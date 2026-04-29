@@ -59,6 +59,16 @@ uv run ty
 
 The project includes a Rust extension (`bibleorgsys-rust`) built with [maturin](https://www.maturin.rs/) and [PyO3](https://pyo3.rs/) for performance-critical internals. `uv sync` handles building and linking it automatically via the workspace configuration.
 
+### Generating Python type stubs
+
+The `.pyi` stub file for the Rust extension is generated with [Rylai](https://github.com/monchin/Rylai), which statically analyses the PyO3 source code:
+
+```bash
+uvx rylai Rust/bible_organisational_system -o typings
+```
+
+This writes stubs into `typings/`. Configuration lives in `Rust/bible_organisational_system/pyproject.toml` under `[tool.rylai]`.
+
 ## Introduction
 
 The Bible Organisational System (BibleOrgSys or BOS) came from starting to write Python3 code to read and display Bibles back in 2010.

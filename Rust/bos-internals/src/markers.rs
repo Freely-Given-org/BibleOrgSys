@@ -7,7 +7,7 @@ use compact_str::CompactString;
 
 /// Types of "extra" content (footnotes, cross-references, etc.)
 /// that are extracted from the main text flow.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, rkyv::Archive, rkyv::Serialize, rkyv::Deserialize)]
 pub enum ExtraType {
     /// Footnote (`fn` -> USFM marker `\f`)
     Footnote,
@@ -225,10 +225,13 @@ pub mod paragraph_markers {
     pub const LI3: &str = "li3";
     pub const LI4: &str = "li4";
 
+    pub const NB: &str = "nb";
+    pub const SP: &str = "sp";
+
     /// All paragraph markers.
     pub const ALL: &[&str] = &[
-        P, PC, PR, M, MI, PM, PMO, PMC, PMR, CLS, PI, PI1, PI2, PI3, PI4, PH, PH1, PH2, PH3, PH4,
-        Q, Q1, Q2, Q3, Q4, QR, QM, QM1, QM2, QM3, QM4, LI, LI1, LI2, LI3, LI4,
+        P, PC, PR, M, MI, PM, PMO, PMC, PMR, CLS, PI, PI1, PI2, PI3, PI4, PH, PH1, PH2, PH3, PH4, Q, Q1, Q2, Q3, Q4,
+        QR, QM, QM1, QM2, QM3, QM4, LI, LI1, LI2, LI3, LI4, NB, SP,
     ];
 
     /// Check if a marker is a paragraph marker.
@@ -238,13 +241,130 @@ pub mod paragraph_markers {
     }
 }
 
+/// USFM introduction markers.
+pub mod introduction_markers {
+    pub const ALL: &[&str] = &[
+        "imt", "imt1", "imt2", "imt3", "imt4", "is", "is1", "is2", "is3", "is4", "ip", "ipi", "im",
+        "imi", "ipq", "imq", "ipr", "iq", "iq1", "iq2", "iq3", "io", "io1", "io2", "io3", "io4",
+        "iot", "ior", "ili", "ili1", "ili2", "ili3", "ili4", "iex", "ib",
+    ];
+
+    #[inline]
+    pub fn is_introduction(marker: &str) -> bool {
+        ALL.contains(&marker)
+    }
+}
+
+/// USFM heading markers.
+pub mod heading_markers {
+    pub const ALL: &[&str] = &[
+        "s", "s1", "s2", "s3", "s4", "sr", "is", "is1", "is2", "is3", "is4", "mr", "qa", "qc",
+    ];
+
+    #[inline]
+    pub fn is_heading(marker: &str) -> bool {
+        ALL.contains(&marker)
+    }
+}
+
+/// USFM intro outline markers.
+pub mod intro_outline_markers {
+    pub const ALL: &[&str] = &["io", "io1", "io2", "io3", "io4"];
+
+    #[inline]
+    pub fn is_intro_outline(marker: &str) -> bool {
+        ALL.contains(&marker)
+    }
+}
+
+/// USFM intro list markers.
+pub mod intro_list_markers {
+    pub const ALL: &[&str] = &["ili", "ili1", "ili2", "ili3", "ili4"];
+
+    #[inline]
+    pub fn is_intro_list(marker: &str) -> bool {
+        ALL.contains(&marker)
+    }
+}
+
+/// USFM main text list markers.
+pub mod main_text_list_markers {
+    pub const ALL: &[&str] = &["li", "li1", "li2", "li3", "li4"];
+
+    #[inline]
+    pub fn is_main_text_list(marker: &str) -> bool {
+        ALL.contains(&marker)
+    }
+}
+
 /// Major section markers.
 pub mod major_section_markers {
+    pub const MS: &str = "ms";
     pub const MS1: &str = "ms1";
     pub const MS2: &str = "ms2";
     pub const MS3: &str = "ms3";
+    pub const MS4: &str = "ms4";
 
-    pub const ALL: &[&str] = &[MS1, MS2, MS3];
+    pub const ALL: &[&str] = &[MS, MS1, MS2, MS3, MS4];
+
+    #[inline]
+    pub fn is_major_section(marker: &str) -> bool {
+        ALL.contains(&marker)
+    }
+}
+
+/// USFM title markers.
+pub mod title_markers {
+    pub const ALL: &[&str] = &["mt", "mt1", "mt2", "mt3", "mt4", "mte", "mte1", "mte2", "toc1", "toc2", "toc3", "h"];
+}
+
+/// All markers that are considered to contain printable Bible text for word counting.
+pub const BOS_PRINTABLE_MARKERS: &[&str] = &[
+    "mt", "mt1", "mt2", "mt3", "mt4", "mte", "mte1", "mte2",
+    "imt", "imt1", "imt2", "imt3", "imt4", "is", "is1", "is2", "is3", "is4", "ip", "ipi", "im", "imi", "ipq", "imq", "ipr", "iq", "iq1", "iq2", "iq3", "io", "io1", "io2", "io3", "io4", "iot", "ior", "ili", "ili1", "ili2", "ili3", "ili4", "iex",
+    "s", "s1", "s2", "s3", "s4", "sr", "mr", "qa", "qc",
+    "v~", "p~",
+];
+
+/// Check if a marker is a printable marker.
+#[inline]
+pub fn is_printable_marker(marker: &str) -> bool {
+    BOS_PRINTABLE_MARKERS.contains(&marker)
+}
+
+/// Check if a marker has "Never" content type (like \b, \ib, \nb).
+#[inline]
+pub fn is_never_content_marker(marker: &str) -> bool {
+    matches!(marker, "b" | "ib" | "nb" | "ts")
+}
+
+/// Normalize a marker to its standard numbered form if applicable.
+/// E.g., "mt" -> "mt1", "s" -> "s1".
+pub fn normalize_marker(marker: &str) -> &str {
+    match marker {
+        "imt" => "imt1",
+        "is" => "is1",
+        "iq" => "iq1",
+        "ili" => "ili1",
+        "io" => "io1",
+        "imte" => "imte1",
+        "mt" => "mt1",
+        "mte" => "mte1",
+        "ms" => "ms1",
+        "s" => "s1",
+        "pi" => "pi1",
+        "li" => "li1",
+        "ph" => "ph1",
+        "q" => "q1",
+        "qm" => "qm1",
+        "th" => "th1",
+        "thr" => "thr1",
+        "tc" => "tc1",
+        "tcr" => "tcr1",
+        "qt-s" => "qt1-s",
+        "qt-e" => "qt1-e",
+        _ => marker,
+    }
 }
 
 /// Generate an end marker for a given marker.
@@ -281,10 +401,7 @@ pub fn all_nesting_markers() -> Vec<&'static str> {
 
 /// Generate all end markers for nesting markers.
 pub fn all_end_markers() -> Vec<CompactString> {
-    all_nesting_markers()
-        .iter()
-        .map(|m| end_marker(m))
-        .collect()
+    all_nesting_markers().iter().map(|m| end_marker(m)).collect()
 }
 
 #[cfg(test)]

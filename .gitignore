@@ -27,7 +27,6 @@ NotIncluded/
 PrivateResources/
 
 TempTestData/
-DataFilesForTests/
 DerivedFiles.sav/
 
 # Ignore various tools folders and files

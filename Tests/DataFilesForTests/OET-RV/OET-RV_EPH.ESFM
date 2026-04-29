@@ -1,0 +1,267 @@
+\id EPH - Open English Translation—Readers' Version (OET-RV) v0.1.54
+\usfm 3.0
+\ide UTF-8
+\rem ESFM v0.6 EPH
+\rem WORDTABLE OET-LV_NT_word_table.tsv
+\h Ephesians
+\toc1 Ephesians
+\toc2 Ephesians
+\toc3 Eph.
+\mt2 Paul's letter to the believers in
+\mt1 Ephesus
+\is1 Introduction
+\is2 The author
+\ip This \bk Letter to the believers in Ephesus\bk* was written by Paul from prison in Rome.
+\is2 This letter
+\ip This letter wasn't just written for the assembly of believers there in Ephesus, but also for other assemblies of believers.
+\ip Paul's main theme is about God's plan that ‘at the right time he will gather everything, whether in heaven or here on earth, for the messiah’ (1:10).
+\ip In the first part of letter, he wrote about unity. Paul carefully explained about how God the father chooses his people, about forgiving and saving them from their sins through his son, Yeshua the messiah.
+\ip In the second part of letter, Paul urges the reader that the believers need to be united in the messiah by means of their unity with each other.
+\ip Paul uses many allegories about the unity of people with God via the messiah: the believers are the body of the messiah, he is the head; it's like a house, with the messiah as the foundation stone; the believers are also like a bride with the messiah as the groom.
+\ip It's also explained here about the correct behaviour for couples, of parents and children, and for slaves and masters. Then in concluding his letter, it's explained about the armour that's given to believers for them to use to stand against Satan's attacks.
+\ip It should be noted here that this letter, like most of the scriptures, was dictated to a scribe (See 2 Thess 3:17), so it was an oral letter, quite different from our modern letters which we edit with word-processing software, adding a word back in a previous sentence, combining two short sentences, or breaking an over-long sentence. Oral letters tend to contain a lot of \it run-on sentences\it* where the thoughts keep flowing without a break, thus 1:3-14 is considered by most Greek experts to be one long sentence (like this one is 😀), however for us as readers, a sentence with some two hundred words is very difficult for us to absorb, hence this \em Reader's Version\em* breaks that single Greek sentence into a number of smaller sentences, in fact, this kind of adjustment is regularly done throughout the Bible by all major English translations in order to make them easier for us to read, but the disadvantage is that we can sometimes lose whatever the connection was between the consecutive thoughts. The \em OET\em* tries to be more transparent about such adjustments by placing the \em Literal Version\em* right beside this text so that the serious student can compare the two.
+\iot Main components of Paul's letter
+\io1 Introduction \ior 1:1-2\ior*
+\io1 Spiritual blessings from the messiah \ior 1:3–3:21\ior*
+\io1 Proper behaviour for believers \ior 4:1–6:20\ior*
+\io1 Closing \ior 6:21-24\ior*
+\rem This is still a very early look into the unfinished text of the Open English Translation of the Bible. Please double-check the text in advance before using in public.
+\ie
+\c 1
+\rem /s1 Greetings from Paul; Salutation
+\p
+\v 1 \add This letter is from\add* Paul, a missionary of Yeshua the messiah by the will of \nd God¦128006\nd*.\x + \xo 1:1: \xt Acts 18:19-21; 19:1.\x*
+\p To the godly people \add there\add* in Ephesus¦128013 who are faithful¦128015 to Yeshua the messiah.
+\p
+\v 2 May our father¦128025 \nd God¦128024\nd* and our \nd master¦128028 Yeshua\nd* the \nd messiah¦128030\nd* give grace¦128019 and peace¦128022 to you¦128020 all.
+\s1 Spiritual blessings
+\rem /s1 The glory of Christ in the church; Spiritual Blessings in Christ
+\p
+\v 3 We praise \nd God¦128033\nd*, the father¦128035 of our \nd master¦128037 Yeshua\nd* the messiah.\f + \fr 1:3 \ft Verses 3-14 seem to be just one long, rambling sentence in the Greek, and it's not totally clear what each part means, or how they all connect logically together in sequence. We have split it into smaller sentence chunks to try to help our readers extract some meaning out of it.\f* He is the one who's blessed us with every¦128047 spiritual¦128049 blessing in heavenly¦128052 places—blessings that come from the messiah.
+\v 4 He chose¦128056 us to follow him even before¦128060 the creation of the world¦128062, so that we could become pure¦128065 and blameless¦128067 in front¦128068 of him. Because of his¦128068 love¦128071
+\v 5 he decided in advance to adopt¦128075 us as his¦128087 children through¦128076 \nd Yeshua¦128078\nd* the \nd messiah¦128079\nd*. His¦128087 decision gave him great pleasure¦128084
+\v 6 and now he's praised¦128089 for the greatness of his¦128093 grace¦128092 which¦128096 favoured¦128097 us, as the one he loved¦128101
+\v 7 \x + \xo 1:7: \xt Col 1:14.\x*redeemed us by means of his blood¦128110 and forgave our sins. It was from the riches¦128119 of his grace¦128123
+\v 8 that was poured onto us that we gain wisdom¦128131 and¦128132 understanding¦128133
+\v 9 as he revealed the mystery¦128137 of his will to us according¦128149 to his great pleasure¦128151 as he himself planned.
+\v 10 He planned for the orchestration of the times¦128165, and at the right time he will gather everything, whether in heaven¦128177 or here on earth¦128182, for the \nd messiah¦128171\nd*
+\v 11 and we¦128188 also have been assigned an inheritance¦128188 in him¦128201. This was also predetermined¦128189 according to God's plan and the decisions of his¦128201 will
+\v 12 so that we, the ones who first put our trust in the \nd messiah¦128215\nd*, would praise¦128207 his¦128210 greatness.
+\v 13 And you people also, after hearing the message of truth¦128225, the good message about being saved, were confirmed by receiving the \nd spirit¦128238\nd* of pure¦128242 promise¦128240 after you believed¦128234.
+\v 14 This spirit is the deposit¦128246 on our¦128249 inheritance¦128248 until we procure¦128253 the freedom which has been bought for us, leading us to praise¦128255 God's greatness.
+\s1 Paul's prayer for them
+\rem /s1 Thanksgiving and Prayer; Paul's Prayer for Spiritual Wisdom
+\p
+\v 15 Because¦128259 of that¦128275, and because I heard¦128262 about your faith¦128266 in the \nd master¦128269 Yeshua\nd* and your \add acceptance\add* of all the pure¦128279 believers,
+\v 16 I don't¦128280 stop giving¦128282 thanks¦128282 for all of you, mentioning¦128285 you in my¦128291 prayers¦128290,
+\v 17 asking the \nd God¦128294\nd* of our¦128297 \nd master¦128296 Yeshua¦128299\nd* the \nd messiah¦128300\nd* to give¦128305 you¦128307 spiritual¦128308 wisdom¦128309 and¦128310 to reveal the knowledge¦128313 about him¦128314.
+\v 18 I ask that your¦128321 inner thoughts will be enlightened¦128315 so that you'll all know the expectation of what he's calling¦128332 you to—the riches¦128337 of the greatness of his¦128333 inheritance¦128341 for the believers
+\v 19 and the exceeding greatness¦128353 of his power to \add help\add* us who believe¦128360, according¦128361 to the working¦128363 of the power of his strength¦128367.
+\v 20 \x + \xo 1:20: \xt Psa 110:1.\x*He worked¦128371 this power in the \nd messiah¦128374\nd* when he brought him back to life and seated him in the place of honour in heavenly¦128392 places—
+\v 21 giving him authority¦128398 over every law and government, and over every powerful¦128401 group and organisation, and over every earthly title, not only in the present age but¦128397 also in the age to come.
+\v 22 \x + \xo 1:22: \xt Psa 8:6.\x*Everything in existence will be under¦128422 his¦128425 authority and God set him in charge of all matters concerning¦128430 the assembly¦128433,
+\v 23 which¦128434 is his¦128438 body¦128437—the completeness of the messiah who completes everything.
+\c 2
+\s1 God's mercy, grace, and plans for us
+\rem /s1 God's grace to Gentiles; Made Alive with Christ; Made Alive in Christ; From Death to Life
+\p
+\v 1 \x + \xo 2:1-5: \xt Col 2:13.\x*You all were dead¦128450 due to your¦128460 disobedience and¦128454 the \add path of\add* sinning
+\v 2 that you once walked¦128464 along when you followed the trends of this world¦128469 which \add in turn\add* come from the ruler¦128473 of the invisible powers—he's the spirit¦128479 that works in the children of disobedience.
+\v 3 In the past, we also lived like them inside our¦128503 fleshly lusts and then living out those desires and fantasies, and so we were children¦128515 \add deserving\add* strong anger¦128518 just like everyone else.
+\p
+\v 4 But \nd God¦128526\nd* was generous with his¦128535 mercy¦128530 because¦128531 of the great¦128533 love¦128534 that¦128536 he loved¦128537 us with,
+\v 5 so although we were dead¦128543 as a result of our disobedience, he make us alive¦128551 along with the \nd messiah¦128554\nd*. Yes, we have been saved¦128557 by \add God's\add* grace¦128555.
+\v 6 And God lifted us up and sat¦128561 us together¦128561 with \nd Yeshua\nd* the \nd messiah¦128567\nd* in the heavenly¦128564 \add domains\add*
+\v 7 so that¦128574 for the ages to come, he could display¦128570 the overflowing riches¦128580 of his grace¦128583 through his kindness¦128586 to us via \nd Yeshua¦128592\nd* the \nd messiah¦128591\nd*.
+\v 8 It's \add God's\add* grace that allows you all to be saved¦128597 through¦128598 faith¦128600. This grace doesn't come from you, but rather it's a gift¦128608 from God—
+\v 9 it doesn't originate from your actions so no one can brag about it.
+\v 10 We are God's workmanship¦128620 and he's created¦128621 us to do good¦128627 things by following \nd Yeshua\nd* the \nd messiah¦128623\nd*. God has already planned these things for us to do.
+\s1 Jews and non-Jews can be united
+\rem /s1 One in Christ; Oneness and Peace in Christ
+\p
+\v 11 Because of that, don't forget that you¦128642 all were once fleshly unbelievers (nicknamed ‘the uncircumcised¦128649 ones’ by circumcised¦128653 Jews who mark the bodies \add of their males\add* with human hands).
+\v 12 At that time¦128661 you were separated from the citizens¦128667 of Yisrael \add (Israel¦128669)\add* and were strangers¦128671 to the agreements involving \add God's\add* promise¦128675. You didn't¦128677 have any future hope as you lived in the world¦128683 without¦128663 \add knowing\add* God.
+\p
+\v 13 But now \add thanks to\add* \nd Yeshua\nd* the messiah, you¦128689 all who were once far \add from God\add* have become¦128695 close by means of the messiah's blood¦128699.
+\v 14 He is \add the source\add* of peace¦128706 \add between Jews and non-Jews\add*, having broken¦128718 the dividing¦128715 wall¦128715 that¦128710 fenced¦128717 them apart and making the two into one. He took the hostility onto himself,
+\v 15 \x + \xo 2:15: \xt Col 2:14.\x*having¦128731 declared the \add old \add* commands¦128728 to be now void so that Jews and non-Jews can now be peaceably¦128745 united.
+\v 16 \x + \xo 2:16: \xt Col 1:20.\x*By \add his death\add* on the pole, any hostility is destroyed and¦128747 both groups now become just one body¦128754 in God's sight.
+\v 17 \x + \xo 2:17: \xt Isa 57:19.\x*When the messiah came, he announced the good message¦128767: peace to you all who were far \add from God\add*, and peace also to the ones who were near,
+\v 18 so now both groups have access¦128786 to the father¦128794 by means of one \nd spirit¦128791\nd* through¦128777 \add the work of\add* the messiah.
+\rem /s1 A Temple for the Lord
+\p
+\v 19 As a result, you all are no longer¦128797 strangers¦128799 and foreigners, but¦128800 fellow-citizens of the believers and part of God's household¦128808
+\v 20 which has been founded¦128814 on the teaching of the missionaries and¦128817 prophets¦128818. The cornerstone¦128820 of this building is \nd Yeshua\nd* the \nd messiah¦128824\nd*.
+\v 21 He joins the entire building¦128830 together¦128831, growing¦128832 us all into a dedicated temple¦128834 for \nd Yahweh¦128837\nd*.
+\v 22 You all are being¦128842 built¦128842 together¦128842 by following him, becoming a place¦128844 for God's \nd spirit¦128849\nd* to live in.
+\c 3
+\s1 Paul's assignment to non-Jews
+\rem /s1 Paul's prayer; Paul's Work for the Gentiles; God's Secret Plan Revealed; Paul the Preacher to the Gentiles; Paul's Ministry to the Gentiles
+\p
+\v 1 That's the reason¦128852 that I, Paul¦128854, am a prisoner¦128856 \add due to my serving\add* \nd Yeshua\nd* the \nd messiah¦128858\nd* for you¦128861 non-Jews.
+\v 2 Certainly you have heard¦128866 that¦128874 God assigned me the task of passing on God's grace¦128870 to you.
+\v 3 He revealed his incredible plan as I wrote¦128888 briefly previously¦128888
+\v 4 \x + \xo 3:4-6: \xt Col 1:26-27.\x*and which¦128893 you¦128894 are all able to read to understand¦128896 my¦128899 insight¦128898 into the incredible plan about the \nd messiah¦128904\nd*.
+\v 5 This plan wasn't explained to humans in previous generations¦128908 but¦128922 now God's \nd spirit¦128925\nd* has revealed¦128917 it to his¦128921 worthy missionaries and¦128922 prophets¦128923.
+\v 6 Now non-Jews can have the same inheritance and become members¦128931 of the same body and can share in the same promise¦128935 that was the positive message¦128943 of \nd Yeshua\nd* the \nd messiah¦128939\nd*.
+\p
+\v 7 I have become¦128946 a servant¦128947 of that message as a result of the gift¦128950 of God's grace¦128952 that was given¦128957 to me by means of the working¦128962 of his¦128965 power¦128964.
+\v 8 Although I was the least¦128970 of the ones dedicated to this message, I was given¦128974 the grace¦128976 to preach¦128981 this positive message to the non-Jews, to tell them about the endless riches¦128986 of the \nd messiah¦128988\nd*
+\v 9 and¦128989 to enlighten¦128990 everyone about the assignment of God's incredible plan. God, the one who created¦129009 everything, hid this plan away over the ages
+\v 10 so that the wide-ranging wisdom¦129029 of \nd God¦129031\nd* could be revealed now through¦129024 the church to the rulers¦129017 and¦129018 authorities¦129020 in the heavenly¦129023 realms¦129023.
+\v 11 God did this according¦129032 to his plan for the ages which¦129036 he established¦129037 in our¦129045 \nd master¦129044 Yeshua\nd* the \nd messiah¦129041\nd*.
+\v 12 It's through our faith¦129058 in Yeshua that we¦129048 can have boldness¦129050 and¦129051 confident¦129055 access¦129053 \add to God\add*.
+\v 13 Because of that¦129072, I'm asking you not to become discouraged over my¦129068 current difficulties as I \add serve\add* you all, in fact you are honoured by them.
+\s1 Paul prays for those in Ephesus
+\rem /s1 A Prayer for the Ephesians; Prayer for the Readers; Paul's Prayer for Spiritual Empowering; The Love of Christ
+\p
+\v 14 That's why I'm kneeling to \add ask\add* the father¦129085
+\v 15 (the one that every¦129093 father in the heavens¦129096 and¦129097 on earth¦129099 is named¦129100 after)
+\v 16 that he would cause you to be strengthened¦129114 inside¦129121 your minds by the power¦129113 of his \nd spirit¦129117\nd* and from the riches¦129108 of his greatness.
+\v 17 Through \add your\add* faith¦129128, the \nd messiah¦129125\nd* can live in your hearts¦129131 so that love¦129134 will become your root and¦129136 foundation
+\v 18 so that just like the dedicated ones, you¦129139 all will also be strong enough to understand the width and length¦129151 and height¦129153 and depth¦129156 of
+\v 19 the \nd messiah's¦129167\nd* love, and to know¦129158 that having this love exceeds having knowledge¦129164 so that you all can be filled¦129169 with God's completeness.
+\p
+\v 20-21 Now we offer praise to \add God\add* in the church and for all the generations to come and to Yeshua the messiah—\add God\add* who, through the power¦129190 that¦129191 works in us, is able to do¦129182 far more than we can ask for or even understand¦129187. May it be so.
+\c 4
+\s1 Many parts and gifts but one body
+\rem /s1 Christian conduct; Unity in the Body; The Unity of the Body; Unity in the Body of Christ
+\p
+\v 1 Because of that¦129228, I, a prisoner¦129220 for \nd Yahweh¦129222\nd*, am urging you all to walk¦129225 worthily¦129224 of the calling¦129227 to which¦129228 you were called¦129229
+\v 2 \x + \xo 4:2: \xt Col 3:12-13.\x*with all humility¦129232, gentleness¦129234, and¦129233 patience¦129236, putting up with one another¦129238 because of your love¦129240 \add for them\add*,
+\v 3 being¦129241 serious about keeping¦129242 the unity of \add God's\add* \nd spirit¦129246\nd* in the bond of peace¦129251.
+\v 4 There¦129252 is one body¦129253 and one \nd spirit¦129256\nd*, just as you all were called to one hope when you were called.
+\v 5 There's one \nd master¦129268\nd*, one \add system of\add* faith¦129270, one immersion¦129272,
+\v 6 one \nd God¦129274\nd* and father¦129276 of all who is over all and through¦129282 all and in all.
+\p
+\v 7 Yet each one of us has been given¦129294 a measure¦129299 of grace¦129296 as a gift¦129301 from the \nd messiah¦129303\nd*,
+\v 8 just as it was written,
+\q1 “When he ascended to heaven,
+\q2 he eliminated captivity¦129311
+\q2 and gave¦129313 gifts¦129314 to people¦129317.”\x + \xo 4:8: \xt Psa 68:18.\x*
+\m
+\v 9 Of course, he couldn't ascend if he hadn't first descended down to earth¦129335.
+\v 10 So the one who descended is the very one who also ascended above¦129343 all the heavens¦129346 so that he could fill¦129348 all locations.
+\v 11 Then¦129351 he gave¦129353 some as missionaries, some as prophets¦129360, some as announcers of the good¦129363 message¦129363, some as pastors and¦129351 teachers¦129368
+\v 12 so as to complete¦129371 the dedicated ones for the work¦129376 of service¦129376—for building¦129378 the body¦129380 of the \nd messiah¦129382\nd*
+\v 13 until¦129383 we¦129384 can reach the unity of our faith¦129391 and¦129392 of our knowledge¦129394 about God's son—becoming mature¦129401 people measured¦129403 against the stature¦129404 of the fullness¦129406 of the \nd messiah¦129408\nd*.
+\v 14 Then we'll no longer¦129410 be \add like\add* children \add in our faith\add*, tossed¦129414 around by waves¦129414 and¦129415 being blown by every¦129417 wind¦129419 of teaching¦129421 used to trick¦129424 us or by crafty¦129428 people¦129426 who scheme¦129433 how to deceive us.
+\v 15 Instead, by lovingly speaking the truth¦129439, we¦129443 will grow up into every aspect of him¦129445—the \nd messiah¦129455\nd* who is the head¦129452
+\v 16 \x + \xo 4:16: \xt Col 2:19.\x*that integrates the entire¦129459 body together and holds it together by every¦129466 one of its joints¦129467. When each component does its work, the body grows and builds¦129486 itself¦129488 up with love.
+\s1 Proper behaviour for godly people
+\rem /s1 Living as Children of Light; The Old Life and the New; The New Life in Christ
+\p
+\v 17 So¦129492 I'll say this with \nd Yahweh's\nd* direction: you¦129499 all are no longer¦129498 to walk¦129500 like \add unbelieving\add* pagans¦129505 who \add trust\add* in their¦129511 own futile thinking.
+\v 18 Their¦129534 minds have been darkened¦129512 because their ignorance¦129524 has drawn them away from the life¦129519 of \nd God¦129521\nd* due to the hardening¦129531 of their hearts¦129533.
+\v 19 They stopped caring \add about what's right and wrong\add*, and then greedily¦129547 indulged themselves¦129537 in their own impure¦129544 lusts.
+\p
+\v 20 But you¦129548 all didn't¦129550 learn¦129552 that about the \nd messiah¦129554\nd*.
+\v 21 If you had heard him and listened to his teaching, you would have heard the truth¦129565 from \nd Yeshua\nd*:
+\v 22 \x + \xo 4:22: \xt Col 3:9.\x*that¦129580 you reject the former conduct¦129576 of the old corrupted¦129581 you, those seductive¦129586 desires¦129584,
+\v 23 and¦129589 allow the spirit¦129592 driving your¦129595 thoughts to be renewed¦129587
+\v 24 \x + \xo 4:24: a \xt Col 3:10; \xo b \xt Gen 1:26.\x*and so to remodel yourself as a godly person¦129601 created¦129605 to obey \nd God¦129604\nd* and follow the pure truth¦129613.
+\rem /s1 Rules for the New Life
+\p
+\v 25 \x + \xo 4:25: \xt Zech 8:16.\x*So¦129614 steer clear of lies—always speak¦129618 the truth¦129619 to those around you because¦129628 we¦129630 are members¦129632 of each other.
+\v 26 \x + \xo 4:26: \xt Psa 4:4 (LXX).\x*Even when you're angry, don't sin, and¦129634 don't carry your¦129644 anger¦129643 through to the next day—
+\v 27 don't¦129646 let the devil¦129650 get his foot in.
+\v 28 If you've been stealing, then stop it. Instead you should¦129654 be a hard worker, doing good¦129665 things with your hands¦129663, so that you'll \add earn\add* enough to be able to help those who are in need.
+\v 29 Don't let any bad¦129675 talk come out of your¦129679 mouths¦129678, but¦129682 rather words that are helpful to encourage others and to show grace¦129692 to them.
+\v 30 And don't¦129696 sadden God's holy \nd spirit¦129699\nd*, because he is the one who recorded your names for the day¦129708 when the price will be paid to buy you all back.
+\v 31 So get rid of all bitterness¦129711, and rage¦129713 and severe¦129715 anger¦129715, uproars and slander¦129719, and any kind of malice¦129727.
+\v 32 \x + \xo 4:32: \xt Col 3:13.\x*Instead, be kind to each other, tender-hearted, forgiving each other just like \nd God¦129739\nd* forgave¦129742 you¦129744 all through \add the work of\add* the \nd messiah¦129741\nd*.
+\c 5
+\s1 Living in God's light
+\rem /s1 Living in the Light
+\p
+\v 1 So¦129746 imitate \nd God¦129749\nd* like valued children¦129751 \add would imitate their father\add*
+\v 2 \x + \xo 5:2: \xt Exo 29:18; Psa 40:6.\x*and immerse yourselves in love¦129756 just as the \nd messiah¦129760\nd* loves you¦129762 all and allowed himself¦129766 to suffer for us as an offering¦129770 and sacrifice¦129774 which is like a pleasant fragrance¦129780 to \nd God¦129777\nd*.
+\rem /s1 Renounce Pagan Ways
+\p
+\v 3 It's fitting¦129794 for dedicated \add believers\add* to not even entertain thoughts of sexual¦129781 immorality¦129781 or impurity¦129785 or greed¦129788.
+\v 4 Nor is dirty or foolish¦129801 talk¦129801 or crude¦129804 joking¦129804 fitting¦129809, but¦129810 rather¦129811 thankfulness¦129812.
+\v 5 You should realise that \nd anyone¦129837\nd* who is sexually¦129820 immoral¦129820 or impure or is a covetous¦129824 or idolatrous¦129828 person won't¦129829 have an inheritance¦129831 in the kingdom¦129835 of the \nd messiah¦129837\nd* and¦129838 of \nd God¦129839\nd*.
+\p
+\v 6 Don't let anyone¦129840 seduce¦129842 you¦129841 with empty¦129844 talk, because¦129848 this is exactly what will induce God's strong anger¦129851 on those who are disobedient.
+\v 7 So¦129861 don't¦129860 get caught up with them
+\v 8 because¦129866 you yourselves were once in the darkness¦129868 but now that you are in \nd Yahweh's\nd* light, you should behave like children¦129875 of light.
+\v 9 The results of this light¦129882 should be goodness¦129886 and doing what is right¦129888 and being honest
+\v 10 as you \add aim\add* to please¦129894 \nd Yahweh¦129896\nd*.
+\v 11 Don't¦129898 join in with the works¦129901 of darkness¦129905 which don't¦129898 lead to positive results, but¦129907 instead you all should expose them
+\v 12 because the things that unbelievers do in secret¦129913 are disgraceful to even talk about.
+\v 13 But everything¦129929 will \add eventually\add* have the light shone on it and all these things will then be exposed.
+\v 14 That's why it says:
+\q1 You who are asleep get up,
+\q1 You who are dead¦129945 come back to life,
+\q2 The \nd messiah¦129950\nd* will shine \add his light\add* on you.
+\rem /s1 Living by the Spirit's Power
+\p
+\v 15 Because of that, take great care in exactly¦129955 how you're living. Don't¦129959 live like fools, but¦129962 like wise people,
+\v 16 \x + \xo 5:16: \xt Col 4:5.\x*making good use of your time¦129967, because¦129968 there's lot of evil¦129971 these days¦129970.
+\v 17 So don't¦129975 be foolish¦129977, but¦129978 rather \add strive to\add* discover what \nd Yahweh¦129988\nd* wants for you.
+\p
+\v 18 And don't¦129991 get drunk¦129992 on alcohol because that's excessive. Instead, be filled¦130000 with \add God's\add* \nd spirit¦130003\nd*,
+\v 19 \x + \xo 5:19-20: \xt Col 3:16-17.\x*sharing scriptures with each other and singing hymns¦130009 and songs¦130011 to praise¦130018 \nd Yahweh¦130026\nd*,
+\v 20 always¦130028 expressing thanks¦130027 for everything to \add our\add* father¦130043 \nd God¦130040\nd* in the authority and name¦130032 of our \nd master¦130034 Yeshua¦130037\nd* the \nd messiah¦130038\nd*.
+\rem /s1 Christian relationships; The Christian Household; Wives and Husbands; Spirit-Guided Relationships: Wives and Husbands
+\v 21 And show your honour of the \nd messiah¦130049\nd* by placing yourselves under each other's authority.
+\s1 Married couples
+\rem /s1 Wives and Husbands
+\p
+\v 22 \x + \xo 5:22: \xt Col 3:18; 1Pe 3:1.\x*Wives should place themselves under their¦130053 own husbands¦130055, just like they're under the \nd master¦130060\nd*,
+\v 23 because¦130061 the husband¦130063 is the leader of the wife¦130068 just like the \nd messiah¦130072\nd* is the head and saviour¦130080 of his body¦130082, the church.
+\v 24 Wives should place themselves under their¦130096 husbands¦130098 in everything¦130100 just like the church should place itself under the \nd messiah¦130091\nd*.
+\p
+\v 25 \x + \xo 5:25: \xt Col 3:19; 1Pe 3:7.\x*You¦130102 husbands must love your¦130104 wives¦130105, just like the \nd messiah¦130110\nd* loved¦130111 the church and¦130114 gave¦130116 himself¦130115 \add completely\add* for it,
+\v 26 so that he could separate the church \add from the world\add* and wash it clean¦130122 with the water¦130126 of the \add good\add* message¦130128
+\v 27 in order to present¦130130 the splendid church to himself¦130133—without any stains¦130141 or wrinkles¦130143 or anything¦130145 like that—just pure¦130151 and¦130152 unblemished.
+\v 28 So husbands¦130158 should love their wives¦130163 just like their own bodies¦130168—anyone who loves his wife¦130173 is loving himself.
+\v 29 No one hates their own body¦130181, but¦130184 they feed and¦130186 look after it¦130188, just like the \nd messiah¦130192\nd* does for the church
+\v 30 and we¦130198 are parts of his¦130201 body¦130200.
+\v 31 \x + \xo 5:31: \xt Gen 2:24.\x*That's the reason why a man¦130214 leaves his father¦130216 and mother¦130220 and becomes joined¦130222 with his wife¦130226 and the two¦130232 of them become one unit.
+\v 32 This is an amazing mystery¦130237 but¦130242 I'm talking¦130243 about the \nd messiah¦130245\nd* and¦130246 the church.
+\v 33 But¦130265 it applies to you all: each one of you should love your wife like yourself and the wife should respect her husband¦130270.
+\c 6
+\s1 Parents and children
+\rem /s1 Children and Parents
+\p
+\v 1 \x + \xo 6:1: \xt Col 3:20.\x*It's¦130272 right¦130282 for children following \nd Yahweh¦130278\nd* to obey¦130273 your¦130276 parents¦130275.
+\v 2 \x + \xo 6:2-3: \xt Exo 20:12; Deu 5:16.\x*Honour your¦130286 father¦130285 and mother¦130289 (that's the first¦130293 command¦130292 that's followed by a promise¦130295)
+\v 3 so that things will go well for you and you'll have a long¦130302 life on the earth¦130305.
+\p
+\v 4 \x + \xo 6:4: \xt Col 3:21.\x*Fathers, don't¦130319 provoke your¦130323 children¦130322 to anger¦130320, but¦130316 bring them up caringly and teach them disciplines¦130328 and instructions from \nd Yahweh¦130331\nd*.
+\s1 Slaves and masters
+\rem /s1 Slaves and Masters
+\p
+\v 5 \x + \xo 6:5-8: \xt Col 3:22-25.\x*Slaves¦130333, submit¦130334 to your human masters¦130339 with respect¦130341 and fear, being sincere¦130345 in your hearts¦130347 as if \add serving\add* the \nd messiah¦130352\nd*.
+\v 6 Don't¦130353 just please¦130357 them when they're watching, but¦130358 \add work\add* as slaves¦130360 of the \nd messiah¦130362\nd*, genuinely wanting to obey \nd God¦130367\nd*
+\v 7 by serving with good will. When you serve as if serving the \nd master¦130375\nd* and not people¦130378,
+\v 8 whether¦130397 you're a slave¦130398 or free, it's him who will reward you.
+\p
+\v 9 \x + \xo 6:9: a \xt Col 4:1; \xo b \xt Deu 10:17; Col 3:25.\x*\nd Masters¦130421\nd*, do the same towards¦130407 your¦130419 slaves. You know that both the slaves and¦130401 you have the same master in the heavens¦130424, so don't¦130428 threaten¦130411 them \add ≈because\add* \add @our master\add* has no favourites¦130427.
+\s1 Wear God's armour
+\rem /s1 The Armor of God; The Whole Armor of God; The Christian's armoury
+\p
+\v 10 Concluding then, be enabled¦130439 by \nd Yahweh¦130443\nd* and¦130444 from the power¦130447 which comes from his¦130450 strength¦130449.
+\v 11 Wear God's complete armour because¦130456 it will enable you¦130459 to stand¦130460 up against¦130461 the devil's¦130465 schemes¦130463.
+\v 12 Our struggle isn't¦130467 against people, but¦130475 against rulers, authorities¦130484, the powers of this world's¦130487 darkness¦130489, and the spiritual¦130495 forces of wickedness¦130497 in heavenly¦130500 places.
+\v 13 Because¦130501 of that, make use of every piece of God's armour so that you'll be able to resist¦130511 those powers in the evil¦130516 day¦130514 and having¦130519 done everything, to remain standing¦130521.
+\p
+\v 14 \x + \xo 6:14: a \xt Isa 11:5; \xo b \xt Isa 59:17.\x*So¦130523 then, stand¦130522 with the belt of truth¦130529 around your¦130527 waist¦130526, wearing the breastplate¦130533 of righteousness¦130535,
+\v 15 \x + \xo 6:15: \xt Isa 52:7.\x*and¦130536 ready your¦130538 feet¦130539 with the good¦130543 message¦130543 of peace¦130545.
+\v 16 Whatever arises, hold up the shield¦130552 of faith¦130554 which¦130556 you¦130557 all will be able to use to extinguish¦130565 all the fiery arrows¦130560 of the evil¦130562 one.
+\v 17 \x + \xo 6:17: \xt Isa 59:17.\x*Take the helmet¦130568 of salvation¦130570 and¦130573 the sword¦130575 of God's \nd spirit¦130577\nd* which¦130578 is the message¦130580 from God.
+\s1 Praying for fellow believers
+\p
+\v 18 Make your requests as you pray in the \nd spirit¦130592\nd* at every¦130589 occasion and similarly staying alert and persevering¦130600 as you make requests on behalf of all the dedicated \add believers\add*
+\v 19 and¦130607 also ask on my behalf for \add God\add* to give me words to say as I open my mouth¦130619 to boldly teach the good¦130627 message¦130627 about \add God's\add* incredible plan
+\v 20 that's led me as a missionary to now be in prison. Ask that I would speak boldly¦130637 as I should.
+\s1 Update
+\rem /s1 Personal Matters and Benediction; Final Greetings
+\p
+\v 21 \x + \xo 6:21: \xt Acts 20:4; 2Tim 4:12.\x*Now Tychicus¦130659, a dear brother¦130662 and faithful¦130664 servant¦130665 of \nd Yahweh¦130668\nd*, will let you know about me and how I'm doing¦130654.
+\v 22 I've sent¦130670 him to you for that reason—so that you all will know¦130677 about us \add here\add* and that he would comfort¦130682 your¦130686 hearts¦130684.
+\s1 Blessings
+\p
+\v 23 Peace¦130687, love¦130693, and faith¦130695 to the brothers¦130690 and sisters¦130690 from \nd God¦130697\nd* the father¦130698 and from \nd Yeshua¦130701\nd* the \nd messiah¦130702\nd*.
+\v 24 Grace¦130704 to all who love our¦130711 \nd master¦130710 Yeshua¦130712\nd* the \nd messiah¦130713\nd*, with a love that won't decay.

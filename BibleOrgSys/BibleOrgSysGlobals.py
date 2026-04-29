@@ -111,11 +111,14 @@ except ImportError:
     pwd = None
     import getpass
 
+# Rust implementations for better memory usage and speed (drop-in replacements with camelCase API)
+from bible_organisational_system import set_rust_verbosity, set_rust_debug, set_rust_strict_checking
 
-LAST_MODIFIED_DATE = '2025-11-19' # by RJH
+
+LAST_MODIFIED_DATE = '2026-04-18' # by RJH
 SHORT_PROGRAM_NAME = "BibleOrgSysGlobals"
 PROGRAM_NAME = "BibleOrgSys (BOS) Globals"
-PROGRAM_VERSION = '0.94'
+PROGRAM_VERSION = '0.95'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -1475,6 +1478,8 @@ def setVerbosity( verbosityLevelParameter: str | int ) -> None:
             verbosityString = 'Verbose'
         else: logging.error( "Invalid '" + verbosityLevelParameter + "' verbosity parameter" )
 
+    set_rust_verbosity( verbosityLevel ) # Set it for the Rust internals as well
+
     dPrint( 'Verbose', DEBUGGING_THIS_MODULE, '  Verbosity =', verbosityString )
     dPrint( 'Verbose', DEBUGGING_THIS_MODULE, '  VerbosityLevel =', verbosityLevel )
 # end of BibleOrgSysGlobals.setVerbosity function
@@ -1508,6 +1513,7 @@ def setDebugFlag( newValue=True ) -> None:
     """
     global debugFlag
     debugFlag = newValue
+    set_rust_debug( debugFlag )
     dPrint( 'Verbose', DEBUGGING_THIS_MODULE, f'  {debugFlag=}' )
 # end of BibleOrgSysGlobals.setDebugFlag
 
@@ -1518,6 +1524,7 @@ def setStrictCheckingFlag( newValue=True ):
     """
     global strictCheckingFlag
     strictCheckingFlag = newValue
+    set_rust_strict_checking( strictCheckingFlag )
     dPrint( 'Verbose', DEBUGGING_THIS_MODULE, f'  {strictCheckingFlag=}' )
 # end of BibleOrgSysGlobals.setStrictCheckingFlag
 

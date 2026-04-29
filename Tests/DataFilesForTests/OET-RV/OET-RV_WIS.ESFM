@@ -1,0 +1,1625 @@
+\id WIS - Open English Translation—Readers' Version (OET-RV) v0.0.02
+\usfm 3.0
+\ide UTF-8
+\rem ESFM v0.6 WIS
+\rem not WORDTABLE OET-LV_OT_word_table.tsv
+\rem Adapted from the Public Domain WEBBE courtesy of https://eBible.org
+\h Wisdom of Solomon
+\toc1 The Wisdom of Solomon
+\toc2 Wisdom
+\toc3 Wis
+\mt1 The Wisdom of Solomon
+\is1 Introduction
+\ip The \bk Wisdom of Solomon\bk* is recognised as Deuterocanonical Scripture by the Roman Catholic, Greek Orthodox, and Russian Orthodox Churches.
+\rem This is still a very early look into the unfinished text of the Open English Translation of the Bible. Please double-check the text in advance before using in public.
+\ie
+\c 1
+\q1
+\v 1 Love righteousness, all you who are judges of the earth.
+\q2 Think of the master\f + \fr 1:1 \ft Gr. \fqa in goodness.\f* with a good mind.
+\q1 Seek him in singleness of heart,
+\q2
+\v 2 because he is found by those who don't put him to the test,
+\q2 and is manifested to those who trust him.
+\q1
+\v 3 for crooked thoughts separate from God.
+\q2 His Power convicts when it is tested,
+\q2 and exposes the foolish;
+\q1
+\v 4 because wisdom will not enter into a soul that devises evil,
+\q2 nor dwell in a body that is enslaved by sin.
+\q1
+\v 5 Because a holy spirit of discipline will flee deceit,
+\q2 and will depart from thoughts that are without understanding,
+\q2 and will be ashamed when unrighteousness has come in.
+\b
+\q1
+\v 6 Because\f + \fr 1:6 \ft Some authorities read \fqa the spirit of wisdom is loving to man.\f* wisdom is a spirit who loves man,
+\q2 and she will not hold a\f + \fr 1:6 \ft Or, \fqa reviler\f* blasphemer guiltless for his lips,
+\q2 because God is witness of his inmost self,
+\q2 and is a true overseer of his heart,
+\q2 and a hearer of his tongue.
+\q1
+\v 7 Because the spirit of the master has filled\f + \fr 1:7 \ft Gr. \fqa the inhabited earth.\f* the world,
+\q2 and that which holds all things together knows what is said.
+\q1
+\v 8 Therefore no one who utters unrighteous things will be unseen;
+\q2 neither will Justice, when it convicts, pass him by.
+\q1
+\v 9 Because in his counsels the ungodly will be searched out,
+\q2 and the sound of his words will come to the master to bring his lawless deeds to conviction;
+\q1
+\v 10 because a jealous ear listens to all things,
+\q2 and the noise of murmurings is not hidden.
+\q1
+\v 11 Beware then of unprofitable murmuring,
+\q2 and keep your tongue from slander;
+\q2 because no secret utterance will go on its way void,
+\q2 and a lying mouth destroys a soul.
+\q1
+\v 12 Don't court death in the error of your life.
+\q2 Don't draw destruction upon yourselves by the works of your hands;
+\q2
+\v 13 because God didn't make death,
+\q2 neither does he delight when the living perish.
+\q1
+\v 14 Because he created all things that they might have being.
+\q2 The generative powers of the world are wholesome,
+\q2 and there is no poison of destruction in them,
+\q2 nor has Hades\f + \fr 1:14 \ft Or, \fqa a royal house\f* royal dominion upon earth;
+\q1
+\v 15 for righteousness is immortal,
+\q2
+\v 16 but ungodly men by their hands and their words summon death;
+\q2 deeming him a friend they\f + \fr 1:16 \ft Or, \fqa were consumed \ft with love of him\f* pined away.
+\q1 They made a covenant with him,
+\q2 because they are worthy to belong with him.
+\b
+\c 2
+\q1
+\v 1 Because they said\f + \fr 2:1 \ft Or, \fqa amongst\f* within themselves, with unsound reasoning,
+\q2 “Our life is short and sorrowful.
+\q2 There is no healing when a man comes to his end,
+\q2 and no one was ever known who\f + \fr 2:1 \ft Or, \fqa returned out of Hades\f* was released from Hades.
+\q1
+\v 2 Because we were born by mere chance,
+\q2 and hereafter we will be as though we had never been,
+\q2 because the breath in our nostrils is smoke,
+\q2 and reason is a spark kindled by the beating of our heart,
+\q1
+\v 3 which being extinguished, the body will be turned into ashes,
+\q2 and the spirit will be dispersed as thin air.
+\q1
+\v 4 Our name will be forgotten in time.
+\q2 No one will remember our works.
+\q2 Our life will pass away as the traces of a cloud,
+\q2 and will be scattered as is a mist,
+\q2 when it is chased by the rays of the sun,
+\q2 and\f + \fr 2:4 \ft Gr. \fqa weighed down.\f* overcome by its heat.
+\q1
+\v 5 Because our allotted time is the passing of a shadow,
+\q2 and our end doesn't retreat,
+\q2 because it is securely sealed, and no one\f + \fr 2:5 \ft Or, \fqa comes again\f* turns it back.
+\b
+\q1
+\v 6 “Come therefore and let's enjoy the good things that exist.
+\q2 Let's use the creation earnestly as in our youth.
+\q1
+\v 7 Let's fill ourselves with costly wine and perfumes,
+\q2 and let no spring flower pass us by.
+\q1
+\v 8 Let's crown ourselves with rosebuds before they wither.
+\q1
+\v 9 Let none of us go without his share in our proud revelry.
+\q2 Let's leave tokens of mirth everywhere,
+\q2 because this is our portion, and this is our lot.
+\q1
+\v 10 Let's oppress the righteous poor.
+\q2 Let's not spare the widow,
+\q2 nor regard the grey hair of the old man.
+\q1
+\v 11 But let our strength be a law of righteousness;
+\q2 for that which is weak is proven useless.
+\q1
+\v 12 But let's lie in wait for the righteous man,
+\q2 because he annoys us,
+\q2 is contrary to our works,
+\q2 reproaches us with sins against the law,
+\q2 and charges us with sins against our training.
+\q1
+\v 13 He professes to have knowledge of God,
+\q2 and calls himself a child of the master.
+\q1
+\v 14 He became to us a reproof of our thoughts.
+\q1
+\v 15 He is grievous to us even to look at,
+\q2 because his life is unlike other men's,
+\q2 and his paths are strange.
+\q1
+\v 16 We were regarded by him as something worthless,
+\q2 and he abstains from our ways as from uncleanness.
+\q2 He calls the latter end of the righteous happy.
+\q2 He boasts that God is his father.
+\q1
+\v 17 Let's see if his words are true.
+\q2 Let's test what will happen at the end of his life.
+\q1
+\v 18 Because if the righteous man is God's son, he will uphold him,
+\q2 and he will deliver him out of the hand of his adversaries.
+\q1
+\v 19 Let's test him with insult and torture,
+\q2 that we may find out how gentle he is,
+\q2 and test his patience.
+\q1
+\v 20 Let's condemn him to a shameful death,
+\q2 for he will be protected, according to his words.”
+\b
+\q1
+\v 21 Thus they reasoned, and they were led astray;
+\q2 for their wickedness blinded them,
+\q1
+\v 22 and they didn't know the mysteries of God,
+\q2 neither did they hope for wages of holiness,
+\q2 nor did they discern that there is a prize for blameless souls.
+\q1
+\v 23 Because God created man for incorruption,
+\q2 and made him an image of his own everlastingness;
+\q1
+\v 24 but death entered into the world by the envy of the devil,
+\q2 and those who belong to him experience it.
+\c 3
+\q1
+\v 1 But the souls of the righteous are in the hand of God,
+\q2 and no torment will touch them.
+\q1
+\v 2 In the eyes of the foolish they seemed to have died.
+\q2 Their departure was considered a disaster,
+\q2
+\v 3 and their travel away from us ruin,
+\q2 but they are in peace.
+\q1
+\v 4 Because even if in the sight of men they are punished,
+\q2 their hope is full of immortality.
+\q1
+\v 5 Having borne a little chastening, they will receive great good;
+\q2 because God tested them, and found them worthy of himself.
+\q1
+\v 6 He tested them like gold in the furnace,
+\q2 and he accepted them as a whole burnt offering.
+\q1
+\v 7 In the time of their visitation they will shine.
+\q2 They will run back and forth like sparks amongst stubble.
+\q1
+\v 8 They will judge nations and have dominion over peoples.
+\q2 The master will reign over them forever.
+\q2
+\v 9 Those who trust him will understand truth.
+\q2 The faithful will live with him in love,
+\q2 because grace and mercy are with his chosen ones.
+\b
+\q1
+\v 10 But the ungodly will be punished even as their reasoning deserves,
+\q2 those who neglected righteousness and revolted from the master;
+\q2
+\v 11 for he who despises wisdom and discipline is miserable.
+\q1 Their hope is void and their toils unprofitable.
+\q2 Their works are useless.
+\q1
+\v 12 Their wives are foolish and their children are wicked.
+\q2
+\v 13 Their descendants are cursed.
+\q1 Because the barren woman who is undefiled is happy,
+\q2 she who has not conceived in transgression.
+\q2 She will have fruit when God examines souls.
+\q1
+\v 14 So is the eunuch which has done no lawless deed with his hands,
+\q2 nor imagined wicked things against the master;
+\q1 for a precious gift will be given to him for his faithfulness,
+\q2 and a delightful inheritance in the master's sanctuary.
+\q1
+\v 15 Because good labours have fruit of great renown.
+\q2 The root of understanding can't fail.
+\q1
+\v 16 But children of adulterers will not come to maturity.
+\q2 The seed of an unlawful union will vanish away.
+\q1
+\v 17 Because if they live long, they will not be esteemed,
+\q2 and in the end, their old age will be without honour.
+\q1
+\v 18 If they die young, they will have no hope,
+\q2 nor consolation in the day of judgement.
+\q1
+\v 19 Because the end of an unrighteous generation is always grievous.
+\c 4
+\q1
+\v 1 It is better to be childless with virtue,
+\q2 for immortality is in the memory of virtue,
+\q2 because it is recognised both before God and before men.
+\q1
+\v 2 When it is present, people imitate it.
+\q2 They long after it when it has departed.
+\q1 Throughout all time it marches, crowned in triumph,
+\q2 victorious in the competition for the prizes that are undefiled.
+\q1
+\v 3 But the multiplying brood of the ungodly will be of no profit,
+\q2 and their illegitimate offshoots won't take deep root,
+\q2 nor will they establish a sure hold.
+\q1
+\v 4 Because even if they grow branches and flourish for a season,
+\q2 standing unsure, they will be shaken by the wind.
+\q2 They will be uprooted by the violence of winds.
+\q1
+\v 5 Their branches will be broken off before they come to maturity.
+\q2 Their fruit will be useless,
+\q2 never ripe to eat, and fit for nothing.
+\q1
+\v 6 Because unlawfully conceived children are witnesses of wickedness
+\q2 against parents when they are investigated.
+\b
+\q1
+\v 7 But a righteous man, even if he dies before his time, will be at rest.
+\q1
+\v 8 Because honourable old age is not that which stands in length of time,
+\q2 nor is its measure given by number of years,
+\q2
+\v 9 but understanding is grey hair to men,
+\q2 and an unspotted life is ripe old age.
+\b
+\q1
+\v 10 Being found well-pleasing to God, someone was loved.
+\q2 While living amongst sinners he was transported.
+\q1
+\v 11 He was caught away, lest evil should change his understanding,
+\q2 or guile deceive his soul.
+\q1
+\v 12 Because the fascination of wickedness obscures the things which are good,
+\q2 and the whirl of desire perverts an innocent mind.
+\q1
+\v 13 Being made perfect quickly,
+\q2 he filled a long time;
+\q2
+\v 14 for his soul was pleasing to the master.
+\q2 Therefore he hurried out of the midst of wickedness.
+\q1
+\v 15 But the peoples saw and didn't understand,
+\q2 not considering this, that grace and mercy are with his chosen,
+\q2 and that he visits his holy ones;
+\q1
+\v 16 but a righteous man who is dead will condemn the ungodly who are living,
+\q2 and youth who is quickly perfected will condemn the many years of an unrighteous man's old age.
+\q1
+\v 17 Because the ungodly will see a wise man's end,
+\q2 and won't understand what the master planned for him,
+\q2 and why he safely kept him.
+\q1
+\v 18 They will see, and they will despise;
+\q2 but the master will laugh them to scorn.
+\q1 After this, they will become a dishonoured carcass
+\q2 and a reproach amongst the dead forever;
+\q1
+\v 19 because he will dash them speechless to the ground,
+\q2 and will shake them from the foundations.
+\q1 They will lie utterly waste.
+\q2 They will be in anguish
+\q2 and their memory will perish.
+\b
+\q1
+\v 20 They will come with coward fear when their sins are counted.
+\q2 Their lawless deeds will convict them to their face.
+\c 5
+\q1
+\v 1 Then the righteous man will stand in great boldness
+\q2 before the face of those who afflicted him,
+\q2 and those who make his labours of no account.
+\q1
+\v 2 When they see him, they will be troubled with terrible fear,
+\q2 and will be amazed at the marvel of salvation.
+\q1
+\v 3 They will speak amongst themselves repenting,
+\q2 and for distress of spirit they will groan,
+\q2 “This was he whom we used to hold in derision,
+\q2 as a parable of reproach.
+\q1
+\v 4 We fools considered his life madness,
+\q2 and his end without honour.
+\q1
+\v 5 How was he counted amongst sons of God?
+\q2 How is his lot amongst saints?
+\q1
+\v 6 Truly we went astray from the way of truth.
+\q2 The light of righteousness didn't shine for us.
+\q2 The sun didn't rise for us.
+\q1
+\v 7 We\f + \fr 5:7 \ft See Proverbs 14:14.\f* took our fill of the paths of lawlessness and destruction.
+\q2 We travelled through trackless deserts,
+\q2 but we didn't know the master's way.
+\q1
+\v 8 What did our arrogance profit us?
+\q2 What good have riches and boasting brought us?
+\b
+\q1
+\v 9 Those things all passed away as a shadow,
+\q2 like a rumour that runs by,
+\q2
+\v 10 like a ship passing through the billowy water,
+\q2 which, when it has gone by, there is no trace to be found,
+\q2 no pathway of its keel in the waves.
+\q1
+\v 11 Or it is like when a bird flies through the air,
+\q2 no evidence of its passage is found,
+\q2 but the light wind, lashed with the stroke of its pinions,
+\q2 and torn apart with the violent rush of the moving wings, is passed through.
+\q2 Afterwards no sign of its coming remains.
+\q1
+\v 12 Or it is like when an arrow is shot at a mark,
+\q2 the air it divided closes up again immediately,
+\q2 so that men don't know where it passed through.
+\q1
+\v 13 So we also, as soon as we were born, ceased to be;
+\q2 and we had no sign of virtue to show,
+\q2 but we were utterly consumed in our wickedness.”
+\q1
+\v 14 Because the hope of the ungodly man is like chaff carried by the wind,
+\q2 and\f + \fr 5:14 \ft Gr. \fqa like foam chased to thinness: \ft or, \fqa as thin foam chased.\f* as\f + \fr 5:14 \ft Most Greek authorities read \fqa hoar frost: \ft some authorities, perhaps rightly, \fqa a spider's web.\f* foam vanishing before a tempest;
+\q2 and is scattered like smoke by the wind,
+\q2 and passes by as the remembrance of a guest who stays just a day.
+\b
+\q1
+\v 15 But the righteous live forever.
+\q2 Their reward is in the master,
+\q2 and the care for them with the Most High.
+\q1
+\v 16 Therefore they will receive the crown of royal dignity
+\q2 and the diadem of beauty from the master's hand,
+\q1 because he will cover them with his right hand,
+\q2 and he will shield them with his arm.
+\q1
+\v 17 He will take his zeal as complete armour,
+\q2 and will make the whole creation his weapons to punish his enemies:
+\q1
+\v 18 He will put on righteousness as a breastplate,
+\q2 and will wear impartial judgement as a helmet.
+\q1
+\v 19 He will take holiness as an invincible shield.
+\q2
+\v 20 He will sharpen stern wrath for a sword.
+\q2 The universe will go with him to fight against his frenzied foes.
+\q1
+\v 21 Shafts of lightning will fly with true aim.
+\q2 They will leap to the mark from the clouds, as from a well-drawn bow.
+\q1
+\v 22 Hailstones full of wrath will be hurled as from a catapult.
+\q2 The water of the sea will be angered against them.
+\q2 Rivers will sternly overwhelm them.
+\q1
+\v 23 A mighty wind will encounter them.
+\q2 It will winnow them away like a tempest.
+\q1 So lawlessness will make all the land desolate.
+\q2 Their evil-doing will overturn the thrones of princes.
+\c 6
+\q1
+\v 1 Hear therefore, you kings, and understand.
+\q2 Learn, you judges of the ends of the earth.
+\q2
+\v 2 Give ear, you rulers who have dominion over many people,
+\q2 and make your boast\f + \fr 6:2 \ft Or, \fqa in the multitudes of your nations\f* in multitudes of nations,
+\q1
+\v 3 because your dominion was given to you from the master,
+\q2 and your sovereignty from the Most High.
+\q1 He will search out your works,
+\q2 and will enquire about your plans,
+\q1
+\v 4 because being officers of his kingdom, you didn't judge rightly,
+\q2 nor did you keep the law,
+\q2 nor did you walk according to God's counsel.
+\q1
+\v 5 He will come upon you awfully and swiftly,
+\q2 because a stern judgement comes on those who are in high places.
+\q1
+\v 6 Because the man of low estate may be pardoned in mercy,
+\q2 but mighty men will be mightily tested.
+\q1
+\v 7 Because the Sovereign master of all will not be impressed with anyone,
+\q2 neither will he show deference to greatness;
+\q1 because it is he who made both small and great,
+\q2 and cares about them all;
+\q1
+\v 8 but the scrutiny that comes upon the powerful is strict.
+\q1
+\v 9 Therefore, my words are to you, O princes,
+\q2 that you may learn wisdom and not fall away.
+\q1
+\v 10 Because those who have kept the things that are holy in holiness will be made holy.
+\q2 Those who have been taught them will find what to say in defence.
+\q1
+\v 11 Therefore set your desire on my words.
+\q2 Long for them, and you princes will be instructed.
+\b
+\q1
+\v 12 Wisdom is radiant and doesn't fade away;
+\q2 and is easily seen by those who love her,
+\q2 and found by those who seek her.
+\q1
+\v 13 She anticipates those who desire her, making herself known.
+\q1
+\v 14 He who rises up early to seek her won't have difficulty,
+\q2 for he will find her sitting at his gates.
+\q2
+\v 15 Because to think upon her is perfection of understanding,
+\q2 and he who watches for her will quickly be free from care;
+\q1
+\v 16 because she herself goes around, seeking those who are worthy of her,
+\q2 and in their paths she appears to them graciously,
+\q2 and in every purpose she meets them.
+\q1
+\v 17 Because her true beginning is desire for instruction;
+\q2 and desire for instruction is love.
+\q1
+\v 18 And love is observance of her laws.
+\q2 To give heed to her laws confirms immortality.
+\q1
+\v 19 Immortality brings closeness to God.
+\q2
+\v 20 So then desire for wisdom promotes to a kingdom.
+\b
+\q1
+\v 21 If therefore you delight in thrones and sceptres, you princes of peoples,
+\q2 honour wisdom, that you may reign forever.
+\q1
+\v 22 But what wisdom is, and how she came into being, I will declare.
+\q2 I won't hide mysteries from you;
+\q2 but I will explore from her first beginning,
+\q2 bring the knowledge of her into clear light,
+\q2 and I will not pass by the truth.
+\q1
+\v 23 Indeed, I won't travel with consuming envy,
+\q2 because envy will have no fellowship with wisdom.
+\q1
+\v 24 But a multitude of wise men is salvation to the world,
+\q2 and an understanding king is stability for his people.
+\q1
+\v 25 Therefore be instructed by my words, and you will profit.
+\c 7
+\q1
+\v 1 I myself am also\f + \fr 7:1 \ft Many authorities read \fqa a mortal man.\f* mortal, like everyone else,
+\q2 and am a descendant of one formed first and born of the earth.
+\q1
+\v 2 I moulded into flesh in the time of ten months in my mother's womb,
+\q2 being compacted in blood from the seed of man and pleasure of marriage.
+\q1
+\v 3 I also, when I was born, drew in the common air,
+\q2 and fell upon the kindred earth,
+\q1 uttering, like all, for my first voice, the same cry.
+\q1
+\v 4 I was nursed with care in swaddling clothes.
+\q1
+\v 5 Because no king had a different beginning,
+\q2
+\v 6 but all men have one entrance into life, and a common departure.
+\b
+\q1
+\v 7 Because this cause I prayed, and understanding was given to me.
+\q2 I asked, and a spirit of wisdom came to me.
+\q1
+\v 8 I preferred her before sceptres and thrones.
+\q2 I considered riches nothing in comparison to her.
+\q1
+\v 9 Neither did I liken to her any priceless gem,
+\q2 because all gold in her presence is a little sand,
+\q2 and silver will be considered as clay before her.
+\q1
+\v 10 I loved her more than health and beauty,
+\q2 and I chose to have her rather than light,
+\q2 because her bright shining is never laid to sleep.
+\q1
+\v 11 All good things came to me with her,
+\q2 and innumerable riches are in her hands.
+\q1
+\v 12 And I rejoiced over them all because wisdom leads them;
+\q2 although I didn't know that she was their mother.
+\q1
+\v 13 As I learnt without guile, I impart without grudging.
+\q2 I don't hide her riches.
+\q1
+\v 14 Because she is a treasure for men that doesn't fail,
+\q2 and those who use it obtain friendship with God,
+\q2 commended by the gifts which they present through discipline.
+\b
+\q1
+\v 15 But may God grant that I may speak his judgement,
+\q2 and to conceive thoughts worthy of what has been given me;
+\q2 because he is one who guides even wisdom and who corrects the wise.
+\q1
+\v 16 Because both we and our words are in his hand,
+\q2 with all understanding and skill in various crafts.
+\q1
+\v 17 Because he himself gave me an unerring knowledge of the things that are,
+\q2 to know the structure of the universe and the operation of the elements;
+\q2
+\v 18 the beginning, end, and middle of times;
+\q2 the alternations of the solstices and the changes of seasons;
+\q2
+\v 19 the circuits of years and the positions of stars;
+\q2
+\v 20 the natures of living creatures and the raging of wild animals;
+\q2 the violence of\f + \fr 7:20 \ft Or, \fqa spirits\f* winds and the thoughts of men;
+\q2 the diversities of plants and the virtues of roots.
+\q1
+\v 21 All things that are either secret or manifest I learnt,
+\q2
+\v 22 for wisdom, that is the architect of all things, taught me.
+\b
+\q1 Because there is in her a spirit that is quick to understand, holy,
+\q2 unique, manifold, subtle, freely moving, clear in utterance, unpolluted,
+\q2 distinct, invulnerable, loving what is good, keen, unhindered,
+\q2
+\v 23 beneficent, loving towards man, steadfast, sure, free from care, all-powerful, all-surveying,
+\q2 and penetrating through all spirits that are quick to understand, pure, most subtle.
+\q1
+\v 24 Because wisdom is more mobile than any motion.
+\q2 Yes, she pervades and penetrates all things by reason of her purity.
+\q1
+\v 25 Because she is a breath of the power of God,
+\q2 and a pure emanation of the glory of the Almighty.
+\q1 Therefore nothing defiled can find entrance into her.
+\q1
+\v 26 Because she is a reflection of everlasting light,
+\q2 an unspotted mirror of the working of God,
+\q2 and an image of his goodness.
+\q1
+\v 27 Although she is one, she has power to do all things.
+\q2 Remaining in herself, she renews all things.
+\q1 From generation to generation passing into holy souls,
+\q2 she makes friends of God and prophets.
+\q2
+\v 28 Because God loves nothing as much as one who dwells with wisdom.
+\q1
+\v 29 Because she is fairer than the sun,
+\q2 and above all the constellations of the stars.
+\q2 She is better than light.
+\q1
+\v 30 Because daylight yields to night,
+\q2 but evil does not prevail against wisdom.
+\c 8
+\q1
+\v 1 But she reaches from one end to the other with full strength,
+\q2 and orders all things well.
+\b
+\q1
+\v 2 I loved her and sought her from my youth.
+\q2 I sought to take her for my bride.
+\q2 I became enamoured by her beauty.
+\q1
+\v 3 She glorifies her noble birth by living with God.
+\q2 The Sovereign master of all loves her.
+\q1
+\v 4 Because she is initiated into the knowledge of God,
+\q2 and she chooses his works.
+\q1
+\v 5 But if riches are a desired possession in life,
+\q2 what is richer than wisdom, which makes all things?
+\q1
+\v 6 And if understanding is effective,
+\q2 who more than\f + \fr 8:6 \ft Gr. \fqa she.\f* wisdom is an architect of the things that exist?
+\q1
+\v 7 If a man loves righteousness,
+\q2 the fruits of wisdom's labour\f + \fr 8:7 \ft Gr. \fqa her labours\f* are virtues,
+\q2 for she teaches soberness, understanding, righteousness, and courage.
+\q2 There is nothing in life more profitable for people than these.
+\q1
+\v 8 And if anyone longs for wide experience,
+\q2 she knows the things of old, and infers the things to come.
+\q2 She understands subtleties of speeches and interpretations of dark sayings.
+\q2 She foresees signs and wonders, and the issues of seasons and times.
+\b
+\q1
+\v 9 Therefore I determined to take her to live with me,
+\q2 knowing that she is one who would give me good counsel,
+\q2 and encourage me in cares and grief.
+\q1
+\v 10 Because of her, I will have glory amongst multitudes,
+\q2 and honour in the sight of elders, though I am young.
+\q1
+\v 11 I will be found keen when I give judgement.
+\q2 I will be admired in the presence of rulers.
+\q1
+\v 12 When I am silent, they will wait for me.
+\q2 When I open my lips, they will heed what I say.
+\q2 If I continue speaking, they will put their hands on their mouths.
+\q1
+\v 13 Because of her, I will have immortality,
+\q2 and leave behind an eternal memory to those who come after me.
+\q1
+\v 14 I will govern peoples.
+\q2 Nations will be subjected to me.
+\q1
+\v 15 Dreaded monarchs will fear me when they hear of me.
+\q2 Amongst the people, I will show myself to be good, and courageous in war.
+\q1
+\v 16 When I come into my house, I will find rest with her.
+\q2 Because conversation with her has no bitterness,
+\q2 and living with her has no pain, but gladness and joy.
+\q1
+\v 17 When I considered these things in myself,
+\q2 and thought in my heart how immortality is in kinship to wisdom,
+\q1
+\v 18 and in her friendship is good delight,
+\q2 and in the labours of her hands is wealth that doesn't fail,
+\q2 and understanding is in her companionship,
+\q2 and great renown in having fellowship with her words,
+\q2 I went about seeking how to take her to myself.
+\q1
+\v 19 Now I was a clever child, and received a good soul.
+\q2
+\v 20 Or rather, being good, I came into an undefiled body.
+\q1
+\v 21 But perceiving that I could not otherwise possess wisdom unless God gave her to me—
+\q2 yes, and to know and understand by whom the grace is given—
+\q2 I pleaded with the master and implored him, and with my whole heart I said:
+\c 9
+\q1
+\v 1 “O God of my ancestors and master of mercy,
+\q2 who made all things by your word;
+\q1
+\v 2 and by your wisdom you formed man,
+\q2 that he should have dominion over the creatures that were made by you,
+\q1
+\v 3 and rule the world in holiness and righteousness,
+\q2 and execute judgement in uprightness of soul,
+\q2
+\v 4 give me wisdom, her who sits by you on your thrones.
+\q1 Don't reject me from amongst your\f + \fr 9:4 \ft Or, \fqa children\f* servants,
+\q2
+\v 5 because I am your servant and the son of your handmaid,
+\q2 a weak and short-lived man,
+\q2 with little power to understand judgement and laws.
+\q1
+\v 6 Because even if a man is perfect amongst the sons of men,
+\q2 if the wisdom that comes from you is not with him, he will count for nothing.
+\q1
+\v 7 You chose me to be king of your people,
+\q2 and a judge for your sons and daughters.
+\q1
+\v 8 You gave a command to build a sanctuary on your holy mountain,
+\q2 and\f + \fr 9:8 \ft Or, \fqa a place of sacrifice\f* an altar in the city where you live,
+\q2 a copy of the holy tent which you prepared from the beginning.
+\q1
+\v 9 Wisdom is with you and knows your works,
+\q2 and was present when you were making the world,
+\q2 and understands what is pleasing in your eyes,
+\q2 and what is right according to your commandments.
+\q1
+\v 10 Send her from the holy heavens,
+\q2 and ask her to come from the throne of your glory,
+\q2 that being present with me she may work,
+\q2 and I may learn what pleases you well.
+\q1
+\v 11 Because she knows all things and understands,
+\q2 and she will guide me prudently in my actions.
+\q2 She will guard me in her glory.
+\q1
+\v 12 So my works will be acceptable.
+\q2 I will judge your people righteously,
+\q2 and I will be worthy of my father's\f + \fr 9:12 \ft Gr. \fqa thrones.\f* throne.
+\q1
+\v 13 Because what man will know the counsel of God?
+\q2 Or who will conceive what the master wills?
+\q1
+\v 14 Because the thoughts of mortals are unstable,
+\q2 and our plans are prone to fail.
+\q1
+\v 15 Because a corruptible body weighs down the soul.
+\q2 The earthy tent burdens a mind that is full of cares.
+\q1
+\v 16 We can hardly guess the things that are on earth,
+\q2 and we find the things that are close at hand with labour;
+\q2 but who has traced out the things that are in the heavens?
+\q1
+\v 17 Who gained knowledge of your counsel, unless you gave wisdom,
+\q2 and sent your holy spirit from on high?
+\q1
+\v 18 It was thus that the ways of those who are on earth were corrected,
+\q2 and men were taught the things that are pleasing to you.
+\q2 They were saved through wisdom.”
+\b
+\c 10
+\q1
+\v 1 Wisdom\f + \fr 10:1 \ft Gr. \fqa She.\f* guarded to the end the first formed father of the world, who was created alone,
+\q2 and delivered him out of his own transgression,
+\q1
+\v 2 and gave him strength to rule over all things.
+\q1
+\v 3 But when an unrighteous man fell away from her in his anger,
+\q2 he perished himself in the rage with which he killed his brother.
+\q1
+\v 4 When for his cause the earth was drowning with a flood,
+\q1 wisdom again saved it,
+\q1 guiding the righteous man's course by a paltry piece of wood.
+\b
+\q1
+\v 5 Moreover, when nations consenting together in wickedness had been confounded,
+\q2 wisdom\f + \fr 10:5 \ft Gr. \fqa she\f* knew the righteous man, and preserved him blameless to God,
+\q2 and kept him strong when his heart yearned towards his child.
+\b
+\q1
+\v 6 While the ungodly were perishing, wisdom\f + \fr 10:6 \ft Gr. \fqa she\f* delivered a righteous man,
+\q2 when he fled from the fire that descended out of heaven on the five cities.
+\q1
+\v 7 To whose wickedness a smoking waste still witnesses,
+\q2 and plants bearing fair fruit that doesn't ripen,
+\q2 a disbelieving soul has a memorial: a standing pillar of salt.
+\q1
+\v 8 Because having passed wisdom by,
+\q2 not only were they disabled from recognising the things which are good,
+\q2 but they also left behind them for their life a monument of their folly,
+\q2 to the end that where they stumbled, they might fail even to be unseen;
+\q1
+\v 9 but wisdom delivered those who waited on her out of troubles.
+\b
+\q1
+\v 10 When a righteous man was a fugitive from a brother's wrath,\f + \fr 10:10 \ft Gr. \fqa she.\f* wisdom guided him in straight paths.
+\q2 She showed him God's kingdom, and gave him knowledge of holy things.
+\q2 She prospered him in his toils, and multiplied the fruits of his labour.
+\q1
+\v 11 When in their covetousness men dealt harshly with him,
+\q2 she stood by him and made him rich.
+\q1
+\v 12 She guarded him from enemies,
+\q2 and she kept him safe from those who lay in wait.
+\q2 Over his severe conflict, she watched as judge,
+\q2 that he might know that godliness is more powerful than every one.
+\b
+\q1
+\v 13 When a righteous man was sold,\f + \fr 10:13 \ft Gr. \fqa she.\f* wisdom didn't forsake him,
+\q2 but she delivered him from sin.
+\q2 She went down with him into a dungeon,
+\q1
+\v 14 and in bonds she didn't depart from him,
+\q2 until she brought him the sceptre of a kingdom,
+\q2 and authority over those that dealt like a tyrant with him.
+\q2 She also showed those who had mockingly accused him to be false,
+\q2 and gave him eternal glory.
+\b
+\q1
+\v 15 Wisdom\f + \fr 10:15 \ft Gr. \fqa she.\f* delivered a holy people and a blameless seed from a nation of oppressors.
+\q1
+\v 16 She entered into the soul of a servant of the master,
+\q2 and withstood terrible kings in wonders and signs.
+\q1
+\v 17 She rendered to holy men a reward of their toils.
+\q2 She guided them along a marvellous way,
+\q2 and became to them a covering in the day-time,
+\q2 and a starry flame through the night.
+\q1
+\v 18 She brought them over the Red sea,
+\q2 and led them through much water;
+\q1
+\v 19 but she drowned their enemies,
+\q2 and she threw them up from the bottom of the deep.
+\q1
+\v 20 Therefore the righteous plundered the ungodly,
+\q2 and they sang praise to your holy name, O master,
+\q2 and extolled with one accord your hand that fought for them,
+\q1
+\v 21 because wisdom opened the mouth of the mute,
+\q1 and made the tongues of babes to speak clearly.
+\b
+\c 11
+\q1
+\v 1 Wisdom prospered their works in the hand of a holy prophet.
+\b
+\q1
+\v 2 They travelled through a desert without inhabitant,
+\q2 and they pitched their tents in trackless regions.
+\q1
+\v 3 They withstood enemies and repelled foes.
+\q1
+\v 4 They thirsted, and they called upon you,
+\q2 and water was given to them out of the\f + \fr 11:4 \ft See Deuteronomy 8:15; Psalms 114:8.\f* flinty rock,
+\q2 and healing of their thirst out of the hard stone.
+\q1
+\v 5 Because by what things their foes were punished,
+\q2 by these they in their need were benefitted.
+\q1
+\v 6 When enemies were troubled with clotted blood
+\q2 instead of a river's ever-flowing fountain,
+\q1
+\v 7 to rebuke the decree for the slaying of babies,
+\q2 you gave them abundant water beyond all hope,
+\q1
+\v 8 having shown by the thirst which they had suffered
+\q2 how you punished the adversaries.
+\q1
+\v 9 Because when they were tried, although chastened in mercy,
+\q2 they learnt how the ungodly were tormented, being judged with wrath.
+\q1
+\v 10 Because you tested these as a father admonishing them;
+\q2 but you searched out those as a stern king condemning them.
+\q1
+\v 11 Yes and whether they were far off or near,
+\q2 they were equally distressed;
+\q1
+\v 12 for a double grief seized them,
+\q2 and a groaning at the memory of things past.
+\q1
+\v 13 Because when they heard that through their own punishments the others benefitted,
+\q2 they recognised the master.
+\q1
+\v 14 Because him who long before was thrown out and exposed they stopped mocking.
+\q2 In the end of what happened, they marvelled,
+\q2 having thirsted in another manner than the righteous.
+\b
+\q1
+\v 15 But in return for the senseless imaginings of their unrighteousness,
+\q2 wherein they were led astray to worship irrational reptiles and wretched vermin,
+\q2 you sent upon them a multitude of irrational creatures to punish them,
+\q2
+\v 16 that they might learn that by what things a man sins, by these he is punished.
+\q1
+\v 17 Because your all-powerful hand
+\q2 that created the world out of formless matter
+\q2 didn't lack means to send upon them a multitude of bears, fierce lions,
+\q2
+\v 18 or newly-created and unknown wild animals, full of rage,
+\q2 either breathing out a blast of fiery breath,
+\q2 or belching out smoke,
+\q2 or flashing dreadful sparks from their eyes;
+\q1
+\v 19 which had power not only to consume them by their violence,
+\q2 but to destroy them even by the terror of their sight.
+\q1
+\v 20 Yes and without these they might have fallen by a single breath,
+\q2 being pursued by Justice, and scattered abroad by the breath of your power;
+\q2 but you arranged all things by measure, number, and weight.
+\b
+\q1
+\v 21 Because to be greatly strong is yours at all times.
+\q2 Who could withstand the might of your arm?
+\q1
+\v 22 Because the whole world before you is as a grain in a balance,
+\q2 and as a drop of dew that comes down upon the earth in the morning.
+\q1
+\v 23 But you have mercy on all men, because you have power to do all things,
+\q2 and you overlook the sins of men to the end that they may repent.
+\q1
+\v 24 Because you love all things that are,
+\q2 and abhor none of the things which you made;
+\q2 Because you never would have formed anything if you hated it.
+\q1
+\v 25 How would anything have endured unless you had willed it?
+\q2 Or that which was not called by you, how would it have been preserved?
+\q1
+\v 26 But you spare all things, because they are yours,
+\q2 O Sovereign master, you who love the living.
+\c 12
+\q1
+\v 1 Because your incorruptible spirit is in all things.
+\q1
+\v 2 Therefore you convict little by little those who fall from the right way,
+\q2 and, putting them in remembrance by the things wherein they sin, you admonish them,
+\q2 that escaping from their wickedness they may believe in you, O master.
+\b
+\q1
+\v 3 Because truly the old inhabitants of your holy land,
+\q2
+\v 4 hating them because they practised detestable works of enchantments and unholy rites—
+\q2
+\v 5 merciless slaughters of children
+\q2 and sacrificial banquets of men's flesh and of blood—
+\q2
+\v 6 allies in an impious fellowship,
+\q2 and murderers of their own helpless babes,
+\q2 it was your counsel to destroy by the hands of our fathers;
+\q2
+\v 7 that the land which in your sight is most precious of all
+\q2 might receive a worthy colony of God's servants.\f + \fr 12:7 \ft Or, \fqa children\f*
+\q1
+\v 8 Nevertheless you even spared these as men,
+\q2 and you sent hornets\f + \fr 12:8 \ft Or, \fqa wasps\f* as forerunners of your army,
+\q2 to cause them to perish little by little.
+\q1
+\v 9 Not that you were unable to subdue the ungodly under the hand of the righteous in battle,
+\q2 or by terrible wild animals or by a stern word to make away with them at once,
+\q1
+\v 10 but judging them little by little you gave them a chance to repent,
+\q2 not being ignorant that their nature by birth was evil,
+\q2 their wickedness inborn,
+\q2 and that their manner of thought would never be changed.
+\q1
+\v 11 Because they were a cursed seed from the beginning.
+\q2 It wasn't through fear of any that you left them unpunished for their sins.
+\b
+\q1
+\v 12 Because who will say, “What have you done?”
+\q2 Or “Who will withstand your judgement?”
+\q1 Who will accuse you for the perishing of nations which you caused?
+\q2 Or who will come and stand before you as an avenger for unrighteous men?
+\q1
+\v 13 Because there isn't any God beside you that cares for all,
+\q2 that you might show that you didn't judge unrighteously.
+\q1
+\v 14 No king or prince will be able to confront you
+\q2 about those whom you have punished.
+\q1
+\v 15 But being righteous, you rule all things righteously,
+\q2 deeming it a thing alien from your power
+\q2 to condemn one who doesn't deserve to be punished.
+\q1
+\v 16 Because your strength is the source of righteousness,
+\q2 and your sovereignty over all makes you to forbear all.
+\q1
+\v 17 Because when men don't believe that you are perfect in power, you show your strength,
+\q2 and in dealing with those who think this, you confuse their boldness.
+\q1
+\v 18 But you, being sovereign in strength, judge in gentleness,
+\q2 and with great forbearance you govern us;
+\q2 for the power is yours whenever you desire it.
+\b
+\q1
+\v 19 But you taught your people by such works as these,
+\q2 how the righteous must be kind.
+\q1 You made your sons to have good hope,
+\q2 because you give repentance when men have sinned.
+\q1
+\v 20 Because if on those who were enemies of your servants\f + \fr 12:20 \ft Or, \fqa children\f* and deserving of death,
+\q2 you took vengeance with so great deliberation and indulgence,
+\q2 giving them times and opportunities when they might escape from their wickedness,
+\q1
+\v 21 with how great care you judged your sons,
+\q2 to whose fathers you gave oaths and covenants of good promises!
+\q1
+\v 22 Therefore while you chasten us, you scourge our enemies ten thousand times more,
+\q2 to the intent that we may ponder your goodness when we judge,
+\q2 and when we are judged may look for mercy.
+\b
+\q1
+\v 23 Therefore also the unrighteous that lived in a life of folly,
+\q2 you tormented through their own abominations.
+\q1
+\v 24 Because truly they went astray very far in the ways of error,
+\q2 Taking as gods those animals\f + \fr 12:24 \ft Gr. \fqa living creatures: \ft and so elsewhere in this book.\f* which even amongst their enemies were held in dishonour,
+\q2 deceived like foolish babes.
+\q1
+\v 25 Therefore, as to unreasoning children, you sent your judgement to mock them.
+\q1
+\v 26 But those who would not be admonished by mild correction
+\q2 will experience the deserved judgement of God.
+\q1
+\v 27 Because through the sufferings they were indignant of,
+\q2 being punished in these creatures which they supposed to be gods,
+\q2 they saw and recognised as the true God him whom they previously refused to know.
+\q2 Therefore also the result of extreme condemnation came upon them.
+\b
+\c 13
+\q1
+\v 1 Because truly all men who had no perception of God were foolish by nature,
+\q2 and didn't gain power to know him who exists from the good things that are seen.
+\q2 They didn't recognise the architect from his works.
+\q1
+\v 2 But they thought that either fire, or wind, or swift air,
+\q2 or circling stars, or raging water, or luminaries of heaven
+\q2 were gods that rule the world.
+\q1
+\v 3 If it was through delight in their beauty that they took them to be gods,
+\q2 let them know how much better their Sovereign master is than these,
+\q2 for the first author of beauty created them.
+\q1
+\v 4 But if it was through astonishment at their power and influence,
+\q2 then let them understand from them how much more powerful he who formed them is.
+\q1
+\v 5 Because from the greatness of the beauty of created things,
+\q2 mankind forms the corresponding perception of their Maker.\f + \fr 13:5 \ft Gr. \fqa is the first maker of them seen.\f*
+\q1
+\v 6 But yet for these men there is but small blame,
+\q2 for they too perhaps go astray
+\q2 while they are seeking God and desiring to find him.
+\q1
+\v 7 Because they diligently search while living amongst his works,
+\q2 and they trust their sight that the things that they look at are beautiful.
+\q1
+\v 8 But again even they are not to be excused.
+\q1
+\v 9 Because if they had power to know so much,
+\q2 that they should be able to explore the world,
+\q2 how is it that they didn't find the Sovereign master sooner?
+\b
+\q1
+\v 10 But they were miserable, and their hopes were in dead things,
+\q2 who called them gods which are works of men's hands,
+\q2 gold and silver, skilfully made, and likenesses of animals,
+\q2 or a useless stone, the work of an ancient hand.
+\q1
+\v 11 Yes and some\f + \fr 13:11 \ft Gr. \fqa carpenter who is a woodcutter.\f* woodcutter might saw down a tree that is easily moved,
+\q2 skilfully strip away all its bark,
+\q2 and fashion it in attractive form, make a useful vessel to serve his life's needs.
+\q1
+\v 12 Burning the scraps from his handiwork to cook his food,
+\q2 he eats his fill.
+\q1
+\v 13 Taking a discarded scrap which served no purpose,
+\q2 a crooked piece of wood and full of knots,
+\q2 he carves it with the diligence of his idleness,
+\q2 and shapes it by the skill of his idleness.
+\q1 He shapes it in the image of a man,
+\q2
+\v 14 or makes it like some worthless animal,
+\q2 smearing it with something red, painting it red,
+\q2 and smearing over every stain in it.
+\q1
+\v 15 Having made a worthy chamber for it,
+\q2 he sets it in a wall, securing it with iron.
+\q1
+\v 16 He plans for it that it may not fall down,
+\q2 knowing that it is unable to help itself
+\q2 (for truly it is an image, and needs help).
+\q1
+\v 17 When he makes his prayer concerning goods and his marriage and children,
+\q2 he is not ashamed to speak to that which has no life.
+\q1
+\v 18 Yes, for health, he calls upon that which is weak.
+\q2 Because life, he implores that which is dead.
+\q2 Because aid, he supplicates that which has no experience.
+\q2 Because a good journey, he asks that which can't so much as move a step.
+\q1
+\v 19 And for profit in business and good success of his hands,
+\q2 he asks ability from that which has hands with no ability.
+\c 14
+\q1
+\v 1 Again, one preparing to sail, and about to journey over raging waves,
+\q2 calls upon a piece of wood more fragile than the vessel that carries him.
+\q1
+\v 2 Because the hunger for profit planned it,
+\q2 and wisdom was the craftsman who built it.
+\q1
+\v 3 Your providence, O Father, guides it along,
+\q2 because even in the sea you gave a way,
+\q2 and in the waves a sure path,
+\q1
+\v 4 showing that you can save out of every danger,
+\q2 that even a man without skill may put to sea.
+\q1
+\v 5 It is your will that the works of your wisdom should not be ineffective.
+\q2 Therefore men also entrust their lives to a little piece of wood,
+\q2 and passing through the surge on a raft come safely to land.
+\q1
+\v 6 Because\f + \fr 14:6 \ft The Greek text here may be corrupt.\f* in the old time also, when proud giants were perishing,
+\q2 the hope of the world, taking refuge on a raft,
+\q2 your hand guided the seed of generations of the race of men.
+\q1
+\v 7 Because blessed is wood through which comes righteousness;
+\q2
+\v 8 but the idol made with hands is accursed, itself and he that made it;
+\q2 because his was the working, and the corruptible thing was called a god.
+\q1
+\v 9 Because both the ungodly and his ungodliness are alike hateful to God;
+\q2
+\v 10 for truly the deed will be punished together with him who committed it.
+\q2
+\v 11 Therefore also there will be a visitation amongst the idols of the nation,
+\q2 because, though formed of things which God created, they were made an abomination,
+\q2 stumbling blocks to the souls of men,
+\q2 and a snare to the feet of the foolish.
+\b
+\q1
+\v 12 Because the devising of idols was the beginning of fornication,
+\q2 and the invention of them the corruption of life.
+\q1
+\v 13 Because they didn't exist from the beginning, and they won't exist forever.
+\q1
+\v 14 Because by the boastfulness of men they entered into the world,
+\q2 and therefore a speedy end was planned for them.
+\b
+\q1
+\v 15 Because a father worn with untimely grief,
+\q2 making an image of the child quickly taken away,
+\q2 now honoured him as a god which was then a dead human being,
+\q2 and delivered to those that were under him mysteries and solemn rites.
+\q1
+\v 16 Afterward the ungodly custom, in process of time grown strong, was kept as a law,
+\q2 and the engraved images received worship by the commandments of princes.
+\q1
+\v 17 And when men could not honour them in presence because they lived far off,
+\q2 imagining the likeness from afar,
+\q2 they made a visible image of the king whom they honoured,
+\q2 that by their zeal they might flatter the absent as if present.
+\b
+\q1
+\v 18 But worship was raised to a yet higher pitch, even by those who didn't know him,
+\q2 urged forward by the ambition of the architect;
+\q1
+\v 19 for he, wishing perhaps to please his ruler,
+\q2 used his art to force the likeness towards a greater beauty.
+\q1
+\v 20 So the multitude, allured by reason of the grace of his handiwork,
+\q2 now consider an object of devotion him that a little before was honoured as a man.
+\q1
+\v 21 And this became an ambush,
+\q2 because men, in bondage either to calamity or to tyranny,
+\q2 invested stones and stocks with the Name that shouldn't be shared.
+\b
+\q1
+\v 22 Afterward it was not enough for them to go astray concerning the knowledge of God,
+\q2 but also, while they live in a great war of ignorance, they call a multitude of evils peace.
+\q1
+\v 23 Because either slaughtering children in solemn rites, or celebrating secret mysteries,
+\q2 or holding frenzied revels of strange customs,
+\q1
+\v 24 no longer do they guard either life or purity of marriage,
+\q2 but one brings upon another either death by treachery, or anguish by adultery.
+\q1
+\v 25 And all things confusedly are filled with blood and murder, theft and deceit,
+\q2 corruption, faithlessness, tumult, perjury,
+\q1
+\v 26 confusion about what is good, forgetfulness of favours,
+\q2 ingratitude for benefits,
+\q2 defiling of souls, confusion of sex,
+\q2 disorder in marriage, adultery and wantonness.
+\q2
+\v 27 Because the worship of idols that may not be named \x + \xo 14:27 \xt Exodus 23:13; Psalms 16:4; Hosea 2:17; Wisdom 14:21\x*
+\q2 is a beginning and cause and end of every evil.
+\q1
+\v 28 Because their worshippers either make merry to madness, or prophesy lies,
+\q2 or live unrighteously, or lightly commit perjury.
+\q1
+\v 29 Because putting their trust in lifeless idols,
+\q2 when they have sworn a wicked oath, they expect not to suffer harm.
+\q1
+\v 30 But on both counts, the just doom will pursue them,
+\q2 because they had evil thoughts of God by giving heed to idols,
+\q2 and swore unrighteously in deceit through contempt for holiness.
+\q1
+\v 31 Because it is not the power of things by which men swear,
+\q2 but it is the just penalty for those who sin
+\q2 that always visits the transgression of the unrighteous.
+\b
+\c 15
+\q1
+\v 1 But you, our god, are gracious and true,
+\q2 patient, and in mercy ordering all things.
+\q1
+\v 2 Because even if we sin, we are yours, knowing your dominion;
+\q2 but we will not sin, knowing that we have been accounted yours.
+\q1
+\v 3 Because to be acquainted with you is\f + \fr 15:3 \ft Gr. \fqa entire.\f* perfect righteousness,
+\q2 and to know your dominion is the root of immortality.
+\q1
+\v 4 Because we weren't led astray by any evil plan of men's,
+\q2 nor yet by painters’ fruitless labour,
+\q2 a form stained with varied colours,
+\q1
+\v 5 the sight of which leads fools into\f + \fr 15:5 \ft Some authorities read \fqa reproach.\f* lust.
+\q2 Their desire is for the breathless form of a dead image.
+\q1
+\v 6 Lovers of evil things, and worthy of such hopes,
+\q2 are those who make, desire, and worship them.
+\b
+\q1
+\v 7 Because a potter, kneading soft earth,
+\q2 laboriously moulds each article for our service.
+\q1 He fashions out of the same clay
+\q2 both the vessels that minister to clean uses, and those of a contrary sort,
+\q2 all in like manner.
+\q1 What shall be the use of each article of either sort,
+\q2 the potter is the judge.
+\q1
+\v 8 Also, labouring to an evil end, he moulds a vain god out of the same clay,
+\q2 he who, having but a little before been made of earth,
+\q2 after a short space goes his way to the earth out of which he was taken,
+\q2 when he is required to render back the\f + \fr 15:8 \ft Or, \fqa life\f* soul which was lent him.
+\q1
+\v 9 However he has anxious care,
+\q2 not because his powers must fail,
+\q2 nor because his span of life is short;
+\q1 But he compares himself with goldsmiths and silversmiths,
+\q2 and he imitates molders in\f + \fr 15:9 \ft Or, \fqa copper\f* brass,
+\q2 and considers it great that he moulds counterfeit gods.
+\q1
+\v 10 His heart is ashes.
+\q2 His hope is of less value than earth.
+\q2 His life is of less honour than clay,
+\q1
+\v 11 because he was ignorant of him who moulded him,
+\q2 and of him that inspired into him\f + \fr 15:11 \ft Gr. \fqa a soul that moves to activity.\f* an active\f + \fr 15:11 \ft Or, \fqa life\f* soul,
+\q2 and breathed into him a vital spirit.
+\q1
+\v 12 But\f + \fr 15:12 \ft Some authorities read \fqa they accounted.\f* he accounted our life to be a game,
+\q2 and our\f + \fr 15:12 \ft Or, \fqa way of life\f* lifetime a festival for profit;
+\q1 for, he says, one must get gain however one can, even if it is by evil.
+\q1
+\v 13 Because this man, beyond all others, knows that he sins,
+\q2 out of earthy matter making brittle vessels and engraved images.
+\q1
+\v 14 But most foolish and more miserable than a baby,
+\q2 are the enemies of your people, who oppressed them;
+\q1
+\v 15 because they even considered all the idols of the nations to be gods,
+\q2 which have neither the use of eyes for seeing,
+\q2 nor nostrils for drawing breath,
+\q2 nor ears to hear,
+\q2 nor fingers for handling,
+\q2 and their feet are helpless for walking.
+\q1
+\v 16 Because a man made them,
+\q2 and one whose own spirit is borrowed moulded them;
+\q2 for no one has power as a man to mould a god like himself.
+\q1
+\v 17 But, being mortal, he makes a dead thing by the work of lawless hands;
+\q2 for he is better than the objects of his worship,
+\q2 since he indeed had life, but they never did.
+\b
+\q1
+\v 18 Yes, and they worship the creatures that are most hateful,
+\q2 for, being compared as to lack of sense, these are worse than all others;
+\q1
+\v 19 Neither, as seen beside other creatures, are they beautiful, so that one should desire them,
+\q2 but they have escaped both the praise of God and his blessing.
+\c 16
+\q1
+\v 1 Because this cause, they were deservedly punished through creatures like those which they worship,
+\q2 and tormented through a multitude of vermin.
+\q1
+\v 2 Instead of this punishment, you, giving benefits to your people,
+\q2 prepared quails for food,
+\q1 a delicacy to satisfy the desire of their appetite,
+\q1
+\v 3 to the end that your enemies, desiring food,
+\q2 might for the hideousness of the creatures sent amongst them,
+\q2 loathe even the necessary appetite;
+\q1 but these, your people, having for a short time suffered lack,
+\q2 might even partake of delicacies.
+\q1
+\v 4 Because it was necessary that inescapable lack should come upon those oppressors,
+\q2 but that to these it should only be showed how their enemies were tormented.
+\q1
+\v 5 Because even when terrible raging of wild animals came upon your people,
+\q2 and they were perishing by the bites of crooked serpents,
+\q2 your wrath didn't continue to the uttermost;
+\q1
+\v 6 but for admonition were they troubled for a short time,
+\q2 having a token of salvation
+\q2 to put them in remembrance of the commandment of your law;
+\b
+\q1
+\v 7 for he who turned towards it was not saved because of that which was seen,
+\q2 but because of you, the Saviour of all.
+\q1
+\v 8 Yes, and in this you persuaded our enemies
+\q2 that you are he who delivers out of every evil.
+\q1
+\v 9 Because the bites of locusts and flies truly killed them.
+\q2 No healing for their life was found,
+\q2 because they were worthy to be punished by such things.
+\q1
+\v 10 But your children weren't overcome by the very fangs of venomous dragons,
+\q2 for your mercy passed by where they were and healed them.
+\q1
+\v 11 Because they were bitten to put them in remembrance of your oracles,
+\q2 and were quickly saved, lest, falling into deep forgetfulness,
+\q2 they should become unable to respond to your kindness.
+\q1
+\v 12 Because truly it was neither herb nor poultice that cured them,
+\q2 but your word, O master, which heals all people.
+\q1
+\v 13 Because you have authority over life and death,
+\q2 and you lead down to the gates of Hades, and lead up again.
+\q1
+\v 14 But though a man kills by his wickedness,
+\q2 he can't retrieve the spirit that has departed
+\q2 or release the imprisoned soul.
+\b
+\q1
+\v 15 But it is not possible to escape your hand;
+\q1
+\v 16 for ungodly men, refusing to know you, were scourged in the strength of your arm,
+\q2 pursued with strange rains and hails and relentless storms,
+\q2 and utterly consumed with fire.
+\q1
+\v 17 Because, what was most marvellous,
+\q2 in the water which quenches all things, the fire burnt hotter;
+\q2 for the world fights for the righteous.
+\q1
+\v 18 Because at one time the flame was restrained,
+\q2 that it might not burn up the creatures sent against the ungodly,
+\q2 but that these themselves as they looked might see that they were chased by the judgement of God.
+\q1
+\v 19 At another time even in the midst of water it burns more intensely than fire,
+\q2 that it may destroy the produce of an unrighteous land.
+\q1
+\v 20 Instead of these things, you gave your people angels’ food to eat,
+\q2 and you provided ready-to-eat bread for them from heaven without toil,
+\q2 having the virtue of every pleasant flavour,
+\q2 and agreeable to every taste.
+\q1
+\v 21 Because your nature showed your sweetness towards your children,
+\q2 while that bread, serving the desire of the eater,
+\q2 changed itself according to every man's choice.
+\q1
+\v 22 But snow and ice endured fire, and didn't melt,
+\q2 that people might know that fire was destroying the fruits of the enemies,
+\q2 burning in the hail and flashing in the rains;
+\q1
+\v 23 and that this fire, again, in order that righteous people may be nourished,
+\q2 has even forgotten its own power.
+\q1
+\v 24 Because the creation, ministering to you, its maker,
+\q2 strains its force against the unrighteous for punishment
+\q2 and in kindness, slackens it on behalf of those who trust in you.
+\q1
+\v 25 Therefore at that time also, converting itself into all forms,
+\q2 it ministered to your all-nourishing bounty,
+\q2 according to the desire of those who had need,
+\q1
+\v 26 that your children, whom you loved, O master, might learn
+\q2 that it is not the growth of crops that nourishes a man,
+\q2 but that your word preserves those who trust you.
+\q1
+\v 27 Because that which was not destroyed by fire,
+\q2 melted away when it was simply warmed by a faint sunbeam,
+\q1
+\v 28 that it might be known that we must rise before the sun to give you thanks,
+\q2 and must pray to you at the dawning of the light;
+\q1
+\v 29 for the hope of the unthankful will melt as the winter's hoar frost,
+\q2 and will flow away as water that has no use.
+\b
+\c 17
+\q1
+\v 1 Because your judgements are great, and hard to interpret;
+\q2 therefore undisciplined souls went astray.
+\q1
+\v 2 Because when lawless men had supposed that they held a holy nation in their power,
+\q2 they, prisoners of darkness, and bound in the fetters of a long night,
+\q2 kept close beneath their roofs,
+\q2 lay exiled from the eternal providence.
+\q1
+\v 3 Because while they thought that they were unseen in their secret sins,
+\q2 they were divided from one another by a dark curtain of forgetfulness,
+\q2 stricken with terrible awe, and very troubled by apparitions.
+\q1
+\v 4 Because neither did the dark recesses that held them guard them from fears,
+\q2 but terrifying sounds rang around them,
+\q2 and dismal phantoms appeared with unsmiling faces.
+\q1
+\v 5 And no power of fire prevailed to give light,
+\q2 neither were the brightest flames of the stars strong enough to illuminate that gloomy night;
+\q1
+\v 6 but only the glimmering of a self-kindled fire appeared to them, full of fear.
+\q2 In terror, they considered the things which they saw
+\q2 to be worse than that sight, on which they could not gaze.
+\q1
+\v 7 The mockeries of their magic arts were powerless, now,
+\q2 and a shameful rebuke of their boasted understanding:
+\q1
+\v 8 Because those who promised to drive away terrors and disorders from a sick soul,
+\q2 these were sick with a ludicrous fearfulness.
+\q1
+\v 9 Because even if no troubling thing frighted them,
+\q2 yet, scared with the creeping of vermin and hissing of serpents,
+\q1
+\v 10 they perished trembling in fear,
+\q2 refusing even to look at the air, which could not be escaped on any side.
+\q1
+\v 11 Because wickedness, condemned by a witness within, is a coward thing,
+\q2 and, being pressed hard by conscience, always has added forecasts of the worst.
+\q2
+\v 12 Because fear is nothing else but a surrender of the help which reason offers;
+\q2
+\v 13 and from within, the expectation of being less
+\q2 prefers ignorance of the cause that brings the torment.
+\q1
+\v 14 But they, all through the night which was powerless indeed,
+\q2 and which came upon them out of the recesses of powerless Hades,
+\q2 sleeping the same sleep,
+\q2
+\v 15 now were haunted by monstrous apparitions,
+\q2 and now were paralysed by their soul's surrendering;
+\q2 for sudden and unexpected fear came upon them.
+\q1
+\v 16 So then whoever it might be, sinking down in his place,
+\q2 was kept captive, shut up in that prison which was not barred with iron;
+\q1
+\v 17 for whether he was a farmer, or a shepherd,
+\q2 or a labourer whose toils were in the wilderness,
+\q2 he was overtaken, and endured that inescapable sentence;
+\q2 for they were all bound with one chain of darkness.
+\q1
+\v 18 Whether there was a whistling wind,
+\q2 or a melodious sound of birds amongst the spreading branches,
+\q2 or a measured fall of water running violently,
+\q2
+\v 19 or a harsh crashing of rocks hurled down,
+\q2 or the swift course of animals bounding along unseen,
+\q2 or the voice of wild animals harshly roaring,
+\q2 or an echo rebounding from the hollows of the mountains,
+\q2 all these things paralysed them with terror.
+\q1
+\v 20 Because the whole world was illuminated with clear light,
+\q2 and was occupied with unhindered works,
+\q2
+\v 21 while over them alone was spread a heavy night,
+\q2 an image of the darkness that should afterward receive them;
+\q2 but to themselves, they were heavier than darkness.
+\c 18
+\q1
+\v 1 But for your holy ones there was great light.
+\q2 Their enemies, hearing their voice but not seeing their form,
+\q2 counted it a happy thing that they too had suffered,
+\q1
+\v 2 yet for that they do not hurt them, though wronged by them before, they are thankful;
+\q2 and because they had been at variance with them, they begged for pardon.
+\q1
+\v 3 Therefore you provided a burning pillar of fire,
+\q2 to be a guide for your people's unknown journey,
+\q2 and a harmless sun for their glorious exile.
+\q1
+\v 4 Because the Egyptians well deserved to be deprived of light and imprisoned by darkness,
+\q2 they who had imprisoned your children,
+\q2 through whom the incorruptible light of the law was to be given to the race of men.
+\b
+\q1
+\v 5 After they had taken counsel to kill the babes of the holy ones,
+\q2 and when a single child had been abandoned and saved to convict them of their sin,
+\q2 you took away from them their multitude of children,
+\q2 and destroyed all their army together in a mighty flood.
+\q1
+\v 6 Our fathers were made aware of that night beforehand,
+\q2 that, having sure knowledge, they might be cheered by the oaths which they had trusted.
+\q1
+\v 7 Salvation of the righteous and destruction of the enemies was expected by your people.
+\q1
+\v 8 Because as you took vengeance on the adversaries,
+\q2 by the same means, calling us to yourself, you glorified us.
+\q1
+\v 9 Because holy children of good men offered sacrifice in secret,
+\q2 and with one consent they agreed to the covenant of the divine law,
+\q2 that they would partake alike in the same good things and the same perils,
+\q2 the fathers already leading the sacred songs of praise.
+\q1
+\v 10 But the discordant cry of the enemies echoed back,
+\q2 and a pitiful voice of lamentation for children was spread abroad.
+\q1
+\v 11 Both servant and master were punished with the same just doom,
+\q2 and the commoner suffering the same as king;
+\q1
+\v 12 Yes, they all together, under one form of death,
+\q2 had corpses without number.
+\q1 Because the living were not sufficient even to bury them,
+\q2 Since at a single stroke, their most cherished offspring was consumed.
+\q1
+\v 13 Because while they were disbelieving all things by reason of the enchantments,
+\q2 upon the destruction of the firstborn they confessed the people to be God's children.
+\q1
+\v 14 Because while peaceful silence wrapped all things,
+\q2 and night in her own swiftness was half spent,
+\q1
+\v 15 your all-powerful word leapt from heaven, from the royal throne,
+\q2 a stern warrior, into the midst of the doomed land,
+\q1
+\v 16 bearing as a sharp sword your authentic commandment,
+\q2 and standing, it filled all things with death,
+\q2 and while it touched the heaven it stood upon the earth.
+\q1
+\v 17 Then immediately apparitions in dreams terribly troubled them,
+\q2 and unexpected fears came upon them.
+\q1
+\v 18 And each, one thrown here half dead, another there,
+\q2 made known why he was dying;
+\q1
+\v 19 for the dreams, disturbing them, forewarned them of this,
+\q2 that they might not perish without knowing why they were afflicted.
+\b
+\q1
+\v 20 The experience of death also touched the righteous,
+\q2 and a multitude were destroyed in the wilderness,
+\q2 but the wrath didn't last long.
+\q1
+\v 21 Because a blameless man hurried to be their champion,
+\q2 bringing the weapon of his own ministry,
+\q2 prayer, and the atoning sacrifice of incense.
+\q1 He withstood the indignation and set an end to the calamity,
+\q2 showing that he was your servant.
+\q1
+\v 22 And he overcame the anger,
+\q2 not by strength of body, not by force of weapons,
+\q2 but by his word, he subdued the avenger
+\q2 by bringing to remembrance oaths and covenants made with the fathers.
+\q1
+\v 23 Because when the dead had already fallen in heaps one upon another,
+\q2 he intervened and stopped the wrath,
+\q2 and cut off its way to the living.
+\q1
+\v 24 Because the whole world was pictured on his long robe,
+\q2 and the glories of the fathers were upon the engraving of the four rows of precious stones,
+\q2 and your majesty was upon the diadem on his head.
+\q1
+\v 25 The destroyer yielded to these, and they feared;
+\q2 for it was enough only to test the wrath.
+\b
+\c 19
+\q1
+\v 1 But indignation without mercy came upon the ungodly to the end;
+\q2 for God also foreknew their future,
+\q1
+\v 2 how, having changed their minds to let your people go,
+\q2 and having sped them eagerly on their way,
+\q2 they would change their minds and pursue them.
+\q1
+\v 3 Because while they were yet in the midst of their mourning,
+\q2 and lamenting at the graves of the dead,
+\q2 they made another foolish decision,
+\q2 and pursued as fugitives those whom they had begged to leave and driven out.
+\q1
+\v 4 Because the doom which they deserved was drawing them to this end,
+\q2 and it made them forget the things that had happened to them,
+\q2 that they might fill up the punishment which was yet lacking from their torments,
+\q2
+\v 5 and that your people might journey on by a marvellous road,
+\q2 but they themselves might find a strange death.
+\b
+\q1
+\v 6 Because the whole creation, each part in its diverse kind, was made new again,
+\q2 complying with your commandments,
+\q2 that your servants might be kept unharmed.
+\q1
+\v 7 Then the cloud that overshadowed the camp was seen,
+\q2 and dry land rising up out of what had been water,
+\q2 out of the Red sea an unhindered highway,
+\q2 and a grassy plain out of the violent surge,
+\q2
+\v 8 by which they passed over with all their army,
+\q2 these who were covered with your hand,
+\q2 having seen strange marvels.
+\q1
+\v 9 Because like horses they roamed at large,
+\q2 and they skipped about like lambs,
+\q2 praising you, O master, who was their deliverer.
+\q1
+\v 10 Because they still remembered the things that happened in the time of their sojourning,
+\q2 how instead of bearing cattle, the land brought forth lice,
+\q2 and instead of fish, the river spewed out a multitude of frogs.
+\q1
+\v 11 But afterwards, they also saw a new kind of birds,
+\q2 when, led on by desire, they asked for luxurious dainties;
+\q1
+\v 12 for, to comfort them, quails came up for them from the sea.
+\b
+\q1
+\v 13 Punishments came upon the sinners,
+\q2 not without the signs that were given beforehand by the violence of the thunder,
+\q2 for they justly suffered through their own wickednesses,
+\q2 for the hatred which they practised towards guests was grievous indeed.
+\q1
+\v 14 Because while the others didn't receive the strangers when they came to them,
+\q2 the Egyptians made slaves of guests who were their benefactors.
+\q1
+\v 15 And not only so, but while punishment of some sort will come upon the former,
+\q2 since they received as enemies those who were aliens;
+\q2
+\v 16 because these first welcomed with feastings,
+\q2 and then afflicted with dreadful toils,
+\q2 those who had already shared with them in the same rights.
+\q1
+\v 17 And moreover they were stricken with loss of sight
+\q2 (even as were those others at the righteous man's doors),
+\q2 when, being surrounded with yawning darkness,
+\q2 they each looked for the passage through his own door.
+\b
+\q1
+\v 18 Because as the notes of a lute vary the character of the rhythm,
+\q2 even so the elements, changing their order one with another,
+\q2 continuing always in its sound,
+\q2 as may clearly be conjectured from the sight of the things that have happened.
+\q1
+\v 19 Because creatures of the dry land were turned into creatures of the waters,
+\q2 and creatures that swim moved upon the land.
+\q1
+\v 20 Fire kept the mastery of its own power in water,
+\q2 and water forgot its quenching nature.
+\q1
+\v 21 On the contrary, flames didn't consume flesh of perishable creatures that walked amongst them,
+\q2 neither did they melt the crystalline grains of ambrosial food that were melted easily.
+\b
+\q1
+\v 22 Because in all things, O master, you magnified your people,
+\q2 and you glorified them and didn't lightly regard them,
+\q2 standing by their side in every time and place.

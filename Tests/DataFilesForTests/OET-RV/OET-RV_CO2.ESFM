@@ -1,0 +1,427 @@
+\id 2CO - Open English Translation—Readers' Version (OET-RV) v0.1.50
+\usfm 3.0
+\ide UTF-8
+\rem ESFM v0.6 CO2
+\rem WORDTABLE OET-LV_NT_word_table.tsv
+\h 2 Corinthians
+\toc1 2 Corinthians
+\toc2 2 Corinthians
+\toc3 2 Cor.
+\mt2 Paul's second letter to the believers in
+\mt1 Corinth
+\is1 Introduction
+\ip This is Paul's second letter to the believers in Corinth that we have in our Bibles, but could easily have been his third or fourth letter to them. We deduce this from his reference to other letters, e.g., see https://www.GotQuestions.org/how-many-letters-Corinthians.html, but we don't have copies of them.
+\ip This letter from Paul to the believers in Corinth was written from Macedonia at a time when his relationship with the believers there wasn't very good.
+\ip In first part of this document, Paul tells about his relationship with the believers there in Corinth. He explains his sadness concerning the shame of the believers and their disobedience of him. Then he tells again about his happiness that his anger faded after the believers repented of their sin and then their good relationship was restored. He urged the believers to continue to collect a gift of aid for poor believers in Yerushalem.
+\ip In the final four chapters, Paul justifies his missionary status to them. (Those that accused Paul said that he's not a true ambassador of Messiah.)
+\iot Main components of Paul's letter
+\io1 Introduction \ior 1:1-11\ior*
+\io1 Paul's relationship with the believers in Corinth \ior 1:12–7:16\ior*
+\io1 Aid for believers in Yudea \ior 8:1–9:15\ior*
+\io1 Paul's defence of his ambassadorial status \ior 10:1–12:21\ior*
+\io1 Ending \ior 13:1-13\ior*
+\rem This is still a very early look into the unfinished text of the Open English Translation of the Bible. Please double-check the text in advance before using in public.
+\ie
+\c 1
+\rem /s1 Greetings from Paul; Salutation
+\p
+\v 1 \x + \xo 1:1: \xt Acts 18:1.\x*\add This letter is from\add* Paul, a missionary of \nd Messiah¦120623 Yeshua\nd* by God's will, and¦120629 from our brother¦120632, Timothy¦120630.
+\p \add It's written\add* to God's assembly¦120634 in Corinth¦120641, along with all the believers throughout \add the province of\add* Achaia¦120651.
+\p
+\v 2 \add May\add* \nd God¦120658\nd* our¦120660 father¦120659 and \nd master¦120662 Yeshua Messiah¦120664\nd* give you¦120654 all grace¦120652 and peace¦120656.
+\s1 Suffering and comfort
+\rem /s1 The God of All Comfort; Paul's Thanksgiving after Affliction; Paul Gives Thanks to God; God Offers Comfort to All
+\p
+\v 3 \add May\add* the god and father of our¦120672 \nd master¦120671 Yeshua Messiah¦120674\nd* \add be\add* blessed. He is the father of compassion¦120678 and \nd God¦120667\nd* of all comfort¦120682
+\v 4 who comforts us through all our¦120690 trials so that we¦120704 can comfort others through all their trials with the \add same\add* comfort that \nd God¦120708\nd* comforts us with.
+\v 5 In the same way that Messiah's many sufferings¦120713 are \add expected\add* of us, so too the Messiah's plentiful comfort¦120726 also \add reaches\add* us.
+\v 6 If we're being oppressed¦120730, it's for your comfort and salvation¦120736, and if we're being comforted, it's for your comfort which enables you all to endure¦120746 the same¦120748 sufferings that¦120743 we're suffering.
+\v 7 We have confident¦120767 expectations for you all because we know that you are partners¦120782 in suffering¦120785, and¦120762 hence also in comfort¦120789.
+\p
+\v 8 \x + \xo 1:8: \xt 1Cor 15:32.\x*Brothers¦120795 and sisters, we don't¦120790 want you¦120793 to miss out on knowing¦120794 about¦120797 our difficulties in \add the province of\add* Asia¦120806 \add Minor\add*. We were weighed¦120813 down with \add a situation\add* totally beyond¦120811 our power¦120812, so much so that¦120801 we thought we wouldn't live through it.
+\v 9 We were resigned in ourselves to the death¦120827 sentence¦120825 so that we wouldn't trust¦120831 in ourselves but¦120820 in \nd God¦120838\nd* who brings the dead¦120842 back to life—
+\v 10 \add the one\add* who rescued us from that death¦120848 and¦120852 will rescue us \add again\add*. He's the one we¦120858 put our hope in that he¦120862 will continue to rescue us
+\v 11 as you¦120866 also cooperated¦120863 with us through¦120885 your requests \add to him\add*. Through this, many people¦120879 will give thanks¦120887 on our behalf for the gift¦120884 that was granted to us \add in answer to the prayers\add* of many.
+\s1 The changes to Paul's plans
+\rem /s1 The Change in Paul's Plans; Paul's Change of Plans; The Postponement of Paul's Visit; Paul's concern for the church at Corinth
+\p
+\v 12 So this is our¦120894 boast¦120893: Our¦120894 consciences¦120900 testify¦120898 that we¦120921 have conducted¦120921 \add ourselves\add* in the world (and even more so towards¦120927 all of you¦120928) with purity¦120905 and godly sincerity¦120909, not with worldly wisdom¦120915, but¦120907 \add relying on\add* God's grace¦120919.
+\v 13 We're not writing¦120932 other ideas to you other than what you're all reading¦120937. You're also understanding \add it\add* and I'm hoping¦120941 that you'll be able to understand it all the way through to the end¦120946
+\v 14 as you \add initially\add* partially understood¦120952 us. Then on the day¦120968 when \nd Master¦120970 Yeshua\nd* \add returns\add*, you'll be able to boast¦120957 about us just as we do about all of you.
+\p
+\v 15 Because of my confidence¦120976 in that, I had wanted to visit you all so that you'd have a second¦120986 \add taste\add* of grace¦120988,
+\v 16 \x + \xo 1:16: \xt Acts 19:1.\x*and to continue on to Macedonia¦120997 and to stay again on the way back, and then to have you all \add help\add* send me on my way to Yudea¦121012.
+\v 17 Was I just being light-\add headed\add* when I hoped for that¦121037? Or what was I thinking? Was I just thinking in worldly ways where yes, I might, and¦121036 \add at the same time\add*, no, I might not?
+\v 18 But¦121055 our¦121047 message¦121046 to you¦121050 all hasn't been \add both\add* ‘yes’ and¦121055 ‘no’, because \nd God¦121043\nd* is faithful¦121040.
+\v 19 \x + \xo 1:19: \xt Acts 18:5.\x*His son \nd Yeshua Messiah¦121066\nd* who I've preached about to you all, as well as \add hearing it\add* from Silas and Timothy¦121078, didn't¦121079 become ‘yes’ and ‘no’, but¦121075 in him it's become ‘yes’.
+\v 20 Concerning the many promises¦121092 \add made by\add* God, in \add Messiah\add* they're ‘yes’, and therefore through him the ‘Let it be so’, resulting in honour for God through us.
+\v 21 It's \nd God¦121126\nd* who commissioned us and who confirms¦121115 you¦121119 and us to \nd Messiah¦121121\nd*,
+\v 22 and God also \add places his\add* seal \add on\add* us and places \add his\add* \nd spirit¦121136\nd* in our¦121140 hearts¦121139.
+\p
+\v 23 I call on \nd God¦121145\nd* as a witness¦121143 for my soul¦121150 that it was to spare you¦121153 all that I didn't come to Corinth¦121157.
+\v 24 Not that we are in any way the masters¦121160 of your faith, but rather we are fellow-workers sharing in your happiness because¦121171 you all stand in the faith.
+\c 2
+\p
+\v 1 So I made the decision myself¦121177 not to make a sad visit to you¦121187,
+\v 2 because¦121190 if I'm making you¦121194 all upset, who \add would be left to\add* cheer me up except¦121201 for the people that¦121198 I would've just upset?
+\v 3 So¦121207 I wrote¦121208 this same¦121211 thing, so that when I came, I wouldn't get your¦121232 upsets when I should be being happy, having trusted¦121223 in you all that my happiness is in you.
+\v 4 I wrote¦121241 to you much difficulty and anguish¦121239 in my heart¦121240 and through¦121243 many tears¦121245, not wanted to make you all upset, but¦121238 rather so that you'd know¦121253 how much love¦121251 toward¦121257 you all is much greater than all that.
+\s1 Forgiveness for the offender
+\rem /s1 Forgiveness for the Sinner
+\p
+\v 5 If someone¦121261 has caused grief, he¦121265 hasn't upset me, well not much, because I don't¦121263 want to be burdening¦121271 you¦121273 all.
+\v 6 The punishment¦121278 imposed on him by most of you is appropriate,
+\v 7 so now you should forgive¦121288 and comfort¦121290 him in case excess pain should drive him out.
+\v 8 That's why I'm urging all of you¦121301 to \add re\add*affirm him¦121304 \add now\add* with your love¦121305.
+\v 9 Another reason that I wrote¦121310 to you was to find out if you would \add stand strong\add* and be obedient¦121319 in everything.
+\v 10 But \nd anyone¦121342\nd* that you forgive for anything, I also forgive, because¦121329 what I've¦121335 also forgiven (if I have forgiven anything), it was for you all in the presence¦121341 of \nd Messiah¦121342\nd*
+\v 11 so that we can't¦121344 be exploited¦121345 by Satan¦121348 (because¦121350 we're not ignorant about his¦121351 intentions).
+\s1 Paul's brief ministry in Troas
+\rem /s1 Ministers of the New Covenant; Paul's Anxiety in Troas
+\p
+\v 12 When¦121356 I went to Troas¦121359\x + \xo 2:12-13: \xt Acts 20:1.\x* \add to preach\add* the good¦121362 message¦121362 of the messiah and¦121365 an opportunity presented itself to me in the messiah,
+\v 13 my spirit¦121375 couldn't relax¦121373 because I found out that¦121377 my brother¦121384 Titos¦121382 wasn't there, so I said my goodbyes¦121387 to them and continued on to Macedonia¦121391.
+\s1 Victory through Messiah
+\rem /s1 Victory through Christ
+\p
+\v 14 But¦121404 \add we're\add* thankful¦121395 to \nd God¦121394\nd* who displays us as victors in the messiah, and¦121404 reveals¦121411 the aroma¦121406 of the knowledge¦121409 of the messiah, through¦121412 us in every¦121415 place¦121416.
+\v 15 Because¦121417 of \nd Messiah¦121418\nd*, we¦121420 who are being¦121425 saved¦121425 are a sweet¦121419 fragrance¦121419 to \nd God¦121422\nd*, and¦121426 also the ones perishing¦121429.
+\v 16 On one hand \add we're\add* an aroma of death to \add those choosing\add* death, and¦121445 on the other¦121438 hand, an aroma of life to \add those choosing\add* life. \add Wow,\add* who's worthy¦121450 \add enough\add* for that?
+\v 17 We're not like the many \add others\add* who are peddling¦121458 God's message¦121460 \add to make a profit\add*, but we speak in front¦121471 of God in sincerity¦121466. As \add followers\add* of God, we speak about \nd Messiah¦121476\nd*.
+\c 3
+\s1 Following the new agreement by the spirit
+\rem /s1 Servants of the New Covenant; Ministers of the New Covenant; Paul's commission as an apostle
+\p
+\v 1 \add Oh,\add* are we beginning¦121478 to pat ourselves¦121481 on the back again¦121479? Don't¦121486 we need written references for you all, or from you all, like some others \add do\add*?
+\v 2 It's all of you¦121502 who are our references, and having¦121504 been written in our hearts¦121507, it's known¦121510 about and being read by all people¦121515.
+\v 3 \x + \xo 3:3: a \xt Exo 24:12; \xo b \xt Jer 31:33; Eze 11:19; 36:26.\x*It shows that you¦121518 who were served¦121521 by us, are \add now\add* Messiah's letter¦121519 that wasn't written with ink¦121527 but with God's living¦121531 \nd spirit¦121529\nd*—not written on stone¦121535 tablets but on people's hearts¦121539.
+\p
+\v 4 We have such confidence¦121542 towards¦121550 \nd God¦121552\nd* through¦121547 the \nd messiah¦121549\nd*,
+\v 5 not that we¦121558 ourselves are worthy¦121557 to consider ourselves anything¦121563 \add special\add*, but our¦121573 qualifications¦121572 come from \nd God¦121576\nd*.
+\v 6 \x + \xo 3:6: \xt Jer 31:31.\x*He qualified¦121580 us as servants¦121582 of a new agreement¦121584—not \add following it\add* by the letter, but by the spirit, because¦121590 \add following by\add* the letter leads to death whereas \add following by\add* the spirit gives life.
+\rem /s1 The Glory of the New Covenant
+\p
+\v 7 \x + \xo 3:7: \xt Exo 34:29.\x*The system which was inscribed on stone¦121611 \add tablets\add* and which results in death¦121605 was so incredible \add when it was given\add* that the Israelis couldn't even \add bring themselves\add* to look at Mosheh's face because¦121626 it shone so brightly. But if that system is being¦121634 nullified¦121634,
+\v 8 won't¦121636 this system via the \nd spirit¦121641\nd* be even greater?
+\v 9 If the system that brought condemnation¦121652 was incredible, how much greater is the system that leads to righteousness¦121660,
+\v 10 because¦121665 that \add earlier system\add* seems ordinary now when compared with the more incredible greatness of the new system,
+\v 11 and if what ended up being¦121683 replaced was incredible, how much more incredible is the system that lasts.
+\p
+\v 12 So¦121693 then, since that's our expectation, we¦121698 can be very bold,
+\v 13 \x + \xo 3:13: \xt Exo 34:33.\x*not just like Mosheh putting¦121703 a veil over his¦121708 face¦121707 because¦121710 the Israelis couldn't even look¦121713 at him¦121708 \add when introducing\add* a system that would be replaced.
+\v 14 But their¦121727 thinking¦121726 was inflexible because \add even\add* until¦121728 this very day, the same veil remains¦121742 during the public¦121738 reading¦121738 of the Hebrew scriptures—it's not opened up \add because it's only\add* \nd Messiah¦121747\nd* that nullifies¦121748 it.
+\v 15 So these days whenever¦121752 Mosheh's writings are being¦121755 read, a veil lies across their¦121762 hearts¦121761,
+\v 16 \x + \xo 3:16: \xt Exo 34:34.\x*but¦121779 whenever¦121778 \add that heart\add* might turn¦121782 towards \nd Yahweh¦121784\nd*, the veil will be removed.
+\v 17 Now \nd Yahweh\nd* is the spirit, and¦121789 there's freedom¦121800 wherever¦121794 \nd Yahweh's\nd* spirit is.
+\v 18 All of us who've had our faces unveiled¦121804 are reflecting¦121810 \nd Yahweh's\nd* greatness, and that same¦121814 image¦121815 transforms¦121816 us from greatness to greatness. This comes from \nd Yahweh\nd* who is the \nd spirit¦121825\nd*.
+\c 4
+\s1 The treasure placed in human containers
+\rem /s1 Treasure in Clay Jars; Treasures in Jars of Clay; Spiritual Treasure in Clay Pots; Treasure in Perishable Containers
+\p
+\v 1 So because we have this ministry as a result of God's mercy¦121833, we're not discouraged
+\v 2 but¦121837 rather, we have renounced¦121838 any shameful¦121842 things that were hidden¦121840 and continue our \add spiritual\add* journey. Avoiding deception and \add taking care\add* not to distort God's message¦121850, we present the truth¦121857 \add clearly\add* even as we commend¦121858 ourselves¦121859 to everyone's¦121861 conscience¦121862 before¦121864 God.
+\v 3 But even if our¦121874 good¦121873 message¦121873 is concealed, it's concealed from those who are perishing¦121877.
+\v 4 The god of this age has blinded¦121887 the thinking¦121889 of the unbelievers¦121891 so that the light of the good message¦121902 about the greatness of the \nd messiah¦121907\nd* who's God's image¦121910, doesn't radiate¦121897 out to them,
+\v 5 because it's not us ourselves that we're proclaiming¦121916, but¦121923 the \nd master¦121921 Yeshua Messiah¦121920\nd*. \nd We\nd* \add serve\add* as your¦121926 slaves¦121924 because of him,
+\v 6 \x + \xo 4:6: \xt Gen 1:3.\x*because¦121950 the god who said, ‘Light will be shining¦121941 out of the darkness¦121939’, shined¦121944 in our¦121948 hearts¦121947 so that¦121935 we could experience God's greatness in the face¦121960 of \nd Yeshua Messiah¦121962\nd*.
+\p
+\v 7 So we¦121963 have this treasure¦121966 stored in containers made from the dirt, so that the excellence¦121973 of the power¦121975 will be from \nd God¦121978\nd* and¦121979 not from us \add ourselves\add*.
+\v 8 We might be oppressed¦121985 but we won't be crushed¦121990, perplexed¦121991 but we won't despair¦121994,
+\v 9 persecuted¦121995 but we won't be abandoned¦121998, and struck¦121999 down but we won't perish¦122002.
+\v 10 We always¦122003 carry¦122012 around in our bodies the death¦122005 of Yeshua, so that the life¦122016 of Yeshua may also be revealed¦122027 in our bodies,
+\v 11 because¦122037 we¦122031 who are alive are always¦122029 being¦122036 given¦122036 over to death¦122035 for \nd Yeshua's\nd* sake, so that his life¦122042 may also be revealed¦122047 in our¦122053 mortal¦122051 bodies.
+\v 12 So then, death¦122057 is working in us, but¦122062 life¦122063 \add is working\add* in all of you¦122065.
+\p
+\v 13 \x + \xo 4:13: \xt Psa 116:10 (LXX).\x*We have the same¦122069 spirit¦122070 of faith¦122072 as what's written¦122075: ‘I believed¦122076, therefore I talked about it.’ We also believe so we also talk about it,
+\v 14 knowing¦122086 that the one who brought Yeshua back to life, will also bring us back to life along with Yeshua, and¦122100 will be presenting¦122101 us along with all of you¦122103.
+\v 15 All of this is for you, so that after \add experiencing\add* much grace¦122111, you all will be even more thankful¦122117 and thus honour \nd God¦122123\nd*.
+\s1 Valuing what's actually important
+\rem /s1 Living by Faith
+\p
+\v 16 Because of that we're not discouraged because even if our outer person is being ruined¦122136, our inner person is being renewed¦122142 day by day
+\v 17 because¦122147 our small, temporary troubles will produce¦122160 an excess of great honour for us.
+\v 18 We don't¦122162 just look at what we can see, but include the things that can't¦122162 be seen, because¦122172 visible things are temporary¦122174, but the things that last forever are invisible \add to our¦122164 eyes\add*.
+\c 5
+\s1 Our future bodies
+\rem /s1 Our Heavenly Dwelling; New Bodies
+\p
+\v 1 We know that when the temporary, earthly¦122185 home \add (our¦122186 body)\add* that we live in is demolished, we will have a building¦122192 from \nd God¦122194\nd* that's not built by human hands—an eternal¦122199 house in the heavens¦122202.
+\v 2 Actually, that's also why we¦122207 groan¦122207—wanting to be clothed¦122214 in our¦122210 heavenly¦122213 \add bodies\add*.
+\v 3 Yes, once we're properly dressed¦122221 we won't¦122222 feel naked¦122223
+\v 4 because¦122226 while we live in these temporary homes we are groaning¦122232. It's not that we want to dispose of these temporary homes, but we want to be \add permanently\add* clothed¦122241 so that our mortal¦122246 \add parts\add* might be enveloped by life¦122249.
+\v 5 It's \nd God¦122258\nd* who prepared¦122252 us for this reason—yes, the one who deposited¦122264 the \nd spirit¦122266\nd* into us.
+\p
+\v 6 Because of that, we're always¦122269 confident¦122267 and¦122270 known¦122271 that while we're at home¦122273 in our bodies, we are distanced from the \nd master¦122281\nd*,
+\v 7 but we¦122285 walk¦122285 by faith¦122283 and not by how things look.
+\v 8 And we do have confidence¦122289 and look forward to being absent¦122297 out of these bodies and being at home¦122302 with the \nd master¦122305\nd*,
+\v 9 so that's why we're ambitious¦122308 to please¦122314 the master, whether¦122310 we're \add still\add* in these bodily homes or absent¦122313 from them.
+\v 10 \x + \xo 5:10: \xt Rom 14:10.\x*Yes, we must all stand at our court hearing in front of the \nd messiah¦122327\nd*, so that¦122317 each of us may receive¦122329 \add justice\add* for what we did¦122338 while in these bodies, whether¦122339 it¦122322 was good¦122340 or evil¦122343.
+\s1 It's time to get saved
+\rem /s1 Friendship with God through Christ; The Ministry of Reconciliation; We Are God's Ambassadors; The message of reconciliation
+\p
+\v 11 Because of that, having¦122344 known¦122344 the fear¦122347 of \nd Yahweh¦122349\nd*, we are persuading¦122351 people¦122350, but¦122354 \nd God¦122353\nd* sees what we're doing, and I'm hoping¦122356 that your¦122362 consciences¦122361 also see the same.
+\v 12 Again, we're not trying to promote ourselves¦122367 to you, but¦122386 we're giving¦122372 you all an opportunity¦122371 to take pride in us, so that you can \add respond to\add* those who take pride in \add outside\add* appearances¦122384 rather than in what's in the heart¦122390.
+\v 13 If we're being crazy, it's \add to serve\add* \nd God¦122394\nd*, or if we're being sensible¦122396, it's for all of you¦122397,
+\v 14 because¦122399 the \nd messiah's¦122403\nd* love controls us since we are convinced that¦122415 he died for \nd everyone¦122403\nd*. Hence we've all died
+\v 15 and he died for everyone, so that anyone who's living, won't be living for themselves¦122427 any more, but¦122419 for the one who died for them and then¦122419 came back to life from the dead.
+\p
+\v 16 So from now on, we don't just know people in the physical dimension, and even if we have known \nd Messiah¦122451\nd* physically, that's no longer¦122454 how we know him.
+\v 17 So then if anyone¦122458 is in \nd Messiah¦122460\nd*, they're a \em new\em* creation¦122462—the old has gone, and wow¦122466, it's \add now\add* become¦122467 new!
+\v 18 Everything is \add from\add* \nd God¦122476\nd*, the one who reconciled us to himself¦122480 by \nd Messiah¦122483\nd* and¦122484 who has given¦122485 the ministry of reconciliation to us.
+\v 19 \nd God¦122494\nd* was in \nd Messiah¦122497\nd* reconciling the world¦122498 to himself¦122500, not listing their¦122506 sins against them, and¦122507 having¦122508 given the message¦122514 of reconciliation to us.
+\p
+\v 20 Because¦122517 of that, we are ambassadors¦122520 for Messiah, as though¦122521 God is encouraging \add others\add* through¦122525 us, so we implore you for Messiah: Make your peace with God.
+\v 21 God took the one who hadn't experienced sin and made him into sin for us so that in him, we could become¦122544 not guilty in God's sight.
+\c 6
+\p
+\v 1 Since we're working¦122550 together¦122550, we want to encourage you¦122564 all not to accept God's grace¦122559 wastefully
+\v 2 \x + \xo 6:2: \xt Isa 49:8.\x*because¦122566 he said¦122565,
+\q1 ‘I listened to you at the right time,
+\q1 and I helped you on the day when you were saved.’
+\m Listen¦122580, today is the right time \add to ask\add*. And listen¦122580 \add again\add*, today is the right day to get saved.
+\rem /s1 Paul's Hardships
+\p
+\v 3 Don't¦122594 give anyone¦122588 a reason to stumble¦122592, so that the ministry won't¦122594 be tarnished,
+\v 4 but¦122598 as God's servants¦122605 we commend¦122601 ourselves¦122602 in every¦122600 way—by great¦122608 endurance¦122607 when facing afflictions, hardships¦122612, calamities,
+\v 5 \x + \xo 6:5: \xt Acts 16:23.\x*beatings¦122616, imprisonments, riots, labours¦122622, sleepless nights, hunger,
+\v 6 by purity¦122628, knowledge¦122630, patience¦122632, kindness¦122634, the holy \nd spirit¦122636\nd*, genuine love¦122639,
+\v 7 in truthful¦122643 speech and in the power¦122645 of \nd God¦122646\nd*. Hold the weapons¦122649 of righteousness in \add both\add* your right and left hands
+\v 8 whether in victory or dishonour¦122659, through bad reports and good¦122663 reports, even if being called fakes (but¦122658 being genuine).
+\v 9 We're regarded as unknowns despite being well-known, considered to be dying¦122675 off yet very much alive, being beaten but¦122672 not yet being killed,
+\v 10 regarded as sad but always¦122686 happy, as poor but making¦122693 many people rich, as having¦122696 nothing¦122695 but possessing everything.
+\p
+\v 11 We've shared our thoughts with you¦122705 all from Corinth and our hearts¦122708 have been expanded.
+\v 12 You haven't been restricted by us, but your¦122721 own compassions¦122720 restrict you all.
+\v 13 In return, you¦122731 \add also\add* should be expanded. (Yes, I know it's like I'm talking¦122728 to children¦122727.)
+\s1 Don't be teamed with unbelievers
+\rem /s1 Do Not Be Yoked With Unbelievers; Church life and discipline; The Temple of the Living God; Warning against Pagan Influences
+\p
+\v 14 Don't be teamed together with unbelievers¦122735, because¦122737 how can there be a partnership¦122738 between obeying and¦122741 disobeying God, or in other words, how can light¦122747 socialise with darkness¦122750?
+\v 15 So¦122752 what harmony¦122753 can \nd Messiah¦122754\nd* have with Satan¦122757, or what does a believer¦122761 have in common with an unbeliever¦122764?
+\v 16 \x + \xo 6:16: a \xt 1Cor 3:16; 6:19; \xo b \xt Lev 26:12; Eze 37:27.\x*What agreement¦122767 can God's temple have with idols¦122771, because we are the temple of the living¦122780 God? As God said,
+\q1 ‘I will live with them
+\q2 and I will walk¦122791 among¦122791 them.
+\q1 I will be their¦122794 god
+\q2 and they will be my¦122800 people¦122801.’
+\m
+\v 17 \x + \xo 6:17: \xt Isa 52:11.\x*Therefore¦122802 \nd Yahweh¦122810\nd* says,
+\q1 ‘Come out from among them and be separate.
+\q1 Touch nothing that's ceremonially prohibited
+\q2 and then¦122815 I will accept you¦122817.
+\q1
+\v 18 \x + \xo 6:18: \xt 2Sam 7:14; 1Ch 17:13; Isa 43:6; Jer 31:9.\x*I will be a Father for you,
+\q1 and you will be my sons¦122828 and daughters¦122830,’
+\m says \nd Yahweh¦122832\nd* the all-powerful.
+\c 7
+\p
+\v 1 Dear brothers and sisters, because we have those promises¦122838 we should avoid doing anything that would defile¦122844 our bodies or our spirits¦122847, thus staying pure due to our respect for \nd God¦122855\nd*.
+\s1 Paul's happiness about those in Corinth
+\rem /s1 Paul's Joy at the Church's Repentance
+\p
+\v 2 Please do accept us because we didn't wrong¦122859 anyone, and we didn't corrupt¦122861 or exploit¦122863 anyone.
+\v 3 I'm not pronouncing condemnation¦122866 because¦122870 I've¦122869 said¦122869 previously¦122869 that you¦122878 all are in our¦122877 hearts¦122875 so together we'll die¦122881 and¦122882 together we'll live \add again\add*.
+\v 4 I \add feel\add* very bold towards¦122887 you all and boast¦122891 a lot about you. I'm filled¦122894 with encouragement and \add even\add* in our¦122905 troubles I'm overflowing¦122897 with happiness .
+\p
+\v 5 \x + \xo 7:5: \xt 2Cor 2:13.\x*Actually, since we arrived in Macedonia¦122912 we've had no physical rest but¦122922 we've been oppressed¦122925 in every¦122924 way—on the outside¦122926 there's quarrels¦122927 and on the inside¦122928 we've had our¦122910 fears¦122929,
+\v 6 but¦122931 the \nd God¦122939\nd* who comforts those who are humble¦122935, comforted us with the arrival of Titos¦122944.
+\v 7 It wasn't just his¦122951 coming¦122950, but¦122947 also because he'd been comforted¦122956 by all of you. He told us about your longing¦122966 for me, and your mourning¦122969 \add for my troubles\add* and your zeal for me, and it really cheered me up.
+\p
+\v 8 Yes, because even if I made you sad with my letter, I don't¦122988 regret \add sending\add* it. (\add Well,\add* for a while I was sad for you that I had sent the letter.)
+\v 9 \add Anyway,\add* now I'm happy, not that it made you sad, but because that sadness led to turning away from your sin because \add that\add* sorrow was according¦123020 to God's \add values\add* so you didn't¦123010 lose anything because of us.
+\v 10 Because¦123029 sorrow according¦123030 to God's \add values\add* brings repentance¦123033 that leads to salvation¦123035 without regrets, but¦123040 the world's¦123042 sorrow leads to death¦123044.
+\v 11 See how this sorrow¦123053 according¦123051 to God's \add values\add* has produced¦123056 earnestness¦123060 in you all, but also eagerness to clear yourselves, resentment¦123065, fear¦123067, longing¦123070, zeal, and vengeance¦123075. You have proved yourselves innocent in the matter¦123084 in every¦123077 area.
+\p
+\v 12 So if I also wrote¦123088 to you all, not on account of the one having done wrong, nor on account of the one having been wronged, but on account of your¦123105 earnestness¦123104 that¦123107 would be revealed¦123102 to us all before¦123113 \nd God¦123115\nd*,
+\v 13 then¦123120 we've been comforted because of this.
+\p And \add talking about\add* our¦123123 comfort, we were quite thrilled at Titos' happiness because his¦123137 spirit¦123136 has been refreshed¦123134 by all of you¦123140.
+\p
+\v 14 Yes, if I've¦123148 boasted anything¦123143 about you all to him, I wasn't disgraced¦123150, but as we spoke¦123158 the truth to you all about everything, so also did our¦123165 boasting to Titos¦123168 become¦123170 true
+\v 15 and his¦123174 affection towards¦123176 you all increased when he's reminded¦123180 about your¦123183 obedience¦123184 and how you accepted him with fear¦123188 and trembling¦123190.
+\v 16 I'm thrilled that I can have confidence¦123198 in you¦123200 all about everything¦123197.
+\c 8
+\s1 Encouragement to be generous
+\rem /s1 Christian Giving; The collection for the church in Jerusalem; A Call to Generous Giving; Generosity Encouraged
+\p
+\v 1 \x + \xo 8:1-4: \xt Rom 15:26.\x*And then¦123202, brothers¦123204 and¦123202 sisters¦123204, we¦123201 want you¦123203 to know about how \nd God¦123208\nd* showed kindness to the assemblies¦123213 in Macedonia¦123216
+\v 2 in that¦123228 as they proved¦123220 themselves in \add a time of\add* persecution, they continued to show great positivity and¦123227 from the depth¦123230 of their poverty¦123232, their generosity¦123241 \add resulted in\add* plentiful¦123234 riches¦123239.
+\v 3 So I'm testifying¦123246 about their ability, and besides¦123248 that, they voluntarily¦123251
+\v 4 and enthusiastically begged us to allow them the grace¦123259 and fellowship¦123262 that¦123265 would come from their service¦123264 to other believers.
+\v 5 It wasn't something that we¦123274 expected of them, but¦123276 they¦123278 gave¦123278 themselves¦123277—firstly¦123280 to the \nd master¦123283\nd*, and¦123284 also to us by God's will.
+\v 6 So we encouraged Titos¦123293 that just as he began¦123297 to do previously¦123297, that he would go on to cultivate this \add generosity\add* in you.
+\v 7 But¦123316 since you're all prolific in everything¦123311—in faith¦123315 and speech¦123317 and knowledge¦123319 and all earnestness¦123322 and in the love¦123331 from us to you all—make sure that you're all prolific in this grace¦123337 \add of giving\add*.
+\p
+\v 8 I'm not saying this as a command¦123341, but¦123343 approving¦123355 the genuineness¦123354 of your¦123352 love¦123353 through¦123344 the earnestness¦123347 of others¦123346.
+\v 9 because¦123366 you have all experienced the grace¦123359 of our¦123362 \nd master¦123361 Yeshua¦123363 Messiah¦123364\nd*: that although he was rich, he became¦123369 poor so that all of you in your¦123366 poverty¦123377 might become rich.
+\p
+\v 10 And I'm giving¦123383 my opinion¦123380 on this because¦123385 it's beneficial¦123387 for you¦123386 all not only to do what began¦123397 last year¦123399, but¦123393 to do it willingly¦123396.
+\v 11 Now you should see this through so that you're all not just ready to be willing¦123411, but¦123401 also to actually accomplish that from what you have,
+\v 12 because¦123420 if the readiness¦123422 is there, it¦123429 is acceptable¦123429 according to what a person has, not according to what they do not have.
+\p
+\v 13 \add Of course,\add* it's not that others¦123437 should be relaxing¦123438 while you¦123439 all endure difficulty, but¦123442 with an aim of equality¦123444.
+\v 14 At the present¦123447 time, your excess \add will help\add* those who are in need—\add another time\add* their excess might meet your need to bring about equality¦123470.
+\v 15 As the scriptures say:\x + \xo 8:15: \xt Exo 16:18.\x*
+\q1 ‘The person who \add gathered\add* much didn't have too much,
+\q1 and¦123478 the person who \add gathered\add* little¦123481 didn't have any lack.’
+\s1 Concerning Titos and his companions
+\rem /s1 Titos Sent to Corinth; Titos and His Companions; Commendation of Titos
+\p
+\v 16 But may \nd God¦123487\nd* be thanked¦123484 for putting the same¦123493 earnestness¦123494 for you¦123496 all into Titos' mind¦123499
+\v 17 because indeed¦123503 he accepted our appeal¦123504, but being¦123508 so earnest¦123506 he volunteered¦123509 to visit you all.
+\v 18 And we¦123513 sent¦123513 another brother¦123518 along with him¦123516, who is praised¦123523 by all the assemblies¦123530 for his good¦123526 message¦123526,
+\v 19 and not only that¦123547, he was also chosen¦123536 by the assemblies¦123539 as our travelling¦123540 companion¦123540 as we bring this gift as our service for the \nd master's¦123556\nd* honour and for our readiness¦123559.
+\v 20 We want to avoid¦123562 the possibility of being¦123573 criticised in our excitement in serving this way,
+\v 21 \x + \xo 8:21: \xt Prv 3:4 (LXX).\x*because¦123578 we¦123577 are providing¦123577 good¦123579, not only towards \nd Yahweh¦123585\nd*, but¦123586 also for people¦123589.
+\p
+\v 22 We also sent¦123590 with them another brother¦123594 who we approved¦123597 of in many ways—often¦123600 being¦123602 diligent, but¦123591 now much more diligent because of \add his\add* high confidence¦123607 in you¦123612 all.
+\v 23 Concerning Titos¦123615, he is my partner¦123616 and your fellow-worker, and the \add accompanying\add* brothers¦123623 are ambassadors¦123625 of the assemblies¦123626 which are Messiah's splendour¦123627,
+\v 24 so show them signs of your¦123636 love¦123635 and \add fulfil\add* what we boasted¦123639 about¦123640 you all in the various assemblies¦123651.
+\c 9
+\s1 Preparing the aid for the believers
+\rem /s1 The Collection for Christians at Jerusalem; Help for Needy Believers
+\p
+\v 1 It's unnecessary for me to write to you¦123667 all about \add this\add* ministry to the believers
+\v 2 because¦123670 I know about your readiness¦123672 \add to help\add* and I've¦123669 been boasting¦123677 about it to those from Macedonia¦123679—that¦123674 \add you all\add* in Achaia¦123681 were ready last year¦123684—and your zeal provoked¦123692 more of them \add to act\add*.
+\v 3 But I sent¦123695 the brothers¦123698 so that our¦123704 boasting¦123702 about¦123706 you all won't¦123700 be invalidated in this regard¦123711, so that you'll be prepared¦123717 just as I had told \add them\add*.
+\v 4 Otherwise if somehow¦123720 some might come¦123723 with me from Macedonia¦123726 and find you unprepared¦123730, then we (or might we say you all as well) might be disgraced¦123731 by \add our\add* confidence¦123741.
+\v 5 That's why I considered¦123747 it necessary¦123745 to encourage the brothers¦123750 to go¦123752 ahead¦123752 to you all \add there\add* so they could prearrange¦123757 the gift that you'd previously¦123759 promised¦123759 so that it would be ready¦123764 as a blessing and not \add appear\add* as \add our\add* greediness¦123773.
+\s1 Showing generosity
+\rem /s1 Sowing Generously
+\p
+\v 6 Also¦123775 this: the person who plants sparingly will also harvest sparingly, and¦123782 the person sowing generously will also have a generous harvest.
+\v 7 Let each person do¦123791 what their own heart¦123796 tells them—not out of sorrow¦123799 or from pressure, but because¦123804 \nd God¦123808\nd* loves those who are cheerful¦123803 givers¦123805.
+\v 8 And \nd God¦123813\nd* is able to shower generosity onto you all so that you'll be content¦123824 having¦123825 everything¦123821 \add you need\add*, thus able to be prolific in doing good¦123830 \add to others\add*.
+\v 9 As it's written¦123832 \add in the scriptures\add*:\x + \xo 9:9: \xt Psa 112:9.\x*
+\q1 ‘He distributed \add his gifts\add* and gave¦123834 to the poor,
+\q1 \add now\add* his righteousness¦123838 will remain¦123840 to the end of the age.’
+\p
+\v 10 \x + \xo 9:10: \xt Isa 55:10.\x*Thus \add God\add* who supplies the seed to the person sowing¦123850 and supplies our food¦123852, will be supplying and multiplying¦123858 your seeds \add as you sow in others\add* and will increase the harvest \add resulting\add* from your righteousness¦123870.
+\v 11 You will be enriched towards generosity¦123877 in every¦123873 way, which¦123880 will lead us all to give thanks¦123884 to \nd God¦123886\nd*.
+\v 12 Serving in this \add kind of\add* ministry¦123892 meets the needs¦123899 of the believers, but¦123902 also \add leads to\add* plenty¦123904 of \add occasions to\add* give thanks¦123907 to \nd God¦123911\nd*.
+\v 13 In proving yourselves by this ministry, they will honour \nd God¦123921\nd* as it displays your commitment to the good¦123930 message¦123930 of the \nd messiah¦123932\nd*, and your generosity¦123934 toward them and towards \nd everyone¦123932\nd*,
+\v 14 and they will wish the best for you all and pray for you because¦123951 of God's overflowing goodness to you all.
+\v 15 \add Yes,\add* we thank \nd God¦123963\nd* for his¦123967 incredible gift¦123968.
+\c 10
+\s1 Paul's defence of his authority
+\rem /s1 The challenge to Paul's authority; Paul Defends His Ministry; Paul's Defense of His Ministry; Paul Defends His Authority
+\p
+\v 1 Now I myself¦123969, Paul¦123972, am indeed¦123985 humble¦123986 when I'm with you all, but¦123970 when I'm absent¦123989 I'm bolder. I implore you all by the humility and¦123970 gentleness of the \nd messiah¦123981\nd*
+\v 2 and¦123996 I beg you¦123995 so that¦124004 when I come I won't¦123998 have to be as bold as I'm expecting to counter those who consider us to be motivated by worldly desires.
+\v 3 We might be living in this world, but it's not people that we're at war with,
+\v 4 because¦124026 the weapons¦124027 that we use in war are not physical but¦124034 \add come with\add* God's power¦124035 for tearing¦124039 down \add anti-God institutions\add* and nullifying \add their\add* arguments¦124041.
+\v 5 \add We attack\add* every \add theory\add* that's used to argue against¦124048 \add the possibility of\add* knowing \nd God¦124052\nd*, and capturing all thinking¦124056 \add so it\add* becomes obedient¦124059 to the \nd messiah¦124061\nd*,
+\v 6 and¦124062 being ready¦124064 to stand against all disobedience¦124068 for whenever¦124069 your¦124072 obedience¦124074 might be complete.
+\p
+\v 7 You all are looking¦124078 at the \add outside\add* appearance¦124077 of things. \nd Anyone¦124086\nd* who has personally decided to \add follow\add* Messiah needs¦124089 to take this into account: just as they belong to Messiah, so also do we¦124102.
+\v 8 So¦124105 if I boast¦124110 too often about our¦124115 authority¦124114 (which¦124116 the \nd master¦124119\nd* gave¦124117 us for building¦124122 you up rather than for tearing¦124126 you down), I won't¦124124 be ashamed¦124129 of it
+\v 9 so that hopefully I won't¦124131 be terrifying¦124135 you¦124136 all with my letters¦124139.
+\v 10 Some are saying¦124145, “His letters¦124143 are heavy¦124147 and strongly-worded, but¦124148 when he's actually here, he's weak and his words get mocked.”
+\v 11 Those people should¦124161 \add reconsider and\add* realise that as we are in our letters¦124170 when we're absent¦124171, that's also how we'll work¦124176 when we're present¦124174.
+\p
+\v 12 We don't¦124177 dare to classify¦124181 ourselves¦124184 or compare with some of those who commend¦124188 themselves, but¦124196 they measure¦124195 and compare themselves with each other—not understanding¦124202 \add what they're doing\add*.
+\v 13 But we¦124203 won't¦124205 boast¦124210 about immeasurable¦124209 things—only those domains¦124216 where \nd God¦124221\nd* allotted¦124218 a measure to us \add which¦124217 was\add* to reach¦124223 all of you¦124226.
+\v 14 In not reaching¦124233 you we don't¦124227 overextend¦124236 ourselves¦124237, because¦124239 we came¦124242 your¦124241 way with the good¦124245 message¦124245 about the \nd messiah¦124247\nd*.
+\v 15 We don't¦124248 boast¦124253 of things we can't¦124248 measure like other peoples' work, but¦124258 we have hope that as your¦124264 faith¦124262 grows, you'll see us as more important in more areas
+\v 16 so we can preach¦124279 the good¦124279 message¦124279 to the areas beyond¦124277 you¦124278—not boasting¦124287 about things already \add done\add* in others' areas.
+\p
+\v 17 But \x + \xo 10:17: \xt Jer 9:24.\x*‘if anyone does boast, they should¦124293 boast in \nd Yahweh¦124292\nd*’,
+\v 18 because¦124296 it's not the people who commend themselves that are approved¦124302, but¦124304 those who the \nd master¦124307\nd* commends.
+\c 11
+\s1 Paul and the fake missionaries
+\rem /s1 Paul speaks as a fool; Paul and the False Apostles
+\p
+\v 1 I wish you all could tolerate a bit of foolishness¦124316 from me, but yes, you do tolerate me,
+\v 2 because¦124328 I'm jealous of you all with godly jealousy as I had committed you to your \add future\add* husband¦124331—a pure bride to present¦124334 to the \nd messiah¦124336\nd*.
+\v 3 \x + \xo 11:3: \xt Gen 3:1-5,13.\x*But¦124360 I'm afraid that¦124363 just as the crafty¦124350 serpent¦124343 somehow¦124340 deceived¦124345 Heva (Eve¦124347), your¦124356 thinking¦124355 might get corrupted¦124353 from its sincerity¦124359 and¦124360 purity¦124362 in the \nd messiah¦124366\nd*.
+\v 4 Indeed even if another \nd Yeshua\nd* came and proclaimed something different from what we proclaimed, or if you receive another spirit¦124379 that¦124382 you hadn't received already, or a good message¦124386 \add different\add* from what you've already heard, you might tolerate¦124393 it.
+\p
+\v 5 I reckon that I wasn't deficient¦124399 compared to the ‘super¦124401 missionaries’,
+\v 6 but¦124404 even if my speaking is just ordinary¦124406, \add my\add* knowledge¦124412 isn't¦124410 and I've made everything clear to you¦124421 all in every way.
+\p
+\v 7 Or did I disobey \nd God¦124434\nd* when I humbled¦124426 myself¦124425 so that all of you might be elevated, because¦124430 I shared the good message with you all without any personal gain?
+\v 8 I've ‘robbed¦124440’ other assemblies¦124439 in order to support¦124442 my ministry to all of you¦124445,
+\v 9 \x + \xo 11:9: \xt Php 4:15-18.\x*and when I was with you and needed \add something\add*, I wasn't a burden to anyone¦124455, because¦124457 the believers¦124462 who came from Macedonia¦124465 supplied what I needed. Thus I have kept¦124473 myself¦124471 from being¦124448 a burden to you in any way, and will keep doing so.
+\v 10 The \nd messiah's¦124478\nd* truth¦124477 is in me such that my boasting¦124483 in the regions¦124492 of Achaia¦124494 won't¦124485 be stopped¦124487.
+\v 11 Why's that? Because¦124497 I don't¦124498 love you¦124500 all? \nd God¦124502\nd* knows that I do¦124503.
+\p
+\v 12 But what I'm doing, I'll¦124508 keep on doing, so that I can deny the opportunity to those \add people\add* who are looking for an opportunity so that what they boast¦124519 about, we'll already be doing,
+\v 13 because¦124525 they are false¦124527 ambassadors¦124532 \add and deceitful¦124529 workers¦124528\add*—masquerading¦124530 themselves¦124530 as Messiah's missionaries,
+\v 14 and¦124534 that's no surprise because¦124539 Satan¦124541 himself¦124538 masquerades¦124542 as \add a\add* messenger¦124544 of light¦124545.
+\v 15 So then it's no great¦124547 \add surprise\add* if his¦124553 servants are masquerading¦124554 as God's servants, \add but\add* their end will be the consequence of their actions.
+\s1 Paul's boasting about his sufferings
+\rem /s1 Paul's Sufferings as an Apostle; Paul Boasts About His Sufferings; Paul's Many Trials
+\p
+\v 16 I'll say it again: no one should suppose¦124571 that I'm foolish, but if they do, at least accept me as foolish so that I can also boast¦124589 a little¦124586.
+\v 17 When I say that, I'm not talking¦124591 \add words from\add* \nd Yahweh¦124595\nd*, but¦124597 like a fool confidently¦124604 boasting¦124606.
+\v 18 Many boast like worldly \add people\add*, so I'll¦124613 boast as well,
+\v 19 because¦124616 you¦124617 prudent¦124620 \add ones\add* happily tolerate¦124617 foolish¦124619 people.
+\v 20 Yes, you tolerate¦124622 those who'll enslave¦124627 you all, those who'll exploit you, those who'll take \add advantage of\add* you all, those who promote themselves, and anyone whacks you in the face¦124641.
+\v 21 I'm talking¦124660 about dishonour¦124645 as if we¦124649 were weak, but¦124654 (speaking¦124660 foolishly¦124659 again), anything that anyone¦124656 else is brave enough to do, then I will also be brave enough \add to match\add*.
+\v 22 Are they Hebrews? I am too. Are they Israelis? So am I. Are they descendants of Abraham¦124670? Me also.
+\v 23 \x + \xo 11:23: \xt Acts 16:23.\x*Are they¦124675 Messiah's servants? \add Well,\add* I'm above¦124678 them (speaking¦124677 insanely¦124676 now): I've worked harder, been in prison¦124687 more often, \add endured\add* uncountable beatings¦124691, and been close to death¦124695 more often.
+\v 24 \x + \xo 11:24: \xt Deu 25:3.\x*I've received¦124703 the thirty-nine lashes from the Jewish \add leadership\add* five¦124699 times¦124699,
+\v 25 \x + \xo 11:25: a \xt Acts 16:22; \xo b \xt Acts 14:19.\x*was beaten three times with rods, was stoned¦124707 once, shipwrecked¦124709 three times, and I was in the ocean for a day¦124710 and a night¦124710.
+\v 26 \x + \xo 11:26: a \xt Acts 9:23; \xo b \xt Acts 14:5.\x*I've done \add many long\add* trips, crossed dangerous rivers¦124718, risked being robbed¦124720, \add was persecuted\add* by my own people as well as by non-Jews, have been in danger in the city¦124729, in the wilderness¦124732 and on the ocean, \add as well as being attacked\add* by false¦124738 \add teachers\add*.
+\v 27 I've worked often and worked hard, often needing to keep guard, \add suffered\add* famine¦124747 and thirst¦124749, fasted often, and been cold¦124754 and lacking clothing.
+\v 28 \add Then\add* apart from all those external¦124759 things, I've been opposed every day¦124767—\add not to mention\add* my concern for all the assemblies¦124772.
+\v 29 What person falters and I don't falter with them? Who stumbles¦124779 \add in their walk with God\add* and I don't suffer with them?
+\p
+\v 30 If it's appropriate¦124786 to be boasting, what I'd boast about would be my¦124790 weaknesses¦124789.
+\v 31 The \nd god¦124793\nd* and¦124794 father¦124795 of the \nd master¦124797 Yeshua\nd*—the one who should be praised for all the ages—knows that I'm not lying¦124810.
+\v 32 \x + \xo 11:32-33: \xt Acts 9:23-25.\x*The governor¦124814 of Aretas¦124815 (appointed by the king¦124817) had guards¦124818 \add around\add* the city¦124821 of Damascus¦124812 to try to arrest¦124823 me,
+\v 33 but¦124826 I was lowered¦124831 down from a window¦124828 in the \add city\add* wall¦124834 in a basket¦124830 and¦124835 thus able to escape¦124836 his¦124839 clutch.
+\c 12
+\s1 What God showed Paul
+\rem /s1 Paul's Visions and Revelations; Paul's Vision and His Thorn in the Flesh
+\p
+\v 1 It's not appropriate¦124842 or beneficial¦124846 to be boasting¦124840, so I'll¦124849 come to \add the\add* visions¦124854 and revelations¦124856 from \nd Yahweh¦124857\nd*.\f + \fr 12:1 \ft See http://bibledifferences.net/2019/04/24/156-boast.\f*
+\v 2 Fourteen years¦124863 ago I observed a man¦124859 who was a believer in \nd Messiah¦124861\nd* who was pulled \add up\add* to the third¦124884 heaven¦124885. (I didn't¦124868 know whether¦124865 this physically happened or just in the spiritual \add realm\add*.)
+\v 3 And I know that man¦124890 (\nd God¦124902\nd* only knows if it was in the physical or \add just\add* the spiritual \add realm\add*)
+\v 4 was pulled \add up\add* into paradise¦124908 and¦124909 heard¦124910 messages¦124912 which¦124913 can't¦124914 be put into words (because \add living\add* people aren't¦124914 allow to speak¦124917 them).
+\v 5 I'm \add prepared\add* to boast about that man¦124920, but¦124923 I won't boast about myself¦124924 because I won't boast \add at all\add* except¦124928 \add about\add* my weaknesses¦124932,
+\v 6 because even if I did want¦124936 to boast¦124938, I wouldn't be being foolish¦124942, because I would be speaking¦124945 the truth¦124943. But I'll¦124941 refrain¦124946 in case anyone¦124949 reckons that I'm more than what they can see or hear¦124958 about me.
+\p
+\v 7 So¦124962 to keep my head from getting too big because of those incredible revelations¦124966, I was given¦124971 a ‘thorn¦124973’ in my body¦124975—Satan's¦124977 messenger¦124976 to harass me and¦124962 keep me from becoming conceited.
+\v 8 Three times I begged the \nd master¦124989\nd* that it might leave me
+\v 9 and¦124995 he told me, “Is my grace¦125001 good enough for you? \add My¦125002\add* power reaches its conclusion through weakness.” Therefore¦125012 I'll¦125014 quite gladly¦125011 boast¦125014 about my weaknesses so that the \nd messiah's¦125026\nd* power can take residence¦125020 in me.
+\v 10 So¦125027 then I take pleasure¦125028 in weaknesses¦125030, in insults¦125032 and hardships¦125035, in persecutions¦125037 and distresses¦125040 for \nd Messiah¦125042\nd* because¦125044 whenever¦125043 I might be faltering¦125045, that's when I'm powerful¦125047.
+\s1 Paul's concerns about the believers there
+\rem /s1 Paul's final appeal; Paul's Concern for the Corinthian Church; Paul's Concern for the Corinthians
+\p
+\v 11 You have forced me to become¦125049 foolish¦125050, because I should have been commended¦125062 by you all because I'm no less than those ‘super¦125069 missionaries’ even if I am \add just\add* ‘nothing’.
+\v 12 Indeed, I persevered to deliver missionary results among¦125081 you all, as well as signs, wonders¦125090, and miracles¦125092.
+\v 13 In what way were you all treated less than the rest of the assemblies¦125101, except¦125102 that I didn't¦125107 load you with any burdens¦125108? Forgive¦125110 me for this mistake.
+\p
+\v 14 Now listen¦125115, I'm ready¦125118 to visit you all for the third¦125116 time and I won't¦125124 be aiming to burden¦125125 you down because I'm not after what you have, but rather \add my interest is in\add* you yourselves. The children shouldn't¦125124 be saving \add to support\add* the parents, but the parents \add should support\add* the children.
+\v 15 I'm happy to invest everything I have, including¦125152 all of myself, for the sake of your¦125157 souls¦125156. Am I being loved¦125165 less the more that I love you all?
+\p
+\v 16 So that's that. I'm didn't¦125169 burden¦125172 you all, but¦125167 being¦125176 crafty¦125177 \add by nature\add*, I took¦125180 you all by trickery.
+\v 17 Did any of those that I sent¦125184 to you exploit¦125189 you all?
+\v 18 I urged¦125191 Titos \add to go there\add* along with another believer. Surely¦125197 Titos must have exploited¦125198 you all? \add No,\add* didn't¦125197 we all do the same things as \add guided by\add* the same spirit¦125204.
+\p
+\v 19 \add Now\add* you're already supposing¦125213 that we're defending¦125216 \add ourselves\add*? \add Actually,\add* we're speaking¦125223 \add as followers of\add* \nd Messiah¦125222\nd* knowing that \nd God¦125220\nd* is watching, and¦125225 dear friends, everything has been \add with the aim of\add* building¦125231 you up.
+\v 20 You see, I'm worried that when I come¦125236, I might not find you \add living\add* how I'd want, and you all might not find me how you'd want. \add I'm worried that I might find\add* strife¦125250 and jealousy¦125252, anger and selfish¦125255 ambition¦125255, slander¦125256 and gossip¦125257, and conceit¦125258 and disturbances¦125260.
+\v 21 \add I'm worried that\add* when I come¦125264, \nd God¦125271\nd* will humble¦125268 me there with you¦125274 all, and I might be upset about many who've sinned¦125279 in the past and haven't repented¦125282 from the impurity¦125285 and sexual¦125287 immorality¦125287 and self-centred living that they¦125291 practiced¦125291.
+\c 13
+\s1 Testing yourselves
+\rem /s1 Paul's Final Advice; Final Warnings and Greetings; Further Warning
+\p
+\v 1 This is the third time¦125293 that I'll be coming¦125297 there to you¦125300 all. ‘Every account must¦125309 be confirmed by at least two¦125304, \add preferably\add* three¦125308, witnesses¦125305.’\x + \xo 13:1: \xt Deu 17:6; 19:15.\x*
+\v 2 I said¦125312 previously on my second¦125318 visit and while I'm absent¦125320 I'll¦125336 say it again to those who sinned¦125324 previously and to all the rest \add as well\add*: if I come¦125331 back \add to find\add* the same¦125333 again, I won't¦125335 be sparing¦125336 anyone¦125336,
+\v 3 because you're all wanting proof¦125339 that¦125341 I speak¦125344 from \nd Messiah¦125345\nd* who isn't¦125350 incapable of \add handling\add* you all but is quite able \add to do what he wants\add*.
+\v 4 Although he was executed¦125359 in weakness¦125361, \add now\add* he's living by God's power. We also falter¦125370 in him, but will be living with him by God's power towards¦125384 you all.
+\p
+\v 5 Test yourselves to check if you're \add living\add* in the faith¦125392—you yourselves can decide that. Or can't¦125396 you all recognise¦125397 whether¦125388 or not \nd Messiah¦125400 Yeshua\nd* is living in you? Surely you're not that unqualified¦125408?
+\v 6 But I'm hoping¦125410 that you¦125413 all will know that we're not unqualified¦125418.
+\v 7 And we're asking \nd God¦125424\nd* that you won't¦125425 do¦125426 evil¦125428—not so that we'll be seen¦125434 to be approved¦125433, but¦125421 so that you all will be doing¦125441 good¦125440, \add even if\add* we may seem unqualified¦125446,
+\v 8 because¦125449 we're not able \add to do\add* anything¦125451 against¦125452 the truth—only \em for\em* the truth.
+\v 9 So we're glad whenever¦125461 we falter¦125463, but you all might be quite capable as we also desire that you all \add grow to\add* perfection.
+\v 10 I'm writing¦125480 these¦125477 things while I'm absent¦125478, so that when I'm present¦125482 I won't¦125483 have to treat¦125485 \add you all\add* severely¦125484 according¦125486 to the authority¦125488 that the \nd master¦125493\nd* gave¦125494 me for building¦125497 and¦125498 not for tearing¦125501 down.
+\s1 Paul's final greetings and prayer
+\rem /s1 Paul's Final Greetings; Final Greetings and Benediction
+\p
+\v 11 Finally¦125502, brothers¦125503 and sisters¦125503, stay happy, be prepared¦125506 and be comforted¦125507, be united with each other and at peace. \add May\add* \nd God¦125514\nd* \add who's the source\add* of love and peace be with all of you.
+\p
+\v 12 Greet¦125522 each other with an innocent kiss¦125526.
+\p The believers here send their greetings¦125528 to all of you¦125529.\f + \fr 13:12 \ft Some translations split this verse into two, so this sentence becomes v13 and our v13 becomes v14.\f*
+\p
+\v 13 \add May\add* the grace¦125534 of the \nd master¦125536 Yeshua Messiah¦125538\nd* and God's love¦125541 and the holy \nd spirit's¦125549\nd* companionship be with all of you¦125552.

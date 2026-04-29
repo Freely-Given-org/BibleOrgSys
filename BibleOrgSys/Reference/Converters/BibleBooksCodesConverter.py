@@ -277,11 +277,12 @@ class BibleBooksCodesConverter:
     # end of BibleBooksCodesConverter.__len__
 
 
-    def importDataToPythonIfNecessary( self ):
+    def importDataToPython( self ):
         """
         Loads (and pivots) the data (not including the header) into suitable Python containers to use in a Python program.
         (Of course, you can just use the elementTree in self._XMLTree if you prefer.)
         """
+        if self.__DataDicts: return self.__DataDicts
         def makeList( parameter1, parameter2 ):
             """
             Returns a list containing all parameters. Parameter1 may already be a list.
@@ -752,7 +753,7 @@ class BibleBooksCodesConverter:
         import pickle
 
         assert len(self._XMLTree)
-        self.importDataToPythonIfNecessary()
+        self.importDataToPython()
         assert len(self.__DataDicts)
 
         if not filepath:
@@ -787,7 +788,7 @@ class BibleBooksCodesConverter:
 
 
         assert len(self._XMLTree)
-        self.importDataToPythonIfNecessary()
+        self.importDataToPython()
         assert len(self.__DataDicts)
 
         if not filepath:
@@ -839,7 +840,7 @@ class BibleBooksCodesConverter:
         import json
 
         assert len(self._XMLTree)
-        self.importDataToPythonIfNecessary()
+        self.importDataToPython()
         assert len(self.__DataDicts)
 
         if not filepath:
@@ -860,7 +861,7 @@ class BibleBooksCodesConverter:
         Note: We can't/don't save the XML header data in the TSV file.
         """
         assert len(self._XMLTree)
-        self.importDataToPythonIfNecessary()
+        self.importDataToPython()
         assert len(self.__DataDicts)
 
         if not filepath:
@@ -997,7 +998,7 @@ class BibleBooksCodesConverter:
 
 
         assert len(self._XMLTree)
-        self.importDataToPythonIfNecessary()
+        self.importDataToPython()
         assert len(self.__DataDicts)
 
         if not filepath:
@@ -1084,7 +1085,7 @@ def briefDemo() -> None:
         # Demo the converter object
         bbcc = BibleBooksCodesConverter().loadAndValidate() # Load the XML
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, bbcc ) # Just print a summary
-        OAD = bbcc.importDataToPythonIfNecessary()['OSISAbbreviationDict']
+        OAD = bbcc.importDataToPython()['OSISAbbreviationDict']
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nSample output:" )
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nOSISAbbreviationDict: ({len(OAD)}) {sorted(OAD)}" )
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n{OAD['WIS']=}" )
@@ -1107,7 +1108,7 @@ def fullDemo() -> None:
     else: # Must be demo mode
         # Demo the converter object
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, bbcc ) # Just print a summary
-        importedData = bbcc.importDataToPythonIfNecessary()
+        importedData = bbcc.importDataToPython()
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nSample output:" )
         allKeys = importedData.keys()
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nallKeys: ({len(allKeys)}) {allKeys}" )

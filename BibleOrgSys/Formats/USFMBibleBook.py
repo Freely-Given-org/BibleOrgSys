@@ -128,7 +128,7 @@ class USFMBibleBook( BibleBook ):
                         thisText = text[ix:iMIndex].rstrip()
                         self.addLine( marker, thisText )
                         ix = iMIndex + 1 + len(insideMarker) + len(nextSignificantChar) # Get the start of the next text -- the 1 is for the backslash
-                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Did a split from {}:{!r} to {}:{!r} leaving {}:{!r}".format( addMarker, addText, marker, thisText, insideMarker, text[ix:] ) )
+                        dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Did a split from {}:{!r} to {}:{!r} leaving {}:{!r}".format( addMarker, addText, marker, thisText, insideMarker, text[ix:] ) )
                         marker = insideMarker # setup for the next line
                 if ix != 0: # We must have separated multiple lines
                     text = text[ix:] # Get the final bit of the line
@@ -414,6 +414,7 @@ class USFMBibleBook( BibleBook ):
         loadErrors:list[str] = []
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "USFMBibleBook.load():", type(originalBook), type(originalBook.lines), len(originalBook.lines), originalBook.lines[0] )
         for marker,text in originalBook.lines: # Always process a line behind in case we have to combine lines
+            # if self.workName=='SR-GNT' and self.BBB=='MRK' and C=='5' and V=='26': halt
             if DEBUGGING_THIS_MODULE and gotUWEncoding:
                 dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'''\n'{self.workName}' {self.BBB} USFMBible.load() loop for line {marker}='{text}' for alignment level = {alignmentVariables['level']} (Max so far = {alignmentVariables['maxLevel']})
     Alignment text = {alignmentVariables['text']!r}{chr(10) if alignmentVariables['text'] else ''}    Alignment words = {alignmentVariables['words']!r}''' )
@@ -566,13 +567,13 @@ class USFMBibleBook( BibleBook ):
                         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"HereXX with {lastMarker} now {marker}" )
                         if not lastText.endswith(' '): lastText += ' ' # Not always good to add a space, but it's their fault!
                         lastText +=  '\\' + marker + ' ' + text
-                        dPrint( 'Never', DEBUGGING_THIS_MODULE, f"{self.BBB} {C} {V} Appended1a {marker}='{text}' to get combined line {lastMarker}='{lastText}'" )
+                        dPrint( 'Never', DEBUGGING_THIS_MODULE, f"USFMBibleBook.load() {self.BBB} {C} {V} Appended1a {marker}='{text}' to get combined line {lastMarker}='{lastText}'" )
                         marker = text = None # Seems to make no difference
                     elif marker=='p~' and (lastMarker in ('v', 'p~', 'q','pi','qm','li') or lastMarker in BibleOrgSysGlobals.USFMParagraphMarkers):
                         dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"HereYY with {lastMarker} now {marker}='{text}'" )
                         if not lastText.endswith(' '): lastText += ' ' # Not always good to add a space, but it's their fault!
                         lastText += text
-                        vPrint( 'Never', DEBUGGING_THIS_MODULE, f"{self.BBB} {C} {V} Appended1b {marker}='{text}' to get combined line {lastMarker}='{lastText}'" )
+                        vPrint( 'Never', DEBUGGING_THIS_MODULE, f"USFMBibleBook.load()  {self.BBB} {C} {V} Appended1b {marker}='{text}' to get combined line {lastMarker}='{lastText}'" )
                         marker = text = None # Seems to make no difference
                     elif marker == 'w' and lastMarker in ('ts','sp'): # \\ts: A common unfoldingWord USFM encoding error; \\sp in Hindu SNG
                         logging.error( f"USFMBibleBook.load() '{self.workName}' {self.BBB}_{C}:{V} added new paragraph for encoding error after {lastMarker}='{lastText}': {marker}='{text}'" )
@@ -675,6 +676,7 @@ class USFMBibleBook( BibleBook ):
                         loadErrors.append( f"{self.BBB} {C}:{V} Found Bad USFM line with {marker=} {text=}" )
                         logging.critical( f"Bad USFM line at {self.BBB} {C}:{V} with {marker=} {text=}" )
                     self.addPriorityError( 100, C, V, f"Found bad USFM line in file with {marker=} {text=}" )
+            if (text and '.Καὶ' in text) or (lastText and '.Καὶ' in lastText): halt
             if marker and not lastMarker:
                 lastMarker, lastText = marker, text
 

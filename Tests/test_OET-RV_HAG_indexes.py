@@ -35,8 +35,8 @@ import sys
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Formats.ESFMBible import ESFMBible
-from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntryList, InternalBibleEntry
-from BibleOrgSys.Internals.InternalBibleIndexes import InternalBibleBookCVIndex, InternalBibleBookSectionIndex
+from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntryList, InternalBibleEntry, \
+    InternalBibleBookCVIndex, InternalBibleBookSectionIndex
 
 
 LAST_MODIFIED_DATE = '2026-04-13' # by RJH
@@ -279,8 +279,8 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Formats.ESFMBible import ESFMBible
 from BibleOrgSys.Formats.ESFMBibleBook import ESFMBibleBook
-from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntryList, InternalBibleEntry
-from BibleOrgSys.Internals.InternalBibleIndexes import InternalBibleBookCVIndex, InternalBibleBookSectionIndex
+from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntryList, InternalBibleEntry, \
+    InternalBibleBookCVIndex, InternalBibleBookSectionIndex
 
 
 LAST_MODIFIED_DATE = '2026-04-22' # by RJH

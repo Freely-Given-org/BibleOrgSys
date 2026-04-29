@@ -6,9 +6,9 @@
 
 use compact_str::CompactString;
 
-use crate::entry_extra_list::InternalBibleExtraList;
+use crate::entry_extras::InternalBibleExtraList;
 use crate::error::ValidationError;
-use crate::markers::{custom_content, custom_nesting, is_end_marker, ExtraType};
+use crate::markers::{ExtraType, custom_content, custom_nesting, is_end_marker};
 
 /// Represents an "extra" element that was extracted from the main text flow.
 ///
@@ -37,7 +37,7 @@ use crate::markers::{custom_content, custom_nesting, is_end_marker, ExtraType};
 /// assert_eq!(extra.extra_type(), ExtraType::Footnote);
 /// assert_eq!(extra.index(), 15);
 /// ```
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, rkyv::Archive, rkyv::Serialize, rkyv::Deserialize)]
 pub struct InternalBibleExtra {
     extra_type: ExtraType,
     index: usize,
@@ -71,7 +71,7 @@ impl InternalBibleExtra {
             return Err(ValidationError::InvalidNewlineInNote);
         }
         if clean_note_text.contains('\\') {
-            return Err(ValidationError::BackslashInCleanText);
+            return Err(ValidationError::BackslashInCleanText(format!("{} extra: '{}'", extra_type, clean_note_text)));
         }
 
         Ok(Self {
@@ -144,11 +144,7 @@ impl InternalBibleExtra {
 
 impl std::fmt::Display for InternalBibleExtra {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(
-            f,
-            "Extra({} @ {} = {:?})",
-            self.extra_type, self.index, self.note_text
-        )
+        write!(f, "Extra({} @ {} = {:?})", self.extra_type, self.index, self.note_text)
     }
 }
 
@@ -185,10 +181,10 @@ impl std::fmt::Display for InternalBibleExtra {
 /// assert_eq!(entry.clean_text(), "In the beginning...");
 ///
 /// // End marker
-/// let end = InternalBibleEntry::end_marker("¬v").unwrap();
+/// let end = InternalBibleEntry::end_marker("¬v", "").unwrap();
 /// assert!(end.is_end_marker());
 /// ```
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, rkyv::Archive, rkyv::Serialize, rkyv::Deserialize)]
 pub struct InternalBibleEntry {
     marker: CompactString,
     original_marker: Option<CompactString>,
@@ -229,9 +225,6 @@ impl InternalBibleEntry {
         }
 
         // Validate texts
-        if clean_text.contains('\\') {
-            return Err(ValidationError::BackslashInCleanText);
-        }
         if clean_text.contains('\n') || clean_text.contains('\r') {
             return Err(ValidationError::InvalidNewlineInAdjustedText);
         }
@@ -240,6 +233,10 @@ impl InternalBibleEntry {
         }
         if original_text.contains('\n') || original_text.contains('\r') {
             return Err(ValidationError::InvalidNewlineInOriginalText);
+        }
+
+        if clean_text.contains('\\') {
+            return Err(ValidationError::BackslashInCleanText(format!("{} marker: '{}'", marker, clean_text)));
         }
 
         Ok(Self {
@@ -276,12 +273,15 @@ impl InternalBibleEntry {
 
     /// Create an end marker entry (e.g., `¬v`, `¬p`).
     ///
-    /// End markers only have `marker` and empty `clean_text` set.
+    /// End markers only have `marker` and `clean_text` set.
     ///
     /// # Errors
     ///
     /// Returns `ValidationError` if the marker doesn't start with `¬`.
-    pub fn end_marker(marker: impl Into<CompactString>) -> Result<Self, ValidationError> {
+    pub fn end_marker(
+        marker: impl Into<CompactString>,
+        text: impl Into<CompactString>,
+    ) -> Result<Self, ValidationError> {
         let marker = marker.into();
         if !is_end_marker(&marker) {
             return Err(ValidationError::InvalidEndMarker(marker.to_string()));
@@ -290,7 +290,7 @@ impl InternalBibleEntry {
             marker,
             original_marker: None,
             adjusted_text: None,
-            clean_text: CompactString::new(""),
+            clean_text: text.into(),
             extras: None,
             original_text: None,
         })
@@ -408,7 +408,7 @@ impl InternalBibleEntry {
     /// Check if this entry has extras.
     #[inline]
     pub fn has_extras(&self) -> bool {
-        self.extras.as_ref().map_or(false, |e| !e.is_empty())
+        self.extras.as_ref().is_some_and(|e| !e.is_empty())
     }
 
     // --- Mutators ---
@@ -421,10 +421,7 @@ impl InternalBibleEntry {
     ///
     /// Panics if extras is not None (use with caution).
     pub fn set_clean_text(&mut self, new_value: impl Into<CompactString>) {
-        assert!(
-            self.extras.is_none(),
-            "Cannot set clean_text when extras exist"
-        );
+        assert!(self.extras.is_none(), "Cannot set clean_text when extras exist");
         let new_value = new_value.into();
         self.clean_text = new_value.clone();
         self.adjusted_text = Some(new_value.clone());
@@ -435,7 +432,11 @@ impl InternalBibleEntry {
 impl std::fmt::Display for InternalBibleEntry {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let abbrev = if self.clean_text.len() > 80 {
-            format!("{}...{}", &self.clean_text[..40], &self.clean_text[self.clean_text.len()-40..])
+            format!(
+                "{}...{}",
+                &self.clean_text[..40],
+                &self.clean_text[self.clean_text.len() - 40..]
+            )
         } else {
             self.clean_text.to_string()
         };
@@ -456,13 +457,7 @@ mod tests {
 
     #[test]
     fn test_internal_bible_extra_new() {
-        let extra = InternalBibleExtra::new(
-            ExtraType::Footnote,
-            15,
-            r"\fr 1:1 \ft Note",
-            "Note",
-        )
-        .unwrap();
+        let extra = InternalBibleExtra::new(ExtraType::Footnote, 15, r"\fr 1:1 \ft Note", "Note").unwrap();
 
         assert_eq!(extra.extra_type(), ExtraType::Footnote);
         assert_eq!(extra.index(), 15);
@@ -482,7 +477,7 @@ mod tests {
 
         // Backslash in clean text
         let result = InternalBibleExtra::new(ExtraType::Footnote, 0, "note", "\\bad");
-        assert!(matches!(result, Err(ValidationError::BackslashInCleanText)));
+        assert!(matches!(result, Err(ValidationError::BackslashInCleanText(_))));
     }
 
     #[test]
@@ -506,10 +501,10 @@ mod tests {
 
     #[test]
     fn test_internal_bible_entry_end_marker() {
-        let entry = InternalBibleEntry::end_marker("¬v").unwrap();
+        let entry = InternalBibleEntry::end_marker("¬v", "1").unwrap();
         assert!(entry.is_end_marker());
         assert_eq!(entry.marker(), "¬v");
-        assert_eq!(entry.clean_text(), "");
+        assert_eq!(entry.clean_text(), "1");
         assert!(entry.original_marker().is_none());
         assert!(entry.adjusted_text().is_none());
     }
@@ -530,26 +525,20 @@ mod tests {
 
         // Invalid marker characters
         let result = InternalBibleEntry::new("\\v", "v", "text", "text", None, "text");
-        assert!(matches!(
-            result,
-            Err(ValidationError::InvalidMarkerCharacters(_))
-        ));
+        assert!(matches!(result, Err(ValidationError::InvalidMarkerCharacters(_))));
 
         // Backslash in clean text
         let result = InternalBibleEntry::new("v", "v", "text", "\\bad", None, "text");
-        assert!(matches!(result, Err(ValidationError::BackslashInCleanText)));
+        assert!(matches!(result, Err(ValidationError::BackslashInCleanText(_))));
 
         // Invalid end marker
-        let result = InternalBibleEntry::end_marker("v");
+        let result = InternalBibleEntry::end_marker("v", "");
         assert!(matches!(result, Err(ValidationError::InvalidEndMarker(_))));
     }
 
     #[test]
     fn test_clean_text_no_underlines() {
         let entry = InternalBibleEntry::simple("p", "word_ _with_ underlines_here");
-        assert_eq!(
-            entry.clean_text_no_underlines(),
-            "word with underlines here"
-        );
+        assert_eq!(entry.clean_text_no_underlines(), "word with underlines here");
     }
 }

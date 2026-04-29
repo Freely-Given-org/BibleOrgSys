@@ -1,0 +1,82 @@
+OET-RV HAG 81
+0 marker='id' text="HAG - Open English Translation—Readers' Version (OET-RV) v0.1.03"
+1 marker='usfm' text='3.0'
+2 marker='ide' text='UTF-8'
+3 marker='rem' text='ESFM v0.6 HAG'
+4 marker='rem' text='WORDTABLE OET-LV_OT_word_table.tsv'
+5 marker='h' text='Haggai'
+6 marker='toc1' text='Haggai'
+7 marker='toc2' text='Haggai'
+8 marker='toc3' text='Hag.'
+9 marker='mt1' text='Haggai'
+10 marker='is1' text='Introduction'
+11 marker='ip' text="This document contains a number of messages from Yahweh that the prophet Haggai passed on to the people in Yerushalem (Jerusalem). These events happened around 520 before Yeshua/Jesus (B.C.), after many of God's people had gone back to Yerushalem after being taken into captivity in Babylon. However, even though they'd been back for a considerable time, they hadn't worked on rebuilding the temple. Therefore, these messages from Yahweh encourage the people to change their priorities and obey God and rebuild the temple. God then promised to prosper the people and bless their living situation."
+12 marker='iot' text='Main components of this account'
+13 marker='io1' text="God's command to rebuild the temple \\ior 1:1-15\\ior*"
+14 marker='io1' text='Stories of comfort and hope \\ior 2:1-23\\ior*'
+15 marker='rem' text='This is still a very early look into the unfinished text of the Open English Translation of the Bible. Please double-check the text in advance before using in public.'
+16 marker='ie' text=''
+17 marker='c' text='1'
+18 marker='s1' text="God's command to rebuild the temple"
+19 marker='rem' text="/s1 The Lord's Command to Rebuild the Temple; A Call to Rebuild the Temple; Zerubbabel restorer of the temple; A Call to Build the House of the Lord; The Command to Rebuild the Temple"
+20 marker='p' text=''
+21 marker='v' text="1 In Dareyavesh's \\add (Darius's¦375563)\\add* second year¦375561 as king¦375564 \\add of Persia\\add*, on¦375565 the 1st of the sixth¦375566 month, the prophet¦375577 Haggai¦375576 brought Yahweh's¦375573 message¦375571 to the governor¦375584 of Yehudah¦375585, Zerubavel¦375580 (Shealtiyel's¦375583 son), and to the high¦375593 priest¦375592, Yehoshua (Yehotsadak's¦375591 son), telling \\add them that\\add*\\x + \\xo 1:1: \\xt Ezr 4:24–5:2; 6:14.\\x*"
+22 marker='v' text="2 Commander-in-chief Yahweh says, “These people¦375601 say that \\add ≈it's not the right\\add* time to rebuild¦375612 Yahweh's¦375598 \\add ≈residence\\add*.”"
+23 marker='p' text=''
+24 marker='v' text='3 Then Yahweh¦375618 \\add ≈gave this message¦375616\\add* to the prophet¦375622 Haggai¦375621 \\add to tell the people\\add*:'
+25 marker='m' text=''
+26 marker='v' text="4 Is it a time¦375625 for all of you to live in your panelled¦375630 houses¦375629, while \\add ≈Yahweh's temple lies in ruins\\add*?"
+27 marker='v' text="5 \\add ≈So¦375635\\add* now Commander-in-chief Yahweh¦375638 says¦375637: “\\add ≈Decide what you're all going to do\\add*."
+28 marker='v' text="6 You've all planted a lot, \\add ≈but only harvested¦375648 a little¦375649. You've eaten¦375650, but it never fills you. You all drink, but never enough to satisfy¦375653 you. You put on clothes, but never feel warm enough. You earn wages¦375664, but your pockets seem to be full of holes\\add*.”"
+29 marker='p' text=''
+30 marker='v' text="7 \\add ≈So\\add* Commander-in-chief Yahweh¦375673 says¦375672 \\add again\\add*: “\\add ≈Decide what you're all going to do\\add*."
+31 marker='v' text='8 Go up into the hills¦375682 and bring¦375683 back timber to build¦375685 the \\add ≈temple\\add*. This will please¦375687 and honour¦375690 me,” says¦375692 Yahweh¦375693.'
+32 marker='p' text=''
+33 marker='v' text="9 “You \\add ≈expected\\add* much, but¦375699 \\add gained\\add* little¦375700. Anything you brought¦375701 home¦375702, I blew away \\add again\\add*. Why? Commander-in-chief Yahweh¦375708 says it's because my residence is still in ruins, while you're all \\add busy\\add* \\add ≈working on\\add* your own houses."
+34 marker='v' text="10 That's why the sky withholds the dew and¦375731 the soil withholds its¦375733 crops."
+35 marker='v' text="11 I've¦375735 \\add ≈summoned¦375735\\add* a drought¦375736 onto the land and into the hills¦375742, onto the grain¦375745 and the new wine, onto the oil and crops from the ground, onto \\add both\\add* people and livestock, and onto \\add ≈everything you all do\\add*.”"
+36 marker='s1' text='The people start rebuilding'
+37 marker='rem' text="/s1 The People Obey the Lord's Command; Obedience to God's Call"
+38 marker='p' text=''
+39 marker='v' text="12 Then Shealtiyel's son Zerubavel and Yehotsadak's son Yehoshua, the high priest¦375779, and all the rest of the people listened¦375769 to the voice¦375785 of their god Yahweh \\add ≈via\\add* the words¦375790 of the prophet¦375792 Haggai¦375791, because Yahweh their god had sent him, and the people \\add ≈respected\\add* Yahweh."
+40 marker='v' text="13 Then¦375802 Yahweh's¦375805 messenger¦375804 Haggai¦375803 passed this message¦375806 from Yahweh onto the people¦375808, “Yahweh declares that I'm with¦375806 you¦375811 all.”"
+41 marker='v' text="14 Then¦375816 Yahweh \\add ≈inspired\\add* Shealtiyel's son Zerubavel, the governor¦375825 of Yehudah¦375826, \\add ≈inspired\\add* Yehotsadak's son Yehoshua, the high¦375835 priest¦375834, and \\add ≈inspired\\add* all the rest of the people¦375841, and they came¦375842 and \\add ≈started\\add* work¦375844 on the \\add ≈temple\\add* for their¦375849 god¦375849, Commander-in-chief Yahweh,"
+42 marker='v' text='15 on¦375856 the twenty-fourth day¦375852 of the sixth¦375856 month¦375855 of the second year¦375857 of Dareyavesh the king¦375860 \\add of Persia\\add*.'
+43 marker='c' text='2'
+44 marker='s1' text='The splendour of the new temple'
+45 marker='rem' text="/s1 The Future Glory of the Temple; The New Temple's Splendour; The Splendour of the New Temple; The Promised Glory of the New House"
+46 marker='p' text=''
+47 marker='v' text='1 On the 21st of the seventh¦375862 month \\add (about a month later)\\add*, Yahweh¦375869 \\add ≈spoke\\add* \\add again\\add* through the prophet¦375873 Haggai¦375872:'
+48 marker='v' text="2 Please \\add ≈ask\\add* Shealtiyel's son Zerubavel, the governor¦375885 of Yehudah¦375886, and \\add ≈ask\\add* Yehotsadak's son Yehoshua, the high¦375894 priest¦375893, and \\add ≈ask\\add* the rest of the people¦375898,"
+49 marker='v' text='3 “\\add ≈Are there any of you still alive who saw¦375905 the splendour¦375910 of the former¦375911 temple\\add*? How does it look to you now? \\add ≈It must now seem pretty much like \\+em nothing¦375919\\+em* in¦375902 comparison\\add*.\\x + \\xo 2:3: \\xt Ezr 3:12.\\x*'
+50 marker='v' text="4 Yahweh is telling you now, Zerubavel, to be strong. And be strong, high¦375935 priest¦375934 Yehoshua, and¦375922 be strong all you people¦375939 of the land. Commander-in-chief Yahweh declares that I'm with you \\add ≈as you work¦375944\\add*."
+51 marker='v' text="5 \\add ≈That's what I promised¦375955 your¦375964 ancestors when they\\add* came¦375960 out of Egypt¦375961,\\x + \\xo 2:5: \\xt Exo 29:45-46.\\x* and¦375962 my spirit¦375962 remains \\add ≈among¦375964 you¦375960\\add*. Don't¦375965 be afraid¦375967,"
+52 marker='v' text="6 because¦375970 Commander-in-chief Yahweh¦375973 says¦375972 that in a little¦375977 while, I'll¦375979 shake¦375980 the heavens¦375983 and the earth¦375986, the sea¦375989 and the dry land, once more.\\x + \\xo 2:6: \\xt Heb 12:26.\\x*"
+53 marker='v' text="7 I'll shake¦375994 all the nations, and¦375994 they'll come \\add here bringing\\add* their treasure. Then¦375994 I'll fill this \\add ≈temple\\add* with \\add my\\add* splendour¦376010, says Commander-in-chief Yahweh¦376012."
+54 marker='v' text='8 Commander-in-chief Yahweh¦376020 declares that the gold¦376018 and¦376017 silver¦376016 \\add belong¦376017\\add* to me.'
+55 marker='v' text='9 \\add *I\\add* declare that this \\add ≈temple\\add* will be \\add ≈greater in the future than it¦376024 was in the past\\add*, and \\add also\\add* that I will give¦376037 peace¦376038 and prosperity to this place¦376035.”'
+56 marker='s1' text='Haggai consults the priests'
+57 marker='rem' text='/s1 Blessings Promised for Obedience; Blessings for a Defiled People; A Rebuke and a Promise; The Prophet Consults the Priests'
+58 marker='p' text=''
+59 marker='v' text="10 On the 24th of the ninth¦376046 month in¦376044 \\add King\\add* Dareyavesh's second year¦376047 \\add (about two¦376048 months later)\\add*, Yahweh¦376053 \\add ≈gave a message¦376051\\add* to the prophet¦376057 Haggai¦376056:"
+60 marker='v' text="11 Commander-in-chief Yahweh¦376062 says¦376061, “Ask the priests¦376069 about \\add Mosheh's\\add* \\add ≈instructions¦376070\\add*."
+61 marker='v' text='12 ‘\\add ≈If a priest took some meat¦376078 that had been offered to God and carried it wrapped in¦376081 a piece of clothing, then if the clothing touched¦376083 some other food, would that other food \\add* become¦376102 holy?’ ”'
+62 marker='p' text="“No, it wouldn't,” the priests¦376104 \\add ≈replied\\add*."
+63 marker='p' text=''
+64 marker='v' text='13 Then¦376108 Haggai¦376109 asked, “\\add But¦376108\\add* if a person became unclean by touching a corpse¦376115 and¦376108 then¦376108 touched any of that \\add food\\add*, would it become unclean?”\\x + \\xo 2:13: \\xt Num 19:11-22.\\x*'
+65 marker='p' text='“\\add Yes,\\add* it would become unclean,” the priests¦376121 answered¦376120.'
+66 marker='p' text=''
+67 marker='v' text="14 “\\add ≈That's what Yahweh¦376139 declares about you\\add* people¦376129,” Haggai¦376126 \\add ≈continued¦376125\\add*. “\\add He says that\\add* \\add ≈that's how this country¦376134 acts towards him\\add*. \\add ≈Your actions are dishonourable, and¦376125 then¦376125 that same disrespect transfers to your offerings\\add*."
+68 marker='rem' text='/s1 The Lord Promises His Blessing'
+69 marker='v' text="15 So¦376151 now think back to before¦376161 stones were being laid for Yahweh's¦376169 temple."
+70 marker='v' text='16 \\add ≈During that time\\add*, when someone went to get twenty \\add containers of grain\\add*, there were \\add only\\add* ten¦376178 there, and when someone went to fill fifty¦376184 \\add jars of wine\\add* from the vat, there was \\add only enough for\\add* twenty.'
+71 marker='v' text="17 Yahweh¦376205 declares that he \\add ≈caused\\add* blight¦376191 and mildew¦376192 and hail to affect your work¦376197, \\add ≈but¦376192\\add* you \\add still\\add* didn't¦376199 turn to him."
+72 marker='v' text="18 Think back to the time from when the foundation¦376225 of Yahweh's¦376228 temple¦376226 was laid, until today (this 24th of the ninth¦376219 month¦376219). Consider that."
+73 marker='v' text="19 Is \\add any grain\\add* left in¦376234 the storehouse for seed? \\add What's more,\\add* the vines, and the fig¦376238 trees and pomegranate¦376239 trees and olive trees, haven't produced fruit. \\add However,\\add* Yahweh will bless you from today onwards.”"
+74 marker='s1' text="God's promise to Zerubavel"
+75 marker='rem' text="/s1 The Lord's Promise to Zerubbabel; God's Promise to Zerubbabel; Promises for Zerubbabel; Zerubbabel the Lord's Signet Ring"
+76 marker='p' text=''
+77 marker='v' text='20 Then Yahweh¦376254 gave a second¦376256 message¦376252 to Haggai¦376259 on¦376260 the 24th:'
+78 marker='v' text="21 Tell Zerubavel, the governor¦376269 of Yehudah¦376271, “I'm \\add about¦376274 to\\add* shake¦376274 the heavens¦376277 and the earth¦376280."
+79 marker='v' text="22 I'll overthrow the thrones¦376283 of kingdoms¦376288, and destroy¦376285 the strength¦376286 of the nations¦376288. I'll overthrow chariots¦376290 and riders—horses¦376293 and their¦376294 riders will fall and \\add related tribes\\add* \\add ≈will kill¦376285 each other\\add*."
+80 marker='v' text="23 Commander-in-chief Yahweh declares that on that day¦376299 he will take¦376305 Shealtiyel's son Zerubavel and \\add ≈cause him to place Yahweh's¦376303 mark on the nation\\add* like a signet¦376315 ring, because¦376316 he's been chosen¦376319.”"

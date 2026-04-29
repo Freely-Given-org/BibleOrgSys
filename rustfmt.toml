@@ -1,0 +1,2 @@
+# Increase the maximum line length allowed by rustfmt
+max_width = 120

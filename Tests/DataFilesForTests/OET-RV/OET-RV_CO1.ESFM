@@ -1,0 +1,698 @@
+\id 1CO - Open English Translation—Readers' Version (OET-RV) v0.1.55
+\usfm 3.0
+\ide UTF-8
+\rem ESFM v0.6 CO1
+\rem WORDTABLE OET-LV_NT_word_table.tsv
+\h 1 Corinthians
+\toc1 1 Corinthians
+\toc2 1 Corinthians
+\toc3 1 Cor.
+\mt2 Paul's first letter to the believers in
+\mt1 Corinth
+\is1 Introduction
+\ip This is Paul's first letter to the believers in Corinth that we have in our Bibles, but could easily have been his second letter to them. We deduce this from his reference to other letters, e.g., see https://www.GotQuestions.org/how-many-letters-Corinthians.html, but we don't have copies of them.
+\ip In this letter from Paul to the believers in Corinth, he wrote about his time preaching in Ephesus. He wrote this in order to help with problems experienced by various groups of believers that he founded there in Corinth. Corinth was the mother city of province of Achaia and Achaia was a province of Rome. At that time, Corinth was a large city that Greeks, Romans, and Jews all lived in, and because it was at the edge of the ocean, many buyers and sellers travelled there to board ships. So the city became famous because of its wealth, and many religions thrived there. There was also a lot of sexual immorality there as well as other ancient traditions. Paul lived there for almost two years in order to preach, and many people believed (Acts 18).
+\ip After around three years had passed while Paul was there in Ephesus preaching, he received a letter from the believers in Corinth (1 Cor. 7:1). Again he heard about the persecution of the believers and of other problems that faced the assembly of believers. In this letter, he advised them about those, and stressed to need to removal sexual offenders from their assembly. Then he answered questions concerning marriage, widows, spiritual gifts, and the dead coming back to life.
+\ip In chapter 13, it tells how love is an amazing gift from God to his people, in fact that's the overall theme of this document.
+\ip It's helpful to understand that this letter (and most Biblical documents) were dictated to scribes (who didn't have word processors) so in terms of sentence structure, the discourses are often not edited or placed in their time sequences more correctly as we would do with modern documents, but rather we notice a lot of long, rambling, run-on sentences (like this one) which we sometimes break into shorter sentences to help our readers, but try not to do it too often as it tends to remove the connections between the thoughts and can even lead to the bad habit of people quoting verses out of the context in which they were written.
+\iot Main components of Paul's letter
+\io1 Introduction \ior 1:1-9\ior*
+\io1 Divisions in the assembly \ior 1:10–4:21\ior*
+\io1 Paul scolds the assembly about sexual immorality \ior 5:1-13\ior*
+\io1 Handling persecution \ior 6:1-11\ior*
+\io1 Use of expulsion as believers \ior 6:12-20\ior*
+\io1 Answers about marriage \ior 7:1-40\ior*
+\io1 Honouring god with respect to idols \ior 8:1–11:1\ior*
+\io1 Expected behaviour from women in the assembly \ior 11:2-16\ior*
+\io1 Proper celebration of the master's dinner \ior 11:17-34\ior*
+\io1 Giftings given by the spirit and their use within the assembly \ior 12:1–14:40\ior*
+\io1 The coming to life of the messiah and of believers \ior 15:1-58\ior*
+\io1 The collection of aid for Christians in Yudea \ior 16:1-4\ior*
+\io1 Paul's future plans and conclusion \ior 16:5-24\ior*
+\rem This is still a very early look into the unfinished text of the Open English Translation of the Bible. Please double-check the text in advance before using in public.
+\ie
+\c 1
+\rem /s1 Greetings from Paul; Salutation
+\p
+\v 1 \add This letter is from\add* Paul, a missionary of \nd Messiah¦113005 Yeshua\nd* by God's will, and¦113011 from our¦113013 brother¦113014, Sosthenes¦113012.
+\p
+\v 2 \x + \xo 1:2: \xt Acts 18:1.\x*\add It's written\add* to God's assembly¦113016 there in Corinth¦113030—to those believers in Messiah Yeshua who've been declared guiltless \add and\add* who've been called¦113031 to live holy lives, along with all those who appeal to the power of our¦113041 and their¦113047 \nd master¦113040 Yeshua Messiah\nd*, everywhere¦113045.
+\p
+\v 3 Grace and peace¦113054 to you¦113052 all from \nd God¦113056\nd* our¦113058 father¦113057 and from the \nd master¦113060 Yeshua Messiah¦113062\nd*.
+\s1 Paul thanks God for what he's done
+\rem /s1 Paul Gives Thanks to God; Blessings in Christ; Thanksgiving
+\p
+\v 4 I always¦113067 thank¦113063 my¦113066 \nd God¦113065\nd* for you because¦113070 of his grace¦113072 that¦113076 he's given¦113077 you in \nd Messiah¦113080 Yeshua\nd*—
+\v 5 \add thanking him\add* that through him, you've all been enriched in every¦113084 way: in all speech¦113091 and in all knowledge¦113094
+\v 6 as \add our\add* testimony about the messiah\f + \fr 1:6 \ft Or alternatively: as the messiah's testimony…\f* was confirmed¦113101 in you¦113103 all
+\v 7 so that you all aren't¦113106 missing out on any \add spiritual\add* gift¦113110 as you eagerly¦113111 wait for our¦113116 \nd master¦113115 Yeshua¦113117 Messiah¦113118\nd* to be revealed.
+\v 8 He will sustain you to the end¦113124, so that you all will be blameless at the \add return\add* of our¦113132 \nd master¦113131 Yeshua Messiah¦113134\nd*.
+\v 9 The \nd God¦113152\nd* who called¦113155 you¦113155 into fellowship¦113157 with his¦113160 son \nd Yeshua Messiah¦113162\nd*, our¦113165 \nd master¦113164\nd*, is faithful.
+\s1 Follow Yeshua, not your leaders
+\rem /s1 True and false wisdom; Divisions in the Church
+\p
+\v 10 Now brothers¦113169 and sisters¦113169, I appeal to you in the name¦113172 of our¦113175 \nd master¦113174 Yeshua Messiah¦113177\nd*, that you all agree together \add so\add* that there'll be no divisions¦113188 among¦113186 you, but¦113167 rather that you'll be united in your thinking and in your purpose,
+\v 11 because¦113203, my¦113208 brothers¦113207 and¦113207 sisters¦113207, it's been made clear to me by some from Chloe's¦113212 household, that you are quarrelling¦113214 among¦113215 yourselves.
+\v 12 What I am talking¦113218 about is how many of you are claiming that you belong to Paul's group, \add for example,\add* or that you belong to Apollos' group, or that you belong to Cephas' group, or that you belong to Messiah's group.\x + \xo 1:12: \xt Acts 18:24.\x*
+\v 13 Has the \nd messiah¦113241\nd* been divided¦113239? Was it Paul who was executed¦113245 for you? Or were you immersed¦113254 \add in water\add* in the Paul's name¦113252?
+\p
+\v 14 I thank¦113255 God that I didn't immerse¦113262 any of you¦113261 other than Crispus¦113265 and¦113266 Gaius¦113267,\x + \xo 1:14: a \xt Acts 18:8; \xo b \xt Acts 19:29; Rom 16:23.\x*
+\v 15 so that no one can say¦113271 that I had immersed¦113280 you¦113280 into my \add own\add* name¦113278.
+\v 16 (\add Oh yes,\add* I also immersed Stephanas¦113285 and¦113282 his household¦113286, but¦113282 I don't¦113288 think I immersed anyone else.)\x + \xo 1:16: \xt 1Cor 16:15.\x*
+\v 17 Because¦113295 \nd Messiah¦113300\nd* didn't¦113294 send me to immerse¦113301 people \add in water\add*, but to preach¦113303 the good message—\add but\add* not with words of wisdom¦113307 just in case the messiah's \add execution¦113313 on the\add* post gets deprived of importance.
+\s1 The messiah is God's power and wisdom
+\rem /s1 Christ the Power and Wisdom of God; The Wisdom of God
+\p
+\v 18 Because the account about the execution¦113321 on a post seems just stupid to non-believers, but on the contrary to us being¦113329 saved¦113329, it's God's power¦113331,
+\v 19 because¦113335 it¦113334 was written¦113334:\x + \xo 1:19: \xt Isa 29:14 (LXX).\x*
+\q1 ‘I will destroy¦113336 the wisdom¦113338 of the wise,
+\q1 and¦113341 I will nullify the understanding of the intelligent¦113343.’
+\m
+\v 20 Where is the wise \add person\add*? Where is the scholar? Where is the debater¦113353 of this age? Hasn't \nd God¦113360\nd* turned the wisdom¦113362 of the world¦113364 into foolishness¦113358?\x + \xo 1:20: a \xt Yob 12:17; Isa 19:12; 33:18; \xo b \xt Isa 44:25.\x*
+\p
+\v 21 Because¦113367 since¦113366 the world¦113377, in God's wisdom, didn't¦113374 know \add about\add* God through \add their\add* wisdom, God was pleased¦113383 to save¦113391 those who believe¦113393 through the ‘foolish¦113388’ message that was preached.
+\v 22 Jews ask for miraculous signs¦113397 and¦113401 Greeks¦113402 search for wisdom¦113403,
+\v 23 but we¦113406 preach \add about how \add* \nd Messiah¦113409\nd* was executed¦113410—something the Jews can't logic out, and which the Greeks see as \add total\add* foolishness¦113417.
+\v 24 Yet to those who \add God\add* calls, whether Jews or Greeks¦113426, \nd Messiah¦113427\nd* is \add both\add* God's power¦113430 and his wisdom¦113434,
+\v 25 because God's foolishness¦113438 is better than humankind's wisdom, and¦113445 God's weakness is greater than humankind's strength.
+\p
+\v 26 So brothers¦113459 and sisters¦113459, think about how \add God\add* called you. Not many of you were wise by human standards, not many were powerful¦113468, and not many were of noble¦113471 birth,
+\v 27 but¦113472 \nd God¦113479\nd* chose the foolish¦113474 things of the world to shame those \add considered to be\add* wise, and he chose the weak things of the world to shame those \add considered to be\add* strong¦113496.
+\v 28 He chose¦113506 the lowly and despised things of the world¦113502, and the things that are not, to nullify¦113517 the things that are,
+\v 29 so that no human can boast¦113520 to \nd God¦113526\nd*.
+\v 30 But¦113545 because of him, you are in \nd Messiah¦113533 Yeshua¦113534\nd*, who was made to become wisdom¦113538 from \nd God¦113542\nd* for us, and to become righteousness¦113543, and also sanctification and redemption¦113548,
+\v 31 so that, as per the scriptures: ‘Let anyone who boasts, boast about \nd Yahweh¦113555\nd*.’\x + \xo 1:31: \xt Jer 9:24.\x*
+\c 2
+\s1 Paul's preaching based on God's power
+\rem /s1 Proclaiming Christ Crucified; The Message about the Crucified Christ; Paul Preaches Wisdom
+\p
+\v 1 Brothers¦113561 and¦113557 sisters, when I visited you all, I didn't¦113563 try to impress you with flowery words or great wisdom¦113569 when I taught you about God's \add incredible plan\add*,
+\v 2 because¦113578 I had decided \add in advance\add* to display knowledge about nothing else other than \nd Yeshua Messiah¦113589\nd* and¦113590 his execution¦113592.
+\v 3 And so I \add came\add* to you¦113609 all in weakness¦113597 and fear¦113600 and with a lot of trembling¦113603,\x + \xo 2:3: \xt Acts 18:9.\x*
+\v 4 and my message¦113612 and my preaching wasn't delivered with persuasive¦113620 words of wisdom¦113623, but¦113610 \add rather\add* demonstrating¦113628 \add God's\add* \nd spirit¦113629\nd* and power¦113631,
+\v 5 so that your¦113635 faith¦113634 wouldn't be based on human¦113640 wisdom¦113639, but¦113641 on God's power¦113643.
+\s1 Spiritual vs human wisdom
+\rem /s1 The True Wisdom of God; Wisdom From the Spirit; God's Wisdom
+\p
+\v 6 However, \add when we're with\add* mature¦113650 \add believers\add*, we speak¦113647 wisdom—not the wisdom of this age, and¦113646 not the wisdom of the rulers¦113659 of this age who will come to nothing.
+\v 7 Instead we speak¦113666 about God's mysterious¦113671 and hidden¦113673 wisdom¦113669, which he had planned before¦113678 \add creation to enable us to enter his kingdom\add*.
+\v 8 None of the rulers¦113687 of this \add present\add* age understood it, because¦113694 if they had, they wouldn't¦113697 have crucified the \nd master¦113699\nd* of \add that¦113684 kingdom\add*,
+\v 9 but¦113711 as scripture says:\x + \xo 2:9: \xt Isa 64:4.\x*
+\q1 ‘No eye¦113708 has seen and no ear¦113712 has heard¦113714,
+\q1 and it's never entered any person's¦113718 mind¦113717,
+\q1 \add all\add* the things that¦113722 \nd God¦113725\nd* has prepared¦113723 for those who love him¦113729.’
+\m
+\v 10 But God has revealed¦113733 it to us through¦113737 his spirit, because¦113742 \add his\add* spirit \add strives to know the meaning of everything\add*, even the deep things of God.
+\v 11 \add Yes,\add* what person knows what \add other\add* people¦113754 are thinking. Only the spirit of the person themself knows that¦113764. So too, no one knows God's thoughts other than God's \add own\add* spirit.
+\v 12 \add No,\add* we haven't received¦113788 the world's¦113787 spirit, but¦113782 \add rather\add* God's spirit so that we can recognise everything that God has freely given to us.
+\p
+\v 13 We don't¦113808 speak¦113807 about these things from our human¦113811 wisdom¦113812, but rather, saying what \add God's\add* \nd spirit¦113817\nd* teaches—teaching spiritual things from spiritual \add sources\add*.
+\v 14 Secular people don't¦113826 accept things about God's \nd spirit¦113830\nd* because they seem foolish¦113833 to them, and they can't¦113826 understand them because it requires spiritual awareness,
+\v 15 but¦113854 spiritual¦113848 people \add can\add* discern all \add these\add* things, even though others \add can't correctly\add* discern about them.
+\v 16 \add This was stated in scripture:\add*\x + \xo 2:16: \xt Isa 40:13 (LXX).\x*
+\q1 ‘Who can understand Yahweh's mind?
+\q1 Who's able to instruct him¦113866?’
+\m But we¦113867 \em do\em* \add know\add* the \nd messiah's¦113871\nd* mind!
+\c 3
+\s1 Build solidly with godly wisdom
+\rem /s1 On Divisions in the Church; On Divisions in the Corinthian Church; Paul and Apollos, Servants of Christ; Servants of God
+\p
+\v 1 So¦113873 brothers¦113876 and¦113873 sisters¦113876, because you were baby Christians \add when I visited\add*, I wasn't able to speak¦113879 to you all like spiritual¦113884 \add people\add*, but¦113873 \add only\add* like worldly \add people\add*.
+\v 2 I gave¦113895 you all milk to drink¦113895, because¦113900 you weren't ready for solid food, in fact, you still¦113906 aren't¦113897\x + \xo 3:2: \xt Heb 5:12-13.\x*
+\v 3 because you're still worldly, because \add seeing\add* the jealousy¦113919 and dissension among¦113917 you \add tells us\add* that you're all still worldly and just living by human¦113931 \add values\add*.
+\v 4 Yes, when one person says, ‘I follow Paul¦113940,’ and another¦113941 person says, ‘I follow Apollos¦113945’, doesn't that show that you're \add just\add* worldly?\x + \xo 3:4: \xt 1Cor 1:12.\x*
+\p
+\v 5 Indeed, who's Apollos¦113955? Who's Paul¦113961? We're just servants \add who brought you all the message\add* when you believed¦113968, each one as the \nd master¦113973\nd* led them.\f + \fr 3:5 \ft (NEEDS MORE RESEARCH BUT) It seems unclear here who the final part of the verse is referring to: a/ those who brought the message, or b/ those who received it. (We've chosen b/ in the OET-RV rendering.)\f*
+\v 6 I planted¦113976 \add the seed\add* and Apollos¦113977 watered it, but¦113979 \nd God¦113981\nd* made it grow.\x + \xo 3:6: a \xt Acts 18:4-11; \xo b \xt Acts 18:24-28.\x*
+\v 7 That means that neither¦113984 the planter¦113986 or the waterer counts for anything¦113988, only the grower, \nd God¦113996\nd*.
+\v 8 The planter¦113998 and the waterer work together, and each of them will be rewarded¦114009 for their work,
+\v 9 because¦114017 we¦114018 are God's co-workers.
+\p You all are God's field¦114021, or \add in a different image,\add* his building¦114023.
+\v 10 Using the \add gifts\add* that¦114030 \nd God¦114029\nd* has given¦114031 me as a wise master-builder, I laid down a foundation¦114036 and then someone else is building on it. But they need to take care about how they build on it
+\v 11 because¦114048 no one can lay a different foundation than the one already laid down, and that¦114056 foundation is \nd Yeshua¦114058 Messiah¦114060\nd*.
+\v 12 Now if anyone¦114063 builds¦114064 on \add top of\add* the foundation¦114067 with gold¦114070, silver¦114073, precious¦114075 stones¦114074, wood, hay, or straw¦114078,
+\v 13 then their work will become¦114083 obvious because it will be revealed¦114091 on the day¦114086 \add of judgement\add* because it will be shown up by fire. The fire will expose what sort of \add building\add* their work \add created\add*:
+\v 14 if anyone's¦114103 work¦114105 that¦114107 they built¦114108 survives the fire, \add those people\add* will be rewarded¦114109,
+\v 15 \add but\add* if their work¦114114 is incinerated, \add those people\add* will lose out, although they themselves will be saved¦114119 but as if they've been through¦114123 the flames¦114124.
+\p
+\v 16 Don't you realise that you \add yourselves\add* are God's temple¦114128, and that God's \nd spirit¦114133\nd* lives \add inside\add* you all?\x + \xo 3:16: \xt 1Cor 6:19; 2Cor 6:16.\x*
+\v 17 If anyone¦114141 destroys God's temple, then God will destroy that¦114159 \add person\add* because¦114153 his temple is sacred¦114157, as are all of you.
+\p
+\v 18 Don't let any of you fool yourselves. If anyone¦114166 of you thinks they're wise by \add worldly standards\add*, then let \add those people\add* become ‘foolish¦114176’ so that they really can become wise
+\v 19 because this world's¦114185 wisdom¦114183 is foolishness¦114187 with \nd God¦114190\nd*, because as it's written¦114192: ‘He catches¦114195 out the wise in their¦114201 craftiness¦114200.’\x + \xo 3:19: \xt Yob 5:13.\x*
+\v 20 And further¦114203: ‘\nd Yahweh¦114204\nd* knows that the thoughts of wise people are useless¦114213.’\x + \xo 3:20: \xt Psa 94:11.\x*
+\v 21 So then, don't let anyone¦114215 boast¦114216 about people¦114218, because¦114220 everything \add already\add* belongs to all of you¦114221.
+\v 22 \add Don't boast about\add* Paul¦114224 or Apollos¦114226 or Cephas¦114228, or the world¦114230 or life¦114232 or death¦114234, or the present¦114236 or the future. All of them belong to you¦114241,
+\v 23 and you¦114244 belong to Messiah, and Messiah belongs to \nd God¦114249\nd*.
+\c 4
+\s1 Status of the missionaries
+\rem /s1 Paul and the Corinthians; The Ministry of the Apostles; Apostles of Christ
+\p
+\v 1 So then, people should¦114252 regard us as servants of \nd Messiah¦114256\nd* and¦114257 as stewards of God's mysteries¦114259.
+\v 2 What's more, stewards are expected to be trustworthy.
+\v 3 But it¦114278 makes virtually no difference to me whether I'm being judged by you¦114282 all, or by a human¦114286 court, because I don't even judge myself¦114290.
+\v 4 \add Yes,\add* my conscience is clear, but that won't¦114297 mean that I'm declared ‘not guilty’, because¦114293 it's \nd Yahweh¦114306\nd* who'll be examining¦114304 me.
+\v 5 So don't¦114309 make judgements ahead of time, but¦114326 wait until¦114314 the \nd master¦114318\nd* comes—the one who'll bring to light what's hidden¦114323 in the darkness¦114325, and who will expose people's \add true\add* motives. At that time, \nd God¦114340\nd* will praise¦114335 each person \add who's acted faithfully\add*.
+\p
+\v 6 Now brothers¦114343 and sisters¦114343, I applied these¦114341 things to myself¦114346 and Apollos¦114348 for your¦114350 sakes, so that through us you all might learn¦114355 this: ‘Not beyond¦114358 what is written¦114361,’ so that no one would be puffed up in favour of one against¦114370 the other¦114372,
+\v 7 because¦114374 who makes you better than others? What do you have that¦114380 wasn't given to you? And if it was given to you, why would you boast¦114388 as if it hadn't been given to you?
+\p
+\v 8 Are you all full already? Have you all already become rich? You think you're kings already, and don't need us—I wish you all were really reigning as kings, so we could reign with you,
+\v 9 because it seems that God has exhibited us missionaries last \add of all\add*, as if sentenced¦114420 to death¦114420—because we¦114423 have become¦114423 a spectacle to the world¦114425—both to \add God's\add* messengers¦114427 and¦114428 to men.
+\v 10 We \add appear as\add* fools for Messiah's sake, but you all are wise in Messiah. We are weak, but you all are strong¦114443. You all are honoured, but we are dishonoured¦114448.
+\v 11 Right up to the present time, we're hungry and thirsty¦114456, we're poorly¦114458 clothed¦114458 and brutally beaten¦114460, and we're homeless
+\v 12 and working hard—working with our own hands¦114468. When people curse us, we bless¦114470 \add them\add*, and when they persecute¦114471 us, we put up with it.\x + \xo 4:12: \xt Acts 18:3.\x*
+\v 13 When people slander us, we answer gently. We've become¦114480 like the scum of the world, the world's trash, even until¦114483 now.
+\rem /s1 Fatherly Admonition
+\p
+\v 14 I'm not writing¦114488 this to shame you all, but to correct you as if you were my¦114493 \add own\add* dear children¦114492,
+\v 15 because if you all would have thousands¦114500 of guardians in Messiah, yet you wouldn't have many ‘fathers¦114508’, because I fathered you in Messiah \nd Yeshua\nd* by means of the good¦114515 message¦114515.
+\v 16 That's why I urge you¦114521 all to imitate¦114522 me,\x + \xo 4:16: \xt 1Cor 11:1; Php 3:17.\x*
+\v 17 and that's why I sent¦114528 Timothy¦114530 to \add visit\add* you. He's like my own dear son in \nd Yahweh¦114540\nd*, and he'll remind¦114543 you all about my ways¦114545 in \nd Messiah¦114549 Yeshua\nd*, just like I teach¦114556 everywhere in every church.
+\p
+\v 18 \add Now\add* some of you have become arrogant¦114564, as if I'm not able to come back to see you all,
+\v 19 but if the \nd master¦114573\nd* allows it, I'll come and¦114575 visit you¦114570 all again soon. Then I won't¦114577 just see what any puffed-up people are \em saying\em*, but I'll also see what \em power¦114584\em* they have,
+\v 20 because¦114586 God's kingdom¦114590 isn't¦114585 just mere words, but¦114593 it's \add a demonstration of\add* power¦114595.
+\v 21 What would you all prefer: should I come to you all with a rod, or \add come\add* with love and a gentle¦114609 spirit¦114606?
+\c 5
+\s1 Expelling the sexually immoral
+\rem /s1 Expel the Immoral Brother!; Paul Condemns Spiritual Pride; Sexual Immorality Defiles the Church; Immorality in the Church
+\p
+\v 1 Actually¦114610, we've been hearing that there's sexual immorality there among you¦114614 all, and¦114616 so bad that even non-believers don't¦114620 do it: a man is sleeping with his step-mother!\x + \xo 5:1: \xt Deu 22:30.\x*
+\v 2 Then¦114632 instead of being upset, you all \add seem\add* proud of it. This man should have been expelled out of your¦114645 \add group\add*,
+\v 3 because even though I'm not there physically, I am present in the spirit¦114662, and I've already¦114663 made my judgement¦114664 about the man who's doing this, as if I were present.
+\v 4 When you assemble together¦114679 in the name of our¦114676 master Yeshua, my spirit¦114684 \add is there\add* along with the master \nd Yeshua's\nd* power¦114687,
+\v 5 \add then you should\add* hand this man over to Satan¦114698 to \add punish\add* his body¦114702, so that his spirit¦114705 can be saved¦114706 for when the \nd master¦114711\nd* \add returns\add*.
+\p
+\v 6 It isn't good¦114716 how you all boast¦114718. Don't you realise that a little¦114723 bit of yeast can raise a whole loaf \add of bread\add*?\x + \xo 5:6: \xt Gal 5:9.\x*
+\v 7 Get rid of the old yeast so that you'll all become fresh dough, just as you are unleavened¦114740 bread. Because¦114742 \nd Messiah¦114749\nd*, our¦114745 Passover lamb, has also been sacrificed¦114748\x + \xo 5:7: \xt Exo 12:5.\x*
+\v 8 so that we¦114751 can be feasting¦114751, not with old yeast or with yeast of evil and wickedness¦114763, but¦114762 with unleavened¦114766 bread¦114766 of sincerity¦114767 and of truth¦114769.\x + \xo 5:8: \xt Exo 13:7; Deu 16:3.\x*
+\rem /s1 Sexual Immorality Must Be Judged
+\p
+\v 9 I wrote¦114770 to you¦114771 in my letter¦114774 not to associate¦114776 with sexually¦114777 immoral¦114777 people,
+\v 10 \add but¦114790\add* certainly¦114780 not \add meaning\add* worldly people who are sexually¦114782 immoral¦114782 or swindlers¦114792 or idolaters¦114794, because¦114795 \add that would mean that\add* you'd all have to leave this world.
+\v 11 \add No,\add* I'm writing to tell you¦114807 all not to associate¦114809 with any so-called believer who's sexually¦114815 immoral¦114815 or greedy or an idolater¦114820 or verbally abusive or a drunkard¦114825 or a swindler¦114827. Don't¦114808 even have a meal with such a person.
+\p
+\v 12 Why would it be my \add job\add* to judge outsiders¦114838—\add no,\add* shouldn't it be those \em inside¦114843\em* \add the assemblies\add* that you judge?
+\v 13 \nd God¦114854\nd* will judge the outsiders¦114852, \add but¦114850\add*:\x + \xo 5:13: \xt Deu 13:5; 17:7 (LXX).\x* ‘Expel¦114858 evil¦114862 \add people\add* from among yourselves¦114865.’
+\c 6
+\s1 Lawsuits among believers
+\rem /s1 Lawsuits against Fellow Christians; Lawsuits among Christians; Avoiding Lawsuits with Christians
+\p
+\v 1 If anyone¦114867 among you¦114869 all has a case against¦114872 another¦114874 \add believer\add*, how dare they go to \add a secular\add* court in front of an unbelieving judge¦114875 instead of to believers.
+\v 2 Don't¦114885 you realise that \add in the future\add*, believers will judge the world, and¦114893 if the world's going to be judged¦114897 by all of you, surely you're competent enough \add now\add* to judge smaller cases?
+\v 3 Don't¦114909 you¦114905 realise that we'll judge \add God's\add* messengers¦114907? So surely we can judge things of \add this\add* life?
+\v 4 \add So then,\add* if you have legal disputes about things of this life, why do you appoint people with no standing in the assembly¦114922 as judges?
+\v 5 I say \add that\add* to your shame¦114926. Don't¦114931 you have anyone¦114936 among you all who can arbitrate between believers?
+\v 6 But¦114954 instead, one believer goes to court against another, and¦114954 it's in front of unbelievers¦114958!
+\p
+\v 7 Actually, you're all disgraced already for having¦114970 lawsuits¦114968 among yourselves¦114972. Why not rather be wronged¦114977? Why not rather be cheated?
+\v 8 But¦114988 you're all wronging¦114987 and cheating \add others, including¦114988\add* fellow¦114993 believers¦114993.
+\rem /s1 Avoiding Sexual Sin
+\p
+\v 9 Or don't¦114995 you¦114996 all know that \add ≈those who disobey\add* \nd God¦115001\nd* won't¦114995 inherit¦115004 his kingdom¦115002? Don't¦114995 let yourselves be deceived¦115006: those who are sexually¦115008 immoral¦115008 or idolaters¦115010, or adulterers¦115012 or male prostitutes or homosexuals,
+\v 10 or thieves¦115019 or greedy, or drunkards¦115028 or slanderers or swindlers¦115032, will inherit¦115036 God's kingdom¦115033.
+\v 11 Now some of you all were like that, but¦115037 now you've been washed¦115042 and declared guiltless, and been declared innocent by the authority of the \nd master¦115051 Yeshua Messiah¦115054\nd*, and by our¦115061 god's \nd spirit¦115058\nd*.
+\s1 Avoid sexual immorality
+\rem /s1 Glorify God in Body and Spirit; Use Your Bodies for God's Glory
+\p
+\v 12 Some might say, ‘Everything is permissible for me,’ but not everything is beneficial¦115068. Everything might be permissible for me, but I don't¦115066 want those things to have control over me.\x + \xo 6:12: \xt 1Cor 10:23.\x*
+\v 13 You might say, ‘Food is for the stomach, and the stomach for food,’ but \nd God¦115089\nd* will \add eventually\add* abolish them both. Also¦115096, the body is not \add meant to be used\add* for sexual¦115100 immorality¦115100, but rather, for the master, and the master for the body.
+\v 14 \add Actually,\add* \nd God¦115111\nd* made the \nd master¦115114\nd* come alive again, and¦115116 by his¦115124 power¦115123, he'll also do that for us.
+\p
+\v 15 Surely you all know that your bodies¦115129 are parts of messiah's \add body\add*? Because of that, you shouldn't take your body back and then join it to a prostitute's¦115143 \add body\add*. May it never happen!
+\v 16 Or don't¦115148 you¦115149 know that having sex with a prostitute¦115154 is a joining together¦115152, because¦115159 it says:\x + \xo 6:16: \xt Gen 2:24.\x* ‘The two¦115162 will become one body¦115156.’
+\v 17 But a person joining with the \nd master¦115170\nd*, becomes one spirit¦115172 \add with him\add*.
+\p
+\v 18 \add Don't just walk away\add* from sexual immorality, but \em run away\em* from it, because other forms of disobeying God are outside¦115183 the body, but sexual immorality is a sin against¦115190 your own body.
+\v 19 Surely you all know that your¦115203 body¦115201 is a temple¦115204 of the holy \nd spirit¦115209\nd* who comes from \nd God¦115215\nd* and¦115216 \add lives\add* within you.\x + \xo 6:19: \xt 1Cor 3:16; 2Cor 6:16.\x* No, you don't¦115196 \add actually\add* own yourselves¦115220
+\v 20 because¦115222 a price¦115223 was paid to buy you, so honour¦115224 \nd God¦115227\nd* with your¦115231 bodies.
+\c 7
+\s1 Advice concerning marriage
+\rem /s1 Directions concerning Marriage; Instruction on Marriage; Sex, marriage, and divorce; Questions about Marriage
+\p
+\v 1 Now concerning¦115241 what you all wrote¦115244 \add to me\add*: “It's good for a man not to touch¦115250 a woman¦115248.”
+\v 2 However, because¦115251 there is so much sexual¦115254 immorality¦115254, each man should¦115259 have his own wife, and each woman¦115261 her own husband¦115264.
+\v 3 Both husbands and wives have a marital duty to each other \add in terms of sexual needs¦115274\add*:
+\v 4 wives' bodies belong to their husbands, not to themselves, and similarly, husbands' bodies belong to their wives, not to themselves.
+\v 5 Don't¦115309 deprive each other, except by mutual agreement so that you may devote yourselves to prayer¦115321 for an agreed time¦115314, and then be together again¦115323, so that Satan¦115335 can't¦115309 \add easily\add* tempt¦115332 you all because¦115336 of your¦115339 lack of self-control.
+\p
+\v 6 But that isn't¦115345 a command¦115347—I'm only suggesting that it's good to do,\f + \fr 7:6 \ft It's not clear here whether Paul is referring back to marriage here (v2), or to abstaining from sex to focus on praying (v5).\f*
+\v 7 and I wish everyone¦115352 could be like me. But¦115349 each person has their own gift from \nd God¦115364\nd*—one has such-and-such a gift while someone else has a different one.
+\p
+\v 8 Now to the unmarried¦115376 and¦115377 to the widows¦115379 I say that it's good¦115381 if they¦115387 remain¦115387 like me,\f + \fr 7:8 \ft This is intentionally left ambiguous because we can't be certain what Paul meant here.\f*
+\v 9 but¦115393 if they don't¦115394 have self-control, they should¦115396 marry because¦115398 it's better¦115397 to marry than to burn \add with sexual desire\add*.
+\p
+\v 10 Now I (\add well,\add* not I, but¦115410 the \nd master¦115412\nd*) command¦115407 married¦115406 people that a wife¦115413 is not to be separated¦115417 from her husband¦115415\x + \xo 7:10-11: \xt Mat 5:32; 19:9; Mrk 10:11-12; Luk 16:18.\x*
+\v 11 (but¦115421 even if she might be separated¦115423, let her remain¦115424 unmarried¦115425, or let her be reconciled¦115429 to the husband), and a husband is not to divorce a wife.
+\p
+\v 12 But¦115450 to the rest I say (I, not the \nd master¦115443\nd*) that if any believing husband has an unbelieving¦115449 wife¦115447 and she agrees to live with him, he shouldn't¦115441 divorce her.
+\v 13 Similarly, if any woman¦115461 has an unbelieving¦115467 husband and¦115460 he agrees to live with her, she shouldn't¦115476 divorce him.
+\v 14 You see, the unbelieving husband is \add exposed to faith\add* through his wife, and the unbelieving wife is \add exposed to faith\add* through the believing husband, otherwise¦115500 your¦115504 children¦115503 would be ‘defiled’, but¦115490 now they are declared innocent.
+\v 15 But if the unbeliever¦115514 departs, let \add that person\add* go. In such cases, the believing spouse is not tied down \add to serving their departed spouse\add*, but¦115528 \add rather\add* \nd God¦115534\nd* has called¦115530 us to peace¦115529.
+\v 16 You see, how do you know, woman, whether you will \add cause\add* your husband to be saved? Or how do you know, man, whether you will \add cause\add* your wife to be saved?
+\s1 Sticking to your social position
+\rem /s1 The Life That the Lord Has Assigned; Live As God Called You
+\p
+\v 17 Nevertheless, each person should¦115570 live according to how the \nd master¦115561\nd* has assigned them and¦115571 how \nd God¦115567\nd* has called¦115565 them. That's what I teach in all the assemblies¦115576.
+\v 18 Anyone who was called and who was \add previously\add* circumcised, shouldn't become ‘uncircumcised’. Anyone who was called who was uncircumcised, shouldn't get circumcised.
+\v 19 Circumcision is nothing and¦115596 uncircumcision¦115598 is nothing, but¦115601 obeying God's commands¦115603 \add is what counts\add*.
+\v 20 Each person should¦115615 maintain the position they were in when they were called¦115611:
+\v 21 Were you a slave when you were called¦115617? Don't be concerned about that (but indeed, if you're¦115624 able to become¦115626 free, then take the opportunity)
+\v 22 because¦115630 anyone who was a slave when they were called by \nd Yahweh\nd* is free in \nd Yahweh's\nd* \add sight\add*. Conversely, anyone who was free when they were called is the \nd messiah's¦115645\nd* slave.
+\v 23 You all were bought¦115648 \add by God\add* for a price¦115647, \add so\add* don't¦115649 become¦115650 slaves¦115652 of people¦115653.
+\v 24 \add Again\add*\x + \xo 7:24 \xt 7:20\x* brothers¦115658 and¦115658 sisters¦115658, each person should¦115661 remain¦115661 in the position they were in when they were called¦115657, \add but now serving\add* \nd God¦115664\nd*.
+\s1 Suggestions about the unmarried and about widows
+\rem /s1 Questions about the Unmarried and the Widows; The Unmarried and the Widows
+\p
+\v 25 Now concerning¦115665 unmarried women, I don't¦115671 have instructions from \nd Yahweh\nd* but¦115674 I'll give my opinions¦115673 as someone who's trustworthy¦115680 thanks to \nd Yahweh's\nd* mercy¦115677.
+\p
+\v 26 Therefore¦115683, I think¦115682 it's good because¦115687 of the distress that's about to come, that people should stay as they are \add currently\add*.
+\v 27 If you're married, then don't try to get out of it. If you're not committed, don't look for a spouse.
+\v 28 But¦115715 if a single guy or single girl get married, that's not a sin, but¦115709 they'll \add likely\add* face difficult circumstances and¦115715 I'm trying to spare you from that.
+\p
+\v 29 But brothers¦115736 and¦115736 sisters¦115736, I will say this: the time is short¦115739, so from now on, even those who are married should live as if they're not.
+\v 30 Those who are mourning should \add act\add* as if they're not, those who are celebrating should \add act\add* as if they're not, and those who are buying¦115767 \add act\add* as if they don't¦115757 own \add anything\add*,
+\v 31 and¦115771 those who are using this world, as if they're not using it¦115781, because¦115783 the present form of this world will soon pass away.
+\p
+\v 32 But I'd like you to be free from concern. Single men are concerned about things of the \nd master\nd*—pleasing¦115801 the \nd master\nd*—
+\v 33 but¦115806 married¦115807 men are concerned about worldly¦115811 affairs—wanting to please¦115813 their wives—so they're divided¦115818. And unmarried¦115823 or single women
+\v 34 are concerning about things of the \nd master¦115832\nd*—so that both their bodies and their spirits¦115841 can be separate \add from the world\add*—but¦115839 married¦115844 women are concerned about worldly affairs—wanting to please¦115850 their husbands¦115853.
+\p
+\v 35 Now I said¦115862 \add all\add* that for your¦115858 benefit¦115860—not to load you all with rules, but¦115855 to \add act\add* in ways that are appropriate and¦115855 devoted¦115873 to the \nd master¦115876\nd* without any distractions.
+\p
+\v 36 However, if a man thinks¦115888 he's made the wrong decisions about his unmarried woman,\f + \fr 7:36-38 \ft Yes, ‘his unmarried woman’ sounds strange, but it's not certain here (and in the next two verses) if Paul is writing about a father and \+em his unmarried daughter who's engaged\+em*, or about an engaged man deciding about \+em his fiancée\+em*.\f* if she's reached the age of marriage and it should proceed, then he should do what he planned—he's not sinning¦115902—they should get married.
+\v 37 But¦115917 if the man has made up his mind¦115910 and isn't¦115913 forced, but¦115905 makes his own decision, and he's firmly decided to keep his own woman unmarried, then that would also be a good decision.
+\v 38 That way, anyone allowing his unmarried woman to marry does well, but¦115952 anyone who doesn't, makes a better¦115958 decision.
+\p
+\v 39 A wife is committed to her¦115970 husband as long as he lives, but if he passes away, she's free to marry whoever she wants to, as long as he's a believer.
+\v 40 However, in my opinion¦115997, she'd be happier if she didn't marry again, and I think it's God's \nd spirit¦116002\nd* \add that wants me to say that\add*.
+\c 8
+\s1 Behaviour about food offered to idols
+\rem /s1 Food Sacrificed to Idols; The Question about Food Offered to Idols
+\p
+\v 1 Now, concerning \add food\add* that's been sacrificed¦116009 to idols: We know¦116013 that we all have ‘knowledge’—knowledge breeds conceit but¦116007 love¦116021 gives inner strength.
+\v 2 Anyone who thinks they know something \add usually\add* doesn't know \add what they don't¦116030\add* know,
+\v 3 but¦116039 anyone¦116040 who loves God is known¦116045 by God.
+\p
+\v 4 Now \add back to\add* eating \add food\add* that's been offered to idols, we¦116054 know that there's¦116051 only one \nd God¦116063\nd* and¦116060 so worldly¦116059 idols are \add really\add* nothing¦116056 \add at all\add*.
+\v 5 Even though there are many so-called ‘gods’ and ‘masters¦116087’ \add said to\add* live in the heavens¦116076 or earth¦116080,
+\v 6 we know there's \add only\add* one \nd God¦116092\nd*, who is the Father who created everything and we exist \add to honour him\add*. And we only have one \nd master¦116106\nd*, \nd Yeshua Messiah¦116108\nd* who created everything and \add is also the source of our existence\add*.
+\p
+\v 7 But¦116139 not everyone knows this. Some people have been so used to \add trusting\add* idols that \add even now as believers\add* when they eat food that's been sacrificed¦116136 to idols, \add they still think it's wrong\add* and¦116139 so their¦116142 weak consciences¦116141 become defiled¦116146.
+\v 8 But food doesn't bring us closer to \nd God¦116155\nd*—what we eat makes us no better or worse off \add spiritually\add*.
+\p
+\v 9 However, be careful in case your¦116176 freedom becomes¦116179 a reason that weaker \add believers might get confused\add* and stumble¦116178 in their \add spiritual walk\add*.
+\v 10 \add Yes,\add* if someone¦116185 with a weaker conscience sees you eating¦116207 at a place with an idol, they might be encouraged to eat food that's offered to idols \add against their conscience\add*,
+\v 11 thus this weaker believer who the \nd messiah¦116225\nd* also died¦116226 for, \add might end up\add* being¦116209 destroyed¦116209.
+\v 12 If you end up sinning against other believers¦116232 and¦116228 wounding¦116234 their¦116235 weak consciences¦116237, you sin against \nd Messiah¦116240\nd*.
+\v 13 Therefore¦116242, if food might cause a fellow believer to stumble, I'll certainly never eat¦116251 meat, so that I won't¦116250 cause them to stumble.
+\c 9
+\s1 The missionary's responsibilities
+\rem /s1 Paul Gives Up His Rights; Rights and Duties of an Apostle; The Rights of an Apostle
+\p
+\v 1 Aren't I free? Aren't I a missionary? Haven't I seen \nd Yeshua\nd* our¦116276 master? Aren't you all \add the result of\add* my¦116281 work for \nd Yahweh¦116275\nd*?
+\v 2 If I'm not a missionary to others¦116287, at least I am to all of you, because¦116296 you're the proof that I'm a missionary for \nd Yahweh¦116305\nd*.
+\v 3 That's my defence¦116308 to those who are questioning my role.
+\p
+\v 4 Don't¦116315 we¦116317 have a right¦116318 to eat¦116319 and¦116320 drink¦116321?
+\v 5 Don't¦116323 we¦116324 have a right¦116325 to take along¦116328 a believing wife¦116327 like the rest of the missionaries and the \nd master's¦116338\nd* brothers¦116336 and Peter¦116340?
+\v 6 Or it is only Barnabas¦116345 and¦116344 I who have to work \add to support ourselves\add*?
+\v 7 What soldier¦116353 has to pay his own expenses? Who plants¦116358 a vineyard¦116359 and isn't \add allowed\add* to eat its¦116366 fruit¦116365? Or who shepherds¦116371 a flock and isn't \add allowed\add* to drink the milk¦116376 \add they produce¦116365\add*?
+\p
+\v 8 Am I \add just\add* saying¦116394 this from a human¦116383 perspective? Doesn't \add Mosheh's\add* law also teach that?
+\v 9 He wrote¦116400 in those laws: ‘Don't prevent the ox from eating when it's \add working to\add* thresh¦116405 the grain.’\x + \xo 9:9: \xt Deu 25:4; 1Tim 5:18.\x*
+\v 10 Isn't he saying that on \em our\em* behalf? \add Yes,\add* it was written¦116420 for our sake \add saying\add* that anyone who's ploughing \add a field \add* should expect \add to be paid\add*, and anyone who threshes¦116432 \add the grain\add* should expect a share of the harvest.
+\v 11 If we sowed¦116448 spiritual¦116447 things among you, is it too much to expect a material¦116454 ‘harvest’ from you?\x + \xo 9:11: \xt Rom 15:27.\x*
+\v 12 If other¦116458 people have the right to this \add kind of\add* support, don't¦116464 we have a greater right?
+\p But we never took advantage of that right—instead we endured¦116475 everything so that we wouldn't do anything to hinder the \nd messiah's¦116487\nd* good¦116484 message¦116484 \add from spreading\add*.
+\v 13 Don't you know that the temple workers eat from the temple \add budget\add*, and those who work at the altar receive a portion of what's offered?\x + \xo 9:13: \xt Deu 18:1.\x*
+\v 14 Similarly, the \nd master¦116511\nd* even instructed that anyone who preaches the good message should be able to make their living¦116520 off it.\x + \xo 9:14: \xt Mat 10:10; Luk 10:7.\x*
+\p
+\v 15 But¦116530 I haven't taken advantage of \add any\add* of those rights, and¦116530 even now, I'm not writing this to ask for material support for myself—I'd rather¦116540 die¦116541 than have someone deprive me of this reason for boasting¦116546.
+\v 16 And yet, when I preach the good message, it doesn't give me any \add good\add* reason to boast¦116561 because¦116563 I'm \add actually\add* \em obligated\em* to do it—I wouldn't end well if I didn't¦116557 preach the good message
+\v 17 because¦116576 if I do it willingly¦116577, I'll have a reward¦116580, but¦116583 if it's done unwillingly¦116584, I'd be \add shirking\add* the responsibility entrusted¦116586 to me.
+\v 18 So¦116588, what's my¦116590 reward¦116593? It's preaching¦116595 the good message and \add the privilege of\add* doing it free of charge¦116596, so as not to take advantage of the right that the good message \add gives me\add*.
+\p
+\v 19 Although I have no obligation to any person, I made myself¦116620 a slave of everyone in order¦116622 to win over as many as possible.
+\v 20 To the Jews, I behave like the Jew \add that I am\add* in order to win them. To those under the \add traditional\add* rules, I behave like one of them (although I myself¦116644 am not under those rules) in order to win them over.
+\v 21 To those outside \add our religious\add* rules, I behave like them (although not so far as to disobey God's law, because I'm under Messiah's law) in order¦116665 to win them over.
+\v 22 To the weak, I become weak to win them over. \add Yes,\add* I've¦116680 become all things to all people so\f + \fr 9:27 \ft TODO: Investigate why so many other translations translate πάντως something like ‘by all means’ here (whereas our OET-LV gloss is ‘certainly’).\f* that I might be certain¦116685 of saving some.
+\p
+\v 23 I do all that for the sake of the good¦116694 message¦116694, so that I'll share in its blessings.
+\v 24 Surely you all know that all the participants in a race run, but only one \add of them\add* gets the prize? Run in such a way that you get \add the prize\add*.
+\v 25 But everyone¦116718 who competes has to exercise self-control in every aspect. They do it in order¦116728 to win a wreath that'll \add quickly\add* wilt, but¦116719 we¦116732 work towards one that never deteriorates.
+\v 26 That's why I don't run aimlessly and don't box like someone punching the air,
+\v 27 but¦116749 I discipline my¦116751 body¦116753 and¦116754 make it¦116755 serve me, because after preaching to others¦116758, I don't¦116756 want to \add end up\add* disqualified myself¦116760.
+\c 10
+\s1 Learn from history
+\rem /s1 Warnings against Idols; Warnings From Israel's History; Warnings against Idolatry
+\p
+\v 1 Now brothers¦116769 and sisters¦116769, I don't¦116768 want you¦116767 all to be ignorant about how our¦116773 Jewish ancestors¦116772 sheltered under¦116775 the cloud¦116777 and then they all passed¦116784 through the sea¦116783,\x + \xo 10:1: a \xt Exo 13:21-22; \xo b \xt Exo 14:22-29.\x*
+\v 2 so they were all immersed¦116793 ‘into Mosheh¦116791’ in \add both\add* the cloud¦116798 and the sea¦116802.
+\v 3 They all ate¦116810 the same¦116806 supernatural food\x + \xo 10:3: \xt Exo 16:35.\x*
+\v 4 and they all drank the same supernatural drink¦116819, because¦116822 they drank from a supernatural rock that followed¦116825 them, and that rock was the \nd messiah¦116833\nd*.\x + \xo 10:4: \xt Exo 17:6; Num 20:11.\x*
+\v 5 Despite that, \nd God¦116842\nd* wasn't very happy with most of them, and they¦116843 \add ended up\add* dying in the wilderness¦116847.\x + \xo 10:5: \xt Num 14:29-30.\x*
+\p
+\v 6 Those things \add back then¦116849\add* became examples¦116850 for us, so that we wouldn't be desiring¦116864 evil things like they did.\x + \xo 10:6: \xt Num 11:4.\x*
+\v 7 Don't worship idols like some of them did, as it's written¦116874:\x + \xo 10:7: \xt Exo 32:6.\x* ‘The people¦116877 sat down to eat¦116878 and drink¦116880 and \add then\add* stood¦116882 up to \add dance to the golden calf\add*.’
+\v 8 Nor should we¦116885 commit¦116885 sexual immorality like many of them did, and¦116890 23,000 people died in one day¦116894.\x + \xo 10:8: \xt Num 25:1-18.\x*
+\v 9 And nor should we¦116899 challenge the \nd master¦116902\nd* like some of \add our Jewish ancestors\add* did, and¦116911 then they were killed by the snakes.\x + \xo 10:9: \xt Num 21:5-6.\x*
+\v 10 Don't grumble¦116918 like many of them did, and¦116926 then they were killed by the \add death angel\add*.\x + \xo 10:10: \xt Num 16:41-49.\x*
+\p
+\v 11 All of those¦116941 things happened¦116939 to them as examples and¦116943 were written¦116942 down as warnings for us who are \add living\add* at the ends¦116951 of the ages.
+\p
+\v 12 So if you think your \add faith is solid\add*, be careful that you don't fall.
+\v 13 You all haven't been tempted by anything except¦116968 what is common to humanity¦116970, but God is faithful¦116971 and won't¦116965 allow¦116977 you to be tempted beyond¦116981 what you all can handle. \add In fact,\add* along with the temptations, God will provide the way¦116991 out so that¦116992 you'll be able to endure them.
+\rem /s1 Idol Feasts and the Lord's Supper
+\p
+\v 14 So¦116996 my¦116998 dear friends, totally avoid idolatry¦117002.
+\v 15 I'm speaking¦117005 to sensible \add people\add*, \add so\add* judge¦117006 what I'm telling you¦117007 for yourselves.
+\v 16 When we bless the ‘cup of blessing’, aren't we sharing the messiah's blood¦117022? When we break¦117029 the bread¦117027, aren't we sharing the messiah's body¦117034?\x + \xo 10:16: \xt Mat 26:26-28; Mrk 14:22-24; Luk 22:19-20.\x*
+\v 17 Because¦117039 there's \add just\add* one loaf that we all eat pieces of, thus we who are many, are one body¦117043 \add together\add*.
+\p
+\v 18 Consider \add the people of\add* Yisrael \add (Israel¦117057)\add* from a physical perspective: Aren't those who eat \add portions\add* of the sacrifices¦117065, joining to the altar¦117068? RECHECK \x + \xo 10:18: \xt Lev 7:6.\x*
+\v 19 So¦117071 what am I saying¦117072? That whether or not food is sacrificed¦117074 to idols means anything? Or that an idol¦117074 is anything?
+\v 20 \add No,\add* but¦117084 the sacrifices of the pagans¦117090 are offered to demons, not to \nd God¦117096\nd*, and I don't¦117095 want you¦117101 all to be partners¦117102 with demons.\x + \xo 10:20: \xt Deu 32:17 (LXX).\x*
+\v 21 You can't drink¦117112 \nd Yahweh's\nd* cup as well as the cup of demons, nor can you partake¦117122 at \nd Yahweh's\nd* table as well as the table of demons.
+\v 22 Or are we \add trying\add* to make \nd Yahweh¦117129\nd* envious? \add No,\add* he's more powerful than us.\x + \xo 10:22: \xt Deu 32:21.\x*
+\rem /s1 The Believer's Freedom; Do All to the Glory of God
+\p
+\v 23 Everything might \add seem\add* to be allowable, but not everything is beneficial¦117140. Everything might \add seem\add* to be allowable, but not everything builds¦117147 up \add character\add*.\x + \xo 10:23: \xt 1Cor 6:12.\x*
+\v 24 No one should¦117152 aim to satisfy themselves, but¦117153 \add work for\add* the good of others¦117157.
+\p
+\v 25 You can eat anything that's sold at the \add meat\add* market¦117162 without even raising questions of conscience¦117169,
+\v 26 because¦117172:\x + \xo 10:26: \xt Psa 24:1.\x* ‘the earth¦117175 and¦117176 everything in it¦117179 belongs to \nd Yahweh¦117171\nd*.’
+\p
+\v 27 If an unbeliever¦117186 invites¦117183 you \add to a meal\add* and you plan to go, eat anything that's set before you without raising questions of conscience¦117203,
+\v 28 but¦117205 if someone¦117206 tells you, “That has been offered as a sacrifice,” for the sake of the person who told you and for the sake of conscience¦117221, don't¦117213 eat it¦117218.
+\v 29 Now when I said¦117233 ‘for the sake of conscience’, I didn't¦117234 mean \em your\em* conscience, but¦117237 that¦117235 of the other¦117240 person, because why does \em my¦117246\em* freedom¦117245 need to be judged¦117247 by someone else's conscience?
+\v 30 As long as I've thanked¦117254 God for what I eat, why should I then criticise it?
+\p
+\v 31 So¦117263 whether¦117262 you're eating¦117264 or drinking¦117266 or doing whatever, always ensure that \nd God¦117273\nd* gets honoured.
+\v 32 Try not to offend the Jews or the Greeks¦117281 or the people in God's assembly¦117284,
+\v 33 just like I \add work to\add* please¦117291 everyone—not for my own benefit but¦117298 rather, trying to benefit everyone else so that they¦117303 might get saved¦117303.
+\c 11
+\nb
+\v 1 Imitate¦117304 me, just like I also imitate \nd Messiah¦117309\nd*.\x + \xo 11:1: \xt 1Cor 4:16; Php 3:17.\x*
+\s1 Men's and women's head coverings
+\rem /s1 Covering the Head in Worship; Public worship; Propriety in Worship; Head Coverings; Instructions for Public Worship
+\p
+\v 2 Now I commend you all because you always think of what I teach and do, and because you carefully believe and do what I taught you all,
+\v 3 but I want you all to know that the messiah is the head of every¦117332 man, and the man is the head of \add his wife\add*, and \nd God¦117349\nd* is the head of the messiah.\f + \fr 11:3 \ft The translators expect that this talk of ‘the head’ is referring to authority, but because our modern society has become more sensitive to these issues, we decided to keep it literal here, thus letting our readers decide for themselves what Paul probably meant. (Having done that, our readers can also consider for themselves whether this might have been a cultural necessity in and around Corinth, or whether it has widespread application to all cultures.)\f*
+\v 4 Any man¦117352 who prays or speaks out a prophecy¦117355 with his head covered is dishonouring his head,
+\v 5 but¦117365 any woman¦117366 who prays or prophesies¦117369 with her head \em uncovered¦117370\em* dishonours her head, because¦117380 it's just as if her head had been shaved¦117386.
+\v 6 \add In fact\add* if a woman doesn't cover her head, then she should cut her hair off, but¦117397 if it is shameful¦117398 for a woman to have her hair cut or shaved¦117403 off, then she should cover her head.
+\v 7 On one side, a man shouldn't¦117408 cover¦117410 his head¦117412 because men present God's image¦117413 and his honour, but¦117414 on the other¦117421 side, women present \add their husbands'\add* honour,\x + \xo 11:7: \xt Gen 1:26-27.\x*
+\v 8 because¦117426 man wasn't made from the woman, but \add the first\add* woman was made out of man.\x + \xo 11:8-9: \xt Gen 2:18-23.\x*
+\v 9 \add Indeed,\add* men weren't created¦117438 for women, but¦117443 women for men.
+\v 10 Because¦117449 of that, women should have authority on their heads, because of the messengers¦117461.\f + \fr 11:10 \ft Again, a rather literal translation because honestly, no one is really certain about what Paul was meaning here. See also https://GitHub.com/openenglishbible/Open-English-Bible/issues/356 and https://UASVBible.org/2024/02/03/unveiling-the-meaning-of-authority-in-1-corinthians-1110-a-textual-and-exegetical-clarification.\f*
+\v 11 Nevertheless, in Messiah, women are not independent from men, nor are men independent from women,
+\v 12 because¦117478 just as the \add first\add* woman came out of the man, so too men \add are born\add* from women, but¦117492 everything comes from \nd God¦117496\nd*.
+\p
+\v 13 \add So\add* judge¦117500 for yourselves¦117499: is it¦117502 proper for women to pray to \nd God¦117507\nd* \add with their heads\add* uncovered¦117505?
+\v 14 Doesn't nature¦117513 itself¦117514 teach¦117516 you¦117517 all that if a man¦117519 has long¦117523 hair¦117523, it¦117526 is a disgrace for him¦117525,
+\v 15 but if a woman¦117527 has long hair, it's \add part of\add* her beauty because long hair has been given¦117540 to women as a covering¦117538?
+\v 16 However, if anyone's¦117544 inclined to be contentious¦117546 about this, that's not how either we¦117548 \add ourselves\add* or God's assemblies¦117555 behave.
+\s1 Conduct when celebrating the master's dinner
+\rem /s1 Abuses at the Lord's Supper; Order at the Lord's Supper
+\r (Mat. 26:26-29; Mark 14:22-25; Luke 22:14-20)
+\p
+\v 17 But I'm not complimenting you all in giving the following instructions, because¦117565 your gatherings have been doing more harm than good.
+\v 18 Firstly¦117575, I hear¦117583 that when you gather together¦117578 in \add the\add* assembly¦117582, there are divisions¦117584 among¦117585 you all, and I partly believe¦117591 it
+\v 19 because¦117593 there must be differences among you to show who out of all of you are approved¦117602.
+\v 20 So¦117608 then, when you¦117609 gather together¦117607 in one place¦117612, it's not to \add celebrate by\add* eating the master's¦117615 dinner
+\v 21 because¦117620 during the meal, everyone¦117630 \add grabs\add* their own food without considering others. So some people remain hungry while others have too much to drink.
+\v 22 For eating¦117643 and drinking¦117645, don't¦117636 you all have your own houses¦117638 to do that in? Why are you showing contempt for God's assembly¦117648 and humiliating those \add left with\add* nothing? What should I say¦117659 about that? Should I praise¦117661 you for that? \add No,\add* I can't¦117636!
+\rem /s1 The Institution of the Lord's Supper
+\p
+\v 23 I've \add already\add* passed on to all of you everything that I received¦117670 from the master: that on the night¦117684 when he was betrayed, he took some bread¦117688
+\v 24 and after giving thanks¦117690, he broke \add off a piece\add* and said¦117693, “This \add represents\add* my¦117697 body¦117701 which¦117702 \add will be\add* broken for your sakes. Keep doing¦117707 this in memory of me.”
+\v 25 Similarly¦117712, after¦117716 the dinner he took the cup and said¦117719, “This cup \add represents\add* the new agreement¦117725 \add which will be sealed\add* by my blood¦117730. As often¦117734 as you all \add celebrate\add*, drink¦117737 it in memory of me.”\x + \xo 11:25: a \xt Exo 24:8; Jer 31:31-34; \xo b \xt Exo 24:6-8.\x*
+\v 26 Because¦117743 as often¦117742 as you all \add celebrate by\add* eating¦117746 bread¦117748 and drinking¦117755 from the cup, you'll continue to announce the \nd master's¦117759\nd* death¦117757 until¦117761 he returns.
+\rem /s1 Partaking of the Supper Unworthily
+\p
+\v 27 Therefore, anyone who eats that bread¦117770 or drinks¦117774 from the \nd master's\nd* cup in an unworthy¦117779 manner will be guilty of sinning against the body¦117785 and blood¦117788 of the \nd master\nd*.
+\v 28 So everyone must first examine themself as part of eating¦117802 that bread¦117801 and drinking¦117807 from that cup,
+\v 29 because¦117809 anyone who eats and drinks without discerning the body,\f + \fr 11:29 \ft Discern/distinguish/recognise their own body? The master's body? The whole group as a body? Unfortunately, we can't ask Paul exactly what he meant here.\f* eats and drinks judgement¦117814 onto themself.
+\v 30 Because¦117825 of that, many among¦117827 you¦117828 are weak and sick¦117832, and many have passed away,
+\v 31 but¦117837 if we were examining ourselves¦117839, we wouldn't be judged¦117843.
+\v 32 However, when we're judged¦117844 by \nd Yahweh¦117848\nd*, we're being disciplined¦117849 so that we won't¦117851 be condemned¦117855 along with the unbelievers.
+\p
+\v 33 So brothers¦117857 and¦117857 sisters¦117857, when you come together¦117859 to celebrate this, wait for each other.
+\v 34 If anyone's¦117867 hungry, they should¦117871 eat at home¦117870 \add beforehand\add*, so that your meetings won't¦117873 lead to judgement¦117875. I'll¦117884 give instructions about other¦117879 matters when I get there.
+\c 12
+\s1 The various abilities given by God's spirit
+\rem /s1 Spiritual Gifts; Gifts from the Holy Spirit
+\p
+\v 1 Now brothers¦117890 and¦117887 sisters¦117890, I don't¦117891 want you¦117893 all to be ignorant about spiritual¦117889 \add matters¦117889\add*.
+\v 2 You all know that when you were still pagans¦117898, you were enticed and led astray in front of idols¦117902 that can't \add even\add* speak.
+\v 3 So¦117909 now I'm informing you all that a person who curses Yeshua, doesn't speak with the power of God's spirit. On the other hand, a person who says that Yeshua is \nd Yahweh¦117926\nd* must be speaking with \add the power of\add* the holy spirit.
+\p
+\v 4 Now there¦117938 are varieties of gifts¦117937, but¦117940 the same¦117941 \nd spirit¦117942\nd*,\x + \xo 12:4-11: \xt Rom 12:6-8.\x*
+\v 5 and¦117943 there¦117946 are varieties of ministries, but¦117947 the same¦117949 \nd master¦117950\nd*.
+\v 6 There are varieties of activities, but¦117955 the same¦117958 \nd God¦117960\nd* works all things in everyone.
+\v 7 Now the display of the \nd spirit's¦117974\nd* \add power\add* is given¦117970 to each \add person\add* in order to benefit¦117977 \add everyone\add*.
+\v 8 One \add person\add* might be given a wise message through¦117982 the spirit, and someone else given \add certain\add* knowledge¦117991 by the same spirit.
+\v 9 Another \add person\add* might be given faith¦117998 by the same spirit, and someone else given gifts¦118005 of healings¦118006 from that one spirit.
+\v 10 Another might be given the ability to do miracles¦118015, and someone else given prophecy¦118019. Another might be given ability to distinguish¦118022 spirits¦118024, and someone else given the ability to speak other languages, and to yet another the ability to translate¦118033 languages.
+\v 11 However it's the one and the same spirit behind all those things—distributing them individually to each person¦118046 as the spirit decides.
+\s1 One body with many parts
+\rem /s1 One Body with Many Members; One Body with Many Parts
+\p
+\v 12 Just like a \add human\add* body is a unit but¦118056 has many parts which are all components, no matter how many, making up that one body, so too is the \nd messiah¦118079\nd*.\x + \xo 12:12: \xt Rom 12:4-5.\x*
+\v 13 \add Yes,\add* in one spirit we were all immersed¦118090 into one body¦118089, whether \add we were\add* Jews or Greeks¦118094, whether slaves¦118096 or free, and we all were given one spirit to drink¦118105. MEANING?
+\p
+\v 14 \add Yes,\add* indeed the body¦118110 is not one part, but¦118115 many.
+\v 15 If \add your\add* foot said, “Since I'm not a hand, I'm not part of the body,” that wouldn't make it any less a part of the body,
+\v 16 and¦118139 if \add your\add* ear said, “Since I'm not an eye, I'm not part of the body,” that wouldn't make it any less a part of the body.
+\v 17 If \add your\add* whole body was an eye, how could \add you\add* hear¦118171? \add But then,\add* if \add your\add* whole body was an ear, how could \add you\add* smell¦118177 \add anything\add*?
+\v 18 Actually, \nd God¦118183\nd* has placed every part in our bodies \add exactly\add* where he wanted¦118194 to put them.
+\v 19 If it was all just one part, how could it be a body¦118204?
+\v 20 \add Yes,\add* there's many parts, but¦118206 \add only\add* one body¦118212.
+\p
+\v 21 \add Your¦118223\add* eye¦118217 can't tell \add your\add* hand¦118221, “I don't need you,” and \add your\add* head¦118229 can't tell \add your\add* feet¦118231, “I don't need you.”
+\v 22 On the contrary, the body¦118243 parts¦118241 that seem to be weaker¦118244 are \add very\add* vital,
+\v 23 and those body parts that¦118249 seem less honourable, we give them greater honour and hence our¦118262 unpresentable body parts are \add treated with\add* more modesty.
+\v 24 Our¦118269 presentable parts don't have any need for that, but¦118273 rather \nd God¦118276\nd* has put the body¦118279 together¦118277 and he gave¦118286 greater honour¦118287 to the lesser parts
+\v 25 so that there¦118290 won't¦118289 be any division¦118292 in the body¦118295, but¦118296 its members¦118303 should care equally for each other.
+\v 26 So¦118304 if one body part is hurting, all the parts hurt as well. If one body part is honoured, then¦118304 all the parts are happy together.
+\p
+\v 27 Now you all are the body¦118328 of Christ, and¦118326 each of you is a part of it.
+\v 28 And indeed¦118336, \nd God¦118339\nd* has appointed¦118337: 1/ missionaries, 2/ prophets¦118346, 3/ teachers¦118348, then¦118334 \add doing\add* miracles¦118350, healing¦118354 \add others\add*, helping \add others\add*, guiding \add others\add*, \add and¦118334 speaking\add* various languages¦118358\x + \xo 12:28: \xt Eph 4:11.\x*
+\v 29 Are everyone missionaries, or everyone prophets¦118364 or teachers¦118367, or doing miracles¦118370?
+\v 30 Does everyone have the gifts¦118373 of healing¦118375, or speaking¦118379 in other languages¦118378, or translating?
+\p
+\v 31 But¦118390 strive for the better gifts¦118386.
+\s1 Love expounded
+\rem /s1 Love Is the Greatest
+\p And now I'll demonstrate a better way¦118396 to you¦118397 all:
+\c 13
+\rem /s1 The Gift of Love
+\p
+\v 1 Even if I could speak¦118404 in human¦118403 languages as well as the languages of \add God's\add* messengers¦118407, but¦118409 didn't¦118410 love¦118408 \add others\add*, then I'd \add just\add* be like a noisy gong or a clanging cymbal¦118416.
+\v 2 And if have \add the ability of being able\add* to prophesy¦118423 and could understand all mysteries¦118427 and all knowledge¦118433, and if I had total¦118429 faith¦118440 so I could tell mountains¦118442 to move, but¦118419 I didn't¦118446 love¦118444 \add others\add*, then¦118419 I'm \add of no use to anyone\add*.\x + \xo 13:2: \xt Mat 17:20; 21:21; Mrk 11:23.\x*
+\v 3 Even if I gave everything I have \add to the poor\add*, and¦118460 even sacrifice my¦118458 body¦118465 so that I could boast¦118468, but¦118472 didn't¦118473 love¦118471 \add others\add*, it wouldn't be any use to me.
+\p
+\v 4 Love is patient¦118479 and kind. It doesn't envy \add others\add*, it doesn't boast, and it isn't¦118483 arrogant¦118492.
+\v 5 It isn't¦118493 crude, it doesn't just care about itself¦118501, it doesn't get angry quickly, and it doesn't keep records about who wrongs \add us\add*.
+\v 6 Love isn't¦118508 happy with disobeying \add God\add*, but¦118514 is happy about the truth¦118516.
+\v 7 It tolerates everything, believes¦118522 everything, is always hopeful about everything, and always perseveres.
+\p
+\v 8 Love never¦118529 fails, unlike prophecies¦118534 that will come to nothing, languages¦118539 that will die out, and knowledge¦118542 that \add also\add* will come to nothing,
+\v 9 because we only have partial knowledge and partial \add understanding\add* of prophecy¦118553.
+\v 10 So when perfection¦118558 comes, partial things will disappear.
+\p
+\v 11 When I was a child, I spoke like a child, thought like a child, and reasoned like a child, \add but\add* then when I became an adult, I set childish things aside.
+\v 12 \add In this present age\add*, we see like fuzzy reflections in a mirror¦118591, but \add in the future\add*, we'll see \add God\add* face to face. In this age, I have partial knowledge, but then it'll be complete, just like \em we'll be known¦118609\em* completely.
+\p
+\v 13 But¦118623 for now, these three¦118617 continue: faith¦118613, hope, and love, but¦118611 love is the greatest¦118622 one of those.
+\c 14
+\s1 Comparing prophesying with speaking in other languages
+\rem /s1 The Gifts of Tongues and Prophecy; Gifts of Prophecy and Tongues; More about Gifts from the Spirit
+\p
+\v 1 Aim to \add show\add* love¦118629, and¦118631 eagerly strive for spiritual¦118633 \add things\add*—especially the ability to prophesy¦118637,
+\v 2 because anyone¦118649 speaking another language isn't¦118643 speaking to \add the\add* people¦118644, but to \nd God¦118648\nd*, because no one understands \add it\add*, but they're speaking \add about\add* spiritual¦118652 mysteries¦118655.
+\v 3 However, anyone who's prophesying¦118658, speaks¦118660 to \add the\add* people¦118659 for their instruction and encouragement and comfort.
+\v 4 Anyone who's speaking¦118667 in another language instructs themself, but¦118672 when \add people\add* prophesy¦118673, they're instructing the \add whole\add* assembly¦118674.
+\p
+\v 5 Now I'd like it if you all spoke in other languages, but¦118677 I'd like it better if you could all be prophesying. The person prophesying is more helpful than someone speaking in other languages, unless they translate so that the assembly¦118705 can be instructed.
+\v 6 But now brothers¦118711 and¦118711 sisters¦118711, if I come¦118713 to you speaking¦118717 in other languages¦118716, how can I be of benefit¦118720 to you all? Only if I share a revelation¦118727 with you all, or some knowledge¦118730, or a prophecy¦118733 or teaching¦118736.
+\p
+\v 7 Even the tune coming from non-living things like musical instruments can't¦118751 be recognised unless the distinct notes can be distinguished,
+\v 8 because¦118762 if the trumpet¦118766 produces an unclear sound¦118767, how will \add the soldiers\add* know to prepare¦118770 for battle¦118773.
+\v 9 Similarly with all of you—unless your words are intelligible, how will anyone know what you're saying? You'll just be talking¦118794 to the wind.
+\v 10 There's certainly many different languages¦118799 in the world¦118803, but¦118804 none of them are without meaning,
+\v 11 so if I don't¦118810 know the meaning of someone's language, I'm a foreigner to that person, and¦118821 that person \add will be\add* a foreigner to me
+\v 12 and it's the same with all of you. Because you all want spiritual¦118833 \add things\add* in order to help grow the assembly¦118838, then strive to have many \add of them\add*.
+\p
+\v 13 So¦118843 then, let anyone who's speaking¦118846 in another language, pray that they will be able to translate \add it\add*.
+\v 14 When I pray in another language, my spirit¦118856 prays but¦118860 my mind is unproductive,
+\v 15 so what should I do? \add Well,\add* I'll pray with my spirit, but I'll also pray with my mind. I'll sing with my spirit, but I'll also sing with my mind.
+\v 16 Otherwise¦118886, if you \add speak out\add*a blessing¦118889 in the spirit¦118892, how can the ordinary \add listeners\add* say ‘May¦118902 it¦118902 be¦118902 so¦118902’ after you give thanks¦118906, since¦118908 they wouldn't know what you've been saying.
+\v 17 \add Yes,\add* you'd certainly give thanks¦118917 well, but¦118918 the other¦118920 \add people\add* wouldn't be encouraged.
+\p
+\v 18 I thank¦118923 \nd God¦118925\nd* that I speak¦118933 in other language more than all of you¦118929,
+\v 19 but with the assembly¦118938, I'd prefer to speak¦118949 five words with my¦118948 mind so that I can instruct¦118953 others¦118952, rather than thousands¦118955 of words in another language.
+\p
+\v 20 Brothers¦118959 and¦118959 sisters¦118959, don't¦118960 be childish¦118961 in your thinking. You all can be like infants with respect to \em evil\em*, but¦118970 \add in everything else\add*, be mature¦118972 in your thinking.
+\v 21 \add The prophet Yeshayah\add* wrote¦118978:\x + \xo 14:21: \xt Isa 28:11-12.\x*
+\q1 ‘I'll¦118988 speak¦118988 to this nation
+\q2 through foreign¦118982 languages¦118982 and strangers' lips¦118985,
+\q1 but¦118983 even then they¦118996 won't¦118993 listen¦118996 to me,’
+\m says \nd Yahweh¦118999\nd*.
+\v 22 So then, \add speaking\add* in other languages¦119002 is a sign¦119004, not for believers, but for unbelievers. However \add in contrast,\add* prophecy¦119014 is not for unbelievers, but for believers.
+\p
+\v 23 So¦119022 if the whole¦119027 assembly¦119026 gathered together¦119024 at the same¦119030 place¦119030 and they all spoke in other languages¦119035, and then some inquirers¦119040 or unbelievers¦119042 came in, wouldn't they say that you're all crazy?
+\v 24 But¦119053 if they were all prophesying¦119050 \add instead\add* and some inquirers¦119057 or unbelievers¦119055 came in, they'd be convicted \add of their sinfulness\add* and called to account by them all.
+\v 25 \add The prophecies\add* would expose the secrets¦119067 of their hearts¦119070, so then they'd bow down and worship God, and exclaim, “God is really \add here\add* among¦119089 you¦119090 all!”
+\s1 The correct means of worshipping
+\rem /s1 Orderly Worship; Order in the Church; A Call to Orderly Worship
+\p
+\v 26 So¦119095 brothers¦119097 and¦119097 sisters¦119097, what should¦119117 we say then? When you all gather together¦119099, each one of you brings a song or a teaching¦119104, or \add explains\add* a revelation¦119108, or \add has a message\add* in another language or has \add the\add* translation¦119112. Let everything you do \add be aimed at growing the faith of the hearers\add*.
+\v 27 If there's any speaking¦119122 in other languages, \add it¦119131 should be\add* two¦119124 or three¦119128 \add people\add* at most, taking turns and someone¦119121 should translate.
+\v 28 But¦119146 if there's no translator, they should¦119142 be silent¦119142 in the assembly¦119144, and \add save it\add* for between themselves and \nd God¦119150\nd*.
+\v 29 But¦119152 let two¦119153 or three¦119155 \add people\add* prophesy, and then the others¦119159 should¦119156 evaluate what was said.
+\v 30 However if something¦119164 is revealed¦119164 to someone still seated, then the first¦119168 person should¦119169 \add stop speaking\add*,
+\v 31 because¦119171 you¦119170 can all prophesy¦119175 in turn so that everyone¦119172 can be instructed and¦119179 encouraged.
+\v 32 The prophet's spirits¦119183 are under the control of the prophets,
+\v 33 because¦119188 \nd God¦119194\nd* isn't¦119187 \add a god\add* of disorder, but¦119195 of peace¦119196.
+\p As in all the assemblies¦119201 of believers,
+\v 34 the women¦119205 should¦119210 stay silent¦119210 in the assemblies¦119209, because¦119212 they're not permitted¦119214 to speak¦119216, but¦119217 must be in submission as \add Mosheh's\add* law says.
+\v 35 But¦119228 if they want to know more about anything¦119229, they should¦119240 ask their¦119237 own husbands¦119239 at home¦119236, because¦119242 it's shameful¦119241 for a woman¦119245 to speak¦119246 in the assembly¦119248.
+\p
+\v 36 Did God's message¦119255 \em originate\em* from you all, or did it¦119263 only \em come\em* to you?
+\v 37 If anyone¦119265 thinks they're a prophet¦119267 or a spiritual¦119270 \add person\add*, then they should¦119272 \add readily\add* acknowledge that what I'm writing¦119274 to you¦119275 all is \nd Yahweh's\nd* command¦119284,
+\v 38 but¦119286 if anyone's¦119287 ignorant, then let them stay ignorant.
+\p
+\v 39 So brothers¦119292 and sisters¦119292, strive to \add be able to\add* prophesy¦119296, and don't¦119301 forbid¦119302 the speaking¦119299 of other languages¦119304,
+\v 40 but¦119306 let everything be done properly¦119307 and¦119308 orderly¦119310.
+\c 15
+\s1 The messiah's resurrection
+\rem /s1 The resurrection of the dead; The Resurrection of Christ
+\p
+\v 1 Now brothers¦119316 and sisters¦119316, I want to remind you all about the good message that¦119322 I preached¦119320 to you, which you then¦119314 received¦119324 and now \add base your faith\add* on.
+\v 2 You're all saved¦119332 by that good message if you hold firmly to what I preached¦119335 to you, \add assuming\add* that you didn't just \add ‘say that’ you\add* believe¦119344.
+\p
+\v 3 \add Yes,\add* first¦119349 of all, I passed onto you¦119347 all what I \add myself\add* had received¦119352: that \nd Messiah¦119354\nd* died¦119355 for our¦119359 sins¦119358 as the scriptures¦119362 \add had predicted\add*,\x + \xo 15:3: \xt Isa 53:5-12.\x*
+\v 4 and that he was buried¦119365 and then brought back to life on the third¦119373 day¦119371 as per the scriptures¦119376 \add again\add*,\x + \xo 15:4: \xt Psa 16:8-10; Mat 12:40; Acts 2:24-32.\x*
+\v 5 and that he was seen¦119379 by Cephas¦119380 and then by the twelve¦119384.\x + \xo 15:5: a \xt Luk 24:34; \xo b \xt Mat 28:16-17; Mrk 16:14; Luk 24:36; Yhn 20:19.\x*
+\v 6 Then he was seen¦119386 by more than 500 believers¦119389 at once—most of whom are still living, although some have already passed away.
+\v 7 Then he was seen¦119403 by Yacob, and then by all the ambassadors¦119408.
+\p
+\v 8 Then last of all, as if I'd been born at the wrong time, he appeared¦119416 to me also,\x + \xo 15:8: \xt Acts 9:3-6.\x*
+\v 9 because I'm the least¦119422 of the ambassadors¦119424—quite unworthy of that title because I persecuted¦119432 God's assembly¦119434.\x + \xo 15:9: \xt Acts 8:3.\x*
+\v 10 But¦119443 I am what I am thanks to God's grace, as his¦119446 grace towards¦119448 me hasn't been wasted. Actually, I worked harder than all \add the others\add*, although \add of course\add* it wasn't really me, but¦119438 God's grace with me.
+\v 11 \add Anyway,\add* whether¦119474 it was me or them, we¦119480 \add all\add* preach \add that same good message\add*, and¦119481 that's how you¦119483 all came to belief¦119483.
+\s1 Life after death
+\rem /s1 Our Resurrection; The Resurrection of the Dead
+\p
+\v 12 Now if \add the message\add* declares that \nd Messiah¦119486\nd* was killed and¦119485 then¦119485 raised¦119492 back to life, how come some of you¦119497 are saying¦119494 that no one comes back to life?
+\v 13 If no one who's dead¦119507 comes back to life, then \nd Messiah¦119511\nd* couldn't have come back to life,
+\v 14 and if \nd Messiah¦119515\nd* hasn't come back to life, then our¦119523 preaching is meaningless and so is your¦119530 faith¦119528!
+\v 15 Not only that, it would make us into fraudsters lying about God, because¦119537 we've testified¦119538 that God brought \nd Messiah¦119545\nd* back to life, but¦119532 that can't be true if the dead¦119552 can't come back to life.
+\v 16 Because¦119556 if the dead¦119557 don't¦119558 come back to life, then \nd Messiah¦119561\nd* can't¦119558 have come back to life,
+\v 17 but¦119564 if \nd Messiah¦119565\nd* didn't¦119566 come back to life, then your¦119571 faith¦119570 is wasted and you're all still¦119574 \add just unforgiven\add* sinners.
+\v 18 Again, if that's the case, those believers who've passed away \add simply\add* perished¦119587.
+\v 19 If our hope in \nd Messiah¦119596\nd* only \add applies\add* to this life¦119591, then we should be pitied more than \nd anyone¦119596\nd* else.
+\p
+\v 20 But \nd Messiah¦119606\nd* has indeed come back to life from the dead¦119609, leading the way for those who have passed away,
+\v 21 because¦119615 since¦119614 death¦119619 came through a man \add (Adam)\add*, then the resurrection¦119623 of the dead also comes through a man \add (Yeshua)\add*.
+\v 22 Just as everyone who's in Adam¦119629 will die, so everyone who's in \nd Messiah¦119636\nd* will come back to life¦119638,
+\v 23 but¦119640 each in his¦119654 own turn: first¦119645 \nd Messiah¦119646\nd* will be leading, then when he \add returns\add*, those who belong to him.
+\v 24 Then the end¦119657 will come when he hands over the kingship to \nd God¦119666\nd* the Father after he's destroyed all rule, and all authority¦119677 and power¦119679,
+\v 25 because¦119681 he must reign¦119683 until¦119684 he's defeated all his¦119695 enemies¦119690.\x + \xo 15:25: \xt Psa 110:1.\x*
+\v 26 The final enemy¦119704 to be abolished will be death¦119707 itself
+\v 27 because¦119709 \add (as David wrote)\add*,\x + \xo 15:27: \xt Psa 8:6.\x* ‘God has made everything subject to him.’ (Now when it says ‘everything’, \add of course\add* that doesn't include \add God\add* who's the one that made it happen.)
+\v 28 And when everything has been put under his control, then¦119733 the son himself¦119740 will submit to the one who subjected everything to him, so that \nd God¦119752\nd* \add will be in total¦119737 control\add*.
+\p
+\v 29 Otherwise¦119758, what will the people do who are being immersed \add in water\add* for the dead? If the dead don't¦119769 come back to life, why would they get immersed for them? TODO: WHAT'S THIS ABOUT?
+\v 30 \add As for us,\add* why do we¦119780 \add place ourselves\add* in danger¦119781 all the time?
+\v 31 I'm dying¦119786 every¦119784 day¦119785 by your¦119791 boasting¦119792 brothers¦119793 and¦119793 sisters¦119793, which¦119794 I have in \nd Messiah¦119797 Yeshua\nd* our¦119801 \nd master¦119800\nd*. TODO: WHAT DOES THIS MEAN?
+\v 32 If I fought¦119805 with wild animals at Ephesus¦119807 for human¦119804 \add purposes\add*, what did I gain? If the dead¦119813 aren't¦119814 brought back to life, then ‘Let's eat¦119816 and¦119817 drink¦119818, because¦119820 tomorrow¦119819 we'll die \add anyway\add*.’\x + \xo 15:32: \xt Isa 22:13.\x*
+\p
+\v 33 Don't be fooled: ‘Evil conversations¦119827 corrupt¦119824 good¦119826 character¦119825.’
+\v 34 Sober¦119829 up as you should, and stop sinning¦119833, because¦119835 some of you are \add quite\add* ignorant¦119834 about \nd God¦119836\nd*. (I say that to your shame¦119840.)
+\s1 Our new immortal bodies
+\rem /s1 The Resurrection Body
+\p
+\v 35 But¦119852 someone¦119846 will ask, “How do the dead¦119850 come back to life and¦119852 what kind of body¦119853 will they¦119854 \add have then¦119852\add*?”
+\v 36 Silly question! \add Plants\add* don't¦119859 come to life¦119860 unless the seed dies \add first\add*.
+\v 37 And you don't¦119870 sow the plants, but¦119867 you sow the bare seeds—perhaps of wheat¦119882 or something¦119885 else—
+\v 38 then \nd God¦119890\nd* gives it a body just like he wants, so each seed gets its own \add new\add* body.
+\p
+\v 39 Not all bodies are the same¦119908: humans¦119914 have one kind of body¦119906, animals¦119918 have different ones, birds¦119922 different again, and fish also different.
+\p
+\v 40 There are also heavenly bodies and earthly bodies, but¦119934 the beauty of heavenly bodies and of earthly \add bodies\add* are \add quite\add* different.
+\v 41 The sun, the moon¦119953, and the stars all have their own different types of beauty, and even the beauty of stars differs from one to another.
+\p
+\v 42 So too it¦119973 is with the resurrection¦119967 of the dead¦119969. The decaying body is ‘sown’ \add into the ground\add*, but the raised¦119973 \add body\add* is immortal.
+\v 43 It's ‘sown’ in dishonour¦119978 but it's raised in splendour¦119981. It's ‘sown’ in weakness¦119984 but it's raised in power¦119987.
+\v 44 It's ‘sown’ a natural body but it's raised¦119991 as a spiritual body. (If there's a natural body, there's also a spiritual body.)
+\v 45 As it's also written¦120006:\x + \xo 15:45: \xt Gen 2:7.\x* ‘The first¦120009 Adam became a living¦120014 being.’ The last ‘Adam’ is a life-giving spirit¦120019,
+\v 46 but¦120026 the spiritual doesn't come first—it's first the natural¦120028 and \em then\em* the spiritual.
+\v 47 The first¦120033 man was made of dust from the earth¦120037—the second¦120040 man \add came\add* from heaven¦120046.
+\v 48 Earthly people are like \add that\add* earthly man, and¦120055 heavenly people are like \add that\add* heavenly man.
+\p
+\v 49 And just like we carry the image of \add that\add* earthly¦120071 man, we should also bear the image of \add that\add* heavenly¦120080 man.
+\v 50 Now brothers¦120084 and sisters¦120084, I can tell you all that our \add present physical bodies\add* can't¦120092 inherit God's kingdom¦120089, and nor can corrupt¦120097 \add things\add* inherit immortality.
+\p
+\v 51 Listen¦120102, I'm explaining a mystery¦120103 to you¦120104 all. Not all of us will pass away, but we will all be changed¦120116\x + \xo 15:51-52: \xt 1Th 4:15-17.\x*
+\v 52 in an instant¦120118, a \add millisecond\add*, at the last trumpet because¦120130 the trumpet will sound and the dead¦120133 will come back to living as immortals, and we'll be changed¦120139.
+\v 53 \add Yes,\add* it's essential for this perishable¦120143 \add body\add* to become incorruptible and¦120147 for this mortal¦120149 to become immortal¦120152.
+\v 54 But¦120160 when this perishable¦120156 \add body\add* becomes incorruptible and¦120160 this mortal¦120162 becomes immortal¦120166, then what was written¦120179 will come true:\x + \xo 15:54: \xt Isa 25:8.\x* ‘Death is replaced by victory¦120184.’
+\q1
+\v 55 \x + \xo 15:55: \xt Hos 13:14 (LXX).\x*‘Death, where is your victory¦120189?
+\q1 \add Yes\add* death, where is your sting¦120194?’
+\m
+\v 56 Sin is the sting¦120202 of death¦120204, and¦120209 sin's power¦120210 is The Law,
+\v 57 but¦120216 be thankful¦120218 to \nd God¦120217\nd* because it's him who gives us the victory¦120224 through¦120225 our¦120228 \nd master¦120227 Yeshua¦120229 Messiah¦120230\nd*.
+\p
+\v 58 Therefore my¦120233 dear brothers¦120232 and sisters¦120232, be strong and stand firm, always¦120246 doing the \nd master's\nd* work enthusiastically, knowing¦120247 that your¦120251 work for \nd Yahweh¦120245\nd* isn't¦120252 wasted.
+\c 16
+\s1 Aid for God's people
+\rem /s1 Plans and greetings; The Offering for Needy Believers; The Collection for God's People; The Collection for Jerusalem; The Collection for the Saints
+\p
+\v 1 Now concerning¦120257 the fund-raising for the believers: You all must do the same as what I got the assemblies¦120269 in Galatia¦120271 to do.\x + \xo 16:1: \xt Rom 15:25-26.\x*
+\v 2 Every Sunday, each one of you should¦120285 put something aside from whatever¦120287 you've earnt, so that when I come¦120296 we won't¦120294 need any collections¦120298 then.
+\v 3 Then¦120302, when I arrive¦120303, I'll¦120312 \add write\add* letters¦120310 to send with those you recommend to take to Jerusalem with your¦120316 gift,
+\v 4 but¦120321 if it's appropriate for me to go as well, then¦120321 they¦120330 can travel with me.
+\s1 Instructions for travellers
+\rem /s1 Plans for Travel; Personal Requests; Paul's Final Instructions; Paul's Plans
+\p
+\v 5 After I've been to Macedonia I'll¦120332 come there. \add Yes,\add* I'm going through Macedonia,\x + \xo 16:5: \xt Acts 19:21.\x*
+\v 6 but¦120345 perhaps I'll¦120348 spend some time with you—maybe even the whole winter¦120351. That way, you all could help me on my way wherever¦120356 I decide to go next,
+\v 7 because I don't want to see¦120367 you all now \add just\add* in passing, but I'd like to stay with you all for a some time¦120371 if the \nd master¦120378\nd* permits¦120380.
+\p
+\v 8 But I'll¦120381 stay \add here\add* at Ephesus¦120384 until¦120385 the Pentecost celebrations\x + \xo 16:8: \xt Lev 23:15-21; Deu 16:9-11.\x*
+\v 9 because¦120389 a wide door¦120388 has opened¦120391 for me to be effective \add here\add*, even though many are opposing¦120396 \add me\add*.
+\p
+\v 10 Now if Timothy¦120401 arrives, make sure that he has nothing for him to be afraid of there, because¦120409 he's doing¦120412 \nd Yahweh's\nd* work¦120410 just like me.\x + \xo 16:10: \xt 1Cor 4:17.\x*
+\v 11 So don't let anyone¦120418 despise him, but¦120423 help him on his way in peace¦120426, so that he can come¦120428 to me because¦120432 I'm expecting him along with the brothers¦120436.
+\p
+\v 12 And then concerning the brother¦120441 Apollos¦120439, I strongly urged him to go to you with the brothers¦120454. He didn't¦120457 want to go at the present time, but¦120438 he'll go when he has \add another\add* opportunity¦120467.
+\s1 Final messages and greetings
+\rem /s1 Final Words
+\p
+\v 13 Stay alert and stay grounded in the faith¦120472. Be strong and courageous.
+\v 14 Everything you¦120477 do, do in love¦120479.
+\p
+\v 15 Now brothers¦120484 and sisters¦120484, you all know that Stephanas' family were the first¦120495 ones in Achaia¦120498 to believe, and \add since then¦120482\add* they've devoted themselves¦120505 to serving¦120501 the believers¦120484, so I urge you all\x + \xo 16:15: \xt 1Cor 1:16.\x*
+\v 16 to submit yourselves to people like them, \add in fact\add* to everyone¦120513 who works and cooperates.
+\p
+\v 17 I'm pleased that Stefanas¦120523, Fortunatus¦120525, and Achaicus¦120527 came because¦120528 they've given what you¦120531 all couldn't,
+\v 18 because¦120537 they¦120536 refreshed¦120536 my spirit¦120540 and¦120541 yours also, so you¦120543 should show appreciation to such people.
+\rem /s1 Paul's Final Greetings
+\p
+\v 19 \x + \xo 16:19: \xt Acts 18:2.\x*The assemblies¦120551 in \add the province of\add* Asia¦120554 \add Minor\add* send their¦120569 greetings.
+\v 20 All the brothers¦120574 and¦120574 sisters¦120574 here send their greetings¦120571.
+\p Greet¦120576 each other with an innocent kiss¦120579.
+\p
+\v 21 \sig I, Paul¦120586, am sending this greeting¦120582 in my own handwriting.\sig*
+\p
+\v 22 \sig If there's anyone¦120589 there who doesn't love the master, let him be cursed¦120597.\sig*
+\p \sig Come, master!\sig*
+\p
+\v 23 \sig May the grace¦120603 from our \+nd master¦120605 Yeshua\+nd* be with all of you¦120610.\sig*
+\p
+\v 24 \sig My¦120613 love¦120612 to all of you¦120616 in \+nd Messiah¦120618 Yeshua¦120619\+nd*. May¦120620 it¦120620 be¦120620 so¦120620.\sig*

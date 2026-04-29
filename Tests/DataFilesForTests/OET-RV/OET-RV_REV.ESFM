@@ -1,0 +1,758 @@
+\id REV - Open English Translation—Readers' Version (OET-RV) v0.1.55
+\usfm 3.0
+\ide UTF-8
+\rem ESFM v0.6 REV
+\rem WORDTABLE OET-LV_NT_word_table.tsv
+\h Revelation
+\toc1 Revelation
+\toc2 Revelation
+\toc3 Rev.
+\mt2 Yohan's
+\mt1 Revelation
+\mt2 of Yeshua the messiah
+\is1 Introduction
+\ip \bk Yohan's (John's) revelation of Yeshua (Jesus) the messiah\bk* concerns events that will happen in the future. This was written long ago in a time when the believers were persecuted due to their faith in the master Yeshua, the messiah, and Yohan himself had been forcibly exiled to Patmos Island by the Roman authorities and held there. Yohan's main purpose for writing this was to give hope to the believers and to encourage them to persevere in their faith despite their persecution.
+\ip A major portion of what's written in this document is the revelation by Yeshua the messiah to Yohan about incredible signs and all those symbols have a meaning and interpretation. At the time of writing, some were likely understood by the Christians of the time, but now, some of the symbols are very hard to interpret, and there's been a large range of interpretations from different people. But even though it's like that, there are also some signs that are easier to understand like ‘horns’ which denote power and authority, and ‘sword’ which denotes war. The themes are repeated throughout this document in various different forms. But it's important to just understand the main points of what's written here: God will indeed destroy all of his enemies through the messiah Yeshua, and also, he will reward all his people who persevere in serving him, and then he'll bring them to live with him. The final major them concerns the new sky and earth that God will create, and concerning the new Yerushalem that will descend from heaven.
+\iot Main components of this document
+\io1 Introduction \ior 1:1-8\ior*
+\io1 Yohan's first revelation in the form of a dream \ior 1:9-20\ior*
+\io1 The letters sent to seven assemblies of believers \ior 2:1–3:22\ior*
+\io1 The scroll with seven seals \ior 4:1–8:1\ior*
+\io1 The seven trumpets \ior 8:2–11:19\ior*
+\io1 The dinosaur and the two creatures \ior 12:1–13:18\ior*
+\io1 The various revelations to Yohan as dreams \ior 14:1–15:8\ior*
+\io1 The seven bowls of God's anger \ior 16:1-21\ior*
+\io1 The destruction of Babylon and the defeat of all God's enemies \ior 17:1–20:10\ior*
+\io1 The final judgement \ior 20:11-15\ior*
+\io1 The new sky and earth, and the new Yerushalem \ior 21:1–22:5\ior*
+\io1 Ending \ior 22:6-21\ior*
+\rem This is still a very early look into the unfinished text of the Open English Translation of the Bible. Please double-check the text in advance before using in public.
+\ie
+\c 1
+\rem /s1 Introduction and Salutation; Prologue
+\p
+\v 1 \add This is\add* the revelation¦155327 that¦155330 \nd God¦155334\nd* gave¦155331 to \nd Yeshua\nd* the \nd messiah¦155329\nd* to show to his slaves¦155338 \add to explain\add* what must happen soon. He communicated it by sending it via his messenger¦155350 to his slave¦155354, Yohan
+\v 2 who \add then\add* faithfully passed on everything he saw¦155371 of \nd God's\nd* message¦155361 and the testimony¦155366 of \nd Yeshua\nd* the \nd messiah¦155368\nd*.
+\v 3 \add God will \add* bless anyone who reads or listens to the messages¦155380 of this prophecy¦155384 and obeys what's written¦155390 in it¦155389, because¦155392 the time¦155393 \add of these events happening\add* is close.
+\s1 The greetings to seven assemblies of believers
+\rem /s1 Christ's messages to seven churches; John's Greeting to the Seven Churches; Greetings to the Seven Churches; Greetings and doxology
+\p
+\v 4 \x + \xo 1:4: a \xt Exo 3:14; \xo b \xt Rev 4:5.\x*\add This letter is from\add* Yohan to the seven assemblies¦155398 in Asia¦155402 \add Minor\add*:
+\p Grace and peace¦155406 to you all from the \add God\add* who is and was and will be, and from the seven spirits¦155422 who are in front of his¦155429 throne¦155428,
+\v 5 \x + \xo 1:5: a \xt Isa 55:4; \xo b \xt Psa 89:27.\x*and from Yeshua \add the\add* \nd messiah¦155433\nd*, the faithful¦155437 witness¦155435, the first¦155439 to come back to life, and the ruler¦155445 of all the leaders \add of the nations\add* of the world.
+\p \add Yeshua \add* loves us and he has released¦155456 us from our¦155463 sins¦155462 by his¦155467 blood¦155466,
+\v 6 \x + \xo 1:6: \xt Exo 19:6; Rev 5:10.\x*and made us into a kingdom¦155473 of priests¦155476 to \nd God¦155479\nd* his¦155483 father¦155482, and he is deserving of honour and power throughout the ages. May¦155501 it¦155501 be¦155501 so¦155501.
+\p
+\v 7 \x + \xo 1:7: a \xt Dan 7:13; Mat 24:30; Mrk 13:26; Luk 21:27; 1Th 4:17; \xo b \xt Zech 12:10; Yhn 19:34,37; \xo c \xt Zech 12:10; Mat 24:30.\x*Look¦155502, he's going to come \add back\add* in the clouds¦155507, and everyone¦155513 will see him—the one who they speared—and all the tribes¦155525 on the earth¦155527 will be mourning¦155520 over him. REWORK OT QUOTES
+\p
+\v 8 \x + \xo 1:8: a \xt Rev 22:13; \xo b \xt Exo 3:14.\x*“I am the A and the Z,” says \nd Yahweh¦155544 God¦155546\nd*, the one who is and was and will be—the most powerful one.
+\s1 Yohan sees the messiah
+\rem /s1 Vision of the Son of Man; A Vision of Christ; One like a Son of Man
+\p
+\v 9 I, Yohan, am your¦155562 brother¦155561 and partner in the suffering \add that's typical of those who follow\add* Yeshua. \add I've been exiled to\add* Patmos¦155588 Island where I endure¦155574 because¦155589 I believe God's message¦155592 and \nd Yeshua's\nd* testimony¦155598 and \add look forward to\add* his kingdom¦155572.
+\v 10 One Sunday \add while I was meditating\add*, \add God's\add* \nd spirit¦155604\nd* gave me a vision, and¦155609 I heard¦155610 a voice¦155614 behind¦155612 me that seemed as loud¦155615 as a trumpet¦155619 blast
+\v 11 that said¦155620, “Write down what you¦155635 see \add here\add* on a scroll¦155640 and send¦155642 it to the seven¦155644 assemblies¦155645 \add of believers\add*—to \add the cities of\add* Ephesus¦155650, Smyrna¦155653, Pergamum¦155656, Thyatira¦155659, Sardis¦155666, Philadelphia¦155669, and to Laodicea¦155672.”
+\p
+\v 12 Then¦155673 I turned to see who was talking¦155680 to me, and¦155673 I saw¦155687 seven¦155688 golden¦155690 lamp holders,
+\v 13 and standing among them was a man who looked like humanity's child,\f + \fr 1:13 \ft It's not certain what was meant here: either ‘a man who looked like humanity's child’ or ‘a form that looked like a human man’.\f* wearing a long robe with a golden¦155711 sash around His¦155702 chest.\x + \xo 1:13: a \xt Dan 7:13; \xo b \xt Dan 10:5.\x*
+\v 14 His¦155716 hair¦155719 was gleaming white like wool or snow and¦155714 his¦155716 eyes¦155729 were \add bright\add* like a fiery flame¦155732.\x + \xo 1:14: \xt Dan 7:9.\x*
+\v 15 His¦155737 feet¦155736 shone like bronze¦155739 that had been refined¦155743 in a furnace¦155742, and his¦155737 voice was like the sound of a \add river of rushing\add* water¦155752.\x + \xo 1:15: \xt Eze 1:24; 43:2.\x*
+\v 16 He was holding¦155755 seven¦155764 stars¦155763 in his right¦155759 hand¦155761 and a sharp¦155772 sword¦155770 was extending from his mouth¦155768, and his face¦155776 was like the sun¦155781 shining¦155782 at its¦155786 brightest.
+\v 17 And when I saw¦155789 him, I quickly lay at his feet¦155795, \add breathless\add* like a dead¦155799 man, but¦155787 he placed his right¦155804 hand¦155804 on me, and told me, “Don't be afraid. \em I am\em* the first¦155817 and the last.\x + \xo 1:17: \xt Isa 44:6; 48:12; Rev 2:8; 22:13.\x*
+\v 18 I lived and died \add here on the earth\add*, but¦155821 look, \add now\add* I'm alive \add again\add* and will live for all eternity, and I control the keys over death¦155842 and over hell.
+\v 19 So¦155849 record what you're seeing \add now\add* as well as \add what I'll show you\add* about current and future events.
+\v 20 This is the meaning of the seven stars that¦155870 you saw in my¦155878 right¦155876 hand¦155876 and of the seven golden¦155884 lamp holders:\x + \xo 1:20: \xt 1:12.\x* The seven stars represent \add God's\add* messengers¦155888 \add watching over\add* those seven groups of believers,\x + \xo 1:20: \xt 1:11.\x* and the seven lamp holders represent those groups of believers.
+\c 2
+\s1 The message to the assembly in Ephesus
+\rem /s1 The Message to the Church in Ephesus
+\p
+\v 1 To the assembly's¦155914 messenger¦155908 in Ephesus¦155912 write¦155915:
+\p The one holding the seven stars¦155922 in his¦155926 right¦155925 hand¦155925, the one walking¦155929 among the seven golden¦155936 lampstands¦155934, says these \add things\add*:
+\v 2 “I know about your activities and work, and your endurance¦155947 and that you can't¦155951 tolerate evil¦155954 people, and that you've investigated the ones who call themselves¦155961 missionaries but¦155941 are not, and you've found¦155969 them to be frauds.
+\v 3 \add I'm aware that\add* you've endured¦155975 and even suffered \add persecution\add* because¦155982 you've \add believed in\add* me, but¦155974 you've never given up.
+\v 4 However, I do have something against¦155994 you: you've abandoned the love¦155998 that you first¦156001 had.
+\v 5 So¦156019 \add now, you need to\add* remember¦156006 where¦156008 you've¦156009 fallen¦156009 from, and repent and repeat how you behaved at the beginning, but¦156019 if you don't, I'll come to you and if you don't repent, I'll remove¦156026 your¦156029 lampstand¦156028 from its¦156033 place¦156032.
+\v 6 But you do have this going for you: you hate what the \add disciples of\add* Nicolaus are doing,\f + \fr 2:7 \ft Nicolaus' disciples ate food that had been sacrificed to idols and committed sexual sins.\f* just like I do.
+\p
+\v 7 Everyone who wants¦156051 to understand¦156051 needs¦156053 to listen¦156053 to what \add God's\add* \nd spirit¦156056\nd* is saying¦156057 to the assemblies¦156060.
+\p I will grant \add the right\add* to eat¦156067 from the tree¦156070 \add that¦156073 gives\add* life¦156072 in God's paradise¦156079 to everyone who overcomes¦156064.”\x + \xo 2:7: a \xt Gen 2:9; Rev 22:2; \xo b \xt Eze 28:13; 31:8 (LXX).\x*
+\s1 The message to the assembly in Smyrna
+\rem /s1 The Message to the Church in Smyrna
+\p
+\v 8 To the assembly's¦156092 messenger¦156086 in Smyrna¦156090 write¦156094:\x + \xo 2:8: \xt Isa 44:6; 48:12; Rev 1:17; 22:13.\x*
+\p The one who's the first¦156099 and¦156084 the last, who died but¦156084 lived¦156107 \add again\add*, says these things:
+\v 9 “I know about your suffering and your poverty¦156117, but you're¦156121 \add actually\add* rich! I also know how about the slander¦156124 of those who consider themselves¦156132 to be Jews, but they're not \add true\add* Jews because \add ≈their master is\add* Satan¦156139.
+\v 10 Don't be afraid about what you're¦156144 going to suffer¦156146. Yes, the devil¦156153 will throw¦156150 some of you into prison¦156159 where your¦156154 \add faith\add* will be tested¦156161, and you'll experience persecution for ten days¦156167. \add Just\add* remain faithful, even if it means death¦156172, and I'll¦156174 give you life¦156179 as a reward.
+\p
+\v 11 Everyone who wants¦156181 to understand¦156181 needs¦156183 to listen¦156183 to what \add God's\add* \nd spirit¦156186\nd* is saying¦156187 to the assemblies¦156189.
+\p Anyone who \add stays true\add* won't¦156193 be affected by the second¦156199 death¦156197.”\x + \xo 2:11: \xt Rev 20:14; 21:8.\x*
+\s1 The message to the assembly in Pergamum
+\rem /s1 The Message to the Church in Pergamum
+\p
+\v 12 To the assembly's¦156206 messenger¦156202 in Pergamum¦156205 write¦156207:
+\p The one with the sharp¦156217 sword¦156213 says these things:
+\v 13 “I know where you live: where Satan's throne¦156227 is. Despite that, you firmly \add believe in me\add* and you haven't denied your faith¦156240 in me, even when Antipas¦156249, the faithful \add man who told others about me\add* was killed¦156257 in your \add city\add*, where Satan lives.
+\v 14 But¦156296 I do have a few things against¦156267 you: you have some people there¦156273 who hold to \add the ancient prophet\add* Balaam's teaching.\x + \xo 2:14: a \xt Num 22:5,7; 31:16; Deu 23:4; \xo b \xt Num 25:1-3.\x* He taught¦156276 \add Moab's king\add*, Balak¦156284, how to tempt¦156288 the Israelis and to eat \add food\add* that had been sacrificed¦156295 to idols, and to be sexually¦156297 immoral¦156297.
+\v 15 In the same way, some of you¦156301 also follow the teachings¦156304 of Nicolaus' disciples.\f + \fr 2:15 \ft They eat food that has been sacrificed to idols, and they commit sexual sins.\f*
+\v 16 So¦156313 turn away from all that, otherwise I'll¦156320 come soon and¦156319 battle against them with the word of my¦156328 mouth¦156327.
+\p
+\v 17 Everyone¦156363 who wants¦156330 to understand¦156330 needs¦156332 to listen¦156332 to what \add God's\add* \nd spirit¦156335\nd* is saying¦156336 to the assemblies¦156338.
+\p Anyone¦156363 who \add stays true\add* will be given hidden¦156349 food from heaven, and I'll¦156341 give \add each of\add* them a white¦156354 stone with a new name¦156359 written¦156361 on it that¦156348 no one knows apart from the person receiving¦156369 it.”\x + \xo 2:17: a \xt Exo 16:14-15; 16:33-34; Yhn 6:48-50; \xo b \xt Isa 62:2; 65:15.\x*
+\s1 The message to the assembly in Thyatira
+\rem /s1 The Message to the Church in Thyatira
+\p
+\v 18 To the assembly's¦156377 messenger¦156372 in Thyatira¦156376 write¦156378:
+\p God's son, the one with eyes¦156388 like a flame¦156391 of fire¦156393 and¦156394 with feet¦156396 like bronze¦156399, says:
+\v 19 “I know what you've been doing, and \add about\add* your love¦156406 and faith¦156409, and your service¦156413 and endurance¦156417, and what you're doing now is better than what you first¦156428 did.
+\v 20 But¦156453 I have against¦156431 you that you tolerate that woman Jezebel¦156442 who calls herself¦156448 a prophetess¦156451, and she deceives my servants by teaching¦156454 them to be sexually¦156462 immoral¦156462 and to eat \add food that's been\add* offered to idols.\x + \xo 2:20: \xt 1Ki 16:31; 2Ki 9:22,30.\x*
+\v 21 Even though I've given her time¦156470 to repent, she's \add still\add* not willing to turn away from her immorality¦156480.
+\v 22 Listen, I'm going to \add punish her with a terrible sickness\add*, and to punish those who are committing¦156496 adultery¦156496 with her with terrible suffering if they don't¦156503 turn away from what she's doing.
+\v 23 I will kill her¦156514 children¦156513, then¦156511 all the assemblies¦156522 will know that I am the one who searches¦156527 \add people's\add* affections and hearts¦156530, and who \add punishes or rewards\add* each one of you depending on your¦156538 actions.\x + \xo 2:23: a \xt Psa 7:9; Jer 17:10; \xo b \xt Psa 62:12.\x*
+\p
+\v 24 But the rest of you \add believers in the city\add* of Thyatira¦156548 haven't obeyed that woman's teachings¦156553 and haven't taken part in what she calls ‘the secret practices that Satan¦156563 taught¦156553 her’, I have something to say to you all as well. I won't¦156550 give you any other other burden¦156572
+\v 25 except just to continue to obey the true teaching that¦156579 you've received, until¦156578 I return.
+\v 26 And anyone who's victorious, who continues to do what I command until¦156588 the end¦156589, I'll¦156593 give them authority¦156595 to rule over the people groups on earth.\x + \xo 2:26-27: \xt Psa 2:8-9 (LXX).\x*
+\v 27 They'll rule them with irresistible power, and¦156599 \add those who rebel\add* will be smashed like \add unwanted\add* clay pots,
+\v 28 just like \add the authority\add* that I've¦156614 received¦156615 from my¦156619 father¦156618. And I'll¦156621 give them the morning¦156626 star¦156624.
+\p
+\v 29 Everyone who wants¦156628 to understand¦156628 needs¦156630 to listen¦156630 to what \add God's\add* \nd spirit¦156633\nd* is saying¦156634 to the assemblies¦156636.”
+\c 3
+\s1 The message to the assembly in Sardis
+\rem /s1 The Message to the Church in Sardis
+\p
+\v 1 To the assembly's¦156643 messenger¦156639 in Sardis¦156642 write¦156645:
+\p The one having the seven spirits¦156652 of \nd God¦156654\nd* and the seven stars¦156658 says these things: “I know what you're achieving and that you have a reputation¦156665 of being ‘alive’, but¦156637 you're \add actually\add* dead¦156670.
+\v 2 So wake up \add from the dead\add* and strengthen¦156675 what's left and was about to die¦156683, because¦156685 your¦156687 actions have been inadequate in God's sight.
+\v 3 Remember how you \add first\add* listened to and internalised \add God's message\add*, and how you obeyed it and repented¦156704. If you don't¦156708 wake up \add soon\add*, I'll come \add unexpectedly\add*—you'll certainly not know \add in advance\add* when I'll be coming.\x + \xo 3:3: \xt Mat 24:43-44; Luk 12:39-40; Rev 16:15.\x*
+\v 4 But¦156742 you¦156728 do have a few people in Sardis¦156734 who haven't stained their¦156741 records, and because¦156750 they are worthy¦156751, they'll \add be\add* dressed in white¦156749 and walk¦156743 with me.
+\v 5 \add So\add* anyone who conquers will be dressed like that in \add pure\add* white¦156761, and I certainly won't¦156764 erase their names from the Book of Life, but¦156762 I'll¦156765 declare their names to my¦156784 father¦156783 and to his¦156768 messengers¦156788.\x + \xo 3:5: a \xt Exo 32:32-33; Psa 69:28; Rev 20:12; \xo b \xt Mat 10:32; Luk 12:8.\x*
+\p
+\v 6 Everyone who wants¦156791 to understand¦156791 needs¦156793 to listen¦156793 to what \add God's\add* \nd spirit¦156796\nd* is saying¦156797 to the assemblies¦156799.”
+\s1 The message to the assembly in Filadelfia
+\rem /s1 The Message to the Church in Philadelphia
+\p
+\v 7 To the assembly's¦156807 messenger¦156802 in Filadelfia¦156805 write¦156809:\x + \xo 3:7: \xt Isa 22:22; Yob 12:14.\x*
+\p The holy one, the true one, the one having¦156819 \add King\add* David's key \add to the city\add*, the one who opens \add doors\add* no one can shut, and¦156800 who shuts \add doors\add* no one can open, says:
+\v 8 “I know \add everything\add* you've been doing. Listen¦156850, I have placed an opened¦156855 door¦156854 in front of you that¦156856 no one can shut. You aren't¦156874 very strong, yet you've obeyed my¦156870 instructions and you haven't disowned¦156875 knowing¦156845 me.
+\v 9 Listen¦156879, I'll give those¦156882 \add people\add* from Satan's¦156887 synagogue¦156885 (the ones who say that they're \add believing\add* Jews, but¦156893 they're not—they're lying¦156897), I'll make them so that they will come and bow down in front of you, and \add then\add* they'll know¦156912 that I love you.\x + \xo 3:9: a \xt Isa 49:23; 60:14; \xo b \xt Isa 43:4.\x*
+\v 10 Because¦156919 you followed my¦156926 instructions about persevering, I will spare you from the time of trouble that¦156935 all of humanity will soon experience (which¦156935 will test everyone living¦156945 on the earth¦156948).
+\v 11 I'll come quickly¦156951. Hold firmly to what you have so that no one can take¦156957 away your¦156960 crown¦156959.
+\v 12 Anyone who's an overcomer¦156962, I'll¦156963 make them a pillar¦156966 in my god's temple¦156969 and they'll never leave it again. I will write my god's name on them, and the name of my god's city¦156993 (the new Jerusalem which will come down out of heaven¦157005 from my god), and my new name.\x + \xo 3:12: a \xt Rev 21:2; \xo b \xt Isa 62:2; 65:15.\x*
+\p
+\v 13 Everyone who wants¦157017 to understand¦157017 needs¦157019 to listen¦157019 to what \add God's\add* \nd spirit¦157022\nd* is saying¦157023 to the assemblies¦157025.”
+\s1 The message to the assembly in Laodicea
+\rem /s1 The Message to the Church in Laodicea
+\p
+\v 14 To the assembly's¦157032 messenger¦157028 in Laodicea¦157031 write¦157034:\x + \xo 3:14: \xt Prv 8:22.\x*
+\p The truth, the faithful¦157043 and¦157044 true witness¦157041, the originator of God's creation¦157052, says:
+\v 15 “I'm aware of what you've been doing \add and\add* that you're¦157062 neither¦157060 hot nor cold. (You'd benefit\f + \fr 3:15 \ft TC: Some manuscripts don't have this parenthesised sentence at all, and some later manuscripts have ‘I wish’ instead of ‘You'd benefit’.\f* if you were hot or cold.)
+\v 16 So because¦157073 you're¦157076 lukewarm¦157075, neither¦157078 hot nor cold¦157083, I'll spit you out of my¦157094 mouth¦157092.
+\v 17 You brag, ‘I'm rich, \add yes\add* I've¦157101 grown rich and don't have any needs,’ but¦157100 you don't realise that you're¦157096 \add actually\add* miserable¦157114 and pitiable, and poor and blind¦157122 and naked¦157124.
+\v 18 I advise you to buy gold¦157131 from me that's been refined¦157132 by fire¦157134 so that you might get rich, and buy white¦157139 clothes¦157138 so that you can dress yourself¦157141 so that the shame¦157146 of your nakedness¦157148 might not be displayed, and buy ointment to rub on your eyes¦157157 so that you'll be able to see.
+\v 19 I tell off and discipline¦157168 those that I love, so be earnest and turn away from your disobedience.\x + \xo 3:19: \xt Prv 3:12; Heb 12:6.\x*
+\v 20 Yes, I stand at the door and knock¦157180—if anyone¦157182 hears my¦157186 voice¦157185 and opens the door, I will come in and eat with him, and he'll eat with me.
+\v 21 Anyone who overcomes¦157205, I'll¦157206 give the right to sit with me on my throne, just like when I conquered and sat with my father¦157223 on his¦157228 throne.
+\p
+\v 22 Everyone who wants¦157230 to understand¦157230 needs¦157232 to listen¦157232 to what \add God's\add* \nd spirit¦157235\nd* is saying¦157236 to the assemblies¦157238.
+\c 4
+\s1 Worshipping in heaven
+\rem /s1 Visions of heaven; Worship in Heaven; The Heavenly Worship; The Throne in Heaven
+\p
+\v 1 After¦157239 that, I looked¦157241 and wow¦157243, a door¦157244 opening in heaven¦157248, and the first¦157254 voice¦157252 that I'd heard¦157256 that sounded like a trumpet¦157258 told me, “Come up here and I'll¦157268 show you what must¦157268 happen after¦157274 those things.”
+\v 2 Immediately¦157277 I was in the \nd spirit¦157280\nd* and wow¦157282, a throne was appearing in heaven¦157287 with someone sitting¦157295 on it.\x + \xo 4:2-3: \xt Eze 1:26-28; 10:1.\x*
+\v 3 The one sitting¦157299 there \add sparkled like jewels\add*, and an emerald-looking rainbow¦157313 encircled the throne¦157316.
+\v 4 Surrounding that throne were twenty-four other thrones, and on them sat twenty-four elders¦157342 dressed in white¦157347 and with golden¦157355 crowns¦157354 on their¦157353 heads¦157352.
+\v 5 From the \add centre\add* throne came lightning¦157361 flashes and thunderous¦157366 sounds and voices¦157364. In front of it, seven torches were burning¦157371, which¦157378 are God's seven spirits¦157383.\x + \xo 4:5: a \xt Exo 19:16; Rev 8:5; 11:19; 16:18; \xo b \xt Eze 1:13; \xo c \xt Rev 1:4; Zech 4:2.\x*
+\v 6 In front of the throne was something¦157386 like a sea¦157391 of glass¦157392 that was as clear as crystal¦157394.
+\p Around the throne were four living¦157405 creatures¦157405, covered \add both\add* front and¦157395 back with eyes¦157407.\x + \xo 4:6: \xt Eze 1:22.\x*
+\v 7 This first¦157415 living creature resembled a lion¦157417, the second¦157420 resembled a bull, the third¦157426 had a face¦157431 like a man, and¦157411 the fourth¦157439 one resembled a flying¦157443 eagle¦157442.
+\v 8 Each of the four¦157446 living¦157447 creatures¦157447 had six¦157459 wings¦157458 with eyes¦157465 all around¦157460 and underneath them. Day and night¦157472 they never stop saying¦157473:\x + \xo 4:8: a \xt Eze 1:18; 10:12; \xo b \xt Isa 6:2-3.\x*
+\q1 ‘Holy, holy, holy,
+\q2 is \nd Yahweh¦157483\nd*, almighty¦157487 \nd God¦157485\nd*,
+\q1 who was and is and is to come.’
+\p
+\v 9 Whenever the living creatures¦157501 praise the one sitting¦157509 on the throne¦157514 and honour¦157504 him and thank¦157506 him (the one who lives through all the ages),
+\v 10 the twenty-four elders¦157529 drop to their knees with their faces to the ground in front of the one sitting¦157532 on the throne and worship the one who lives through all the ages. They place their crowns¦157551 down in front of the throne and say:
+\q1
+\v 11 “You, our¦157565 \nd God¦157564\nd* and \nd master¦157561\nd*, are worthy to receive¦157568 praise and honour¦157573 and power¦157576,
+\q2 because¦157577 you created everything.
+\q1 Everything exists just as you determined to create it.”
+\c 5
+\s1 The scroll and the lamb
+\rem /s1 The Lamb Opens the Scroll; The Scroll and the Lamb
+\p
+\v 1 Then¦157592 I saw¦157593 a scroll¦157603 in the right-hand of the one sitting¦157599 on the throne¦157602. It had writing on both sides, and¦157592 had been sealed¦157610 with seven¦157612 \add wax\add* seals¦157611.\x + \xo 5:1: \xt Eze 2:9-10; Isa 29:11.\x*
+\v 2 I also saw¦157614 a powerful messenger¦157615 who was asking in a loud¦157621 voice¦157620, “Who's worthy¦157624 to break¦157630 the seals¦157632 and¦157629 open the scroll¦157628?”
+\v 3 But¦157634 there wasn't any person on earth or \add in the place of the dead\add* who was permitted to open the scroll¦157653 and¦157642 read it¦157657.
+\v 4 I began to cry loudly, because¦157662 no one could be found¦157666 who was worthy¦157664 to open the scroll¦157671 or look inside it¦157674.
+\v 5 Then¦157675 one of the elders¦157679 said¦157680 to me, “Stop crying. Look¦157684, here's the lion¦157687 from the tribe¦157692 of Yudah¦157693. He's the descendant of \add King\add* David¦157696 who's a conqueror \add who's competent\add* to break the seals¦157706 and¦157702 open the scroll¦157701.”\x + \xo 5:5: a \xt Gen 49:9; \xo b \xt Isa 11:1,10.\x*
+\p
+\v 6 Then¦157711 I saw¦157712 a lamb standing there between the throne¦157717 and the four¦157720 living¦157721 creatures¦157721 and the elders¦157726. The lamb looked like it had been slaughtered, and it had seven horns¦157734 and seven eyes¦157737 which¦157739 are God's seven spirits¦157744 that¦157739 had been sent¦157751 throughout the world.\x + \xo 5:6: a \xt Isa 53:7; \xo b \xt Zech 4:10.\x*
+\v 7 The lamb went¦157757 up to the throne and¦157756 accepted \add the scroll\add* from the right¦157764 hand¦157764 of the one sitting¦157767 on the throne.
+\v 8 When¦157771 he'd taken the scroll¦157775, the four living¦157778 creatures¦157778 and the twenty-four elders knelt down in front of the lamb¦157787. Each elder held a harp and a bowl that¦157798 was full of incense¦157797 (which¦157798 symbolised the prayers¦157802 of the believers).\x + \xo 5:8: \xt Psa 141:2.\x*
+\v 9 They sung a new song \add like this\add*:\x + \xo 5:9: \xt Psa 33:3; 98:1; Isa 42:10.\x*
+\q1 “It's you who's worthy to take the scroll¦157815 and break its¦157820 seals¦157819,
+\q1 because¦157821 you were slaughtered and with your¦157831 blood¦157830 you purchased \add people\add* for \nd God¦157826\nd*
+\q2 from every¦157833 tribe¦157834 and language and people group and nation¦157840.
+\q1
+\v 10 You've made them to be a kingdom¦157848\x + \xo 5:10: \xt Exo 19:6; Rev 1:6.\x*
+\q2 and to be priests¦157852 to \add serve\add* our¦157847 \nd God¦157846\nd*,
+\q2 and they¦157855 will reign¦157855 on the earth¦157859.”
+\p
+\v 11 Then¦157860 I looked¦157861 and I heard¦157863 the voices¦157865 of the living¦157874 creatures¦157874 and elders¦157877 that were around¦157869 the throne¦157871 along with millions of \add God's\add* messengers¦157866\x + \xo 5:11: \xt Dan 7:10.\x*
+\v 12 saying¦157888 with loud¦157890 voices¦157889:
+\q1 “The lamb¦157895 that¦157896 was slaughtered is worthy to receive¦157898 power¦157900 and riches¦157903,
+\q1 and wisdom¦157905 and strength¦157907 and honour¦157909 and praise and blessing¦157913.”
+\p
+\v 13 Then¦157914 I heard¦157951 every creature¦157916 in heaven¦157922 and on earth, and under the earth and in the sea¦157940—everything everywhere—saying¦157952,
+\q1 “To the one sitting¦157955 on the throne¦157959
+\q2 and to the lamb¦157963,
+\q1 be praise and honour¦157968 and GLORY and power
+\q2 forever and ever.”
+\p
+\v 14 Then¦157982 the four¦157984 living¦157985 creatures¦157985 said¦157986, “May¦157989 it¦157989 be¦157989 so¦157989,” and the elders¦157994 knelt down and worshipped.
+\c 6
+\s1 The lamb breaks the first six seals
+\rem /s1 The Seven Seals
+\p
+\v 1 Then¦158004 I saw¦158005 the lamb¦158010 breaking the first of the seven¦158014 seals¦158015, and¦158016 I heard¦158017 one of the four¦158021 living¦158022 creatures¦158022 say, “Come,” in a thunderous¦158029 voice¦158026.
+\v 2 So¦158035 I looked¦158036, and wow¦158038, there was a white¦158040 horse¦158039 with someone sitting¦158043 on it holding a bow \add and arrow\add*. A crown¦158053 was given¦158051 to him, and then¦158035 he went¦158055 out as a conqueror to conquer.\x + \xo 6:2: \xt Zech 1:8; 6:3,6.\x*
+\v 3 And when \add the lamb\add* broke the second seal, I heard¦158070 the second living¦158073 creature¦158073 say, “Come,”
+\v 4 and another horse came out. It was a red horse, and the one sitting¦158091 on it was given permission to withdraw peace¦158099 from the earth¦158103 so that \add people\add* would slaughter each other, and a large¦158113 sword¦158112 was given to him.\x + \xo 6:4: \xt Zech 1:8; 6:2.\x*
+\v 5 Then¦158115 \add the lamb\add* broke the third seal and I heard¦158123 the third living¦158126 creature¦158126 say, “Come.” I looked¦158133, and wow¦158135, there was a black¦158137 horse¦158136, and the one sitting¦158141 on it¦158143 held balancing scales¦158146 in his¦158150 hand¦158149.\x + \xo 6:5: \xt Zech 6:2,6.\x*
+\v 6 Then¦158151 I heard¦158152 \add something¦158152\add* like a voice¦158154 from among the four¦158158 living¦158159 creatures¦158159 that said¦158160, “A kilo of wheat¦158162 for a day's pay, or three¦158165 kilos of barley¦158168 for the same price. But¦158151 don't¦158178 harm the oil¦158174 and¦158151 wine \add supplies\add*.”
+\p
+\v 7 When¦158180 \add the lamb\add* broke the fourth seal, I heard¦158187 the voice¦158188 of the fourth living¦158193 creature¦158193 saying¦158195, “Come.”
+\v 8 Then¦158201 I looked¦158202, and wow¦158204, there was a green¦158206 horse¦158205. The one sitting on it was named ‘Death¦158216’, and Hades¦158219 was \add sitting\add* behind him. They were given¦158225 authority¦158228 over a quarter of the earth: to execute people with the sword¦158237, with famine¦158240, with death¦158243, and with the wild animals on the earth.\x + \xo 6:8: \xt Eze 14:21.\x*
+\p
+\v 9 When¦158252 \add the lamb\add* broke the fifth¦158256 seal, under the altar¦158263 I saw¦158259 the souls¦158265 of everyone who had been killed because of God's word and¦158275 because of the testimony¦158278 that¦158268 they¦158286 had upheld.
+\v 10 These souls called out loudly¦158292, “You, master¦158297, always do what is right and decide what is right! So¦158288 please condemn and punish the people on the earth¦158317 who killed us.”
+\v 11 Then¦158318 each of them was given¦158319 a white¦158326 robe¦158324, and told to wait a little¦158338 longer until¦158339 the full number was reached of their¦158348 fellow¦158347 servants and brothers¦158351 and sisters¦158351 who would also be killed¦158356 like they were.
+\p
+\v 12 When¦158362 \add the lamb\add* broke the sixth¦158370 seal, there¦158375 was a violent earthquake¦158373 and the sun¦158379 went black like black cloth, and the moon¦158388 which was full, went \add red\add* like blood¦158392.\x + \xo 6:12: a \xt Rev 11:13; 16:18; \xo b \xt Isa 13:10; Yoel 2:10,31; 3:15; Mat 24:29; Mrk 13:24-25; Luk 21:25.\x*
+\v 13 \add Also\add* the stars¦158395 fell out of the sky¦158398, just like how a fig¦158405 tree¦158405 out of season drops its¦158411 fruit when it¦158411 gets shaken¦158419 by a strong wind¦158415.\x + \xo 6:13-14: \xt Isa 34:4.\x*
+\v 14 The sky was split apart like a scroll¦158425 being¦158426 rolled¦158426 up, and all the mountains¦158430 and islands¦158433 were moved¦158439 out of their¦158437 places¦158436.\x + \xo 6:14: \xt Rev 16:20.\x*
+\v 15 Then¦158441 the kings¦158443 on the earth¦158445, and high-ranking officials, military officers, rich \add people\add* and \add influential individuals\add*, all slaves¦158463 and free \add people\add* hid in caves¦158471 and among¦158473 rocks¦158475 on the mountains¦158477.\x + \xo 6:15: \xt Isa 2:19,21.\x*
+\v 16 They told the mountains¦158481 and rocks¦158484, “Fall \add down\add* on us and hide¦158489 us so that the one sitting¦158494 on the throne¦158498 can't see us, and \add also\add* from the lamb's anger¦158504\x + \xo 6:16: \xt Hos 10:8; Luk 23:30.\x*
+\v 17 because¦158507 today is the terrible day¦158510 when their¦158516 anger¦158514 has eventuated, and¦158517 who can stand up to that?”\x + \xo 6:17: \xt Yoel 2:11; Mal 3:2.\x*
+\c 7
+\s1 The 144,000 marked Israelis
+\rem /s1 The 144,000 of Israel Sealed; The 144,000 People of Israel; God's People Will Be Preserved
+\p
+\v 1 After¦158522 that I saw¦158525 four messengers¦158527 standing around the earth, holding \add back\add* the four winds¦158538 of the earth so that no wind¦158546 would blow on land or sea¦158553 or on any tree¦158559.\x + \xo 7:1: \xt Jer 49:36; Dan 7:2; Zech 6:5.\x*
+\v 2 Then¦158561 I saw¦158562 another¦158563 messenger coming up from \add the direction of\add* the rising¦158568 sun¦158570, and he was holding the living¦158575 God's seal. He called out loudly¦158580 to the four¦158582 messengers that God had permitted to damage the earth¦158590 and the sea¦158593,
+\v 3 saying¦158594, “Don't harm the earth¦158600 or the sea¦158605 or the trees¦158609 until¦158610 we¦158613 can \add mark the\add* seal on the foreheads¦158621 of God's servants.”\x + \xo 7:3: \xt Eze 9:4,6.\x*
+\v 4 Then¦158623 I heard¦158624 the count of those who were \add marked with\add* the seal. There were 144,000 from all of Yisrael's tribes¦158639.
+\v 5 There were 12,000 from the tribes of Yehudah, Reuben¦158651, Gad¦158657,
+\rem /s1 The Enormous Crowd
+\v 6 Asher, Naftali, Menashsheh,
+\rem /s1 Praise from the Great Multitude
+\v 7 Shimeon (Simeon¦158682), Levi¦158688, Yissakar (Issachar¦158694),
+\v 8 Zebulun, Yosef (Joseph), and Benyamin (Benjamin¦158713).
+\s1 The huge crowd dressed in white
+\rem /s1 The Great Multitude in White Robes; The Multitude from Every Nation
+\p
+\v 9 After¦158719 that¦158729, I looked¦158721 and wow¦158723, there was a huge¦158726 crowd¦158724 too large¦158726 to count, from every¦158736 nation¦158737 and tribe¦158739 and people¦158741 and language, standing in front of the throne¦158750 and the lamb¦158754, having been dressed in white¦158758 robes¦158757 and holding palm¦158760 branches¦158760,
+\v 10 and they¦158767 were shouting loudly¦158770, “Our¦158778 \nd God¦158776\nd* who's sitting¦158780 on the throne¦158784 has saved us! The lamb¦158791 has saved us!”
+\v 11 Then¦158798 all the messengers stood¦158802 around the throne, and around the elders¦158808 and the four living¦158812 beings. The messengers all knelt down in front of the throne with their¦158822 faces¦158820 to the ground and worshipped \nd God¦158826\nd*
+\v 12 saying¦158827, “Yes, may it be so. May praise and GLORY and wisdom¦158836 and thanks¦158839 and honour¦158842 and power¦158845 and strength¦158848 be \add given\add* to our¦158851 \nd God¦158850\nd* who lives through all the ages! May it be so.”
+\p
+\v 13 Then¦158858 one of the elders¦158863 asked me, “Who are those people in white¦158878 robes¦158876 and¦158858 where¦158882 have they come from?”
+\p
+\v 14 “Sir, you are the one who knows,” I answered.\x + \xo 7:14: \xt Dan 12:1; Mat 24:21; Mrk 13:19.\x*
+\p And then¦158884 he told me, “Those are the ones who've come through the terrible tribulation¦158903, and they've washed¦158907 their¦158910 robes¦158909 in the blood¦158918 of the lamb¦158920 and made them white¦158912.
+\v 15 That's why they're here in front of God's throne, and they worship him day¦158932 and night¦158934 in his temple¦158937, and the one sitting¦158941 on the throne will extend his protection over them.
+\v 16 They won't be hungry or thirsty¦158956 any longer, and the sun¦158965 won't burn them with its scorching heat,\x + \xo 7:16: \xt Isa 49:10.\x*
+\v 17 because¦158970 the lamb that's there at the throne¦158977 will shepherd¦158978 them. The lamb will guide them to the springs¦158988 of living water¦158989, and \nd God¦158993\nd* will \add ensure that\add* every¦158994 tear is wiped away from their¦159000 eyes¦158999.”\x + \xo 7:17: a \xt Psa 23:1; Eze 34:23; \xo b \xt Psa 23:2; Isa 49:10; \xo c \xt Isa 25:8.\x* SHOULD THIS BE IN POETIC FORMAT?
+\c 8
+\s1 The lamb of seventh seal
+\rem /s1 The Seventh Seal and the Golden Censer; The Lamb Breaks the Seventh Seal
+\p
+\v 1 Then¦159001 the lamb broke the seventh¦159008 seal and¦159001 there was silence¦159010 in heaven¦159013 for about¦159014 half an hour¦159015.
+\rem /s1 The seven trumpets
+\v 2 And I saw¦159017 the seven messengers¦159020 who stand in front of \nd God¦159024\nd* and¦159016 they were each given¦159027 a trumpet¦159031.
+\p
+\v 3 Then¦159032 another¦159033 messenger¦159034 came¦159035 and¦159032 stood¦159037 at the altar holding a golden bowl for burning incense. He was given¦159050 a lot of incense to offer which¦159067 was to be mingled with the prayers¦159058 of all the believers on the golden altar in front of the throne¦159070.\x + \xo 8:3: a \xt Amos 9:1; \xo b \xt Exo 30:1,3.\x*
+\v 4 So¦159071 the smoke¦159075 of the incense¦159077 from the bowl in the messenger's¦159085 hand¦159083, together with the prayers¦159079 of the believers, drifted upwards in front of \nd God¦159088\nd*.
+\v 5 Then¦159089 the messenger¦159092 took the bowl and filled¦159097 it with coals of fire¦159102 from the altar¦159104, and threw them\f + \fr 8:5 \ft The Greek doesn't specify whether or not the bowl itself was included.\f* onto the earth and that caused peals of thunder¦159114 and roaring, and lightning¦159120 bolts and an earthquake.\x + \xo 8:5: a \xt Lev 16:12; Eze 10:2; \xo b \xt Exo 19:16; Rev 11:19; 16:18.\x*
+\s1 The first four trumpets
+\rem /s1 The Seven Trumpets
+\p
+\v 6 Then¦159124 the seven messengers¦159127 who had the seven trumpets¦159132, got ready to blow them.
+\p
+\v 7 Then¦159138 the first¦159140 messenger blew his trumpet¦159142 and then¦159138 hail and fire¦159147 mixed¦159148 together with blood¦159151 was thrown¦159153 \add down\add* on the earth and a third of the earth was burnt up along with a third of the trees¦159167, and all the green¦159172 grass¦159171 got burnt up.\x + \xo 8:7: \xt Exo 9:23-25; Eze 38:22.\x*
+\p
+\v 8 Then¦159174 the second¦159176 messenger¦159177 blew his trumpet¦159178, and something¦159179 was thrown¦159185 into the ocean that was like a huge¦159182, burning¦159183 mountains¦159181, and a third¦159193 of the sea turned into blood¦159196.
+\v 9 One third of the living creatures¦159204 in the sea¦159208 died¦159198, and a third of the ships¦159217 were destroyed.
+\p
+\v 10 Then¦159220 the third messenger¦159223 blew his trumpet¦159224 and a huge¦159231 star¦159230, burning like a torch¦159234, fell \add down\add* from the sky¦159229 and landed on a third of the rivers¦159241 and on the springs¦159245 of water¦159247.\x + \xo 8:10: \xt Isa 14:12.\x*
+\v 11 That star¦159252 is named ‘Bitterness’ and¦159259 a third¦159263 of those waters turned bitter¦159279. Many people¦159272 died from the waters, because¦159278 they \add became¦159260 poisonous\add*.\x + \xo 8:11: \xt Jer 9:15.\x*
+\p
+\v 12 Then¦159280 the fourth¦159282 messenger¦159283 blew his trumpet¦159284 and a third of the sun and the moon were struck and the sun didn't¦159312 shine for a third of the day¦159308, nor the moon for a third of the night¦159323. One third of the stars¦159300 were struck and went dark.\x + \xo 8:12: \xt Isa 13:10; Eze 32:7; Yoel 2:10,31; 3:15.\x*
+\p
+\v 13 Then¦159325 as I watched, I heard¦159328 an eagle¦159330 that¦159357 was flying¦159332 high in the sky, shouting loudly¦159337, “Three terrible things will happen to the people who are living¦159344 on the earth¦159347 when the three¦159355 remaining messengers¦159356 blow their trumpets¦159353.”
+\c 9
+\s1 The fifth trumpet brings the first terror
+\p
+\v 1 Then¦159360 the fifth¦159362 messenger blew his trumpet¦159364 and I saw¦159366 a star that had fallen¦159372 from the sky¦159371 to the earth¦159376, and he/it\f + \fr 9:1 \ft It's ambiguous in the Greek whether the key was given to the messenger or the star, or possibly the falling star was the messenger.\f* was given the key to the deep, dark pit.
+\v 2 When he/it \add unlocked and\add* opened¦159387 that pit, smoke came up out of it like the smoke of a large¦159404 furnace¦159402, and the smoke darkened¦159407 the sun¦159409 and the air.\x + \xo 9:2: \xt Gen 19:8.\x*
+\v 3 Then¦159418 locusts¦159423 came out of the smoke¦159421 and \add descended\add* on the land, and they were given¦159428 \add stinging\add* power like the large scorpions¦159436 of the earth.\x + \xo 9:3: \xt Exo 10:12-15.\x*
+\v 4 \add However the locusts\add* were told that they¦159445 shouldn't¦159464 harm the grass¦159448 or any green¦159454 plants or trees, but¦159439 only those people¦159461 who didn't¦159464 have God's mark on their¦159471 foreheads¦159472.\x + \xo 9:4: \xt Eze 9:4.\x*
+\v 5 They weren't given¦159475 power to kill¦159480 them, but¦159474 only to torment them for five¦159487 months¦159486, and¦159474 their¦159491 torment was like that of a scorpion¦159494 when it strikes¦159497 a person¦159498.
+\v 6 People in those¦159503 days¦159502 will try to die, but won't¦159514 be able to—they will long to die, but death will run away from them.\x + \xo 9:6: \xt Yob 3:21; Jer 8:3.\x*
+\p
+\v 7 The locusts¦159535 looked like horses¦159539 that had been prepared¦159540 for battle¦159542, with something¦159543 on their heads¦159546 that were similar to golden¦159552 crowns¦159549 and¦159531 their faces being like human¦159559 faces.\x + \xo 9:7: \xt Yoel 2:4.\x*
+\v 8 Their¦159569 hair was like women's¦159565 hair and their¦159569 teeth were like lions' teeth.\x + \xo 9:8: \xt Yoel 1:6.\x*
+\v 9 They wore chestplates that seemed to be made of iron, and the sound of their¦159584 wings¦159583 was like the roar of many horses¦159588 rushing into battle¦159592 pulling chariots¦159587.\x + \xo 9:9: \xt Yoel 2:5.\x*
+\v 10 They had tails with stingers¦159600 like scorpions¦159598 which had the power¦159609 to harm people¦159616 for five¦159618 months¦159617.
+\v 11 They had a king¦159627 in charge of them who's the messenger¦159631 of the deep pit—his name is ‘Destroyer’. (‘Abaddon¦159640’ in Hebrew and ‘Apollyon¦159651’ in Greek.)
+\p
+\v 12 The first terrible event has now passed, but there are still¦159660 two¦159662 more to follow.
+\s1 The sixth trumpet brings the second terror
+\p
+\v 13 Then¦159667 the sixth¦159669 messenger¦159670 blew his trumpet¦159671 and¦159672 I heard¦159673 a voice¦159674 coming from the corners of the golden¦159683 altar¦159681 in front of \nd God¦159687\nd*,\x + \xo 9:13: \xt Exo 30:1-3.\x*
+\v 14 that was telling the sixth¦159691 messenger (with the trumpet¦159698), “Release¦159699 the four¦159701 messengers that are tied up by the large¦159712 Euphrates¦159714 River.”
+\v 15 So¦159716 the four¦159720 messengers¦159721 who had been prepared¦159723 for this exact time were released to kill¦159737 a third¦159739 of humankind.
+\v 16 I heard¦159757 someone say how many mounted soldiers there were—there were 200 million of them,
+\v 17 and this is what the horses and their riders looked like in my vision¦159768: the soldiers \add wore\add* chestplates that were \add red like\add* fire, \add blue like\add* sapphire, and \add yellow like\add* sulfur. The heads of the horses were like lions' heads, and fire, smoke¦159799, and fumes of burning¦159797 sulfur came out of their mouths¦159794.
+\v 18 These three¦159805 plagues¦159806 (fire¦159817, smoke¦159821, and burning¦159817 sulfur¦159825 coming out of their¦159831 mouths¦159830) killed¦159808 one third¦159811 of humankind
+\v 19 because the horses' power¦159837 is in their mouths¦159847 and in their tails, because their tails are like snakes, having¦159864 heads¦159867 that injure¦159871 \add people\add*.
+\p
+\v 20 \add However,\add* the rest of humankind that hadn't been killed¦159879 by those plagues¦159882, didn't repent¦159888 of their¦159894 actions and didn't stop worshipping demons¦159900 and idols \add made\add* of gold and silver¦159908 and bronze¦159911 and stone¦159915 and wood—idols that can't see, can't hear¦159926, and can't walk¦159928.\x + \xo 9:20: \xt Psa 115:4-7; 135:15-17; Dan 5:23.\x*
+\v 21 They \add also\add* didn't repent¦159931 of their murdering¦159935 or of their sorcery¦159940, nor of their sexual immorality or of their stealing.
+\c 10
+\s1 The messenger and the small scroll
+\rem /s1 The Angel with the Little Scroll; The Angel and the Small Scroll
+\p
+\v 1 Then¦159954 \add in the vision\add* I saw¦159955 another¦159956 powerful messenger¦159957 coming¦159959 down from heaven¦159962 wrapped in a cloud¦159964 and with a rainbow¦159968 above his head¦159973. His¦159974 face¦159978 was like the sun¦159982 and his feet¦159985 were like pillars¦159988 of fire¦159990,
+\v 2 and he was holding a small¦159999 opened¦160000 scroll¦159999. He set his right¦160007 foot \add down\add* on the ocean and his left \add foot down\add* on the land
+\v 3 and shouted in a loud¦160024 voice like a lion¦160026 roaring¦160027, and when he shouted, the seven¦160034 thunders¦160036 spoke¦160032 out in their own voices.
+\v 4 When¦160042 the seven thunders spoke, I was going¦160054 to write \add down what they said\add* but¦160042 I heard¦160059 a voice¦160060 from heaven¦160064 that said, “Keep what the seven thunders have said secret, and¦160042 don't¦160076 write it down.”
+\p
+\v 5 Then¦160080 the messenger¦160082 that I'd seen straddling the ocean and¦160080 the land raised his¦160096 right¦160098 hand¦160095\x + \xo 10:5-7: \xt Exo 20:11; Deu 32:40; Dan 12:7; Amos 3:7.\x*
+\v 6 and made an oath by the one living¦160106 through all the ages and who created¦160113 heaven¦160115 and everything in it and the earth¦160122 and everything in it, and the sea¦160129 and everything in it, saying, “There won't be any more delay,
+\v 7 but¦160141 at the time¦160144 when the seventh¦160148 messenger¦160149 will speak and blow his trumpet¦160155, then the hidden purposes of \nd God¦160162\nd* will come to be, just like he told his slaves¦160168 the prophets¦160174 \add long ago\add*.”
+\p
+\v 8 Then¦160176 the one whom I had heard¦160180 speak¦160185 from heaven¦160183 spoke to me again¦160184, saying¦160190, “Go and get the open scroll¦160195 from the hand¦160201 of the messenger¦160203 who is straddling the ocean and the land.”\x + \xo 10:8-10: \xt Exo 2:8–3:3.\x*
+\v 9 So¦160213 I went¦160214 to the messenger¦160218 and asked him to give¦160221 me the little¦160226 scroll¦160226, and he answered, “Take it and eat it. At first it'll taste sweet¦160247 like honey¦160249, but¦160213 afterwards it'll be uncomfortable in your¦160237 stomach¦160240.”
+\v 10 So¦160250 I took¦160251 that little¦160254 scroll¦160254 from the messenger's¦160259 hand¦160257 and ate¦160275 it, and it tasted sweet¦160272 like honey¦160271, but¦160250 my¦160268 stomach¦160280 hurt afterwards
+\v 11 and they¦160283 told me, “You have to speak out God's message about many nations¦160294 and people¦160291 groups and language groups and kings¦160298.”
+\c 11
+\s1 The two witnesses
+\rem /s1 The Two Witnesses
+\p
+\v 1 Then¦160302 I was given¦160303 a measuring stick and told, “Go and measure God's temple¦160319 and the altar¦160324 and the people who are worshipping there,\x + \xo 11:1: \xt Exo 40:3; Zech 2:1-2.\x*
+\v 2 but¦160330 exclude the outer courtyard¦160333. Don't¦160348 measure¦160350 that¦160335 because¦160351 it's been given¦160352 to the non-Jews, and they'll tread¦160361 \add around\add* the holy city¦160358 for three and a half years.\x + \xo 11:2: \xt Luk 21:24.\x*
+\v 3 Then¦160368 I'll¦160369 give my¦160373 two witnesses¦160372 \add the ability\add* to speak out God's message for six months, while dressed in mourning garb.
+\p
+\v 4 Those are the two olive¦160388 trees¦160388 and the two lampstands¦160393 that¦160394 stand before¦160395 the \nd master¦160397\nd* of the earth¦160400.\x + \xo 11:4: \xt Zech 4:3,11-14.\x*
+\v 5 If anyone wants to harm them, fire¦160412 comes out of their mouth¦160416 and¦160418 burns up their enemies¦160421, \add yes\add*, if anyone wants to harm them then¦160403 they deserve to be killed¦160438.
+\v 6 Those witnesses have the power to stop the rain so that it doesn't rain while they're speaking out, and they have power to turn \add rivers and lakes\add* into blood¦160472, and to damage the earth¦160476 with every¦160478 type of plague¦160479 just as often¦160480 as they want.\x + \xo 11:6: a \xt 1Ki 17:1; \xo b \xt Exo 7:17-19; \xo c \xt 1Sam 4:8.\x*
+\p
+\v 7 When¦160489 \add the two witnesses\add* have finished¦160491 speaking out, the creature that¦160502 comes up from the deep, dark pit will attack them. It'll overpower them and¦160489 \add then¦160489\add* kill them.\x + \xo 11:7: a \xt Dan 7:7; Rev 13:5-7; 17:8; \xo b \xt Dan 7:21.\x*
+\v 8 Their¦160525 corpses¦160523 will \add lie\add* on the road¦160528 of the great¦160532 city¦160530, which¦160533 in spiritual¦160535 terms is called¦160534 Sodom¦160536 and¦160537/or Egypt¦160538 \add (Mitsrayim)\add*—where¦160539 their¦160525 \nd master¦160542\nd* was executed¦160545 \add by being¦160534 nailed to\add*\x + \xo 11:8: \xt Jhn 20:25.\x* a stake¦160545.\x + \xo 11:8: \xt Isa 1:9-10.\x*
+\v 9 People from every nation¦160559 and tribe¦160555 and language will look at their corpses for three¦160567 and a half days¦160566 and will prevent their corpses from being put into a tomb¦160581.
+\v 10 Those who are living¦160585 on the earth will be happy about it and celebrate and send gifts¦160597 to each another¦160601 because¦160603 those two¦160606 prophets¦160607 had tormented¦160611 them,
+\v 11 but¦160618 after¦160619 three¦160621 and a half days¦160622, God's breath of life¦160628 will enter into them and they'll stand up. The people who see that will be terrified.\x + \xo 11:11: \xt Eze 37:10.\x*
+\v 12 Then the two witnesses will hear a loud voice¦160659 from the sky¦160675 telling them, “Come up here.” Then they'll go up to heaven¦160665 in a cloud¦160678 as their¦160685 enemies¦160684 watch them go up.\x + \xo 11:12: \xt 2Ki 2:11.\x*
+\v 13 At that same time, there will be a huge¦160695 earthquake which will cause a tenth¦160699 of the city¦160701 to collapse. That'll kill 7,000 people¦160709 and the rest will be terrified and will acknowledge the \nd God¦160723\nd* of heaven¦160725.\x + \xo 11:13: \xt Rev 6:12; 16:18.\x*
+\p
+\v 14 The second¦160729 terror has then passed, but the third¦160737 will be coming¦160739 soon.
+\s1 The seventh trumpet brings the third terror
+\p
+\v 15 Then¦160741 the seventh¦160744 messenger¦160745 blew his trumpet¦160746, and voices¦160750 in heaven¦160754 shouted loudly, “The kingdom of the world¦160764 has become the kingdom of our¦160767 \nd master¦160766\nd* and of his \nd messiah¦160770\nd*, and he will reign¦160773 through all the ages.”\x + \xo 11:15: \xt Exo 15:18; Dan 2:44; 7:14,27.\x*
+\v 16 The twenty-four elders¦160785 sitting¦160792 on their thrones¦160795 in front of God knelt down with their faces¦160801 to the ground and¦160803 worshipped God,
+\v 17 saying¦160807,
+\q1 “\nd Yahweh¦160811\nd*, \nd God¦160817\nd*, ruler of everything, we thank¦160808 you,
+\q2 the one who \add always existed\add*,
+\q2 and who \add exists now\add*.
+\q1 You have taken¦160829 your¦160832 incredible power¦160831
+\q2 and have started to reign¦160837.
+\q1
+\v 18 The nations¦160840 were enraged,\x + \xo 11:18: a \xt Psa 2:5; 110:5; \xo b \xt Psa 115:13.\x*
+\q2 but¦160838 your anger¦160846 has arrived.
+\q1 It's the time¦160851 to judge¦160854 the dead¦160853
+\q2 and to give¦160856 a reward¦160858 to your slaves¦160860, the prophets¦160864,
+\q1 and to those who obey you and those who respect you,
+\q2 both the lowly ones and the powerful,
+\q1 and to destroy those who are destroying the earth¦160893.”
+\p
+\v 19 Then¦160894 God's temple in heaven¦160903 was opened¦160895, and the \add wooden\add* chest containing his agreement¦160911 appeared¦160907 in his temple. And there¦160921 were flashes of lightning¦160923, and rumblings, and peals of thunder¦160929, and an earthquake¦160931, and a large¦160934 hailstorm.\x + \xo 11:19: a \xt Rev 8:5; 16:18; \xo b \xt Rev 16:21.\x*
+\c 12
+\s1 The woman and the dinosaur
+\rem /s1 The Woman and the Dragon; Seven visions
+\p
+\v 1 Then¦160935 a \add miraculous\add* sign¦160936 appeared¦160938 in heaven¦160941: a woman¦160942 clothed¦160944 with the sun¦160946, and with the moon¦160950 under her feet¦160954, and a crown¦160961 of twelve¦160963 stars¦160962 on her head¦160959.
+\v 2 She was about to give birth¦160973 and was crying¦160971 out in pain and agony.
+\p
+\v 3 Another \add miraculous\add* sign¦160980 appeared¦160978 in heaven¦160983, and wow¦160985, a huge¦160990, red dinosaur¦160986 with seven heads, ten horns¦160995, and seven crowns¦161004 on his¦161001 heads.\x + \xo 12:3: \xt Dan 7:7.\x*
+\v 4 His¦161009 tail swept a third¦161012 of the stars¦161015 out of the sky¦161019 and¦161027 hurled them down to earth¦161026, then¦161027 he stood¦161030 in front of the woman¦161034 who was about to give birth, so that¦161035 when the child¦161042 was delivered, he could devour¦161044 it.\x + \xo 12:4: \xt Dan 8:10.\x*
+\v 5 The woman gave birth to a son who's going¦161051 to rule all the nations¦161055 with an iron scepter, and he was snatched¦161060 away to \nd God¦161066\nd* and to his¦161071 throne¦161070,\x + \xo 12:5: a \xt Isa 66:7; \xo b \xt Psa 2:9.\x*
+\v 6 and the woman¦161074 fled into the wilderness¦161078 where¦161079 \nd God¦161087\nd* had prepared¦161083 a place¦161082 for her so that they might nourish¦161091 her there for three and a half years.
+\rem /s1 Michael Defeats the Dragon
+\p
+\v 7 Then¦161099 a battle¦161101 began in heaven¦161104, with Micha'el and his messengers making war on the dinosaur. But¦161099 the dinosaur and his messengers fought \add back\add*,\x + \xo 12:7: \xt Dan 10:13,21; 12:1; Jude 9.\x*
+\v 8 but¦161127 couldn't win, so after that they weren't able to stay in heaven¦161144 anymore¦161141.
+\v 9 Thus the huge¦161150 dinosaur¦161148 was thrown \add out\add*—that ancient¦161156 snake called¦161158 ‘the devil’ and ‘Satan¦161162’—the one who deceived¦161164 the whole¦161167 world¦161166. He was thrown \add down\add* to the earth¦161171 and his¦161175 messengers¦161174 were thrown \add down\add* with him.\x + \xo 12:9: a \xt Gen 3:1; \xo b \xt Luk 10:18.\x*
+\p
+\v 10 Then¦161179 I heard¦161180 a loud voice¦161181 in heaven¦161186 saying¦161187, “Now our¦161200 god's salvation¦161191 and power¦161194 and kingdom¦161197 have come, and the authority¦161204 of his¦161208 \nd messiah¦161206\nd*, because¦161209 the accuser of the believers¦161215 has been thrown¦161210 \add out\add*—the one who spent day¦161225 and night¦161227 in front of \nd God¦161199\nd* accusing them.\x + \xo 12:10: \xt Yob 1:9-11; Zech 3:1.\x*
+\v 11 They conquered him¦161232 by means of the lamb's blood¦161235 and¦161228 by the message¦161241 in their¦161246 testimony¦161244. Indeed, they were prepared to die \add if necessary\add*.
+\v 12 So, be glad \add you\add* heavens¦161259 and those who shelter¦161266 in them. The earth¦161273 and the sea¦161279 won't have a good ending because the devil¦161284 has gone down to you and he's very angry because he knows he doesn't have much time¦161293 left.”
+\rem /s1 The Dragon Fights Again on Earth
+\p
+\v 13 When¦161295 the dinosaur¦161299 realised¦161297 that God had thrown¦161301 him \add down\add* to the earth¦161304, he tried to attack the woman¦161310 who had given birth to the son.
+\v 14 But¦161315 two¦161321 large¦161328, eagle¦161326 wings¦161323 were given¦161316 to the woman¦161319 so that she could fly \add away\add* to the wilderness¦161333, to her¦161337 place¦161336 where¦161339 she'll be nourished¦161340 away from the snake for three and¦161315 a half \add years\add*.\x + \xo 12:14: \xt Dan 7:25; 12:7.\x*
+\v 15 Then¦161354 the snake poured water¦161370 out of his¦161366 mouth¦161365 like a river¦161372 towards the woman¦161369 so that the current would sweep her¦161375 away,
+\v 16 but¦161379 the ground helped the woman by opening up a big hole, and¦161379 so the flood that¦161400 the dinosaur¦161404 poured out from his¦161409 mouth disappeared into it.
+\v 17 The dinosaur¦161413 was furious with the woman and went¦161418 away to battle¦161420 against the rest of her¦161428 children¦161427, the ones obeying God's commands¦161432 and \add believing\add* \nd Yeshua's\nd* testimony¦161438.
+\s1 The two wild animals
+\rem /s1 The First Beast; The Beast out of the Sea
+\p
+\v 18 Then¦161443 the dinosaur stood¦161444 on the beach by the ocean
+\c 13
+\rem /s1 The Two Beasts
+\p
+\v 1 and I saw¦161452 a wild creature coming up out of the water. It had ten horns and seven¦161466 heads, and on its horns were ten crowns¦161474, and anti-God name\add s were written\add* on \add each of\add* its heads.\x + \xo 13:1: a \xt Dan 7:3; \xo b \xt Rev 17:3,7-12.\x*
+\rem /s1 The Beast out of the Sea
+\v 2 The sea creature that I saw was like a leopard¦161491 with feet¦161494 like a bear and a mouth like a lion¦161504, and the dinosaur¦161510 gave it his power¦161512 and his throne¦161516 and wide-ranging authority¦161519.\x + \xo 13:2: \xt Dan 7:4-6.\x*
+\v 3 One of the heads¦161528 of the sea creature looked as if someone had wounded it so that it had died, but¦161523 that wound had healed¦161542 and as a result, all the people of the earth¦161551 marvelled¦161545 at the sea creature and \add obeyed\add* it.
+\v 4 They worshipped the dinosaur¦161561 because¦161563 he had given authority¦161569 to the sea creature, and they worshipped the sea creature, saying¦161578, “Who is like this sea creature and who is able to battle¦161587 against it?”
+\p
+\v 5 The sea creature was given a mouth¦161593 so it could speak¦161594 out arrogant and anti-God statements, and it was given authority¦161604 to act for three and a half years.\x + \xo 13:5-6: \xt Dan 7:8,25; 11:36.\x*
+\v 6 So¦161613 it started speaking out anti-God statements, as well as speaking out against¦161622 God's name¦161627 and his¦161628 \add home and\add* those \add who live\add* in heaven¦161638.
+\v 7 It was given permission to battle against the believers and to conquer them, and it¦161655 was given authority¦161656 over every¦161659 tribe¦161660 and people¦161662 and language and nation¦161667.\x + \xo 13:7: \xt Dan 7:21.\x*
+\v 8 All the people living¦161674 on the earth will worship it—all of those whose names have never been written in the lamb's book of life¦161695 since the \add ≈creation\add* of the world—the lamb who was slaughtered.\f + \fr 13:8 \ft ‘since the creation of the world’ is placed to connect with ‘written’ (similar to how it is in 17:8), but the Greek grammar would also allow it to be at the end of the verse (as it is physically in the Greek) connected to ‘slaughtered’ instead (as you'll find in some other translations).\f*\x + \xo 13:8: \xt Psa 69:28.\x*
+\p
+\v 9 Everyone who wants¦161706 to understand¦161706 needs¦161708 to listen¦161708.
+\v 10 If anyone's \add enemies\add* are going to capture them, they will capture them \add and\add* if anyone's \add enemies\add* are going to kill them with a sword, they'll kill them with a sword. So God's people must endure¦161735 \add suffering\add* and remain faithful¦161739.\x + \xo 13:10: \xt Jer 15:2; 43:11.\x*
+\rem /s1 The Second Beast; The Beast out of the Earth
+\p
+\v 11 Then¦161742 I saw¦161743 a second wild animal¦161745 come up from the earth¦161750. It had two¦161754 small horns¦161753 on its head like a lamb¦161758, but¦161742 it spoke like a dinosaur¦161763.
+\v 12 This land animal carries out all the orders¦161785 of the sea creature and¦161779 insists that the people who live on the earth¦161778 worship the sea creature—the one that almost died except its¦161799 wound¦161796 healed¦161794.
+\v 13 The land animal also did amazing miracles and¦161800 it even caused fire¦161806 to fall from the sky¦161815 down to the earth¦161822 that people¦161825 could see.
+\v 14 The dinosaur gave¦161839 the land animal the power to do these miracles on behalf of the sea creature. The land animal used the miracles to deceive¦161827 the people who live on the earth, telling¦161845 them to make an idol that looked like the sea creature that had survived a sword¦161867 wound¦161861 that seemed to kill it.
+\v 15 The dinosaur \add also\add* gave¦161872 the land animal the power to make that idol live and¦161889 so the idol that looked like the sea creature was able to speak¦161884. The land animal was able to execute anyone who refused to worship the idol
+\v 16 and it¦161909 \add also\add* required each person, whether important or not, and whether rich or poor, free or slave¦161929, to have a mark on their right¦161942 hand¦161939 or on their forehead¦161948.
+\v 17 Then the land creature ordered that no one could buy or sell anything if they don't¦161954 have that mark. The mark was the name of the sea creature or the number¦161980 that stood for its¦161983 name.
+\p
+\v 18 This \add calls for\add* wisdom¦161986: Let anyone who has understanding calculate the number of the creature, because¦162001 it's the number of a man¦162002 and¦162004 his number is 666.\f + \fr 13:18 \ft There are some manuscripts that have the number as 616 (XIS) rather than 666 (XES). See https://GreekCNTR.org/collation/?v=66013018.\f*
+\c 14
+\s1 The lamb and the 144,000
+\rem /s1 The Lamb and the 144,000; The Lamb and His People
+\p
+\v 1 Then¦162017 I looked¦162018 and wow¦162020, the lamb¦162022 was standing on Mt¦162027. Tsiyyon/Zion¦162028, and with him were 144,000 \add people\add* with his name and the name of his father¦162046 written¦162049 on their¦162053 foreheads¦162052.\x + \xo 14:1: \xt Eze 9:4; Rev 7:3.\x*
+\v 2 I heard a sound from heaven¦162061 like the sound of lots of water¦162064 and like the sound of great thunder¦162069, and the sound that I heard was like \add lots of people\add* playing¦162080 their¦162084 harps¦162083.
+\v 3 They sang a new song in front of throne¦162095 and the four living¦162101 creatures¦162101 and the elders¦162105, and no one was able to learn¦162109 the song except¦162112 the 144,000 who had been bought¦162121 from the earth¦162124.
+\v 4 They are \add all\add* virgins¦162133 and they follow¦162139 the lamb wherever¦162142 he goes. Out of all people, these ones have been purchased as a first¦162153 fruits \add offering\add* for \nd God¦162157\nd* and for the lamb,
+\v 5 and they tell no lies because¦162174 they are innocent.\x + \xo 14:5: \xt Zeph 3:13.\x*
+\s1 The three messengers
+\rem /s1 The Messages of the Three Angels
+\p
+\v 6 Then¦162181 I saw another¦162184 messenger¦162185 flying¦162186 through the air, having¦162189 the good message that's eternal¦162191 to proclaim to those living¦162197 on the earth¦162200, even to every¦162203 nation¦162204 and tribe¦162206 and language and people¦162212,
+\v 7 saying¦162213 in a loud¦162217 voice¦162216, “Honour \nd God¦162221\nd* and praise him, because¦162228 his¦162234 judgement¦162233 time has come. Worship the one who made the heaven¦162245 and the earth¦162248 and the sea¦162251 and the springs¦162254 of water¦162255.”
+\p
+\v 8 Then¦162256 a second¦162258 messenger¦162259 followed¦162262, saying¦162264, “The powerful Babylon has fallen \add into ruins\add*, the \add city\add* that caused all the nations to drink¦162283 from the wine of the passion of her¦162281 immorality¦162280!”\x + \xo 14:8: \xt Isa 21:9; Jer 51:8; Rev 18:2.\x*
+\p
+\v 9 Then¦162287 a third¦162291 messenger¦162290 followed¦162292 them, saying¦162295 in a loud¦162298 voice¦162297, “Those who worship the sea creature and its¦162313 image¦162312, and receive¦162316 a mark on their forehead¦162321 or on their hand¦162328,
+\v 10 they'll be on the receiving end of God's anger¦162353 which¦162342 he'll pour out undiluted¦162344, so they'll be tormented¦162357 with fire¦162360 and \add burning¦162360\add* sulfur¦162362 in front of \add God's\add* messengers¦162366 and of the lamb¦162371.\x + \xo 14:10: a \xt Isa 51:17; \xo b \xt Gen 19:24; Eze 38:22.\x*
+\v 11 The smoke¦162374 from their¦162377 torment¦162376 will continue through all the ages, \add yes\add*, the ones worshipping the sea creature and its image¦162400 and anyone¦162405 who receives¦162406 the mark of its name¦162410 will have no rest, day¦162390 or night¦162392.\x + \xo 14:11: \xt Isa 34:10.\x*
+\v 12 So the believers who obey God's commands¦162425 and¦162428 have faith¦162430 in \nd Yeshua\nd* must persevere on.
+\p
+\v 13 Then¦162432 I heard¦162433 a voice¦162434 from heaven¦162438 saying, “Write¦162442, ‘Blessed¦162443 are the those who die \add trusting\add* in the \nd master¦162448\nd* from now on.’ ”
+\s1 The harvest of the world
+\rem /s1 The Harvest of the Earth; Reaping the Earth's Harvest
+\p “Yes,” says the \nd spirit¦162457\nd*, “so they will rest from their work, because \add the record of\add* their activities will follow¦162471 with them.”
+\p
+\v 14 Then¦162474 I looked and wow¦162477, there was a white¦162479 cloud, and someone who looked like a human was sitting¦162485 on the cloud with a golden¦162501 crown¦162500 on his head¦162497 and a sharp¦162508 sickle¦162507 (harvesting tool) in his hand¦162505.\x + \xo 14:14: \xt Dan 7:13.\x*
+\v 15 Another messenger¦162511 came out of the temple¦162516, calling out in a loud voice¦162522 to the one sitting¦162525 on the cloud¦162528: “Extend your¦162532 sickle¦162531 and¦162509 reap \add the grain\add* because it's reaping time—the harvest¦162550 of the earth¦162552 is ripe now.”\x + \xo 14:15: \xt Yoel 3:13.\x*
+\v 16 So¦162553 the one sitting¦162556 on the cloud¦162561 swung his¦162564 sickle¦162563 across the earth, and¦162568 the earth was harvested.
+\p
+\v 17 Then¦162572 another¦162573 messenger¦162574 came¦162575 out from the temple¦162578 in heaven¦162583, also holding a sharp¦162588 sickle¦162587.
+\p
+\v 18 And another¦162590 messenger¦162591 came from the altar¦162595, the one who had authority¦162598 over the fire¦162601, and he shouted in a loud¦162606 voice¦162604 to the one with the sharp sickle, saying¦162613, “Extend your¦162616 sharp sickle out and gather the clusters¦162625 of the grapevine¦162627 of the earth¦162629, because¦162630 their grapes¦162633 are ripe.”
+\v 19 So¦162635 the messenger¦162638 swung his¦162641 sickle¦162640 across the earth and harvested the grapevine¦162651 of the earth, and he threw the grapes into the great¦162668 winepress which is God's anger.
+\v 20 Then¦162672 \add the grapes were\add* trampled in the winepress outside¦162678 the city¦162680, and blood¦162683 came¦162682 out of it \add and flowed\add* up to the height of a horse's¦162692 bridle¦162690 for 300 kilometres.\x + \xo 14:20: \xt Isa 63:3; Lam 1:15; Rev 19:15.\x*
+\c 15
+\s1 The messengers bringing the final plagues
+\rem /s1 The Song of Moses and of the Lamb; The Angels with the Last Plagues; The Angels with the Seven Last Plagues; The seven bowls; Seven Angels with Seven Plagues
+\p
+\v 1 Then¦162698 I saw¦162699 another¦162700 \add miraculous\add* sign¦162701 in heaven¦162704: seven messengers¦162708 with the seven final plagues¦162711, because¦162715 \add the expression\add* of God's anger will finish¦162719 with these.
+\p
+\v 2 I saw something¦162725 that was like a sea of glass that had been mixed¦162729 with fire¦162730. The people who had been victorious over the sea creature and over its image¦162740 and over the number¦162749 of its name¦162751 were standing on that sea of glass. They were holding harps¦162773 from \nd God¦162776\nd*
+\v 3 and singing¦162778 this song that \add came from\add* \nd God's\nd* slave¦162785 Mosheh, and from the lamb¦162792, which went:\x + \xo 15:3: \xt Exo 15:1.\x*
+\q1 “What you do, \nd Yahweh¦162800\nd* God, ruler over everything,
+\q2 is powerful and marvellous¦162796.
+\q1 Your¦162799 ways¦162809 PATHS? are fair and honest,
+\q2 king¦162812 of the ages.\f + \fr 15:2 \ft TC: There's a textual variant here where some manuscripts have ‘εθνων’ (nations) and other readings instead of the older reading: ‘αἰώνων’ (ages).\f*
+\q1
+\v 4 Who will \add refuse\add* to respect you, \nd Yahweh¦162823\nd*,\x + \xo 15:4: a \xt Jer 10:7; \xo b \xt Psa 86:9.\x*
+\q2 and honour your name¦162828?
+\q1 \add Yes,\add* you alone¦162831 are HOLY,
+\q1 because all the nations¦162838 will come
+\q2 and worship in front of you,
+\q1 because your RIGHTEOUS acts have been revealed¦162850.”
+\rem /s1 The Seven Bowls of the Seven Plagues
+\p
+\v 5 Then¦162852 after¦162853 that, I saw that the temple¦162861 doors—the tent¦162863 that's a testimony¦162865—were open\x + \xo 15:5: \xt Exo 38:21.\x*
+\v 6 and the seven messengers¦162874 holding the seven plagues¦162879 came¦162870 out of the temple¦162882. They were dressed¦162885 in clean, bright linen, with golden¦162902 sashes wrapped around¦162898 their¦162899 chests¦162900.
+\v 7 Then¦162903 one of the four living creatures¦162908 gave¦162909 the seven messengers¦162913 seven golden¦162916 bowls¦162915 that were full of the anger of \nd God¦162921\nd* who lives through all the ages,
+\v 8 and the temple was filled¦162931 with smoke¦162936 from God's glory¦162939 and from his¦162946 power¦162945, and no one was able to enter the temple until¦162955 the seven plagues¦162961 of the seven messengers¦162964 were completed.\x + \xo 15:8: \xt Exo 40:34; 1Ki 8:10-11; 2Ch 5:13-14; Isa 6:4.\x*
+\c 16
+\s1 The pouring out of God's anger
+\rem /s1 The Bowls of God's Anger; The Seven Bowls of God's Wrath
+\p
+\v 1 Then¦162965 I heard¦162966 a loud¦162968 voice¦162969 from the temple¦162972 telling the seven messengers¦162976, “Go and¦162965 pour out the seven bowls¦162983 of God's anger onto the earth¦162990.”
+\p
+\v 2 So¦162991 the \em first¦162994\em* \add messenger\add* went¦162992 and poured¦162996 out his¦162999 bowl on the earth¦163003, all the people¦163016 with the sea creature's mark and the ones worshipping its¦163030 image¦163028.\x + \xo 16:2: \xt Exo 9:10.\x*
+\p
+\v 3 The \em second¦163034\em* \add messenger\add* poured¦163037 out his¦163042 bowl into the ocean and it went \add thick\add* like a corpse's blood¦163048, and every¦163053 living creature in it died¦163058.
+\p
+\v 4 The \em third¦163069\em* \add messenger\add* poured¦163072 out his¦163075 bowl into the rivers¦163079 and the springs¦163084 of water¦163086, and it¦163088 became¦163088 blood¦163090.\x + \xo 16:4: \xt Exo 7:17-21; Psa 78:44.\x*
+\v 5 Then¦163091 I heard¦163092 the messenger¦163095 \add who was in charge of those\add* waters¦163097 say to God, “You are righteous¦163099, the one who exists now and¦163091 in the past, the HOLY one, because¦163113 you have judged¦163115 these¦163114.
+\v 6 Because¦163116 they \add killed\add* those who obeyed God and \add killed\add* the prophets¦163122 and poured¦163123 out their blood, you have also given¦163127 blood to them to drink¦163130. It's what they deserve.”
+\v 7 Then¦163135 I heard¦163136 \add (someone at?)\add* the altar¦163140 say, “Yes, \nd Yahweh¦163143 God¦163145\nd*, ruler of all, you¦163153 judge¦163152 \add people\add* with truth and¦163149 fairness.”
+\p
+\v 8 The \em fourth¦163156\em* \add messenger\add* poured¦163159 out his¦163162 bowl onto the sun¦163165 and¦163166 it was permitted to scorch¦163169 people¦163171 with fire¦163173.
+\v 9 So¦163176 people¦163179 were scorched¦163177 with incredible heat and they swore at the \nd God¦163192\nd* who has authority¦163196 over those plagues¦163199, but¦163176 they did not turn from their disobedience and honour him¦163206.
+\p
+\v 10 The \em fifth¦163210\em* \add messenger\add* poured¦163213 out his¦163216 bowl on the throne¦163219 of the sea creature and¦163208 its¦163226 kingdom¦163225 went dark. The \add people there\add* were biting¦163230 their¦163233 tongues¦163232 from the pain,\x + \xo 16:10: \xt Exo 10:21.\x*
+\v 11 and they swore at the \nd God¦163242\nd* of heaven¦163244 because of their pain and their sores, but¦163238 they didn't¦163255 turn from their \add evil\add* actions.
+\p
+\v 12 The \em sixth¦163263\em* \add messenger\add* poured¦163266 out his¦163269 bowl onto the large¦163274 River Euphrates¦163276 and¦163277 its¦163281 water¦163280 was dried¦163278 up in order¦163282 to prepare¦163283 the path¦163285 of the kings¦163287 from the east.\x + \xo 16:12: \xt Isa 11:15.\x*
+\v 13 I saw three¦163314 \add evil\add* spirits¦163313 like frogs¦163322 come out from the dinosaur's mouth and out from the sea creature's mouth and out from the false¦163312 prophet's¦163312 mouth,
+\v 14 because¦163325 they¦163324 are demons' spirits¦163326 that are able to do \add miraculous\add* signs¦163330. They went out to the rulers all over the world¦163342 to gather¦163344 them together¦163344 for battle¦163348 on the great¦163353 day¦163354 of \nd God¦163356\nd*, the ruler of all.
+\p
+\v 15 (“Listen¦163359, I am coming¦163360 \add unexpectedly\add* like a thief¦163363! It'll be good for the ones who are alert and with their clothes¦163371 ready so they¦163378 won't¦163374 have to walk¦163376 around naked¦163375 and exposed.”)\x + \xo 16:15: \xt Mat 24:43-44; Luk 12:39-40; Rev 3:3.\x*
+\p
+\v 16 Then¦163383 \add the demons' spirits\add* gathered¦163384 \add the rulers\add* at the place¦163390 called¦163392 Harmagedon¦163394 in Hebrew.\x + \xo 16:16: \xt 2Ki 23:29; Zech 12:11.\x*
+\p
+\v 17 The \em seventh¦163398\em* \add messenger\add* poured¦163401 out his¦163404 bowl onto the air and¦163409 a loud¦163412 voice¦163411 came¦163410 out from the throne¦163421 in the temple¦163416 saying¦163423, “It's \add now\add* done.”
+\v 18 Then¦163425 there was lightning¦163429 and thunder¦163433 and \add other\add* sounds, and a terrible earthquake, such as had not happened since people had been on the earth. Such a powerful earthquake, so massive!\x + \xo 16:18: \xt Rev 8:5; 11:13,19.\x*
+\rem /s1 The destruction of Babylon
+\v 19 The huge¦163465 city split into three¦163467 parts¦163468 and¦163460 cities¦163472 collapsed all over the world. The famous \add city of\add* Babylon the Great was remembered in God's sight that she should be given her share of the results of his¦163498 severe¦163497 anger¦163497.\x + \xo 16:19: \xt Isa 51:17.\x*
+\v 20 All the islands¦163501 vanished, and¦163499 mountains¦163504 could no longer be seen.\x + \xo 16:20: \xt Rev 6:14.\x*
+\v 21 Then¦163508 thirty kilogram hailstones dropped onto people from the sky. The people swore at \nd God¦163525\nd* because of the hail, because it was incredibly terrible!\x + \xo 16:21: \xt Exo 9:23; Rev 11:19.\x*
+\c 17
+\s1 The immoral woman drunk with blood
+\rem /s1 The Woman and the Beast; The Great Prostitute; The Great Whore and the Beast; The Famous Prostitute
+\p
+\v 1 Then¦163538 one of the seven messengers¦163545 holding the seven bowls¦163550 came¦163540 and¦163538 spoke¦163552 with me, saying¦163555, “Come, I'll¦163558 show you the judgement¦163561 of the famous prostitute¦163563 sitting¦163567 on many waters¦163570,\x + \xo 17:1: \xt Jer 51:13.\x*
+\v 2 that the rulers of the earth committed¦163575 sexual immorality with, and¦163582 those living¦163585 on the earth were intoxicated from the wine of her¦163594 sexual immorality.”\x + \xo 17:2: \xt Isa 23:17; Jer 51:7.\x*
+\p
+\v 3 Then¦163599 in the \nd spirit¦163605\nd* I was carried¦163600 away to a wilderness¦163603 and I saw¦163607 a woman¦163608 sitting¦163609 on a wild animal¦163611 that was scarlet¦163612 and had anti-God names¦163615 \add written all over it\add*. It had seven¦163622 heads¦163621 and ten¦163625 horns¦163624.\x + \xo 17:3: \xt Rev 13:1.\x*
+\v 4 The woman¦163628 was dressed in purple¦163632 and scarlet¦163635, and adorned with gold¦163639 and precious¦163643 stone¦163642 and pearls¦163645. In her hand¦163652 she was holding¦163646 a golden¦163649 cup full of abominations¦163656 and the impurities of her sexual¦163662 immorality¦163662,\x + \xo 17:4: \xt Jer 51:7.\x*
+\v 5 and a name was written¦163673 on her¦163671 forehead¦163670. The name was a mystery: ‘Babylon the Great, the Mother of Prostitutes and the Abominations of the Earth.’
+\v 6 I noticed¦163688 that the woman¦163690 was drunk¦163691 from the blood of the believers and from the blood of the witnesses¦163705 of \nd Yeshua\nd*. and, having¦163709 seen her, I wondered a great¦163712 wonder.
+\p When¦163687 I saw her, I was incredibly amazed
+\v 7 but¦163715 the messenger¦163719 asked me, “Why are you astounded? I'll tell you the mystery¦163728 of the woman¦163730 and of the wild animal¦163733 with the seven¦163740 heads¦163741 and the ten¦163744 horns¦163745 that's carrying her¦163736.
+\v 8 The wild animal that you saw used to be \add here\add* and isn't \add anymore\add* but is about to come up from the abyss¦163760. Then¦163766 it's going to destruction¦163763, and the ones living¦163770 on the earth whose¦163774 names¦163779 have not been written¦163776 in the book of life¦163785 from the creation of the world will wonder, seeing¦163789 the creature that used to be \add here\add* and isn't \add anymore\add* but will come \add back\add*.\x + \xo 17:8: a \xt Dan 7:7; Rev 11:7; \xo b \xt Psa 69:28.\x*
+\p
+\v 9 Here's the mind \add understanding\add* wisdom¦163810: The seven heads¦163813 are seven hills that¦163808 the woman¦163820 is sitting¦163821 on, and¦163824 they're seven rulers.
+\v 10 Five \add of the rulers\add* have fallen \add and\add* one is \add still there\add*, \add but¦163841\add* the other¦163838 one hasn't come¦163843 yet, and when he does, it'll be necessary¦163847 for him to remain¦163848 a while.
+\v 11 The wild animal¦163852 that¦163853 used to be \add here\add* and isn't¦163856 \add anymore\add* is itself also an eighth¦163862, but¦163850 it's from the seven¦163867 and is heading towards destruction¦163871.
+\p
+\v 12 The ten horns¦163876 that¦163877 you saw¦163878 are ten rulers who haven't received¦163887 a \add domain\add* yet \add to rule\add*, but¦163873 they are receiving¦163895 authority¦163889 as rulers with the wild animal¦163898 for one hour¦163894.\x + \xo 17:12: \xt Dan 7:24.\x*
+\v 13 They're \add all unified\add*, and they¦163914 give their¦163911 power¦163906 and authority¦163909 to the wild animal¦163913.
+\v 14 They'll go to battle against the lamb, but¦163921 the lamb will conquer them because¦163926 he is \nd master¦163927\nd* of masters¦163928 and king¦163931 of kings¦163932 and the ones with him are called¦163937 and chosen¦163939 and faithful¦163941.”
+\p
+\v 15 Then¦163942 the messenger said¦163943 to me, “The waters¦163948 that you¦163950 saw¦163950, where¦163952 the prostitute¦163954 sits, are peoples¦163957 and multitudes and nations¦163962 and languages¦163964.
+\v 16 The ten¦163967 horns¦163968 that you saw¦163970 and the wild animal¦163975, they'll hate the prostitute¦163980 and will make her desolated¦163982 and naked¦163986 and they'll eat her flesh¦163991 and will burn her completely with fire¦163998,
+\v 17 because¦164000 God has put it into their hearts¦164005 to do his¦164011 purpose and to do one purpose and to give¦164018 their kingdom¦164020 to the wild animal¦164024 until¦164025 God's words turn into reality.
+\p
+\v 18 The woman¦164037 that¦164045 you¦164039 saw¦164039 is the \add famous\add* city¦164042 whose leaders rule over the rulers of the earth¦164053.”
+\c 18
+\s1 Babylon's fall
+\rem /s1 The Fall of Babylon
+\p
+\v 1 After¦164055 all that, I saw¦164057 another¦164058 messenger¦164059 coming¦164060 down from heaven¦164063. He had been given great¦164066 authority¦164065, and¦164067 the earth¦164069 was illuminated¦164070 by his¦164074 radiance.
+\v 2 He called out in a loud voice¦164081, saying¦164083, “The mighty¦164080 Babylon has fallen and become a place¦164091 for demons¦164093 to live, and a prison for evil spirits¦164097 and for every kind of scavenging and detestable bird.\f + \fr 18:2 \ft There's some manuscript variations here, and so some translations also mention wild animals.\f*\x + \xo 18:2: a \xt Isa 21:9; Jer 51:8; Rev 14:8; \xo b \xt Isa 13:21; Jer 50:39.\x*
+\v 3 All the nations¦164128 have participated in her immoral passions, and the kings¦164131 of the earth have committed¦164136 sexual immorality with her, and the merchants¦164139 of the earth have become wealthy¦164152 from the power¦164148 of her luxury.”\x + \xo 18:3: \xt Isa 23:17; Jer 51:7.\x*
+\p
+\v 4 Then¦164153 I heard¦164154 someone else from heaven¦164161 saying¦164162,\x + \xo 18:4: \xt Isa 48:20; Jer 50:8; 51:6,45.\x*
+\q1 “Come out from her, my¦164169 people¦164168,
+\q2 so that you won't participate¦164174 in her sins¦164176
+\q1 and¦164153 so that you won't \add be on the receiving¦164188 end\add* of the plagues¦164184 \add intended for\add* her,
+\q1
+\v 5 because¦164189 her pile of sins¦164194 has reached up to heaven¦164197,\x + \xo 18:5: \xt Gen 18:20-21; Jer 51:9.\x*
+\q2 so \nd God¦164201\nd* has noticed her wickedness.
+\q1
+\v 6 Pay her back in the way she's treated others,\x + \xo 18:6: \xt Psa 137:8; Jer 50:29.\x*
+\q2 pay her back double for what she's done.
+\q1 Mix a double portion for her in her own cup.
+\q1
+\v 7 As much as she thought highly of herself and lived¦164236 in luxury,\x + \xo 18:7-8: \xt Isa 47:7-9.\x*
+\q2 give¦164238 her¦164248 just as much torture and grief.
+\q1 Because¦164244 she tells herself
+\q1 ‘I sit like a queen¦164253,
+\q2 I'm not a widow¦164255 and will never have to grieve.’
+\q1
+\v 8 Because¦164264 of that¦164289, her plagues¦164271 will suddenly arrive one day¦164268,
+\q2 death¦164273 and grief and famine¦164277.
+\q1 She'll be burnt up by fire¦164280,
+\q2 because¦164282 it's the powerful \nd Yahweh¦164284 God¦164286\nd* who has judged¦164290 her.”
+\p
+\v 9 The kings¦164303 of the earth¦164305 that¦164306 had committed¦164309 sexual¦164309 immorality¦164309 and lived¦164311 in luxury with her, will weep and wail over her when they see the smoke¦164316 of her burning¦164319.\x + \xo 18:9-10: \xt Eze 26:16-17.\x*
+\v 10 In their fear they'll stand back at a distance and say,
+\q1 “The famous city's end won't be good,
+\q2 the powerful city of Babylon.
+\q1 Because¦164342 your¦164351 judgement¦164350 has come all at once.”
+\p
+\v 11 The merchants¦164354 on the earth¦164356 \add will\add* weep and¦164360 mourn¦164361 for her¦164365, because¦164367 no one buys their¦164370 goods anymore\x + \xo 18:11: \xt Eze 27:31,36.\x*—
+\v 12 gold¦164375 and silver¦164378, precious stones¦164381 and pearls¦164387, fine linen¦164391 and purple¦164395 cloth and silk and scarlet¦164400 cloth, expensive wood and \add carved\add* ivory¦164409 containers and every kind of container made from the costliest wood and bronze¦164418 and iron and marble¦164422,\x + \xo 18:12-13: \xt Eze 27:12-13,22.\x*
+\v 13 cinnamon¦164424 and spice, incense¦164429 and myrrh and frankincense¦164433, wine and oil¦164437 and fine flour¦164439 and wheat¦164441, cattle¦164443 and sheep¦164446 and horses¦164449, and chariots and \add slaves¦164453\add* and people's souls¦164455.
+\v 14 \add People will say,\add* “The good things the people of Babylon longed¦164482 to have are gone. Their splendid¦164475 and luxurious goods have been destroyed¦164476 and won't¦164485 become available again.”
+\v 15 The merchants¦164491 who became rich \add selling\add* those things will stand¦164499 at a distance from her because¦164500 of the fear¦164502 of \add becoming¦164494 included in\add* her torment¦164504, weeping¦164506 and mourning¦164508,\x + \xo 18:15: \xt Eze 27:31,36.\x*
+\v 16 saying¦164510, “That famous city¦164514 that used to dress in fine linen¦164520 and scarlet¦164526 and be adorned with gold¦164531 and precious¦164535 stones¦164534 and pearls¦164538 has come to a bad end
+\v 17 because so much wealth was destroyed in a single hour¦164541.”\x + \xo 18:17: \xt Isa 23:14; Eze 27:26-30.\x*
+\p Every captain¦164548 of a ship, and all the passengers and sailors¦164561 and others who work on the ocean will keep far away from the city
+\v 18 and when they see the smoke¦164578 from the burning¦164580 city they'll call out, “No other city has ever been so awesome.”\x + \xo 18:18: \xt Eze 27:32.\x*
+\v 19 Then¦164590 they'll throw¦164591 dust on their¦164601 heads¦164598 \add (a Hebrew sign of mourning)\add* and weep and mourn and cry out, “That incredible city¦164613 where every ship owner became¦164618 wealthy¦164629 from valuable trade with her¦164630—she's been destroyed in a single hour¦164634.”\x + \xo 18:19: \xt Eze 27:30-34.\x*
+\p
+\v 20 You in heaven¦164641 celebrate, and also you¦164657 believers and missionaries and prophets¦164650, because¦164651 \nd God¦164654\nd* has judged¦164652 the city \add on your behalf\add*.\x + \xo 18:20: \xt Deu 32:43; Jer 51:48.\x*
+\p
+\v 21 Then¦164660 a powerful messenger¦164663 picked up a stone the size of a large¦164672 millstone and threw it into the sea¦164677, saying¦164678, “The famous city¦164686 of Babylon will be violently¦164681 thrown¦164674 down just like that \add stone\add*, and she'll definitely never be seen again.\x + \xo 18:21: a \xt Jer 51:63-64; \xo b \xt Eze 26:21.\x*
+\v 22 The sounds of harpists¦164696 and musicians¦164698 and flutists and trumpeters¦164703 will definitely never be heard in you again, and no more craftsmen¦164712 will be seen in you, and the sound of \add grain being ground into flour\add* will never be heard in you again.\x + \xo 18:22: \xt Eze 26:13; Isa 24:8.\x*
+\v 23 There definitely won't¦164735 be any more lamps illuminating you, nor will there be any more \add happy wedding sounds\add*. Your¦164756 merchants¦164755 were the best in the world because all the nations¦164770 were deceived¦164767 by your¦164756 witchcraft.
+\p
+\v 24 The blood¦164775 of the prophets¦164776 and the believers and all the others who've been murdered can be found¦164779 in that city.”\x + \xo 18:24: \xt Jer 51:49.\x*
+\c 19
+\rem /s1 Hallelujah!; The Rejoicing in Heaven; Songs of Victory in Heaven
+\p
+\v 1 After¦164788 all that, I heard¦164790 what sounded like a huge¦164795 crowd¦164794 in heaven¦164799, \add calling out\add*, “Praise¦164802 Yahweh—he's saved us and all honour and power¦164814 belong to him
+\v 2 because¦164829 his judgements¦164827 are true and honest. He's judged¦164830 the famous prostitute¦164832 who was corrupting¦164836 the earth¦164840 with her sexual¦164843 immorality¦164843, and he's avenged¦164846 her for the murder of his slaves¦164850.”\x + \xo 19:2: \xt Deu 32:43; 2Ki 9:7.\x*
+\v 3 Then¦164857 \add the crowd\add* called out again, “Praise¦164862 Yahweh. The smoke¦164865 from her¦164866 burning will keep rising throughout the ages.”\x + \xo 19:3: \xt Isa 34:10.\x*
+\v 4 Then¦164873 the twenty-four elders¦164876 and the four living¦164885 creatures¦164885 knelt down and worshipped \nd God¦164889\nd*, the one sitting¦164891 on the throne¦164896, saying¦164897, “May¦164898 it¦164898 be¦164898 so¦164898. Praise¦164899 Yahweh.”
+\s1 The lamb's wedding reception
+\rem /s1 The Wedding Feast of the Lamb
+\p
+\v 5 Then¦164900 a voice¦164901 came¦164908 from the throne¦164907, saying¦164909, “Praise our¦164916 \nd God¦164914\nd*, all his¦164920 slaves¦164919 and everyone who respects him, both great¦164930 and small¦164927.”\x + \xo 19:5: \xt Psa 115:13.\x*
+\v 6 Then¦164931 I heard¦164932 what sounded like a large¦164936 crowd¦164935 and what seemed to be the sounds of lots of water¦164940 and of powerful thunder¦164945, saying¦164950, “Praise¦164951 \nd Yah\nd*, because¦164952 our¦164959 \nd God¦164956\nd*, the powerful \nd Yahweh¦164954\nd*, reigns¦164953.\x + \xo 19:6: a \xt Eze 1:24; \xo b \xt Psa 93:1; 97:1; 99:1.\x*
+\v 7 We'll¦164962 celebrate and be happy and praise him, because¦164973 it's now time for the lamb's wedding¦164976 and the bride is all ready.
+\v 8 She was given¦164986 fine linen clothes¦164989 that are bright and¦164985 pure¦165003, because¦164997 what she's wearing is the obedient acts of the believers.”
+\p
+\v 9 Then¦165005 \add the messenger\add* told me to write, “Everyone who's invited¦165018 to the lamb's wedding¦165015 reception is blessed.” And he added, “These¦165022 are God's true words¦165024.”\x + \xo 19:9: \xt Mat 22:2-3.\x*
+\p
+\v 10 I knelt in front of him \add about\add* to worship him, but¦165032 he told me, “Hey, I'm a fellow slave of you and¦165032 your¦165046 fellow believers¦165050 who believe Yeshua's testimony. \add Only\add* worship \nd God¦165059\nd*, because¦165062 Yeshua's testimony \add came from\add* the \add same\add* spirit¦165068 as prophecy¦165070.”
+\s1 The rider on the white horse
+\rem /s1 The Rider on the White Horse; More visions
+\p
+\v 11 Then¦165071 I saw¦165072 heaven¦165074 open up and wow¦165077, a white¦165079 horse¦165078 and its rider was named ‘Faithful¦165086 and true’, and he judges and battles righteously¦165092.\x + \xo 19:11: a \xt Eze 1:1; \xo b \xt Psa 96:3; Isa 11:4.\x*
+\v 12 His¦165100 eyes¦165099 \add shone like\add* a flame¦165102 of fire¦165103, and¦165097 he had many crowns¦165109 on his¦165100 head¦165107, with a name¦165115 written¦165116 \add (on him? See v16)\add* that¦165117 no one knows except¦165120 himself,\x + \xo 19:12: \xt Dan 10:6.\x*
+\v 13 He's wearing a robe¦165125 that's been dipped¦165128 in blood¦165129, and his¦165136 name¦165135 is ‘God's message¦165138’,
+\v 14 and the armies¦165143 in heaven¦165147 were following¦165148 him¦165149 on white horses¦165151, all dressed¦165153 in fine linen¦165155—white and clean.
+\v 15 A sharp¦165168 sword¦165166 comes out of his mouth¦165163 so he can strike¦165172 the nations¦165176 and¦165160 he'll rule them with an iron scepter. \add He'll destroy his enemies like\add* trampling \add grapes in a\add* winepress, with the \add resultant juice representing\add* the anger¦165197 of the all-powerful God's fury.\x + \xo 19:15: a \xt Psa 2:9; \xo b \xt Isa 63:3; Yoel 3:13; Rev 14:20.\x*
+\v 16 He has a name¦165213 written¦165214 on his robe¦165206 and on his thigh¦165210: ‘King¦165215 of kings¦165216 and \nd master¦165218\nd* of masters¦165219’.
+\rem /s1 The Beast and Its Armies Defeated
+\p
+\v 17 Then¦165220 I saw¦165221 a messenger¦165224 standing in the sun¦165228, and he yelled¦165230 out in a loud¦165233 voice¦165232 to all the birds¦165237 flying¦165239 high in the sky, “Come and join God's big feast,\x + \xo 19:17-18: \xt Eze 39:17-20.\x*
+\v 18 so you can eat the flesh of kings¦165258 and commanders¦165261 and warriors¦165278 and horses¦165267 and their riders, and the flesh of others, both free and slaves¦165281, lowly and prominent.”
+\p
+\v 19 Then¦165288 I saw¦165289 the wild animal¦165291 and the worldly kings¦165294 and their¦165301 armies¦165300 who had joined together¦165303 to battle¦165306 against the rider of the \add white\add* horse¦165312 and his¦165317 army.
+\v 20 \add But¦165318 then¦165318 the animal was captured along with the false¦165329 prophet¦165329 who had done¦165331 miracles in front of him. (That was how he'd deceived¦165338 the ones who had accepted the mark of the animal and¦165318 the ones worshipping his¦165352 image¦165350.) The two¦165356 of them were thrown¦165354 alive into the lake of fire¦165361 burning¦165361 with sulfur¦165368.\add* \x + \xo 19:20: \xt Rev 13:1-18.\x*
+\v 21 The rest were killed¦165372 by the rider of the \add white\add* horse¦165380 with the sword¦165375 coming out from his¦165387 mouth¦165386, and¦165388 all the birds¦165391 were gorged with the flesh¦165395 of \add the dead\add*.
+\c 20
+\s1 The thousand years
+\p
+\v 1 Then¦165397 I saw¦165398 a messenger¦165399 coming¦165400 down from heaven¦165403 holding¦165404 the key to the pit as well as a \add heavy\add* chain¦165410
+\v 2 and he seized the dinosaur¦165423, that ancient¦165430 snake, who is the devil and Satan¦165439, and chained him up for a thousand¦165448 years¦165449.\x + \xo 20:2: \xt Gen 3:1.\x*
+\v 3 \add The messenger\add* threw him into the pit and shut it and sealed¦165460 it over him so that he wouldn't deceive¦165468 the nations¦165472 anymore¦165470 until¦165474 the thousand¦165477 years¦165478 were ended. After that, it will be necessary¦165482 for him to be released¦165485 for a short time¦165488.
+\p
+\v 4 I saw¦165490 thrones¦165491 with \add people\add* sitting on them and they were given¦165498 \add the responsibility\add* of judging both the souls¦165502 of the ones who'd been beheaded¦165505 for \add believing\add* \nd Yeshua's\nd* and God's message¦165513, and those who didn't worship the animal¦165525 or his¦165531 image¦165530 and didn't receive the mark on their¦165538 hand¦165544 or forehead¦165539. And they lived¦165547 and reigned¦165549 with the \nd messiah¦165552\nd* for a thousand years¦165555.\x + \xo 20:4: \xt Dan 7:9,22.\x*
+\v 5 The rest of the dead¦165561 didn't¦165562 come back to life until¦165565 the thousand¦165569 years¦165570 were up. That's the first¦165575 resurrection¦165573.
+\v 6 Those who have a part in that first¦165586 resurrection¦165584 will be blessed and \add (considered?)\add* holy. The second¦165590 death¦165591 has no power over them—they'll be priests¦165599 of \nd God¦165602\nd* and of the \nd messiah¦165605\nd* and they'll reign¦165607 with him¦165610 for a thousand¦165612 years¦165613.
+\s1 Satan's defeat
+\rem /s1 The Defeat of Satan; Satan's Doom
+\p
+\v 7 At the end of the thousand¦165619 years¦165620, Satan¦165623 will be released¦165621 from his¦165627 prison¦165626,
+\v 8 and he'll go out to deceive¦165630 the nations¦165633 \add right around\add* the earth¦165640—Gog¦165642 and Magog¦165645—to gather¦165647 them together¦165647 to battle¦165651. They'll be \add too many to count\add* like the sand \add on the beach\add*.\x + \xo 20:8: a \xt Eze 7:2; \xo b \xt Eze 38:2,9,15.\x*
+\v 9 They'll cover the whole world and surround¦165670 the camp¦165672 of the believers and the beloved city¦165677, but¦165680 fire¦165682 will come down from heaven and burn them up.
+\v 10 Then¦165695 the devil¦165697 who'd deceived¦165699 them was thrown¦165701 into the lake of fire¦165706 and sulfur¦165709 where¦165710 the animal¦165713 and the false¦165717 prophet¦165717 were, and they'll be tormented¦165719 day¦165720 and night¦165722 throughout the ages.
+\s1 The dead are revived for judgement
+\rem /s1 The Final Judgment; The Dead Are Judged
+\p
+\v 11 Then¦165728 I saw¦165729 a large¦165731 white¦165732 throne¦165730 with someone sitting¦165736 on it¦165739. Earth and¦165728 sky fled from his presence but¦165728 they couldn't find \add where to go\add*.\x + \xo 20:11-12: \xt Dan 7:9-10.\x*
+\v 12 Then I saw¦165757 the dead—both prominent people and the lowly—standing before¦165770 the throne¦165772, and \add some\add* books were opened and then¦165756 another¦165778 book was opened—the book of life¦165785. Then the dead were judged¦165787 from the things written¦165792 in the books according¦165798 to what they'd done.
+\v 13 The sea¦165805 gave up the dead in it, and ‘death¦165815’ and Hades¦165818 gave up the dead in them, and then¦165802 every one of them was judged¦165829 according¦165831 to what they'd done.
+\v 14 Then¦165835 ‘death’ and¦165835 Hades¦165840 were thrown¦165841 into the lake of fire. That's the second¦165853 death—the lake of fire,
+\v 15 and¦165860 anyone¦165862 whose \add name\add* couldn't be found¦165864 in the book of life¦165872 was thrown¦165874 into that lake of fire¦165879.
+\c 21
+\s1 The new sky and the new earth
+\rem /s1 The New Heaven and the New Earth; The New Jerusalem
+\p
+\v 1 Then¦165880 I saw¦165881 a new sky and a new earth, because¦165890 the first sky and the first earth had gone away, and there weren't any more oceans.\x + \xo 21:1: \xt Isa 65:17; 66:22; 2Pe 3:13.\x*
+\v 2 Then¦165908 I saw¦165918 the \add chosen\add* city¦165913—the new Jerusalem—coming¦165919 down out of heaven¦165925 from \nd God¦165928\nd*, prepared¦165929 like a bride¦165931 all dressed up for her¦165935 husband¦165934,\x + \xo 21:2: a \xt Isa 52:1; \xo b \xt Rev 3:12; \xo c \xt Isa 61:10.\x*
+\v 3 and I heard¦165937 a loud voice¦165938 from the throne¦165944 saying¦165946, “Listen¦165948, God will now live here with the people—he'll live with them and they'll be his¦165965 people, and God himself¦165968 will be with them.\x + \xo 21:3: \xt Eze 37:27; Lev 26:11-12.\x*
+\v 4 He'll wipe all their tears away from their eyes¦165987, and there won't be any more death¦165991 or grieving, or crying or pain. They won't even exist any longer—the \add original world\add* is gone.”\x + \xo 21:4: a \xt Isa 25:8; \xo b \xt Isa 35:10; 65:19.\x*
+\p
+\v 5 Then¦166012 the one sitting¦166015 on the throne¦166019 said¦166013, “Listen¦166022, I'm remaking everything.” And he told me, “Write¦166031 that down because¦166032 these¦166033 words are trustworthy and¦166012 true.”
+\v 6 And he told me, “Everything's done. I'm the A and the Z—the beginning¦166057 and the end¦166060. I'll freely give from the spring¦166067 of the water¦166069 of life¦166071 to anyone who's thirsty¦166063.\x + \xo 21:6: \xt Isa 55:1.\x*
+\v 7 All of those who conquer will inherit¦166076 those things, and I will be their \nd God¦166083\nd* and they will be my children.\x + \xo 21:7: \xt 2Sam 7:14; Psa 89:26-27.\x*
+\v 8 But¦166096 as for the cowardly and the unbelieving¦166097, the abhorred and murderers¦166103, fornicators and sorcerers¦166108, and idolaters¦166110 and all liars¦166115, their¦166118 place will be in the lake burning¦166124 with fire¦166124 and sulfur¦166126, which is the second¦166133 death¦166131.”
+\s1 The new Yerushalem
+\rem /s1 Vision of the New Jerusalem
+\p
+\v 9 Then¦166134 one of the seven messengers¦166142 holding the seven bowls¦166147 full of the seven last plagues¦166154 came¦166135 and¦166134 spoke¦166158 to me, saying¦166161, “Come, I'll¦166163 show you the bride¦166168—the lamb's wife¦166170.”
+\v 10 Then¦166175 in the \nd spirit¦166179\nd*, he carried¦166176 me away to a very large¦166182, high¦166184 mountain¦166181 and¦166175 he showed¦166186 me the HOLY city¦166189, Jerusalem, coming¦166195 down from \nd God¦166201\nd* out of heaven¦166198,\x + \xo 21:10: \xt Eze 40:2.\x*
+\v 11 \add shining like God's splendour¦166204\add*—its¦166211 brilliance being like a very precious¦166214 stone—like a jasper¦166217 stone shining like crystal¦166218.
+\v 12 \add The city\add* had wall that¦166245 was both wide and high, with twelve gates and twelve messengers¦166238 at the gates. The gates had the names¦166241 of the twelve tribes¦166251 (\add from\add* Yisrael's twelve sons) written on them.\x + \xo 21:12-13: \xt Eze 48:30-35.\x*
+\v 13 There were three gates on the east, three on the north¦166262, three on the south¦166273, and three on the west.
+\v 14 The city¦166285 wall¦166283 had twelve foundation¦166288 \add stones\add*, and¦166281 they had the names¦166296 of the lamb's twelve missionaries \add written\add* on them.
+\p
+\v 15 The \add messenger\add* speaking¦166304 to me had a golden¦166310 measuring rod so that he could measure the city¦166314 and its¦166318 gates¦166317 and wall¦166321.\x + \xo 21:15: \xt Eze 40:3.\x*
+\v 16 The city was laid out square with the length equalling the width. Using the rod, the \add messenger\add* measured¦166340 the city at 2.2km \add on each edge\add*, with the length, width, and¦166323 height¦166358 all being equal.
+\v 17 He also measured the wall to be 70m using normal measurements.\f + \fr 21:17 \ft It's not stated if that's the \+em height\+em* or the \+em thickness\+em* of the city wall.\f*
+\v 18 The wall¦166386 was made of \add green\add* jasper¦166388 \add stone\add* and¦166389 the city¦166391 itself was pure gold¦166392 but¦166379 as clear as glass¦166396.\x + \xo 21:18-21: \xt Isa 54:11-12.\x*
+\v 19 The foundations of the city's wall¦166402 were adorned¦166408 with \add many different kinds of\add* precious¦166407 stones¦166406. The first¦166413 foundation was jasper¦166414, the second¦166417 sapphire¦166418, the third¦166421 chalcedony¦166422, the fourth¦166424 emerald¦166425,
+\v 20 the fifth¦166427 sardonyx¦166428, the sixth¦166430 carnelian, the seventh¦166434 chrysolite, the eighth¦166437 beryl¦166438, the ninth¦166440 topaz¦166441, the tenth¦166443 chrysoprase, the eleventh¦166447 jacinth, and the twelfth¦166450 amethyst¦166452.
+\v 21 The twelve gates were twelve pearls—each one of the gates individually was from one pearl—and¦166453 the city¦166474 street was pure gold—transparent¦166480 like glass¦166478.
+\p
+\v 22 I didn't¦166485 see any temple in \add the city\add* because¦166491 the all-powerful \nd God¦166494 Yahweh¦166492\nd* and¦166483 the lamb¦166503 are its¦166499 temple.
+\v 23 The city¦166506 doesn't need the sun¦166511 or moon¦166514 to illuminate it because¦166520 God's radiance illuminates it, and¦166504 its¦166529 lamp is the lamb¦166531.\x + \xo 21:23: \xt Isa 60:19-20.\x*
+\v 24 The nations¦166536 will \add be able to\add* walk¦166533 \add around\add* from its¦166545 light¦166543, and¦166547 the kings¦166549 on the earth¦166551 will bring¦166552 their¦166561 \add best\add* into \add the city\add*.\x + \xo 21:24: \xt Isa 60:3.\x*
+\v 25 It'll never get dark there¦166577, so the city gates¦166566 will never need to be closed\x + \xo 21:25-26: \xt Isa 60:11.\x*
+\v 26 and they¦166579 will bring¦166579 the prestige and the honour¦166584 of the nations¦166586 into it¦166588.
+\v 27 \add However,\add* nothing that's ‘unclean¦166597’ will ever enter \add the city\add*, and¦166589 nor will those with shameful or dishonest behaviour—only those whose names have been written¦166610 in the lamb's book of life¦166615.\x + \xo 21:27: \xt Isa 52:1; Eze 44:9.\x*
+\c 22
+\rem /s1 The River of Life
+\p
+\v 1 \x + \xo 22:1: \xt Eze 47:1; Zech 14:8.\x*Then¦166619 he showed¦166620 me the river¦166623 of \add the\add* water¦166625 of life¦166626 that sparkled like crystal¦166629. It flowed out of the throne¦166633 of \nd God¦166635\nd* and¦166619 the lamb¦166638.
+\v 2 \x + \xo 22:2: \xt Gen 2:9.\x*In the middle of its¦166643 path¦166642 and in the middle of the river¦166646 \add reaching\add* from one side to the other was \add the\add* tree of life¦166653 that produces¦166654 twelve¦166657 fruits¦166656—a different one each month¦166659—and the leaves¦166671 of the tree are for healing¦166677 the nations¦166679
+\v 3 \x + \xo 22:3: \xt Zech 14:11.\x*and there won't¦166685 be a curse¦166682 any more.
+\p The throne¦166690 for \nd God¦166692\nd* and the lamb¦166695 will be in \add the city\add*, and his¦166702 slaves¦166701 will be serving¦166703 him.
+\v 4 They will see his face¦166708, and¦166710 his name¦166712 on their¦166718 foreheads¦166717.
+\v 5 \x + \xo 22:5: a \xt Isa 60:19; \xo b \xt Dan 7:18.\x*Nights won't exist any more and they won't need the light from a lamp or from the sun because¦166737 \nd Yahweh¦166738 God¦166740\nd* will illuminate¦166741 them, and they will reign¦166746 through the ages.
+\s1 Yeshua's return
+\rem /s1 Conclusion; The Coming of Jesus
+\p
+\v 6 Then¦166752 he said¦166754 to me, “These¦166756 messages¦166758 are faithful¦166759 and true, and \nd Yahweh¦166764\nd*, the \nd God¦166766\nd* of the spirits¦166768 of the prophets¦166771, sent¦166772 his messenger¦166775 out to show his slaves¦166779 what's planned to happen soon.”
+\rem /s1 Jesus Is Coming
+\p
+\v 7 “Yes, listen, I'm coming¦166788 soon. Whoever follows the messages¦166794 of the prophecy¦166796 on this scroll¦166799 will be blessed.”
+\rem /s1 Epilogue and Benediction
+\p
+\v 8 I, Yohan, am the one who saw and heard \add all\add* those things, and when I heard and saw them, I knelt down to worship at the feet¦166824 of the messenger¦166826 who showed them to me.
+\v 9 But¦166831 he told me, Hey, no! I'm a fellow¦166836 slave of you and of your¦166837 brothers¦166842 the prophets¦166845 and of the ones who obey the words of this book. Worship \nd God¦166855\nd*.”
+\v 10 Then¦166857 he continued, “Don't seal up the words of the prophecy¦166866 of this book, because the time¦166872 is near.
+\v 11 Those who \add disobey God\add* can continue to do¦166878 so and those who are filthy can continue to be so, \add but¦166880\add* those who \add obey God\add* should continue to \add obey\add*, and those who are \add godly\add* should continue to be \add godly\add*.”\x + \xo 22:11: \xt Dan 12:10.\x*
+\p
+\v 12 \add (Yeshua says,)\add* “Listen¦166900, I'm coming¦166901 \add back\add* soon, bringing my¦166906 reward¦166905 to distribute to each person according to their \add behaviour\add*.\x + \xo 22:12: a \xt Isa 40:10; 62:11; \xo b \xt Psa 28:4; Isa 40:10; Jer 17:10.\x*
+\v 13 I'm the A and the Z—the first and the last—the beginning¦166935 and the end¦166938.\x + \xo 22:13: a \xt Rev 1:8; \xo b \xt Isa 44:6; 48:12; Rev 1:17; 2:8.\x*
+\p
+\v 14 “Blessed¦166939 are those who are washing¦166941 their¦166947 robes¦166944 so that they'll have authority over the tree¦166959 of life¦166961 (MEANING???) and¦166962 so that they'll be able to enter the city¦166968 through the gates¦166964.\x + \xo 22:14: \xt Gen 2:9; 3:22.\x*
+\v 15 \add On the contrary, those\add* outside \add the city\add* are dogs and sorcerers¦166975, the sexually¦166978 immoral¦166978 and murderers¦166981 and idolaters¦166984, and everyone¦166986 loving¦166988 and exhibiting dishonesty.
+\p
+\v 16 “I, \nd Yeshua\nd*, have sent¦166996 my¦166999 messenger¦166998 to explain these¦167002 things to you¦167001 concerning the churches. I am \add both\add* David's source and¦167011 his descendant¦167013—the bright morning¦167022 star¦167017.”\x + \xo 22:16: \xt Isa 11:1,10.\x*
+\p
+\v 17 The \nd spirit¦167026\nd* and¦167024 the bride¦167029 say, ‘Come.’\x + \xo 22:17: \xt Isa 55:1.\x*
+\p Anyone who hears this should also say, ‘Come.’
+\p Anyone who's thirsty¦167041 \add to live forever\add* should come. Anyone who wants it can take the water¦167050 that gives life¦167051 free of charge.
+\s1 Farewell
+\rem /s1 Conclusion
+\p
+\v 18 \x + \xo 22:18-19: \xt Deu 4:2; 12:32.\x*I am testifying¦167054 to everyone¦167058 who hears the prophecies¦167064 written in this document: If anyone¦167069 adds to these words, then \nd God¦167084\nd* will add to them the plagues¦167086 written in this document.
+\v 19 And if anyone¦167096 takes away any of this prophetic¦167107 document, then¦167093 \nd God¦167113\nd* will take¦167097 away their share in the tree¦167119 of life¦167122 and¦167123 in the holy city¦167126 that's written¦167131 about in this document.
+\p
+\v 20 The one who testified¦167138 about these¦167139 things says: ‘Yes, I'm coming quickly¦167143.’
+\p May¦167144 it¦167144 be¦167144 so¦167144. Come, \nd master¦167147 Yeshua\nd*.
+\p
+\v 21 \add May\add* the grace¦167150 from the \nd master¦167152 Yeshua\nd* be with the godly people.

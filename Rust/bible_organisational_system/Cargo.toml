@@ -10,6 +10,10 @@ name = "bible_organisational_system"
 crate-type = ["rlib", "cdylib"]
 
 [dependencies]
-bos-internals = { path = "../bos-internals" }
+log.workspace = true
+pyo3-log.workspace = true
+bos-internals.workspace = true
+indexmap.workspace = true
 pyo3.workspace = true
+rkyv.workspace = true
 thiserror.workspace = true

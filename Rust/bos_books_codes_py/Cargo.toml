@@ -1,0 +1,13 @@
+[package]
+name = "bos_books_codes_py"
+version = "0.2.0"
+edition = "2024"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[lib]
+name = "bos_books_codes_py"
+crate-type = ["cdylib"]
+
+[dependencies]
+pyo3 = { workspace = true, features = ["extension-module", "abi3-py38"] }
+bos_books_codes = { path = "../bos_books_codes" }  # Local dependency

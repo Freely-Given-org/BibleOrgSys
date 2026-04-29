@@ -6,7 +6,11 @@
 //! The core internals are provided by the `bos-internals` crate.
 
 pub mod cv_index_bindings;
+pub mod discovery_bindings;
+pub mod extras_bindings;
 pub mod parsing_bindings;
+pub mod processing_bindings;
+pub mod section_index_bindings;
 
 // Re-export everything from bos-internals for convenience
 pub use bos_internals::*;

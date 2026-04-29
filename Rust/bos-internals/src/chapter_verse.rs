@@ -39,7 +39,7 @@ use crate::parsing::get_small_leading_int;
 /// let cv = ChapterVerse::new("1", "17a");
 /// assert_eq!(cv.verse_int().unwrap(), 17);
 /// ```
-#[derive(Clone, PartialEq, Eq, Hash)]
+#[derive(Clone, PartialEq, Eq, Hash, rkyv::Archive, rkyv::Serialize, rkyv::Deserialize)]
 pub struct ChapterVerse {
     chapter: CompactString,
     verse: CompactString,
@@ -129,11 +129,7 @@ impl ChapterVerse {
 
     /// Check if the verse has a suffix (e.g., `17a`, `17b`).
     pub fn has_verse_suffix(&self) -> bool {
-        self.verse
-            .chars()
-            .last()
-            .map(|c| c.is_alphabetic())
-            .unwrap_or(false)
+        self.verse.chars().last().map(|c| c.is_alphabetic()).unwrap_or(false)
     }
 
     /// Parse a verse range into (start, end) integers.
@@ -164,10 +160,10 @@ impl ChapterVerse {
 
         if self.is_verse_list() {
             for part in self.verse.split(',') {
-                if let Ok(v) = get_small_leading_int(part.trim()) {
-                    if v == verse_num {
-                        return true;
-                    }
+                if let Ok(v) = get_small_leading_int(part.trim())
+                    && v == verse_num
+                {
+                    return true;
                 }
             }
             return false;

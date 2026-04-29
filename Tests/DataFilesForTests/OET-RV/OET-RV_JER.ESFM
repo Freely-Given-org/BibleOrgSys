@@ -1,0 +1,3328 @@
+\id JER - Open English Translation—Readers' Version (OET-RV) v0.0.10
+\usfm 3.0
+\ide UTF-8
+\rem ESFM v0.6 JER
+\rem WORDTABLE OET-LV_OT_word_table.tsv
+\h Yirmeyah
+\toc1 Yirmeyah
+\toc2 Yirmeyah
+\toc3 Yer.
+\mt1 Yirmeyah
+\mt2 (Jeremiah)
+\is1 Introduction
+\ip The prophet Yirmeyah/Jeremiah, started his vocation as a prophet around 627 B.C. and continued for just under fifty years until around 580 B.C. Te long time of serving Yirmeyah, impanpanayan he/his the people concerning the destruction coming of nation due to sins their, and of worshipping ran of false gods. And/Now saw of Yirmeyah the katumanan of prophesied he/his of time nasakup e the Yerushalem of Nibukadnisar King of Babylon. Saw/Found his again the demolition of city and temple, and the capture of many people other of King their there to Babylon. Prophesied he/his again the return of people from capture their, and the replacement of standing up of nation there to old natahuan here.
+\ip \bk The Account of Yirmeyah\bk* divided of five main sections: 1. The calling to Yirmeyah; 2. the what was said of God for of nation of Yehudah and of teachers here at time of kingdom of Husiyas, Huwakim, Hihuyakin and of Sidikiyas; 3. the all persecution of people according to it's written of Baruk secretary of Yirmeyah, including the various prophecies, and the important what happened of life of Yirmeyah; 4. the what was said of Master God concerning the various foreigner there nations; and 5. the other still story concerning the demolition of Yerushalem, and of pegkaddakep of people going to Babylon.
+\ip Merciful person Yirmeyah; very his love the his people, and disliked he/his the judging them. There are parts of document very the love his of telling concerning the sufferings he/his due to because called he of God so that to become prophets. Like fire there to heart he/his the speech of Master God, and not he/his indeed this igkeeles.
+\ip Written again of this document coming the time there is e new agreement. And/Now the that agreement eg-ay-ayaran of people of God and obeyed their, even still not/none teacher thinking them because written man e this there to me heart their. (31:31-34)
+\iot Main components of this document
+\io1 Yirmeyah's calling \ior 1:1-19\ior*
+\io1 The prophecies concerning the kingdom of Husiyas, Huwakim, Huwakin, and of Sidikiyas \ior 2:1–25:38\ior*
+\io1 Yirmeyah's persecution \ior 26:1–45:5\ior*
+\io1 The prophecies for nations \ior 46:1–51:64\ior*
+\io1 Yerushalem's destruction \ior 52:1-34\ior*
+\rem This is still a very early look into the unfinished text of the Open English Translation of the Bible. Please double-check the text in advance before using in public.
+\ie
+\c 1
+\p
+\v 1 \add These are\add* the messages¦304124 from Hilkiyah's son, Yirmeyah—one of the priests¦304131 who were in Anatot¦304133 in Benyamin's¦304135 territory¦304134.
+\v 2 Yahweh's¦304141 messages¦304139 \add started\add* coming to him when Yehudah's¦304149 King¦304148 Yoshiyah \add (Josiah,\add* Amon's¦304147 son) was in the thirteenth year¦304153 of his reign¦304154.\x + \xo 1:2: \xt 2Ki 22:3–23:27; 2Ch 34:8–35:19.\x*
+\v 3 \add ≈It continued\add* through the \add ≈reign\add* of Yoshiyah's son, King Yehoyakim \add (Jehoiakim)\add* until the end of the eleventh year of \add the reign\add* of Yoshiyah's son, King Tsidkiyah \add (Hezekiah)\add*—Yerushalem¦304179 \add (Jerusalem)\add* was exiled¦304178 in the fifth¦304181 month¦304180 \add of that year\add*.\x + \xo 1:3: a \xt 2Ki 23:36–24:7; 2Ch 36:5-8; \xo b \xt 2Ki 24:18–25:21; 2Ch 36:11-21.\x*
+\s1 Yirmeyah's calling
+\rem /s1 Jeremiah's Call and First Visions; Jeremiah's call and first visions; Jeremiah's Call and Commission; The Call of Jeremiah
+\q1
+\v 4 \add ≈Now\add* Yahweh's¦304187 message¦304185 came to me:
+\q1
+\v 5 “Before¦304191 I formed¦304192 you in \add ≈your mother\add*, I \add already\add* knew¦304195 you,
+\q1 ≈and before¦304196 you came¦304197 out of the womb, I \add ≈had a plan for you\add*.
+\q1 I appointed¦304202 you as a prophet¦304200 to the nations¦304201.”
+\p
+\v 6 \add ≈But¦304204\add* I said¦304204, “Oh no, Yahweh¦304206, my master¦304206. Listen, I don't¦304209 know¦304211 how to speak¦304212, because¦304214 I'm \add just\add* a young lad.”
+\p
+\v 7 \add ≈but¦304220\add* Yahweh¦304221 told me, “Don't¦304223 say that you're only a child, because¦304228 you must go¦304235 to everyone I send you to and you must tell them everything that I command¦304240 you to say.
+\v 8 Don't¦304243 be afraid¦304245 of them, because¦304247 I'll be with you to rescue¦304251 you.”
+\m That's Yahweh's¦304254 message¦304252.
+\p
+\v 9 Then¦304256 Yahweh¦304257 stretched¦304256 out his hand¦304260 and touched¦304261 my mouth and said, “Listen¦304266, I've¦304269 put my messages into your mouth.
+\v 10 I'm¦304274 appointing¦304274 you¦304274 today over the nations¦304280 and kingdoms¦304283—to uproot and to break down, to destroy¦304286 and to pull down, to build¦304288 and to plant¦304289.”
+\s1 Yahweh encourages Yirmeyah
+\rem /s1 Two Visions
+\p
+\v 11 \add ≈Another time,\add* Yahweh's¦304295 message¦304293 came to me, saying, “Yirmeyah \add (Jeremiah)\add*, what do you¦304300 see?”
+\p “I see a branch¦304304 from an almond¦304305 tree¦304305,” I \add ≈replied\add*.
+\p
+\v 12 Then¦304309 Yahweh¦304310 told me, “You've done¦304312 well to see¦304313 \add <that\add*, because¦304314 I keep watch\f + \fr 1:12 \ft There's a play on words in the original here, as the Hebrew word for ‘keeping watch’ has the same consonants as the word for ‘almond’.\f* on my message¦304320 \add ≈to make sure it happens\add*.”
+\p
+\v 13 Then Yahweh¦304327 asked me a second¦304330 time what I was seeing, and I replied, “I see a pot full of boiling water and it's tipping towards the north¦304342.”
+\p
+\v 14 “\add Yes,\add* disaster will come from the north¦304347 \add and¦304344\add* be released onto all the inhabitants¦304353 of this region,” Yahweh¦304345 \add ≈continued¦304344\add*.
+\v 15 “Listen, I'm about¦304359 to summon¦304359 all the clans¦304362 of the northern¦304364 kingdoms¦304363, and they'll come¦304368 and \add attack\add* the walls¦304379 around¦304380 Yerushalem and all of Yehudah's¦304385 \add other\add* cities¦304384, then each \add @king\add* will place his throne¦304371 at the entrance¦304372 to Yerushalem's¦304375 gates¦304374.” That is Yahweh's¦304367 declaration.
+\v 16 “\add That's how\add* I'll¦304387 judge¦304388 \add @my people\add* for their wickedness¦304393 as they've abandoned¦304395 me and \add ≈sacrificed¦304396\add* to other¦304398 gods¦304397 and bowed¦304399 down to \add idols\add* that¦304394 they made with their own hands¦304401.
+\v 17 \add ≈So¦304403\add* \add @Yirmeyah\add*, \add ≈get yourself ready¦304404 and go\add* and tell them everything that I'll tell you. Don't¦304415 be scared¦304417 \add ≈in front of them\add* or else I'll scare you \add right there\add* \add ≈in front of them\add*!
+\v 18 And listen, today I've¦304426 you¦304426 \add as strong as\add* a fortified¦304429 city¦304428 and an iron pillar¦304430 and bronze¦304433 walls¦304432, as far as the kings¦304439 of Yehudah¦304440 \add are concerned\add*, along with their officials¦304441 and priests¦304442, and the \add ≈general population\add*.
+\v 19 They'll \add ≈oppose\add* you \add ≈but¦304446\add* they won't¦304448 \add be able to\add* defeat you because¦304452 I'll be with you to rescue¦304459 you,” says Yahweh¦304458.
+\c 2
+\s1 Yisrael has deviated from Yahweh
+\rem /s1 God's appeal to Israel and Judah; The Lord's Case against His People; God Pleads with Israel to Repent; Israel Forsakes God; God's Care for Israel
+\p
+\v 1 Then Yahweh¦304465 \add ≈gave\add* me a message¦304463
+\v 2 to proclaim¦304470 to Yerushalem's¦304473 ears¦304471:
+\q1 “Yahweh¦304477 says¦304476: I remember¦304478 your loyal¦304480 commitment \add ≈when you were all young\add*
+\q1 ≈and your love¦304482 \add ≈when you were committed to me\add*.
+\q1 You all followed after¦304485 me in the wilderness¦304486 \add ≈where no crops were planted\add*.
+\q1
+\v 3 Yisrael¦304492 was set apart for Yahweh¦304493—the firstfruits of his harvest.
+\q1 All those¦304499 who devoured¦304499 it became guilty¦304500—calamity¦304501 came to them.
+\q1 That is Yahweh's¦304493 declaration.
+\s1 The turning-away by Yisrael's ancestors
+\rem /s1 The Sin of Israel's Ancestors
+\p
+\v 4 Listen to Yahweh's¦304512 message¦304510 you \add ≈descendants\add* of Yakov \add (Jacob)\add*,
+\q1 ≈and¦304515 all you clans¦304517 \add ≈that are part\add* of Yisrael¦304519 \add (Israel¦304519)\add*.
+\q1
+\v 5 Yahweh¦304524 asks: what injustices¦304530 did you ancestors¦304528 find in me,
+\q1 that \add caused them\add* to become distant¦304532 from me.
+\q1 They \add ≈chased\add* after¦304535 vanity¦304536 and became vain.
+\q1
+\v 6 They didn't¦304539 \add ≈try to find out\add* where¦304541 Yahweh¦304542 was—
+\q1 \add the one\add* brought¦304543 led them out of Egypt¦304546 \add (Heb. Mitsrayim)\add*
+\q1 then¦304539 led them \add ≈through\add* the wilderness with its pits and¦304539 desert areas.
+\q1 \add It was\add* a \add ≈region¦304545\add* of deep darkness¦304555 \add ≈without water\add*—
+\q1 an \add ≈area\add* that¦304557 no one passes¦304559 through, \add ≈let alone\add* lives in.
+\q1
+\v 7 Then¦304568 I took you to the Carmel \add ≈region¦304572\add*
+\q1 to eat¦304574 its fruit¦304575 and \add other\add* good¦304576 things¦304576.
+\q1 \add ≈However\add* you came¦304577 and defiled my land
+\q1 ≈and made the inheritance¦304582 \add ≈that I gave you\add* into \add ≈something detestable\add*.
+\q1
+\v 8 The priests¦304586 didn't ask where¦304589 Yahweh¦304590 was,
+\q1 and the handlers¦304591 of the law didn't know me.
+\q1 The shepherds¦304595 rebelled¦304596 against¦304597 me,
+\q1 and the prophets prophesied by Ba'al
+\q1 and they went after¦304601 \add things¦304602\add* that¦304602 wouldn't profit¦304604 them.
+\s1 Yahweh's case against his people
+\rem /s1 The Lord's Case against His People
+\q1
+\v 9 Yahweh¦304613 declares: I¦304618 will bring a case against you all,
+\q1 and I'll¦304609 contend against your \add children and\add* your grandchildren.
+\q1
+\v 10 If you all cross¦304621 over \add west\add* to the coasts¦304622 of Cypress \add island\add* and look,
+\q1 or head \add east\add* to Kedar¦304625, \add ≈ask around\add* and \add ≈pay careful¦304627 attention\add*
+\q1 to see if something like this has \add ever\add* happened¦304631 \add before\add*.
+\q1
+\v 11 Has a country¦304635 ever \add ≈swapped out\add* its gods (not that¦304643 they were \add actual\add* gods)?
+\q1 \add ≈But¦304637\add* my people¦304640 have exchanged their \add ≈greatness\add* for something \add ≈of no benefit\add*.
+\q1
+\v 12 \add ≈You\add* heavens¦304647, be appalled¦304646 and¦304651 shudder¦304651.
+\q1 ≈Become \add ≈utterly¦304654\add* desolate¦304652.
+\q1 \add ≈That's what Yahweh¦304656 says\add*
+\q1
+\v 13 because my people¦304663 have done two evil things¦304661:
+\q1 1. They've abandoned¦304665 the spring¦304666 of living¦304669 water
+\q1 \add and 2. They've gone and\add* dug wells for themselves—broken¦304674 cisterns that¦304675 can't¦304676 hold any water.
+\s1 The impangkusan of arguing of Israelis
+\rem /s1 The Results of Israel's Sin; The Results of Israel's Unfaithfulness
+\q1
+\v 14 Is Yisrael¦304682 a slave¦304681? Was it born \add ≈into slavery\add*?
+\q1 Why has it \add been carried off as\add* plunder¦304690?
+\q1
+\v 15 Young lions¦304694 roared at it—they've \add ≈made their¦304696 voice¦304696 heard\add*.
+\q1 They've made the land into wasteland¦304699—its cities¦304700 have become ruins¦304701 without any inhabitants¦304704.
+\q1
+\v 16 ◙
+\q1
+\v 17 ◙
+\q2 …
+\q2 …
+\q1
+\v 18 ◙
+\q1 …
+\q2 …
+\q1
+\v 19 ◙
+\q1 …
+\q1 …
+\q2 …
+\q2 …
+\q1 …
+\s1 Not/None worshipped of God the Israelis
+\rem /s1 Israel Refuses to Worship the Lord
+\q1
+\v 20 ◙
+\q2 …
+\q1 …
+\q1 …
+\q2 …
+\q2 …
+\q1 …
+\q1
+\v 21 ◙
+\q1 …
+\q1
+\v 22 ◙
+\q2 …
+\q1 …
+\q1
+\rem /s1 Israel, an Unfaithful Wife
+\v 23 ◙
+\q2 …
+\q1 …
+\q2 …
+\q1 …
+\q1
+\v 24 ◙
+\q1 …
+\q2 …
+\q2 …
+\q1
+\v 25 ◙
+\q2 …
+\q1 …
+\q2 …
+\q2 …
+\s1 Eleg punished the people of Yisrael
+\rem /s1 Israel Deserves to Be Punished
+\p
+\v 26 ◙
+\q2 …
+\q2 …
+\q2 …
+\q2 …
+\q1
+\v 27 ◙
+\q2 …
+\q2 …
+\q1 …
+\q2 …
+\b
+\q1
+\v 28 ◙
+\q1 …
+\q2 …
+\q1 …
+\q2 …
+\q1
+\v 29 ◙
+\q2 …
+\q1
+\v 30 ◙
+\q2 …
+\q1 …
+\q2 …
+\q1
+\v 31 ◙
+\q1 …
+\q2 …
+\q1 …
+\q2 …
+\q1
+\v 32 ◙
+\q2 …
+\q1 …
+\q2 …
+\q1
+\v 33 ◙
+\q1 …
+\q2 …
+\q1
+\v 34 ◙
+\q1 …
+\q2 …
+\q1 …
+\q2
+\v 35 ◙
+\q2 …
+\q2 …
+\q1 …
+\q2 …
+\q1
+\v 36 ◙
+\q1 …
+\q1
+\v 37 ◙
+\q2 …
+\q1 …
+\q2 …
+\c 3
+\s1 The Israelis not me obedient
+\rem /s1 Unfaithful Israel
+\p
+\v 1 ◙
+\q2 …
+\q2 …
+\q2 …
+\q1 …
+\q1 …
+\q1 …
+\q1
+\v 2 ◙
+\q1 …
+\q1 …
+\q1 …
+\q2 …
+\q2
+\v 3 ◙
+\q2 …
+\q1 …
+\b
+\q1
+\v 4 ◙
+\q2 …
+\q1
+\v 5 ◙
+\s1 The following of those from-Yehudah of Israelis
+\rem /s1 Unfaithful Israel; Israel and Judah Must Repent; Judah Follows Israel's Example; A Call to Repentance
+\p
+\v 6 \x + \xo 3:6: \xt 2Ki 22:1–23:30; 2Ch 34:1–35:27.\x*◙
+\v 7 ◙
+\v 8 ◙
+\v 9 ◙
+\v 10 ◙
+\rem /s1 Hope for Wayward Israel
+\p
+\v 11 ◙
+\v 12 ◙
+\q1 …
+\q2 …
+\q1 …
+\q1
+\v 13 ◙
+\q2 …
+\q1 …
+\q2 …
+\q1 …
+\p
+\v 14 ◙
+\v 15 ◙
+\v 16 ◙
+\v 17 ◙
+\v 18 ◙
+\s1 The sinning of Yisrael
+\rem /s1 The Idolatry of God's People
+\q1
+\v 19 ◙
+\q1 …
+\q2 …
+\q2 …
+\q1 …
+\q2 …
+\q1
+\v 20 ◙
+\q2 …
+\q1 …
+\b
+\q1
+\v 21 ◙
+\q1 …
+\q2 …
+\q1
+\v 22 ◙
+\q2 …
+\m …
+\v 23 ◙
+\v 24 ◙
+\v 25 ◙
+\c 4
+\s1 The calling of repentance from sin
+\rem /s1 A Call to Repentance
+\p
+\v 1 ◙
+\q2 …
+\q1 …
+\q2 …
+\q1
+\v 2 ◙
+\rem /s1 Coming Judgment against Judah
+\p
+\v 3 \x + \xo 4:3: \xt Hos 10:12.\x*◙
+\v 4 ◙
+\s1 The coming punishment of Yehudah
+\rem /s1 Invasion and Desolation of Judah Threatened; Judah Is Threatened with Invasion; Disaster From the North
+\p
+\v 5 ◙
+\v 6 ◙
+\v 7 ◙
+\v 8 ◙
+\p
+\v 9 ◙
+\v 10 ◙
+\p
+\v 11 ◙
+\v 12 ◙
+\rem /s1 Judah Is Surrounded by Enemies
+\v 13 ◙
+\v 14 ◙
+\v 15 ◙
+\v 16 ◙
+\v 17 ◙
+\v 18 ◙
+\s1 The mourning of Jeremiah
+\rem /s1 Sorrow for a Doomed Nation; Jeremiah Weeps for His People; Jeremiah's Sorrow for His People
+\p
+\v 19 ◙
+\q1 …
+\q1 …
+\q1 …
+\q2 …
+\q1
+\v 20 ◙
+\q2 …
+\q1 …
+\q2 …
+\q1
+\v 21 ◙
+\q2 …
+\q1
+\v 22 ◙
+\q2 …
+\q1 …
+\q2 …
+\q1 …
+\q2 …
+\s1 The destruction dreamed of Jeremiah
+\rem /s1 Jeremiah's Vision of Coming Disaster; Jeremiah's Vision of the Coming Destruction
+\q1
+\v 23 ◙
+\q2 …
+\q1
+\v 24 ◙
+\q2 …
+\q2 …
+\q1
+\v 25 ◙
+\q2 …
+\q1
+\v 26 ◙
+\q2 …
+\q2 …
+\p
+\v 27 ◙
+\q1
+\v 28 ◙
+\q2 …
+\q1 …
+\q2 …
+\q1 …
+\q2 …
+\q1
+\v 29 ◙
+\q2 …
+\q2 …
+\q1 …
+\q2 …
+\q1 …
+\q2 …
+\q1
+\v 30 ◙
+\q2 …
+\q2 …
+\q1 …
+\q2 …
+\q2 …
+\q1
+\v 31 ◙
+\q2 …
+\q1 …
+\q2 …
+\q1 …
+\q2 …
+\c 5
+\s1 The sin of Yerushalem
+\rem /s1 Not One Is Upright; The Sins of Judah; The Sin of Jerusalem; The Utter Corruption of God's People
+\q1
+\v 1 ◙
+\q2 …
+\q2 …
+\q1 …
+\q2 …
+\q2 …
+\q1
+\v 2 ◙
+\q2 …
+\q1
+\v 3 ◙
+\q1 …
+\q2 …
+\q1 …
+\q1
+\v 4 ◙
+\q1 …
+\q2 …
+\q2 …
+\q1
+\v 5 ◙
+\q2 …
+\q1 …
+\q2 …
+\q1 …
+\q2 …
+\q1
+\v 6 ◙
+\q2 …
+\q2 …
+\q2 …
+\q1 …
+\q2 …
+\q1
+\v 7 ◙
+\q2 …
+\q1 …
+\q2 …
+\q2 …
+\q1
+\v 8 ◙
+\q2 …
+\q1
+\v 9 ◙
+\q2 …
+\q1
+\v 10 ◙
+\q2 …
+\q1 …
+\q2 …
+\q1
+\v 11 ◙
+\q2 …
+\s1 Mig-inniyuhan of Master Yisrael
+\rem /s1 The Lord Rejects Israel
+\p
+\v 12 ◙
+\v 13 ◙
+\p
+\v 14 ◙
+\v 15 ◙
+\v 16 ◙
+\v 17 ◙
+\p
+\v 18 ◙
+\v 19 ◙
+\s1 The warning of God of his people
+\rem /s1 A Warning for God's People; God Warns His People
+\p
+\v 20 ◙
+\v 21 \x + \xo 5:21: \xt Isa 6:9-10; Eze 12:2; Mrk 8:18.\x*◙
+\v 22 \x + \xo 5:22: \xt Yob 38:8-11.\x*◙
+\v 23 ◙
+\v 24 ◙
+\v 25 ◙
+\p
+\v 26 ◙
+\v 27 ◙
+\v 28 ◙
+\p
+\v 29 ◙
+\v 30 ◙
+\v 31 ◙
+\c 6
+\s1 Inlingutan of enemies the Yerushalem
+\rem /s1 Jerusalem's Last Warning; The Imminence and Horror of the Invasion; Jerusalem Is Surrounded by Enemies; Jerusalem Under Siege
+\p
+\v 1 ◙
+\v 2 ◙
+\v 3 ◙
+\p
+\v 4 ◙
+\v 5 ◙
+\v 6 ◙
+\v 7 ◙
+\v 8 ◙
+\s1 The disobeying of Yisrael
+\rem /s1 Rebellious Israel
+\p
+\v 9 ◙
+\rem /s1 Israel's Constant Rebellion
+\v 10 ◙
+\v 11 ◙
+\p …
+\v 12 ◙
+\v 13 ◙
+\v 14 \x + \xo 6:14: \xt Eze 13:10.\x*◙
+\v 15 \x + \xo 6:12-15: \xt Jer 8:10-12.\x*◙
+\s1 The repentance from Yisrael of advice of God
+\rem /s1 Israel Rejects God's Way; Israel Rejects the Lord's Way
+\p
+\v 16 ◙
+\p …
+\v 17 ◙
+\p
+\v 18 ◙
+\v 19 ◙
+\v 20 ◙
+\v 21 ◙
+\s1 The enemies from north
+\rem /s1 Invasion from the North; An Invasion from the North
+\p
+\v 22 ◙
+\v 23 ◙
+\p
+\v 24 ◙
+\v 25 ◙
+\p
+\v 26 ◙
+\v 27 ◙
+\v 28 ◙
+\v 29 ◙
+\v 30 ◙
+\c 7
+\s1 The preaching of Jeremiah there to Timplu
+\rem /s1 False Religion Worthless; Jeremiah Proclaims God's Judgment on the Nation; False religion and its punishment; Jeremiah Speaks at the Temple; Jeremiah Preaches in the Temple
+\p
+\v 1 ◙
+\v 2 ◙
+\v 3 ◙
+\v 4 ◙
+\p
+\v 5 ◙
+\v 6 ◙
+\v 7 ◙
+\p
+\v 8 ◙
+\v 9 ◙
+\v 10 ◙
+\v 11 \x + \xo 7:11: \xt Mat 21:13; Mrk 11:17; Luk 19:46.\x*◙
+\v 12 \x + \xo 7:12-14: \xt Josh 18:1; Psa 78:60; Jer 26:6.\x*◙
+\v 13 ◙
+\v 14 ◙
+\v 15 ◙
+\s1 The disobeying of people
+\rem /s1 Judah's Persistent Idolatry; The People's Disobedience
+\p
+\v 16 ◙
+\v 17 ◙
+\v 18 \x + \xo 7:18: \xt Jer 44:17-19.\x*◙
+\v 19 ◙
+\v 20 ◙
+\p
+\v 21 ◙
+\v 22 ◙
+\v 23 ◙
+\v 24 ◙
+\v 25 ◙
+\v 26 ◙
+\p
+\v 27 ◙
+\v 28 ◙
+\s1 The bad deeds there to plain of Hinum
+\rem /s1 Sinful Deeds in Hinnom Valley
+\q1
+\v 29 ◙
+\q2 …
+\q1 …
+\q2 …
+\q2 …
+\rem /s1 The Valley of Slaughter
+\p
+\v 30 ◙
+\v 31 \x + \xo 7:31: a \xt 2Ki 23:10; Jer 32:35; \xo b \xt Lev 18:21.\x*◙
+\v 32 ◙
+\v 33 ◙
+\v 34 \x + \xo 7:34: \xt Jer 16:9; 25:10; Rev 18:23.\x*◙
+\c 8
+\p
+\v 1 ◙
+\v 2 ◙
+\v 3 ◙
+\s1 The sin and punishment
+\rem /s1 Sin and Punishment; The Blind Perversity of the Whole Nation; Deception by False Prophets
+\p
+\v 4 ◙
+\v 5 ◙
+\v 6 ◙
+\v 7 ◙
+\v 8 ◙
+\v 9 ◙
+\v 10 ◙
+\v 11 \x + \xo 8:11: \xt Eze 13:10.\x*◙
+\v 12 \x + \xo 8:10-12: \xt Jer 6:12-15.\x*◙
+\p
+\v 13 ◙
+\p
+\v 14 ◙
+\v 15 ◙
+\v 16 ◙
+\p
+\v 17 ◙
+\s1 The mourning of Jeremiah due to his people
+\rem /s1 The Prophet Mourns for the People; Jeremiah Weeps for Sinful Judah; Jeremiah's Sorrow for His People
+\q1
+\v 18 ◙
+\q2 …
+\q1
+\v 19 ◙
+\q2 …
+\q1 …
+\q2 …
+\q1 …
+\q2 …
+\q1
+\v 20 ◙
+\q1 …
+\q2 …
+\b
+\q1
+\v 21 ◙
+\q2 …
+\q2 …
+\q1
+\v 22 ◙
+\q2 …
+\q2 …
+\c 9
+\q1
+\v 1 ◙
+\q2 …
+\q1 …
+\q2 …
+\q1
+\v 2 ◙
+\q2 …
+\q1 …
+\q2 …
+\q1
+\rem /s1 Judgment for Disobedience
+\v 3 ◙
+\q2 …
+\p …
+\q1 …
+\q2 …
+\b
+\q1
+\v 4 ◙
+\q2 …
+\q1 …
+\q2 …
+\q1
+\v 5 ◙
+\q2 …
+\q1 …
+\q2 …
+\q1
+\v 6 ◙
+\q2 …
+\q1
+\v 7 ◙
+\q1 …
+\q2 …
+\q1 …
+\q1
+\v 8 ◙
+\q2 …
+\q1 …
+\q2 …
+\q1
+\v 9 ◙
+\q2 …
+\q1 …
+\b
+\q1
+\v 10 ◙
+\q2 …
+\q2 …
+\q1 …
+\q2 …
+\b
+\q1
+\v 11 ◙
+\q2 …
+\q1 …
+\q2 …
+\p
+\v 12 ◙
+\p
+\v 13 ◙
+\v 14 ◙
+\v 15 ◙
+\v 16 ◙
+\s1 The requesting of people of Yerushalem
+\rem /s1 Weeping in Jerusalem; The People of Jerusalem Cry Out for Help; The People Mourn in Judgment
+\p
+\v 17 ◙
+\q1 …
+\q2 …
+\p
+\v 18 ◙
+\q1 …
+\q2 …
+\q2 …
+\p
+\v 19 ◙
+\q1 …
+\q2 …
+\q1 …
+\q2 …
+\p
+\v 20 ◙
+\q1 …
+\q2 …
+\q1 …
+\q2 …
+\q1
+\v 21 ◙
+\q2 …
+\q1 …
+\q2 …
+\q1
+\v 22 ◙
+\q2 …
+\q2 …
+\q2 …
+\q1 …
+\p
+\v 23 ◙
+\q1 …
+\q2 …
+\q2 …
+\q1
+\v 24 \x + \xo 9:24: \xt 1Cor 1:31; 2Cor 10:17.\x*◙
+\q2 …
+\q1 …
+\q2 …
+\q2 …
+\q1 …
+\p
+\v 25 ◙
+\v 26 ◙
+\c 10
+\s1 The worshipping of false gods and the true/correct worshipping
+\rem /s1 God and Idols; Idolatry Brings Destruction; Idolatry and True Worship; Idolatry Has Brought Ruin on Israel
+\p
+\v 1 ◙
+\v 2 ◙
+\q1 …
+\q2 …
+\q2 …
+\q1
+\v 3 ◙
+\q1 …
+\q2 …
+\q2
+\v 4 ◙
+\q1 …
+\q2 …
+\q1
+\v 5 ◙
+\q1 …
+\q2 …
+\q1 …
+\q2 …
+\q2 …
+\b
+\q1
+\v 6 ◙
+\q2 …
+\q1
+\v 7 \x + \xo 10:7: \xt Rev 15:4.\x*◙
+\q2 …
+\q1 …
+\q2 …
+\q2 …
+\q1
+\v 8 ◙
+\q2 …
+\q1
+\v 9 ◙
+\q2 …
+\q2 …
+\q1 …
+\q2 …
+\q1
+\v 10 ◙
+\q2 …
+\q2 …
+\q1 …
+\q2 …
+\p
+\v 11 ◙
+\s1 The song of praising of God
+\rem /s1 A Hymn of Praise to God
+\q1
+\v 12 ◙
+\q2 …
+\q1
+\v 13 ◙
+\q2 …
+\q1 …
+\q2 …
+\q1
+\v 14 ◙
+\q1 …
+\q2 …
+\q1
+\v 15 ◙
+\q2 …
+\q1
+\v 16 ◙
+\q2 …
+\q2 …
+\q2 …
+\s1 The capture of people of Yehudah
+\rem /s1 Coming Destruction; The Coming Destruction; The Coming Exile
+\p
+\v 17 ◙
+\v 18 ◙
+\p
+\v 19 ◙
+\q1 …
+\q2 …
+\q1 …
+\q1
+\v 20 ◙
+\q2 …
+\q1 …
+\q2 …
+\q2 …
+\b
+\q1
+\v 21 ◙
+\q2 …
+\q1 …
+\q2 …
+\q1
+\v 22 ◙
+\q2 …
+\q1 …
+\q2 …
+\b
+\q1
+\rem /s1 Jeremiah's Prayer
+\v 23 ◙
+\q2 …
+\q1
+\v 24 ◙
+\q2 …
+\q2 …
+\q2 …
+\q1
+\v 25 ◙
+\q2 …
+\q1 …
+\q2 …
+\c 11
+\s1 Jeremiah and the agreement
+\rem /s1 Israel and Judah Have Broken the Covenant; Jeremiah and the Covenant; The Covenant Is Broken; Judah's Broken Covenant
+\p
+\v 1 ◙
+\v 2 ◙
+\v 3 ◙
+\v 4 ◙
+\v 5 ◙
+\p …
+\p
+\v 6 ◙
+\v 7 ◙
+\v 8 ◙
+\p
+\v 9 ◙
+\v 10 ◙
+\v 11 ◙
+\v 12 ◙
+\v 13 ◙
+\v 14 ◙
+\p
+\v 15 ◙
+\v 16 ◙
+\p
+\v 17 ◙
+\s1 The bad plan to Jeremiah
+\rem /s1 Jeremiah's Life Threatened; Plot Against Jeremiah; A Plot against Jeremiah; A Plot against Jeremiah's Life
+\p
+\v 18 ◙
+\v 19 ◙
+\p
+\v 20 ◙
+\p
+\v 21 ◙
+\v 22 ◙
+\v 23 ◙
+\c 12
+\s1 The questioning of Jeremiah of Master
+\rem /s1 Jeremiah Questions the Lord; Jeremiah Questions the Lord's Justice; Jeremiah's Complaint; Jeremiah Complains to God
+\q1
+\v 1 ◙
+\q2 …
+\q1 …
+\q1 …
+\q2 …
+\q1
+\v 2 ◙
+\q2 …
+\q1 …
+\q2 …
+\q1
+\v 3 ◙
+\q2 …
+\q2 …
+\q1 …
+\q2 …
+\q1
+\v 4 ◙
+\q2 …
+\q1 …
+\q2 …
+\q2 …
+\rem /s1 God's Answer; God Replies to Jeremiah; The Lord's Reply to Jeremiah
+\p
+\v 5 ◙
+\q1 …
+\q2 …
+\q1 …
+\q2 …
+\q1
+\v 6 ◙
+\q2 …
+\q1 …
+\s1 The mourning of Master due to his people
+\rem /s1 The Lord's Sorrow because of His People
+\p
+\v 7 ◙
+\q1 …
+\q2 …
+\q1 …
+\q2 …
+\q1
+\v 8 ◙
+\q2 …
+\q2 …
+\q2 …
+\q1
+\v 9 ◙
+\q2 …
+\q1 …
+\q2 …
+\q1
+\v 10 ◙
+\q2 …
+\q2 …
+\q1
+\v 11 ◙
+\q2 …
+\q1 …
+\q2 …
+\q1
+\v 12 ◙
+\q2 …
+\q1 …
+\q2 …
+\q2 …
+\q1
+\v 13 ◙
+\q2 …
+\q1 …
+\q2 …
+\s1 The what was said of God concerning the nations surrounding Yisrael
+\rem /s1 The Lord's Promise to Israel's Neighbours; A Message for Israel's Neighbours
+\p
+\v 14 ◙
+\v 15 ◙
+\v 16 ◙
+\v 17 ◙
+\c 13
+\s1 Impabeli of Master Jeremiah of like hamit
+\rem /s1 A Linen Belt; The Linen Loincloth; Jeremiah's Linen Belt; The Linen Shorts
+\p
+\v 1 ◙
+\v 2 ◙
+\v 3 ◙
+\v 4 ◙
+\v 5 ◙
+\p
+\v 6 ◙
+\v 7 ◙
+\p
+\v 8 ◙
+\v 9 ◙
+\v 10 ◙
+\v 11 ◙
+\s1 The container of wine
+\rem /s1 Symbol of the Wine-Jars; The Wine Jar; Wineskins
+\p
+\v 12 ◙
+\v 13 ◙
+\v 14 ◙
+\s1 The warning of Jeremiah concerning the pegpaambug
+\rem /s1 Threat of Captivity; Exile Threatened; A Warning against Pride; Jeremiah Warns against Pride
+\q1
+\v 15 ◙
+\q1 …
+\q1
+\v 16 ◙
+\q2 …
+\q2 …
+\q1 …
+\q1
+\v 17 ◙
+\q1 …
+\q2 …
+\p
+\v 18 ◙
+\v 19 ◙
+\p
+\v 20 ◙
+\v 21 ◙
+\v 22 ◙
+\v 23 ◙
+\v 24 ◙
+\v 25 ◙
+\v 26 ◙
+\v 27 ◙
+\c 14
+\s1 The mangune-kune famine
+\rem /s1 The Great Drought; Drought, Famine, Sword; Judah's Terrible Drought; The Terrible Drought
+\p
+\v 1 ◙
+\q1
+\v 2 ◙
+\q2 …
+\q1 …
+\q2 …
+\q1
+\v 3 ◙
+\q2 …
+\q2 …
+\q2 …
+\q1 …
+\q2 …
+\q1
+\v 4 ◙
+\q2 …
+\q1 …
+\q2 …
+\q1
+\v 5 ◙
+\q2 …
+\q2 …
+\q1
+\v 6 ◙
+\q2 …
+\q1 …
+\q2 …
+\q1
+\v 7 ◙
+\q2 …
+\q2 …
+\q2 …
+\q1 …
+\q2 …
+\q1
+\v 8 ◙
+\q2 …
+\q1 …
+\q2 …
+\q1
+\v 9 ◙
+\q2 …
+\q1 …
+\q2 …
+\q2 …
+\p
+\v 10 ◙
+\rem /s1 The Lord Forbids Jeremiah to Intercede
+\p
+\v 11 ◙
+\v 12 ◙
+\rem /s1 Denunciation of Lying Prophets
+\p
+\v 13 ◙
+\p
+\v 14 ◙
+\v 15 ◙
+\v 16 ◙
+\p
+\v 17 ◙
+\q1 …
+\q2 …
+\q1 …
+\q2 …
+\q1
+\v 18 ◙
+\q2 …
+\q1 …
+\q2 …
+\q1 …
+\q2 …
+\s1 The mercy of people there to Master
+\rem /s1 A Prayer for Healing; The People Plead for Mercy; The People Plead with the Lord
+\q1
+\v 19 ◙
+\q2 …
+\q1 …
+\q2 …
+\q1 …
+\q2 …
+\q1
+\v 20 ◙
+\q2 …
+\q2 …
+\q1
+\v 21 ◙
+\q2 …
+\q2 …
+\q1 …
+\q1
+\v 22 ◙
+\q2 …
+\q1 …
+\q2 …
+\c 15
+\s1 The destruction of people of Yehudah
+\rem /s1 Punishment Is Inevitable; Judah's Inevitable Doom; Doom for the People of Judah
+\p
+\v 1 \x + \xo 15:1: a \xt Exo 32:11-14; Num 14:13-19; \xo b \xt 1Sam 7:5-9.\x*◙
+\v 2 \x + \xo 15:2: \xt Rev 13:10.\x*◙
+\q1 …
+\q2 …
+\q1 …
+\q2 …
+\q1 …
+\q2 …
+\q1 …
+\q2 …
+\m
+\v 3 ◙
+\v 4 \x + \xo 15:4: \xt 2Ki 21:1-16; 2Ch 33:1-9.\x*◙
+\p
+\v 5 ◙
+\q1 …
+\q2 …
+\q1 …
+\q2 …
+\q1
+\v 6 ◙
+\q2 …
+\q1 …
+\q2 …
+\q1
+\v 7 ◙
+\q2 …
+\q1 …
+\q2 …
+\q1
+\v 8 ◙
+\q2 …
+\q1 …
+\q2 …
+\q1 …
+\q2 …
+\q1
+\v 9 ◙
+\q2 …
+\q1 …
+\q2 …
+\q1 …
+\q1 …
+\q2 …
+\q1 …
+\s1 The complaints of Jeremiah of Master
+\rem /s1 Jeremiah's Complaint; Jeremiah Complains to the Lord; Jeremiah Complains Again and Is Reassured
+\p
+\v 10 ◙
+\v 11 ◙
+\v 12 ◙
+\p
+\v 13 ◙
+\v 14 ◙
+\p
+\v 15 ◙
+\v 16 ◙
+\v 17 ◙
+\v 18 ◙
+\p
+\v 19 ◙
+\v 20 ◙
+\v 21 ◙
+\c 16
+\s1 Not egpaasaween of Master Jeremiah
+\rem /s1 Day of Disaster; The Lord's Will for Jeremiah's Life; Judgement on Judah; Jeremiah Forbidden to Marry; Jeremiah's Celibacy and Message
+\p
+\v 1 ◙
+\v 2 ◙
+\v 3 ◙
+\v 4 ◙
+\rem /s1 Judah's Coming Punishment
+\p
+\v 5 ◙
+\v 6 ◙
+\v 7 ◙
+\p
+\v 8 ◙
+\v 9 \x + \xo 16:9: \xt Jer 7:34; 25:10; Rev 18:23.\x*◙
+\p
+\v 10 ◙
+\v 11 ◙
+\v 12 ◙
+\v 13 ◙
+\s1 The return from capture
+\rem /s1 The Return from Exile; God Will Restore Israel; Hope despite the Disaster
+\p
+\v 14 ◙
+\v 15 ◙
+\s1 The coming punishment
+\rem /s1 The Coming Punishment
+\p
+\v 16 ◙
+\v 17 ◙
+\v 18 ◙
+\s1 The mapahetpet praying for Jeremiah
+\rem /s1 Jeremiah's Prayer of Confidence in the Lord; Jeremiah's Prayer of Confidence
+\p
+\v 19 ◙
+\v 20 ◙
+\p
+\v 21 ◙
+\c 17
+\s1 The sin of Yehudah and the punishment
+\rem /s1 Judah's Sin and Punishment; The Sin and Punishment of Judah
+\p
+\v 1 ◙
+\v 2 ◙
+\v 3 ◙
+\v 4 ◙
+\s1 The various sayings
+\rem /s1 Wisdom from the Lord; Various Sayings
+\p
+\v 5 ◙
+\q1 …
+\q2 …
+\q1 …
+\q2 …
+\q1
+\v 6 ◙
+\q2 …
+\q2 …
+\q1 …
+\b
+\q1
+\v 7 ◙
+\q2 …
+\q1
+\v 8 \x + \xo 17:8: \xt Psa 1:3.\x*◙
+\q2 …
+\q1 …
+\q2 …
+\q1 …
+\q2 …
+\b
+\q1
+\v 9 ◙
+\q2 …
+\q2 …
+\q1
+\v 10 \x + \xo 17:10: a \xt Rev 2:23; \xo b \xt Psa 62:12.\x*◙
+\q2 …
+\q1 …
+\q2 …
+\b
+\q1
+\rem /s1 Jeremiah's Trust in the Lord
+\v 11 ◙
+\q2 …
+\q1 …
+\q2 …
+\s1 The requesting of Jeremiah of Master
+\p
+\v 12 ◙
+\v 13 ◙
+\rem /s1 Jeremiah Prays for Vindication; Jeremiah Asks the Lord for Help
+\v 14 ◙
+\v 15 ◙
+\v 16 ◙
+\v 17 ◙
+\v 18 ◙
+\s1 The obedience of Day of Resting
+\rem /s1 On Observing the Sabbath; Hallow the Sabbath Day; Observing the Sabbath; Keeping the Sabbath Holy
+\p
+\v 19 ◙
+\v 20 ◙
+\v 21 \x + \xo 17:21: \xt Neh 13:15-22.\x*◙
+\v 22 ◙
+\v 23 ◙
+\p
+\v 24 ◙
+\v 25 ◙
+\v 26 ◙
+\v 27 ◙
+\c 18
+\s1 The going of Jeremiah of house of creator of kuren land
+\rem /s1 At the Potter's House; The Potter and the Clay; Jeremiah at the Potter's House; The potter and the clay
+\p
+\v 1 ◙
+\v 2 ◙
+\v 3 ◙
+\v 4 ◙
+\p
+\v 5 ◙
+\v 6 ◙
+\v 7 ◙
+\v 8 ◙
+\v 9 ◙
+\v 10 ◙
+\v 11 ◙
+\rem /s1 Israel's Stubborn Idolatry
+\v 12 ◙
+\s1 Nalingawan e of Yisrael the Master he/his
+\rem /s1 The People Reject the Lord
+\p
+\v 13 ◙
+\q1 …
+\q2 …
+\q2 …
+\q1
+\v 14 ◙
+\q2 …
+\q1
+\v 15 ◙
+\q2 …
+\q1 …
+\q2 …
+\q1
+\v 16 ◙
+\q1 …
+\q2 …
+\q1
+\v 17 ◙
+\q2 …
+\q1 …
+\q2 …
+\s1 The bad plan of people to Jeremiah
+\rem /s1 A Plot against Jeremiah
+\p
+\v 18 ◙
+\p
+\v 19 ◙
+\v 20 ◙
+\v 21 ◙
+\v 22 ◙
+\v 23 ◙
+\c 19
+\s1 The broken banga
+\rem /s1 The Broken Earthenware Jug; The Broken Jar; Jeremiah's Shattered Jar
+\p
+\v 1 ◙
+\v 2 \x + \xo 19:2: \xt 2Ki 23:10; Jer 7:30-32; 32:34-35.\x*◙
+\v 3 ◙
+\v 4 ◙
+\v 5 \x + \xo 19:5: \xt Lev 18:21.\x*◙
+\v 6 ◙
+\v 7 ◙
+\v 8 ◙
+\v 9 ◙
+\p
+\v 10 ◙
+\v 11 ◙
+\v 12 ◙
+\v 13 ◙
+\p
+\v 14 ◙
+\v 15 ◙
+\c 20
+\s1 The pegpekeg-apul of Jeremiah to Pasur
+\rem /s1 Jeremiah and Pashhur; Jeremiah's Conflict with Pashhur the Priest; Jeremiah Persecuted by Pashhur
+\p
+\v 1 ◙
+\v 2 ◙
+\v 3 ◙
+\v 4 ◙
+\v 5 ◙
+\v 6 ◙
+\s1 The complaints of Jeremiah of Master
+\rem /s1 Jeremiah Denounces His Persecutors; Jeremiah's Complaint; Jeremiah Complains to the Lord; Jeremiah's lament
+\q1
+\v 7 ◙
+\q2 …
+\q1 …
+\q2 …
+\q1 …
+\q2 …
+\b
+\q1
+\v 8 ◙
+\q2 …
+\q1 …
+\q2 …
+\q1
+\v 9 ◙
+\q2 …
+\q2 …
+\q2 …
+\q1 …
+\q2 …
+\q1
+\v 10 ◙
+\q2 …
+\q2 …
+\q1 …
+\q1 …
+\q2 …
+\q1
+\v 11 ◙
+\q2 …
+\q1 …
+\q2 …
+\q1 …
+\q1 …
+\q1
+\v 12 ◙
+\q2 …
+\q1 …
+\q2 …
+\q1
+\v 13 ◙
+\q1 …
+\b
+\q1
+\v 14 \x + \xo 20:14-18: \xt Yob 3:1-19.\x*◙
+\q1 …
+\q1
+\v 15 ◙
+\q2 …
+\q1
+\v 16 ◙
+\q2 …
+\q1 …
+\q2 …
+\q2
+\v 17 ◙
+\q1 …
+\q1
+\v 18 ◙
+\q2 …
+\q2 …
+\c 21
+\s1 The prediction of defeat of Yerushalem
+\rem /s1 Jerusalem Will Fall to Nebuchadrezzar; Warnings to kings and people; God Rejects Zedekiah's Request; No Deliverance from Babylon; Jerusalem's Defeat Is Predicted
+\p
+\v 1 ◙
+\v 2 \x + \xo 21:2: \xt 2Ki 25:1-11; 2Ch 36:17-21.\x*◙
+\p
+\v 3 ◙
+\v 4 ◙
+\v 5 ◙
+\v 6 ◙
+\v 7 ◙
+\p
+\v 8 ◙
+\v 9 ◙
+\v 10 ◙
+\s1 The punishment of Master of kings of Yehudah
+\rem /s1 Judgment on the Royal House of Judah; Judgment on Judah's Kings; Message to the House of David
+\p
+\v 11 ◙
+\v 12 ◙
+\v 13 ◙
+\v 14 ◙
+\c 22
+\s1 The speech of Jeremiah of family of King of Yehudah
+\rem /s1 A Message for Judah's Kings; Exhortation to Repent; Jeremiah's Message to the Royal House of Judah; Judgment Against Evil Kings
+\p
+\v 1 ◙
+\v 2 ◙
+\v 3 ◙
+\v 4 ◙
+\v 5 \x + \xo 22:5: \xt Mat 23:28; Luk 13:35.\x*◙
+\rem /s1 A Message about the Palace
+\p
+\v 6 ◙
+\v 7 ◙
+\p
+\v 8 ◙
+\v 9 ◙
+\s1 The speech of Jeremiah concerning Huwakas
+\rem /s1 Jeremiah's Message concerning Joahaz; A Message about Jehoahaz
+\q1
+\v 10 ◙
+\q1 …
+\q1 …
+\q2 …
+\q2 …
+\rem /s1 Message to the Sons of Josiah
+\p
+\v 11 \x + \xo 22:11: \xt 2Ki 23:31-34; 2Ch 36:1-4.\x*◙
+\v 12 ◙
+\s1 The speech of Jeremiah concerning Huwakim
+\rem /s1 A Message about Jehoiakim; Jeremiah's Message concerning Jehoiakim
+\q1
+\v 13 ◙
+\q2 …
+\q1 …
+\q1
+\v 14 ◙
+\q2 …
+\q2 …
+\q1 …
+\q2 …
+\q2 …
+\q1
+\v 15 ◙
+\q2 …
+\q1 …
+\q2 …
+\q2 …
+\q1
+\v 16 ◙
+\q2 …
+\q1 …
+\q1
+\v 17 ◙
+\q1 …
+\q2 …
+\q1 …
+\p
+\v 18 \x + \xo 22:18: \xt 2Ki 23:36–24:6; 2Ch 36:5-7.\x*◙
+\q1 …
+\q2 …
+\q1 …
+\q2 …
+\q1
+\v 19 ◙
+\q2 …
+\s1 The speech of Jeremiah concerning the egpangkusan of Yerushalem
+\rem /s1 Jeremiah's Message about the Fate of Jerusalem
+\q1
+\v 20 ◙
+\q2 …
+\q2 …
+\q1
+\v 21 ◙
+\q1 …
+\q2 …
+\q1 …
+\q1
+\v 22 ◙
+\q2 …
+\q1 …
+\q2 …
+\q1
+\v 23 ◙
+\q1 …
+\q2 …
+\s1 The judging of God to Huwakin
+\rem /s1 Judgment on Coniah (Jehoiachin); A Message for Jehoiachin; God's Judgment on Jehoiachin
+\p
+\v 24 \x + \xo 22:24: \xt 2Ki 24:8-15; 2Ch 36:9-10.\x*◙
+\v 25 ◙
+\v 26 ◙
+\v 27 ◙
+\p
+\v 28 ◙
+\q1
+\v 29 ◙
+\q2 …
+\q1
+\v 30 ◙
+\q2 …
+\q1 …
+\q2 …
+\q2 …
+\c 23
+\s1 The hope
+\rem /s1 Hope for the Future; The Righteous Branch; Restoration after Exile
+\p
+\v 1 ◙
+\v 2 ◙
+\v 3 ◙
+\v 4 ◙
+\rem /s1 The Righteous Branch of David
+\v 5 \x + \xo 23:5-6: \xt Jer 33:14-16.\x*◙
+\v 6 ◙
+\p
+\v 7 ◙
+\v 8 ◙
+\s1 The speech of Jeremiah concerning the prophets
+\rem /s1 Judgment on False Prophets; Jeremiah's Message about the Prophets; False Prophets of Hope Denounced; Lying Prophets
+\q1
+\v 9 ◙
+\q2 …
+\q1 …
+\q2 …
+\q1 …
+\q2 …
+\q1
+\v 10 ◙
+\q1 …
+\q2 …
+\q1 …
+\q2 …
+\p
+\v 11 ◙
+\q1 …
+\q2 …
+\q1
+\v 12 ◙
+\q1 …
+\q2 …
+\q2 …
+\q1 …
+\q1
+\v 13 ◙
+\q1 …
+\q1 …
+\q2 …
+\q1
+\v 14 \x + \xo 23:14: \xt Gen 18:20; Eze 16:49.\x*◙
+\q1 …
+\q2 …
+\q1 …
+\q2 …
+\q1 …
+\q2 …
+\p
+\v 15 ◙
+\q1 …
+\q2 …
+\q1 …
+\p
+\v 16 ◙
+\v 17 ◙
+\p
+\v 18 ◙
+\v 19 ◙
+\v 20 ◙
+\p
+\v 21 ◙
+\v 22 ◙
+\p
+\v 23 ◙
+\v 24 ◙
+\v 25 ◙
+\v 26 ◙
+\v 27 ◙
+\v 28 ◙
+\v 29 ◙
+\v 30 ◙
+\v 31 ◙
+\v 32 ◙
+\s1 The not true/correct prophet
+\rem /s1 False Prophecies and False Prophets; False Oracles and False Prophets; The Lord's Burden
+\p
+\v 33 ◙
+\v 34 ◙
+\v 35 ◙
+\v 36 ◙
+\v 37 ◙
+\v 38 ◙
+\v 39 ◙
+\v 40 ◙
+\c 24
+\s1 The two leban behas of fig
+\rem /s1 The Good and the Bad Figs; Two Baskets of Figs; Good and Bad Figs
+\p
+\v 1 \x + \xo 24:1: \xt 2Ki 24:12-16; 2Ch 36:10.\x*◙
+\v 2 ◙
+\v 3 ◙
+\p …
+\p
+\v 4 ◙
+\v 5 ◙
+\v 6 ◙
+\v 7 ◙
+\p
+\v 8 ◙
+\v 9 ◙
+\v 10 ◙
+\c 25
+\s1 The enemies from north
+\rem /s1 Seventy Years of Captivity; The Babylonian Captivity Foretold; The Enemy from the North
+\p
+\v 1 ◙
+\v 2 ◙
+\v 3 ◙
+\v 4 ◙
+\v 5 ◙
+\v 6 ◙
+\v 7 ◙
+\p
+\v 8 ◙
+\v 9 ◙
+\v 10 \x + \xo 25:10: a \xt Jer 7:34; 16:9; \xo b \xt Rev 18:22-23.\x*◙
+\v 11 \x + \xo 25:11: \xt 2Ch 36:21; Jer 29:10; Dan 9:2.\x*◙
+\v 12 ◙
+\v 13 ◙
+\v 14 ◙
+\s1 The punishment of God of nations
+\rem /s1 The Cup of God's Wrath; God's Judgment on the Nations; The Cup of the Lord's Anger
+\p
+\v 15 ◙
+\v 16 ◙
+\p
+\v 17 ◙
+\v 18 ◙
+\li1
+\v 19 ◙
+\li1 …
+\li1
+\v 20 ◙
+\li1 …
+\li1 …
+\li1
+\v 21 ◙
+\li1
+\v 22 ◙
+\li1 …
+\li1
+\v 23 ◙
+\li1 …
+\li1
+\v 24 ◙
+\li1 …
+\li1
+\v 25 ◙
+\li1
+\v 26 ◙
+\p …
+\p
+\v 27 ◙
+\v 28 ◙
+\v 29 ◙
+\p
+\v 30 ◙
+\q1 …
+\q2 …
+\q1 …
+\q2 …
+\q2 …
+\q1
+\v 31 ◙
+\q2 …
+\q1 …
+\q2 …
+\p
+\v 32 ◙
+\v 33 ◙
+\p
+\v 34 ◙
+\v 35 ◙
+\v 36 ◙
+\v 37 ◙
+\v 38 ◙
+\c 26
+\s1 The carrying to Jeremiah there to courts
+\rem /s1 Jeremiah's Prophecies in the Temple; Jeremiah Threatened With Death; Jeremiah Is Brought to Trial; Jeremiah's Escape from Death
+\p
+\v 1 ◙
+\v 2 ◙
+\v 3 ◙
+\v 4 ◙
+\v 5 ◙
+\v 6 \x + \xo 26:6: \xt Josh 18:1; Psa 78:60; Jer 7:12-14.\x*◙
+\p
+\v 7 ◙
+\v 8 ◙
+\v 9 ◙
+\p
+\v 10 ◙
+\v 11 ◙
+\p
+\v 12 ◙
+\v 13 ◙
+\v 14 ◙
+\v 15 ◙
+\p
+\v 16 ◙
+\p
+\v 17 ◙
+\v 18 \x + \xo 26:18: \xt Mic 3:12.\x*◙
+\q1 …
+\q2 …
+\q2 …
+\m
+\v 19 ◙
+\p
+\v 20 ◙
+\v 21 ◙
+\v 22 ◙
+\v 23 ◙
+\p
+\v 24 ◙
+\c 27
+\s1 The pegyuyuggu of Jeremiah
+\rem /s1 Jeremiah opposes false prophets; The Sign of the Yoke; Jeremiah Wears an Ox Yoke; Judah to Serve Nebuchadnezzar
+\p
+\v 1 \x + \xo 27:1: \xt 2Ki 24:18-20; 2Ch 36:11-13.\x*◙
+\v 2 ◙
+\v 3 ◙
+\v 4 ◙
+\v 5 ◙
+\v 6 ◙
+\v 7 ◙
+\p
+\v 8 ◙
+\v 9 ◙
+\v 10 ◙
+\v 11 ◙
+\p
+\v 12 ◙
+\v 13 ◙
+\v 14 ◙
+\v 15 ◙
+\v 16 ◙
+\v 17 ◙
+\v 18 ◙
+\p
+\v 19 ◙
+\v 20 ◙
+\p
+\v 21 ◙
+\v 22 ◙
+\c 28
+\s1 Jeremiah and Prophet Ananiyas
+\rem /s1 Jeremiah Condemns Hananiah; The False Prophet Hananiah; Jeremiah and the Prophet Hananiah; Hananiah Opposes Jeremiah and Dies
+\p
+\v 1 \x + \xo 28:1: \xt 2Ki 24:18-20; 2Ch 36:11-13.\x*◙
+\v 2 ◙
+\v 3 ◙
+\v 4 ◙
+\p
+\v 5 ◙
+\v 6 ◙
+\v 7 ◙
+\v 8 ◙
+\v 9 ◙
+\p
+\v 10 ◙
+\v 11 ◙
+\p
+\v 12 ◙
+\v 13 ◙
+\v 14 ◙
+\p
+\v 15 ◙
+\v 16 ◙
+\p
+\v 17 ◙
+\c 29
+\s1 The letter of Jeremiah of Jews there to Babylon
+\rem /s1 A Letter to the Exiles; Jeremiah's Letter to the Exiles in Babylon; Jeremiah's Letter to the Jews in Babylonia
+\p
+\v 1 \x + \xo 29:1-2: \xt 2Ki 24:12-16; 2Ch 36:10.\x*◙
+\v 2 ◙
+\v 3 ◙
+\pi1
+\v 4 ◙
+\v 5 ◙
+\v 6 ◙
+\v 7 ◙
+\v 8 ◙
+\v 9 ◙
+\p
+\v 10 \x + \xo 29:10: \xt 2Ch 36:21; Jer 25:11; Dan 9:2.\x*◙
+\v 11 ◙
+\v 12 ◙
+\v 13 \x + \xo 29:13: \xt Deu 4:29.\x*◙
+\v 14 ◙
+\pi1
+\v 15 ◙
+\v 16 ◙
+\v 17 ◙
+\v 18 ◙
+\v 19 ◙
+\p
+\v 20 ◙
+\pi1
+\v 21 ◙
+\v 22 ◙
+\v 23 ◙
+\s1 The letter of Simayas
+\rem /s1 A Message for Shemaiah; Message to Shemaiah; The Letter of Shemaiah
+\p
+\v 24 ◙
+\v 25 ◙
+\pi1
+\v 26 ◙
+\v 27 ◙
+\v 28 ◙
+\p
+\v 29 ◙
+\v 30 ◙
+\v 31 ◙
+\v 32 ◙
+\c 30
+\s1 The promise of Master of his people
+\rem /s1 The Lord's Promises to His People; Restoration of Israel; Promises of Deliverance; Promises of restoration for the people; Restoration Promised for Israel and Judah
+\p
+\v 1 ◙
+\v 2 ◙
+\v 3 ◙
+\p
+\v 4 ◙
+\q1
+\v 5 ◙
+\q2 …
+\q1
+\v 6 ◙
+\q2 …
+\q1 …
+\q2 …
+\q1
+\v 7 ◙
+\q2 …
+\q2 …
+\q2 …
+\p
+\v 8 ◙
+\v 9 ◙
+\q1
+\v 10 \x + \xo 30:10-11: \xt Jer 46:27-28.\x*◙
+\q2 …
+\q1 …
+\q2 …
+\q1 …
+\q2 …
+\q1 …
+\q1
+\v 11 ◙
+\q1 …
+\q2 …
+\q2 …
+\q1 …
+\q2 …
+\q1 …
+\p
+\v 12 ◙
+\q1 …
+\q2 …
+\q1
+\v 13 ◙
+\q2 …
+\q1 …
+\q1
+\v 14 ◙
+\q2 …
+\q1 …
+\q2 …
+\q2 …
+\q2 …
+\q1
+\v 15 ◙
+\q2 …
+\q1 …
+\q2 …
+\q2 …
+\q1
+\v 16 ◙
+\q2 …
+\q1 …
+\q2 …
+\q1
+\v 17 ◙
+\q2 …
+\q1 …
+\q2 …
+\q2 …
+\q1 …
+\p
+\v 18 ◙
+\q2 …
+\q2 …
+\q1 …
+\q2 …
+\q1
+\v 19 ◙
+\q2 …
+\q1 …
+\q2 …
+\q2 …
+\q1
+\v 20 ◙
+\q2 …
+\q1 …
+\q1
+\v 21 ◙
+\q2 …
+\q1 …
+\q2 …
+\q1
+\v 22 ◙
+\q2 …
+\p
+\v 23 ◙
+\v 24 ◙
+\c 31
+\s1 The returning home of people of Yisrael
+\rem /s1 Hope for Restoration; Israel's Return Home; The Joyful Return of the Exiles
+\p
+\v 1 ◙
+\v 2 ◙
+\v 3 ◙
+\v 4 ◙
+\v 5 ◙
+\v 6 ◙
+\p
+\v 7 ◙
+\q1 …
+\q2 …
+\q1 …
+\q2 …
+\q1
+\v 8 ◙
+\q2 …
+\q1 …
+\q2 …
+\q1 …
+\q1
+\v 9 ◙
+\q2 …
+\q1 …
+\q2 …
+\q1 …
+\q2 …
+\p
+\v 10 ◙
+\q2 …
+\q2 …
+\q1 …
+\q2 …
+\q1
+\v 11 ◙
+\q2 …
+\q1
+\v 12 ◙
+\q2 …
+\q1 …
+\q2 …
+\q2 …
+\q1 …
+\q2 …
+\q1
+\v 13 ◙
+\q2 …
+\q1 …
+\q1
+\v 14 ◙
+\q2 …
+\q1 …
+\s1 The mercy of master of Yisrael
+\rem /s1 The Lord's Mercy on Israel; Rachel's Sadness Turns to Joy
+\p
+\v 15 \x + \xo 31:15: a \xt Gen 35:16-19; \xo b \xt Mat 2:18.\x*◙
+\q1 …
+\q2 …
+\q2 …
+\q1 …
+\q2 …
+\q1
+\v 16 ◙
+\q1 …
+\q1 …
+\q2 …
+\q1 …
+\q1
+\v 17 ◙
+\q2 …
+\q1 …
+\p
+\v 18 ◙
+\q1 …
+\q1 …
+\q2 …
+\q1 …
+\q2 …
+\q2 …
+\q1
+\v 19 ◙
+\q2 …
+\q1 …
+\q2 …
+\q1 …
+\q2 …
+\b
+\q1
+\v 20 ◙
+\q1 …
+\q2 …
+\q1 …
+\q2 …
+\q1 …
+\q1 …
+\q1
+\v 21 ◙
+\q2 …
+\q2 …
+\q1 …
+\q2 …
+\q1
+\v 22 ◙
+\q1 …
+\q2 …
+\s1 The coming peace/prosperity of people of Yisrael
+\rem /s1 The Future Prosperity of God's People
+\p
+\v 23 ◙
+\q2 …
+\q1 …
+\q2 …
+\m
+\v 24 ◙
+\v 25 ◙
+\v 26 ◙
+\rem /s1 Individual Retribution
+\p
+\v 27 ◙
+\v 28 ◙
+\v 29 \x + \xo 31:29: \xt Eze 18:2.\x*◙
+\q1 …
+\q2 …
+\m
+\v 30 ◙
+\rem /s1 A New Covenant
+\p
+\v 31 \x + \xo 31:31: \xt Mat 26:28; Mrk 14:24; Luk 22:20; 1Cor 11:25; 2Cor 3:6.\x*◙
+\v 32 ◙
+\v 33 \x + \xo 31:33: \xt Heb 10:16.\x*◙
+\v 34 \x + \xo 31:34: \xt Heb 10:17.\x*◙
+\q1
+\v 35 ◙
+\q1 …
+\q2 …
+\q1 …
+\q1 …
+\q1
+\v 36 ◙
+\q2 …
+\q1
+\v 37 ◙
+\q2 …
+\q2 …
+\q2 …
+\q1 …
+\rem /s1 Jerusalem to Be Enlarged
+\p
+\v 38 ◙
+\v 39 ◙
+\v 40 ◙
+\c 32
+\s1 The buying of Jeremiah of field
+\rem /s1 Jeremiah Buys a Field During the Siege; Jeremiah's Land Purchase; Jeremiah Buys a Field
+\p
+\v 1 \x + \xo 32:1: \xt 2Ki 25:1-7.\x*◙
+\v 2 ◙
+\v 3 ◙
+\v 4 ◙
+\v 5 ◙
+\p
+\v 6 ◙
+\v 7 ◙
+\v 8 ◙
+\v 9 ◙
+\v 10 ◙
+\v 11 ◙
+\v 12 ◙
+\v 13 ◙
+\v 14 ◙
+\v 15 ◙
+\s1 The praying for Jeremiah
+\rem /s1 Jeremiah's Prayer; Jeremiah Prays for Understanding
+\p
+\v 16 ◙
+\v 17 ◙
+\v 18 ◙
+\v 19 ◙
+\v 20 ◙
+\v 21 ◙
+\v 22 ◙
+\v 23 ◙
+\p
+\v 24 ◙
+\v 25 ◙
+\rem /s1 God's Assurance of the People's Return; A Prediction of Jerusalem's Fall
+\p
+\v 26 ◙
+\v 27 ◙
+\v 28 \x + \xo 32:28: \xt 2Ki 25:1-11; 2Ch 36:17-21.\x*◙
+\v 29 ◙
+\v 30 ◙
+\v 31 ◙
+\v 32 ◙
+\v 33 ◙
+\v 34 \x + \xo 32:34: \xt 2Ki 23:10; Jer 7:30-31; 19:1-6.\x*◙
+\v 35 \x + \xo 32:35: a \xt 2Ki 23:10; Jer 7:31; \xo b \xt Lev 18:21.\x*◙
+\s1 The promise of Master
+\rem /s1 A Promise of Hope; A Promise of Restoration
+\p
+\v 36 ◙
+\v 37 ◙
+\v 38 ◙
+\v 39 ◙
+\v 40 ◙
+\v 41 ◙
+\p
+\v 42 ◙
+\v 43 ◙
+\v 44 ◙
+\c 33
+\s1 The promised me blessing
+\rem /s1 Promises of Peace and Prosperity; Another Promise of Hope; Healing after Punishment; Promise of Restoration
+\p
+\v 1 ◙
+\v 2 ◙
+\v 3 ◙
+\v 4 ◙
+\v 5 ◙
+\v 6 ◙
+\v 7 ◙
+\v 8 ◙
+\v 9 ◙
+\p
+\v 10 ◙
+\v 11 \x + \xo 33:11: \xt 1Ch 16:34; 2Ch 5:13; 7:3; Ezr 3:11; Psa 100:5; 106:1; 107:1; 118:1; 136:1.\x*◙
+\q1 …
+\q2 …
+\q2 …
+\m …
+\p
+\v 12 ◙
+\v 13 ◙
+\rem /s1 The Righteous Branch and the Covenant with David
+\p
+\v 14 ◙
+\v 15 ◙
+\v 16 ◙
+\v 17 \x + \xo 33:17: \xt 2Sam 7:12-16; 1Ki 2:4; 1Ch 17:11-14.\x*◙
+\v 18 \x + \xo 33:18: \xt Num 3:5-10.\x*◙
+\p
+\v 19 ◙
+\v 20 ◙
+\v 21 ◙
+\v 22 ◙
+\p
+\v 23 ◙
+\v 24 ◙
+\v 25 ◙
+\v 26 ◙
+\c 34
+\s1 The warning to Sidikiyas
+\rem /s1 Death in Captivity Predicted for Zedekiah; Events under Jehoiakim and Zedekiah; A Warning for Zedekiah; Warning to Zedekiah; A Message for Zedekiah
+\p
+\v 1 \x + \xo 34:1: \xt 2Ki 25:1-11; 2Ch 36:17-21.\x*◙
+\v 2 ◙
+\v 3 ◙
+\v 4 ◙
+\v 5 ◙
+\v 6 ◙
+\v 7 ◙
+\s1 The restoration of slaves
+\rem /s1 Treacherous Treatment of Slaves; Deceitful Treatment of Slaves; Freedom for Slaves; Freedom for Hebrew Slaves
+\p
+\v 8 ◙
+\v 9 ◙
+\v 10 ◙
+\v 11 ◙
+\p
+\v 12 ◙
+\v 13 ◙
+\v 14 \x + \xo 34:14: \xt Exo 21:2; Deu 15:12.\x*◙
+\v 15 ◙
+\v 16 ◙
+\v 17 ◙
+\v 18 ◙
+\v 19 ◙
+\v 20 ◙
+\v 21 ◙
+\v 22 ◙
+\c 35
+\s1 Jeremiah and the descendants of Rikab
+\rem /s1 The Recabites; The Rechabites Commended; Jeremiah and the Rechabites; The Faithful Recabites
+\p
+\v 1 \x + \xo 35:1: \xt 2Ki 23:36–24:6; 2Ch 36:5-7.\x*◙
+\v 2 ◙
+\v 3 ◙
+\v 4 ◙
+\v 5 ◙
+\p
+\v 6 ◙
+\v 7 ◙
+\v 8 ◙
+\v 9 ◙
+\v 10 ◙
+\v 11 ◙
+\p
+\v 12 ◙
+\v 13 ◙
+\v 14 ◙
+\v 15 ◙
+\v 16 ◙
+\v 17 ◙
+\p
+\v 18 ◙
+\v 19 ◙
+\c 36
+\s1 Imbasa of Baruk there to temple the letter of Jeremiah
+\rem /s1 Jehoiakim Burns Jeremiah's Scroll; Baruch Reads the Scroll in the Temple; The Scroll Read in the Temple; Baruch Reads the Lord's Messages
+\p
+\v 1 \x + \xo 36:1: \xt 2Ki 24:1; 2Ch 36:5-7; Dan 1:1-2.\x*◙
+\v 2 ◙
+\v 3 ◙
+\p
+\v 4 ◙
+\v 5 ◙
+\v 6 ◙
+\v 7 ◙
+\v 8 ◙
+\p
+\v 9 ◙
+\v 10 ◙
+\s1 Ke reading of writings there to officials
+\rem /s1 The Scroll Read in the Palace; The Scroll Is Read to the Officials
+\p
+\v 11 ◙
+\v 12 ◙
+\v 13 ◙
+\v 14 ◙
+\v 15 ◙
+\v 16 ◙
+\v 17 ◙
+\p
+\v 18 ◙
+\p
+\v 19 ◙
+\s1 The pegsilab of King of rolled-up document
+\rem /s1 The King Burns the Scroll; Jehoiakim Burns the Scroll
+\p
+\v 20 ◙
+\rem /s1 King Jehoiakim Burns the Scroll
+\v 21 ◙
+\v 22 ◙
+\v 23 ◙
+\v 24 ◙
+\v 25 ◙
+\v 26 ◙
+\s1 Written e again Jeremiah
+\rem /s1 Jeremiah Writes Another Scroll; Jeremiah Dictates Another; Jeremiah Rewrites the Scroll
+\p
+\v 27 ◙
+\v 28 ◙
+\v 29 ◙
+\v 30 ◙
+\v 31 ◙
+\p
+\v 32 ◙
+\c 37
+\s1 The requesting of Sidikiyas to Jeremiah
+\rem /s1 Zedekiah's Request to Jeremiah; Jeremiah in Prison; Zedekiah Calls for Jeremiah; Zedekiah's Vain Hope
+\p
+\v 1 \x + \xo 37:1: \xt 2Ki 24:17; 2Ch 36:10.\x*◙
+\v 2 ◙
+\p
+\v 3 ◙
+\v 4 ◙
+\v 5 ◙
+\p
+\v 6 ◙
+\v 7 ◙
+\v 8 ◙
+\v 9 ◙
+\v 10 ◙
+\s1 The capturing and pegprisu to Jeremiah
+\rem /s1 Jeremiah Is Arrested and Imprisoned; Jeremiah Is Imprisoned
+\p
+\v 11 ◙
+\v 12 ◙
+\v 13 ◙
+\p
+\v 14 ◙
+\v 15 ◙
+\v 16 ◙
+\p
+\v 17 ◙
+\p …
+\v 18 ◙
+\v 19 ◙
+\v 20 ◙
+\p
+\v 21 ◙
+\c 38
+\s1 The peg-ulug to Jeremiah there to dry well
+\rem /s1 Jeremiah in a Cistern; Jeremiah Thrown Into a Cistern; Jeremiah in the Cistern; Jeremiah in a Dry Well
+\p
+\v 1 ◙
+\v 2 ◙
+\v 3 ◙
+\p
+\v 4 ◙
+\p
+\v 5 ◙
+\v 6 ◙
+\rem /s1 Jeremiah Is Rescued by Ebed-melech
+\p
+\v 7 ◙
+\v 8 ◙
+\v 9 ◙
+\v 10 ◙
+\v 11 ◙
+\v 12 ◙
+\v 13 ◙
+\s1 The pegpatambag of King Sidikiyas to Jeremiah
+\rem /s1 Zedekiah Consults Jeremiah Again; Zedekiah Asks Jeremiah's Advice; Zedekiah Questions Jeremiah Again; Zedekiah Questions Jeremiah
+\p
+\v 14 ◙
+\p
+\v 15 ◙
+\p
+\v 16 ◙
+\p
+\v 17 ◙
+\v 18 ◙
+\p
+\v 19 ◙
+\p
+\v 20 ◙
+\v 21 ◙
+\v 22 ◙
+\q1 …
+\q1 …
+\q2 …
+\p
+\v 23 ◙
+\p
+\v 24 ◙
+\v 25 ◙
+\v 26 ◙
+\v 27 ◙
+\v 28 \x + \xo 38:28: \xt Eze 33:21.\x*◙
+\c 39
+\s1 The snatching of Yerushalem
+\rem /s1 The Fall of Jerusalem
+\p
+\v 1 ◙
+\v 2 ◙
+\v 3 ◙
+\p
+\v 4 ◙
+\v 5 ◙
+\v 6 ◙
+\v 7 ◙
+\v 8 ◙
+\v 9 ◙
+\v 10 ◙
+\s1 The pegleke to Jeremiah
+\rem /s1 Jeremiah, Set Free, Remembers Ebed-melech; Jeremiah's Release; Jeremiah Remains in Judah
+\p
+\v 11 ◙
+\v 12 ◙
+\v 13 ◙
+\v 14 ◙
+\s1 The hope of Ibid-Milik
+\rem /s1 Hope for Ebedmelech
+\p
+\v 15 ◙
+\v 16 ◙
+\v 17 ◙
+\v 18 ◙
+\c 40
+\s1 The peglemung of Jeremiah to Gidaliyas
+\rem /s1 Jeremiah Freed; Jeremiah Stays with Gedaliah; After the capture of Jerusalem; Jeremiah with Gedaliah the Governor
+\p
+\v 1 ◙
+\p
+\v 2 ◙
+\v 3 ◙
+\v 4 ◙
+\p
+\v 5 ◙
+\v 6 ◙
+\s1 Gidaliyas governor of Yehudah
+\rem /s1 Gedaliah Assassinated; Gedaliah, Governor of Judah; Gedaliah Governs in Judah
+\r (2 Kgs 25:22-24)
+\p
+\v 7 \x + \xo 40:7-9: \xt 2Ki 25:22-24.\x*◙
+\v 8 ◙
+\v 9 ◙
+\v 10 ◙
+\v 11 ◙
+\v 12 ◙
+\s1 The killing to Gidaliyas
+\rem /s1 Gedaliah Is Murdered; A Plot against Gedaliah
+\r (2 Kgs 25:25-26)
+\p
+\v 13 ◙
+\v 14 ◙
+\v 15 ◙
+\p
+\v 16 ◙
+\c 41
+\rem /s1 Insurrection against Gedaliah; The Murder of Gedaliah
+\p
+\v 1 \x + \xo 41:1-3: \xt 2Ki 25:25.\x*◙
+\v 2 ◙
+\v 3 ◙
+\p
+\v 4 ◙
+\v 5 ◙
+\v 6 ◙
+\v 7 ◙
+\p
+\v 8 ◙
+\v 9 ◙
+\v 10 ◙
+\p
+\v 11 ◙
+\v 12 ◙
+\v 13 ◙
+\v 14 ◙
+\v 15 ◙
+\rem /s1 Flight to Egypt
+\p
+\v 16 ◙
+\v 17 ◙
+\v 18 ◙
+\c 42
+\s1 The requesting of people to Jeremiah to pray
+\rem /s1 The People Ask Jeremiah to Pray for Them; Warning to Stay in Judah; Jeremiah Advises Survivors Not to Migrate
+\p
+\v 1 ◙
+\v 2 ◙
+\v 3 ◙
+\p
+\v 4 ◙
+\p
+\v 5 ◙
+\v 6 ◙
+\s1 The answer of Master of praying for Jeremiah
+\rem /s1 The Lord's Answer to Jeremiah's Prayer
+\p
+\v 7 ◙
+\v 8 ◙
+\v 9 ◙
+\v 10 ◙
+\v 11 ◙
+\v 12 ◙
+\p
+\v 13 ◙
+\v 14 ◙
+\v 15 ◙
+\v 16 ◙
+\v 17 ◙
+\p
+\v 18 ◙
+\p
+\v 19 ◙
+\v 20 ◙
+\v 21 ◙
+\v 22 ◙
+\c 43
+\s1 The pegduma to Jeremiah there to Egypt
+\rem /s1 Taken to Egypt, Jeremiah Warns of Judgment; Jeremiah Taken to Egypt; Jeremiah Is Taken to Egypt
+\p
+\v 1 ◙
+\v 2 ◙
+\v 3 ◙
+\p
+\v 4 ◙
+\v 5 \x + \xo 43:5-7: \xt 2Ki 25:26.\x*◙
+\v 6 ◙
+\v 7 ◙
+\p
+\v 8 ◙
+\v 9 ◙
+\v 10 ◙
+\v 11 ◙
+\v 12 ◙
+\v 13 ◙
+\c 44
+\s1 The speech of Master for of Israelis there to Egypt
+\rem /s1 Denunciation of Persistent Idolatry; The Lord's Message to the Israelites in Egypt; Disaster Because of Idolatry; Judgment for Idolatry
+\p
+\v 1 ◙
+\v 2 ◙
+\v 3 ◙
+\v 4 ◙
+\v 5 ◙
+\v 6 ◙
+\p
+\v 7 ◙
+\v 8 ◙
+\v 9 ◙
+\v 10 ◙
+\p
+\v 11 ◙
+\v 12 ◙
+\v 13 ◙
+\v 14 ◙
+\p
+\v 15 ◙
+\v 16 ◙
+\v 17 ◙
+\v 18 ◙
+\p
+\v 19 ◙
+\p
+\v 20 ◙
+\v 21 ◙
+\v 22 ◙
+\v 23 ◙
+\p
+\v 24 ◙
+\v 25 ◙
+\v 26 ◙
+\v 27 ◙
+\v 28 ◙
+\v 29 ◙
+\v 30 \x + \xo 44:30: \xt 2Ki 25:1-7.\x*◙
+\c 45
+\s1 The promise of God to Baruk
+\rem /s1 A Word of Comfort to Baruch; A Message to Baruch; A Message for Baruch; God's Promise to Baruch
+\p
+\v 1 \x + \xo 45:1: \xt 2Ki 24:1; 2Ch 36:5-7; Dan 1:1-2.\x*◙
+\v 2 ◙
+\v 3 ◙
+\p
+\v 4 ◙
+\v 5 ◙
+\c 46
+\s1 The speech concerning the Egypt
+\rem /s1 Judgment on Egypt; Egypt's Defeat at Carchemish; Prophecies against foreign nations; Messages for the Nations; A Message About Egypt
+\p
+\v 1 ◙
+\rem /s1 Messages about Egypt
+\v 2 \x + \xo 46:2-26: \xt Isa 19:1-25; Eze 29:1–32:32.\x*◙
+\q1
+\v 3 ◙
+\q2 …
+\q1
+\v 4 ◙
+\q1 …
+\q2 …
+\q2 …
+\b
+\q1
+\v 5 ◙
+\q1 …
+\q1 …
+\q2 …
+\q1
+\v 6 ◙
+\q2 …
+\q2 …
+\q1
+\v 7 ◙
+\q2 …
+\q1
+\v 8 ◙
+\q2 …
+\q1 …
+\q2 …
+\q1
+\v 9 ◙
+\q1 …
+\q2 …
+\q2 …
+\b
+\q1
+\v 10 ◙
+\q2 …
+\q2 …
+\q1 …
+\q2 …
+\q1 …
+\q2 …
+\q1
+\v 11 ◙
+\q2 …
+\q2 …
+\q1 …
+\q2 …
+\q1
+\v 12 ◙
+\q2 …
+\q1 …
+\q2 …
+\s1 The arrival of Nibukadnisar
+\rem /s1 The Coming of Nebuchadnezzar; Babylonia Will Strike Egypt
+\p
+\v 13 \x + \xo 46:13: \xt Jer 43:10-13.\x*◙
+\q1
+\v 14 ◙
+\q2 …
+\q1
+\v 15 ◙
+\q2 …
+\q1
+\v 16 ◙
+\q2 …
+\q1 …
+\q2 …
+\b
+\q1
+\v 17 ◙
+\q1
+\v 18 ◙
+\q2 …
+\q1 …
+\q2 …
+\q2 …
+\q1
+\v 19 ◙
+\q2 …
+\q1 …
+\q2 …
+\q1
+\v 20 ◙
+\q2 …
+\q1
+\v 21 ◙
+\q2 …
+\q1 …
+\q2 …
+\q1 …
+\q2 …
+\q1
+\v 22 ◙
+\q2 …
+\q1 …
+\q2 …
+\q1
+\v 23 ◙
+\q2 …
+\q2 …
+\q1
+\v 24 ◙
+\q2 …
+\p
+\v 25 ◙
+\v 26 ◙
+\s1 The saving/explaining of God of his people
+\rem /s1 The Lord Will Save His People; God Will Save Israel
+\q1
+\v 27 \x + \xo 46:27-28: \xt Jer 30:10-11.\x*◙
+\q2 …
+\q1 …
+\q2 …
+\q1 …
+\q2 …
+\q1
+\v 28 ◙
+\q1 …
+\q2 …
+\q2 …
+\q1 …
+\q2 …
+\c 47
+\s1 The speech of God concerning the ones from-Philistia
+\rem /s1 Judgment on the Philistines; A Message About the Philistines; A Message about Philistia; The Lord's Message about Philistia
+\p
+\v 1 \x + \xo 47:1-7: \xt Isa 14:29-31; Eze 25:15-17; Yoel 3:4-8; Amos 1:6-8; Zeph 2:4-7; Zech 9:5-7.\x*◙
+\v 2 ◙
+\q1 …
+\q2 …
+\q1 …
+\q2 …
+\q1 …
+\q2 …
+\q1
+\v 3 ◙
+\q2 …
+\q2 …
+\q1 …
+\q1
+\v 4 ◙
+\q2 …
+\q1 …
+\q2 …
+\q1
+\v 5 ◙
+\q2 …
+\q2 …
+\q1
+\v 6 ◙
+\q2 …
+\q1 …
+\q2 …
+\q1
+\v 7 ◙
+\q2 …
+\q1 …
+\q2 …
+\c 48
+\s1 The speech of God concerning the ones from-Moab
+\rem /s1 The Destruction of Moab; A Message about Moab; Judgment on Moab; A Message About Moab
+\p
+\v 1 \x + \xo 48:1-47: \xt Isa 15:1–16:14; 25:10-12; Eze 25:8-11; Amos 2:1-3; Zeph 2:8-11.\x*◙
+\q2 …
+\q2 …
+\q1 …
+\q2 …
+\q1 …
+\q1
+\v 2 ◙
+\q1 …
+\q2 …
+\q1 …
+\q2 …
+\q1
+\v 3 ◙
+\q2 …
+\b
+\q1
+\v 4 ◙
+\q2 …
+\q1
+\v 5 ◙
+\q2 …
+\q2 …
+\q2 …
+\q2 …
+\q1
+\v 6 ◙
+\q2 …
+\b
+\q1
+\v 7 ◙
+\q2 …
+\q2 …
+\q1
+\v 8 ◙
+\q1 …
+\q1
+\v 9 ◙
+\q2 …
+\q1 …
+\q2 …
+\q1 …
+\p
+\v 10 ◙
+\s1 Destroyed e the cities of Moab
+\rem /s1 The Cities of Moab Are Destroyed
+\p
+\v 11 ◙
+\p
+\v 12 ◙
+\v 13 ◙
+\q1
+\v 14 ◙
+\q2 …
+\q1
+\v 15 ◙
+\q2 …
+\q1 …
+\q1
+\v 16 ◙
+\q2 …
+\q1
+\v 17 ◙
+\q2 …
+\q1 …
+\q2 …
+\q1
+\v 18 ◙
+\q2 …
+\q2 …
+\q1 …
+\q2 …
+\q1
+\v 19 ◙
+\q2 …
+\q2 …
+\q1
+\v 20 ◙
+\q1 …
+\q1 …
+\p
+\v 21 ◙
+\v 22 ◙
+\v 23 ◙
+\v 24 ◙
+\v 25 ◙
+\s1 The shame of Moab
+\rem /s1 Moab Will Be Humbled
+\p
+\v 26 ◙
+\v 27 ◙
+\p
+\v 28 ◙
+\v 29 ◙
+\v 30 ◙
+\v 31 ◙
+\v 32 ◙
+\v 33 ◙
+\p
+\v 34 ◙
+\v 35 ◙
+\p
+\v 36 ◙
+\v 37 ◙
+\v 38 ◙
+\v 39 ◙
+\s1 No longer eg-alihu the Moab
+\rem /s1 No Escape for Moab
+\p
+\v 40 ◙
+\v 41 ◙
+\v 42 ◙
+\v 43 ◙
+\v 44 ◙
+\v 45 ◙
+\v 46 ◙
+\p
+\v 47 ◙
+\c 49
+\s1 The speech of God concerning the ones from-Amun
+\rem /s1 A Message about Ammon; The Lord's Judgment on Ammon; A Message About Ammon; Judgment on the Ammonites
+\p
+\v 1 \x + \xo 49:1-6: \xt Eze 21:28-32; 25:1-7; Amos 1:13-15; Zeph 2:8-11.\x*◙
+\v 2 ◙
+\v 3 ◙
+\v 4 ◙
+\v 5 ◙
+\v 6 ◙
+\s1 The speech of God concerning the ones from-Edom
+\rem /s1 Messages about Edom; The Lord's Judgment on Edom; A Message About Edom; Judgment on Edom
+\p
+\v 7 \x + \xo 49:7-22: \xt Isa 34:5-17; 63:1-6; Eze 25:12-14; 35:1-15; Amos 1:11-12; Oba 1-14; Mic 1:2-5.\x*◙
+\v 8 ◙
+\v 9 ◙
+\v 10 ◙
+\v 11 ◙
+\p
+\v 12 ◙
+\v 13 ◙
+\p
+\v 14 ◙
+\v 15 ◙
+\v 16 ◙
+\p
+\v 17 ◙
+\v 18 \x + \xo 49:18: \xt Gen 19:24-25.\x*◙
+\v 19 ◙
+\v 20 ◙
+\v 21 ◙
+\v 22 ◙
+\s1 The speech of God concerning the ones from-Damasku
+\rem /s1 A Message About Damascus; Judgment on Damascus; A Message about Damascus; The Lord's Judgment on Damascus
+\p
+\v 23 \x + \xo 49:23-27: \xt Isa 17:1-3; Amos 1:3-5; Zech 9:1.\x*◙
+\v 24 ◙
+\v 25 ◙
+\v 26 ◙
+\v 27 ◙
+\s1 The punishment of God of tribe of Kidar and of kingdom of Hasur
+\rem /s1 A Message About Kedar and Hazor; Judgment on Kedar and Hazor; A Message about Kedar and Hazor; Judgment on the Tribe of Kedar and the City of Hazor
+\p
+\v 28 ◙
+\v 29 ◙
+\p
+\v 30 ◙
+\v 31 ◙
+\p
+\v 32 ◙
+\v 33 ◙
+\s1 The speech of God concerning the ones from-Ilam
+\rem /s1 A Message about Elam; Judgment on Elam; The Lord's Judgment on Elam; A Message About Elam
+\p
+\v 34 ◙
+\v 35 ◙
+\v 36 ◙
+\v 37 ◙
+\v 38 ◙
+\v 39 ◙
+\c 50
+\s1 The speech of God concerning the ones from-Babylon
+\rem /s1 Babylon's Capture; A Message About Babylon; A Message about Babylon; Judgment on Babylon
+\p
+\v 1 \x + \xo 50:1–51:64: \xt Isa 13:1–14:23; 47:1-15.\x*◙
+\q1
+\v 2 ◙
+\q1 …
+\q2 …
+\q2 …
+\q1 …
+\q1 …
+\q2 …
+\p
+\v 3 ◙
+\s1 The returning home of Israelis
+\rem /s1 Israel's Return; Hope for Israel and Judah
+\p
+\v 4 ◙
+\v 5 ◙
+\p
+\v 6 ◙
+\v 7 ◙
+\p
+\v 8 \x + \xo 50:8: \xt Rev 18:4.\x*◙
+\v 9 ◙
+\v 10 ◙
+\s1 The defeat of Babylon
+\rem /s1 Babylon's Sure Fall; Babylon's Fall
+\p
+\v 11 ◙
+\v 12 ◙
+\v 13 ◙
+\p
+\v 14 ◙
+\v 15 ◙
+\v 16 ◙
+\s1 Went home e the people of Yisrael
+\rem /s1 Israel's Return; Hope for God's People
+\p
+\v 17 ◙
+\v 18 ◙
+\v 19 ◙
+\v 20 ◙
+\s1 The judging of God of Babylon
+\rem /s1 The Lord's Judgment on Babylon; God's Judgment on Babylonia
+\p
+\v 21 ◙
+\v 22 ◙
+\v 23 ◙
+\v 24 ◙
+\v 25 ◙
+\v 26 ◙
+\v 27 ◙
+\p
+\v 28 ◙
+\p
+\v 29 \x + \xo 50:29: \xt Rev 18:6.\x*◙
+\v 30 ◙
+\p
+\v 31 ◙
+\v 32 ◙
+\p
+\v 33 ◙
+\v 34 ◙
+\p
+\v 35 ◙
+\q1 …
+\q2 …
+\q1
+\v 36 ◙
+\q2 …
+\q1 …
+\q2 …
+\q1
+\v 37 ◙
+\q2 …
+\q1 …
+\q2 …
+\q1 …
+\q1
+\v 38 ◙
+\q2 …
+\q2 …
+\q2 …
+\p
+\v 39 \x + \xo 50:39: \xt Rev 18:2.\x*◙
+\v 40 \x + \xo 50:40: \xt Gen 19:24-25.\x*◙
+\q1
+\v 41 ◙
+\q2 …
+\q1 …
+\q2 …
+\q1
+\v 42 ◙
+\q2 …
+\q1 …
+\q2 …
+\q2 …
+\q1
+\v 43 ◙
+\q2 …
+\q1 …
+\q2 …
+\p
+\v 44 ◙
+\v 45 ◙
+\v 46 ◙
+\c 51
+\s1 The continued speech of God concerning Babylon
+\rem /s1 Further Judgment on Babylonia
+\p
+\v 1 ◙
+\v 2 ◙
+\v 3 ◙
+\v 4 ◙
+\v 5 ◙
+\v 6 ◙
+\v 7 \x + \xo 51:7: \xt Rev 17:2-4; 18:3.\x*◙
+\v 8 ◙
+\v 9 \x + \xo 51:9: \xt Rev 18:5.\x*◙
+\p
+\v 10 ◙
+\p
+\v 11 ◙
+\v 12 ◙
+\p …
+\v 13 \x + \xo 51:13: \xt Rev 17:1.\x*◙
+\v 14 ◙
+\s1 The song of praising of God
+\rem /s1 A Hymn of Praise to the Lord; A Hymn of Praise to God
+\q1
+\v 15 ◙
+\q2 …
+\q1
+\v 16 ◙
+\q1 …
+\q1 …
+\q2 …
+\q1
+\v 17 ◙
+\q1 …
+\q2 …
+\q1
+\v 18 ◙
+\q2 …
+\q1
+\v 19 ◙
+\q2 …
+\q2 …
+\q2 …
+\s1 Yahweh's hammer
+\rem /s1 The Lord's Hammer; Israel the Creator's Instrument; Babylon's Great Punishment
+\p
+\v 20 ◙
+\q1 …
+\q1 …
+\q2
+\v 21 ◙
+\q2 …
+\q2
+\v 22 ◙
+\q2 …
+\q2 …
+\q1
+\v 23 ◙
+\q2 …
+\q2 …
+\s1 The punishment of Babylon
+\rem /s1 The Doom of Babylon; Babylonia's Punishment
+\p
+\v 24 ◙
+\v 25 ◙
+\v 26 ◙
+\p
+\v 27 ◙
+\v 28 ◙
+\v 29 ◙
+\v 30 ◙
+\v 31 ◙
+\v 32 ◙
+\v 33 ◙
+\q1
+\v 34 ◙
+\q1 …
+\q2 …
+\q1 …
+\q2 …
+\q1
+\v 35 ◙
+\q2 …
+\q1 …
+\q2 …
+\q2 …
+\s1 The assisting of God of Yisrael
+\rem /s1 The Lord's Vengeance on Babylon; The Lord Will Help Israel
+\p
+\v 36 ◙
+\v 37 ◙
+\v 38 ◙
+\v 39 ◙
+\v 40 ◙
+\s1 The what happened of Babylon
+\rem /s1 Babylon's Fate
+\p
+\v 41 ◙
+\v 42 ◙
+\v 43 ◙
+\v 44 ◙
+\rem /s1 A Message for the Exiles
+\p …
+\v 45 ◙
+\v 46 ◙
+\v 47 ◙
+\v 48 \x + \xo 51:48: \xt Rev 18:20.\x*◙
+\v 49 \x + \xo 51:49: \xt Rev 18:24.\x*◙
+\s1 The speech of God of Israelis there to Babylon
+\rem /s1 God's Message to the Israelites in Babylonia
+\p
+\v 50 ◙
+\v 51 ◙
+\v 52 ◙
+\v 53 ◙
+\s1 The other still destruction egkeulaula of Babylon
+\rem /s1 Further Destruction on Babylon; Babylon's Complete Destruction
+\p
+\v 54 ◙
+\q2 …
+\q2 …
+\q1
+\v 55 ◙
+\q2 …
+\q1 …
+\q2 …
+\q1
+\v 56 ◙
+\q2 …
+\q2 …
+\q1 …
+\q1 …
+\q1
+\v 57 ◙
+\q2 …
+\q1 …
+\q2 …
+\q2 …
+\q1
+\v 58 ◙
+\q2 …
+\q1 …
+\q2 …
+\q1 …
+\s1 The sending of Jeremiah there to Babylon of rolled-up document
+\rem /s1 Jeremiah's Message Is Sent to Babylonia; Jeremiah's Message Sent to Babylon; Jeremiah's Command to Seraiah
+\p
+\v 59 ◙
+\v 60 ◙
+\v 61 ◙
+\v 62 ◙
+\v 63 \x + \xo 51:63-64: \xt Rev 18:21.\x*◙
+\v 64 ◙
+\q1 …
+\c 52
+\s1 The demolition of Yerushalem
+\rem /s1 The fall of Jerusalem; The Fall of Jerusalem; The Destruction of Jerusalem Reviewed
+\r (2 Kgs 24:18–25:7)
+\p
+\v 1 ◙
+\v 2 ◙
+\v 3 ◙
+\p …
+\v 4 \x + \xo 52:4: \xt Eze 24:2.\x*◙
+\v 5 ◙
+\v 6 ◙
+\v 7 \x + \xo 52:7: \xt Eze 33:21.\x*◙
+\v 8 ◙
+\v 9 ◙
+\v 10 ◙
+\v 11 \x + \xo 52:11: \xt Eze 12:13.\x*◙
+\s1 The pegguhus of those from-Babylon of temple
+\rem /s1 The Temple Destroyed; The Destruction of the Temple
+\r (2 Kgs 25:8-17)
+\p
+\v 12 ◙
+\v 13 \x + \xo 52:13: \xt 1Ki 9:8.\x*◙
+\v 14 ◙
+\v 15 ◙
+\v 16 ◙
+\p
+\v 17 \x + \xo 52:17-23: \xt 1Ki 7:15-47.\x*◙
+\v 18 ◙
+\v 19 ◙
+\v 20 ◙
+\v 21 ◙
+\v 22 ◙
+\v 23 ◙
+\s1 The capturing of Jews and carrying them there to Babylon
+\rem /s1 The People of Judah Are Taken to Babylonia
+\r (2 Kgs 25:18-21, 27-30)
+\p
+\v 24 ◙
+\v 25 ◙
+\v 26 ◙
+\v 27 ◙
+\p …
+\v 28 ◙
+\v 29 ◙
+\v 30 ◙
+\rem /s1 Jehoiachin Released; Hope for Israel's Royal Line; Jehoiachin Favoured in Captivity
+\p
+\v 31 ◙
+\v 32 ◙
+\v 33 ◙
+\v 34 ◙

@@ -8,9 +8,9 @@ use compact_str::CompactString;
 use indexmap::IndexMap;
 
 use crate::chapter_verse::ChapterVerse;
-use crate::entry_extra_list::InternalBibleEntryList;
+use crate::entry_extras::InternalBibleEntryList;
 use crate::error::{IndexError, LookupError};
-use crate::markers::{is_end_marker, custom_nesting, regular_nesting};
+use crate::markers::{custom_nesting, is_end_marker, regular_nesting};
 
 /// An entry in the CV index, representing a single Chapter:Verse reference.
 ///
@@ -18,7 +18,7 @@ use crate::markers::{is_end_marker, custom_nesting, regular_nesting};
 /// - The index into the entry list where this CV starts
 /// - The count of entries for this CV
 /// - The context (list of open markers at this point)
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, rkyv::Archive, rkyv::Serialize, rkyv::Deserialize)]
 pub struct CVIndexEntry {
     /// Index of the first entry for this C:V in the entry list.
     entry_index: usize,
@@ -88,19 +88,12 @@ impl std::fmt::Display for CVIndexEntry {
 ///
 /// # Example
 ///
-/// ```ignore
-/// use bos_internals::indexes::InternalBibleBookCVIndex;
-///
-/// let mut index = InternalBibleBookCVIndex::new("ESV", "GEN");
-/// // After building index...
-/// let entries = index.get_verse_entries(&ChapterVerse::new("1", "1"), true)?;
-/// ```
-#[derive(Debug)]
+#[derive(Debug, rkyv::Archive, rkyv::Serialize, rkyv::Deserialize)]
 pub struct InternalBibleBookCVIndex {
     /// Name of the work/Bible.
     work_name: CompactString,
     /// Three-letter book code (e.g., "GEN", "MAT").
-    book_code: CompactString,
+    bos_book_code: CompactString,
     /// The CV -> entry mapping.
     index_data: IndexMap<ChapterVerse, CVIndexEntry>,
     /// The processed entries this index references.
@@ -111,10 +104,10 @@ pub struct InternalBibleBookCVIndex {
 
 impl InternalBibleBookCVIndex {
     /// Create a new empty CV index.
-    pub fn new(work_name: impl Into<CompactString>, book_code: impl Into<CompactString>) -> Self {
+    pub fn new(work_name: impl Into<CompactString>, bos_book_code: impl Into<CompactString>) -> Self {
         Self {
             work_name: work_name.into(),
-            book_code: book_code.into(),
+            bos_book_code: bos_book_code.into(),
             index_data: IndexMap::new(),
             entries: InternalBibleEntryList::new(),
             indexed: false,
@@ -129,8 +122,8 @@ impl InternalBibleBookCVIndex {
 
     /// Get the book code.
     #[inline]
-    pub fn book_code(&self) -> &str {
-        &self.book_code
+    pub fn bos_book_code(&self) -> &str {
+        &self.bos_book_code
     }
 
     /// Check if the index has been built.
@@ -187,11 +180,7 @@ impl InternalBibleBookCVIndex {
     ///
     /// Returns `LookupError::NotIndexed` if index hasn't been built.
     /// Returns `LookupError::CVNotFound` if the CV is not in the index.
-    pub fn get_verse_entries(
-        &self,
-        cv: &ChapterVerse,
-        strict: bool,
-    ) -> Result<InternalBibleEntryList, LookupError> {
+    pub fn get_verse_entries(&self, cv: &ChapterVerse, strict: bool) -> Result<InternalBibleEntryList, LookupError> {
         if !self.indexed {
             return Err(LookupError::NotIndexed);
         }
@@ -211,10 +200,11 @@ impl InternalBibleBookCVIndex {
         for (key, entry) in &self.index_data {
             if key.chapter() == cv.chapter() {
                 // Check verse ranges (e.g., "17-25")
-                if let Some((start, end)) = key.parse_verse_range() {
-                    if start <= desired_v && desired_v <= end {
-                        return Ok(self.entries.slice(entry.entry_index(), entry.next_entry_index()));
-                    }
+                if let Some((start, end)) = key.parse_verse_range()
+                    && start <= desired_v
+                    && desired_v <= end
+                {
+                    return Ok(self.entries.slice(entry.entry_index(), entry.next_entry_index()));
                 }
                 // Check verse lists (e.g., "5,6,7")
                 if key.is_verse_list() && key.contains_verse(desired_v) {
@@ -337,84 +327,107 @@ impl InternalBibleBookCVIndex {
         self.entries = entries;
         self.index_data.clear();
 
-        let mut current_chapter: Option<CompactString> = None;
-        let mut current_verse: Option<CompactString> = None;
+        let mut current_chapter = CompactString::from("-1");
+        let mut current_verse = CompactString::from("0");
         let mut current_start: usize = 0;
         let mut context: Vec<CompactString> = Vec::new();
+        let mut current_context: Vec<CompactString> = Vec::new();
 
         for (i, entry) in self.entries.iter().enumerate() {
+            let mut next_chapter = current_chapter.clone();
+            let mut next_verse = current_verse.clone();
+            let mut is_cv_start = false;
+            
             let marker = entry.marker();
-
-            // Handle nesting markers - push onto context
-            if is_nesting_marker(marker) && !is_end_marker(marker) {
-                context.push(CompactString::from(marker));
-            }
-
-            // Handle end markers - pop from context
-            if is_end_marker(marker) {
-                if let Some(base) = crate::markers::base_marker(marker) {
-                    if let Some(pos) = context.iter().rposition(|m| m == base) {
-                        context.remove(pos);
+            if marker == "c" {
+                next_chapter = CompactString::from(entry.clean_text());
+                next_verse = CompactString::from("0");
+                is_cv_start = true;
+            } else if marker == "v" || marker == "v=" {
+                let verse_text = entry.clean_text();
+                let verse_num = verse_text.split_whitespace().next().unwrap_or(verse_text);
+                next_verse = CompactString::from(verse_num);
+                is_cv_start = true;
+            } else if current_chapter == "-1" {
+                next_verse = CompactString::from(i.to_string());
+                is_cv_start = true;
+            } else if crate::markers::paragraph_markers::is_paragraph(marker)
+                || crate::markers::heading_markers::is_heading(marker)
+                || crate::markers::major_section_markers::is_major_section(marker)
+            {
+                // Look ahead for next verse to see if this structural marker starts it
+                for j in (i + 1)..self.entries.len() {
+                    let next_entry = &self.entries[j];
+                    let next_m = next_entry.marker();
+                    if next_m == "v" || next_m == "v=" {
+                        let text = next_entry.clean_text();
+                        let verse_num = text.split_whitespace().next().unwrap_or(text);
+                        if verse_num != current_verse {
+                            next_verse = CompactString::from(verse_num);
+                            is_cv_start = true;
+                        }
+                        break;
+                    }
+                    if next_m == "c" || next_m == "id" || next_m == "¬v" {
+                        break;
                     }
                 }
             }
 
-            // Handle chapter markers
-            if marker == "c" {
-                // Save previous verse if any
-                if let (Some(c), Some(v)) = (&current_chapter, &current_verse) {
-                    let cv = ChapterVerse::new(c.as_str(), v.as_str());
-                    let entry_count = (i - current_start) as u16;
-                    self.index_data.insert(
-                        cv,
-                        CVIndexEntry::new(current_start, entry_count, context.clone()),
-                    );
-                }
+            if is_cv_start && (next_chapter != current_chapter || next_verse != current_verse) {
+                // Finish previous CV
+                let cv = ChapterVerse::new(current_chapter.as_str(), current_verse.as_str());
+                let entry_count = (i - current_start) as u16;
+                // // Double-check that all verse markers in this range have the same verse number (to catch any inconsistencies)
+                // for entry in self.entries.slice(current_start, i) {
+                //     if entry.marker() == "v" || entry.marker() == "v=" || entry.marker() == "¬v" {
+                //         let verse_num = entry.clean_text();
+                //         assert!(verse_num==current_verse.as_str(), "{} {} CV index entry for {} contains inconsistent verse marker with text {}='{}'",
+                //             self.work_name(), self.bos_book_code(), cv, entry.marker(), verse_num);
+                //     }
+                // }
+                self.index_data
+                    .insert(cv, CVIndexEntry::new(current_start, entry_count, current_context.clone()));
 
-                current_chapter = Some(CompactString::from(entry.clean_text()));
-                current_verse = Some(CompactString::from("0"));
+                current_chapter = next_chapter;
+                current_verse = next_verse;
                 current_start = i;
+                current_context = context.clone();
             }
 
-            // Handle verse markers
-            if marker == "v" {
-                // Save previous verse if any
-                if let (Some(c), Some(v)) = (&current_chapter, &current_verse) {
-                    let cv = ChapterVerse::new(c.as_str(), v.as_str());
-                    let entry_count = (i - current_start) as u16;
-                    self.index_data.insert(
-                        cv,
-                        CVIndexEntry::new(current_start, entry_count, context.clone()),
-                    );
+            // 2. Handle nesting markers - push onto context
+            if is_nesting_marker(marker) && !is_end_marker(marker) && marker != "nb" {
+                if crate::markers::paragraph_markers::is_paragraph(marker) {
+                    context.retain(|m| !crate::markers::paragraph_markers::is_paragraph(m));
                 }
-
-                // Start new verse - extract verse number from clean text
-                let verse_text = entry.clean_text();
-                let verse_num = verse_text.split_whitespace().next().unwrap_or(verse_text);
-                current_verse = Some(CompactString::from(verse_num));
-                current_start = i;
+                context.push(CompactString::from(marker));
             }
 
-            // Handle introduction (before chapter 1)
-            if marker == "intro" {
-                current_chapter = Some(CompactString::from("-1"));
-                current_verse = Some(CompactString::from("0"));
-                current_start = i;
+            // 3. Handle end markers - pop from context
+            if is_end_marker(marker) {
+                if let Some(base) = crate::markers::base_marker(marker)
+                    && let Some(pos) = context.iter().rposition(|m| m == base)
+                {
+                    context.remove(pos);
+                }
             }
         }
 
-        // Save final verse
-        if let (Some(c), Some(v)) = (&current_chapter, &current_verse) {
-            let cv = ChapterVerse::new(c.as_str(), v.as_str());
-            let entry_count = (self.entries.len() - current_start) as u16;
-            self.index_data.insert(
-                cv,
-                CVIndexEntry::new(current_start, entry_count, context.clone()),
-            );
-        }
+        // Finish last CV
+        let cv = ChapterVerse::new(current_chapter.as_str(), current_verse.as_str());
+        let entry_count = (self.entries.len() - current_start) as u16;
+        self.index_data.insert(cv, CVIndexEntry::new(current_start, entry_count, current_context));
 
         self.indexed = true;
+        self.validate(); // This line can be removed in the future for a speed-up once fully debugged and tested
         Ok(())
+    }
+
+    fn format_verse_result(&self, res: Result<InternalBibleEntryList, LookupError>) -> String {
+        match res {
+            Ok(entries) => format!("{}", entries),
+            Err(e) => format!("{}", e),
+        }
     }
 
     /// Validate the index structure.
@@ -429,13 +442,27 @@ impl InternalBibleBookCVIndex {
         }
 
         // Check for overlapping entries
+        //  and for entries containing incorrect verse numbers
         let mut last_end: usize = 0;
         for (cv, entry) in &self.index_data {
             if entry.entry_index() < last_end {
                 issues.push(format!(
                     "{}: entry_index {} < previous end {}",
-                    cv, entry.entry_index(), last_end
+                    cv,
+                    entry.entry_index(),
+                    last_end
                 ));
+            }
+            if cv.chapter() != "-1"  {
+                for processed_line_entry in self.entries.slice(entry.entry_index(), entry.next_entry_index()) {
+                    if processed_line_entry.marker() == "v" || processed_line_entry.marker() == "v=" || processed_line_entry.marker() == "¬v" {
+                        assert!(processed_line_entry.clean_text().starts_with(cv.verse().to_string().as_str()), "Validating {} {} CV index entry for {} found unexpected verse marker with text {}='{}'\n\n{}:{} {}\n\n{} {}\n\n{}:{} {}",
+                            self.work_name(), self.bos_book_code(), cv, processed_line_entry.marker(),processed_line_entry.clean_text(),
+                            cv.chapter(), cv.verse_int().unwrap_or(1)-1, self.format_verse_result(self.get_verse_entries(&ChapterVerse::new(cv.chapter(), (cv.verse_int().unwrap_or(1) - 1).to_string().as_str()), true)),
+                            cv, self.format_verse_result(self.get_verse_entries(cv, true)),
+                            cv.chapter(), cv.verse_int().unwrap_or(1)+1, self.format_verse_result(self.get_verse_entries(&ChapterVerse::new(cv.chapter(), (cv.verse_int().unwrap_or(1) + 1).to_string().as_str()), true)));
+                    }
+                }
             }
             last_end = entry.next_entry_index();
         }
@@ -466,7 +493,7 @@ impl std::fmt::Display for InternalBibleBookCVIndex {
         writeln!(
             f,
             "InternalBibleBookCVIndex({} {}):",
-            self.work_name, self.book_code
+            self.work_name, self.bos_book_code
         )?;
         if !self.indexed {
             writeln!(f, "  Not indexed")?;
@@ -489,67 +516,166 @@ impl std::fmt::Display for InternalBibleBookCVIndex {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::fs;
     use crate::entry::InternalBibleEntry;
+    use crate::ProcessLinesOptions;
+    use crate::process_lines;
 
-    fn create_test_entries() -> InternalBibleEntryList {
+    fn create_test_entries_1() -> InternalBibleEntryList {
         let mut entries = InternalBibleEntryList::new();
 
+        // Introduction
+        entries.push(InternalBibleEntry::nesting_marker("intro")); // 0
+        entries.push(InternalBibleEntry::simple("ip", "Introduction...")); // 1
+        entries.push(InternalBibleEntry::end_marker("¬intro", "").expect("Fail")); // 2
+
         // Chapter 1
-        entries.push(InternalBibleEntry::simple("c", "1"));
-        entries.push(InternalBibleEntry::simple("p", ""));
-        entries.push(InternalBibleEntry::simple("v", "1"));
-        entries.push(InternalBibleEntry::simple("v~", "In the beginning..."));
-        entries.push(InternalBibleEntry::simple("v", "2"));
-        entries.push(InternalBibleEntry::simple("v~", "And the earth was..."));
+        entries.push(InternalBibleEntry::nesting_marker("chapters")); // 3
+        entries.push(InternalBibleEntry::simple("c", "1")); // 4
+        entries.push(InternalBibleEntry::simple("s1", "Creation")); // 5
+        entries.push(InternalBibleEntry::simple("p", "")); // 6
+        entries.push(InternalBibleEntry::simple("v", "1")); // 7
+        entries.push(InternalBibleEntry::simple("v~", "In the beginning...")); // 8
+        entries.push(InternalBibleEntry::end_marker("¬v", "1").expect("Fail")); // 9
+        entries.push(InternalBibleEntry::simple("v", "2")); // 10
+        entries.push(InternalBibleEntry::simple("v~", "And the earth was...")); // 11
+        entries.push(InternalBibleEntry::end_marker("¬v", "2").expect("Fail")); // 12
+        entries.push(InternalBibleEntry::simple("p", "")); // 13
+        entries.push(InternalBibleEntry::simple("v", "3")); // 14
+        entries.push(InternalBibleEntry::simple("v~", "And the spirit...")); // 15
+        entries.push(InternalBibleEntry::end_marker("¬v", "3").expect("Fail")); // 16
+        entries.push(InternalBibleEntry::end_marker("¬p", "").expect("Fail")); // 17
+        entries.push(InternalBibleEntry::end_marker("¬c", "1").expect("Fail")); // 18
 
         // Chapter 2
-        entries.push(InternalBibleEntry::simple("c", "2"));
-        entries.push(InternalBibleEntry::simple("v", "1"));
-        entries.push(InternalBibleEntry::simple("v~", "Thus the heavens..."));
+        entries.push(InternalBibleEntry::simple("c", "2")); // 19
+        entries.push(InternalBibleEntry::simple("v", "1")); // 20
+        entries.push(InternalBibleEntry::simple("v~", "Thus the heavens...")); // 21
+        entries.push(InternalBibleEntry::end_marker("¬v", "1").expect("Fail")); // 22
+        entries.push(InternalBibleEntry::end_marker("¬c", "2").expect("Fail")); // 23
+        entries.push(InternalBibleEntry::end_marker("¬chapters", "").expect("Fail")); // 24
 
         entries
     }
 
     #[test]
-    fn test_build_index() {
+    fn test_build_index_1() {
         let mut index = InternalBibleBookCVIndex::new("ESV", "GEN");
-        let entries = create_test_entries();
+        let entries = create_test_entries_1();
 
         index.build(entries).unwrap();
-
+        log::trace!("CV index: {}", index);
         assert!(index.is_indexed());
-        assert!(!index.is_empty());
+
+        assert!(index.contains(&ChapterVerse::new("-1", "0")));
         assert!(index.contains(&ChapterVerse::new("1", "0")));
         assert!(index.contains(&ChapterVerse::new("1", "1")));
         assert!(index.contains(&ChapterVerse::new("1", "2")));
+        assert!(index.contains(&ChapterVerse::new("1", "3")));
         assert!(index.contains(&ChapterVerse::new("2", "0")));
+        assert!(index.contains(&ChapterVerse::new("2", "1")));
+
+        // Intro
+        assert_eq!(index.get_index_entry(&ChapterVerse::new("-1", "0")).unwrap().entry_index(), 0);
+        assert_eq!(index.get_index_entry(&ChapterVerse::new("-1", "0")).unwrap().entry_count(), 1);
+        assert_eq!(index.get_index_entry(&ChapterVerse::new("-1", "1")).unwrap().entry_index(), 1);
+        assert_eq!(index.get_index_entry(&ChapterVerse::new("-1", "1")).unwrap().entry_count(), 1);
+
+        // 1:0
+        assert_eq!(index.get_index_entry(&ChapterVerse::new("1", "0")).unwrap().entry_index(), 4);
+        assert_eq!(index.get_index_entry(&ChapterVerse::new("1", "0")).unwrap().entry_count(), 1);
+        assert_eq!(index.get_index_entry(&ChapterVerse::new("1", "0")).unwrap().context(), ["chapters"]);
+
+        // 1:1
+        assert_eq!(index.get_index_entry(&ChapterVerse::new("1", "1")).unwrap().entry_index(), 5);
+        assert_eq!(index.get_index_entry(&ChapterVerse::new("1", "1")).unwrap().entry_count(), 5);
+
+        // 2:0
+        assert_eq!(index.get_index_entry(&ChapterVerse::new("2", "0")).unwrap().entry_index(), 19);
+        assert_eq!(index.get_index_entry(&ChapterVerse::new("2", "0")).unwrap().entry_count(), 1);
+
+        assert!(index.len() == 10);
+    }
+
+    fn create_test_entries_2() -> InternalBibleEntryList {
+        let mut entries = InternalBibleEntryList::new();
+
+        entries.push(InternalBibleEntry::simple("id", "SA2")); // 0
+        entries.push(InternalBibleEntry::nesting_marker("chapters")); // 1
+
+        // Chapter 6
+        entries.push(InternalBibleEntry::simple("c", "6")); // 2
+        entries.push(InternalBibleEntry::simple("v", "1")); // 3
+        entries.push(InternalBibleEntry::simple("v~", "Forsothe Dauid gaderide eft alle the chosun men of Israel, thritti thousynde.")); // 4
+        entries.push(InternalBibleEntry::end_marker("¬v", "1").expect("Fail")); // 5
+        entries.push(InternalBibleEntry::simple("v", "2")); // 6
+        entries.push(InternalBibleEntry::simple("v~", "And Dauid roos, and yede, and al the puple that was with hym of the men of Juda, to brynge the arke of God, on which the name of the Lord of oostis, sittynge in cherubyn on that arke, was clepid.")); // 7
+        entries.push(InternalBibleEntry::end_marker("¬v", "2").expect("Fail")); // 8
+        entries.push(InternalBibleEntry::simple("v", "3")); // 9
+        entries.push(InternalBibleEntry::simple("v~", "And thei puttiden the arke of God on a newe wayn, and thei token it fro the hows of Amynadab, that was in Gabaa. Forsothe Oza and Haio, the sons of Amynadab, dryueden the newe wayn.")); // 10
+        entries.push(InternalBibleEntry::end_marker("¬v", "3").expect("Fail")); // 11
+        entries.push(InternalBibleEntry::simple("v", "4")); // 12
+        entries.push(InternalBibleEntry::simple("v~", "And whanne thei hadden take it fro the hows of Amynadab, that was in Gabaa, and kepte the arke of God, Haio yede bifor the arke.")); // 13
+        entries.push(InternalBibleEntry::end_marker("¬v", "4").expect("Fail")); // 14
+        entries.push(InternalBibleEntry::end_marker("¬c", "6").expect("Fail")); // 15
+
+        entries
+    }
+
+    #[test]
+    fn test_build_index_2() {
+        let mut index = InternalBibleBookCVIndex::new("ESV", "GEN");
+        let entries = create_test_entries_2();
+
+        index.build(entries).unwrap();
+        log::trace!("CV index: {}", index);
+        assert!(index.is_indexed());
+
+        // 6:1
+        assert_eq!(index.get_index_entry(&ChapterVerse::new("6", "1")).unwrap().entry_index(), 3);
+        assert_eq!(index.get_index_entry(&ChapterVerse::new("6", "1")).unwrap().entry_count(), 3);
+
+        // 6:2
+        assert_eq!(index.get_index_entry(&ChapterVerse::new("6", "2")).unwrap().entry_index(), 6);
+        assert_eq!(index.get_index_entry(&ChapterVerse::new("6", "2")).unwrap().entry_count(), 3);
+
+        // 6:3
+        assert_eq!(index.get_index_entry(&ChapterVerse::new("6", "3")).unwrap().entry_index(), 9);
+        assert_eq!(index.get_index_entry(&ChapterVerse::new("6", "3")).unwrap().entry_count(), 3);
+
+        // 6:4
+        assert_eq!(index.get_index_entry(&ChapterVerse::new("6", "4")).unwrap().entry_index(), 12);
+        assert_eq!(index.get_index_entry(&ChapterVerse::new("6", "4")).unwrap().entry_count(), 4);
+
+        assert_eq!(index.len(), 7);
     }
 
     #[test]
     fn test_get_verse_entries() {
         let mut index = InternalBibleBookCVIndex::new("ESV", "GEN");
-        index.build(create_test_entries()).unwrap();
+        index.build(create_test_entries_1()).unwrap();
 
         let entries = index.get_verse_entries(&ChapterVerse::new("1", "1"), true).unwrap();
         assert!(!entries.is_empty());
-        assert_eq!(entries[0].marker(), "v");
+        // With the new logic, the first entry for 1:1 is the section marker 's1'
+        assert_eq!(entries[0].marker(), "s1");
     }
 
     #[test]
     fn test_get_chapter_entries() {
         let mut index = InternalBibleBookCVIndex::new("ESV", "GEN");
-        index.build(create_test_entries()).unwrap();
+        index.build(create_test_entries_1()).unwrap();
 
         let entries = index.get_chapter_entries("1").unwrap();
+        log::trace!("Chapter entries:{}", entries);
         assert!(!entries.is_empty());
-        // Chapter 1 should have: c, p, v, v~, v, v~ = 6 entries
-        assert_eq!(entries.len(), 6);
+        // Chapter 1 should have: c, s1, p, v, v~, ¬v, v, v~, ¬v, p, v, v~, ¬v, ¬p, ¬c = 15 entries
+        assert_eq!(entries.len(), 15);
     }
-
     #[test]
     fn test_chapters() {
         let mut index = InternalBibleBookCVIndex::new("ESV", "GEN");
-        index.build(create_test_entries()).unwrap();
+        index.build(create_test_entries_1()).unwrap();
 
         let chapters = index.chapters();
         assert!(chapters.contains(&"1"));
@@ -561,5 +687,281 @@ mod tests {
         let index = InternalBibleBookCVIndex::new("ESV", "GEN");
         let result = index.get_verse_entries(&ChapterVerse::new("1", "1"), true);
         assert!(matches!(result, Err(LookupError::NotIndexed)));
+    }
+
+    #[test]
+    fn test_oet_lv_haggai_cv_index_build() {
+        let content = include_str!("../../../../Tests/DataFilesForTests/OET-LV/OET-LV_HAG.ESFM");
+        let mut raw_lines = Vec::new();
+        for line in content.lines() {
+            let (marker, text) = match line.split_once(' ') {
+                Some((m, t)) => (m, t),
+                None => (line, ""),
+            };
+            let marker = marker.strip_prefix('\\').unwrap_or(marker);
+            raw_lines.push((marker.to_string(), text.to_string()));
+        }
+
+        let options = ProcessLinesOptions::default();
+        let entries_final = process_lines(raw_lines, "HAG", "OET-RV", &options);
+
+        let mut index = InternalBibleBookCVIndex::new("OET-RV", "HAG");
+        index.build(entries_final).unwrap();
+
+        // It should give 58 entries (as per ../../test_data/OET-LV_HAG_CVs.txt):
+        assert_eq!(index.len(), 58);
+
+        // 0 -1:0 Headers='HAG'
+        let (cv0, entry0) = index.index_data.get_index(0).unwrap();
+        assert_eq!(cv0.to_string(), "-1:0");
+        assert_eq!(entry0.entry_index(), 0);
+        assert_eq!(entry0.entry_count(), 1);
+        assert_eq!(entry0.context(), Vec::<CompactString>::new());
+
+        // 10 -1:10 ctxt=['headers']
+        let (cv10, entry10) = index.index_data.get_index(10).unwrap();
+        assert_eq!(cv10.to_string(), "-1:10");
+        assert_eq!(entry10.entry_index(), 10);
+        assert_eq!(entry10.entry_count(), 1);
+        assert_eq!(entry10.context(), ["headers"]);
+
+        // 18 1:0 ctxt=['chapters']
+        let (cv18, entry18) = index.index_data.get_index(18).unwrap();
+        assert_eq!(cv18.to_string(), "1:0");
+        assert_eq!(entry18.entry_index(), 18);
+        assert_eq!(entry18.entry_count(), 1);
+        assert_eq!(entry18.context(), ["chapters"]);
+
+        // 19 1:1 ctxt=['chapters', 'c']
+        let (cv19, entry19) = index.index_data.get_index(19).unwrap();
+        assert_eq!(cv19.to_string(), "1:1");
+        assert_eq!(entry19.entry_index(), 19);
+        assert_eq!(entry19.entry_count(), 5);
+        assert_eq!(entry19.context(), ["chapters", "c"]);
+
+        // 20 1:2 ctxt=['chapters', 'c']
+        let (cv20, entry20) = index.index_data.get_index(20).unwrap();
+        assert_eq!(cv20.to_string(), "1:2");
+        assert_eq!(entry20.entry_index(), 24);
+        assert_eq!(entry20.entry_count(), 3);
+        assert_eq!(entry20.context(), ["chapters", "c"]);
+
+        // 33 1:15 ctxt=['chapters', 'c']
+        let (cv33, entry33) = index.index_data.get_index(33).unwrap();
+        assert_eq!(cv33.to_string(), "1:15");
+        assert_eq!(entry33.entry_index(), 63);
+        assert_eq!(entry33.entry_count(), 4);
+        assert_eq!(entry33.context(), ["chapters", "c"]);
+
+        // 34 2:0 ctxt=['chapters']
+        let (cv34, entry34) = index.index_data.get_index(34).unwrap();
+        assert_eq!(cv34.to_string(), "2:0");
+        assert_eq!(entry34.entry_index(), 67);
+        assert_eq!(entry34.entry_count(), 1);
+        assert_eq!(entry34.context(), ["chapters"]);
+
+        // 35 2:1 ctxt=['chapters', 'c']
+        let (cv35, entry35) = index.index_data.get_index(35).unwrap();
+        assert_eq!(cv35.to_string(), "2:1");
+        assert_eq!(entry35.entry_index(), 68);
+        assert_eq!(entry35.entry_count(), 5);
+        assert_eq!(entry35.context(), ["chapters", "c"]);
+
+        // 36 2:2 ctxt=['chapters', 'c']
+        let (cv36, entry36) = index.index_data.get_index(36).unwrap();
+        assert_eq!(cv36.to_string(), "2:2");
+        assert_eq!(entry36.entry_index(), 73);
+        assert_eq!(entry36.entry_count(), 3);
+        assert_eq!(entry36.context(), ["chapters", "c"]);
+
+        // 57 2:23 ctxt=['chapters', 'c']
+        let (cv57, entry57) = index.index_data.get_index(57).unwrap();
+        assert_eq!(cv57.to_string(), "2:23");
+        assert_eq!(entry57.entry_index(), 136);
+        assert_eq!(entry57.entry_count(), 5);
+        assert_eq!(entry57.context(), ["chapters", "c"]);
+    }
+
+    #[test]
+    fn test_oet_rv_haggai_cv_index_build() {
+        let content = include_str!("../../../../Tests/DataFilesForTests/OET-RV/OET-RV_HAG.ESFM");
+        let mut raw_lines = Vec::new();
+        for line in content.lines() {
+            let (marker, text) = match line.split_once(' ') {
+                Some((m, t)) => (m, t),
+                None => (line, ""),
+            };
+            let marker = marker.strip_prefix('\\').unwrap_or(marker);
+            raw_lines.push((marker.to_string(), text.to_string()));
+        }
+
+        let options = ProcessLinesOptions::default();
+        let entries_final = process_lines(raw_lines, "HAG", "OET-RV", &options);
+
+        let mut index = InternalBibleBookCVIndex::new("OET-RV", "HAG");
+        index.build(entries_final).unwrap();
+
+        // It should give the following 63 entries (as per ../../test_data/OET-RV_HAG_CV_index.txt):
+        assert_eq!(index.len(), 63);
+
+        // 0 -1:0 Headers='HAG'
+        let (cv0, entry0) = index.index_data.get_index(0).unwrap();
+        assert_eq!(cv0.to_string(), "-1:0");
+        assert_eq!(entry0.entry_index(), 0);
+        assert_eq!(entry0.entry_count(), 1);
+        assert_eq!(entry0.context(), Vec::<CompactString>::new());
+
+        // 10 -1:10 ctxt=['headers']
+        let (cv10, entry10) = index.index_data.get_index(10).unwrap();
+        assert_eq!(cv10.to_string(), "-1:10");
+        assert_eq!(entry10.entry_index(), 10);
+        assert_eq!(entry10.entry_count(), 1);
+        assert_eq!(entry10.context(), ["headers"]);
+
+        // 23 1:0 ctxt=['chapters']
+        let (cv23, entry23) = index.index_data.get_index(23).unwrap();
+        assert_eq!(cv23.to_string(), "1:0");
+        assert_eq!(entry23.entry_index(), 23);
+        assert_eq!(entry23.entry_count(), 1);
+        assert_eq!(entry23.context(), ["chapters"]);
+
+        // 24 1:1 ctxt=['chapters', 'c']
+        let (cv24, entry24) = index.index_data.get_index(24).unwrap();
+        assert_eq!(cv24.to_string(), "1:1");
+        assert_eq!(entry24.entry_index(), 24);
+        assert_eq!(entry24.entry_count(), 8);
+        assert_eq!(entry24.context(), ["chapters", "c"]);
+
+        // 25 1:2 ctxt=['chapters', 'c', 'p']
+        let (cv25, entry25) = index.index_data.get_index(25).unwrap();
+        assert_eq!(cv25.to_string(), "1:2");
+        assert_eq!(entry25.entry_index(), 32);
+        assert_eq!(entry25.entry_count(), 4);
+        assert_eq!(entry25.context(), ["chapters", "c", "p"]);
+
+        // 26 1:3 ctxt=['chapters', 'c']
+        let (cv26, entry26) = index.index_data.get_index(26).unwrap();
+        assert_eq!(cv26.to_string(), "1:3");
+        assert_eq!(entry26.entry_index(), 36);
+        assert_eq!(entry26.entry_count(), 5);
+        assert_eq!(entry26.context(), ["chapters", "c"]);
+
+        // 38 1:15 ctxt=['chapters', 'c', 'p']
+        let (cv38, entry38) = index.index_data.get_index(38).unwrap();
+        assert_eq!(cv38.to_string(), "1:15");
+        assert_eq!(entry38.entry_index(), 84);
+        assert_eq!(entry38.entry_count(), 5);
+        assert_eq!(entry38.context(), ["chapters", "c", "p"]);
+
+        // 39 2:0 ctxt=['chapters']
+        let (cv39, entry39) = index.index_data.get_index(39).unwrap();
+        assert_eq!(cv39.to_string(), "2:0");
+        assert_eq!(entry39.entry_index(), 89);
+        assert_eq!(entry39.entry_count(), 1);
+        assert_eq!(entry39.context(), ["chapters"]);
+
+        // 40 2:1 ctxt=['chapters', 'c']
+        let (cv40, entry40) = index.index_data.get_index(40).unwrap();
+        assert_eq!(cv40.to_string(), "2:1");
+        assert_eq!(entry40.entry_index(), 90);
+        assert_eq!(entry40.entry_count(), 8);
+        assert_eq!(entry40.context(), ["chapters", "c"]);
+
+        // 41 2:2 ctxt=['chapters', 'c', 'p']
+        let (cv41, entry41) = index.index_data.get_index(41).unwrap();
+        assert_eq!(cv41.to_string(), "2:2");
+        assert_eq!(entry41.entry_index(), 98);
+        assert_eq!(entry41.entry_count(), 3);
+        assert_eq!(entry41.context(), ["chapters", "c", "p"]);
+
+        // 42 2:3 ctxt=['chapters', 'c', 'p']
+        let (cv42, entry42) = index.index_data.get_index(42).unwrap();
+        assert_eq!(cv42.to_string(), "2:3");
+        assert_eq!(entry42.entry_index(), 101);
+        assert_eq!(entry42.entry_count(), 3);
+        assert_eq!(entry42.context(), ["chapters", "c", "p"]);
+
+        // 62 2:23 ctxt=['chapters', 'c', 'p']
+        let (cv62, entry62) = index.index_data.get_index(62).unwrap();
+        assert_eq!(cv62.to_string(), "2:23");
+        assert_eq!(entry62.entry_index(), 182);
+        assert_eq!(entry62.entry_count(), 6);
+        assert_eq!(entry62.context(), ["chapters", "c", "p"]);
+    }
+
+    #[test]
+    fn test_oet_lv_indexing() {
+        let test_folder_path = "../../Tests/DataFilesForTests/OET-LV";
+        let mut books = IndexMap::new();
+
+        let paths = fs::read_dir(test_folder_path).expect("Could not read OET-LV folder");
+        for path in paths {
+            let path = path.unwrap().path();
+            if path.is_file() && path.extension().and_then(|s| s.to_str()) == Some("ESFM") {
+                let filename = path.file_name().unwrap().to_str().unwrap();
+                // OET-LV_HAG.ESFM -> HAG
+                let bos_book_code = filename.split('_').nth(1).unwrap().split('.').next().unwrap();
+                
+                let content = fs::read_to_string(&path).expect("Could not read file");
+                let mut raw_lines = Vec::new();
+                for line in content.lines() {
+                    if line.trim().is_empty() { continue; }
+                    let (marker, text) = match line.split_once(' ') {
+                        Some((m, t)) => (m, t),
+                        None => (line, ""),
+                    };
+                    let marker = marker.strip_prefix('\\').unwrap_or(marker);
+                    raw_lines.push((marker.to_string(), text.to_string()));
+                }
+
+                let options = ProcessLinesOptions::default();
+                let entries_final = process_lines(raw_lines, bos_book_code, "OET-LV", &options);
+
+                let mut index = InternalBibleBookCVIndex::new("OET-LV", bos_book_code);
+                index.build(entries_final.clone()).unwrap();
+                books.insert(bos_book_code.to_string(), entries_final);
+            }
+        }
+
+        assert!(!books.is_empty(), "Should have loaded some books");
+        
+    }
+
+    #[test]
+    fn test_oet_rv_indexing() {
+        let test_folder_path = "../../Tests/DataFilesForTests/OET-RV";
+        let mut books = IndexMap::new();
+
+        let paths = fs::read_dir(test_folder_path).expect("Could not read OET-RV folder");
+        for path in paths {
+            let path = path.unwrap().path();
+            if path.is_file() && path.extension().and_then(|s| s.to_str()) == Some("ESFM") {
+                let filename = path.file_name().unwrap().to_str().unwrap();
+                // OET-RV_HAG.ESFM -> HAG
+                let bos_book_code = filename.split('_').nth(1).unwrap().split('.').next().unwrap();
+                
+                let content = fs::read_to_string(&path).expect("Could not read file");
+                let mut raw_lines = Vec::new();
+                for line in content.lines() {
+                    if line.trim().is_empty() { continue; }
+                    let (marker, text) = match line.split_once(' ') {
+                        Some((m, t)) => (m, t),
+                        None => (line, ""),
+                    };
+                    let marker = marker.strip_prefix('\\').unwrap_or(marker);
+                    raw_lines.push((marker.to_string(), text.to_string()));
+                }
+
+                let options = ProcessLinesOptions::default();
+                let entries_final = process_lines(raw_lines, bos_book_code, "OET-RV", &options);
+
+                let mut index = InternalBibleBookCVIndex::new("OET-RV", bos_book_code);
+                index.build(entries_final.clone()).unwrap();
+                books.insert(bos_book_code.to_string(), entries_final);
+            }
+        }
+
+        assert!(!books.is_empty(), "Should have loaded some books");
+        
     }
 }

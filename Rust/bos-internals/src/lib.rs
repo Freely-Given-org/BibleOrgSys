@@ -79,18 +79,70 @@
 
 // Re-export core modules
 pub mod chapter_verse;
+pub mod discovery;
 pub mod entry;
-pub mod entry_extra_list;
+pub mod entry_extras;
 pub mod error;
 pub mod indexes;
 pub mod markers;
+pub mod nesting;
 pub mod parsing;
+pub mod processing;
 
 // Re-export commonly used types at crate root
 pub use chapter_verse::ChapterVerse;
+pub use discovery::{
+    AggregateDiscoveryResults, BibleDiscoveryResults, BookDiscoveryResults, discover_book,
+    discover_bible,
+};
 pub use entry::{InternalBibleEntry, InternalBibleExtra};
-pub use entry_extra_list::{InternalBibleEntryList, InternalBibleExtraList};
+pub use entry_extras::{InternalBibleEntryList, InternalBibleExtraList};
 pub use error::{BosError, IndexError, LookupError, ParseError, ValidationError};
 pub use indexes::{CVIndexEntry, InternalBibleBookCVIndex, InternalBibleBookSectionIndex, SectionIndexEntry};
 pub use markers::ExtraType;
-pub use parsing::{get_small_leading_int, parse_figure_attributes, parse_word_attributes, UsfmFigureAttributes, WordWithAttributes};
+pub use parsing::{
+    UsfmFigureAttributes, WordWithAttributes, abbreviate, get_positive_leading_int,
+    get_small_leading_int, parse_figure_attributes, parse_word_attributes,
+    strip_word_ends_punctuation,
+};
+pub use processing::{ObjectType, ProcessLinesOptions, process_lines};
+
+
+use std::sync::atomic::{AtomicU8, AtomicBool, Ordering};
+
+// A global atomic variable in Rust
+pub static VERBOSITY: AtomicU8 = AtomicU8::new(2);
+pub static STRICT_CHECKING: AtomicBool = AtomicBool::new(false);
+pub static DEBUG: AtomicBool = AtomicBool::new(false);
+
+pub fn set_verbosity(level: u8) {
+    // Store the level (0-4) using Relaxed ordering (fastest)
+    VERBOSITY.store(level, Ordering::Relaxed);
+}
+pub fn get_verbosity() -> u8 {
+    VERBOSITY.load(Ordering::Relaxed)
+}
+
+pub fn set_strict_checking(value: bool) {
+    STRICT_CHECKING.store(value, Ordering::Relaxed);
+}
+pub fn get_strict_checking() -> bool {
+    STRICT_CHECKING.load(Ordering::Relaxed)
+}
+
+pub fn set_debug(value: bool) {
+    DEBUG.store(value, Ordering::Relaxed);
+}
+pub fn get_debug() -> bool {
+    DEBUG.load(Ordering::Relaxed)
+}
+
+// Internal Rust macro for displaying user messages based on verbosity level
+#[macro_export]
+macro_rules! verbosity_println {
+    ($level:expr, $($arg:tt)*) => {
+        if crate::get_verbosity() >= $level {
+            println!($($arg)*);
+        }
+    };
+}

@@ -4,18 +4,101 @@
 //! - Leading integers from strings (for verse numbers like "17a")
 //! - Word attributes from USFM3 `\w` fields
 //! - Figure attributes from USFM2/USFM3 `\fig` fields
+//! - Text abbreviation for display
 
 use std::collections::HashMap;
 
-use regex::Regex;
-use std::sync::LazyLock;
-// use compact_str::CompactString;
-
 use crate::error::ParseError;
 
-/// Regex for extracting leading integer (including negative).
-static LEADING_INT_RE: LazyLock<Regex> =
-    LazyLock::new(|| Regex::new(r"^-?[0-9]+").expect("Invalid regex"));
+/// Leading punctuation characters for word stripping.
+pub const LEADING_WORD_PUNCT_CHARS: &str = "“«„\"‘¿¡‹'([{<";
+/// Trailing punctuation characters for word stripping.
+pub const TRAILING_WORD_PUNCT_CHARS: &str = ",.”»\"’›'?)!;:]}>%…—।";
+/// Medial word punctuation characters.
+pub const MEDIAL_WORD_PUNCT_CHARS: &str = "-";
+
+/// Remove leading and trailing punctuation from words (or strings of words).
+/// Ported from Python stripWordEndsPunctuation.
+pub fn strip_word_ends_punctuation(word_token: &str) -> String {
+    let mut word = word_token.to_string();
+    if word.is_empty() {
+        return word;
+    }
+
+    // Matching pairs for removal
+    let pairs = [
+        ('(', ')'),
+        ('[', ']'),
+        ('{', '}'),
+        ('<', '>'),
+        ('“', '”'),
+        ('‘', '’'),
+        ('«', '»'),
+        ('‹', '›'),
+    ];
+
+    // 1. Remove matching end punctuation pairs
+    for (start_char, end_char) in pairs {
+        if word.starts_with(start_char) && word.ends_with(end_char) {
+            let inner = &word[start_char.len_utf8()..word.len() - end_char.len_utf8()];
+            if !inner.contains(start_char) && !inner.contains(end_char) {
+                word = inner.to_string();
+            }
+        }
+    }
+
+    // 2. Remove non-matching punctuation
+    while !word.is_empty() {
+        let first = word.chars().next().unwrap();
+        if LEADING_WORD_PUNCT_CHARS.contains(first) {
+            // Check if it's part of a pair that's closed later
+            let mut has_match = false;
+            for (s, e) in pairs {
+                if s == first && word.contains(e) {
+                    has_match = true;
+                    break;
+                }
+            }
+            if has_match {
+                break;
+            }
+            word.remove(0);
+        } else {
+            break;
+        }
+    }
+
+    while !word.is_empty() {
+        let last = word.chars().last().unwrap();
+        if TRAILING_WORD_PUNCT_CHARS.contains(last) {
+            let mut has_match = false;
+            for (s, e) in pairs {
+                if e == last && word.contains(s) {
+                    has_match = true;
+                    break;
+                }
+            }
+            if has_match {
+                break;
+            }
+            word.pop();
+        } else {
+            break;
+        }
+    }
+
+    // 3. One more pass for matching pairs that might have been revealed
+    for (start_char, end_char) in pairs {
+        if word.starts_with(start_char) && word.ends_with(end_char) {
+            let inner = &word[start_char.len_utf8()..word.len() - end_char.len_utf8()];
+            if !inner.contains(start_char) && !inner.contains(end_char) {
+                word = inner.to_string();
+            }
+        }
+    }
+
+    word
+}
 
 /// Extract the leading integer from a string.
 ///
@@ -25,18 +108,87 @@ static LEADING_INT_RE: LazyLock<Regex> =
 ///
 /// ```
 /// use bos_internals::parsing::get_small_leading_int;
+/// use bos_internals::error::ParseError;
 ///
 /// assert_eq!(get_small_leading_int("17").unwrap(), 17);
 /// assert_eq!(get_small_leading_int("17a").unwrap(), 17);
 /// assert_eq!(get_small_leading_int("17-25").unwrap(), 17);
 /// assert_eq!(get_small_leading_int("-1").unwrap(), -1);
-/// assert!(get_small_leading_int("abc").is_err());
+/// assert_eq!(get_small_leading_int("200something").unwrap(), 200);
+/// assert!(matches!(get_small_leading_int("abc"), Err(ParseError::NoLeadingInt(_))));
+/// assert!(matches!(get_small_leading_int("-2"), Err(ParseError::IntOutOfRange(-2, _))));
+/// assert!(matches!(get_small_leading_int("-11"), Err(ParseError::IntOutOfRange(-11, _))));
+/// assert!(matches!(get_small_leading_int("201"), Err(ParseError::IntOutOfRange(201, _))));
 /// ```
 pub fn get_small_leading_int(s: &str) -> Result<i16, ParseError> {
-    LEADING_INT_RE
-        .find(s)
-        .and_then(|m| m.as_str().parse().ok())
-        .ok_or_else(|| ParseError::NoLeadingInt(s.to_string()))
+    let mut end = 0;
+    let bytes = s.as_bytes();
+    
+    if bytes.is_empty() {
+        return Err(ParseError::NoLeadingInt(s.to_string()));
+    }
+
+    if bytes[0] == b'-' {
+        end = 1;
+    }
+
+    while end < bytes.len() && bytes[end].is_ascii_digit() {
+        end += 1;
+    }
+
+    if end == 0 || (end == 1 && bytes[0] == b'-') {
+        return Err(ParseError::NoLeadingInt(s.to_string()));
+    }
+
+    let val: i32 = s[..end]
+        .parse()
+        .map_err(|_| ParseError::NoLeadingInt(s.to_string()))?;
+
+    if val < -1 || val > 200 {
+        return Err(ParseError::IntOutOfRange(val, s.to_string()));
+    }
+
+    Ok(val as i16)
+}
+
+/// Extract the leading integer from a string.
+/// Needed for ESFM word numbers which can be larger than 32767 (e.g., "46168", "381561") but must be non-negative.
+///
+/// # Examples
+///
+/// ```
+/// use bos_internals::parsing::get_positive_leading_int;
+/// use bos_internals::error::ParseError;
+///
+/// assert_eq!(get_positive_leading_int("17").unwrap(), 17);
+/// assert_eq!(get_positive_leading_int("17a").unwrap(), 17);
+/// assert_eq!(get_positive_leading_int("17-25").unwrap(), 17);
+/// assert_eq!(get_positive_leading_int("400000").unwrap(), 400000);
+/// assert!(matches!(get_positive_leading_int("abc"), Err(ParseError::NoLeadingInt(_))));
+/// assert!(matches!(get_positive_leading_int("-1"), Err(ParseError::NoLeadingInt(_)))); // No digits at start
+/// assert!(matches!(get_positive_leading_int("400001"), Err(ParseError::IntOutOfRange(400001, _))));
+/// ```
+pub fn get_positive_leading_int(s: &str) -> Result<u32, ParseError> {
+    let mut end = 0;
+    let bytes = s.as_bytes();
+
+    while end < bytes.len() && bytes[end].is_ascii_digit() {
+        end += 1;
+    }
+
+    if end == 0 {
+        return Err(ParseError::NoLeadingInt(s.to_string()));
+    }
+
+    let val: u32 = s[..end]
+        .parse()
+        .map_err(|_| ParseError::NoLeadingInt(s.to_string()))?;
+
+    if val > 400_000 {
+        return Err(ParseError::IntOutOfRange(val as i32, s.to_string()));
+    }
+
+    Ok(val)
 }
 
 /// Result of parsing word attributes from USFM3 `\w` field.
@@ -44,7 +196,7 @@ pub fn get_small_leading_int(s: &str) -> Result<i16, ParseError> {
 pub struct WordWithAttributes {
     /// The word itself (before the pipe).
     pub word: String,
-    /// The lemma (dictionary form).
+    /// The lemma (dictionary form).reasonMarker
     pub lemma: Option<String>,
     /// Strong's number(s).
     pub strong: Option<String>,
@@ -99,11 +251,9 @@ pub fn parse_word_attributes(word_attribute_string: &str) -> Result<WordWithAttr
     let mut result = WordWithAttributes::new(word);
 
     // If no equals sign, assume it's a single unnamed lemma
-    if !attribute_string.contains('=') {
-        if !attribute_string.contains('"') && !attribute_string.contains('\'') {
-            result.lemma = Some(attribute_string.to_string());
-            return Ok(result);
-        }
+    if !attribute_string.contains('=') && !attribute_string.contains('"') && !attribute_string.contains('\'') {
+        result.lemma = Some(attribute_string.to_string());
+        return Ok(result);
     }
 
     // Parse named attributes using a state machine
@@ -270,9 +420,7 @@ pub fn parse_figure_attributes(figure_attribute_string: &str) -> Result<UsfmFigu
 
     // Detect USFM3 vs USFM2
     // USFM3 has exactly one pipe and contains '='
-    if figure_attribute_string.matches('|').count() == 1
-        && figure_attribute_string.contains('=')
-    {
+    if figure_attribute_string.matches('|').count() == 1 && figure_attribute_string.contains('=') {
         // USFM3 format
         result.usfm_version = 3;
 
@@ -374,6 +522,30 @@ fn store_figure_attribute_by_name(result: &mut UsfmFigureAttributes, name: &str,
     }
 }
 
+/// Abbreviate a string to `head…tail` if it exceeds `MAX_CHARS` characters,
+/// keeping `KEEP` characters on each side. Returns the original string if short enough.
+///
+/// Uses a ring buffer to find the tail offset in a single pass over the string,
+/// handling multi-byte characters correctly.
+pub fn abbreviate<const MAX_CHARS: usize, const KEEP: usize>(s: &str) -> String {
+    let mut head_end = 0;
+    let mut count = 0;
+    let mut indexes = [0; KEEP];
+    let mut indexes_current = 0;
+    for (byte_offset, _) in s.char_indices() {
+        if count == KEEP {
+            head_end = byte_offset;
+        }
+        indexes_current = (indexes_current + 1) % KEEP;
+        indexes[indexes_current] = byte_offset;
+        count += 1;
+    }
+    if count <= MAX_CHARS {
+        return s.to_string();
+    }
+    format!("{}…{}", &s[..head_end], &s[indexes[(indexes_current + 1) % KEEP]..])
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -384,10 +556,22 @@ mod tests {
         assert_eq!(get_small_leading_int("17a").unwrap(), 17);
         assert_eq!(get_small_leading_int("17-25").unwrap(), 17);
         assert_eq!(get_small_leading_int("-1").unwrap(), -1);
-        assert_eq!(get_small_leading_int("0").unwrap(), 0);
-        assert_eq!(get_small_leading_int("123abc456").unwrap(), 123);
-        assert!(get_small_leading_int("abc").is_err());
-        assert!(get_small_leading_int("").is_err());
+        assert_eq!(get_small_leading_int("200something").unwrap(), 200);
+        assert!(matches!(get_small_leading_int("abc"), Err(ParseError::NoLeadingInt(_))));
+        assert!(matches!(get_small_leading_int("-2"), Err(ParseError::IntOutOfRange(-2, _))));
+        assert!(matches!(get_small_leading_int("-11"), Err(ParseError::IntOutOfRange(-11, _))));
+        assert!(matches!(get_small_leading_int("201"), Err(ParseError::IntOutOfRange(201, _))));
+    }
+
+    #[test]
+    fn test_get_positive_leading_int() {
+        assert_eq!(get_positive_leading_int("17").unwrap(), 17);
+        assert_eq!(get_positive_leading_int("17a").unwrap(), 17);
+        assert_eq!(get_positive_leading_int("17-25").unwrap(), 17);
+        assert_eq!(get_positive_leading_int("400000").unwrap(), 400000);
+        assert!(matches!(get_positive_leading_int("abc"), Err(ParseError::NoLeadingInt(_))));
+        assert!(matches!(get_positive_leading_int("-1"), Err(ParseError::NoLeadingInt(_)))); // No digits at start
+        assert!(matches!(get_positive_leading_int("400001"), Err(ParseError::IntOutOfRange(400001, _))));
     }
 
     #[test]
@@ -421,9 +605,7 @@ mod tests {
 
     #[test]
     fn test_parse_figure_attributes_usfm3() {
-        let attrs =
-            parse_figure_attributes(r#"At once they left.|src="avnt016.jpg" size="span" ref="1.18""#)
-                .unwrap();
+        let attrs = parse_figure_attributes(r#"At once they left.|src="avnt016.jpg" size="span" ref="1.18""#).unwrap();
         assert_eq!(attrs.usfm_version, 3);
         assert_eq!(attrs.caption, Some("At once they left.".to_string()));
         assert_eq!(attrs.source_filename, Some("avnt016.jpg".to_string()));
@@ -433,9 +615,7 @@ mod tests {
 
     #[test]
     fn test_parse_figure_attributes_usfm2() {
-        let attrs =
-            parse_figure_attributes("Description|file.jpg|span|loc|copyright|Caption|1:18")
-                .unwrap();
+        let attrs = parse_figure_attributes("Description|file.jpg|span|loc|copyright|Caption|1:18").unwrap();
         assert_eq!(attrs.usfm_version, 2);
         assert_eq!(attrs.alt_description, Some("Description".to_string()));
         assert_eq!(attrs.source_filename, Some("file.jpg".to_string()));

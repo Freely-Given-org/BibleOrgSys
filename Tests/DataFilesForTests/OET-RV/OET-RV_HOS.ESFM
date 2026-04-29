@@ -1,0 +1,903 @@
+\id HOS - Open English Translation—Readers' Version (OET-RV) v0.1.55
+\usfm 3.0
+\ide UTF-8
+\rem ESFM v0.6 HOS
+\rem WORDTABLE OET-LV_OT_word_table.tsv
+\h Hosea
+\toc1 Hoshea
+\toc2 Hoshea
+\toc3 Hos.
+\mt1 Hoshea
+\mt2 (Hosea)
+\is1 Introduction
+\ip This document is about what was prophesied long ago by the prophet Hoshea (often wrongly known in English as ‘Hosea’) around 800 before Yeshua/Jesus (B.C.) and before Shomron (Samaria) was destroyed by invading armies. The prophets Hoshea and Amos gave similar prophecies to the people in similar period, but Hoshea continued on for several years longer. In those times, Yisrael (Israel) was divided into two countries. The northern part where Hoshea preached continued to be known as Yisrael and was also named as ‘Efrayim’ (the name of a prominent tribe in that northern kingdom). Shomron (Samaria) was its capital city. The smaller, southern part of the former, larger Yisrael was named Yehudah (after the largest tribe in that area).
+\ip In this document, Hoshea showed the arguments between those who followed Yahweh, and those who had decided to change their allegiance to idols and other gods. The latter were like Hoshea's disobedient spouse Gomir who left him behind. Also, Hoshea was very sad about how the people argued and worshipped false gods, and no longer trusted their god Yahweh. But in the ending, God again displayed his love towards his people and wanted to bring them back to him. His love for them was very strong, and he revealed this to them through Hoshea's sorrowful speeches, “How can I give you up, O Efrayim? How can I hand you over, O Yisrael? … My heart is turned over within me—all my compassions are aroused.” (11:8).
+\iot Main components of this document
+\io1 Hoshea's marriage and family \ior 1:1–3:5\ior*
+\io1 God's case against Yisrael \ior 4:1–13:16\ior*
+\io1 The promise, and the command to repent \ior 14:1-9\ior*
+\rem This is still a very early look into the unfinished text of the Open English Translation of the Bible. Please double-check the text in advance before using in public.
+\ie
+\c 1
+\p
+\v 1 This is Yahweh's¦363569 message¦363567 that¦363571 came¦363572 to Beeri's¦363578 son Hoshea¦363575 \add (Hosea¦363575)\add* in the time¦363579 of Kings Uzziyah, Yotam, Ahaz¦363582, and Hizkiyah, of Yehudah¦363585 \add (Judah)\add*, \add ≈and was also during the reign of\add* Yoash's¦363590 son King¦363591 Yeroboam¦363587 in Yisrael¦363592 \add (Israel¦363592)\add*.\x + \xo 1:1: a \xt 2Ki 15:1-7; 2Ch 26:1-23; \xo b \xt 2Ki 15:32-38; 2Ch 27:1-8; \xo c \xt 2Ki 16:1-20; 2Ch 28:1-27; \xo d \xt 2Ki 18:1–20:21; 2Ch 29:1–32:33; \xo e \xt 2Ki 14:23-29.\x*
+\s1 Hoshea's wife and children
+\rem /s1 Hosea's unfaithful wife; The Family of Hosea; Hosea's Wife and Children
+\s4 Northern kingdom
+\p
+\v 2 When Yahweh first spoke¦363595 through Hoshea¦363598, \add *he\add* told \add *him\add*, “Go and \add ≈get yourself¦363608 a prostitute for a wife¦363609\add* and have children¦363611 \add ≈from her\add*, because¦363613 the \add ≈country\add* is committing flagrant prostitution by forsaking Yahweh.”
+\p
+\v 3 So¦363621 he went¦363621 and \add ≈married\add* Divlayim's¦363628 daughter¦363626 Gomer¦363625, and she \add ≈got pregnant¦363629\add* and bore him a son.
+\v 4 Then¦363635 Yahweh¦363636 told him, “Name him Yizre'el, because¦363641 in a little¦363644 while I'll avenge the blood¦363648 \add shed\add* in the Yizre'el \add valley\add* on Yehu's¦363653 \add ≈family\add*, and¦363635 I'll put an end¦363654 to the kingdom¦363655 of Yisrael¦363657.\x + \xo 1:4: \xt 2Ki 10:11.\x*
+\v 5 \add ≈At that time\add* in¦363667 the Yizre'el valley¦363667, I'll¦363662 break¦363662 Yisrael's \add ≈military power\add*.”
+\p
+\v 6 Then¦363670 \add @Gomer\add* conceived¦363670 again and bore a daughter¦363673, and \add @Yahweh\add* told \add @Hoshea\add*, “Name her Lo-Ruhamah¦363679 \add (which means ‘No mercy’)\add*, because¦363680 I'll¦363682 no longer have mercy on the \add ≈Israelis¦363687, and I won't¦363681\add* forgive them at all.
+\v 7 But¦363695 I'll have mercy on¦363701 Yehudah's¦363698 \add ≈descendants\add*, and¦363695 I'll save them \add so they'll be able to see that it was\add* their¦363702 god¦363702 Yahweh¦363701. (I won't¦363703 save them using \add #bows, swords¦363706, battles¦363707\add*, horses¦363708, or horsemen.)”
+\p
+\v 8 After she'd weaned¦363711 Lo-Ruhamah¦363715, she got pregnant¦363716 \add again\add* and¦363711 bore a \add second\add* son.
+\v 9 Then¦363720 Yahweh said, “Name him Lo-Ammi \add (which means ‘Not my people’)\add* because¦363725 you're not my people and¦363720 I'm not your god.”
+\s1 Yisrael's restoration
+\rem /s1 Israel Is to Be Restored; The Restoration of Israel
+\s4 Northern kingdom
+\p
+\v 10 Yet the number of \add ≈Israelis\add* will be like the sand on the seashore, which can't be measured or counted. Then instead of being told, ‘You're not my people,’ they'll be told, ‘You are children of the living god.’\x + \xo 1:10: \xt Rom 9:26.\x*
+\v 11 The people from \add both\add* Yehudah and Yisrael will be gathered together. They'll appoint one leader for themselves, and they'll \add ≈come out of the countries\add* \add where they'd been exiled\add*, because the day of Yizre'el \add (which means ‘planted by God’)\add* will be great.
+\c 2
+\p
+\v 1 “Say to your brothers, ‘My people,’ and your sisters, ‘You've all been shown compassion.’ ”
+\s1 Yisrael, the prostitute, will be punished
+\rem /s1 Israel Punished and Restored; Charges against an Unfaithful Wife; Israel's Infidelity, Punishment, and Redemption; Unfaithful Gomer—Unfaithful Israel
+\s4 Northern kingdom
+\p
+\v 2 Contend with your mother, contend, because¦363784 she's not my wife,
+\q1 and nor am I her husband.
+\q1 Let her \add ≈turn her face away from\add* prostitution,
+\q1 and \add ≡cease\add* her adultery from between her breasts.
+\q1
+\v 3 If she doesn't, I'll strip her naked
+\q1 ≈and expose her like on the day she was born.
+\q1 I will make her like the wilderness,
+\q1 ≈and make her like a sun-baked land,
+\q1 →and I'll make her die from thirst.
+\q1
+\v 4 I¦363805 won't¦363803 have mercy on¦363798 her¦363809 children,
+\q1 →because they're \add ≈the products\add* of prostitution¦363809,
+\q1
+\v 5 because their mother has \add ≈dabbled in¦363830 prostitution\add*—
+\q1 ≈\add @the woman\add* who conceived them has acted shamefully.
+\q1 \add ≈Yes,\add* she¦363823 had said, “I'll¦363821 go after my lovers,
+\q1 who give me my bread and my water,
+\q1 ≈my wool and my flax,
+\q1 ≈\add and\add* my oil and my drink.”
+\q1
+\v 6 Therefore, I'll \add ≈fence her paths in\add* with thorns.
+\q1 I'll build a wall up against her so she can't¦363836 find her way.
+\q1
+\v 7 She'll \add try to\add* pursue her lovers¦363854, \add ≈but\add* she won't \add be able to\add* \add ≈catch up to\add* them.
+\q1 ≈She'll search for them, \add ≈but\add* she won't \add be able to\add* find them.
+\q1 Then she'll say, “I'll¦363852 go¦363852 and return to my first husband,
+\q1 →because it was better for me then than it is now.”
+\b
+\q1
+\v 8 \add ≈No,\add* she¦363878 hadn't known that it was me who gave her the grain, the new wine and the oil,
+\q1 ≈and who lavished gold and silver on¦363871 her,
+\q1 →which they then used for Baal.
+\q1
+\v 9 Therefore I'll take my grain back in its time,
+\q1 ≈and my new wine in its season.
+\q1 I'll take away my wool and my flax
+\q1 →that were used to cover her¦363884 nakedness.
+\q1
+\v 10 Now I'll uncover her lewdness \add ≈as her lovers watch\add*,
+\q1 \add ≈but¦363906\add* no one can rescue her \add ≈from my punishment\add*.
+\q1
+\v 11 I'll¦363925 also put an end to all her mirth,
+\q1 her feasts, her new-moon celebrations, her rest days, and all her scheduled festivals.
+\q1
+\v 12 “I'll destroy her grapevines and her fig trees,
+\q1 of which she said, ‘Those are my wages that my lovers¦363946 gave me.’
+\q1 I'll make them \add ≈grow wild\add*,
+\q1 →and then the animals in the countryside will devour them.
+\q1
+\v 13 I'll¦363954 punish her for the feast¦363962 days for the Baals,
+\q1 when she burnt incense to them,
+\q1 when she adorned herself with her rings and jewellery,
+\q1 and went after her lovers and forgot me.”
+\mi That is Yahweh's declaration.
+\s1 The love of God of his people
+\rem /s1 The Lord's Love for Unfaithful Israel; The Lord's Love for His People
+\s4 Northern kingdom
+\q1
+\v 14 Therefore, listen, I'm going to entice her.
+\q1 ≈I'll¦363965 bring her into the wilderness and speak tenderly to her.
+\q1
+\v 15 I'll¦363985 give her back her vineyards,
+\q1 and the \add depressing\add* Akor Valley\x + \xo 2:15: \xt Josh 7:24-26.\x* as a gateway for hope.
+\q1 She'll answer me there as in the days¦363989 of her youth—
+\q1 like at the \add ≈time¦363989\add* that she came out of Egypt \add (Heb. Mitsrayim)\add*:
+\p
+\v 16 “Yahweh declares you'll call me, ‘My husband,’ \add ≈at the time\add*
+\q1 ^and no longer call me, ‘My master \add (Heb. Baal)\add*,’
+\q1
+\v 17 because I'll¦364022 remove the names of the Baals from her¦364026 mouth,
+\q1 and they'll no longer be remembered by their names.”
+\b
+\q1
+\v 18 “On that day¦364048 I'll make an agreement for them
+\q1 with the animals in the fields,
+\q1 with the birds in the sky,
+\q1 and with the crawling things on¦364048 the ground.
+\q1 I'll abolish the bow, the sword, and war from the land,
+\q1 and I'll make you lie down in safety.
+\p
+\v 19 I'll \add ≈take you as my wife\add* forever.
+\q1 I'll \add ≈marry\add* you to me in righteousness and justice,
+\q1 in loyal commitment, and in mercy.
+\q1
+\v 20 I'll¦364096 \add ≈be faithful to you as my wife\add*,
+\q1 and you'll know Yahweh.
+\p
+\v 21 This is Yahweh's declaration:
+\q1 \add ≈At that time\add* I'll¦364104 answer the skies \add ?with¦364109 rain\add*,
+\q1 and they'll answer the earth.
+\q1
+\v 22 The earth will answer the grain, the new wine and the oil,
+\q1 and they'll answer Yizre'el \add (which means ‘God sows/plants’)\add*.
+\q1
+\v 23 I will sow her for myself in the land,
+\q1 and I will have mercy on Lo-Ruhamah \add (‘No mercy’)\add*.
+\q1 I will tell Lo-Ammi \add (‘Not my people’)\add*,
+\q1 ‘You are my people,’
+\q1 and they'll say, ‘You're \add #our\add* God.’ ”\x + \xo 2:23: \xt Rom 9:25; 1Pe 2:10.\x*
+\c 3
+\s1 Yahweh's love for his people
+\rem /s1 Hosea and the Unfaithful Woman; Hosea's Wife Is Redeemed; Hosea's Reconciliation With His Wife; Further Assurances of God's Redeeming Love
+\s4 Northern kingdom
+\p
+\v 1 Yahweh told me, “Go again¦364185 \add and\add* love¦364187 a woman¦364189 who is loved¦364190 by another man and is an adulteress¦364192, even as Yahweh loves¦364193 the \add ≈Israeli¦364197 people¦364197\add*, even though they turn to other¦364204 gods¦364203 and \add ?≈honour them with\add* raisin cakes¦364206.”
+\p
+\v 2 So¦364209 I bought¦364209 her¦364209 for myself for fifteen silver¦364213 \add ≈coins\add* and¦364209 \add ≈ten baskets\add* of barley.
+\v 3 I told her, “You must¦364223 stay with me \add ≈for some time¦364221\add*. You mustn't \add ≈dabble in prostitution¦364226 or mess with\add* any other man¦364229. In the same way, I'll be \add ≈true to\add* you.”
+\v 4 Because the \add ≈Israeli¦364241 people¦364240\add* will \add ≈continue\add* for many days¦364237 without a king¦364243 or prince¦364245, a sacrifice¦364247 or stone pillar¦364249, and an ephod¦364251 or household idols.
+\v 5 Afterwards¦364254, the \add ≈Israeli¦364257 people¦364256\add* will return¦364255 and \add ≈want to follow\add* Yahweh their god¦364262 and David¦364264 their king¦364265, and in the final days¦364274, they'll come¦364266 trembling to Yahweh and to his goodness¦364272.
+\c 4
+\s1 Yahweh's case against Yisrael
+\rem /s1 The Lord's Case against Israel; The Lord's case against Israel; The Lord's Accusation against Israel; The Charge Against Israel; God Accuses Israel
+\s4 Northern kingdom
+\q1
+\v 1 Listen to Yahweh's¦364280 message¦364278 you \add ≈Israelis¦364281\add*,
+\q1 because Yahweh has brought a lawsuit against the inhabitants¦364288 of the land,
+\q1 because there's¦364291 no faithfulness¦364293 or loyal¦364296 commitment—no knowledge¦364299 of God¦364300 in the land.
+\q1
+\v 2 There's cursing, lying¦364304, murder¦364305, stealing¦364306 and adultery¦364307.
+\q1 They've broken¦364308 \add ≈all bounds\add*, and bloodshed \add ≈follows\add* bloodshed.
+\q1
+\v 3 Therefore¦364313 the land mourns,
+\q1 and everyone¦364320 who lives in it is wasting away,
+\q1 along with¦364323 the animals¦364324 in the countryside¦364325 and the birds in the sky.
+\q1 Even the fish in the sea¦364331 \add ≈will disappear\add*.
+\s1 Yahweh's warning to priests
+\rem /s1 The Lord Accuses the Priests
+\s4 Northern kingdom
+\q1
+\v 4 Despite that, don't let anyone bring¦364338 a lawsuit,
+\q1 and don't let them accuse.
+\q1 Your¦364343 people¦364343 are like those¦364344 who would accuse a priest¦364345.
+\q1
+\v 5 You'll stumble \add ≈during the day¦364348\add*.
+\q1 The prophets¦364352 will also stumble with you¦364353 at night¦364354,
+\q1 and¦364347 I'll¦364355 destroy¦364355 \add Yisrael\add* your¦364356 mother¦364356.
+\q1
+\v 6 My people¦364359 are destroyed¦364358 because of the lack of knowledge
+\q1 because you have rejected knowledge and I'll reject you from being¦364368 a priest¦364368 to me.
+\q1 \add Because\add* you've¦364366 forgotten¦364370 your god's instructions,
+\q1 I'll also forget¦364373 your children¦364374.
+\b
+\q1
+\v 7 The¦364386 more \add @the priests\add* multiplied, the more they sinned¦364381 against me.
+\q1 →I will change their¦364384 \add ≈high status\add* into shame¦364385.
+\q1
+\v 8 They feed on the sin¦364388 of my people¦364389.
+\q1 ≈They are \add ≈greedy\add* for their¦364393 wickedness.
+\q1
+\v 9 It will be like people¦364398, like \add #priests\add*.
+\q1 →I will punish¦364400 them for their ways¦364402
+\q1 ≈and¦364397 I will repay¦364404 them for their actions.
+\q1
+\v 10 They'll eat¦364407 but never be full.
+\q1 They'll \add ≈sleep around\add* but not \add ≈prosper\add*,
+\q1 because¦364413 they've abandoned¦364418 Yahweh¦364417 as their protector.
+\s1 Yahweh's curse on those worshipping false gods
+\rem /s1 The Lord Condemns Pagan Worship
+\s4 Northern kingdom
+\q1
+\v 11 Drinking and \add ≈sleeping around destroy\add* the heart¦364426.
+\rem /s1 The Idolatry of Israel
+\q1
+\v 12 My people consult their wooden¦364429 idols,
+\q1 ≈and their divining¦364431 rods inform them,
+\q1 because¦364434 a spirit¦364435 of \add ≈unfaithfulness\add* has led them astray,
+\q1 ≈and they've played¦364438 the \add ≈loose woman\add*, departing from their god¦364440.
+\q1
+\v 13 They sacrifice¦364446 on the mountaintops¦364445
+\q1 ≈and burn incense on the hills¦364449,
+\q1 under¦364451 oaks, poplars¦364453 and terebinths¦364454,
+\q1 →because the shade¦364457 is good¦364456.
+\b
+\q1 Therefore your daughters¦364462 \add ≈prostitute¦364461 themselves¦364461\add*,
+\q1 ≈and your daughters-in-law commit¦364464 adultery¦364464.
+\q1
+\v 14 I¦364468 won't¦364491 punish your daughters¦364471 when they \add ≈prostitute themselves\add*,
+\q1 ≈nor your daughters-in-law when they commit¦364478 adultery¦364478,
+\q1 because¦364472 the men themselves go¦364485 off with \add ≈loose women¦364471\add*,
+\q1 ≈and they offer sacrifices¦364489 with cult prostitutes,
+\q1 →so the people¦364490 without understanding¦364493 will be ruined¦364494.
+\b
+\q1
+\v 15 Though¦364496 you \add ≈prostitute¦364498 yourself¦364498\add*, Yisrael¦364500,
+\q1 don't \add ≈involve Yehudah¦364504 in what you're doing\add*.
+\q1 Don't¦364501 go to Gilgal¦364508 or to Beyt-Aven,
+\q1 and don't \add ≈make an oath\add*, saying, ‘As Yahweh¦364519 lives.’
+\q1
+\v 16 Yisrael¦364525 is stubborn, like a stubborn heifer¦364522.
+\q1 Can Yahweh¦364528 now feed them like lambs in¦364530 a large paddock?
+\q1
+\v 17 Efrayim¦364534\add /Yisrael\add* is joined¦364532 to idols¦364533.
+\q1 Leave \add #them\add* alone¦364535.
+\q1
+\v 18 Even when their drinking¦364540 is over,
+\q1 they \add ≈prostitute¦364541 themselves\add* continually¦364541.
+\q1 Her rulers¦364546 dearly love¦364544 \add their\add* shame¦364545.
+\q1
+\v 19 The wind¦364549 will wrap them up in¦364551 its¦364551 wings¦364551,
+\q1 and¦364552 they'll be ashamed¦364552 because¦364553 of their¦364553 sacrifices¦364553.
+\c 5
+\rem /s1 Judgment Against Israel; Impending Judgment on Israel and Judah; The Failure of Israel's Leaders
+\q1
+\v 1 “Hear this, you priests¦364561.
+\q1 ≈Pay attention¦364562, you Israelis¦364564.
+\q1 ≈Listen, you household of the king¦364567,
+\q1 because the judgement¦364571 is for you,
+\q1 because you have all been a snare at Mizpah¦364576
+\q1 ≈and a net¦364577 spread¦364578 over \add Mt.\add* Tabor¦364581.
+\q1
+\v 2 The rebels¦364584 \add ≈stand\add* deep in slaughter¦364583,
+\q1 →\add ≈but\add* I will discipline¦364587 all of them.
+\q1
+\v 3 I know¦364591 Efrayim¦364592,
+\q1 ≈and¦364593 Yisrael isn't¦364594 hidden¦364596 from me.
+\q1 You've \add ≈prostituted¦364600 yourself¦364600\add* for now, Efrayim.
+\q1 ≈Yisrael is defiled.
+\s1 Hoshea's warning against idolatry
+\rem /s1 Hosea Warns against Idolatry
+\s4 Northern kingdom
+\q1
+\v 4 Their¦364615 \add past\add* actions won't¦364619 allow them to return¦364608 to their¦364615 god¦364611,
+\q1 because¦364612 they have a spirit¦364613 of prostitution¦364614 within them,
+\q1 and they don't¦364619 know¦364620 Yahweh¦364618.
+\q1
+\v 5 Yisrael's arrogance testifies¦364622 against \add #them\add*,
+\q1 Yisrael and¦364622 Efrayim¦364628 will stumble in¦364626 their¦364630 guilt¦364630.
+\q1 Yehudah¦364634 also will stumble with¦364626 them.
+\q1
+\v 6 They'll go¦364639 to \add ≈inquire from\add* Yahweh¦364643, taking their¦364637 flocks¦364637 and herds¦364638 \add for sacrifices\add*,
+\q1 but¦364638 they won't¦364644 \add ≈hear from\add* him¦364645 because he's withdrawn¦364646 from them.
+\q1
+\v 7 They were unfaithful to Yahweh¦364649 because¦364651 they've borne¦364655 illegitimate children¦364653.
+\q1 Now the new moon¦364658 \add festivals\add* will devour¦364657 them along with their¦364661 fields¦364661.
+\s1 The war between Yehudah and Yisrael
+\rem /s1 War between Judah and Israel
+\s4 Northern kingdom
+\q1
+\v 8 Blow the horn in Gibeah¦364666,
+\q1 and the trumpet¦364667 in Ramah.
+\q1 Sound the alarm at¦364666 Beyt-Aven:
+\q1 ‘We'll follow you¦364672 \add into battle\add*, Benyamin!’
+\q1
+\v 9 Efrayim\add /Yisrael¦364681\add* will become¦364677 \add ≈uninhabited in¦364680 the time\add* of punishment.
+\q1 Among Yisrael's tribes¦364680 I declare what will certainly \add happen\add*.
+\b
+\q1
+\v 10 Yehudah's¦364687 leaders¦364686 are like \add thieves\add* who move a boundary¦364689.
+\q1 I'll¦364691 pour my anger¦364693 out on them like water¦364692 \add from a jug\add*.
+\q1
+\v 11 Efrayim¦364696 is oppressed¦364695.
+\q1 It's crushed¦364697 in judgement¦364698,
+\q1 because¦364699 it¦364697 was determined¦364700 to \add ≈honour\add* idols.
+\q1
+\v 12 So¦364706 I'll be like a moth to Efrayim¦364708,
+\q1 ≈and¦364709 like rot to Yehudah's¦364711 \add ≈descendants\add*.
+\b
+\q1
+\v 13 When¦364713 Efrayim¦364714 saw¦364713 its sickness¦364717,
+\q1 ≈and Yehudah its wound,
+\q1 then¦364713 Efrayim went¦364722 to Assyria¦364726,
+\q1 ≈and sent¦364727 to the great¦364731 king¦364730 \add there\add*.
+\q1 But¦364713 he can't¦364733 cure you
+\q1 ≈or heal¦364735 your wound,
+\q1
+\v 14 because I'll be like a lion to Efrayim¦364746,
+\q1 ≈and like a young¦364747 lion to Yehudah's¦364749 \add ≈descendants\add*.
+\q1 I myself will tear \add them apart\add* then go away.
+\q1 ≈I'll carry¦364754 them off and there'll¦364755 be no one to rescue \add >them\add*.
+\b
+\q1
+\v 15 I'll¦364758 go¦364758 and return¦364759 to my place¦364762,
+\q1 until they acknowledge their guilt¦364766 and \add ≈strive to do what I've¦364759 told them\add*—
+\q1 until in¦364769 their distress¦364769, they \add ≈make a sincere decision to obey me\add*.”
+\c 6
+\s1 Insincere repentance
+\rem /s1 The People's Insincere Repentance; Israel Unrepentant; A Call to Repentance
+\s4 Northern kingdom
+\q1
+\v 1 “Come on, let's return¦364774 to Yahweh¦364777.
+\q1 He tore us apart, but he'll heal¦364781 us.
+\q1 He struck¦364782 us down, \add ≈but\add* he'll bandage \add ≈our wounds\add*.
+\q1
+\v 2 After two¦364786 days¦364786 he'll revive us.
+\q1 ≈He'll raise¦364789 us up on the third¦364788 day¦364787,
+\q1 so that we¦364790 can live¦364790 in his presence¦364791.
+\q1
+\v 3 Let us know—let's press on to know Yahweh¦364798.
+\q1 His arrival is certain as the dawn.
+\q1 ≈He will come¦364802 to us like the showers¦364803—
+\q1 ≈like the spring¦364805 rains¦364805 that¦364806 water¦364806 the earth.”
+\rem /s1 Impenitence of Israel and Judah
+\q1
+\v 4 What will I do with you, Efrayim¦364813?
+\q1 ≈Yehudah¦364818, what will I do with you?
+\q1 Your love¦364819 is like a morning¦364822 cloud¦364820 \add that doesn't last long\add*—
+\q1 ≈like the dew that \add ≈quickly disappears\add*.
+\q1
+\v 5 That's why I've cut them to pieces¦364830 by \add means of\add* the prophets¦364831.
+\q1 ≈I've killed¦364832 them with¦364831 the messages¦364833 \add ≈that I've spoken\add*.
+\q1 \add ≈My\add* judgement¦364836 is like the light¦364837 that \add ≈shines out\add*.
+\q1
+\v 6 because I¦364842 desire¦364842 loyal¦364841 commitment \add ≈rather than\add* \add #sacrifices\add*,
+\q1 ≈and knowledge¦364846 about God¦364847 rather than burnt¦364848 offerings¦364848.\x + \xo 6:6: \xt Mat 9:13; 12:7.\x*
+\q1
+\v 7 Like Adam¦364851, they broke the agreement¦364853.
+\q1 ≈They were unfaithful to me.
+\q1
+\v 8 Gilead is a city \add full\add* of evildoers
+\q1 \add leaving behind\add* bloody¦364863 footprints.
+\q1
+\v 9 Just like a band of raiders lie in wait for a man,
+\q1 so the priests¦364869 band together to commit murder¦364871 on the way¦364870 to Shekem.
+\q1 Surely they've committed shameful crimes.
+\q1
+\v 10 I've¦364880 seen¦364880 a horrible¦364881 thing among the \add ≈Israelis¦364878\add*.
+\q1 Efrayim's prostitution¦364884 is there¦364883—Yisrael¦364879 is defiled.
+\b
+\q1
+\v 11 A harvest¦364893 has been appointed¦364892 for you also, Yehudah¦364891,
+\q1 when I restore¦364895 my people's¦364897 fortunes.
+\c 7
+\rem /s1 Israel's Love for Wickedness
+\q1
+\v 1 Whenever I'd heal¦364900 Yisrael¦364901, Efrayim's¦364904 sin is exposed,
+\q1 as well as the evil¦364905 deeds¦364905 of Shomron¦364906 \add (Samaria¦364906)\add*.
+\q1 \add ≈Yes,\add* they're deceitful, plus¦364902 thieves break in,
+\q1 and a group of raiders robs \add >people\add* in the streets¦364914.
+\q1
+\v 2 But¦364916 they don't¦364916 realise in their hearts¦364919 that I remember¦364923 all their evil¦364922.
+\q1 ≈Now their deeds¦364926 surround¦364925 them—they're \add staring at me in the\add* face¦364928.
+\s1 The betrayal of people of King and teacher ran
+\rem /s1 Conspiracy in the Palace
+\s4 Northern kingdom
+\q1
+\v 3 They make the king¦364934 glad with their evil¦364931,
+\q1 ≈and the leaders¦364936 with their lies.
+\q1
+\v 4 They're all adulterers¦364939, like an oven overheated by the baker¦364943.
+\q1 He shouldn't have stoked the fire from the kneading¦364946 of the dough¦364947 until¦364948 after it's risen.
+\q1
+\v 5 On our king's day¦364952, the \add ≈leaders\add* became¦364954 \add ≈red in the face from the\add* wine.
+\q1 \add Then\add* he \add ≈joined in\add* with those who were mocking.
+\q1
+\v 6 Because with¦364969 their hearts¦364968 like an oven, they¦364966 get closer to \add implementing\add* their plot.
+\q1 Their anger smoulders¦364974 all night¦364972—in¦364969 the morning¦364975 it¦364976 \add ≈bursts into flame¦364979\add*.
+\q1
+\v 7 All of them are hot as an oven and they devour¦364984 \add ≈those who rule over them\add*.
+\q1 All their¦364981 kings¦364990 have fallen¦364991—none of them called to me \add for help\add*.
+\s1 Yisrael and the other nations
+\rem /s1 Israel and the Nations
+\s4 Northern kingdom
+\q1
+\v 8 Efrayim¦365002\add /Yisrael\add* mixes¦365001 itself among¦364999 the peoples¦364999.
+\q1 Efrayim is a \add ≈flat\add* cake that's \add ^only been cooked on¦364999 one side\add*.
+\q1
+\v 9 Foreigners have devoured his strength¦365010, but he \add ≈hasn't realised that\add*.
+\q1 Gray hairs \add ≈are now mixed in\add*, but he \add ≈hasn't noticed them\add*.
+\q1
+\v 10 Yisrael's¦365026 pride¦365024 testifies¦365023 against it¦365023,
+\q1 yet they haven't returned¦365030 to their¦365034 god¦365034 Yahweh¦365033,
+\q1 ≈nor have they \add ≈tried to obey\add* all his¦365027 \add instructions\add*.
+\q1
+\rem /s1 Futile Reliance on the Nations
+\v 11 Efrayim¦365042\add /Yisrael\add* is like a dove¦365043, heartless¦365046 and¦365041 foolish,
+\q1 calling¦365048 to Egypt¦365047 \add for help\add*, then¦365041 \add ≈trying\add* Assyria¦365049.
+\q1
+\v 12 When they go¦365053 \add there\add*, I'll spread¦365054 my net¦365056 over them.
+\q1 ≈I'll bring¦365059 them down like the birds¦365057 in the sky.
+\q1 →I'll discipline¦365060 them \add ?≈according¦365061 to what they report¦365061 back to their¦365062 council\add*.
+\q1
+\v 13 \add ≈They won't end well\add* because they've strayed from me.
+\q1 ≈Devastation \add ≈will hit\add* them because they've rebelled against¦365081 me.
+\q1 →I would have bought them back, but¦365077 they told lies about me.
+\q1
+\v 14 They don't¦365084 cry to me from their heart¦365088, \add ≈but\add* they wail on¦365088 their beds¦365093.
+\q1 They gather together for grain¦365096 and¦365084 new wine, \add but\add* they turn¦365099 away from me.
+\q1
+\v 15 \add ≈Although\add* I trained \add >them\add* and¦365106 \add ≈helped them become strong\add*,
+\q1 they¦365107 \add still\add* plot evil¦365109 against¦365106 me.
+\q1
+\v 16 They return, but not upward.
+\q1 They're like a slack bow.
+\q1 Their \add ≈leaders¦365120\add* will \add ≈die\add* by the sword¦365119 because¦365121 \add ≈they've been so insolent¦365121\add*.
+\q1 That's why Egypt¦365126 \add (Heb. Mitsrayim)\add* \add ≈will mock them\add*.
+\c 8
+\s1 Yisrael's rejection of God
+\rem /s1 The Lord Condemns Israel for Idol Worship; Israel Harvests the Whirlwind; Israel to Reap the Whirlwind; Israel's Apostasy
+\s4 Northern kingdom
+\q1
+\v 1 “\add ≈Blow\add* the trumpet—
+\q1 someone like a vulture is \add swooping\add* over Yahweh's¦365136 residence
+\q1 because¦365137 \add @Yahweh's people\add* have transgressed¦365138 my covenant¦365139
+\q1 and¦365140 rebelled¦365143 against¦365140 my law.
+\q1
+\v 2 They call out to me,
+\q1 ‘My god¦365147, we¦365148 in Yisrael¦365149 know¦365148 you¦365148.’
+\q1
+\v 3 Yisrael¦365152 has rejected¦365151 \add what's\add* good¦365153.
+\q1 An enemy¦365154 will chase after them.
+\q1
+\v 4 They appointed kings¦365159, but not through¦365161 me.
+\q1 ≈They've appointed leaders¦365162 but I didn't¦365160 know \add about it¦365171\add*.
+\q1 They've made idols¦365169 for themselves with their¦365165 gold¦365166 and silver¦365165
+\q1 so they'll \add ≈end up being destroyed\add*.”
+\q1
+\v 5 “Your calf \add ≈has been rejected¦365173\add*, Shomron¦365175 \add (Samaria¦365175)\add*.
+\q1 My anger¦365177 burns against them.
+\q1 For how long will they¦365183 be incapable of innocence¦365184,
+\q1
+\v 6 because¦365194 it came from Yisrael¦365187—a craftsman¦365189 made it.
+\q1 It's not God¦365192.
+\q1 That calf in Shomron¦365199 will end up in pieces,
+\q1
+\v 7 because they sow the wind and reap the whirlwind¦365204.
+\q1 The standing¦365206 grain¦365206 has no \add ≈heads\add*—it yields no flour¦365214.
+\q1 If it were to produce, strangers¦365217 would \add ≈grab\add* it \add anyway\add*.
+\q1
+\v 8 Yisrael¦365221 is swallowed¦365220 up.
+\q1 Now they're among¦365224 the nations¦365224 like a \add ≈cup that¦365226 no one likes\add*
+\q1
+\v 9 because they've gone up to Assyria¦365235—a wild donkey¦365236 all alone.
+\q1 Efrayim¦365239\add /Yisrael\add* has hired¦365240 lovers for herself.
+\q1
+\v 10 Even though they¦365248 hire lovers among¦365249 the nations¦365249, now I'll¦365251 gather¦365251 them together.
+\q1 They'll begin¦365252 to diminish under¦365254 the burden¦365254 of the king¦365255 of princes¦365256.
+\b
+\q1
+\v 11 Since Efrayim¦365261 has \add ≈set up multiple¦365260\add* altars for sin¦365263 offerings,
+\q1 they¦365264 have become¦365264 altars for their sinning¦365268.
+\q1
+\v 12 Even if I wrote¦365270 down my instructions¦365276 for them ten thousand times,
+\q1 they¦365280 would regard¦365280 them as something strange¦365279.
+\q1
+\v 13 As for my sacrificial gifts¦365283, they sacrifice meat¦365285 and eat¦365286 it,
+\q1 \add ≈but¦365286\add* Yahweh¦365287 doesn't accept¦365289 \add @their sacrifices\add*.
+\q1 Now he will remember¦365291 their \add ≈disobedience\add*
+\q1 ≈and punish¦365293 their sins¦365294.
+\q1 They will return¦365297 to Egypt¦365296.
+\b
+\q1
+\v 14 Yisrael¦365300 has forgotten¦365299 his maker¦365303 and¦365299 has built¦365304 palaces¦365305.
+\q1 ≈Yehudah¦365306 has fortified¦365309 \add ≈many\add* cities,
+\q1 \add ≈but¦365299\add* I'll¦365310 send fire into their cities—
+\q1 ≈it'll devour their fortresses¦365315.
+\c 9
+\s1 Punishment coming for Yisrael
+\rem /s1 Hosea Announces Punishment for Israel; Punishment for Israel; Punishment for Israel's Sin; Hosea Announces Israel's Punishment
+\s4 Northern kingdom
+\q1
+\v 1 Don't¦365318 celebrate, Yisrael¦365321, with joy like the peoples¦365326,
+\q1 because¦365327 you've¦365328 \add ≈prostituted¦365328 yourself¦365328\add*—forsaking your¦365330 god¦365330.
+\q1 ≈You've loved¦365331 the wages of a sex-worker on all the threshing¦365336 floors¦365336.
+\q1
+\v 2 The \add grain\add* threshing floor¦365339 and the winepress¦365340 won't¦365341 \add ≈provide enough\add*
+\q1 ≈and the \add ≈grape harvest\add* will fail them.
+\q1
+\v 3 \add @The people\add* won't remain¦365348 on¦365354 Yahweh's¦365350 land,
+\q1 instead, Efrayim¦365352\add /Yisrael\add* will return¦365351 to Egypt¦365353,
+\q1 ≈and they'll eat¦365356 \add ≈non-kosher\add* food in¦365354 Assyria¦365354.
+\b
+\q1
+\v 4 They won't pour out wine offerings to Yahweh¦365361,
+\q1 ≈and their sacrifices¦365368 won't please¦365365 him.
+\q1 To them, it'll be like the \add ≈food at a\add* funeral—
+\q1 everyone who eats it will become defiled.
+\q1 Their food will only be for themselves¦365375 to eat¦365374—
+\q1 it won't \add ≈be allowed\add* into Yahweh's¦365361 residence.
+\q1
+\v 5 \add So\add* what will you do on the day of a scheduled celebration,
+\q1 and on the day of a festival¦365392 for Yahweh¦365394?
+\q1
+\v 6 Listen, even if they¦365399 \add ≈avoid\add* destruction¦365400,
+\q1 Egypt¦365401 will gather¦365402 them.
+\q1 ≈Mof \add (Memphis¦365403)\add* \add city\add* will bury¦365404 them.
+\q1 Nettles will possess¦365408 their valuable silver¦365406.
+\q1 ≈Thornbushes will be in¦365410 their tents¦365410.
+\b
+\q1
+\v 7 The days of punishment¦365415 have come.
+\q1 ≈The days of retribution¦365418 have come.
+\q1 Let Yisrael¦365421 know these things.
+\q1 The prophet¦365423 is a fool,
+\q1 ≈the man \add ≈of the spirit¦365426\add* is insane,
+\q1 because of the \add ≈extent of your disobedience\add*
+\q1 ≈and \add ≡your\add* \add ≈intense\add* hostility.\x + \xo 9:7: \xt Luk 21:22.\x*
+\q1
+\v 8 The prophet¦365438 is the watchman¦365433 over Efrayim¦365434\add /Yisrael\add* with my god¦365437,
+\q1 \add but\add* the bird-catcher's \add #traps are\add* on all of his paths,
+\q1 and there's hostility in his god's house¦365447.
+\q1
+\v 9 They have deeply corrupted¦365452 themselves as in the time¦365453 of Gibeah¦365454.
+\q1 He will remember¦365455 their iniquity¦365456.
+\q1 ≈He will punish¦365457 their sins¦365458.\x + \xo 9:9: \xt Jdg 19:1-30.\x*
+\s1 The consequences of Yisrael's sin
+\rem /s1 Israel's Sin and Its Consequences
+\s4 Northern kingdom
+\q1
+\v 10 I found¦365463 Yisrael¦365464 like \add someone finding\add* grapes¦365461 \add there\add* in the wilderness¦365462.
+\q1 ≈Like the first fruit¦365465 on¦365462 the fig¦365466 tree¦365466 in its¦365467 first season¦365467, I saw¦365468 your ancestors¦365469.
+\q1 \add But¦365475\add* they came¦365471 to Baal¦365472-Peor¦365474 and they devoted themselves¦365475 to that shameful¦365476 \add >thing\add*.
+\q1 ≈They became detestable¦365478 like that which they loved¦365479.\x + \xo 9:10: \xt Num 25:1-5.\x*
+\q1
+\v 11 As for Efrayim\add /Yisrael\add*, their¦365484 splendour¦365484 will fly away like a bird—
+\q1 no birth¦365485, no pregnancy¦365486, and no conception¦365487.
+\q1
+\v 12 Even if they¦365492 bring¦365492 up their¦365495 children¦365495, I'll¦365496 \add ≈cause them all to die one by one\add*.
+\q1 ≈Yes, it certainly \add ≈won't end well\add* when I turn away from them!
+\b
+\q1
+\v 13 Efrayim¦365514, as I have seen¦365510, is like Tsor \add (Tyre¦365511)\add* planted¦365512 in¦365513 a meadow¦365513,
+\q1 \add ≈yet\add* Efrayim will bring¦365515 his children¦365519 out to the slaughterman.”
+\q1
+\v 14 Give them \add >something\add*, Yahweh¦365524—what will you give?
+\q1 Give them a womb that¦365532 miscarries¦365532, and breasts¦365533 \add ≈with no milk\add*.
+\s1 God's judgement of Yisrael
+\rem /s1 The Lord's Judgment on Israel
+\s4 Northern kingdom
+\q1
+\v 15 “All their evil¦365538 is in¦365539 Gilgal¦365539—indeed I came to hate¦365543 them there¦365542.
+\q1 Because of the wickedness¦365545 of their deeds¦365546, I'll¦365550 drive¦365548 them out of my house¦365547.
+\q1 I \add ≈won't¦365549 love¦365551 them any more\add*—all their leaders¦365554 are rebels¦365555.
+\q1
+\v 16 Efrayim¦365558 is stricken—it's root has withered \add so now\add* it can't¦365562 bear any fruit¦365561.
+\q1 ≈Even if they give¦365568 birth¦365568, I will kill¦365569 the precious ones of their¦365559 womb.”
+\s1 The prophet's message about Yisrael
+\rem /s1 The Prophet Speaks about Israel
+\s4 Northern kingdom
+\q1
+\v 17 My god¦365575 will reject¦365574 them because¦365576 they¦365578 haven't listened¦365578 to him.
+\q1 →They will become wanderers¦365581 among¦365582 the nations¦365582.
+\c 10
+\rem /s1 The Lord's Judgment against Israel; God's judgement on Israel; Israel's Sin and Captivity
+\q1
+\v 1 Yisrael¦365587 is a luxuriant¦365586 vine that produces his fruit.
+\q1 →The more his fruit increased¦365592, the more altars¦365595 he built.
+\q1 ≈As his land prospered¦365596, he improved his \add sacred¦365599\add* pillars¦365599.
+\q1
+\v 2 Their heart¦365602 is deceitful.
+\q1 →Now they¦365604 must¦365604 bear their guilt¦365604.
+\q1 He will break¦365606 down their altars¦365607.
+\q1 ≈He'll destroy¦365608 their pillars¦365609.
+\b
+\q1
+\v 3 Now they'll say, “We don't have any king,
+\q1 because¦365617 we don't \add ≈respect\add* Yahweh¦365622,
+\q1 and what \add ≈advantage would it be to us to have a king\add*?”
+\q1
+\v 4 They speak mere words¦365633.
+\q1 They make agreements with worthless promises.
+\q1 So judgement springs¦365638 up like poisonous¦365639 weeds¦365639 in the furrows¦365642 of a field¦365643.
+\q1
+\v 5 The inhabitants¦365649 of Shomron¦365650 \add (Samaria)\add* will be afraid¦365648 \add about what will happen\add* to the calf of Beyt¦365646-Aven.
+\q1 Indeed, its people¦365655 will mourn¦365653 over it, as will its idolatrous¦365656 priests¦365656 who had rejoiced over it
+\q1 and over its splendour¦365661 because¦365651 it's departed from them.
+\q1
+\v 6 The thing itself¦365669 will be carried¦365671 to Assyria¦365670 as tribute¦365672 for the great¦365674 king¦365673.
+\q1 Efrayim¦365676 will receive¦365677 shame¦365675,
+\q1 ≈and¦365678 Yisrael¦365679 will be ashamed¦365678 of its¦365680 idol.
+\b
+\q1
+\v 7 The king¦365684 of Shomron¦365683 will be \add ≈removed\add*,
+\q1 like a twig \add ≈getting carried out of sight by a river\add*.
+\q1
+\v 8 The high¦365693 places¦365693 of Aven, the \add place\add* of Yisrael's¦365696 sin¦365695, will be destroyed¦365692.
+\q1 ≈Thorns and thistles will grow up on their¦365702 altars¦365702.
+\q1 Then¦365692 they'll say¦365703 to the mountains¦365704, ‘Cover us!’
+\q1 ≈and to the hills¦365706, ‘Fall on us.’\x + \xo 10:8: \xt Luk 23:30; Rev 6:16.\x*
+\s1 God coming punishment for Yisrael
+\rem /s1 The Lord Pronounces Judgment on Israel
+\s4 Northern kingdom
+\q1
+\v 9 “\add ≈Yes,\add* Yisrael¦365714, you've¦365713 been sinning since¦365711 the \add ≈time¦365711\add* of Gibeah¦365712.\x + \xo 10:9: \xt Jdg 19:1-30.\x*
+\q1 There they¦365716 have remained¦365716.
+\q1 Won't the war against the sons¦365724 of injustice¦365725 overtake¦365719 them in¦365720 Gibeah?
+\q1
+\v 10 When \add ≈I'm ready\add*, I'll¦365728 discipline¦365728 them,
+\q1 and the nations will be gathered¦365729 against¦365730 them when they're \add ≈taken in¦365732 chains\add* for their¦365734 two¦365733 sins.
+\b
+\q1
+\v 11 Efrayim¦365749 is a trained¦365739 heifer¦365738 that¦365740 loves to thresh¦365741 and¦365742 I spared her¦365747 fair neck,
+\q1 but¦365737 I will harness Efrayim.
+\q1 ≈Yehudah¦365751 will plough.
+\q1 ≈Yakov will harrow¦365752 \add the ground\add* for himself.
+\q1
+\v 12 Sow righteousness for yourselves.
+\q1 →Harvest in accordance¦365761 with loyal¦365763 commitment.
+\q1 Break up your fallow ground¦365766 because it's time¦365767 to seek Yahweh¦365771,
+\q1 →until he¦365774 comes and rains righteousness on you.
+\q1
+\v 13 You have ploughed wickedness¦365781 \add and\add* harvested injustice¦365782.
+\b
+\q1 You've eaten¦365784 the fruit¦365785 of lies
+\q1 because¦365788 you¦365790 trusted¦365790 in your \add own\add* way¦365791—in your many warriors¦365793.
+\q1
+\v 14 Therefore a \add ≈confused alarm will sound\add* among¦365797 your people¦365797 and¦365795 all your fortresses¦365800 will be destroyed,
+\q1 ≈just like Shalman¦365803 destroyed Beyt¦365804-Arbel¦365805 on¦365797 the day¦365806 of battle¦365807 when mothers¦365808 were dashed¦365812 to pieces¦365812 with¦365797 their children¦365811.
+\q1
+\v 15 Then it will also be done to you¦365816, Beyt-El, because of your¦365822 great wickedness¦365822.
+\q1 At dawn, Yisrael's king¦365826 will be \add ≈destroyed\add*.”
+\c 11
+\s1 God's love for his disobedient people
+\rem /s1 God's Love for Israel; God's Compassion Despite Israel's Ingratitude; God's Love for His Rebellious People; The Lord's Love for Israel
+\s4 Northern kingdom
+\q1
+\v 1 “When Yisrael¦365831 was a child I loved¦365832 him¦365832,
+\q1 and I called my son out of Egypt¦365833 \add (Heb. Mitsrayim)\add*.\x + \xo 11:1: \xt Exo 4:22; Mat 2:15.\x*
+\q1
+\v 2 The more \add ?@the godly people\add* called them, the more they went¦365840 away from them.
+\q1 They kept sacrificing¦365843 to the Baals¦365842
+\q1 ≈and burning¦365845 incense for idols¦365844.
+\q1
+\v 3 Yet it was me who taught¦365848 Efrayim¦365849\add /Yisrael\add* to walk¦365848.
+\q1 I took¦365850 them by their¦365853 arms, \add ≈but¦365847\add* they¦365855 didn't¦365854 know that I healed¦365857 them.
+\q1
+\v 4 I led them with ropes¦365859 of human¦365860 kindness—
+\q1 with \add iron\add* bands¦365862 of love¦365863.
+\q1 I was to them like someone who \add ≈loosened\add* the yoke on¦365862 their¦365869 jaws,
+\q1 and I bent down to them and fed them.
+\b
+\q1
+\v 5 They won't return to Egypt¦365879,
+\q1 \add ≈but¦365880\add* Assyria¦365880 will become their¦365882 king¦365882,
+\q1 because¦365883 they¦365884 refused¦365884 to return to me.
+\q1
+\v 6 The sword¦365888 will whirl¦365887 against their cities¦365889,
+\q1 and destroy the \add locking\add* bars on¦365889 their gates¦365891,
+\q1 and devour¦365892 them because¦365893 of their own plans.
+\q1
+\v 7 My¦365897 people¦365895 are \add ≈insistent\add* on turning¦365897 away from me.
+\q1 Though they¦365901 call to the highest \add >one\add*, he¦365904 won't¦365903 lift \add them\add* up.
+\b
+\q1
+\v 8 How can I give¦365908 you up, O Efrayim¦365909?
+\q1 ≈How can I hand¦365910 you over, O Yisrael¦365911?
+\q1 How can I make you like Adamah¦365914?
+\q1 ≈How can I make you like Tsevoim?
+\q1 My heart¦365919 is turned over within¦365918 me—
+\q1 ≈all my compassions¦365922 are aroused.\x + \xo 11:8: \xt Deu 29:23.\x*
+\q1
+\v 9 I won't put my fierce anger \add ≈into action\add*.
+\q1 I won't destroy¦365930 Efrayim¦365931\add /Yisrael\add* again,
+\q1 because¦365932 I'm God¦365933
+\q1 and not a human¦365937,
+\q1 the holy \add >one\add* \add ≈among you\add*,
+\q1 and I won't come in¦365938 anger.
+\b
+\q1
+\v 10 They'll \add ≈decide to follow\add* Yahweh¦365945—he'll roar like a lion¦365947.
+\q1 When he roars, his children¦365954 will come¦365953 trembling¦365953 from the west.
+\q1
+\v 11 They will come trembling¦365957 like a bird from Egypt¦365959—
+\q1 like a dove¦365960 from Assyria¦365962.
+\q1 I'll¦365963 settle¦365963 them in their¦365966 homes¦365966
+\mi That's what Yahweh¦365969 declares.
+\s1 Judgement on Yisrael and Yehudah
+\rem /s1 Charges against Israel and Judah; Israel and Judah Are Condemned; Israel's Sin
+\s4 Both kingdoms
+\q1
+\v 12 Efrayim has surrounded me with lies,
+\q1 ≈and the \add ≈people\add* of Yisrael with deceit,
+\q1 \add ≈but\add* Yehudah still goes about with God,
+\q1 ≈and is faithful to the holy \add >one\add*.”
+\c 12
+\q1
+\v 1 Efrayim¦365975\add /Yisrael¦365978\add* feeds on¦365974 the wind
+\q1 ≈and pursues the east wind all day.
+\q1 He multiplies lies and violence.
+\q1 They make a covenant with¦365974 Assyria
+\q1 and olive oil is carried to Egypt.
+\b
+\rem /s1 The Long History of Rebellion
+\q1
+\v 2 Yahweh also has a dispute with Yehudah,
+\q1 and will punish Yakov \add ≈for what they've done\add*.
+\q1 He will repay \add #them\add* according to \add ≈how they behaved\add*.
+\q1
+\v 3 In the womb he took his brother by the heel,
+\q1 and in his manhood he struggled with God.\x + \xo 12:3: \xt Gen 25:26.\x*
+\q1
+\v 4 He struggled¦366033 with the messenger and prevailed.
+\q1 He wept and begged for his favour.
+\q1 He found \add @Yahweh\add* at¦366027 Beyt-El
+\q1 and he spoke with us there.
+\q1
+\v 5 Yahweh, the god of armies.
+\q1 Yahweh is his \add ≈famous\add* name.
+\q1
+\v 6 But¦366057 you must return to your god.
+\q1 Keep¦366060 loyal commitment and justice,
+\q1 and wait continually for your god.
+\s1 The other still judging
+\rem /s1 Further Words of Judgment
+\s4 Northern kingdom
+\q1
+\v 7 A merchant has false scales in¦366065 his hands.
+\q1 ≈He loves to oppress.
+\q1
+\v 8 Efrayim\add /Yisrael\add* said, “\add ≈Fantastic.\add* I've become rich.
+\q1 I've found wealth for myself.
+\q1 In all my labours they won't find \add ≈disobedience\add* in me,
+\q1 which would be sin.”
+\b
+\q1
+\v 9 “I'm Yahweh your god \add ≈since I rescued you from\add* Egypt.
+\q1 I'll make you live in shelters again,
+\q1 as in the days of that¦366100 particular festival.\x + \xo 12:9: \xt Lev 23:42-43.\x*
+\b
+\q1
+\v 10 I spoke to the prophets,
+\q1 and \add ≈gave them many\add* visions.
+\q1 By the hand of the prophets I gave parables.”
+\q1
+\v 11 If there's \add ≈disobedience\add* in Gilead,
+\q1 surely they're worthless.
+\q1 In Gilgal they sacrifice bulls.
+\q1 Their altars also will be like piles of stones beside the furrows in the fields.
+\b
+\q1
+\v 12 Yakov fled to Syria \add (Heb. Aram)\add*.
+\q1 Yisrael worked \add to earn\add* a wife,
+\q1 and for a wife, he kept sheep.\x + \xo 12:12: \xt Gen 29:1-20.\x*
+\q1
+\v 13 Yahweh used the prophet \add Mosheh\add* to bring Yisrael¦366153 out of Egypt,
+\q1 and so \add @Yisrael\add* \add ≈was preserved\add* by a prophet.\x + \xo 12:13: \xt Exo 12:50-51.\x*
+\q1
+\v 14 Efrayim has provoked \add ≈bitter\add* anger,
+\q1 so his master will \add ≈hold him to account for bloodshed\add*
+\q1 and will turn his \add ≈insults\add* back onto himself.
+\c 13
+\s1 Final judgement on Yisrael
+\rem /s1 Relentless Judgment on Israel; Final Judgment on Israel; The Lord's Anger Against Israel; The Lord's Anger against Israel
+\s4 Northern kingdom
+\q1
+\v 1 “When Efrayim¦366182 spoke¦366181, there was trembling¦366183.
+\q1 He \add ≈promoted\add* himself in¦366186 Yisrael¦366186,
+\q1 but¦366187 he became¦366187 guilty¦366187 through Baal and died¦366189.
+\q1
+\v 2 Now they \add ≈disobey\add* \add God\add* more and more,
+\q1 and they make cast metal images¦366197 for themselves—
+\q1 idols¦366200 skillfully¦366199 made from their¦366203 silver¦366198—
+\q1 ≈all of them the work¦366201 of craftsmen¦366202.
+\q1 They say about them, ‘Those who sacrifice¦366207 people, kiss¦366210 calves¦366209.’
+\q1
+\v 3 Therefore they'll be like the morning¦366216 clouds¦366214,
+\q1 ≈and like the dew that goes¦366219 away early¦366218,
+\q1 like the chaff¦366220 that swirls from the threshing¦366222 floor¦366222,
+\q1 ≈and like smoke¦366223 \add exiting an open\add* window¦366224.
+\q1
+\v 4 \add ≈But¦366226\add* I'm your god¦366228 Yahweh¦366227 \add who brought you out\add* of Egypt¦366230,
+\q1 and¦366226 you were to \add ≈consider\add* no god except¦366237 me,
+\q1 because there's¦366236 no saviour¦366235 other than me.
+\q1
+\v 5 I knew¦366240 you¦366240 \add out there\add* in the wilderness¦366241,
+\q1 in the \add ≈region¦366242\add* of drought¦366243.
+\q1
+\v 6 When they had their pasture¦366245, then they became full.
+\q1 They were filled, and their heart¦366249 became lifted up,
+\q1 so they \add just\add* forgot¦366253 me.
+\q1
+\v 7 So¦366255 I will become like a lion¦366259 to them.
+\q1 Like a leopard¦366260, I'll¦366264 lurk along the path¦366263.
+\q1
+\v 8 I'll attack them like a bear that's been robbed¦366268 of her cubs.
+\q1 ≈I'll rip open their¦366271 chests and devour¦366272 them there¦366273 like a lion¦366274—
+\q1 ≈like a wild animal¦366275 would tear them apart.
+\b
+\q1
+\v 9 He destroys¦366279 you¦366279, Yisrael¦366280.
+\q1 because¦366281 you're against me—against your¦366284 helper¦366284.
+\q1
+\v 10 Where's¦366286 your king now to save you in all your cities¦366292,
+\q1 and your \add other\add* leaders¦366300
+\q1 that you'd talked about, saying, ‘Give me a king and princes¦366300’?\x + \xo 13:10: \xt 1Sam 8:5-6.\x*
+\q1
+\v 11 I gave you a king in my anger,
+\q1 then I took him away in my rage.\x + \xo 13:11: a \xt 1Sam 10:17-24; \xo b \xt 1Sam 15:26.\x*
+\b
+\q1
+\v 12 Efrayim's¦366313 \add ≈disobedience\add* is \add ≈wrapped\add* up.
+\q1 His sin¦366315 is stored¦366314 up.
+\q1
+\v 13 Pains of childbirth¦366333 will come¦366319 on¦366332 him,
+\q1 \add but\add* he's an unwise son,
+\q1 because¦366326 he \add ≈fails to\add* present¦366331 himself¦366331 at¦366332 the right time¦366328 when the womb opens.
+\q1
+\v 14 Will I ransom¦366337 them from the hand of \add ≈the grave\add*?
+\q1 ≈Will I redeem¦366339 them from death?
+\q1 Where, O Death, are your plagues¦366341?
+\q1 ≈Where, O Grave, is your destruction¦366345?
+\q1 My eyes \add ≈won't be displaying any\add* compassion¦366347.”\x + \xo 13:14: \xt 1Cor 15:55.\x*
+\q1
+\v 15 Though he flourishes¦366356 among his brothers¦366355, an east wind will come.
+\q1 Yahweh's¦366360 wind will come up from the wilderness¦366361.
+\q1 His fountain¦366364 will dry up,
+\q1 and his spring¦366366 will be parched¦366365.
+\q1 It will plunder¦366368 every¦366370 precious¦366373 object from his treasury¦366369.
+\q1
+\v 16 Samaria will be held guilty,
+\q1 because she's rebelled against her god.
+\q1 They will fall by the sword.
+\q1 Their young children will be dashed to pieces,
+\q1 ≈and their pregnant women will be ripped open.
+\c 14
+\s1 The mercy of Hoshea of Israelis
+\rem /s1 A Plea for Repentance; Repentance to Bring Blessing; Healing for the Repentant; Hosea's Plea to Israel; Repentance and restoration
+\s4 Northern kingdom
+\q1
+\v 1 Yisrael, return to your god¦366380 Yahweh,
+\q1 because¦366378 you've stumbled as a result of your \add ≈iniquity\add*.
+\q1
+\v 2 \add ≈Prepare what you're going to say\add* and return¦366390 to Yahweh¦366393.
+\q1 Tell him, “Take away all \add &our\add* \add ≈disobedience\add* and accept what is good,
+\q1 so that we can offer \add ≈praise from\add* our lips.
+\q1
+\v 3 Assyria \add ≈can't\add* save us.
+\q1 We won't ride on \add war-\add*horses.
+\q1 Nor will we say¦366407, ‘Our god,’ again to \add ≈anything that we've made ourselves\add*
+\q1 because \add &this\add* fatherless \add nation\add* finds compassion in you¦366411.”
+\q1
+\rem /s1 Assurance of Forgiveness; The Lord Promises New Life for Israel
+\v 4 “I will heal their waywardness.
+\q1 I'll love them freely
+\q1 because my anger has turned away from them.
+\q1
+\v 5 To Yisrael, I will be like the dew.
+\q1 He will blossom like a lily flower
+\q1 ≈and take root like a cedar tree in Lebanon.
+\q1
+\v 6 His shoots will sprout.
+\q1 His beauty will be like that of olive trees,
+\q1 ≈and¦366459 his fragrance like the cedars in Lebanon¦366461.
+\q1
+\v 7 Those who live in \add @Yisrael's\add* shadow will return.
+\q1 They will revive like the grain
+\q1 and blossom like the grapevine.
+\q1 His fame will be like the wine of Lebanon¦366471.
+\q1
+\v 8 Efrayim, what more do I have to do with¦366476 idols?
+\q1 It's me who answer and¦366479 look after him.
+\q1 I'm like a flourishing cypress \add tree\add*—
+\q1 your fruit comes from me.”
+\s1 Conclusion
+\rem /s1 Conclusion
+\q1
+\v 9 Let \add ≈those\add* who are wise, understand these things.
+\q1 ≈Anyone who's discerning, let \add #them\add* know them
+\q1 because Yahweh's ways are right,
+\q1 and¦366495 righteous \add >people\add* will \add ≈follow\add* them,
+\q1 but¦366495 transgressors will stumble in them.

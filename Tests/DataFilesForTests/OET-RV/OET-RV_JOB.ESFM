@@ -1,0 +1,3466 @@
+\id JOB - Open English Translation—Readers' Version (OET-RV) v0.1.16
+\usfm 3.0
+\ide UTF-8
+\rem ESFM v0.6 JOB
+\rem WORDTABLE OET-LV_OT_word_table.tsv
+\h Yob
+\toc1 Iyyov (Job)
+\toc2 Iyyov
+\toc3 Iyyov
+\mt1 Iyyov
+\mt2 (Job)
+\is1 Introduction
+\ip \bk The account of Iyyov\bk* (but commonly as known as ‘Job’ which is the English evolution of the Germanic adaptation of the Greek adaptation Ἰώβ (Iōb) of his actual Hebrew name ‘אִיּוֹב’) is an account about a godly man who was struck by a series of tragedies: all his children and their families were killed, all his extensive wealth was lost, and then he was struck with a terrible disease. By means of this seven-part account, the reader is informed about how Iyyov and his friends react concerning those tragedies. Then finally, God reveals himself to Iyyov and the others.
+\ip Near the beginning of this document, God is told by Satan that it's not good governing of his people if he always rewards those who obey him. What if people only obey God because they're after the material blessings that would always follow. This would mean that their obedience no longer comes from their hearts. Yes, that's what Satan said about Iyyov, so God allowed Satan to test Iyyov's heart to see if he'd continue to trust God in times of suffering and misery.
+\ip Iyyov's traditional friends assumed that he must be suffering because he sinned. Surely he wouldn't suffer all that if he'd been honest and righteous. None of them could understand why God might allow sickness or disease to strike someone if he was truly a righteous person, but this is too simplistic for Iyyov to accept. Therefore he challenges God to present his case. In all of that, Iyyov's faith in God isn't lost, but he desires to regain his honour as an honest and godly person.
+\ip God doesn't answer Iyyov's questions but he responds by displaying his own power and wisdom and knowledge. So then Iyyov acknowledges God as the wise creator and requests forgiveness for his angry words.
+\ip The final segment of this account explains how Iyyov was restored to health, peace, and prosperity (all the elements of ‘shalom’/‘שָׁלוֹם’), and how he actually prospered even more than before. It also shows how God was angry at Iyyov's friends, because they had so much to say when none of them actually knew why Iyyov had suffered—only Iyyov had really sensed that God and his eventual (but eternal) justice is greater than simplistic proverbs and trite beliefs.
+\iot Main components of this account
+\io1 SECTION ONE: Introduction \ior 1:1–2:13\ior*
+\io1 SECTION TWO: Dialogues between Iyyov and his friends \ior 3:1–27:23\ior*
+\io2 a. Iyyov's complaint \ior 3:1-26\ior*
+\io2 b. The first dialogue \ior 4:1–14:22\ior*
+\io2 c. The second dialogue \ior 15:1–21:34\ior*
+\io2 d. The third dialogue \ior 22:1–27:23\ior*
+\io1 SECTION THREE: Praising wisdom \ior 28:1-28\ior*
+\io1 SECTION FOUR: Iyyov's final statement \ior 29:1–31:40\ior*
+\io1 SECTION FIVE: Elihu's speech \ior 32:1–37:24\ior*
+\io1 SECTION SIX: God answers Iyyov \ior 38:1–42:6\ior*
+\io1 SECTION SEVEN: The final restoration \ior 42:7-17\ior*
+\rem This is still a very early look into the unfinished text of the Open English Translation of the Bible. Please double-check the text in advance before using in public.
+\ie
+\c 1
+\ms1 SECTION ONE: The introduction
+\mr (1:1–2:13)
+\s1 Iyyov's prosperous life
+\rem /s1 Prologue; Job and His Family; Satan Tests Job
+\p
+\v 1 \add Once\add* there was a man called Iyyov¦232252 \add (Job)\add* who lived in¦232249 the Uz¦232251 region¦232249. \add He\add* was blameless¦232258 and righteous—both obeying God¦232261 and avoiding evil.
+\v 2 He had seven¦232267 sons¦232268 and¦232269 three¦232269 daughters¦232270,
+\v 3 and he owned 7,000 sheep¦232277, 3,000 camels¦232280, 1,000 cattle, and 500 donkeys¦232288, as well as many slaves. Iyyov was \add richer\add* than \add anyone else\add* who lived in the area east \add of the Jordan River\add*.
+\v 4 \add Iyyov's\add* sons¦232303 \add regularly\add* held feasts in their¦232312 homes, and whenever any of them held a feast, he would invite¦232310 all his brothers and sisters¦232312 to share the meal with him.
+\v 5 \add Then¦232318 once a feast¦232322 was over\add*, Iyyov would send \add for his children\add* and consecrate them—he got up early¦232326 in the morning¦232327 and offered burnt¦232329 offerings for each of them, because¦232319 Iyyov said, “Perhaps my \add children\add* have sinned¦232336 and cursed\f + \fr 1:15 \ft Literally ‘blessed’ but it's possible that the original reading was ‘cursed’ and that scribes changed it to ‘blessed’ in order to avoid the uncomfortable concept of a person cursing God. Traditional manuscripts of the Hebrew Bible don't have a marginal notation about this (as they do in the case of 7:20), but LXX uses ‘ἐνενοήθησαν κακά’ which can be rendered as ‘have thought evil things’ and the Peshitta (Syriac) uses ‘reviled’. Many other translations also use ‘cursed’ since this is the kind of change that scribes are known to have made in similar cases.\f* God¦232339 in their¦232340 hearts¦232340.” \add ≈It was Job's regular habit to\add* \add intercede for his children\add*.
+\s1 Satan's first attack on Iyyov
+\rem /s1 Attack on Job's Character; Job's First Test
+\p
+\v 6 It was the day¦232350 that God's sons¦232352\f + \fr 1:6 \ft It's not clear from the text who these are.\f* came to present¦232354 themselves¦232354 to Yahweh¦232357, and the adversary¦232361 (Satan) was also there among¦232362 them.\x + \xo 1:6: \xt Gen 6:2.\x*
+\v 7 Yahweh¦232365 asked him, “Where have you¦232370 just come from?”
+\p “I have come from the earth¦232378, where¦232369 I was travelling around¦232379 \add to see what was going on¦232380\add*.” Satan replied.
+\p
+\v 8 “Have you¦232387 \add noticed\add* my servant¦232391 Iyyov¦232392?” Yahweh¦232383 asked. “There's no one else like him¦232395 on the \add whole\add* earth¦232396—a blameless¦232398 and righteous man¦232397 who obeys me God¦232401 and avoids \add anything\add* evil¦232403.”
+\p
+\v 9 “Does Iyyov¦232413 \add get\add* nothing¦232411 \add back\add* for respecting God¦232414?” Satan answered¦232405 Yahweh¦232409.
+\v 10 “Don't you \add constantly protect\add* him and his household¦232424 and everything¦232431 that's his? You've blessed¦232434 \add what he works on\add*, and his \add livestock¦232435 have multiplied prolifically\add*.
+\v 11 However, just stretch¦232440 out your hand¦232443 and¦232439 \add ruin\add* everything he has, then¦232439 \add we'll see that\add* he'll curse¦232456 you¦232456 to your face¦232455.”
+\p
+\v 12 “Listen, \add I'll cede you control over\add* everything he has,” Yahweh replied. “Only \add just\add* don't¦232472 do¦232472 \add anything\add* against \add Iyyov himself\add*.” \add So¦232458\add* the adversary went¦232476 away from Yahweh's¦232459 \add presence¦232479\add*.
+\s1 Satan destroys Iyyov's wealth and children
+\rem /s1 Job Loses Property and Children; Job's Children and Wealth Are Destroyed
+\p
+\v 13 \add So¦232482 one\add* day¦232483 when \add Iyyov's\add* sons¦232484 and his daughters¦232485 were eating¦232486 and drinking¦232487 wine in their¦232490 eldest brother's¦232490 house¦232489,
+\v 14 a messenger¦232493 came¦232494 to Iyyov¦232497 and \add reported\add*, “\add While\add* the oxen were plowing¦232501 and the donkeys¦232502 were feeding \add nearby\add*,
+\v 15 the Sabeans¦232509 attacked¦232508 with their swords¦232517 and¦232508 stole them \add all\add*. They killed all your slaves except that I \add managed to\add* escape¦232518 to tell you.”
+\p
+\v 16 \add While\add* he was still speaking¦232529, another \add messenger\add* came¦232531 and said¦232532, “The fire¦232533 of God¦232534 fell from the sky and burnt¦232539 up the sheep¦232540 and the \add shepherds\add*. \add Only ashes are left\add*, except that I alone¦232547 escaped¦232543 to tell you.”
+\p
+\v 17 \add While\add* he was still speaking¦232554, another \add one\add* came¦232556 and \add explained\add*, “The Chaldeans formed¦232559 into three¦232561 bands and \add raided\add* the camels¦232566 and took¦232567 them, and they attacked the slaves with their swords¦232574, and I'm the only one who escaped¦232575 to \add come and\add* tell you.”
+\p
+\v 18 \add While\add* he was still speaking¦232585, another \add messenger\add* came¦232587 and said¦232588, “Your sons¦232589 and daughters¦232590 were eating¦232591 and drinking¦232592 wine in the house¦232594 of their¦232595 eldest brother¦232595
+\v 19 when \add suddenly\add* a \add freak\add* wind¦232599 came¦232601 from across¦232603 the desert and struck¦232605 the house¦232608. It \add collapsed\add* on¦232606 the young¦232612 people¦232612 and \add killed them\add*, and only I alone¦232618 have escaped¦232614 to tell you.”
+\p
+\v 20 Then Iyyov¦232623 stood up and tore his robe¦232627 and shaved¦232628 his head¦232631. Then he knelt with his face to the ground and worshipped¦232634 \add God\add*,
+\v 21 saying, “I came¦232638 naked from my mother's¦232641 womb, and I will \add leave this life\add* naked. Yahweh gave¦232647, and Yahweh has taken¦232649. May Yahweh's¦232646 \add reputation¦232651???\add* be blessed¦232653.”
+\p
+\v 22 \add Through\add* all of that, Iyyov¦232661 didn't¦232658 \add disobey\add* God¦232666 or \add accuse him of being evil\add*.
+\c 2
+\s1 Satan's second attack on Iyyov
+\rem /s1 Job's Second Test; Attack on Job's Health; Satan Tests Job Again
+\p
+\v 1 It was the day¦232670 that God's sons¦232672 came to present themselves¦232674 to Yahweh¦232677 and the adversary¦232681 (Satan) was also there among¦232682 them.
+\v 2 “Where have you come from?” Yahweh¦232689 \add asked\add* the adversary.
+\p “From wandering on the earth¦232703 and going back and forth on it,” \add he\add* answered¦232696.
+\p
+\v 3 “Have you \add noticed\add* my servant¦232716 Iyyov¦232717 \add (Job)\add*?” Yahweh¦232708 asked Satan, “because¦232718 there's¦232719 no one like him on¦232731 the earth¦232721—a blameless¦232723 and righteous man¦232722, \add striving to obey\add* God¦232726 and turning from evil¦232728. And he's still¦232729 holding firmly to his integrity¦232731, even though you incited¦232732 me against him, to \add ruin¦232734\add* him for nothing.”
+\p
+\v 4 “Skin¦232741 for skin,” replied the adversary¦232738, “\add actually, a person will give¦232750 everything they have to save their\add* life¦232752.
+\v 5 However, just \add reach out\add* and touch¦232759 his flesh¦232765 and bones¦232762, \add and see\add* if he¦232772 doesn't curse¦232772 you¦232772 to your face¦232771.”
+\p
+\v 6 “\add Listen\add*,” Yahweh¦232775 said¦232774 to \add him\add*, “\add I'll give you power¦232780 over him\add*, but¦232774 you \add must\add* preserve¦232785 his life¦232784.”
+\p
+\v 7 So¦232793 the adversary¦232788 went¦232787 away from Yahweh's¦232791 \add presence¦232790\add*, and¦232787 he \add infected\add* Iyyov¦232795 with¦232796 bad¦232797 boils from the sole of his foot¦232799 to \add the top of his head¦232802\add*.
+\v 8 \add Iyyov picked up a piece of broken pottery\add* to \add scratch\add* himself¦232808 with \add as\add* he sat \add down\add* in the middle¦232812 of a pile of ashes¦232814.
+\p
+\v 9 “Are you¦232819 still¦232819 holding tightly onto your¦232821 integrity¦232821?” his wife \add asked\add* him. “\add Just\add* curse God¦232823 and¦232824 die¦232824.”
+\p
+\v 10 “You're talking¦232831 like a foolish¦232830 \add person\add*,” Iyyov \add ≈replied\add*. “Should we \add only\add* accept good from God¦232838 and¦232826 not receive the bad?” In all of that, Iyyov didn't¦232842 sin \add in¦232851 what he said\add*.
+\s1 Iyyov's three friends come
+\rem /s1 Job's Friends Come; Job's Three Friends Share His Anguish; Job's Three Friends
+\p
+\v 11 \add When\add* Iyyov's three¦232855 friends¦232857 heard¦232854 \add about all the troubles¦232862 that¦232864 had happened to\add* him, they each came¦232866 from his place¦232868: Elifaz¦232869 from Teman¦232870, Bildad¦232871 from Shuah, and Zofar¦232873 from Naamah¦232874. They gathered together¦232876 to come¦232864 to console¦232878 and comfort¦232881 him.
+\v 12 \add but¦232883 when\add* they saw him from a distance¦232887, they \add barely\add* recognised¦232889 him. They \add wailed loudly\add*, and they \add ripped their own clothes\add*, and they threw¦232896 dust \add into the air so that it would fall\add* on their heads¦232900. \add (All three of those were traditional signs of mourning.)\add*
+\v 13 Then¦232903 they sat with him \add there¦232910\add* on the ground¦232905 for seven days¦232907 and¦232903 seven nights¦232909 without saying a \add single\add* word¦232914 to \add Iyyov\add* because¦232915 they had seen that \add his\add* suffering¦232920 was extreme.
+\c 3
+\ms1 SECTION TWO: Iyyov talking with his friends
+\mr (3:1–27:33)
+\s1 Iyyov's complaint
+\rem /s1 Job's Complaint to God; Job Speaks; Job's First Speech; Job Curses the Day He Was Born; Job's complaint to God
+\p
+\v 1 After¦232923 that, Iyyov¦232927 spoke up and¦232931 cursed¦232931 \add the\add* day¦232934 \add of\add* his \add conception\add*.\x + \xo 3:1-19: \xt Jer 20:14-18.\x*
+\p
+\v 2 He¦232938 said¦232939:
+\q1
+\v 3 May the day¦232942 on which I was born perish¦232941,
+\q1 and¦232946 the night¦232946 that¦232944 said¦232947, ‘A boy has been conceived¦232948.’
+\q1
+\v 4 May that day¦232951 be dark.
+\q1 May God¦232958 not search for it from above¦232959
+\q2 and may no light shine¦232962 on it.
+\q1
+\v 5 May darkness¦232967 and a dark shadow¦232968 claim it.
+\q1 ≈May a cloud¦232972 remain over it.
+\q1 May the blacknesses of the day¦232975 terrify¦232973 it.
+\q1
+\v 6 May gloom¦232980 take¦232979 that night¦232977.
+\q1 May it not be happy among¦232984 the days¦232984 of the year¦232985.
+\q1 May it not enter into the number¦232986 of months¦232987.
+\q1
+\v 7 Listen, may that night¦232993 be barren¦232996.
+\q1 May a happy shout never enter it.
+\q1
+\v 8 May¦233009 those who curse days, curse that one—
+\q1 \add yes,\add* those \add people\add* who are skillful enough to wake up the large sea monster.
+\q1
+\v 9 May the stars¦233012 of its twilight¦233013 be dark.
+\q1 May it stay waiting for the light¦233016 that never \add arrives\add*.
+\q1 May it not see the dawn \add breaking\add*.
+\q1
+\v 10 Because it¦233027 didn't¦233026 close the doors¦233028 of my \add mother's\add* womb,
+\q1 to hide the sorrow from my eyes¦233032.
+\b
+\q1
+\v 11 Why didn't¦233035 I die¦233037 \add at birth¦233036\add*?
+\q1 ≈\add Just\add* come out then stop breathing?
+\q1
+\v 12 Why was I accepted onto \add her lap\add*?
+\q1 ≈And onto those breasts¦233047 to suckle?
+\q1
+\v 13 \add Yes,\add* I'd be peacefully¦233055 lying down now.
+\q1 ≈I would have slept¦233056 and¦233055 been at rest,
+\q1
+\v 14 along with kings¦233064 and¦233065 counsellors¦233065 of the earth¦233066—
+\q1 \add yes,\add* those¦233067 who built monuments for themselves¦233069.
+\q1
+\v 15 Or \add been asleep\add* with princes¦233074 \add and their\add* gold¦233075—
+\q1 those¦233077 who filled¦233077 their houses¦233078 with silver¦233079.
+\q1
+\v 16 I might never have been—like a stillborn¦233083 child¦233083.
+\q1 ≈Like some infants¦233087 who never see the light¦233091.
+\q1
+\v 17 Wicked \add people\add* don't cause any more trouble there.
+\q1 Those who've run out of strength¦233100 rest there.
+\q1
+\v 18 Prisoners are able to relax together.
+\q1 They no longer hear¦233106 the voice¦233107 of their taskmaster¦233108.
+\q1
+\v 19 Ordinary and famous \add people are all\add* alike there¦233112.
+\q1 And slaves¦233114 \add there\add* no longer have \add to obey their\add* masters¦233116.
+\b
+\q1
+\v 20 Why is light¦233121 given to \add those\add* who are miserable¦233120?
+\q1 ≈And why's life¦233122 \add given to those\add* who are bitter¦233123 inside?
+\q1
+\v 21 They wish for death¦233127 but¦233128 it won't¦233128 come.\x + \xo 3:21: \xt Rev 9:6.\x*
+\q1 They dig for it more than for hidden¦233130 treasure¦233130.
+\q1
+\v 22 Those¦233137 who are happy for happiness sake,
+\q1 will celebrate when they find the grave¦233140.
+\q1
+\v 23 \add Why search for\add* a path that's hidden¦233146
+\q2 when God¦233148 has hedged¦233147 them in?
+\b
+\q1
+\v 24 Sighing has \add become more important\add* than eating.
+\q1 ≈My groans¦233159 \add just\add* pour out like water¦233158.
+\q1
+\v 25 I had my fears and they've \add come to pass\add*.
+\q1 ≈What I dreaded has come to me.
+\q1
+\v 26 I'm not relaxed or peaceful¦233174.
+\q1 ≈I can't¦233173 rest \add because only\add* trouble comes¦233178.
+\c 4
+\s1 Elifaz's first response to Iyyov
+\rem /s1 The First Dialogue; Eliphaz; Eliphaz's First Response to Job; Eliphaz Speaks: Job Has Sinned; First cycle of speeches
+\sr (4:1–14:22)
+\p
+\v 1 Then Elifaz¦233183 (from Teman¦233184) \add ≈replied¦233182\add*:
+\q1
+\v 2 If \add someone¦233187\add* tries \add to talk\add* with¦233192 you, will it wear you out?
+\q1 \add But¦233191\add* who can resist \add answering\add*?
+\q1
+\v 3 Listen, you've instructed¦233197 many \add other people\add*.
+\q1 And you've \add encouraged those who were\add* weak.
+\q1
+\v 4 Your words¦233206 have encouraged those who were stumbling¦233203.
+\q1 You've strengthened¦233209 \add those\add* whose knees¦233207 were buckling.
+\q1
+\v 5 But¦233216 now it's you \add in trouble\add* and you're \add depressed\add*.
+\q1 \add Troubles\add* touch you and you're discouraged¦233219.
+\q1
+\v 6 Doesn't your \add faith\add* give you confidence¦233223?
+\q1 \add What about\add* your hope and your integrity¦233225?
+\q1
+\v 7 Remember¦233228: Who has \add ever\add* perished¦233234 when they¦233237 were innocent¦233233?\f + \fr 4:7 \ft Don't forget that this is Elifaz giving his opinions and advice, and not necessarily endorsed as theologically sound. See God's disapproval of the words of Elifaz and his companions in Job 42:7-8.\f*
+\q1 Or when were godly people \add ever\add* destroyed¦233237?
+\b
+\q1
+\v 8 Just like I've¦233240 seen¦233240 those¦233241 who plant evil and¦233243 sow mischief¦233244 harvest¦233245 it¦233245 \add back again\add*,
+\q1
+\v 9 God's breath¦233247 \add causes\add* them to perish¦233249,
+\q1 and with a snort of his nose they come¦233252 to an end¦233252.
+\q1
+\v 10 The lion roars and the UNKNOWN-lion sounds¦233256 his voice¦233256,
+\q1 AND the teeth¦233258 of the young¦233259 lions¦233259 are broken¦233260.
+\q1
+\v 11 The UNKNOWN-lion \add starves to death\add* because of a lack of prey,
+\q1 and¦233267 the lionesses cubs are scattered¦233269.
+\b
+\q1
+\v 12 \add Now\add* a message¦233272 was brought¦233273 secretly¦233273 to me,
+\q1 and¦233271 my ears caught a whisper¦233276 of it.
+\q1
+\v 13 When troubled by thoughts¦233279 from dreams in¦233282 the night¦233281,
+\q1 when people¦233286 have fallen into deep sleep¦233283,
+\q1
+\v 14 I was hit by fear and trembling¦233290—
+\q1 my bones¦233292 were shaking with fright.
+\q1
+\v 15 A spirit¦233295 passed¦233299 over my face¦233298,
+\q1 and¦233295 the hairs on my body¦233302 \add stood on end\add*.
+\q1
+\v 16 It stood¦233304 still¦233304, but¦233306 I didn't¦233306 recognise¦233308 what it was.
+\q1 There was an image in front of my eyes¦233312.
+\q1 It was silent and then I heard¦233315 a voice¦233314:
+\q1
+\v 17 ‘Can a mortal \add human\add* be innocent before¦233318 God¦233318?
+\q1 Can a person¦233317 be more pure than the creator of people?’\f + \fr 4:17 \ft All speech marks in Bible translations are added by the translators. It's not certain from the text whether or not this was what ‘the voice’ said, and if it is (as we assumed), it's not clear where ‘the voice’ stopped speaking and Elifaz resumes. (Many translations put it at the end of the chapter, but remember that chapter breaks are also rather arbitrary and not in the original manuscripts.)\f*
+\q1
+\v 18 Listen, he doesn't \add even\add* trust¦233329 his \add own\add* servants¦233327,
+\q1 and he accuses his \add own\add* messengers¦233330 of making mistakes.
+\q1
+\v 19 How much less for those¦233336 whose bodies were made from the clay,
+\q2 whose foundations¦233343 were made from the dust.
+\q1 They're crushed¦233344 \add even easier\add* than a moth \add is\add*.
+\q1
+\v 20 They're destroyed from morning¦233349 to evening¦233350.
+\q1 They're always¦233354 dying \add even\add* without¦233352 anyone¦233353 doing anything.
+\q1
+\v 21 Their tent cords are pulled¦233359 out on¦233361 them.
+\q1 They die¦233362 and¦233363 \add don't¦233363 even know why\add*.
+\c 5
+\rem /s1 Job Is Corrected by God; Eliphaz's Response Continues
+\q1
+\v 1 Call out \add to God\add* now. Does anyone¦233370 answer¦233370?
+\q1 Which of the holy ones will you turn¦233375 to?
+\q1
+\v 2 Resentment kills foolish \add people\add*.
+\q1 Jealousy kills those who are simple-minded¦233383.
+\q1
+\v 3 I've seen¦233389 foolish \add people\add* taking¦233391 root,
+\q1 then I've immediately cursed¦233392 \add their\add* homes.
+\q1
+\v 4 Their children¦233397 are far from safety¦233398,
+\q1 and they¦233399\f + \fr 5:4 \ft This could refer to either the foolish people (v3) OR their children.\f* are crushed¦233399 in¦233400 the gate,\f + \fr 5:4 \ft This could refer to any gate, or possibly to the hearings/court of the elders conducted at the village/city gate.\f*
+\q2 and no one saves them.
+\q1
+\v 5 Those who are hungry¦233407 consume his harvest¦233405
+\q2 even getting it¦233412 from among the thorns¦233411.
+\q1 \add Greedy people\add* long for his wealth¦233415.
+\q1
+\v 6 Hardship doesn't just grow up from the dust,
+\q1 and¦233424 trouble¦233428 doesn't just spring¦233427 up from the ground¦233424.
+\q1
+\v 7 Everyone is born into trouble¦233433—
+\q1 \add sparks\add* tend to fly up high¦233438.
+\b
+\q1
+\v 8 But¦233447 for myself, I'll search¦233443 for God¦233446
+\q1 and¦233447 I'll \add approach\add* him with my \add case\add*.
+\q1
+\v 9 \add He\add* does incredible things,
+\q1 and¦233455 \add performs\add* wonders¦233457 without number¦233461 that are \add beyond our understanding\add*.
+\q1
+\v 10 \add He's\add* the one giving rain \add all over\add* the earth¦233469,
+\q1 and¦233470 sending water¦233471 onto the fields.
+\b
+\q1
+\v 11 \add God helps\add* the humble \add to prosper\add*,
+\q1 and¦233480 he lifts those who are mourning¦233480 to \add a safe place¦233479\add*.
+\q1
+\v 12 \add He\add* frustrates¦233484 the schemes of the crafty¦233486,
+\q1 so their¦233490 actions cannot succeed¦233491.
+\q1
+\v 13 \add He\add* catches¦233493 \add smart people\add* in¦233495 their¦233495 craftiness¦233495,
+\q1 and¦233496 he hurries along the plans of those who are deceptive.
+\q1
+\v 14 \add Even\add* in the daytime, they \add remain in\add* darkness¦233503.
+\q1 \add Even\add* at¦233506 midday, they feel \add their way around\add* as if it's nighttime¦233504.
+\q1
+\v 15 He saves¦233508 the poor from the \add plans of those smart people\add*,
+\q1 and¦233508 from the \add actions\add* of powerful \add people\add*.
+\q1
+\v 16 \add So¦233515\add* the poor have hope,
+\q1 and¦233518 injustice¦233518 \add is silenced\add*.
+\b
+\q1
+\v 17 Listen, the person¦233524 who's corrected by God is blessed¦233523.
+\q1 Don't¦233529 despise chastening from \add God\add* the provider.
+\q1
+\v 18 He wounds and he \add also\add* bandages up.
+\q1 He strikes \add but¦233536\add* his hands¦233538 \add also\add* heal¦233540.
+\q1
+\v 19 \add If you get in¦233545\add* trouble¦233543 six¦233542 \add times\add*, he'll rescue¦233544 you.
+\q1 \add Even\add* seven¦233545 \add times, he'll prevent\add* you \add from being\add* harmed.
+\q1
+\v 20 During famines¦233553, he'll \add rescue\add* you from death¦233555,
+\q1 ≈and in¦233556 war, he'll \add save you from slaughter\add*.
+\q1
+\v 21 He'll¦233567 hide you away from \add hurting words\add*,
+\q1 ≈and when destruction¦233566 comes, you won't¦233563 be afraid¦233565.
+\q1
+\v 22 You'll laugh¦233572 at destruction¦233570 and at famine¦233571,
+\q1 ≈and you¦233572 won't¦233575 be afraid¦233577 of wild animals¦233573,
+\q1
+\v 23 because you¦233584 have an agreement¦233584 with the stones¦233582 in the fields \add for walls\add*,
+\q1 ≈and¦233585 the wild animals¦233585 will be at peace¦233587 with you.
+\q1
+\v 24 You'll¦233592 know¦233591 that your \add home\add* is \add secure\add*,
+\q1 ≈and you'll inspect¦233596 your animal shelters and nothing will be missing.
+\q1
+\v 25 You'll¦233602 know¦233601 that your descendants¦233606 will be numerous,
+\q1 ≈and¦233601 your offspring¦233605 like the grass¦233607 on the land.
+\q1
+\v 26 You'll \add reach\add* an old age before you \add get\add* to the grave¦233614,
+\q1 like grain that's harvested at¦233611 the right time¦233617.
+\q1
+\v 27 Listen to this: we've investigated and it's true.
+\q1 Listen to it \add so\add* you'll know¦233628 for yourself.
+\c 6
+\s1 Iyyov's first response to Elifaz
+\rem /s1 Job; Job Replies: My Complaint Is Just; Job's Second Speech: A Response to Eliphaz
+\p
+\v 1 Then Iyyov¦233634 \add (Job) responded¦233635\add*:
+\q1
+\v 2 If only my anguish could be truly weighed¦233638,
+\q1 and¦233641 my calamity¦233641 could be \add put\add* together¦233646 \add with¦233643 it¦233639 on¦233643 the scales\add*.
+\q1
+\v 3 Because now it¦233653 would be heavier than the sand \add on the beaches\add*
+\q1 \add so\add* that's why my words¦233657 have been \add so\add* rash.
+\q1
+\v 4 Because the arrows¦233661 of \add God¦233669\add* the provider are in me.
+\q1 My spirit is drinking¦233666 in their¦233665 poison¦233665.
+\q1 God's terrors¦233668 are set out against¦233670 me.
+\b
+\q1
+\v 5 \add Does\add* a wild donkey¦233674 bray \add when it has\add* fresh¦233677 grass¦233677 \add to eat\add*,
+\q1 or a ox bellow \add when it has\add* its fodder¦233684?
+\q1
+\v 6 \add Do people\add* eat tasteless food without¦233688 \add adding\add* salt,
+\q1 ≈or \add enjoy\add* the taste of purslane¦233697 \add leaves by itself\add*?
+\q1
+\v 7 My¦233704 soul refuses¦233699 to touch¦233700 them—
+\q1 they¦233702 are like detestable food to me.
+\b
+\q1
+\v 8 Who will give me my request¦233710?
+\q1 ≈May God¦233713 give me what I hope for.
+\q1
+\v 9 \add If only\add* God¦233716 would be willing¦233715 to crush¦233717 me.
+\q1 ≈May he¦233718 \add play\add* his hand¦233719 and¦233715 cut me off.
+\q1
+\v 10 It still¦233723 comforts¦233725 me and¦233726 gives me \add inner\add* joy through never-ending pain,
+\q1 that¦233728 I haven't \add denied\add* the words¦233734 of the holy one.
+\q1
+\v 11 \add I don't have the\add* strength¦233739 to \add keep\add* waiting.
+\q1 ≈What \add future\add* do I have, that I should \add want to\add* go on living?
+\q1
+\v 12 Am I strong like rock?
+\q1 ≈Is my body¦233758 \add made of\add* bronze¦233759?
+\q1
+\v 13 Am I \add in¦233764 a position\add* to help¦233763 myself¦233763?
+\q1 \add It seems that\add* success¦233765 has been driven away from me.
+\b
+\q1
+\v 14 When a man's in despair¦233769, \add surely\add* his friend¦233770 should be kind
+\q1 \add even if the man\add* stops honouring \add God\add* the provider.
+\q1
+\v 15 My ‘brothers’ have been as treacherous¦233777 as a \add river that¦233783 dries up in the summer\add*.
+\q1 They \add disappear\add* again like dry river beds.
+\q1
+\v 16 They go dark from the ice \add over them\add*,
+\q1 and they hide themselves \add when covered\add* with snow.
+\q1
+\v 17 At the time¦233794 when they \add should be\add* flowing, they're silenced¦233796.
+\q1 When it's hot, they dry up from their¦233799 \add channels\add*.
+\q1
+\v 18 \add Their\add* paths¦233802 twist¦233801 in¦233805 their¦233803 courses¦233803,
+\q1 they¦233804 go¦233804 out into the wasteland¦233805 and \add end there\add*.
+\q1
+\v 19 The \add camel\add* caravans from Tema¦233810 look¦233808 \add for water\add*.
+\q1 The caravans from Sheba¦233812 keep looking forward to them.
+\q1
+\v 20 They were distressed because¦233818 they¦233821 had been confident¦233820.
+\q1 They've come¦233821 to \add the dry stream bed\add* and¦233824 were stunned.
+\q1
+\v 21 Now you have become¦233829 of no \add help\add*.
+\q1 You see the terror¦233833 and¦233834 \add you're\add* afraid¦233834.
+\q1
+\v 22 Have I ever \add asked you\add* to give me something?
+\q1 ≈Or to give me a reward¦233842 from your wealth¦233841?
+\q1
+\v 23 Or to save me from my enemy \add in battle\add*?
+\q1 Or to pay a ransom¦233851 to ruthless¦233850 people in order to free me?
+\b
+\q1
+\v 24 Teach¦233853 me and then I'll¦233855 be quiet.
+\q1 Explain to me where I've \add gone wrong\add*.
+\q1
+\v 25 \add Truthful\add* words¦233865 are so painful¦233864.
+\q1 \add But¦233868\add* what does your¦233872 proof¦233871 prove¦233870 \add to anyone\add*?
+\q1
+\v 26 Do you plan to correct \add my\add* words?
+\q1 Do you \add consider\add* the words of \add someone in\add* despair¦233879 \add to be like\add* wind¦233877?
+\q1
+\v 27 You would even \add draw straws\add* for a fatherless¦233885 \add child\add*.
+\q1 You would \add make money out\add* of your¦233890 friend¦233890.
+\b
+\q1
+\v 28 So¦233892 now, look at¦233896 me willingly¦233893.
+\q1 \add Would\add* I lie to your¦233899 face?
+\q1
+\v 29 Please turn¦233911 back—don't¦233907 let there be injustice¦233910.
+\q1 ≈Turn \add now\add*—my \add cause\add* is righteous¦233916.
+\q1
+\v 30 \add Am I being unfair\add*?
+\q1 \add Am I incapable of\add* discerning¦233929 \add evil\add*?
+\c 7
+\rem /s1 Job: My Suffering Is without End
+\q1
+\v 1 Aren't \add people expected to work¦233934\add* on earth¦233939?
+\q1 Aren't a person's days like the days of a hired¦233941 labourer¦233941?
+\q1
+\v 2 He \add longs\add* for the shade¦233947 \add just\add* like a slave¦233944 does.
+\q1 He's \add just\add* like a hired¦233948 man¦233948 who waits¦233949 eagerly¦233949 for his wages¦233950.
+\q1
+\v 3 So¦233953 months¦233955 of worthlessness¦233957 have been alloted to me,
+\q1 and¦233958 they've appointed me \add to have many\add* nights¦233958 of trouble¦233959.
+\q1
+\v 4 When I lie down I \add ask myself\add*, ‘When can I get up?’
+\q1 \add Thus\add* evening¦233972 drags¦233970 on \add followed by\add* restlessness¦233974 until¦233975 dawn.
+\q1
+\v 5 My body¦233980 is clothed¦233979 with maggots¦233981 and encrusted¦233982 with dust.
+\q1 ≈My skin has become¦233986 brittle and breaks¦233987 apart.
+\q1
+\rem /s1 Job Cries Out to God
+\v 6 \add In the past\add* the days flew by faster than a weaver's¦233993 shuttle¦233993,
+\q1 \add but¦233994 now\add* they've come¦233994 to an end¦233994 without \add any\add* hope.
+\b
+\q1
+\v 7 Remember¦233998 that my life¦234002 is \add just a puff of air\add*.
+\q1 My¦233999 eyes will \add never\add* see¦234007 happiness again.
+\q1
+\v 8 Your eyes¦234015 won't¦234017 see¦234012 me \add any more\add*.
+\q1 They'll be on¦234016 me \add but¦234017\add* I'll¦234017 be gone.
+\q1
+\v 9 Clouds \add just pop out of existence again\add* and¦234021 vanish¦234019.
+\q1 Similarly, the \add person\add* who goes¦234023 down to She'ol doesn't come \add back\add* up \add again\add*.
+\q1
+\v 10 \add That person\add* won't return¦234030 to their house¦234032 again,
+\q1 and¦234033 \add before long\add* their place¦234037 won't \add even\add* know¦234035 them again.
+\b
+\q1
+\v 11 \add So\add* I won't¦234042 restrain¦234043 my mouth¦234044—
+\q2 I'll¦234043 speak¦234045 in¦234046 the distress¦234046 of my spirit.
+\q1 I will complain¦234048 with¦234046 the bitterness¦234049 of my soul¦234050.
+\q1
+\v 12 \add Do you think that\add* I'm the sea or the sea monster¦234057
+\q1 that you will \add station\add* a guard¦234062 to watch me?
+\q1
+\v 13 I¦234066 thought that my bed¦234071 would comfort¦234067 me,
+\q1 ≈and that my couch¦234071 would take away my complaints¦234070.
+\q1
+\v 14 \add But¦234073\add* then¦234073 you frighten¦234073 me with dreams¦234074,
+\q1 ≈and¦234075 \add you\add* terrify¦234076 me with visions¦234075.
+\q1
+\v 15 My inner¦234080 self chooses¦234078 strangling¦234079—
+\q1 ≈death¦234081 over \add life in\add* this body¦234082.
+\q1
+\v 16 I REJECT—I won't¦234085 live¦234088 to a VANISHING POINT.
+\q1 \add Leave me alone because¦234091\add* my days¦234094 are \add just a puff of air\add*.
+\q1
+\v 17 What are humans¦234098 that you¦234103 make so much of \add them\add*,
+\q1 ≈and¦234101 that your¦234105 mind¦234105 \add thinks about\add* them?
+\q1
+\v 18 You visit¦234107 \add them\add* in the mornings¦234108,
+\q1 and¦234107 test \add them at various times\add*.
+\q1
+\v 19 Will you never look¦234115 away from me?
+\q1 Won't you leave me alone¦234119 \add long¦234112 enough\add* to swallow¦234122?
+\q1
+\v 20 \add If\add* I've¦234125 sinned¦234125, what did I do to you, the watcher¦234130 of people?
+\q1 Why have you made me your target¦234134—
+\q2 \add me who feels\add* like I myself¦234137 am now a burden¦234138?
+\q1
+\v 21 Why won't¦234142 you¦234144 forgive¦234144 my fault
+\q2 and¦234140 take¦234146 away my guilt?
+\q1 For now I'll lie down in the dust.
+\q1 You'll search¦234155 for me but¦234140 I'll no longer exist.
+\c 8
+\s1 Bildad's first response to Iyyov
+\rem /s1 Bildad; Bildad Speaks: Job Should Repent; Bildad's First Response to Job
+\p
+\v 1 Then Bildad¦234160 (from Shuah) answered¦234159:
+\q1
+\v 2 \add For how much longer\add* will you¦234168 keep saying that stuff?
+\q1 The words¦234173 \add coming out\add* of your¦234175 mouth¦234175 are like a strong wind.
+\q1
+\v 3 Does God¦234177 pervert justice¦234179?
+\q1 Does the provider pervert what is right¦234185?
+\q1
+\v 4 If your¦234189 children¦234189 sinned¦234190 \add against\add* him,
+\q1 then he let their¦234196 disobedience \add take them on¦234194\add*.
+\q1
+\v 5 If you genuinely search¦234201 for God¦234204,
+\q1 and you request¦234201 a favour¦234208 from the provider,
+\q1
+\v 6 \add and\add* if you're pure and honourable,
+\q1 he'll rouse himself \add to help\add* you
+\q2 and restore¦234220 your rightful¦234222 home.
+\q1
+\v 7 Your beginning¦234225 \add started off\add* small¦234226,
+\q1 \add but¦234224\add* your ending will \add see\add* a large increase.
+\b
+\q1
+\v 8 \add Why don't you\add* ask¦234233 previous generations¦234236,
+\q1 ≈and¦234238 consider¦234238 what their¦234240 ancestors¦234240 had \add learnt\add*,
+\q1
+\v 9 because¦234248 \em we\em* \add were born just\add* ‘yesterday¦234244’
+\q2 and don't¦234246 know¦234247 anything.
+\q1 Our¦234248 days¦234250 on the earth¦234253 are just a shadow¦234249 \add in comparison\add*.
+\q1
+\v 10 Won't they speak to you and teach¦234258 you?
+\q1 They'll \add advise\add* from their¦234261 understanding¦234261.
+\b
+\q1
+\v 11 Can papyrus¦234267 grow tall where there's no swamp¦234269?
+\q1 Can reeds grow where there's no water¦234275?
+\q1
+\v 12 They're not harvested when they're still flowering¦234278,
+\q1 \add but¦234281\add* they wither before¦234281 any \add other\add* plants.
+\q1
+\v 13 The paths¦234288 of \add people\add* who forget¦234291 God¦234292 are like them.
+\q1 The hope of godless¦234294 \add people\add* will \add just\add* disappear.
+\q1
+\v 14 \add Their\add* confidence¦234300 snaps¦234299,
+\q1 and¦234301 \add their\add* trust¦234303 is \add broken like\add* a spider's¦234302 web.
+\q1
+\v 15 He leans against his house¦234308 \add but\add* it \add collapses\add*.
+\q1 He takes¦234311 hold of it, but it doesn't stand¦234310 \add again\add*.
+\b
+\q1
+\v 16 It's a fresh¦234316 plant¦234316 in the \add sunshine\add*,
+\q1 and¦234322 its shoots¦234324 \add spread\add* out over the garden¦234323.
+\q1
+\v 17 Its roots¦234331 are twisted around over a heap.
+\q1 \add They find the cracks\add* between¦234333 stones¦234334.
+\q1
+\v 18 If¦234344 it's destroyed¦234339 from its place¦234340,
+\q1 it'll deny that it \add even\add* saw¦234344 you¦234344.
+\q1
+\v 19 That's the happiness of its¦234350 path.
+\q1 Another one will spring¦234353 up from the dust.
+\b
+\q1
+\v 20 God¦234357 doesn't reject¦234359 \add people who are\add* blameless¦234361.
+\q1 And he doesn't \add join in¦234365\add* with¦234365 \add those who\add* do evil.
+\q1
+\v 21 He'll still fill¦234371 your mouth¦234373 with laughter¦234372,
+\q1 ≈and your lips¦234374 with a happy shout¦234375.
+\q1
+\v 22 Those who hate¦234377 you¦234377 will be \add exposed and\add* shamed¦234380,
+\q1 and the \add homes\add* of wicked¦234382 \add people will cease to exist\add*.
+\c 9
+\s1 Iyyov's first response to Bildad
+\rem /s1 Job; Job's Third Speech: A Response to Bildad; Job Replies: There Is No Mediator
+\p
+\v 1 Then Iyyov¦234387 answered¦234386 saying:
+\q1
+\v 2 \add Yes,\add* I certainly know¦234391 that.\x + \xo 9:2: \xt Yob 4:17.\x*
+\q1 \add But¦234395\add* how can a \add person¦234398 be declared innocent\add* before God¦234401?
+\q1
+\v 3 If someone¦234405 wanted to argue with him¦234410,
+\q1 he¦234410 wouldn't answer¦234410 \add them\add* once out of a thousand¦234414 \add times\add*.
+\q1
+\v 4 He's wise \add in his thinking\add* and very powerful¦234419.
+\q1 Who has \add ever challenged\add* him and succeeded¦234424?
+\q1
+\v 5 He \add takes down\add* mountains¦234427 and¦234428 they¦234429 don't¦234428 \add even\add* know¦234429 who is overturning¦234431 them with¦234432 his anger¦234432.
+\q1
+\v 6 The \add one\add* who shakes¦234434 the earth¦234435 from its place¦234436
+\q1 ≈and \add makes\add* its pillars¦234437 shudder.
+\q1
+\v 7 The \add one\add* who can tell the sun¦234442 not to shine¦234444,
+\q1 and seals \add off\add* the stars¦234446.
+\q1
+\v 8 The \add one\add* who stretches¦234449 out \add space all\add* by himself,
+\q1 and¦234452 treads¦234452 on the tops \add of the waves\add* in the sea¦234456.
+\q1
+\v 9 The \add one\add* who made the Bear, Orion¦234461, Pleiades¦234462,
+\q1 as well as the southern¦234464 constellations¦234463.
+\q1
+\v 10 The \add one\add* who does more incredible things than \add we\add* can find,
+\q1 and¦234472 does more marvellous¦234472 \add things\add* than \add we\add* can count.
+\q1
+\v 11 It he went past me, I couldn't see¦234482 \add him\add*,
+\q1 and if he moved off, I wouldn't be able to perceive¦234486 it.
+\q1
+\v 12 When he takes \add things\add* away, who \add can\add* stop him,
+\q1 and who will \add ask\add* him what he's doing¦234499?
+\q1
+\v 13 God¦234501 won't¦234502 suppress his anger¦234505.
+\q1 Those who help¦234509 Rahab¦234510 lie beneath¦234506 him¦234506.
+\b
+\q1
+\v 14 I will certainly answer¦234516 him.
+\q1 I will choose¦234517 my words¦234518 \add against\add* him.
+\q1
+\v 15 If I was \add innocent\add*, I wouldn't answer¦234526.
+\q1 I would ask my judge¦234527 for \add mercy\add*.
+\q1
+\v 16 If I called¦234532 and¦234533 he¦234539 answered¦234533 me,
+\q1 I wouldn't believe¦234536 that he'd \add listened\add* to my voice.
+\q1
+\v 17 He crushes¦234545 me with¦234544 storms¦234544,
+\q1 and wounds¦234547 me over and over without¦234548 cause¦234548.
+\q1
+\v 18 He doesn't let me \add catch\add* my breath¦234554.
+\q1 He fills¦234556 me with bitterness¦234557.
+\q1
+\v 19 \add Concerning\add* strength¦234561, he's powerful¦234561.
+\q1 \add Concerning\add* justice¦234566, \add he'll ask,\add* ‘Who will summon¦234568 me?’
+\q1
+\v 20 If I was \add innocent\add*, my mouth¦234573 would condemn¦234574 me.
+\q1 If I was blameless¦234575, \add it\add* would declare¦234578 me guilty¦234578.
+\q1
+\v 21 I'm innocent—I don't¦234583 know¦234585 myself.
+\q1 I \add despise\add* my¦234586 life¦234588.
+\q1
+\v 22 It's the same thing, therefore¦234592 I said,
+\q1 ‘He's bringing¦234599 \add both\add* the blameless¦234596 and¦234597 the wicked¦234597 to \add their\add* end¦234599.’
+\q1
+\v 23 When a disaster \add brings\add* sudden¦234605 \add death\add*, he¦234608 mocks¦234608 the despair¦234606 of innocent¦234607 \add people\add*.
+\q1
+\v 24 The \add world\add* has been given¦234612 over to \add someone\add* wicked¦234615.
+\q1 He covers¦234619 the judges¦234618 \add eyes\add*—\add so\add* who \add did\add* it?
+\b
+\q1
+\v 25 My days¦234628 \add go\add* by faster than a sprinter.
+\q1 ≈They've fled by without seeing any good¦234637.
+\q1
+\v 26 They pass like boats \add made with\add* reeds—
+\q1 ≈like an eagle¦234644 \add swooping down\add* on its food.
+\q1
+\v 27 If I said¦234652 that I would forget¦234653 my complaint¦234654,
+\q1 and \add soften\add* my expression¦234656 and smile¦234657,
+\q1
+\v 28 I'd be afraid¦234659 of all my sufferings¦234662.
+\q1 I know¦234663 that \add you¦234667\add* wouldn't consider me innocent¦234667.
+\q1
+\v 29 I'd be guilty¦234670,
+\q1 \add so\add* why would I work \add hard\add* for such vanity¦234674?
+\q1
+\v 30 If I washed¦234679 myself¦234679 \add from a clear mountain stream\add*
+\q1 and¦234684 cleaned¦234684 my hands¦234686 with¦234685 \add strong soap\add*,
+\q1
+\v 31 then \add you'd\add* plunge¦234690 me into a pit
+\q1 and¦234691 my own clothes¦234692 would abhor¦234691 me.
+\q1
+\v 32 He's¦234700 not a human¦234698 like me,
+\q1 so we¦234701 wouldn't be going into court¦234703 together¦234702.
+\q1
+\v 33 There's no mediator between¦234708 us,
+\q1 who would \add have authority over\add* both¦234714 of us.
+\q1
+\v 34 Let him¦234716 remove¦234716 his rod from me,
+\q1 \add so\add* his terror won't¦234720 frighten me.
+\q1
+\v 35 I would speak¦234724 and¦234725 not fear¦234726 him¦234726,
+\q1 \add but¦234725\add* it's not like that with me.
+\c 10
+\rem /s1 Job Frames His Plea to God; Job: I Loathe My Life
+\p
+\v 1 Inside, I loathe¦234734 my life¦234736.
+\q1 I'll release my complaints¦234739.
+\q1 I'll \add express\add* my \add inner¦234735\add* bitterness¦234741.
+\q1
+\v 2 I'll¦234744 tell God¦234747 not to condemn¦234750 me.
+\q1 \add Help\add* me to know¦234751 why you're against me.
+\q1
+\v 3 \add Does it¦234757 seem\add* good¦234757 to you to oppress¦234762 \add me\add*?
+\q1 Have you rejected¦234765 \add this creation\add* of yours¦234758,
+\q1 and \add delighted\add* in wicked¦234771 \add people's\add* plans \add instead\add*?
+\q1
+\v 4 Do you have \add actual\add* eyes¦234774?
+\q1 Do you see¦234781 like people do?
+\q1
+\v 5 Are your days like a person's days
+\q1 or your years like a person's years
+\q1
+\v 6 that you look for my guilt
+\q1 and search¦234797 for my sin¦234796.
+\q1
+\v 7 Knowing that I'm not guilty¦234805,
+\q1 won't¦234804 anyone save me from you¦234801?
+\q1
+\v 8 Your hands shaped and moulded me.
+\q1 \add Will the same hands now\add* destroy¦234815 me?
+\q1
+\v 9 Please remember that you made me like the clay.
+\q1 \add Will you now\add* turn¦234827 me to dust?
+\q1
+\v 10 Haven't you poured me out like milk¦234830
+\q1 ≈and¦234832 curdled¦234833 me like cheese¦234832?
+\q1
+\v 11 You clothed¦234837 me with flesh¦234836 and skin,
+\q1 ≈and you knit me together¦234840 with bones¦234838 and tendons¦234839 \add inside\add*.
+\q1
+\v 12 You have \add made\add* life and genuine love¦234843 \add for\add* me,
+\q1 and your¦234846 care has kept¦234847 my spirit alive.
+\q1
+\v 13 \add But¦234850\add* you hid these¦234850 \add things\add* in¦234852 your heart¦234852,
+\q1 and¦234850 I¦234853 know¦234853 that this \add is\add* with¦234852 you.
+\q1
+\v 14 If I sin you'll be watching¦234862 me,
+\q1 and you wouldn't acquit¦234865 me of my crime.
+\q1
+\v 15 If I'm guilty¦234869, \add may my end be bad\add*.
+\q1 If I'm innocent, I won't¦234873 raise my head¦234876.
+\q1 I'm full of shame¦234878 and \add you've\add* seen my suffering.
+\q1
+\v 16 If I get up, the lion¦234883 will hunt me.
+\q1 Again, you show me how wonderful¦234886 you are.
+\q1
+\v 17 You find new witnesses¦234891 against me.
+\q1 And you¦234894 get more angry with me and \add send\add* changed¦234897 forces¦234898 against me.
+\b
+\q1
+\v 18 So¦234901 why did¦234903 you¦234903 allow me to come out from the womb?
+\q1 Better if I'd expired¦234904 and¦234905 no one had seen¦234908 me.
+\q1
+\v 19 If only I'd never existed—
+\q1 just went \add straight\add* from the womb to the grave¦234916.
+\q1
+\v 20 Aren't my days¦234922 few?
+\q1 \add So\add* leave me and¦234928 let me \add enjoy\add* a little¦234929 comfort¦234928
+\q1
+\v 21 before¦234931 I go¦234932 and don't¦234933 return¦234934 to the land of darkness¦234938 and deep shadow¦234939—
+\q1
+\v 22 the land of gloom and deep darkness¦234946,
+\q1 disorderly and with gloomy light¦234949.
+\c 11
+\s1 Zofar's first response to Iyyov
+\rem /s1 Zophar Speaks: Job's Guilt Deserves Punishment; Zophar; Zophar's First Response to Job
+\p
+\v 1 Then Zofar¦234956 (from Naamah¦234957) answered¦234955:
+\q1
+\v 2 Shouldn't these many words¦234961 be answered¦234963?
+\q1 Or is a man¦234966 to be acquitted¦234968 \add just by what comes from his\add* lips¦234967.
+\q1
+\v 3 Will your¦234970 boasting make people silent¦234972?
+\q1 Or will you mock and no one puts \add you\add* to shame¦234976?
+\q1
+\v 4 You've said¦234978, ‘My teaching¦234980 is pure,
+\q1 and¦234981 I'm clean¦234981 in¦234983 your¦234983 sight¦234983.’
+\q1
+\v 5 But¦234985 who will allow God¦234989 to speak¦234990
+\q1 and¦234991 to open his lips¦234992 against¦234993 you¦234993
+\q1
+\v 6 and¦235005 to tell you the secrets¦234999 of wisdom?
+\q1 True wisdom has DOUBLE
+\q1 God¦235010 will forget¦235008 some of your¦235011 offenses for you.
+\b
+\q1
+\v 7 Will you find the deep \add things\add* of God¦235014?
+\q1 Will you discover the limits of the provider?
+\q1
+\v 8 What can you do to the height¦235023 of the sky?
+\q1 What do you know¦235032 that's deeper than the grave?
+\q1
+\v 9 It measures¦235036 longer than the land,
+\q1 and¦235037 wider than the ocean.
+\q1
+\v 10 If he¦235044 comes past and imprisons¦235045 you and convenes¦235046 a hearing,
+\q1 who can prevent him¦235048?
+\q1
+\v 11 He \add recognises people\add* who are deceitful.
+\q1 He sees wickedness¦235059 but¦235057 doesn't reveal that he's paying attention¦235061.
+\q1
+\v 12 \add Even\add* a hollow¦235064 person¦235063 will gain understanding¦235065.
+\q1 A wild donkey's¦235067 colt will give birth to a man.
+\b
+\q1
+\v 13 If you've¦235075 directed¦235075 your heart¦235076
+\q1 and stretched¦235077 your arms out to him,
+\q1
+\v 14 and put wickedness¦235083 far away from yourself
+\q1 and didn't¦235086 let injustice¦235090 live in¦235084 your¦235084 home,
+\q1
+\v 15 then you can raise your \add head\add* without \add shame\add*
+\q1 and be firmly¦235100 establishing¦235100 without fear¦235102.
+\q1
+\v 16 You will forget¦235108 trouble¦235107—
+\q1 remembering¦235111 it only like water¦235109 that's flowed past.
+\q1
+\v 17 Your life will rise brighter than the midday \add sun\add*.
+\q1 Darkness will become¦235118 like morning¦235117.
+\q1
+\v 18 You'll be confident¦235120 that there's¦235123 hope.
+\q1 You'll look¦235125 around¦235125 \add then¦235120\add* safely lie down.
+\q1
+\v 19 You'll lie down without being terrified¦235131.
+\q1 Many \add people\add* will be after your¦235133 favour¦235133.
+\q1
+\v 20 \add But¦235136\add* the eyes¦235136 of the wicked¦235137 will fail
+\q2 and¦235136 the way¦235139 of escape¦235139 will be \add invisible\add* to them.
+\q1 Their hope will \add be limited to their¦235142 last\add* gasp of life¦235145.
+\c 12
+\s1 Iyyov's first response to Zofar
+\rem /s1 Job; Job's Fourth Speech: A Response to Zophar; Job Replies: I Am a Laughingstock
+\p
+\v 1 Then Iyyov¦235149 responded¦235150 \add to Zofar\add*:
+\q1
+\v 2 \add Ah¦235153,\add* you're certainly ‘the people¦235156’
+\q1 and¦235157 wisdom¦235159 will die¦235158 with you.
+\q1
+\v 3 \add But¦235172\add* I too have a \add mind¦235164\add* as well as you.
+\q1 I'm not \add getting bowled over\add* by you.
+\q1 Is there¦235176 anyone who doesn't know those things?
+\q1
+\v 4 I'm laughed at by \add my\add* friends¦235182.
+\q1 I was calling¦235185 on God¦235186 and¦235187 he¦235187 answered¦235187,
+\q2 but¦235187 an innocent man \add becomes someone\add* to laugh at.
+\q1
+\v 5 People who are \add comfortable\add* have contempt¦235193 for misfortune¦235192—
+\q1 for those¦235192 whose feet \add seem to be\add* slipping¦235197 away.
+\q1
+\v 6 Robbers relax \add in\add* their tents¦235201,
+\q1 and those who provoke¦235205 God¦235206 \add seem\add* secure¦235204—
+\q2 those who carry \add their\add* gods in their hands.
+\b
+\q1
+\v 7 But¦235212 please¦235215 ask¦235213 the animals¦235216 and they'll teach¦235217 you.
+\q1 \add Ask\add* the birds in the sky and they'll tell you.
+\q1
+\v 8 Or complain¦235225 to the ground and it'll teach¦235227 you,
+\q1 and the fish in the sea¦235231 will declare¦235228 \add it\add* to you.
+\q1
+\v 9 Which¦235240 of them doesn't know¦235236 that Yahweh¦235243 has done¦235244 all this?
+\q1
+\v 10 The life¦235249 of everything that lives is in his hands,
+\q1 as is the spirit¦235253 in the body¦235256 of every person.
+\q1
+\v 11 Doesn't the ear¦235262 have to test the words¦235263 \add it hears\add*?
+\q1 And the palate¦235265 has to taste¦235267 the food \add that's eaten\add*?
+\q1
+\v 12 Wisdom \add comes\add* with age,
+\q1 and¦235273 understanding¦235275 \add comes\add* from a long¦235273 life.
+\b
+\q1
+\v 13 Wisdom and power \add belong to\add* him.
+\q1 Counsel and understanding¦235282 \add belong to\add* him.
+\q1
+\v 14 What he tears¦235285 down won't be rebuilt¦235287.
+\q1 What he closes on a person¦235291 won't be opened¦235293.
+\q1
+\v 15 When he holds¦235296 back the waters¦235297 they dry up,
+\q1 and when he sends¦235299 them out they overwhelm¦235300 the earth¦235301.
+\q1
+\v 16 Strength and sound¦235305 wisdom¦235305 \add belong to\add* him.
+\q1 The deceived and the deceiver¦235309 are \add both\add* his.
+\q1
+\v 17 He leads counsellors¦235312 away barefoot¦235313,
+\q1 and¦235314 makes¦235315 judges¦235314 look¦235315 foolish¦235315.
+\q1
+\v 18 He undoes the chains of the king's \add prisoners\add*,
+\q1 and¦235320 wraps a cloth around their¦235322 \add naked\add* loins¦235322.
+\q1
+\v 19 He leads priests¦235325 away barefoot¦235326,
+\q1 and¦235327 overthrows powerful \add people\add*.
+\q1
+\v 20 He deprives trusted¦235332 \add advisors\add* of \add the opportunity to speak\add*,
+\q1 and he takes¦235335 discernment¦235333 away from the elders¦235334.
+\q1
+\v 21 He pours contempt¦235338 on \add successful\add* people,
+\q1 and unties¦235344 the belt¦235342 that powerful people \add put onto others\add*.
+\q1
+\v 22 He reveals¦235346 the deep \add things\add* of darkness,
+\q1 and he brings¦235351 deep darkness into the light¦235352.
+\q1
+\v 23 He makes nations great¦235355 and he \add also\add* destroys¦235357 nations.
+\q1 He enlarges nations and he \add has them led away as slaves\add*.
+\q1
+\v 24 He removes¦235362 the heart¦235363 from the leaders¦235364 of the people¦235365 of the land,
+\q1 and makes¦235368 them wander¦235368 in¦235369 wasteland¦235369 where there's no paths.
+\q1
+\v 25 They grope¦235374 in the darkness¦235376 without \add any\add* light¦235379,
+\q1 and he¦235380 makes¦235380 them stagger¦235380 around as if they're drunk¦235381.
+\c 13
+\s1 Iyyov argues that he hasn't sinned
+\rem /s1 Job Wants to Argue His Case with God
+\p
+\v 1 Look here, my eyes have seen¦235386 all \add that\add*,
+\q1 ≈my ears have heard¦235388 it and understood¦235390.
+\q1
+\v 2 I also know everything that you know,
+\q1 ≈I'm not \add way behind\add* you.
+\q1
+\v 3 But¦235410 I \add would like\add* to talk to the provider,
+\q1 ≈and¦235410 I desire¦235414 to plead with God¦235413.
+\q1
+\v 4 But¦235416 you're all smearers¦235418 of lies,
+\q1 ≈all of you are worthless¦235422 healers¦235421.
+\q1
+\v 5 If only \add you all\add* would remain silent¦235428,
+\q1 then you all might be considered wise.
+\b
+\q1
+\v 6 Please listen to my argument¦235437,
+\q1 ≈and¦235438 pay attention¦235440 to the pleading¦235438 of my lips¦235439.
+\q1
+\v 7 Will you all speak \add faithlessly\add* on God's behalf,
+\q1 ≈and will you talk deceitfully¦235447 for him?
+\q1
+\v 8 Will you¦235450 show partiality¦235450 to him¦235449,
+\q1 or argue¦235454 the case for God¦235453?
+\q1
+\v 9 Is¦235460 it good¦235456 that he'll examine¦235459 you all,
+\q1 or will you deceive¦235465 him like deceiving a person¦235464?
+\q1
+\v 10 He¦235470 would certainly rebuke you all,
+\q1 if you were secretly¦235473 showing partiality.
+\q1
+\v 11 Shouldn't¦235480 his majesty¦235478 make you all afraid,
+\q1 ≈and¦235481 his dread¦235481 fall on you all?
+\q1
+\v 12 Your \add traditional\add* sayings are proverbs¦235486 of ashes.
+\q1 ≈Your defenses \add might as well be made\add* of clay.
+\b
+\q1
+\v 13 Be¦235498 silent¦235494 in my presence and let me speak¦235496,
+\q1 and let come¦235499 to me what may.
+\q1
+\v 14 Why should I \add bite\add* my flesh¦235508 with¦235509 my \add own\add* teeth¦235509,
+\q1 ≈and¦235510 take¦235507 my life¦235510 in¦235509 my \add own\add* hands¦235512?
+\q1
+\v 15 Even if he¦235515 kills me, my hope will still be in him.
+\q1 I will certainly defend my behaviour to him in person.
+\q1
+\v 16 Even that would result¦235532 in my salvation¦235532.
+\q1 A godless¦235537 person wouldn't enter his¦235536 presence¦235536.
+\q1
+\v 17 Listen¦235540 carefully¦235541 to my words¦235542,
+\q1 ≈and¦235543 may my declaration¦235543 be in¦235544 the ears¦235544 of you all.
+\q1
+\v 18 I've¦235549 now arranged¦235549 \add my case\add*.
+\q1 I know¦235551 that I'm in the right¦235555.
+\q1
+\v 19 Who¦235566 will conduct¦235560 my case?
+\q1 I'll¦235565 keep¦235565 silent¦235565 now and¦235566 die¦235566.
+\q1
+\rem /s1 Job's Despondent Prayer; Job Asks How He Has Sinned
+\v 20 Just don't¦235571 do these two¦235570 things to me,
+\q1 then I won't¦235571 hide¦235578 myself¦235578 from your¦235576 presence:
+\q1
+\v 21 \add Don't¦235584\add* take your hand far away from me,
+\q1 and don't¦235584 terrify¦235586 me with your dread¦235583.
+\q1
+\v 22 Then¦235588 call me and I'll¦235590 answer,
+\q1 or let me speak¦235593 and answer me.
+\q1
+\v 23 How many errors and sins¦235599 do I have?
+\q1 Let me know how I disobeyed and sinned.
+\q1
+\v 24 Why are you¦235607 keeping away from me,
+\q1 and¦235608 treating me like an enemy¦235609?
+\q1
+\v 25 Would you terrify¦235614 a leaf blown by the wind?
+\q1 ≈Would you chase a dry stalk \add to punish it\add*?
+\q1
+\v 26 You write¦235623 bitter¦235625 things¦235625 against¦235624 me,
+\q1 and¦235626 \add even recall\add* the \add errors\add* of my youth¦235628.
+\q1
+\v 27 You \add lock\add* my feet in¦235631 stocks¦235631.\x + \xo 13:27: \xt Yob 33:11.\x*
+\q1 You watch¦235634 all my paths¦235637 and¦235630 mark the soles of my feet.
+\q1
+\v 28 He decays like something rotten¦235645.
+\q1 ≈He's like a garment¦235647 that's eaten¦235648 by moths.
+\c 14
+\p
+\v 1 Humans, born from women,
+\q1 live relatively short¦235654 lives with lots of turmoil¦235658.
+\q1
+\v 2 \add People\add* appear and then wither¦235662, just like the flowers¦235660.
+\q1 ≈They don't¦235665 stay around, but¦235662 rush away like shadows¦235664.
+\q1
+\v 3 Do you watch over even \add creatures\add* like this?
+\q1 Do you bring¦235676 me in¦235677 to be judged¦235677?
+\q1
+\v 4 Who can make \add something innocent\add* out of something \add impure\add*?
+\q2 No one.
+\q1
+\v 5 Since a person's lifespan is \add already\add* determined¦235689,
+\q1 ≈then you already know the number¦235692 of months¦235694.
+\q1 You've set the limit¦235696 and \add we\add* won't¦235699 live past that.
+\q1
+\v 6 Stop watching \add us\add*.
+\q1 Give us relief so we can take some pleasure¦235707 in our daily work.
+\b
+\q1
+\v 7 There's \add even\add* hope for a tree¦235713 that gets cut down.
+\q1 It will sprout¦235719 again¦235718 and its¦235720 \add new\add* shoots¦235720 won't¦235721 fail.
+\q1
+\v 8 Even when its roots¦235728 in the ground get old,
+\q1 ≈and its base is rotting in the soil,
+\q1
+\v 9 when it detects water¦235734 it'll send up branches¦235737 like a \add young\add* plant¦235740.
+\b
+\q1
+\v 10 \add But¦235742 a person\add* dies and is laid out—
+\q1 ≈a person breathes¦235745 their last and now where¦235747 are they?
+\q1
+\v 11 The water¦235751 disappears¦235749 from a \add lake¦235754\add*,
+\q1 ≈and the river¦235755 \add level\add* goes down then dries¦235756 up.
+\q1
+\v 12 \add So¦235759 too\add* people lie down and¦235759 don't¦235761 get up again.
+\q1 ≈They won't¦235761 wake up until¦235764 the sky no longer exists.
+\q1 ≈\add For now\add* they can't¦235761 be roused¦235772 out of their¦235773 sleep¦235773.
+\b
+\q1
+\v 13 If¦235778 only you'd allow me to be hidden in¦235778 the grave,
+\q1 that you'd conceal¦235780 me until¦235781 your¦235784 anger¦235784 is passed.
+\q1 \add but¦235789\add* set a limit¦235788 and¦235789 then remember¦235789 me.
+\q1
+\v 14 If¦235800 a person dies, will they \add ever\add* live¦235795 again¦235795?
+\q1 I'll¦235800 keep doing my work¦235799 here until¦235801 I'm released from it.
+\q1
+\v 15 You'll call me and I'll¦235808 answer¦235808 you.
+\q1 You'll desire the \add creature you've made\add*.
+\q1
+\v 16 Now you'll count¦235817 my steps¦235816.
+\q1 You won't¦235818 keep watch¦235820 on my sins.
+\q1
+\v 17 My disobedience would be sealed¦235825 up in¦235826 a bag,
+\q1 ≈and¦235828 you'd plaster over my wickedness.
+\b
+\q1
+\v 18 But¦235833 mountains¦235834 fall and crumble¦235837,
+\q1 ≈and rocks move out of their places¦235840.
+\q1
+\v 19 \add Flowing\add* water¦235845 wears down stones,
+\q1 ≈and¦235852 its¦235848 torrents¦235848 wash away the soil.
+\q1 You destroy¦235854 humankind's¦235853 hope.
+\q1
+\v 20 You're forever¦235857 overpowering¦235856 \add us\add* and \add we\add* depart.
+\q1 You are changing¦235859 the expression on \add our\add* faces and sending \add us\add* away.
+\q1
+\v 21 If our children achieved some honour¦235863, we wouldn't \add even\add* know it.
+\q1 Or if they're put to shame, we wouldn't \add be there to\add* see it.
+\q1
+\v 22 Only our own bodies feel the pain.
+\q1 ≈Only our inner¦235878 selves mourn¦235880.
+\c 15
+\s1 Elifaz's second response to Iyyov
+\rem /s1 The Second Dialogue; Eliphaz's Second Response to Job; Second cycle of speeches; Eliphaz; Eliphaz Speaks: Job Undermines Religion
+\sr (15:1–21:34)
+\p
+\v 1 Then Elifaz¦235884 (from Teman¦235885) replied:
+\q1
+\v 2 Do wise people \add just\add* answer¦235889 with knowledge¦235890 \add full\add* of wind?
+\q1 ≈Do they just fill \add themselves\add* with the east wind?
+\q1
+\v 3 Should a person argue¦235897 \add against\add* useless talk¦235898,
+\q1 ≈\add or against\add* words¦235901 that¦235899 have no \add value\add*?
+\q1
+\v 4 You \add turn people\add* from the fear¦235911 \add of God¦235916\add*,
+\q1 ≈and¦235912 discourage \add them\add* from godly meditation¦235913.
+\q1
+\v 5 \add Thus\add* your wickedness \add drives your words\add*,
+\q1 ≈and you¦235922 choose¦235922 the language of crafty¦235924 \add people\add*.
+\q1
+\v 6 It's not me who condemns¦235926 you, but¦235928 it's your own mouth¦235927.
+\q1 ≈Your own lips¦235931 testify¦235932 against¦235934 you.
+\b
+\q1
+\v 7 Were you the first person \add ever\add* born?
+\q1 ≈Were you \add created\add* before¦235939 the hills¦235940 were made?
+\q1
+\v 8 Do you¦235945 listen¦235945 to God's advice,
+\q1 \add or\add* limit¦235946 wisdom¦235948 to your \add own experience\add*?
+\q1
+\v 9 What do you know that we don't¦235953?
+\q1 ≈What do you understand¦235955 that's not \add clear\add* to us?
+\q1
+\v 10 Both the gray-haired and the elderly are on¦235967 our \add side\add*,
+\q1 ≈\add People\add* who've lived longer than your¦235969 father¦235969.
+\q1
+\v 11 Isn't it enough when God¦235975 comforts you?
+\q1 ≈\add Aren't\add* his gentle¦235977 words \add enough\add* for you?
+\q1
+\v 12 Why do your \add emotions\add* get carried away?
+\q1 ≈Why do your eyes¦235987 flash¦235986 \add with anger\add*?
+\q1
+\v 13 Are you¦235991 turning your spirit¦235995 against¦235992 God¦235994
+\q1 as your words¦235998 \add pour\add* out of your mouth¦235997?
+\q1
+\v 14 What person¦236002 \add could ever\add* be pure,\x + \xo 15:14-16: \xt Yob 25:4-6.\x*
+\q1 ≈and¦236006 how could someone born from a woman¦236010 be righteous¦236008?
+\q1
+\v 15 He doesn't \add even\add* trust¦236016 his holy \add ones\add*,
+\q1 and¦236017 the heavens¦236017 aren't¦236015 pure¦236013 \add from his viewpoint\add*.
+\q1
+\v 16 Certainly¦236024 not \add someone who's\add* corrupt¦236027 and¦236027 abhorrent¦236026,
+\q1 ≈or a person¦236028 who drinks¦236030 wickedness like water¦236031.
+\b
+\q1
+\v 17 I'll¦236034 show you¦236034—listen¦236035 to me—
+\q1 what I've¦236040 seen¦236040 and will tell \add everyone\add*.
+\q1
+\v 18 What's been told by wise \add people\add*—
+\q1 ≈that¦236043 hasn't been hidden¦236048 from their¦236049 ancestors¦236049.
+\q1
+\v 19 The land was given¦236053 to them alone¦236052,
+\q1 ≈and no stranger¦236058 \add had come in¦236059\add* among them.
+\q1
+\v 20 Wicked \add people\add* squirm in pain for their entire lifetime.
+\q1 ≈Those who oppress \add others\add* have a number¦236067 of years¦236068 \add of pain\add* stored¦236069 up for them.
+\q1
+\v 21 Sounds of terrors are in¦236075 their ears¦236075.
+\q1 The destroyer¦236077 comes \add while they're enjoying\add* prosperity¦236076.
+\q1
+\v 22 They don't believe¦236082 that the darkness¦236086 \add will ever end\add*.
+\q1 They're destined¦236087 for the sword¦236092.
+\q1
+\v 23 They wander¦236094 around \add searching\add* for food that \add must be there\add*.
+\q1 They know that dark days are ahead—already prepared¦236102.
+\q1
+\v 24 They're terrified¦236108 by distress¦236109 and¦236110 anguish¦236110.
+\q1 ≈\add That dread\add* overwhelms them like a king¦236112 who's ready¦236114 for a battle¦236115.
+\q1
+\v 25 \add These things happen to wicked people because they oppose\add* God¦236122.
+\q1 ≈They've behaved¦236127 arrogantly to the provider.
+\q1
+\v 26 They rush against him in¦236131 defiance¦236131,
+\q1 \add trusting\add* the thick¦236132 reinforcing of \add their\add* shields¦236134.
+\b
+\q1
+\v 27 Though their faces are \add round and\add* fat,
+\q1 and their bodies have rolls on¦236140 their hips,
+\q1
+\v 28 they'll live in broken-down houses¦236151
+\q1 which¦236156 people¦236154 normally wouldn't live in because they're marked for demolition.
+\q1
+\v 29 They won't be rich and their wealth¦236166 won't endure¦236165,
+\q1 ≈and their \add herds and flocks\add* won't spread across the land.
+\q1
+\v 30 \add Wicked people\add* will never escape the darkness¦236179.
+\q1 A flame¦236182 will wither their branches,
+\q1 and¦236183 with¦236184 one breath¦236184 of their mouths¦236185, they'll be gone.
+\q1
+\v 31 Don't¦236193 let them trust¦236189 in¦236190 emptiness¦236190 or they'll be led astray¦236192,
+\q1 and worthlessness¦236195 will be their only reward.
+\q1
+\v 32 They'll be finished before¦236199 their time¦236201,
+\q1 and their branches¦236203 won't¦236204 flourish and produce leaves.
+\q1
+\v 33 They'll be like grapevines that drop their grapes when they're still unripe¦236209,
+\q1 and¦236210 like olive¦236211 trees that shed their blossoms¦236212.
+\q1
+\v 34 \add Yes,\add* the company¦236216 of godless¦236217 \add people\add* is worthless,
+\q1 and¦236219 \add anything gained\add* from bribery¦236223 will be burnt up in the fire¦236219.
+\q1
+\v 35 They dream about trouble¦236226 and encourage wickedness¦236229,
+\q1 and they¦236227 give¦236227 birth¦236227 to deceitful¦236232 \add plots\add*.
+\c 16
+\s1 Iyyov's second response to Elifaz
+\rem /s1 Job; Job's Fifth Speech: A Response to Eliphaz; Job Reaffirms His Innocence
+\p
+\v 1 Then Iyyov¦236236 answered¦236235 \add Elifaz\add*:
+\q1
+\v 2 I've¦236239 heard¦236239 many things like that \add before\add*.
+\q1 You come to comfort¦236242, but bring trouble¦236243 \add instead\add*.
+\q1
+\v 3 \add You need to\add* limit your words¦236247 \add full\add* of wind¦236249.
+\q1 What makes you keep responding?
+\q1
+\v 4 I could also speak¦236261 like you all if you were in¦236270 my place¦236266.
+\q1 I could string words¦236270 together against¦236269 you all and¦236271 shake¦236271 my head¦236274 at¦236270 you.
+\q1
+\v 5 \add Alternatively,\add* I could use my mouth¦236279 to encourage you¦236276 all.
+\q1 My lips¦236281 \add could be used instead\add* to bring relief.
+\b
+\q1
+\v 6 Even when I speak¦236286, it doesn't take away my pain.
+\q1 But¦236291 if I hold back, how will it go¦236295 away?
+\b
+\q1
+\v 7 However, he's now worn me out.
+\q1 My entire¦236302 household has been devastated¦236301.
+\q1
+\v 8 \add You've made me lose so much weight that everyone can't help notice it\add*.
+\q1 ≈My being so thin \add is used against me so people think\add* from my face¦236312 \add that I must be guilty.\add*
+\q1
+\v 9 \add His anger\add* has ripped \add my body\add* open
+\q1 ≈and¦236318 in¦236321 his hate he's gnashed¦236319 at¦236321 me with¦236321 his teeth¦236321.
+\q1 \add Even\add* my enemy locks his eyes¦236325 on¦236321 me.
+\q1
+\v 10 People¦236328 \add stare\add* at¦236331 me with¦236331 their¦236331 mouths¦236331 wide¦236328 open.
+\q1 They slap my cheek¦236334 in¦236331 contempt¦236332 as they¦236333 join together¦236335 against¦236336 me.
+\q1
+\v 11 God¦236340 has handed me over to a YOUNG BOY
+\q1 and¦236343 he throws¦236347 me into the hands¦236345 of wicked¦236346 \add people\add*.
+\q1
+\v 12 I was \add just living my¦236354 life\add* and he shattered¦236352 me.
+\q1 ≈He grabbed me by the neck and dashed¦236355 me to pieces¦236355.
+\q1 He set me up as a \add his\add* target¦236358.
+\q1
+\v 13 ≈Soldiers with bows and arrows surround¦236360 me.
+\q1 He pierces¦236364 my kidneys¦236365 \add but¦236366\add* doesn't care.
+\q1 ≈He \add splits my gallbladder\add* and pours¦236368 my bile out on the ground¦236369.
+\q1
+\v 14 He keeps breaking¦236372 through¦236372 \add my protective walls\add*.
+\q1 ≈He charges against me like a warrior¦236381.
+\q1
+\v 15 I've \add dressed in¦236388\add* sackcloth \add to show I'm mourning\add*.
+\q1 ≈I've tossed my horn into the dust \add to show I'm defeated\add*.
+\q1
+\v 16 My face is red from so much crying.
+\q1 My eyelids¦236398 \add are surrounded by dark shadows\add*.
+\q1
+\v 17 I haven't \add committed\add* any violence¦236404.
+\q1 My prayer¦236406 is pure.
+\b
+\q1
+\v 18 Earth, don't¦236410 \add just\add* cover¦236412 over my blood¦236413.
+\q1 Don't¦236410 \add just\add* become a hiding place¦236417 for my cries.
+\q1
+\v 19 Even now, my witness¦236426 is there¦236423 in¦236428 the heavens¦236425,\x + \xo 16:19: \xt Yob 19:25.\x*
+\q1 ≈and¦236427 my advocate¦236427 is \add up\add* on¦236428 high¦236428.
+\q1
+\v 20 My¦236430 friends¦236431 scorn me.
+\q1 The \add tears of\add* my¦236430 eyes \add are directed\add* to God¦236434.
+\q1
+\v 21 \add May someone\add* plead with God¦236442 for a man¦236439,
+\q1 and¦236443 a son of humanity¦236445 \add plead\add* for his friend¦236446.
+\q1
+\v 22 When a \add certain\add* number¦236451 of years¦236450 have passed,
+\q1 I'll¦236456 go¦236457 on a path¦236453 that¦236454 I won't¦236454 return¦236456 from.
+\c 17
+\rem /s1 Job Continues to Defend His Innocence; Job Prays for Relief
+\p
+\v 1 My spirit is broken¦236460,
+\q1 my days¦236461 are extinguished¦236462,
+\q1 ≈only the grave¦236463 is left.
+\q1
+\v 2 Surely there's mockers¦236469 with¦236471 me.
+\q1 My eye¦236473 \add is held\add* by their¦236471 provocations¦236471.
+\b
+\q1
+\v 3 Please give yourself¦236479 to cover my bail.
+\q1 Who else would put up security for me?
+\q1
+\v 4 You've closed their¦236487 minds¦236487 from being able to understand¦236489,
+\q1 so therefore¦236491 you won't¦236494 elevate them \add over me\add*.
+\q1
+\v 5 \add People\add* who'd denounce their friends¦236499 for some gain,
+\q1 \add should expect their children¦236501 to be selfish also\add*.
+\b
+\q1
+\v 6 He's made me into \add a local gossip point\add*.
+\q1 \add Someone\add* to spit at in the face¦236508.
+\q1
+\v 7 My eyes have become dark from \add my\add* grief¦236512.
+\q1 ≈Every one of my body¦236514 parts¦236514 is \add just\add* like a shadow¦236515.
+\q1
+\v 8 \add Godly people\add* are appalled¦236518 by this,
+\q1 ≈and¦236523 innocent¦236523 people are stirred up against those who are godless¦236526.
+\q1
+\v 9 But¦236529 \add those who obey\add* will be able to stay on the correct road,
+\q1 ≈and¦236532 those who \add haven't done anything wrong\add* will become stronger.
+\q1
+\v 10 But¦236538 all of them \add and\add* you all may return¦236540 now and come¦236541,
+\q1 and I¦236545 wouldn't find a wise person among¦236546 you all.
+\b
+\q1
+\v 11 My \add good\add* days have passed¦236550.
+\q1 My plans¦236551 are shattered,
+\q2 \add even\add* my secret desires.
+\q1
+\v 12 They change night into day¦236557 \add in their minds\add*—
+\q1 ≈making light¦236559 seem near \add while staring into the\add* darkness¦236563.
+\q1
+\v 13 If I wait for the grave to become my home¦236569,
+\q1 \add if\add* I've¦236571 spread¦236571 out my blankets \add ready to sleep\add* in¦236570 the darkness¦236570,
+\q1
+\v 14 \add if\add* I've¦236575 called¦236575 out and told the pit that it's my father¦236576,
+\q1 and to the worm that it's my mother¦236578 and my sister¦236579,
+\q1
+\v 15 then¦236582 where¦236582 would my hope be \add placed\add*?
+\q1 Who \add would know that I had any\add* hope?
+\q1
+\v 16 Will they go down to the \add gates\add* of the grave?
+\q1 ≈Will we go down together¦236594 into the ground?
+\c 18
+\s1 Bildad's second response to Iyyov
+\rem /s1 Bildad; Bildad's Second Response to Job; Bildad Speaks: God Punishes the Wicked
+\p
+\v 1 Then Bildad¦236602 (from Shuah) responded¦236604 \add again\add*:
+\q1
+\v 2 \add How long until\add* you¦236610 \add stop all these\add* words¦236612?
+\q1 \add Think first,\add* and¦236614 then afterwards¦236614 we¦236615 can speak¦236615.
+\q1
+\v 3 Why are we regarded¦236618 as cattle¦236619,
+\q1 \add as if\add* we're considered¦236620 by you all as being stupid¦236620?
+\q1
+\v 4 People who tear themselves \add apart\add* in¦236625 anger¦236625,
+\q1 will the ground be abandoned¦236627 for your¦236626 sakes,
+\q1 or the rock¦236631 removed¦236629 out of its¦236632 place¦236632?
+\b
+\q1
+\v 5 Indeed, the light¦236635 of wicked \add people\add*\f + \fr 18:5 \ft This segment is about ‘the wicked man’ (somewhat general, but also obviously referring to Iyyov), but we've generalised it into ‘wicked people’ as being more relevant to the average reader (of both sexes).\f* is extinguished¦236637.
+\q1 ≈the flame¦236641 of \add their\add* fire¦236642 won't¦236638 shine¦236640.
+\q1
+\v 6 The light¦236644 in¦236647 \add their\add* tents will go dark.
+\q1 ≈and¦236648 the lamps that hang \add over their heads\add* will go out.
+\q1
+\v 7 \add Their\add* strong¦236654 steps¦236653 will get shorter,
+\q1 and¦236655 their own schemes¦236656 \add make them depressed\add*.
+\q1
+\v 8 \add Yes, they'll\add* get their feet¦236662 caught¦236660 in a net¦236661,
+\q1 ≈and¦236663 they'll wander around in a maze.
+\q1
+\v 9 They'll get their heels caught in¦236669 traps,
+\q1 ≈the \add sprung jaws\add* will keep hold of \add them\add*.
+\q1
+\v 10 A rope¦236677 is hidden¦236675 in the ground,
+\q1 ≈and¦236678 a \add noose\add* lies \add there\add* on \add their\add* paths.
+\q1
+\v 11 Sudden \add noises\add* around¦236682 them will \add terrify¦236683 them\add*,
+\q1 and¦236685 follow their steps \add as they run away\add*.
+\q1
+\v 12 \add Their\add* strength¦236691 \add dissolves into\add* hunger,
+\q1 and¦236692 disaster¦236692 \add has been\add* prepared¦236693 for them to stumble¦236694 \add into\add*.
+\q1
+\v 13 It devours parts of \add their\add* skin,
+\q1 ≈death¦236702 \add begins by\add* devouring their body parts.
+\q1
+\v 14 They're pulled from their tents \add where they felt\add* secure¦236706,
+\q1 and¦236707 taken away to the king¦236708 of terrors¦236709.
+\q1
+\v 15 \add Other people\add* will live in¦236712 their tents.
+\q1 Sulfur is scattered¦236716 over their homes.
+\q1
+\v 16 Their roots¦236723 dry up underneath¦236722 them,
+\q1 ≈and¦236725 their branches¦236727 above¦236725 them \add all\add* wither¦236726.
+\q1
+\v 17 No one on the earth¦236734 will remember them \add any more\add*,
+\q1 ≈and no streets \add will be named after them\add*.\f + \fr 18:17 \ft That was a paraphrase (and probably an anachronism) that we couldn't resist (and will probably delete again). It's really something more like ‘no one will mention their names on the streets’.\f*
+\q1
+\v 18 They'll be driven¦236745 from the light¦236746 out into the darkness¦236749,
+\q1 ≈and¦236750 they'll be chased¦236751 out of this world¦236750.
+\q1
+\v 19 \add You won't¦236756 find\add* any of their children or grandchildren \add in¦236759 their town\add*.
+\q1 ≈nor \add find\add* any survivor¦236761 where¦236762 \add they previously\add* lived.
+\q1
+\v 20 Those in the west are appalled¦236767 at \add their\add* fate,
+\q1 ≈and¦236769 those in the east are getting the shudders¦236771.
+\q1
+\v 21 That's certainly how the homes of wicked \add people end up\add*,
+\q1 ≈and¦236778 that's the place¦236779 for \add people\add* who don't¦236780 know God¦236784.
+\c 19
+\s1 Iyyov's second response to Bildad
+\rem /s1 Job's Sixth Speech: A Response to Bildad; Job; Job Replies: I Know That My Redeemer Lives
+\p
+\v 1 Iyyov¦236788 \add ≈responded¦236789 to Bildad and companions again\add*:
+\q1
+\v 2 \add How much longer\add* will I be tormented¦236794
+\q1 and¦236796 crushed¦236796 with¦236797 words¦236797?
+\q1
+\v 3 You \add people\add* have scolded me ten¦236800 times¦236801 now.
+\q1 You should be ashamed¦236805 for how you've ill-treated¦236806 me.
+\q1
+\v 4 And even if I had truly¦236812 done something wrong,
+\q1 my error¦236816 would remain with \em me\em*.
+\q1
+\v 5 If you truly¦236820 think that you're better \add people\add* than me,
+\q1 and¦236823 use my disgrace¦236825 to argue¦236823 against me,
+\q1
+\v 6 then you need to know¦236828 that God¦236831 has wronged¦236834 me,
+\q1 and¦236835 he's closed¦236837 his net¦236835 around¦236836 me.
+\q1
+\v 7 There¦236839, I cry out that I'm being attacked, and get no answer¦236843.
+\q1 ≈I call for help, but¦236842 there's¦236845 no justice¦236846.
+\q1
+\v 8 He's blocked my road so I can't¦236850 get past,
+\q1 ≈and he places darkness¦236854 over my paths¦236853.
+\q1
+\v 9 He's taken away \add all\add* my honour,
+\q1 and¦236860 removed¦236860 the crown¦236861 from on my head¦236862.
+\q1
+\v 10 He's battered me from every direction and I'm gone.
+\q1 He's removed my hope like a tree¦236868 that's been uprooted¦236867.
+\q1
+\v 11 He's directed his anger¦236873 against¦236872 me,
+\q1 and¦236874 treats me as one of his enemies¦236876.
+\q1
+\v 12 His troops¦236881 advance \add in formation\add*.
+\q1 They build up a siege¦236884 ramp against¦236883 me,
+\q2 and set themselves up around¦236886 my tent¦236887.
+\b
+\q1
+\v 13 He's moved my brothers far away from me,
+\q1 ≈and¦236892 my acquaintances¦236892 have certainly kept out of my way.
+\q1
+\v 14 My relatives¦236899 have deserted me,
+\q1 ≈and¦236900 my close¦236900 friends¦236900 have forgotten¦236901 me.
+\q1
+\v 15 Those who've stayed in my home, and¦236905 \add even\add* the female¦236905 servants¦236905 regard me as a stranger¦236906.
+\q1 ≈I've¦236909 become¦236909 a foreigner¦236908 in their¦236910 eyes¦236910.
+\q1
+\v 16 When I call my servant¦236912, he¦236915 doesn't answer¦236915.
+\q1 ≈I try to persuade him with my \add words\add*.
+\q1
+\v 17 My¦236926 breath¦236923 is repugnant to my wife¦236925,
+\q1 and¦236926 abhorrent to my \add siblings\add*.
+\q1
+\v 18 Even young¦236932 boys¦236932 reject¦236933 me.
+\q1 \add When\add* I stand they¦236933 speak \add against¦236938\add* me.
+\q1
+\v 19 All my closest friends abhor¦236940 me,
+\q1 and¦236945 those¦236945 I love¦236947 have turned¦236948 on¦236950 me.
+\q1
+\v 20 My skin and flesh¦236953 cling¦236954 to my bones¦236955.
+\q1 I've¦236956 escaped¦236956 by the skin of my teeth¦236958.
+\b
+\q1
+\v 21 Pity me, pity me, you¦236962 my friends¦236963,
+\q1 \add because¦236964\add* God's hand¦236965 has touched¦236968 me.
+\q1
+\v 22 Why do you chase me as \add if you're God¦236975\add*?
+\q1 Won't you be satisfied¦236978 with \add destroying\add* my body¦236976?
+\b
+\q1
+\v 23 Who will permit that my words¦236985 be written¦236984 down?
+\q1 ≈Who will allow them to be inscribed¦236990 onto a scroll¦236989
+\q1
+\v 24 with a pen¦236992 made of iron and¦236995 lead,
+\q1 ≈or engraved¦236998 onto stone with a chisel?
+\q1
+\v 25 I \add do\add* know¦237001 that my redeemer¦237002 lives¦237003,
+\q1 and¦237000 that he will stand¦237008 on the dust at the end.
+\q1
+\v 26 After my skin has been struck¦237012 off,
+\q1 then¦237010 in my flesh¦237015, I'll¦237016 see¦237016 God¦237017,
+\q1
+\v 27 \add yes,\add* I'll¦237022 see him for myself.
+\q1 My eyes¦237025 will see, and not a stranger¦237029.
+\q1 My heart¦237031 will \add feel\add* faint¦237030 within my¦237032 chest.
+\b
+\q1
+\v 28 You \add people\add* will say¦237035, ‘How will we¦237039 persecute¦237039 him?
+\q1 After all, the root of the matter¦237043 is found¦237044 in¦237046 \add him\add*.’
+\q1
+\v 29 You¦237061 \add should\add* be afraid¦237048 of the sword,
+\q2 because¦237054 anger brings punishment by the sword,
+\q1 so that \add you\add* will know that \add there is\add* judgement¦237061.
+\c 20
+\s1 Zofar's second response to Iyyov
+\rem /s1 Zophar Speaks: Wickedness Receives Just Retribution; Zophar; Zophar's Second Response to Job
+\p
+\v 1 Then Zofar (from Naamah¦237067) \add ≈responded¦237068 to Iyyov\add*:
+\q1
+\v 2 My anxious thoughts¦237071 \add force\add* me to answer¦237072,
+\q1 because¦237073 of the turmoil that's within me.
+\q1
+\v 3 I've¦237079 heard¦237079 \add your\add* correction¦237077 \add and\add* it insults¦237078 me,
+\q1 and a spirit¦237080 beyond¦237081 my¦237078 understanding¦237081 answers¦237082 me.
+\q1
+\v 4 Do you¦237085 know¦237085 this from long ago,
+\q1 ≈from back when humankind¦237091 was placed on the earth¦237094:
+\q1
+\v 5 that the excited shout of wicked¦237098 \add people\add* is brief,
+\q1 ≈and¦237100 the happiness of godless¦237101 \add people\add* only lasts a moment¦237104?
+\q1
+\v 6 Although \add their\add* arrogance¦237110 rises up to the sky,
+\q1 and¦237111 \add their\add* heads reach¦237113 into the clouds¦237112,
+\q1
+\v 7 \add they\add* will vanish forever¦237116 like \add their\add* own dung—
+\q1 ≈those¦237118 who had seen¦237118 them will ask, ‘Where are \add they now\add*?’
+\q1
+\v 8 \add They'll\add* fly away like a dream¦237122 that can't¦237124 be found¦237125 \add again\add*,
+\q1 ≈and be chased¦237126 away like a vision¦237127 in the night¦237128.
+\q1
+\v 9 Whoever saw¦237131 \add them\add* won't \add see them again\add*,
+\q1 ≈and \add even\add* the place¦237138 \add where they lived\add* won't see \add them\add* again.
+\q1
+\v 10 \add Their\add* children will be seeking the favour¦237141 of poor \add people\add*,
+\q1 ≈\add because their own\add* hands¦237143 \add must¦237141\add* return¦237144 \add their\add* wealth¦237145.
+\q1
+\v 11 \add Although their\add* bones were full of youthful¦237149 vigour,
+\q1 that \add same strength\add* will lie down with \add them\add* in the dust.
+\b
+\q1
+\v 12 Although \add their\add* evil¦237161 tastes¦237159 sweet¦237159 in¦237160 \add their\add* mouths¦237160,
+\q1 \add they\add* hide it under¦237163 \add their\add* tongues¦237164.
+\q1
+\v 13 \add They\add* would miss it too much to let it go¦237169,
+\q1 and they keep it \add there\add* in the middle¦237171 of \add their\add* mouths¦237172.
+\q1
+\v 14 \add But that\add* food changes¦237176 in¦237175 \add their\add* stomachs¦237175.
+\q1 ≈It becomes like snake venom¦237177 inside¦237179 \add them\add*.
+\q1
+\v 15 \add They\add* swallow¦237182 up wealth \add but¦237183 then\add* vomit¦237183 it up.
+\q1 ≈God¦237186 forces it out of \add their\add* stomachs¦237184.
+\q1
+\v 16 \add They'll\add* suck on cobra¦237190 poison¦237188.
+\q1 ≈The viper's¦237194 fangs will kill¦237192 \add them\add*.
+\q1
+\v 17 \add Those wicked people\add* won't enjoy the streams¦237199,
+\q1 \add or the\add* fast-flowing rivers¦237200 of honey¦237202 and¦237203 yoghurt.
+\q1
+\v 18 \add They\add* will return what \add they've gained\add* and not swallow¦237208 it \add down\add*.
+\q1 ≈\add They\add* won't¦237207 get any enjoyment from the profits¦237209 of \add their\add* trading¦237210.
+\q1
+\v 19 \add They've\add* oppressed \add others\add* and¦237221 ignored the poor.
+\q1 ≈\add They've\add* seized¦237220 homes that they didn't¦237221 build¦237222.
+\b
+\q1
+\v 20 \add Their\add* bellies¦237230 are never at¦237230 ease.
+\q1 \add They\add* never deliver¦237233 what \add they\add* desire¦237231.
+\q1
+\v 21 There's¦237235 nothing left over from \add their\add* eating,
+\q1 so their prosperity¦237245 won't¦237235 endure¦237244.
+\q1
+\v 22 \add They'll\add* be so full \add but\add* it'll \add only\add* bring distress¦237249.
+\q1 Every troublemaker will come¦237255 to \add them\add*.
+\q1
+\v 23 Maybe when \add they've\add* filled their bellies,
+\q1 \add God\add* will send¦237261 his anger¦237266 against \add them\add*,
+\q2 raining down on¦237269 \add them and¦237267 their\add* meal.
+\q1
+\v 24 \add They\add* flee from weapons¦237272 made of iron.
+\q1 ≈A bow made of brass \add sends its arrows\add* right through \add them\add*.
+\q1
+\v 25 \add They\add* pull them through and out \add their\add* backs.
+\q1 The tips have shiny liver¦237282 on them—terrors¦237285 come¦237283 over \add them\add*.
+\q1
+\v 26 Total darkness¦237289 is reserved for \add their\add* treasures¦237291.
+\q1 A fire¦237293 \add which¦237294 no one started\add* will devour¦237292 \add them\add*.
+\q1 Only sorry remnants will survive¦237298 in¦237299 \add their\add* tents.
+\q1
+\v 27 The heavens¦237302 will reveal¦237301 \add their\add* evils,
+\q1 and¦237304 the earth¦237304 will rise up against \add them\add*.
+\q1
+\v 28 The contents of \add their\add* houses¦237310 will be removed—
+\q1 washed away in his severe¦237313 anger¦237313.
+\q1
+\v 29 That's what God serves up to wicked¦237320 people,
+\q1 ≈and¦237322 the heritage¦237322 that God has decreed¦237323 for them.
+\c 21
+\s1 Iyyov's second response to Zofar
+\rem /s1 Job; Job Replies: The Wicked Often Go Unpunished; Job's Seventh Speech: A Response to Zophar
+\p
+\v 1 Then Iyyov¦237328 \add ≈responded¦237329 to Zofar and the others\add*:
+\q1
+\v 2 Listen¦237331 carefully¦237332 to my words¦237333,
+\q1 and¦237334 let this be a consolation¦237337 for you all.
+\q1
+\v 3 Bear with me while I speak¦237341,
+\q1 and after¦237342 I've¦237343 \add finished\add*, you¦237344 can continue mocking then.
+\q1
+\v 4 As for me, is my complaint¦237348 against any person?
+\q1 If it was, then \add you\add* might expect \add me to be impatient\add*.
+\q1
+\v 5 Turn \add and look\add* at me and be appalled¦237360.
+\q1 ≈\add Yes,\add* put your hands over your mouths¦237365 \add in shock\add*.
+\q1
+\v 6 When¦237367 I remember¦237369 \add what happened\add*, I'm horrified,
+\q1 and¦237367 my body¦237372 starts shuddering¦237373.
+\q1
+\v 7 Why do wicked¦237376 \add people\add* live¦237377?
+\q1 ≈\add Why\add* do they grow old and become¦237381 more powerful?
+\q1
+\v 8 Their children become established¦237385 around them,
+\q1 ≈and their offspring¦237388 \add become settled\add* in front of them.
+\q1
+\v 9 Their homes are safe and¦237394 \add free from\add* fear¦237393.
+\q1 ≈God¦237396 isn't¦237394 punishing them.
+\q1
+\v 10 Their bulls mate \add productively\add*,
+\q1 ≈and their cows calve¦237403 without miscarrying¦237406.
+\q1
+\v 11 They send¦237408 out their little¦237410 ones like a flock¦237409,
+\q1 ≈and their children¦237411 dance¦237412 \add all around\add*.
+\q1
+\v 12 They pick up their tambourines¦237415 and harps,
+\q1 ≈and they're happy to hear the sound¦237418 of the flutes¦237419.
+\q1
+\v 13 They¦237426 spend their¦237424 days¦237424 in¦237423 prosperity¦237423,
+\q1 and¦237425 they¦237427 go¦237427 peacefully¦237425 down \add to the grave\add*.
+\q1
+\v 14 They tell God¦237430, “Leave us alone.
+\q1 We're not \add interested\add* in knowing about your¦237434 ways¦237434.
+\q1
+\v 15 Who is ‘the provider’ \add and why should\add* we serve¦237443 him.
+\q1 What would we gain if we made requests to him?”
+\b
+\q1
+\v 16 \add However,\add* their prosperity¦237455 isn't¦237453 in¦237454 \em their\em* hands¦237454.
+\q1 I keep far away from the advice of wicked¦237457 \add people\add*.
+\b
+\q1
+\v 17 How often¦237461 is the lamp of wicked¦237465 \add people\add* extinguished¦237466 and calamity¦237469 hits them?
+\q1 In his anger¦237472, does he dole out pain to them?
+\q1
+\v 18 Are they \add just\add* like straw¦237475 \add blown by\add* the wind,
+\q1 ≈and like chaff¦237479 that's carried¦237480 away by a gale.
+\b
+\q1
+\v 19 God saves up \add their\add* evil for \add their\add* children¦237486.
+\q1 Let \add God\add* repay¦237488 \add them\add* so \add they'll\add* know¦237490.
+\q1
+\v 20 Let them watch \add their\add* own destruction¦237495,
+\q1 and¦237496 let \add them\add* drink¦237498 the severe¦237496 anger¦237496 of the provider.
+\q1
+\v 21 After they're gone, why would \add they\add* care about their families¦237504?
+\q1 ≈Why would they count the months¦237507 after¦237505 they've already been cut off?
+\q1
+\v 22 Can any \add person\add* teach¦237511 knowledge¦237513 to God¦237510
+\q1 since he judges¦237516 the \add high and mighty\add*?
+\b
+\q1
+\v 23 \add Some people\add* die¦237519 in¦237520 full strength,
+\q1 completely¦237522 secure and¦237524 at¦237520 ease.
+\q1
+\v 24 Their buckets are full of milk¦237528,
+\q1 and¦237529 their bone marrow¦237529 is \add nicely\add* moistened.
+\q1
+\v 25 \add But¦237533 others\add* die¦237534 full of bitterness¦237536,
+\q1 and¦237537 \add they\add* haven't tasted prosperity¦237540.
+\q1
+\v 26 \add Both kinds of people\add* lie together in the dust,
+\q1 and¦237547 worms¦237547 cover¦237548 them \add both\add*.
+\q1
+\v 27 \add Yes,\add* I know¦237552 what you're all thinking,
+\q1 and¦237554 the schemes¦237554 that¦237555 you'd all use against me.
+\q1
+\v 28 You all say¦237559, ‘\add Which\add* is the house¦237561 of that respected \add person\add*?
+\q1 And \add ≈which\add* are the tents that the wicked¦237568 \add people\add* live in?’
+\b
+\q1
+\v 29 Haven't you all asked¦237571 those¦237572 travelling on the roads?
+\q1 Don't¦237575 you all accept their¦237574 reports
+\q1
+\v 30 that evil \add people\add* are spared¦237581 from the day of calamity¦237580—
+\q1 that they are led away from \add that\add* day of anger?
+\q1
+\v 31 Who will denounce \add their\add* actions to \add their\add* faces¦237592?
+\q1 ≈Who will repay¦237598 \add them\add* for \add the evil they've\add* done¦237596?
+\q1
+\v 32 They'll be carried off to the cemetery,
+\q1 ≈and¦237605 someone¦237608 will keep¦237608 watch¦237608 over \add their\add* tombs.
+\q1
+\v 33 The clods¦237613 of the riverbed will be sweet¦237610 to \add them\add*.
+\q1 Everyone will follow¦237619 along behind \add them\add*,
+\q2 ≈and \add no one\add* can count those who go in front¦237620 of \add them\add*.
+\b
+\q1
+\v 34 \add So¦237624\add* how can vanity¦237626 be of comfort¦237625 to me?
+\q1 It's only faithlessness that remains¦237628 from the replies that you¦237625 all \add have given\add*.
+\c 22
+\s1 Elifaz's third response to Iyyov
+\rem /s1 Eliphaz's Third Response to Job; Eliphaz Speaks: Job's Wickedness Is Great; The Third Dialogue; Third cycle of speeches; Eliphaz
+\sr (22:1–27:23)
+\p
+\v 1 Then Elifaz¦237634 (from Teman¦237635) responded¦237636 \add to Iyyov\add*:
+\q1
+\v 2 Can a human be of use to God¦237638?\x + \xo 22:2-3: \xt Yob 35:6-8.\x*
+\q1 ≈Might a wise \add person\add* be of any use to him¦237645?
+\q1
+\v 3 Does it give pleasure¦237648 to the provider if you're innocent?
+\q1 ≈Will he benefit if you're blameless¦237657 in your¦237658 actions?
+\q1
+\v 4 Does he scold you for your religiosity?
+\q1 ≈Does he go¦237662 with¦237664 you into judgement¦237664?
+\q1
+\v 5 Your wickedness¦237667 is really bad,
+\q1 ≈and¦237669 there's¦237669 no end¦237671 to your¦237667 evil¦237667 actions.
+\q1
+\v 6 You've forced your brothers¦237677 into unnecessary debt to you.
+\q1 ≈You've demanded clothes¦237679 \add in payment\add* and left \add people\add* naked¦237680.
+\q1
+\v 7 You \add never\add* gave¦237687 exhausted \add people\add* anything to drink¦237687,
+\q1 ≈and you refused to give food¦237691 to those who were hungry¦237688.
+\q1
+\v 8 The land belongs to a powerful man.
+\q1 ≈A man who \add was\add* honoured¦237697 lives on¦237700 it.
+\q1
+\v 9 You sent¦237703 widows away empty-handed¦237704,
+\q1 ≈and¦237705 the strength¦237705 of orphans has been crushed¦237707.
+\q1
+\v 10 Because of that there's traps set all around¦237712 you,
+\q1 and sudden¦237716 fear terrifies¦237714 you,
+\q1
+\v 11 or darkness¦237720 so you can't¦237721 see¦237723,
+\q1 and a flood¦237724 of water¦237726 covers¦237727 you.
+\b
+\q1
+\v 12 Isn't¦237738 God¦237731 as high as the sky,
+\q1 and¦237734 look¦237734 at how high the tops of those stars¦237737 are!
+\q1
+\v 13 \add You might ask\add*, ‘What does God¦237746 know¦237745?
+\q1 Will he judge¦237749 through¦237747 thick¦237748 darkness¦237748?
+\q1
+\v 14 Clouds¦237751 block things off from him so he can't¦237756 see¦237757.
+\q1 He walks¦237760 around \add way up there\add* on top of the heavens¦237759.’
+\q1
+\v 15 Will you¦237764 stay on the ancient paths,
+\q1 on which¦237765 wicked¦237769 \add people regularly\add* tred?
+\q1
+\v 16 They were captured at an inappropriate time¦237776—
+\q1 a torrent \add of water\add* poured¦237778 over their¦237779 foundations¦237779.
+\q1
+\v 17 They had told God¦237782, ‘Leave us alone,’
+\q1 and¦237785 ‘What can the provider do¦237787 for us?’
+\q1
+\v 18 \add But¦237791\add* he had filled¦237792 their¦237793 houses¦237793 with good¦237794 \add things¦237794\add*,
+\q1 and¦237791 I keep far away from the advice of wicked¦237796 \add people\add*.
+\q1
+\v 19 \add Godly people\add* are happy when they see¦237800 that, WHAT?
+\q1 ≈and innocent¦237803 \add people\add* mock them. WHO?
+\q1
+\v 20 If he¦237811 didn't¦237810 destroy our¦237812 enemies, MEANING?
+\q1 and¦237813 fire¦237815 has destroyed¦237814 what was left. MEANING?
+\q1
+\v 21 \add Now\add* be reconciled¦237817 with him and¦237821 at peace¦237821.
+\q1 Doing that will bring good¦237825 to you¦237824.
+\q1
+\v 22 \add Just\add* accept his advice,
+\q1 ≈and¦237832 keep thinking about his words¦237833.
+\q1
+\v 23 If you return¦237838 to the provider, you'll be encouraged.
+\q1 He'll remove¦237843 injustice¦237844 from your \add living situation\add*.
+\q1
+\v 24 \add Throw¦237855 your\add* gold onto the dust \add on¦237853 the ground\add*,
+\q1 ≈and¦237847 fine gold onto the stones¦237853 in¦237853 the riverbed.
+\q1
+\v 25 Then¦237857 the provider will be your¦237859 gold¦237859,
+\q1 ≈and¦237860 \add be\add* heaps¦237861 of silver¦237860 to you.
+\q1
+\v 26 Then you'll enjoy your relationship with the provider,
+\q1 ≈and you'll raise your head towards God¦237874.
+\q1
+\v 27 You'll pray to him and he'll listen¦237879 to you,
+\q1 and you'll fulfil your promises \add to him\add*.
+\q1
+\v 28 Once you decide¦237883 on something, it'll be done for you,
+\q1 ≈and¦237883 light¦237893 will shine¦237892 on all your¦237891 paths.
+\q1
+\v 29 People are humbled and \add then honoured again\add*,
+\q1 ≈and he¦237902 will save¦237902 \add those\add* who humble themselves.
+\q1
+\v 30 He will set free \add those\add* who aren't¦237906 innocent¦237908,
+\q1 ≈and¦237909 they'll be rescued with¦237910 the cleanness¦237910 of your¦237911 hands¦237911.
+\c 23
+\s1 Iyyov's third response to Elifaz
+\rem /s1 Job; Job Replies: My Complaint Is Bitter; Job's Eighth Speech: A Response to Eliphaz
+\p
+\v 1 Then Iyyov¦237915 responded¦237916 \add to Elifaz and the others\add*:
+\q1
+\v 2 Even today my complaint¦237922 is bitter.
+\q1 ≈I'm groaning¦237927 \add because my situation is so difficult\add*.
+\q1
+\v 3 If only I knew¦237932 where to find him¦237933
+\q1 I would have gone to his place¦237937.
+\q1
+\v 4 I would \add present\add* my case to him¦237940,
+\q1 ≈and¦237942 I would \add expound all my\add* arguments¦237944,
+\q1
+\v 5 I want¦237946 to know¦237946 how he'd answer¦237948,
+\q1 ≈and to understand¦237949 what he'll say¦237952 to me.
+\q1
+\v 6 Would he use his incredible power¦237957 to \add dispute my\add* case?
+\q1 No, surely¦237962 he'd pay attention to me.
+\q1
+\v 7 An honest person could reason¦237970 with him there,
+\q1 and¦237972 I would be set free forever¦237973 by the one judging me.
+\q1
+\v 8 Look, I go¦237978 to the east but he¦237979 isn't¦237979 there,
+\q1 ≈and to the west but I can't¦237979 detect him \add there\add*.
+\q1
+\v 9 He works in¦237987 the north, but¦237988 I can't¦237988 see him,
+\q1 ≈and when he turned south, I didn't¦237988 spot him.
+\q1
+\v 10 Nevertheless, he knows¦237998 the path¦237999 that I've taken.
+\q1 He's tested¦238001 me and I've come¦238003 out like \add refined\add* gold¦238002.
+\q1
+\v 11 My¦238012 feet have followed in his tracks.
+\q1 ≈I've¦238009 kept¦238009 to the path without wavering.
+\q1
+\v 12 I've \add always obeyed\add* what he commanded¦238014,
+\q1 and I've valued his words¦238020 more than my daily¦238018 food.
+\b
+\q1
+\v 13 \add But¦238024\add* he's¦238024 independent \add so\add* who could dissuade¦238027 him¦238027?
+\q1 ≈He does whatever he wants to do.
+\q1
+\v 14 He carries out what's been decided for me,
+\q1 ≈and¦238035 he¦238033 \add knows so much about me\add*.
+\q1
+\v 15 That's why I'm terrified¦238043 in his¦238046 presence¦238042,
+\q1 ≈I'm afraid of him¦238046 when I consider¦238044 \add all that\add*.
+\q1
+\v 16 God¦238048 has caused me to be faint-hearted.
+\q1 ≈The provider has terrified¦238052 me.
+\q1
+\v 17 I¦238057 haven't been silenced¦238057 \add when\add* facing the darkness¦238060,
+\q1 or by the fog that covers¦238062 my¦238061 face¦238061.
+\c 24
+\s2 Iyyov complains about continued evil
+\rem /s1 Job Complains of Violence on the Earth; Job Asks Why the Wicked Are Not Punished
+\p
+\v 1 Why doesn't the provider \add ?store¦238070 up the times¦238071\add*,
+\q1 and those¦238072 who know¦238072 him \add ?≈never see him age\add*?
+\b
+\q1
+\v 2 \add People\add* move boundaries.
+\q1 They steal \add ≈sheep and goats\add* and graze \add <them\add*.
+\q1
+\v 3 They drive¦238087 away the donkey¦238085 of \add ≈a family who lost the husband\add*.
+\q1 ≈They take¦238088 the widow's¦238090 ox as \add payment for\add* a pledge¦238088.
+\q1
+\v 4 They turn needy¦238093 people off the road¦238094.
+\q1 ≈The poor people in the land \add ≈mustn't be seen\add*.
+\q1
+\v 5 Indeed, \add @the poor\add* work in¦238104 the desert.
+\q1 ≈The wilderness is their¦238106 field where they search for something to eat.
+\q1
+\v 6 They harvest¦238116 \add whatever they can find\add* in the countryside¦238114,
+\q1 ≈and they \add ≈gather grapes left behind\add* in the wicked¦238119 peoples' vineyards¦238118.
+\q1
+\v 7 They spend¦238123 the night¦238123 \add ≈under-dressed\add* from lack of clothing¦238125,
+\q1 ≈and¦238126 have nothing to cover¦238127 themselves with¦238128 in¦238128 the cold¦238128.
+\q1
+\v 8 They get soaked by the showers in the hills,
+\q1 ≈and¦238133 huddle against the rocky \add ledge\add* for shelter¦238134.
+\b
+\q1
+\v 9 They pull the fatherless¦238141 \add >baby\add* from the breast¦238140,
+\q1 ≈and¦238142 take¦238145 the \add children\add* from poor \add families\add* to pay their debt.
+\q1
+\v 10 Without clothing¦238150, they walk around under-dressed.
+\q1 ≈Harvesting \add for others\add*, they're feeling hungry¦238151.
+\q1
+\v 11 They squeeze out \add olive\add* oil¦238158 at the press¦238158.
+\q1 ≈They tread¦238160 the \add juice out of the grapes\add* while they thirst¦238161.
+\q1
+\v 12 People groan¦238166 in the cities,
+\q1 ≈and wounded¦238169 souls cry out.
+\q2 \add but¦238167\add* God¦238171 seems to not be offended¦238175.
+\b
+\q1
+\v 13 They're in¦238180 with¦238180 those¦238180 rebelling¦238180 against¦238180 the light¦238182.
+\q1 They take no notice of his ways¦238186,
+\q1 ≈and they don't¦238183 stay on¦238180 his paths¦238189.
+\q1
+\v 14 At \add first\add* light¦238191, the murderer¦238193 gets up and kills¦238194 the poor,
+\q1 ≈and in the night¦238198 he's like a thief¦238200.
+\q1
+\v 15 The adulterer¦238203 watches¦238205 out for the twilight¦238206,
+\q2 saying that no one will see¦238210 him,
+\q1 and¦238212 he¦238214 puts a covering¦238212 over his face¦238213.
+\q1
+\v 16 They dig into \add people's\add* houses¦238218 in¦238217 the dark,
+\q1 \add ≈but\add* they stay hidden away during the day¦238219—
+\q2 they don't¦238223 know¦238225 what daylight is.
+\q1
+\v 17 To them, morning¦238231 is like deep darkness.
+\q1 They're familiar with the terrors¦238237 of deep darkness.
+\b
+\q1
+\v 18 They're swift¦238240 on the surface¦238246 of the waters¦238248.
+\q1 Their portion¦238250 of the land is cursed¦238249.
+\q1 No one goes in the direction¦238255 of their¦238250 vineyards¦238256.
+\q1
+\v 19 Drought¦238258 as well as heat will snatch¦238262 away the snow.
+\q1 ≈The¦238266 grave \add will do the same to those¦238267 who\add* have sinned¦238267.
+\q1
+\v 20 The womb will forget¦238269 them—the worm will dine on them.
+\q1 ≈They won't¦238275 be remembered¦238277 again¦238274—injustice¦238280 is like a broken¦238278 tree¦238279.
+\q1
+\v 21 He devours the barren¦238283 \add >woman\add* who's never had a child.
+\q1 He doesn't do \add anything\add* good¦238288 to the widow¦238286.
+\q1
+\v 22 He uses his strength to drag powerful¦238292 \add >people\add* away.
+\q1 He rises¦238293 \add but¦238290\add* no one trusts¦238296 in¦238292 life¦238297. WHAT???
+\q1
+\v 23 He gives¦238299 him support¦238303 and security¦238302,
+\q1 and his eyes¦238304 are on their¦238307 ways¦238307.
+\q1
+\v 24 They're promoted for a while then they're gone.
+\q1 Then they're cut down and gathered¦238315 up \add like wheat\add*,
+\q1 ≈then they wither¦238318 like the stalks of grain¦238317.
+\q1
+\v 25 If that isn't¦238322 true, then¦238320 who will prove¦238325 me a liar
+\q1 ≈and¦238326 demonstrate that my words \add mean\add* nothing¦238327?
+\c 25
+\s1 Bildad's third response to Iyyov
+\rem /s1 Bildad; Bildad Speaks: How Can a Mortal Be Righteous Before God?; Bildad's Third Response to Job
+\p
+\v 1 Then Bildad¦238332 (from Shuah) \add ≈responded¦238334 to Iyyov\add*:
+\q1
+\v 2 Dominion¦238336 and¦238337 fear belong to God.
+\q1 He establishes peace¦238340 in¦238341 his high \add places\add*.
+\q1
+\v 3 Can his troops¦238345 be counted?
+\q1 Is there¦238343 anyone who his light¦238352 doesn't shine on?
+\q1
+\v 4 How can a person¦238357 be innocent before God¦238360?
+\q1 ≈How could a human born from a women be pure?
+\q1
+\v 5 Look, even the moon¦238370 isn't¦238371 clear¦238372 \add ?to us\add*,
+\q1 ≈and the stars¦238373 aren't¦238371 pure in¦238377 \add our\add* sight¦238377.
+\q1
+\v 6 Indeed¦238380, a person's¦238382 \add just like\add* an \add insect\add*,
+\q1 ≈and¦238384 human¦238386 offspring \add ?are as insignificant as\add* worms.
+\c 26
+\s1 Iyyov's response to Bildad
+\rem /s1 Job; Job Replies: God's Majesty Is Unsearchable; Job's Ninth Speech: A Response to Bildad
+\p
+\v 1 Then Iyyov¦238391 responded¦238392 \add to Bildad\add*:
+\q1
+\v 2 How have you helped¦238396 \add those\add* without power¦238399?
+\q1 ≈\add How have\add* you saved¦238400 \add those\add* \add ≈who are weak\add*?
+\q1
+\v 3 How \add well\add* you have advised \add those\add* without wisdom¦238410,
+\q1 ≈and displayed many good¦238411 \add ?things\add*.
+\q1
+\v 4 Who did you tell \add all that\add* to,
+\q1 and whose spirit¦238420 spoke through you?
+\q1
+\v 5 The dead¦238426 will be made to tremble¦238427
+\q1 from beneath the water¦238429 and¦238430 their¦238430 inhabitants¦238430. ???
+\q1
+\v 6 The grave is wide open before¦238434 him¦238434,
+\q1 ≈and¦238435 ABADDON has no covering¦238436.
+\q1
+\v 7 He stretches¦238439 out the north¦238440 over \add ≈empty space\add*.
+\q1 ≈He hangs the earth¦238445 upon nothing at all.
+\q1
+\v 8 He attaches the water¦238454 into his clouds,
+\q1 \add but¦238456\add* the cloud isn't¦238456 torn apart by it.
+\q1
+\v 9 He covers¦238462 the surface¦238463 of the THRONE/MOON.
+\q1 He spreads¦238466 his cloud¦238468 above it.
+\q1
+\v 10 He's drawn¦238472 a circle¦238472 \add to mark\add* the limit¦238470 of the waters¦238477,
+\q1 \add and to mark\add* the boundary between light¦238481 and darkness¦238484.
+\q1
+\v 11 The pillars¦238486 of heaven¦238487 shake¦238488,
+\q1 and¦238489 they're astounded¦238489 when he scolds them.
+\q1
+\v 12 He stirs up the sea¦238494 with¦238495 his power¦238492,
+\q1 and using his know-how he smashed¦238497 RAHAB.
+\q1
+\v 13 By his breath¦238500 he makes the skies¦238501 clear¦238502.
+\q1 His hand¦238504 pierced¦238503 the fleeing¦238506 snake¦238505.
+\q1
+\v 14 Listen, those are the ends¦238512 of his ways¦238513,
+\q2 and how we¦238519 hear¦238519 \add just\add* a whisper¦238517 of a word¦238518.
+\q1 And who can interpret the thunder¦238522 of his power¦238523?
+\c 27
+\rem /s1 Job's Final Speech; Job Maintains His Integrity
+\p
+\v 1 Then Iyyov¦238531 continued¦238530 speaking:
+\q1
+\v 2 \add Although\add* God¦238538 lives, who's taken¦238539 justice¦238540 away from me,
+\q1 ≈and¦238541 the provider who's made my soul¦238543 bitter¦238542,
+\q1
+\v 3 I still¦238549 have my breath in me,
+\q1 ≈and¦238552 God's breath \add remains\add* in my nostrils¦238554.
+\q1
+\v 4 If my lips¦238559 speak¦238558 wickedness,
+\q1 ≈if my tongue¦238561 speaks deceitfully¦238565,
+\q1
+\v 5 I'll¦238571 never say that you¦238572 all are correct—
+\q1 I won't¦238576 set aside¦238578 my integrity¦238579 before I die¦238575.
+\q1
+\v 6 I'm holding tight to my \add ≈innocence\add* and won't¦238584 let it go¦238585.
+\q1 ≈\add ≈There hasn't been a single day\add* \add when\add* my \add ≈conscience\add* has reproached¦238588 me.
+\b
+\q1
+\v 7 May my enemies \add get the same reward\add* as wicked¦238593 \add >people\add*,
+\q1 ≈and¦238595 may my opponents¦238595 \add receive the same\add* as unjust¦238596 \add >people\add*.
+\q1
+\v 8 What hope do godless¦238602 \add >people\add* have
+\q2 \add when\add* he cuts \add <them\add* off,
+\q2 ≈\add when\add* God¦238607 takes away their lives?
+\q1
+\v 9 Will¦238614 God¦238613 hear¦238611 their cries
+\q1 when troubles \add ≈hit\add* them?
+\q1
+\v 10 If they delight¦238625 themselves in the provider,
+\q1 will they call on God¦238627 at all times?
+\b
+\q1
+\v 11 I'll¦238632 teach you¦238633 all about God's power¦238634.
+\q1 ≈I won't¦238641 hide¦238642 \add >anything\add* about the provider.
+\q1
+\v 12 Yes, all of you have seen¦238648 this for yourselves,
+\q1 \add so\add* why do¦238653 you vainly speak such \add nonsense\add*?
+\q1
+\v 13 This is the wicked¦238660 people's portion¦238657 from God¦238664,
+\q1 ≈and¦238665 the inheritance¦238665 that¦238667 ruthless¦238666 \add >people\add* will receive¦238668 from the provider:
+\q1
+\v 14 If they have many children¦238673, they'll die in battle,
+\q1 ≈and their offspring¦238677 won't¦238678 have enough food¦238681 \add to eat\add*.
+\q1
+\v 15 Those who remain will be buried¦238686 by the plague¦238685,
+\q1 and¦238687 their¦238687 widows¦238687 won't¦238688 \add be there to\add* weep \add for them\add*.
+\q1
+\v 16 If they heap up silver¦238695 like the dust,
+\q1 ≈and¦238696 pile up clothes¦238698 like clay mounds,
+\q1
+\v 17 although the wicked piled it up, the godly¦238701 people will wear them,
+\q1 ≈and innocent¦238704 \add >people\add* will divide¦238705 up the silver¦238703.
+\q1
+\v 18 \add The wicked\add* build \add easily-broken\add* houses¦238709 like the moths do,
+\q1 and¦238710 like \add temporary\add* shelters¦238710 that¦238711 a guard \add quickly\add* makes.
+\q1
+\v 19 \add They're\add* wealthy when they lie down, but¦238716 that's that—
+\q1 when \add they\add* open \add their\add* eyes¦238718, it's gone.
+\q1
+\v 20 Terrors overtake¦238722 \add them\add* like a flood¦238723.
+\q1 ≈A gale carries¦238726 \add them\add* away in the night¦238725.
+\q1
+\v 21 The east wind¦238730 carries \add them\add* away then they're gone,
+\q1 ≈and it¦238732 sweeps¦238732 \add them\add* out from their places¦238733.
+\q1
+\v 22 It hurls¦238735 itself against \add them\add* without mercy.
+\q1 They hurriedly flee from its¦238739 power¦238739.
+\q1
+\v 23 \add That wind\add* claps its hands¦238745 at \add them\add*,
+\q1 ≈and¦238746 hisses¦238746 at them from its place¦238748.
+\c 28
+\ms1 SECTION THREE:
+\mr (28:1-28)
+\s1 Praising wisdom
+\rem /s1 Job Speaks of Wisdom and Understanding; Interlude: Where Wisdom Is Found; God's unfathomable wisdom; In Praise of Wisdom
+\q1
+\v 1 Surely there's¦238751 a mine where silver¦238752 \add is extracted\add*,
+\q1 ≈and¦238754 a place¦238754 where gold¦238755 is refined¦238756.
+\q1
+\v 2 Iron is taken¦238760 from the ground,
+\q1 ≈and¦238761 copper¦238763 is smelted from rock¦238761.
+\q1
+\v 3 \add People have ways\add* to end the darkness.
+\q1 \add They\add* search¦238773 \add the furthest places\add*
+\q1 for the stone¦238774 of gloom¦238775 and deep darkness. ???
+\q1
+\v 4 \add They\add* break¦238778 open a shaft¦238779 \add far\add* from \add villages\add*—
+\q2 where feet have forgotten¦238784 \add to go\add*.
+\q1 They hang down \add on ropes\add* and swing¦238790 around \add far\add* from people¦238789.
+\q1
+\v 5 Food comes¦238794 from \add the land on the surface of\add* the earth¦238792,
+\q1 \add but¦238797\add* underneath¦238797 it \add ≈keeps changing\add* like fire¦238801.
+\q1
+\v 6 Its rocks¦238806 are a source of sapphires¦238805,
+\q1 ≈and¦238807 its¦238806 dust \add a source\add* of gold¦238808.
+\q1
+\v 7 The birds of prey don't¦238812 know \add that\add* path,
+\q1 ≈and¦238816 the falcon's eye¦238818 hasn't seen¦238817 it¦238817.
+\q1
+\v 8 The sons¦238824 of pride¦238826 haven't walked on it.
+\q1 ≈The lion¦238831 hasn't passed¦238829 over it.
+\q1
+\v 9 \add ?@ The miner works\add* the flinty¦238833 rock¦238833 with his hands.
+\q1 He overturns¦238836 mountains¦238838 by their roots¦238837.
+\q1
+\v 10 He splits¦238842 open shafts¦238841 in the rocks¦238840,
+\q1 and¦238843 his eyes¦238847 \add ≈notice\add* everything that's valuable.
+\q1
+\v 11 He \add ≈dams up\add* rivers¦238850 \add upstream towards the\add* source¦238849,
+\q1 then hidden¦238852 things¦238852 are brought into the light¦238855.
+\b
+\q1
+\v 12 \add But¦238858\add* where can \bd wisdom¦238858\bd* be found¦238860,
+\q1 ≈and where does understanding¦238864 \add ≈live\add*?
+\q1
+\v 13 \add People\add* don't¦238871 know their worth¦238870,
+\q1 and it's not found¦238872 in the land of the living¦238874.
+\q1
+\v 14 The deep \add waters\add* say, ‘I don't¦238878 have it,’
+\q1 ≈and the ocean says, ‘It's not in¦238879 me.’
+\q1
+\v 15 Gold can't be used to obtain it,
+\q1 ≈and silver¦238894 can't be weighed¦238893 out to match its price¦238895.
+\q1
+\v 16 \add Even\add* the gold¦238900 from Ofir¦238901 can't be used to pay for \add @wisdom\add*,
+\q1 \add nor can\add* precious¦238903 onyx stones and¦238904 sapphires¦238904.
+\q1
+\v 17 Neither gold nor \add clear\add* glass¦238910 can equal¦238908 it,
+\q1 ≈and it can't be exchanged¦238911 for a gold \add goblet\add*.
+\q1
+\v 18 It's not even worth mentioning coral¦238922 and jasper.
+\q1 ≈Yes, \bd wisdom¦238921\bd* is \add way\add* more expensive than pearls¦238922.
+\q1
+\v 19 The \add good\add* topaz¦238927 from Ethiopia¦238929 can't be compared¦238926 with it.
+\q1 ≈It can't be paid for with gold¦238930.
+\s1 Wisdom is obeying God
+\q1
+\v 20 \add So\add* then, where does \bd wisdom¦238936\bd* come¦238938 from?
+\q1 ≈Where then, does understanding¦238942 \add ≈live\add*?
+\q1
+\v 21 It's hidden¦238951 from the eyes¦238945 of every¦238946 living¦238948 creature.
+\q1 ≈It's even concealed¦238944 from the birds¦238949 in the sky.
+\q1
+\v 22 Destruction and¦238954 death¦238954 say¦238955,
+\q1 ‘We've heard¦238957 a rumour about it¦238958 with¦238956 our¦238956 ears¦238956.’
+\q1
+\v 23 \add But¦238965\add* God¦238960 understands¦238961 the path¦238962 \add to wisdom\add*,
+\q1 ≈and he knows¦238964 where it lives,
+\q1
+\v 24 because he can see \add ≈right around\add* the earth¦238975,
+\q1 and he notices everything under¦238977 the sky.
+\q1
+\v 25 \add @God\add* determined the weight¦238985 of the \add atmosphere\add*,
+\q1 ≈and¦238986 he¦238987 \add dished\add* out the ocean \add with¦238988 his measuring¦238987 cup\add*.
+\q1
+\v 26 He told the rain how to behave,
+\q1 ≈and¦238994 made the paths for the lightning¦238995 bolts when it thunders¦238996.
+\q1
+\v 27 Then he saw¦238999 \add @wisdom\add* and declared¦239000 it.
+\q1 ≈and He established¦239001 it then searched¦239004 it out.
+\q1
+\v 28 Then¦239006 he told humankind¦239008,\x + \xo 28:28: \xt Psa 111:10; Prv 1:7; 9:10.\x*
+\q1 ‘Listen, obeying the master¦239011—that's \bd wisdom¦239013\bd*,
+\q2 along with turning away from \add doing\add* evil¦239015.’
+\c 29
+\ms1 SECTION FOUR: Final speech of Iyyov
+\mr (29:1–31:40)
+\s1 Iyyov remembers his earlier life
+\rem /s1 Job's final survey of his case; Job Finishes His Defense; Job Speaks of His Former Blessings; Job's Final Statement of His Case
+\p
+\v 1 Then Iyyov continued¦239023 speaking:
+\q1
+\v 2 How I wish for \add my life\add* in the months¦239028 of the past,
+\q1 ≈in the days¦239031 when God¦239032 watched¦239033 over me.
+\q1
+\v 3 When his lamp shone¦239035 over my head¦239038.
+\q1 ≈When I walked¦239040 in the darkness¦239041 by his light¦239039.
+\q1
+\v 4 I was \add still\add* in my prime¦239046 in those days¦239045,
+\q1 when God's friendship¦239047 \add ≈could be noticed in my home\add*.
+\q1
+\v 5 When the provider was still¦239052 with me.
+\q1 ≈When my¦239055 children¦239056 were all around¦239055 me.
+\q1
+\v 6 When my path was greased with¦239060 butter¦239060,
+\q1 ≈and¦239061 the rock¦239061 poured¦239062 streams¦239064 of olive oil¦239066 out for me.
+\q1
+\v 7 When I went¦239068 to \add the gathering of the city elders at¦239073\add* the city gate¦239069.
+\q1 ≈When I took my seat¦239075 in¦239073 the public square¦239073.
+\q1
+\v 8 Young men¦239078 saw¦239077 me and got out of the way,
+\q1 ≈and the old people got up and remained standing.
+\q1
+\v 9 The leaders would stop their conversations,
+\q1 and put their hands¦239087 over their mouths¦239089.
+\q1
+\v 10 The voices¦239091 of the nobles¦239093 were hushed,
+\q1 ≈and their tongues¦239095 stayed on the roofs of their mouths¦239096.
+\b
+\q1
+\v 11 \add ≈Those who listened to me\add* commended¦239102 me,
+\q1 ≈and \add ≈those who saw¦239104 me\add* approved¦239105 of me,
+\q1
+\v 12 because I¦239109 rescued¦239109 the poor who cried¦239111 out,
+\q1 ≈and the fatherless¦239112 who had no one to help¦239111 them.
+\q1
+\v 13 Those who were close to dying gave me their blessing¦239118,
+\q1 ≈and¦239122 widows¦239123 were very pleased \add that I'd helped them\add*.
+\q1
+\v 14 I put on obedience like a cloak.
+\q1 ≈My justice¦239131 was like a robe¦239129 and a turban¦239130.
+\q1
+\v 15 I was the eyes for the blind¦239135,
+\q1 ≈and¦239136 the feet¦239136 for the lame.
+\q1
+\v 16 I was a father¦239140 for the needy¦239142,
+\q1 ≈and¦239143 I helped strangers \add present\add* their cases.
+\q1
+\v 17 I¦239153 broke¦239149 the jaws\f + \fr 29:17 \ft Of course this is figurative language as you can see from the second line of the doublet.\f* of unjust¦239151 \add >people\add*,
+\q1 \add so\add* they had to drop their prey from their teeth¦239152.
+\b
+\q1
+\v 18 I had thought¦239156 that I would \add ≈die in my own home\add*,
+\q1 having multiplied my days¦239163 like the sand.
+\q1
+\v 19 My roots are spread out to \add reach\add* water¦239169,
+\q1 ≈and¦239170 the dew will lie on¦239172 my branches¦239172 overnight¦239171.
+\q1
+\v 20 \add ≈People were always honouring me\add*,
+\q1 and the bow in¦239178 my hand¦239178 will \add always\add* seem new.
+\q1
+\v 21 They listened¦239183 to me and they waited¦239184,
+\q1 ≈and they kept¦239185 silent¦239185 \add ready to hear\add* my advice.
+\q1
+\v 22 After¦239190 my talk, they¦239192 \add still\add* didn't¦239191 speak,
+\q1 \add because\add* my words slowly sunk into them like the dew.
+\q1
+\v 23 They waited¦239197 for me like \add a farmer\add* waits for rain,
+\q1 ≈and¦239200 they¦239201 opened¦239201 their¦239200 mouths¦239200 wide¦239201 like \add soil\add* expecting the wet weather.
+\q1
+\v 24 I smiled at them \add even when\add* they didn't believe¦239207 \add <me\add*,
+\q1 and they didn't cause the \add ≈delight\add* on my face¦239209 to falter.
+\q1
+\v 25 I chose¦239213 their¦239214 path¦239214 and I sat¦239215 as a chief¦239216,
+\q1 and I lived¦239217 like a king¦239218 with¦239219 \add his\add* troops¦239219,
+\q2 like when someone¦239222 comforts¦239222 those who are mourning¦239221.
+\c 30
+\rem /s1 Job Speaks of His Anguish
+\q1
+\v 1 But¦239224 now those who are younger¦239228 than me laugh¦239226 at me—
+\q1 those whose fathers¦239234 I¦239233 would have refused to have join my sheepdogs!
+\q1
+\v 2 What use was the strength¦239243 of their¦239244 arms to me?
+\q1 \add Their contentment with life\add* has gone.
+\q1
+\v 3 \add They're useless\add* due to poverty¦239251 and hunger¦239252.
+\q1 Gnawing at¦239252 the dry land that's devastated¦239257 and uninhabited.
+\q1
+\v 4 They pick mallow¦239261 \add leaves\add* off the \add wild\add* bushes,
+\q1 ≈and¦239265 roots¦239265 of broom¦239266 trees have become their¦239267 food.
+\q1
+\v 5 They're driven¦239272 away from the community¦239271,
+\q1 and people¦239273 shout¦239273 at them as if \add they're\add* thieves,
+\q1
+\v 6 They live \add out\add* in the river valleys—
+\q1 in holes¦239280 in the ground¦239281 and¦239282 \add ≈caves in the cliffs\add*.
+\q1
+\v 7 They bray \add like animals out\add* between the shrubs.
+\q1 ≈They're huddled together¦239290 under¦239288 the thorn bushes¦239286.
+\q1
+\v 8 They're the children of fools, without any name¦239300 to them.
+\q1 They've been driven out of the land.
+\q1
+\v 9 \add But¦239306\add* now I'm¦239308 mocked in their¦239307 songs,
+\q1 and¦239309 \add ≈my name has been made into a joke\add* by them.
+\q1
+\v 10 They despise me and¦239316 keep their distance¦239314,
+\q1 \add yet\add* don't¦239317 hesitate to spit in my face¦239316.
+\q1
+\v 11 \add @God\add* has unstrung my bow and humbled¦239327 me,
+\q1 so they¦239330 don't restrain¦239328 themselves in my presence¦239329.
+\q1
+\v 12 A rabble appears on one side¦239334 and¦239339 push my feet¦239337 away.
+\q1 ≈They pile up their¦239342 destructive¦239342 paths¦239341 against¦239340 me.
+\q1
+\v 13 They've torn down my path.
+\q1 They benefit¦239347 from my destruction¦239346—
+\q2 there's no helper¦239349 for them.
+\q1
+\v 14 They come¦239354 \add quickly\add* like \add through\add* a wide¦239353 breach¦239352 \add in the wall\add*.
+\q1 They have rolled¦239357 themselves¦239357 under¦239355 the devastation¦239356.
+\q1
+\v 15 Terrors have been turned¦239359 against me.
+\q1 They pursue¦239362 my honour¦239364 like the wind¦239363,
+\q1 ≈and¦239365 my prosperity¦239367 has disappeared like cloud¦239365.
+\q1
+\v 16 Now my¦239373 life¦239372 pours¦239371 itself¦239371 out within¦239370 me.
+\q1 ≈Days of suffering have taken¦239373 hold of me.
+\q1
+\v 17 Night¦239381 pierces¦239380 my bones¦239379 from upon me,
+\q1 ≈and¦239382 the pains¦239382 that gnaw at me never rest.
+\q1
+\v 18 My clothing¦239391 is transformed through great¦239386 strength¦239388.
+\q1 ≈My garment¦239393 ties me up by the collar¦239392.
+\q1
+\v 19 He throws¦239396 me into the mud,
+\q1 ≈and I've¦239398 become¦239398 like dust and ashes¦239400.
+\b
+\q1
+\v 20 I call out to you for help¦239402
+\q2 \add but¦239404\add* you don't¦239404 answer¦239405 me.
+\q1 I've¦239406 stood¦239406 here and you \add just\add* look¦239407 at¦239408 me.
+\q1
+\v 21 You've changed¦239410 yourself¦239410 to become cruel¦239411 to me.
+\q1 ≈\add ≈You use your¦239414 strength\add* to persecute¦239415 me.
+\q1
+\v 22 You hold me up to the wind¦239420 and¦239423 let it take me.
+\q1 ≈You toss me around in the storm.
+\q1
+\v 23 I¦239429 know¦239429 you¦239431 are bringing¦239431 me towards death¦239430,
+\q1 ≈and¦239432 to the \add final\add* appointment¦239433 that everyone has.
+\q1
+\v 24 Doesn't someone¦239442 who's collapsed into a heap stretch¦239442 out their hand¦239444.
+\q1 ≈In a disaster¦239447 they cry¦239449 out for help¦239449.
+\q1
+\v 25 Didn't I weep for those having a troubled day¦239457?
+\q1 ≈I was upset \add when I saw\add* the poor.
+\q1
+\v 26 I waited for good, but it was evil that came.
+\q1 ≈I waited for light¦239468, but it was gloom¦239470 that came.
+\q1
+\v 27 My insides feel like they're boiling—
+\q2 they never feel settled,
+\q1 and my suffering confronts¦239477 me \add every\add* day.
+\q1
+\v 28 I go around being dark, but not from the sun¦239485.
+\q1 I've¦239483 stood¦239486 in¦239484 the assembly¦239487 and called out for help¦239488.
+\q1
+\v 29 I've¦239491 become¦239491 a brother¦239490 to jackals¦239492,
+\q1 ≈and¦239493 a companion¦239493 of \add ≈young\add* ostriches¦239495.
+\q1
+\v 30 My skin has turned black¦239499,
+\q1 ≈and¦239501 my bones¦239501 are burning with \add ≈fever\add*.
+\q1
+\v 31 \add So¦239508\add* my harp is used for mourning¦239509.
+\q1 ≈My flute¦239511 \add ≈accompanies\add* those¦239513 who are weeping.
+\c 31
+\s1 Iyyov's claims of obedience
+\rem /s1 Job's Final Protest of Innocence
+\p
+\v 1 I've made an agreement¦239515 with my eyes¦239517,
+\q1 ≈\add about\add* how I'll be careful¦239519 when I look¦239519 at a young woman.
+\q1
+\v 2 \add Yes,\add* what would God¦239527 serve out from above¦239528,
+\q1 ≈and¦239529 \add what would our\add* inheritance¦239529 be from the provider on high¦239531?
+\q1
+\v 3 Isn't calamity¦239535 \add intended\add* for the disobedient,
+\q1 ≈and¦239537 disaster¦239537 for those¦239538 who do¦239538 evil?
+\q1
+\v 4 Doesn't \add @God\add* see¦239545 my ways¦239546,
+\q1 ≈and¦239547 count¦239550 all my steps¦239549?
+\q1
+\v 5 If I've¦239554 walked¦239554 \add the life of\add* liars,
+\q1 ≈and¦239558 my feet have rushed to be deceitful¦239561,
+\q1
+\v 6 let him weigh¦239564 me on¦239565 his scales¦239565 of justice,
+\q1 and¦239568 God¦239569 will acknowledge¦239568 my integrity¦239570.
+\q1
+\v 7 If I have stepped off the path¦239576,
+\q1 \add or\add* my thoughts have followed my eyes¦239578,
+\q1 \add or\add* any stain \add can be seen on¦239581\add* my hands¦239581,
+\q1
+\v 8 let others eat¦239589 the crops that I planted,
+\q1 \add or\add* let all my crops be pulled out.
+\q1
+\v 9 If my heart¦239596 has been enticed by a woman¦239599,
+\q1 \add or\add* I've¦239604 watched for my chance at my neighbour's¦239603 door,
+\q1
+\v 10 then may my wife¦239608 \add ≈prepare meals\add* for someone else,
+\q1 and may others¦239611 \add ≈take advantage of\add* her.
+\q1
+\v 11 \add Yes,\add* that would be wicked¦239617,
+\q1 and¦239618 would be an evil deserving judgement¦239621.
+\q1
+\v 12 It's a fire¦239624 that¦239626 will devour¦239629 Abaddon¦239628, ???
+\q1 and it would uproot all of my harvest¦239632. ???
+\q1
+\v 13 If I didn't treat my male or female¦239640 servants fairly,
+\q1 when they bring their¦239641 complaints¦239641 against me,
+\q1
+\v 14 then¦239644 what would I do¦239645 if God¦239649 stood up \add to judge\add*?
+\q1 How would I answer¦239654 when he came to me?
+\q1
+\v 15 Didn't the one who made me in the uterus, also make \add @the servants\add*?
+\q1 ≈Didn't the same one form us in the womb?
+\b
+\q1
+\v 16 If I've been stingy in meeting the needs of the poor,
+\q1 \add or\add* have allowed the widow's¦239671 EYES TO FAIL,
+\q1
+\v 17 \add or\add* if I ever ate¦239679 my meal myself¦239676
+\q1 while the orphan \add there\add* had nothing to eat,
+\q1
+\v 18 \add because\add* he'd grown up with me like a father¦239686 to him
+\q1 and¦239687 I'd guided¦239689 \add @the widow\add* \add ≈since¦239684 I was very small\add*.
+\b
+\q1
+\v 19 If I ever saw¦239693 someone \add ≈dying from the cold\add* due to lack of clothing¦239697,
+\q1 \add or\add* any needy¦239700 \add person\add* without¦239698 a \add blanket\add*,
+\q1
+\v 20 if \add the poor\add* haven't blessed¦239705 me,
+\q1 \add or\add* they¦239705 haven't warmed¦239710 themselves with wool from my sheep¦239709,
+\q1
+\v 21 if I've used my strength against the fatherless¦239717,
+\q1 because¦239719 I'd be supported¦239723 by \add the elders\add* from the \add city\add* gate¦239722,
+\q1
+\v 22 may my upper arm fall away from my shoulder¦239726 blade¦239725,
+\q1 ≈and¦239728 may my arm be broken¦239730 out of its¦239729 socket¦239729,
+\q1
+\v 23 because¦239737 calamity¦239735 from God¦239736 worries me,
+\q1 and¦239737 I¦239739 can't¦239738 match his greatness.
+\q1
+\v 24 If¦239747 I've¦239743 put my trust¦239745 in gold,
+\q1 ≈and called fine gold my security¦239748,
+\q1
+\v 25 if I've celebrated because of my great¦239755 wealth¦239756,
+\q1 ≈and because I've been able to accumulate so much,
+\q1
+\v 26 if I've¦239765 seen the light¦239766 when it¦239768 shines,
+\q1 and¦239769 the moon¦239769 advancing in its splendour¦239770,
+\q1
+\v 27 and my heart¦239775 was secretly¦239774 enticed¦239773,
+\q1 and my hand gave kisses¦239776 from my hand,
+\q1
+\v 28 this would also be an evil deserving judgement¦239785,\x + \xo 31:28a \xt Yob 31:11b.\x*
+\q1 because¦239786 I¦239788 would have denied¦239788 the god¦239789 above¦239790.
+\q1
+\v 29 If I've been happy at¦239795 the ruin of someone who hated¦239796 me,
+\q1 or been glad because¦239798 calamity¦239801 found¦239800 them,
+\q1
+\v 30 I¦239805 have not allowed my \add ≈mouth¦239807\add* to sin¦239806
+\q1 by demanding their life¦239810 in¦239809 a curse¦239809.
+\q1
+\v 31 \add # Those\add* who live in my home will declare
+\q1 that no one has ever been denied food \add there\add*.
+\q1
+\v 32 No traveller¦239831 has had to overnight outside \add on the street¦239825\add*—
+\q1 ≈I've opened¦239832 my doors¦239830 to \add #travellers\add*.
+\q1
+\v 33 If I've¦239836 concealed¦239836 my disobedience like others¦239837 do,
+\q1 ≈by hiding¦239839 my guilt in¦239840 my chest,
+\q1
+\v 34 because I feared how the big crowd¦239846 \add would react\add*,
+\q1 ≈and because \add being on the receiving end of\add* the contempt¦239848 of the clans¦239850 terrified¦239844 me,
+\q2 then I'd remain silent¦239852 and wouldn't go outside¦239855,
+\q1
+\v 35 If only I had someone to hear my case.
+\q2 Look, here's my signature¦239867.
+\q1 May the provider answer¦239869 me
+\q2 and¦239870 the indictment¦239870 that¦239871 \add my accuser¦239873\add* has written¦239871.
+\q1
+\v 36 If I didn't¦239877 display it up on my shoulder¦239880,
+\q1 I'd tie it \add around my head\add* like a crown¦239883.
+\q1
+\v 37 I would have to give¦239888 him an account of my every step.
+\q1 Like a noble, I would \add go and\add* approach¦239892 him.
+\b
+\q1
+\v 38 If my land cried¦239898 out against¦239896 me,
+\q1 and the \add ploughed\add* furrows¦239900 wept together¦239899,
+\q1
+\v 39 if I've eaten¦239907 what it produces with paying \add fair wages\add*,
+\q1 or I've caused¦239913 the death of its owners¦239912,
+\q1
+\v 40 then let thornbushes¦239919 grow up instead of wheat¦239916,
+\q1 ≈and¦239920 let stinkweed grow up instead of barley¦239922.
+\p (That finishes¦239924 Iyyov's response.)
+\c 32
+\ms1 SECTION FIVE: Elihu's speeches
+\mr (32:1–37:24)
+\s1 Elihu's response
+\rem /s1 The Speeches of Elihu; Speeches of Elihu; Elihu Rebukes Job's Friends; Elihu; Elihu Responds to Job's Friends
+\p
+\v 1 \add After that\add* those three¦239930 men¦239931 stopped answering¦239933 Iyyov, because¦239937 \add ≈they considered that he had just been trying to justify himself\add*.
+\v 2 Then Elihu¦239946 (son of Barakel¦239949 the Buzite, from the clan of Ram¦239952) \add ≈got angry with¦239953\add* Iyyov because¦239956 \add @Iyyov\add* \add seemed to be\add* claiming that he was \add ≈in¦239953 the right\add* rather¦239960 than God¦239960.
+\p
+\v 3 He was also \add ≈angry\add* at¦239962 \add Iyyov's\add* three¦239962 friends¦239963, because they¦239970 had declared that he¦239965 was wrong, yet hadn't found¦239970 any \add reasonable justification for it¦239964\add*.
+\v 4 Elihu¦239979 had \add ≈waited¦239978 to speak¦239982\add* because¦239983 they¦239986 were \add all\add* older than him,
+\v 5 \add but¦239990\add* when \add *he\add* had seen that they \add ≈didn't¦239993 really have any answer¦239994\add*, he got angry.
+\s1 Elihu's first speech to Iyyov's three friends
+\p
+\v 6 \add So now\add* Elihi (son of Barakel¦240007 the Buzite) \add spoke up\add*:
+\q1 I'm \add only\add* young¦240010 and all of you are much older than me,
+\q1 so I was shy and reluctant to give you all my views.
+\q1
+\v 7 I told myself to let the elders speak¦240028,
+\q1 ≈and¦240029 to let those \add with much experience\add* share \add their\add* wisdom¦240032.
+\q1
+\v 8 However, each person¦240038 has a spirit¦240035,
+\q1 ≈and¦240039 the provider's breath¦240039 gives¦240041 \add us\add* understanding¦240041.
+\q1
+\v 9 Not so many \add >people\add* are wise,
+\q1 and older \add >people\add* \add don't necessarily\add* understand¦240048 what's right.
+\q1
+\v 10 So I say¦240052, “Listen to me.
+\q1 I too will declare¦240056 what I know¦240057.
+\b
+\q1
+\v 11 Listen, I waited¦240063 for your words.
+\q1 I listened to your wise sayings¦240068
+\q2 while you all searched¦240071 for the \add right\add* words.
+\q1
+\v 12 I gave you all my full attention¦240075, \add but¦240074\add* listen,
+\q1 none of you could refute Iyyov
+\q1 ≈\add or\add* could answer¦240080 his words¦240081.
+\q1
+\v 13 So don't¦240091 tell yourselves that you¦240086 displayed wisdom¦240088.
+\q1 It's God¦240089 who must refute¦240090 him¦240090—not any person.
+\q1
+\v 14 \add But¦240095\add* \add @Iyyov\add* hasn't directed his words¦240099 against me,
+\q1 and¦240100 I¦240102 won't¦240095 answer¦240102 him¦240102 with¦240100 your¦240100 answers.
+\s1 Elihu's speeches to Iyyov
+\q1
+\v 15 They're dismayed¦240104 and can't¦240105 answer¦240107 again¦240108.
+\q1 ≈\add Their\add* words¦240111 have \add ≈run away\add* from them.
+\q1
+\v 16 Should I wait \add because¦240114\add* they're not speaking¦240117?
+\q1 ≈They stand there but¦240113 haven't answered¦240122 again¦240123.
+\q1
+\v 17 \add Yes,\add* I too will answer¦240125 with my share¦240129.
+\q1 ≈I'll¦240125 declare¦240130 my opinion¦240131 as well.
+\q1
+\v 18 Because I'm full of words¦240138.
+\q1 ≈Something inside me compels me.
+\q1
+\v 19 My belly¦240145 is like pressurised wine.
+\q1 ≈It'll split¦240152 open like a new wineskin¦240150.
+\q1
+\v 20 Let me speak¦240154 so I can relax.
+\q1 ≈I'll open my mouth and answer¦240160.
+\q1
+\v 21 I won't \add ≈take anyone's side\add*,
+\q1 ≈and¦240169 I won't \add ≈flatter\add* anyone with \add fancy\add* titles¦240173.
+\q1
+\v 22 I don't¦240176 know¦240177 how to \add ≈give¦240178 fancy titles¦240178\add*.
+\q1 My maker¦240181 would soon take¦240180 me away.
+\c 33
+\s1 Elihu asks Iyyov to hear him out
+\rem /s1 Elihu Rebukes Job; Elihu Presents His Case against Job
+\p
+\v 1 \add So¦240183\add* now Iyyov¦240187, please¦240186 hear¦240184 my speech¦240188,
+\q1 ≈and¦240189 listen¦240192 to all my words¦240191.
+\q1
+\v 2 \add Listen\add*, I've opened my mouth¦240198.
+\q1 ≈My tongue¦240200 \add is ready\add* to speak¦240199.
+\q1
+\v 3 My words¦240206 come from an honest heart¦240205,
+\q1 ≈and¦240207 my lips¦240208 utter¦240210 what I truly believe.
+\q1
+\v 4 The spirit¦240212 of God¦240214 created me,
+\q1 ≈and¦240216 the provider gave me life¦240218.
+\b
+\q1
+\v 5 If you¦240222 can, answer¦240223 me.
+\q1 ≈Get things in order then take¦240226 a stand¦240226.
+\q1
+\v 6 Listen, my words are just like yours in God's sight.
+\q1 ≈I too was broken off from the clay.
+\q1
+\v 7 Listen, fear¦240240 of me shouldn't¦240241 terrify¦240242 you.
+\q1 ≈I won't¦240241 be putting heavy¦240247 pressure¦240243 on you.
+\s1 Elihu responds to Iyyov's speeches
+\q1
+\v 8 You've certainly spoken¦240250 in¦240251 my hearing¦240251,
+\q1 ≈and¦240252 I've heard¦240254 the sound¦240252 of the words¦240253:
+\q1
+\v 9 ‘I'm blameless—I haven't disobeyed.
+\q1 ≈I'm innocent¦240260—I haven't done anything wrong.
+\q1
+\v 10 Listen, he¦240269 finds¦240269 \add ≈reasons to accuse\add* me.
+\q1 ≈He considers¦240270 me as his enemy¦240271.
+\q1
+\v 11 He locks my feet¦240276 in¦240275 shackles.\x + \xo 33:11: \xt Yob 13:27.\x*
+\q1 He watches¦240277 me wherever I go.’
+\b
+\q1
+\v 12 Listen, you're¦240287 not right¦240287 about this.
+\q1 I'll¦240288 tell you that God¦240292 is greater¦240291 than any person.
+\q1
+\v 13 Why¦240298 do you¦240297 argue against him
+\q1 since he¦240304 doesn't answer¦240304 \add #people's\add* questions?
+\q1
+\v 14 God¦240311 speaks¦240309 with one \add >person\add*—
+\q1 with two¦240312, \add but¦240312\add* \add #they\add* don't¦240313 perceive¦240314 it¦240314, ???
+\q1
+\v 15 in a dream¦240316 \add or\add* a vision¦240318 in the night¦240319,
+\q1 \add when\add* deep sleep¦240321 falls¦240320 on¦240320 \add *those\add* asleep in bed¦240327.
+\s2 How God warns people
+\q1
+\v 16 Then he uncovers¦240330 people's¦240332 ears,
+\q1 and seals them with¦240333 warnings¦240333 ???
+\q1
+\v 17 to turn¦240336 \add #people\add* aside¦240336 from their deeds,
+\q1 and¦240339 to stop \add #them\add* from \add becoming\add* proud.
+\q1
+\v 18 He spares \add #their\add* souls from the pit,
+\q1 ≈and¦240348 \add #their\add* lives from perishing¦240349 by the sword¦240350.
+\q1
+\v 19 \add #They're\add* chastened¦240352 on¦240353 \add #their beds\add*
+\q1 with¦240353 constant¦240360 pain in¦240353 \add #their\add* bones¦240359.
+\q1
+\v 20 \add #They\add* have no desire for bread¦240364.
+\q1 ≈\add nor\add* do \add #their\add* souls desire food¦240364.
+\q1
+\v 21 \add #Their\add* flesh¦240370 wastes¦240369 \add right\add* away from sight¦240371.
+\q1 ≈\add #Their\add* bones¦240374, not normally visible, \add now\add* stick¦240372 out.
+\q1
+\v 22 \add #Their\add* souls get near to the pit,
+\q1 ≈and¦240381 \add #their\add* lives to the \add messengers\add* of death¦240382.
+\q1
+\v 23 If¦240396 there's¦240386 a messenger¦240389 who will mediate¦240390 for \add #them\add*,
+\q1 ≈one in a thousand¦240394 to announce¦240395 what's right¦240397 for \add #them\add*,
+\q1
+\v 24 who's gracious¦240399 to \add #them\add* and¦240400 says,
+\q2 ‘Spare \add @that person\add* from going¦240402 down to the pit,
+\q2 because I've¦240404 found¦240404 the ransom¦240405 \add to pay\add* for \add #them\add*.’
+\q1
+\v 25 Then \add #their\add* flesh¦240408 renews like that of a child.
+\q1 ≈\add #They\add* regain their youthful¦240409 energy.
+\q1
+\v 26 \add #They'll\add* \add request God's help\add* and he'll accept¦240419 \add #them\add*.
+\q1 \add #They'll\add* give happy shouts¦240422 when \add #they\add* see his face,
+\q2 and when he repays¦240423 \add #them\add* for \add #their\add* obedience.
+\q1
+\v 27 \add #They'll\add* sing to \add *others\add*, ??? TC ???
+\q1 ‘I sinned¦240433 and I \add ≈said¦240432 that what was wrong was right¦240434\add*,
+\q2 but¦240432 it wasn't \add ≈good for me\add*.
+\q1
+\v 28 He's \add ≈paid the ransom¦240441 to keep\add* my¦240442 soul¦240442 out of the pit,
+\q1 \add so\add* I'll live to see the light¦240448.’
+\b
+\q1
+\v 29 Listen, God¦240458 does all those \add >things\add* to \add #people\add* \add ≈several times¦240459\add*,
+\q1
+\v 30 to bring¦240465 \add #their\add* souls back from the pit
+\q1 \add so they can\add* be enlightened with¦240471 the light¦240471 of life¦240472.
+\b
+\q1
+\v 31 Pay attention¦240474, Iyyov, and listen¦240476 to me.
+\q1 Stay silent and then I'll¦240481 speak¦240481.
+\q1
+\v 32 If \add you¦240493 have\add* words¦240487, answer¦240488 me \add then\add*.
+\q1 Speak up because¦240490 I'd like to \add hear\add* that you're innocent.
+\q1
+\v 33 \add But¦240503\add* if not, then listen¦240499 to me.
+\q1 Remain silent and I'll¦240503 teach¦240503 you wisdom¦240504.
+\c 34
+\rem /s1 Elihu Accuses Job of Arrogance; Elihu Proclaims God's Justice
+\p
+\v 1 Then Elihu¦240508 \add continued¦240507\add*:
+\q1
+\v 2 Hear¦240512 my words¦240513 \add you\add* wise \add >men\add*,
+\q1 ≈and¦240514 listen¦240515 to me \add you\add* who are in the know¦240514.
+\q1
+\v 3 \add Yes,\add* our ears test words¦240521,
+\q1 \add just like\add* our mouth \add distinguishes\add* tastes¦240524.
+\q1
+\v 4 Let's choose¦240528 justice for ourselves.
+\q1 ≈Let's discern among¦240532 ourselves what is good¦240535.
+\q1
+\v 5 Because Iyyov has \add declared\add*, ‘I'm righteous¦240541,
+\q1 but¦240542 God¦240542 has deprived me of justice¦240544.
+\q1
+\v 6 Would I lie about my rights¦240548?
+\q1 My wound¦240551 is incurable¦240550 despite not having disobeyed.’
+\b
+\q1
+\v 7 What other \add #person\add* is like Iyyov?
+\q1 He drinks¦240560 up mockery¦240562 like \add drinking\add* water¦240563.
+\q1
+\v 8 He keeps company¦240566 with those¦240569 who do¦240569 evil¦240570,
+\q1 ≈and¦240571 walks¦240571 with wicked¦240576 \add #people\add*.
+\q1
+\v 9 He's said¦240580, ‘What advantage it¦240582 is to anyone
+\q1 when they take¦240585 delight¦240585 in¦240585 \add pleasing¦240585\add* God¦240588?’
+\b
+\q1
+\v 10 So¦240592 listen¦240595 to me you \add #people\add* \add who understand\add*.
+\q2 God¦240598 wouldn't \add do anything\add* wicked¦240599,
+\q2 ≈and¦240600 the provider wouldn't \add do anything\add* wrong¦240601.
+\q1
+\v 11 He repays¦240606 \add each\add* person according¦240609 to their actions.\x + \xo 34:11: \xt Psa 62:12.\x*
+\q1 ≈and what happens to \add #them\add* depends on their conduct¦240609.
+\q1
+\v 12 Honestly, God¦240616 doesn't do wicked¦240619 things,
+\q1 ≈and¦240620 the provider doesn't pervert¦240623 justice¦240624.
+\q1
+\v 13 Who assigned¦240628 him to be over the earth¦240630,
+\q1 ≈and¦240631 who put the whole¦240634 world¦240633 \add under\add* him?
+\q1
+\v 14 If he set his \add mind¦240640\add* on himself,
+\q1 ≈gathering¦240644 his spirit and his breath¦240641 to himself,
+\q1
+\v 15 everybody would die simultaneously,
+\q1 ≈and¦240651 humanity¦240651 would return¦240655 to dust.
+\b
+\q1
+\v 16 If \add you have\add* understanding¦240659 then¦240657 hear¦240660 this.
+\q1 ≈Listen to the words¦240665 that I say¦240665.
+\q1
+\v 17 Would one who hates¦240668 justice¦240669 really govern¦240670?
+\q1 Would you¦240675 condemn¦240675 the righteous¦240673 one—the mighty¦240674 one—as guilty¦240675?
+\q1
+\v 18 \add The one who\add* tells a king¦240678 that he's worthless¦240679.
+\q1 ≈\add Yes,\add* who tells a wealthy person¦240679 that they're wicked¦240680.
+\q1
+\v 19 \add The one who\add* doesn't show favour to princes¦240691,
+\q1 ≈and¦240692 doesn't favour the rich in front¦240697 of the poor.
+\q1 \add Yes,\add* they're all the work¦240702 of his hands¦240703.
+\q1
+\v 20 They die¦240708 in a moment¦240706—they do a shiver in the middle¦240709 of the night¦240710 then pass¦240713 away.
+\q1 ≈\add Even powerful people¦240712\add* are taken¦240714 away without human¦240717 \add involvement\add*.
+\q1
+\v 21 His eyes¦240721 watch over everyone¦240726,
+\q1 ≈he observes all of \add our\add* steps¦240729.
+\q1
+\v 22 There's¦240732 no darkness or gloom
+\q1 that wicked¦240741 people can hide in.
+\q1
+\v 23 He doesn't appoint¦240748 anyone again¦240749
+\q1 to go¦240750 to God¦240753 for judgement¦240754.
+\q1
+\v 24 He breaks¦240756 powerful people without investigation,
+\q1 and¦240761 establishes others¦240762 \add ≈instead of them\add*\f + \fr 34:24 \ft TN: Without rewording this last phrase, it can mislead the reader as to whose place the literal ‘their place’ probably refers to.\f*
+\q1
+\v 25 because he's familiar with their¦240767 activities
+\q1 and overthrows¦240768 them in the night¦240769 and they're crushed¦240770.
+\q1
+\v 26 He strikes¦240775 them \add as\add* wicked¦240774 \add >people\add*,
+\q1 \add ≈where everyone can see¦240777\add*
+\q1
+\v 27 since they turned¦240783 away from following¦240784 him¦240784,
+\q1 and didn't¦240788 consider¦240789 any of his ways¦240787.
+\q1
+\v 28 \add They\add* cause the cry of the poor to reach him,
+\q1 ≈and he heard¦240798 the \add #cries\add* of the afflicted¦240797.
+\b
+\q1
+\v 29 \add If\add* he stays silent, then who would condemn¦240804 \add him\add*?
+\q1 and¦240800 \add if\add* he hides¦240805 his face¦240806, then who will see¦240808 him
+\q2 although he's over \add #every\add* nation¦240811 as well as \add #every\add* individual
+\q1
+\v 30 so that godless¦240819 \add #people¦240821\add* shouldn't¦240817 reign¦240817
+\q1 or ensnare¦240820 the people.
+\b
+\q1
+\v 31 If someone¦240828 says to God¦240827,
+\q1 ‘I've¦240829 endured \add my punishment\add*—\add now\add* I'll¦240831 \add ≈stop\add* acting corruptly¦240831.
+\q1
+\v 32 Complement what I can see¦240834 by teaching¦240836 me,
+\q1 \add so that¦240834\add* if I've¦240840 disobeyed, I won't¦240841 repeat¦240842 it.
+\q1
+\v 33 Must he¦240845 repay¦240845 it¦240845 from with you? ???
+\q2 Since you despise, then you will choose¦240852, not me. ???
+\q1 So speak¦240859 out what you do¦240858 know¦240858.
+\b
+\q1
+\v 34 \add #People\add* of understanding tell me
+\q1 along with wise \add #people\add* \add who\add* listen¦240867 to me:
+\q1
+\v 35 ‘Iyyov speaks¦240874 without knowledge¦240873,
+\q1 ≈and¦240875 his words¦240875 lack insight¦240877.
+\q1
+\v 36 If¦240881 only \add *he\add* would be tested¦240880 to the end—
+\q1 his answers¦240887 are \add like those\add* of wicked¦240890 \add #people\add*.
+\q1
+\v 37 He adds \add rebellion\add* to his sin¦240896.
+\q1 He claps¦240899 among¦240898 us and¦240900 multiplies¦240900 his words¦240901 against¦240902 God¦240902.
+\c 35
+\rem /s1 Elihu Reminds Job of God's Justice; Elihu Condemns Self-Righteousness
+\p
+\v 1 Then Elihu¦240906 \add continued¦240905 again\add*:
+\q1
+\v 2 Do you consider¦240910 yourself to be \add ≈honest\add*
+\q1 \add when\add* you've¦240912 said¦240912, ‘God¦240914 knows that I'm innocent.’
+\q1
+\v 3 You \add ≈ask\add*, ‘What does it benefit you?
+\q1 \add ≈How am I better off than I would be if I had sinned¦240927\add*?’
+\q1
+\v 4 I'll¦240930 answer¦240930 you \add with\add* words¦240931,
+\q1 and \add ≡answer\add* your \add three\add* friends¦240934 as well.
+\b
+\q1
+\v 5 Look \add up\add* at the \add #sky\add* and observe¦240940,
+\q1 and see¦240939 that the clouds¦240941 are higher than you¦240943.
+\q1
+\v 6 If you disobey \add <him\add*, what do effect \add could\add* it have on him?\x + \xo 35:6-8: \xt Yob 22:2-3.\x*
+\q1 ≈And if your disobedience accumulates, what \add could\add* that do to him?
+\q1
+\v 7 If you're innocent, what \add ≈does he gain from that\add*,
+\q1 or what \add ≈good thing will he receive¦240973 due to that\add*?
+\q1
+\v 8 Wickedness \add only applies\add* to \add #people like us\add*,
+\q1 and¦240979 innocence \add ≈is only a concept for humans¦240981\add*.
+\b
+\q1
+\v 9 People cry out because there's so much oppression¦240985,
+\q1 ≈they cry for help because \add ≈some people¦240986 have so much power\add*.
+\q1
+\v 10 \add But¦240991\add* no one \add ≈asks\add*, ‘Where's God¦240995 my creator,
+\q1 who gives¦240997 \add <us\add* songs¦240998 in¦240999 the night¦240999,
+\q1
+\v 11 who has taught us more than \add ≡he taught\add* the animals¦241002,
+\q1 ≈and¦241004 made us wiser¦241006 than \add ≡he made\add* the birds¦241004 in the \add #sky\add*.
+\q1
+\v 12 \add ≈When\add* they¦241009 cry¦241009 out, he¦241011 doesn't answer¦241011
+\q1 \add because of\add* the pride¦241013 of wicked¦241014 \add people\add*.
+\q1
+\v 13 Surely¦241016 God¦241023 doesn't listen to empty \add >words\add*.
+\q1 ≈\add ≡Surely\add* the provider doesn't take notice of \add #them\add*.
+\b
+\q1
+\v 14 Indeed¦241028 you'll say¦241031 that you can't¦241033 see¦241034 him.
+\q1 Your¦241029 case is in front of him \add but¦241037\add* you're waiting¦241037 for him.
+\q1
+\v 15 \add So¦241041\add* now in¦241049 his anger¦241045, he hasn't visited,
+\q1 and¦241040 he doesn't take much notice of disobedience.
+\q1
+\v 16 \add So¦241052\add* Iyyov opens¦241054 his mouth¦241056 \add ≈for nothing\add*.
+\q1 ≈He \add ≈says many\add* words¦241060 \add ≈but¦241052 doesn't know¦241059 what he's talking about\add*.
+\c 36
+\s1 Elihu continues speaking
+\rem /s1 Elihu Exalts God's Goodness
+\p
+\v 1 Then Elihu¦241065 continued¦241064:
+\q1
+\v 2 \add ≈Be patient with\add* me a little¦241071 \add longer\add*
+\q1 and¦241072 I'll show you¦241072 that \add I\add* still¦241074 \add have\add* words¦241076 on God's behalf¦241075.
+\q1
+\v 3 I¦241082 get my knowledge¦241079 from \add ≈a wide range of sources\add*,
+\q1 and¦241081 \add as my foundation\add*, I'll¦241078 use the creator's justice.
+\q1
+\v 4 \add ≈I can assure you\add* that I won't¦241089 say anything that's false¦241091.
+\q1 ≈The \add person\add* with total knowledge¦241094 is \add right here in front of\add* you.
+\b
+\q1
+\v 5 Listen, God¦241099 is very powerful \add but¦241101\add* he doesn't despise \add >people\add*.
+\q1 ≈\add He's\add* powerful and \add ≈knows exactly what he wants\add*.
+\q1
+\v 6 He doesn't preserve¦241109 the life of evil \add >people\add*,
+\q1 \add but¦241111\add* he gives¦241113 justice¦241111 to those who are suffering.
+\q1
+\v 7 He¦241120 never stops \add protecting\add* innocent \add >people\add*,
+\q1 \add but¦241120\add* he establishes kings¦241122 on their thrones¦241123
+\q2 to \add rule\add* forever¦241125 and to be honoured.
+\q1
+\v 8 If they¦241130 become \add prisoners\add* in chains,
+\q1 ≈tangled in the ropes¦241133 of suffering,
+\q1
+\v 9 then¦241137 he¦241137 tells them what they've done and¦241137 how they disobeyed—
+\q1 they were behaving¦241142 proudly¦241142.
+\q1
+\v 10 He¦241148 makes them listen to instruction¦241146,
+\q1 ≈and¦241147 tells them to stop disobeying.
+\q1
+\v 11 If they would listen¦241155 and serve¦241156 \add <him\add*,
+\q1 they would live out their remaining days¦241158 in¦241159 prosperity¦241159,
+\q1 ≈and their remaining years¦241160 would be pleasant¦241161.
+\q1
+\v 12 But¦241163 if they don't¦241165 listen¦241166,
+\q1 they'll \add ≈be killed in¦241167 battle\add*,
+\q1 ≈and¦241163 die¦241169 without¦241170 \add ≈knowing what's coming\add*.
+\q1
+\v 13 Those \add ≈whose thoughts are\add* godless¦241175 will remain angry.
+\q1 They won't¦241180 cry¦241181 out for help¦241181 when he¦241183 captures them.
+\q1
+\v 14 Their¦241187 soul¦241187 dies¦241185 in¦241186 its youth¦241186,
+\q1 and¦241188 their¦241188 life¦241188 is among¦241189 the male temple prostitutes¦241189.
+\q1
+\v 15 He \add uses\add* their suffering to rescue¦241191 the person suffering,
+\q1 and \add ≈makes them listen as a result of their difficulties\add*.
+\b
+\q1
+\v 16 Indeed, he's enticed you¦241199 out of the jaws of distress¦241203
+\q2 to a wide place¦241208 without constraints¦241207,
+\q1 and¦241209 he's set your¦241210 table¦241210 with \add ≈rich food\add*.
+\q1
+\v 17 You are \add ≈always judging\add* wicked¦241216 \add >people\add*.
+\q1 ≈\add ≈You're addicted to\add* judgement and¦241219 justice¦241219.
+\q1
+\v 18 Don't¦241232 let yourself be enticed¦241227 by riches,
+\q1 ≈and¦241229 \add ≈don't¦241232 let a large bribe change your mind\add*.
+\q1
+\v 19 Can your wealth¦241237 keep distress¦241240 away from you,
+\q1 or by using every effort¦241242 of your strength¦241244?
+\q1
+\v 20 Don't¦241246 wish for the night¦241249 time,
+\q1 when people¦241251 groups are cut off in their¦241252 place¦241252.
+\q1
+\v 21 Watch¦241261 out that you¦241266 don't¦241255 choose evil,
+\q1 because¦241261 you've¦241266 chosen¦241266 that rather than suffering.
+\b
+\q1
+\rem /s1 Elihu Reminds Job of God's Power
+\v 22 Listen, God¦241271 is honoured because of his power¦241273.
+\q1 Who's a \add better\add* teacher¦241276 than him¦241275?
+\q1
+\v 23 Who could possibly give orders to him,
+\q1 ≈and¦241283 who might accuse him of disobeying?
+\q1
+\rem /s1 Elihu Proclaims God's Majesty
+\v 24 Make¦241290 sure that¦241294 you¦241292 praise his actions,
+\q1 which¦241294 people¦241296 have sung about.
+\q1
+\v 25 All humankind¦241300 has seen it.
+\q1 ≈People look at it from a distance¦241306.
+\q1
+\v 26 Listen, God¦241310 must be honoured, but¦241312 we don't¦241312 know¦241313 him¦241313.
+\q1 \add ≈How could we determine how old he is?\add*
+\q1
+\v 27 He lifts up the droplets of water¦241324.
+\q1 They form into rain from the vapour,
+\q1
+\v 28 which then showers down from the clouds¦241332.
+\q1 ≈They drop down on humankind¦241336 in large quantities.
+\q1
+\v 29 Who can understand¦241342 how the clouds¦241345 spread¦241343 out?
+\q1 Or the thundering coming from his porch?
+\q1
+\v 30 Listen, he spreads¦241351 his lightning¦241353 out,
+\q1 and he covers¦241356 the depths¦241354 of the sea¦241355.
+\q1
+\v 31 He uses them to judge¦241361 people¦241362 groups.
+\q1 He supplies plenty of food.
+\q1
+\v 32 He directs the lightning¦241373 with¦241376 his hands,
+\q1 ≈and¦241374 instructs it where to strike¦241376.
+\q1
+\v 33 Its thundering¦241380 \add noise\add* tells¦241378 about him.
+\q1 Even the livestock¦241381 know what's coming.
+\c 37
+\q1
+\v 1 My heart¦241391 also pounds \add after\add* that
+\q1 and¦241392 it¦241390 jumps away from its¦241393 place¦241393.
+\q1
+\v 2 Listen¦241395, hear his thunderous¦241397 voice¦241398,
+\q1 and¦241399 the \add low\add* rumbling¦241399 that¦241400 comes¦241401 from his mouth¦241400.
+\q1
+\v 3 He releases \add ?@the thundering\add* under all the skies¦241407,
+\q1 ≈and his lightning¦241409 to the end of the earth¦241413.
+\q1
+\v 4 After¦241415 that, a voice roars¦241417 out.
+\q1 He¦241425 thunders¦241420 with¦241421 his majestic¦241422 voice,
+\q1 and¦241423 he¦241420 doesn't restrain¦241424 \add ?@the lightning bolts\add*.
+\q1
+\v 5 \add ≈When God¦241431 speaks, it's awesome, like thunder¦241430\add*,
+\q1 doing¦241434 amazing \add >things\add* that we¦241437 \add ≈can't¦241436 even comprehend\add*.
+\q1
+\v 6 He tells the snow when to fall to the earth¦241445,
+\q1 ≈and \add ≡commands\add* the shower of rain to become a downpour.
+\q1
+\v 7 He puts a seal on everyone's¦241461 \add #hands\add*,
+\q1 \add ?≈so that everyone knows that he made them\add*.
+\q1
+\v 8 The wild \add #animals\add* go into their \add #lairs\add*,
+\q1 ≈and¦241464 they stay inside their dens.
+\q1
+\v 9 A gale comes¦241475 out of its room,
+\q1 and¦241477 the cold is brought by the north winds¦241477.
+\q1
+\v 10 God's breath¦241480 delivers ice,
+\q1 and¦241486 the wide \add ≈lakes\add* freeze over.
+\q1
+\v 11 Indeed he loads the \add #clouds\add* with¦241492 moisture¦241492.
+\q1 He scatters¦241495 his lightning¦241497 through \add *them\add*.
+\q1
+\v 12 They go round¦241500 in¦241503 circles \add then¦241499\add* turning¦241502 with¦241503 his guidance¦241503—
+\q1 following his instructions right across the earth¦241514,
+\q1
+\v 13 whether it's¦241525 for correction¦241518 or for the land,
+\q1 or because of his favour¦241524 that he¦241525 causes¦241525 it to happen¦241525.
+\b
+\q1
+\v 14 Just listen to this, Iyyov.
+\q1 Stand still¦241530 and consider¦241531 how incredible God's actions are.
+\q1
+\v 15 Do you¦241536 understand how God¦241539 makes¦241541 these things happen,
+\q1 and¦241541 how his clouds¦241543 are able to flash¦241541 with¦241537 lightning¦241542?
+\q1
+\v 16 Do you know¦241545 how the \add #clouds\add* balance¦241548 \add at just that level\add*?
+\q1 \add ≡Do you understand\add* the activities of the \add >one\add* who has perfect knowledge¦241553?
+\q1
+\v 17 You whose clothes¦241557 \add get\add* hot
+\q1 when the south¦241561 wind¦241561 brings \add hot\add*, still¦241559 \add air\add*.
+\q1
+\v 18 Can you¦241563 flatten out the \add #sky\add* like him,
+\q1 as solid as a cast \add metal\add* mirror¦241567.
+\q1
+\v 19 Teach¦241570 us what we should say¦241574 to him.
+\q1 We can't¦241576 get organised \add here\add* in the darkness¦241581.
+\q1
+\v 20 Should he be informed that I want to speak¦241588,
+\q1 or will anyone¦241592 who talks get swallowed¦241594 up?
+\q1
+\v 21 You know that people¦241599 can't¦241598 look at¦241603 the bright \add sun\add*light in¦241603 the \add #sky\add*
+\q1 when the wind has come through and¦241596 cleared¦241606 it.
+\q1
+\v 22 Gold comes¦241610 from the north¦241608. ???
+\q1 Awesome majesty¦241615 surrounds God¦241613.
+\q1
+\v 23 We don't¦241618 know how to find the provider.
+\q1 He has incredible power¦241623.
+\q2 and he¦241629 doesn't violate¦241629 justice¦241624 or \add ≈his integrity\add*.
+\q1
+\v 24 Because of that, people¦241633 \add ≈should obey\add* him¦241632.
+\q1 He doesn't \add ≈pay attention\add* to those who are wise.
+\c 38
+\ms1 SECTION SIX: God's speeches
+\mr (38:1–42:6)
+\s1 God answers Iyyov
+\rem /s1 God's answer and Job's submission; The Lord Answers Job; The Lord Challenges Job; The Lord Speaks
+\p
+\v 1 Then Yahweh¦241646 answered¦241644 Iyyov from the storm:
+\q1
+\v 2 Who is this giving \add ≈bad advice\add*,
+\q1 with¦241661 words¦241661 that are lacking knowledge¦241664?
+\q1
+\v 3 \add ≈Get ready to battle\add*\f + \fr 38:3 \ft Lit. ‘Gird your loins’. In a robe-wearing culture, it was normal for a man to tuck the bottom of his robe up into his belt to clear his legs to be able to move more freely—perhaps to run, but also to fight.\f*like a man,
+\q1 and I'll¦241671 question¦241671 you and you can answer me.
+\b
+\q1
+\v 4 Where¦241674 were you when I laid \bd the world's foundations¦241676\bd*?
+\q1 Do tell me, if you understand¦241683 that.
+\q1
+\v 5 Who decided on it's measurements, if you¦241690 know¦241690?
+\q1 ≈Or who stretched¦241694 out a tape measure over it?
+\q1
+\v 6 What were its footings attached to?
+\q1 ≈Who put its reference stone¦241707 in place
+\q1
+\v 7 when the morning¦241714 stars¦241713 sung together¦241712,
+\q1 ≈and¦241715 God's children shouted¦241715 happily?
+\b
+\q1
+\v 8 \add ≡Who was\add* the one who confined \bd the ocean\bd* with¦241722 gates\x + \xo 38:8-11: \xt Psa 104:9; Prv 8:29; Jer 5:22.\x*
+\q1 \add when\add* it burst¦241724 its way out from the womb?
+\q1
+\v 9 I \add covered it\add* with clouds¦241729 as its clothing¦241730,
+\q1 ≈and thick¦241731 darkness¦241731 as its tight blanket.
+\q1
+\v 10 I assigned my boundaries¦241736 for \add @the ocean\add*,
+\q1 and¦241734 put a latch on its gates,
+\q1
+\v 11 and I said¦241741, ‘You can only come¦241745 this far and no further.
+\q1 ≈Your proud¦241751 waves¦241752 will be stopped here.’
+\b
+\q1
+\v 12 In all your life¦241754, have you ever commanded¦241756 the morning¦241757 \add to come\add*,
+\q1 ≈or helped the dawn to know¦241759 its¦241762 place¦241762
+\q1
+\v 13 so that it might take¦241764 hold of the bottom edges of the earth¦241766
+\q1 and shake¦241767 the wicked out of it?\f + \fr 38:13 \ft Of course, the wicked are busy in the ‘blanket of darkness’, but dawn pulls that off them.\f*
+\q1
+\v 14 \add After dawn,\add* \add @the earth\add* \add ≈takes shape\add* like clay \add ≈when a seal is pressed into it\add*,
+\q1 and \add @its features\add* stand¦241775 out like folds in a cloak.
+\q1
+\v 15 Their light¦241782 is withheld¦241779 from wicked \add >people\add*,
+\q1 and¦241783 their¦241782 arm raised \add in violence\add* gets broken¦241785.
+\q1
+\v 16 Have you visited the springs¦241790 \add under\add* the sea¦241792?
+\q1 ≈Have you walked¦241795 around in¦241793 the trenches of the deep \add ocean\add*?
+\q1
+\v 17 Have the gates of death¦241801 been revealed¦241797 to you?
+\q1 ≈Have you seen¦241804 the gates \add that open into\add* deep darkness¦241803?
+\q1
+\v 18 Have you taken note of the width of the earth¦241811?
+\q1 Do tell me if you know¦241815 all those things.
+\q1
+\v 19 How do you get to where light¦241824 lives,
+\q1 ≈and¦241825 where is the place¦241829 that darkness¦241825 comes from?
+\q1
+\v 20 Can you take¦241832 it¦241832 to its territory¦241835,
+\q1 ≈and how would you figure out the paths¦241839 to its house¦241840?
+\q1
+\v 21 You'd¦241843 know¦241842 because¦241843 \add surely\add* you¦241846 were born before then, \add ☺\add*
+\q1 ≈and¦241847 you're so very, very old. \add ☺\add*
+\b
+\q1
+\v 22 Have you¦241858 entered the warehouses where snow is stored,
+\q1 ≈and¦241856 have you seen¦241858 the bunker where hail is kept,
+\q1
+\v 23 which I¦241862 keep there ready for troubled times—
+\q1 ≈for \add the\add* day¦241866 of war and¦241868 battle¦241867?
+\q1
+\v 24 Where's¦241870 the way¦241873 to \add find\add* where light¦241875 is distributed,
+\q1 ≈\add or where\add* the east wind¦241877 gets scattered¦241876 all over the earth¦241880?
+\q1
+\v 25 Who cuts out the channels¦241886 for the downpours \add to flow in\add*,
+\q1 ≈and¦241887 makes the path¦241887 for thunderbolts¦241889?
+\q1
+\v 26 \add Who sends\add* rain to regions¦241894 where nobody lives,
+\q1 ≈\add or\add* to a wilderness¦241898 that¦241899 has nobody in it,
+\q1
+\v 27 to satisfy¦241904 the parched wasteland¦241907
+\q1 and to cause¦241908 fresh¦241910 grass¦241910 to shoot up?
+\q1
+\v 28 Does the rain have a father,
+\q1 ≈or who gave birth to the dew drops¦241920?
+\q1
+\v 29 ≈Whose womb does the ice come¦241926 from,
+\q1 ≈and¦241928 who gives birth¦241931 to the frost¦241928 \add that descends\add* from the sky,
+\q1
+\v 30 when the waters¦241934 become¦241935 hard like stone¦241933,
+\q1 ≈and¦241936 the surface¦241936 of the deep \add ocean\add* freezes¦241938?
+\b
+\q1
+\v 31 Can you¦241947 tie together \bd the \+add stars\+add*\bd* of Pleiades¦241942,\x + \xo 38:31: \xt Yob 9:9; Amos 5:8.\x*
+\q1 ≈or loosen Orion's¦241946 belt?
+\q1
+\v 32 Can you lead each constellation¦241950 out in¦241951 its season¦241951,
+\q1 ≈and¦241952 can you guide¦241956 the Bear with¦241951 her cubs?
+\q1
+\v 33 Do you understand the physical laws of the universe,
+\q1 ≈or can you establish their¦241964 rule over the earth¦241965?
+\b
+\q1
+\v 34 Can you \add command\add* \bd the clouds¦241968\bd* with your voice¦241969,
+\q1 ≈and \add cause\add* a flood¦241970 of water¦241972 to cover¦241973 you?
+\q1
+\v 35 Can you send¦241975 out flashes¦241976 of lightning¦241976,
+\q1 \add so\add* they go¦241977 off then tell you, ‘Here we¦241980 are’?
+\q1
+\v 36 Who put wisdom¦241986 into people's minds,
+\q1 ≈or can give understanding¦241992 to the mind¦241985?
+\q1
+\v 37 Who has \add enough\add* wisdom¦241998 to number the clouds¦241997,
+\q1 ≈and¦241999 who will tip over the water¦241999 jars of the sky
+\q1
+\v 38 when the dust solidifies into a lump,
+\q1 ≈and¦242007 the clods¦242007 of soil stick together¦242008?
+\b
+\q1
+\v 39 Can you¦242015 hunt for prey for the \bd lioness\bd*,
+\q1 and¦242013 satisfy the appetite¦242013 of \add her\add* cubs,
+\q1
+\v 40 when they crouch¦242019 in their dens—
+\q1 ≈lying¦242025 in wait in the thicket¦242022?
+\b
+\q1
+\v 41 Who¦242031 prepares¦242028 prey for the \bd raven¦242029\bd*
+\q1 when its chicks cry¦242038 out to God¦242037 for help¦242038,
+\q2 \add when\add* they stagger around for lack of food?
+\b
+\c 39
+\rem /s1 The Lord's Challenge Continues
+\q1
+\v 1 Do you know¦242044 when it is that \bd mountain¦242047 goats¦242047\bd* give birth?
+\q1 ≈Do you watch¦242052 the \add wild\add* does having their fawns?
+\q1
+\v 2 Have you counted¦242054 how many months¦242055 it'll be after they conceived?
+\q1 Do you know¦242057 what date they'll give¦242059 birth¦242059?
+\q1
+\v 3 They crouch down to deliver their young¦242062,
+\q1 ≈and then their labour¦242064 pains¦242064 are over.
+\q1
+\v 4 Their young¦242068 grow up in¦242070 the countryside and become¦242067 strong¦242067,
+\q1 ≈then they \add ≈leave their¦242068 mothers\add* and don't¦242072 return¦242074 to them \add again\add*.
+\b
+\q1
+\v 5 Who set the \bd wild donkeys¦242080\bd* free?
+\q1 ≈Who untied¦242079 the ropes of the wild mule?
+\q1
+\v 6 I¦242089 decided that the wilderness¦242090 would be their home¦242091,
+\q1 ≈and¦242092 the salt-land to be where they live.
+\q1
+\v 7 They laugh¦242095 at the commotion coming from the city.
+\q1 They don't¦242100 have any drivers¦242099 shouting¦242098 at them.
+\q1
+\v 8 They range across the hills looking for pasture¦242105,
+\q1 ≈and¦242106 search¦242110 after¦242106 anything that's green¦242109.
+\b
+\q1
+\v 9 Will the \bd wild cow¦242113\bd* consent to serve¦242115 you¦242115,
+\q1 ≈or to stay the night¦242118 beside your¦242121 feeding¦242121 trough¦242121?
+\q1
+\v 10 Will you¦242132 use a rope¦242127 to guide the wild bull¦242125 to plough straight,
+\q1 ≈or will he¦242130 come along afterwards¦242132 to harrow¦242130 over the furrows¦242126?
+\q1
+\v 11 Would¦242138 you trust¦242134 in his strength¦242141,
+\q1 and¦242142 leave¦242142 your¦242144 work for him to do?
+\q1
+\v 12 Would¦242149 you depend on the \add @wild bull\add* to bring¦242151 in your grain¦242153,
+\q1 and to pile it on your threshing¦242154 floor¦242154?
+\b
+\q1
+\v 13 \bd Ostriches\bd* happily flap their wings,
+\q1 but¦242165 unlike the stork¦242164, their joints and¦242165 feathers \add aren't made for flying\add*.
+\q1
+\v 14 The female leaves her¦242171 eggs on the ground¦242170.
+\q1 ≈They're kept warm in the dust.
+\q1
+\v 15 She¦242178 forgets¦242177 that they might be crushed¦242181 by a foot¦242180,
+\q1 ≈or be trampled¦242184 by wild animals¦242182.
+\q1
+\v 16 She's harsh¦242186 on her young as if they're not hers,
+\q1 ≈without worrying that her egg-laying might all be wasted.
+\q1
+\v 17 \add Yes,\add* God¦242200 \add ≈didn't give her much\add* wisdom¦242201,
+\q1 ≈and¦242202 he¦242204 didn't \add ≈fill her with¦242206 much\add* understanding¦242206.
+\q1
+\v 18 But¦242213 it doesn't stop her flapping her wings.
+\q1 She laughs¦242211 at¦242209 the horse¦242212 and its rider¦242213.
+\b
+\q1
+\v 19 Was it you who gave \bd the horse¦242216\bd* his strength¦242217?
+\q1 Did you clothe¦242218 his neck with \add that\add* mane?
+\q1
+\v 20 Did you¦242222 make him so he can leap like a locust¦242223?
+\q1 His powerful snorting¦242225 is terrifying.
+\q1
+\v 21 They paw at¦242229 the ground, excited to \add go and¦242230 display\add* their strength¦242231.
+\q1 Off they go to face \add the enemy's\add* weapons¦242235.
+\q1
+\v 22 It laughs¦242237 at fear¦242238—not afraid at all,
+\q1 and it doesn't retreat back from the sword¦242246.
+\q1
+\v 23 The quiver¦242250 \add of arrows\add* rattles¦242249 on its side.
+\q1 ≈The spear¦242252 and¦242253 the javelin¦242253 flash.
+\q1
+\v 24 Shaking with excitement¦242256, it \add ≈speeds over\add*.
+\q1 ≈It can't¦242260 stand¦242262 still once the horn is sounded¦242265.
+\q1
+\v 25 When it hears the horn, it snorts ready to go,
+\q1 and it smells¦242274 the battle¦242275 from far away—
+\q1 the shouts of the commanders¦242277 and the battle-cries.
+\b
+\q1
+\v 26 Is it your wisdom¦242280 that \bd the hawk\bd* uses to soar,
+\q1 ≈\add and why\add* it spreads¦242284 its wings¦242285 to \add migrate\add* south¦242287?
+\q1
+\v 27 Is it your command¦242293 that sends the eagle¦242295 flying upwards,
+\q1 ≈and \add tells it\add* to build it nest¦242298 up so high?
+\q1
+\v 28 It lives on a cliff,
+\q1 ≈and spends¦242302 the night¦242302 in its fortress among the sharp rocks.
+\q1
+\v 29 From there¦242310, it¦242311 spies¦242311 out food.
+\q1 ≈Its eyes¦242315 watch from far away.
+\q1
+\v 30 Its young¦242318 ones feast on¦242323 blood¦242322,\x + \xo 39:30: \xt Mat 24:28; Luk 17:37.\x*
+\q1 and¦242323 where¦242323 there's dead \add >bodies\add*, they'll be there.
+\c 40
+\s1 God challenges Iyyov to answer
+\p
+\v 1 Then Yahweh¦242330 \add continued¦242329\add* to speak to Iyyov:
+\q1
+\v 2 Will the \add >person\add* who's been finding faults¦242340 \add now\add* argue with the provider?
+\q1 ≈Let the \add >one\add* who \add tries to\add* correct¦242341 God¦242342, give an answer¦242343.
+\s1 Iyyov's non-answer
+\rem /s1 Job Responds to the Lord; Job's Response to God
+\p
+\v 3 Then Iyyov answered¦242346 Yahweh¦242350:
+\q1
+\v 4 Indeed, I'm insignificant¦242354—what could I answer¦242356?
+\q1 I'll \add just\add* put my hand¦242357 over my mouth¦242361.
+\q1
+\v 5 I've¦242364 spoken¦242364 once, but I won't answer¦242366,
+\q1 ≈and twice¦242367, but I won't continue.
+\s1 God's response to Iyyov
+\rem /s1 God's Challenge to Job; The Lord Challenges Job Again
+\p
+\v 6 Then Yahweh¦242374 again spoke to Iyyov from inside the storm:
+\q1
+\v 7 \add Now\add* tuck up your robe like a man¦242387 \add going into battle\add*.
+\q1 I will question¦242389 you, and you must¦242389 answer me.
+\q1
+\v 8 Would you actually invalidate my judgement?
+\q1 \add ≡Would you\add* condemn¦242395 me so you can \add declare yourself\add* right?
+\q1
+\v 9 Is your arm \add as powerful\add* as God's?
+\q1 ≈Can you¦242407 thunder¦242407 with¦242405 a voice¦242405 like his?
+\q1
+\v 10 \add Then\add* embellish yourself with majesty¦242411 and greatness,
+\q1 ≈and dress yourself with honour¦242415 and splendour¦242415.
+\q1
+\v 11 Let your¦242420 fierce anger¦242420 loose,
+\q1 and take every¦242422 proud¦242424 \add >person\add* on and bring¦242425 them down.
+\q1
+\v 12 ≈Take note of every¦242428 proud¦242430 \add >person\add* and¦242432 humble¦242431 them.
+\q1 ≈Crush wicked¦242433 \add >people\add* where¦242434 they¦242434 stand¦242434.
+\q1
+\v 13 \add ?≈Bury\add* them together¦242438 in the dust.
+\q1 ≈\add ?≈Imprison them in the grave¦242441.\add*
+\q1
+\v 14 Then¦242443 I'd¦242445 even admit to you
+\q1 that you \em can\em* save¦242449 yourself¦242450 \add ≈with your own strength\add*.
+\b
+\q1
+\v 15 Now look at the \bd sauropod\bd* which¦242457 I made \add ≈on the same day\add* as you¦242460.
+\q1 It eats¦242463 grass¦242461 like a cow¦242462.
+\q1
+\v 16 Notice the strength¦242468 in¦242469 his thighs,
+\q1 ≈and¦242470 the power¦242470 of his stomach muscles¦242471.
+\q1
+\v 17 It bends its tail like a cedar¦242478 tree.
+\q1 Its thigh¦242480 tendons¦242479 are tightly strung.
+\q1
+\v 18 Its bones are \add like\add* bronze¦242486 pipes.
+\q1 ≈Its legs are like iron rods.
+\q1
+\v 19 It's \add at\add* the beginning of God's paths. ???
+\q1 The creator has let him¦242498 bring¦242498 his sword¦242499 near. ???
+\q1
+\v 20 The hills provide produce¦242503 for it,
+\q1 and¦242508 all the animals¦242510 in the countryside¦242511 play there¦242514.
+\q1
+\v 21 It lies under \add the\add* lotus¦242518 trees,
+\q1 ≈hidden in the reeds in the marsh¦242522.
+\q1
+\v 22 The lotus¦242525 trees cover¦242524 it with their¦242526 shade¦242526.
+\q1 ≈The poplars¦242528 in the riverbed surround¦242527 it.
+\q1
+\v 23 If the river¦242534 gets violent¦242533, it doesn't rush out.
+\q1 ≈It remains confident¦242537 even when the Jordan \add River\add* surges to his mouth¦242545.
+\q1
+\v 24 Can anyone capture¦242548 it¦242548 while its eyes¦242547 \add watch\add*?
+\q1 ≈Is there anyone who can \add make\add* a snare¦242549 to pierce¦242550 its nose¦242552?
+\c 41
+\rem /s1 The Lord's Challenge Continues
+\p
+\v 1 Can you pull \bd the sea dragon\bd* with a hook,\x + \xo 41:1: \xt Psa 74:14; 104:26; Isa 27:1.\x*
+\q1 ≈or tie his¦242632 tongue down with a rope?
+\q1
+\v 2 Can you put a leash into its nose,
+\q1 ≈or pierce its jaw with a harpoon?
+\q1
+\v 3 Will it beg you over and over for mercy?
+\q1 ≈Maybe if it says tender things to you?
+\q1
+\v 4 Will it make an agreement with you?
+\q1 ≈Might you take it as a slave \add ≈for the rest of its life\add*?
+\q1
+\v 5 Will you play with it like with a pet,
+\q1 ≈and tie it on¦242676 a leash for your girls?
+\q1
+\v 6 Will your team set a price on \add @the whole creature\add*?
+\q1 ≈Will they divide it up among the merchants?
+\q1
+\v 7 Can you fill its hide with harpoons,
+\q1 ≈or its head with fishing spears?
+\q1
+\v 8 Put your hand on¦242700 it and you'll remember the battle—
+\q1 don't¦242703 do it!
+\q1
+\v 9 What hope would \add you\add* have against it?
+\q1 Aren't \add you\add* put off just from looking at¦242711 it?
+\q1
+\v 10 No one's fierce enough to wake it¦242719 up,
+\q1 \add so\add* how might you expect to stand up to me?
+\q1
+\v 11 Who has confronted me \add with any claim\add* that I should repay?
+\q1 Everything under the \add #sky\add* belongs to me.
+\q1
+\v 12 I won't keep quiet \add about\add* its limbs,
+\q1 or about its strength and¦242740 the beauty of its form.
+\q1
+\v 13 Who can remove its armour plating at the front,
+\q1 or penetrate beyond its chestplate?
+\q1
+\v 14 Who can open its jaws,
+\q1 when there's terror all around its teeth?
+\q1
+\v 15 Rows of scales are its¦242760 pride,
+\q1 fitting into each other with a tight seal.
+\q1
+\v 16 Each one is very close to the next,
+\q1 and¦242774 no air can get between them.
+\q1
+\v 17 The lock tightly to their next door neighbour.
+\q1 ≈They cling together and can't be separated.
+\q1
+\v 18 Its¦242786 snorting causes flashes of light,
+\q1 ≈and¦242792 its¦242786 eyes are like the \add early rays\add* of dawn.
+\q1
+\v 19 Flames come from its mouth.
+\q1 ≈Sparks of fire leap out.
+\q1
+\v 20 Smoke pours from its nostrils,
+\q1 like a boiling pot with a \add hollow\add* reed \add poking out from under the lid\add*.
+\q1
+\v 21 Its breath sets coals on fire,
+\q1 ≈and¦242821 a flame comes out of its mouth.
+\q1
+\v 22 There's \add incredible\add* strength in its neck,
+\q1 and fear \add always\add* goes ahead of it¦242829.
+\q1
+\v 23 The folds of his body are joined tightly together—
+\q1 so firm that they can't be moved.
+\q1
+\v 24 His chest is hard like stone—
+\q1 \add yes,\add* as solid as the bottom mill-stone.
+\q1
+\v 25 When it rises up, even mighty \add men\add* are afraid.
+\q1 ≈They retreat if they see it thrashing around.
+\q1
+\v 26 Striking¦242864 it with a sword would have no effect,
+\q1 nor would a spear, arrow, or dart.
+\q1
+\v 27 Iron is like straw \add to the sea dragon\add*,
+\q1 ≈and bronze like rotten wood.
+\q1
+\v 28 Nothing shot with a bow can make it turn away—
+\q1 For it, stones from a sling are like bits of straw.
+\q1
+\v 29 \add Heavy\add* clubs are just like a grain stalk,
+\q1 and it laughs at the rattling of a spear.
+\q1
+\v 30 Its underbelly is sharp like broken pottery.
+\q1 It tears up the mud like a sledge for threshing \add grain\add*.
+\q1
+\v 31 It makes the deep \add ocean\add* boil like a pot.
+\q1 It makes the sea \add swirl\add* like a jar of ointment.
+\q1
+\v 32 It leaves a glistening wake behind it—
+\q1 you'd think that the deep \add water\add* had white hair.
+\q1
+\v 33 There's no equal to it on the earth—
+\q1 the creature that was made to have no fear.
+\q1
+\v 34 It looks down on all \add ≈those who think they're powerful\add*.
+\q1 ≈It's the king of all those who are proud.
+\c 42
+\s1 Iyyov requests God's forgiveness
+\rem /s1 Job; Job Responds to the Lord; Job Is Humbled and Satisfied
+\p
+\v 1 Then Iyyov answered¦242881 Yahweh¦242885:
+\q1
+\v 2 I know¦242888 that you can do everything¦242892,
+\q1 ≈and no one can stop you from doing what you want.
+\q1
+\v 3 \add You asked,\add* \x + \xo 42:3: \xt Yob 38:2.\x*
+\q2 ‘Who's this concealing¦242903 counsel¦242904 without knowledge¦242906?’
+\q1 That's why I spouted out things I didn't understand¦242910—
+\q1 things that are too wonderful¦242911 for me—that I didn't know¦242906.
+\q1
+\v 4 Listen¦242916 now, and I'll speak¦242920.\x + \xo 42:4: \xt Yob 38:3.\x*
+\q1 I'll tell you my question¦242921 and you can inform¦242922 me.
+\b
+\q1
+\v 5 I'd heard¦242927 you with my \add #ears\add*,
+\q1 but¦242928 now I can see you with my \add #eyes\add*.
+\q1
+\v 6 Therefore¦242932 I despise \add myself for what I said\add*,
+\q1 and I \add show my\add* repentance¦242936 \add by sitting in dust and ashes¦242940\add*.
+\ms1 SECTION SEVEN: Final speech
+\mr (42:7-17)
+\s1 Iyyov's three friends humiliated by God
+\rem /s1 Conclusion; Conclusion: The Lord Blesses Job; Epilogue; Job's Friends Are Humiliated
+\p
+\v 7 After Yahweh¦242946 had said that to Iyyov, \add *he\add* told Elifaz¦242958 (from Teman¦242959), “I'm angry with¦242963 you and your two friends¦242964, because¦242965 what you all said about me wasn't right, like what Iyyov \add said\add*.
+\v 8 \add So¦242973\add* now get seven bulls¦242979 and seven rams and go to my servant Iyyov and offer \add <them\add* as a burnt¦242989 offering¦242989 for yourselves¦242990. Then¦242973 my servant Iyyov will pray for you all. \add ≈I'll¦242999 do what he asks and\add* not deal with you like your foolishness \add deserves\add*, because¦242995 you all didn't¦243000 speak accurately about me like Iyyov did.”
+\p
+\v 9 \add So¦243012\add* Elifaz¦243013 (from Teman¦243014) and Bildad¦243015 (from Shuah) and Zofar (from Naamah¦243018) went¦243012 and did¦243019 what Yahweh had told them, and Yahweh accepted¦243024 Iyyov's \add prayer\add*.
+\s1 Iyyov's doubled restoration
+\rem /s1 Job's Fortunes Are Restored Twofold
+\p
+\v 10 After Iyyov had prayed¦243038 for his friends, Yahweh¦243042 \add ≈changed his situation\add* and¦243031 \add ≈gave¦243041\add* \add *him\add* double¦243049 \add what he had before\add*.\x + \xo 42:10: \xt Yob 1:1-3.\x*
+\v 11 Then all of his brothers¦243055 and sisters¦243058 and everyone¦243084 who'd known¦243062 him before¦243063, came¦243051 to his house¦243067 and \add ≈had a meal\add* with¦243067 him, and they comforted¦243070 him and consoled him about all the troubles¦243075 that¦243076 Yahweh¦243079 had brought¦243078 on¦243067 him. Then they each gave¦243081 him a \add ≈silver coin\add* and a gold¦243089 ring.
+\p
+\v 12 Then Yahweh¦243093 blessed¦243094 the second part of Iyyov's \add life\add* more than the first, and he \add ended up with\add* 14,000 sheep¦243106, 6,000 camels¦243109, 1,000 \add working\add* pairs of cows, and 1,000 female¦243115 donkeys¦243115.
+\v 13 He \add also\add* had seven¦243120 \add more\add* sons¦243121 and¦243122 three¦243122 \add more\add* daughters¦243123
+\v 14 who he named Yemimah¦243129, Ketsiah¦243132, and¦243125 Keren¦243135-Happuk¦243136.
+\v 15 No one in the whole country was as beautiful¦243141 as Iyyov's daughters¦243142, and¦243138 as well as their brothers¦243152, their father¦243149 gave¦243147 them \add each a piece of land\add* as an inheritance¦243150.
+\v 16 Iyyov¦243156 lived¦243155 another 140 years after¦243157 \add all\add* that, and was \add even\add* able to see his great-grandchildren.
+\v 17 Then¦243175 Iyyov¦243176 died¦243175 \add ≈in good circumstances\add* and¦243178 at a very old age.

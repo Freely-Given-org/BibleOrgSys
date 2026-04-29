@@ -1,0 +1,2961 @@
+\id PRO - Open English Translation—Readers' Version (OET-RV) v0.1.04
+\usfm 3.0
+\ide UTF-8
+\rem ESFM v0.6 PRO
+\rem WORDTABLE OET-LV_OT_word_table.tsv
+\h Proverbs
+\toc1 Proverbs
+\toc2 Proverbs
+\toc3 Prv.
+\mt1 Proverbs
+\is1 Introduction
+\ip This collection of \bk Proverbs\bk*, is one way of teaching so that godly people have good examples of sensible life principles. Most of these sayings concern a person's lifestyle and internal values. Perhaps the most critical proverb included in here is: “The first step towards being wise is to strive to obey Yahweh” (1:7; 9:10). The sayings illustrate the good results that can come from following wise paths and not that of stupidity, as the path of wicked people is like deep darkness (4:19), and in contrast, the path of those who do what is right, is like a bright light (v18).
+\ip These proverbs are a collection of useful sayings that help to impart godly wisdom to the reader.
+\iot Main components of this collection
+\io1 Praising wisdom \ior 1:1–9:18\ior*
+\io1 Shelomoh's (Solomon's) sayings \ior 10:1–29:27\ior*
+\io1 Agur's sayings \ior 30:1-33\ior*
+\io1 Various other proverbs \ior 31:1-31\ior*
+\rem This is still a very early look into the unfinished text of the Open English Translation of the Bible. Please double-check the text in advance before using in public.
+\ie
+\c 1
+\s1 The purpose of proverbs
+\rem /s1 Advice to the reader; The Value of Proverbs; The Purpose of Proverbs; Prologue: Purpose and Theme
+\p
+\v 1 \add These are\add* the proverbs¦269403 \add collected\add* by King Solomon¦269404 of Yisrael¦269409 (\add King\add* David's¦269407 son):
+\rem /s1 Prologue
+\q1
+\v 2 \add These will help you\add* to know¦269411 wisdom¦269412 and instruction¦269413,
+\q1 ≈\add and\add* to comprehend sayings \add that give\add* understanding¦269416.
+\q1
+\v 3 \add Also\add* to learn insight¦269420
+\q1 \add and to understand\add* \add ≈what's right¦269421\add* and \add leads to\add* justice¦269422 and integrity.
+\q1
+\v 4 \add They\add* give¦269425 good advice to those who are naive¦269426—
+\q1 ≈\add teaching\add* knowledge¦269429 and¦269430 discretion¦269430 to young¦269428 people¦269426.
+\q1
+\v 5 Let wise \add >people\add* \add also\add* listen¦269432 \add to these sayings\add* to keep learning¦269435 more,
+\q1 and discerning¦269436 \add >people\add* can acquire guidance¦269437—
+\q1
+\v 6 understanding¦269440 proverbs¦269441 and parables¦269442—
+\q1 the words¦269443 of wise \add >people\add* plus¦269442 their¦269445 challenges.
+\s1 The warning to young people
+\rem /s1 Advice to the Young
+\p
+\v 7 \add ≈Deciding to obey\add* Yahweh¦269448 is the beginning¦269449 of knowledge¦269450.
+\q1 Fools despise¦269454 wisdom¦269451 and¦269452 \add ≈being told what they¦269454 should do\add*.\x + \xo 1:7: \xt Yob 28:28; Psa 111:10; Prv 9:10.\x*
+\rem /s1 Warnings against Evil Companions; Exhortations to Embrace Wisdom; A Father's Exhortation: Acquire Wisdom
+\rem /s2 Warning Against Enticement
+\q1
+\v 8 My¦269460 child, listen¦269457 to your father's instructions¦269464.
+\q1 ≈Don't¦269461 reject¦269463 what your mother¦269465 has told you to do¦269461,
+\q1
+\v 9 because \add @their teaching\add* is like a graceful¦269470 garland to wear on your head¦269472,
+\q1 ≈or like \add beautiful\add* necklaces¦269473 to wear around your neck.
+\p
+\v 10 My child, if evil people tempt you¦269479 \add to join them\add*, don't¦269481 agree to it.
+\v 11 If they¦269487 say¦269487,
+\q1 “Come with us. We'll \add ≈find someone to kill\add*—
+\q1 ≈we'll hide and ambush an innocent¦269493 person \add just for fun\add*.
+\q1
+\v 12 Let's¦269497 swallow innocent people just like the grave does,
+\q1 ≈and¦269499 healthy people just like those¦269500 going down to the pit.
+\q1
+\v 13 We'll find lots of valuable loot.
+\q1 ≈We'll fill¦269508 our houses¦269509 with what we take.
+\q1
+\v 14 You need to come and join us—
+\q1 \add ≈we¦269518 share everything equally\add*.”
+\q1
+\v 15 My child, don't¦269521 \add ≈follow their ways\add*.
+\q1 ≈Keep your¦269527 foot¦269527 away from their path¦269524
+\q1
+\v 16 because their¦269531 feet¦269531 run¦269533 towards evil¦269532,
+\q1 and¦269534 they¦269533 rush to pour out blood¦269537.
+\q1
+\v 17 Surely it would be \add ≈a waste of time\add*
+\q1 to spread¦269542 out a net¦269543 \add ≈while the bird is watching\add*,
+\q1
+\v 18 \add ≈but¦269551\add* they lie in wait for their own blood¦269552—
+\q1 they ambush their own lives¦269555.
+\q1
+\v 19 \add ≈That's what happens to anyone¦269561 who gains¦269561 wealth illegally\add*—
+\q1 it¦269567 takes that person's life¦269565.
+\s1 Accepting or rejecting wisdom
+\rem /s1 Wisdom Shouts in the Streets; The Call of Wisdom; Wisdom Calls
+\rem /s2 Warning Against Rejecting Wisdom
+\q1
+\v 20 Wisdom calls out loudly on¦269571 the street¦269571—
+\q1 ≈she¦269574 \add ≈makes her¦269575 voice¦269575 known\add* in¦269571 the plazas.\x + \xo 1:20-21: \xt Prv 8:1-3.\x*
+\q1
+\v 21 She calls¦269579 out from above the \add ≈busy streets\add*.
+\q1 ≈She tells her¦269583 sayings¦269583 at the \add ≈meeting place¦269578\add* at the city¦269582 gates¦269581.
+\q1
+\v 22 How¦269590 much longer will naive people love \add their\add* naivety,
+\q1 ≈and mockers enjoy their mockery,
+\q1 ≈and stupid people despise knowledge¦269600?
+\q1
+\v 23 \add ≈Change your ways when I correct you\add*.
+\q1 Listen, I'll¦269605 pour my spirit out on you all.
+\q1 Let me declare¦269608 my messages¦269609 to you all
+\q1
+\v 24 because I've called¦269613 and you've all refused¦269614 \add to listen\add*.
+\q1 ≈I held out my hand¦269616 \add ≈but¦269614\add* no one paid \add any\add* attention¦269618
+\q1
+\v 25 and you all ignored¦269620 all my advice¦269623
+\q1 and \add ≈took no notice when I corrected you\add*.
+\q1
+\v 26 \add ≈So\add* I'll laugh¦269632 when \add ≈calamity¦269631 hits you all\add*
+\q1 and I'll ridicule you when you're all \add ≈terrified\add*
+\q1
+\v 27 when panic¦269641 strikes¦269637 you all like a storm¦269638
+\q1 and calamity¦269642 comes like a whirlwind¦269643
+\q1 and when trouble¦269647 and anguish¦269648 reach you all.
+\q1
+\v 28 Then they'll call out to me \add for help\add* \add ≈but\add* I won't answer¦269653.
+\q1 ≈They'll search¦269654 for me \add ≈but\add* won't be able to find me
+\q1
+\v 29 because¦269659 they hated¦269661 wisdom
+\q1 ≈and didn't¦269665 choose to \add ≈respect and obey\add* Yahweh¦269664.
+\q1
+\v 30 They didn't \add ≈listen\add* to my advice¦269671.
+\q1 ≈They \add ≈didn't want to hear whenever I corrected them\add*,
+\q1
+\v 31 \add ≈so\add* they'll eat¦269677 the fruit¦269678 of their own chosen path¦269679
+\q1 ≈and¦269677 they'll be filled with their own schemes¦269680.
+\q1
+\v 32 Naive people¦269685 will get killed \add as a result of their own\add* turning¦269684 away,
+\q1 ≈and¦269687 the fools' \add own\add* complacency¦269687 will destroy¦269689 them.
+\q1
+\v 33 \add ≈However,\add* those who listen¦269691 to me will \add ≈have secure¦269695 lives\add*
+\q1 and¦269696 be able to relax without¦269697 worrying about troubles¦269698 \add coming\add*.
+\c 2
+\s1 The peace/prosperity from wisdom
+\rem /s1 The Value of Wisdom; The Benefits of Wisdom; The Rewards of Wisdom
+\rem /s2 Moral Benefits of Wisdom
+\p
+\v 1 My¦269701 child, if you accept my sayings
+\q1 ≈and \add ≈internalise\add* my commands¦269706,
+\q1
+\v 2 \add so\add* you'll be attentive¦269710 to wisdom¦269711
+\q1 ≈\add and\add* your \add ≈mind¦269714 will look for\add* understanding¦269715,
+\q1
+\v 3 if you'll call out for insight¦269719,
+\q1 ≈raising your¦269723 voice¦269723 \add to ask\add* for understanding¦269721,
+\q1
+\v 4 if you go after it as if it's silver¦269728
+\q1 ≈and search¦269730 for it as if it was hidden¦269729 treasure¦269729,
+\q1
+\v 5 then you'll understand \add how to\add* \add ≈respect and obey\add* Yahweh¦269735
+\q1 ≈and you'll \add ≈learn more\add* about God¦269737.
+\q1
+\v 6 \add That's\add* because Yahweh¦269742 gives¦269743 wisdom¦269744—
+\q1 knowledge¦269746 and¦269747 understanding¦269747 come from his mouth¦269745
+\q1
+\v 7 and¦269749 he gives true wisdom to godly \add >people\add*—
+\q1 a \add protective\add* shield¦269753 for those¦269754 walking with integrity¦269755.
+\q1
+\v 8 to guard¦269757 the paths¦269758 of justice¦269759,
+\q1 and he will preserve¦269763 the way¦269760 of \add ≈those who are faithful¦269761 to him\add*.
+\q1
+\v 9 Then you'll understand¦269766 righteousness¦269767 and justice¦269768 and integrity—every¦269770 good¦269774 path \add to walk\add*,
+\q1
+\v 10 because wisdom¦269779 will enter into your \add ≈mind¦269780\add*
+\q1 ≈and knowledge¦269781 will \add ≈give you pleasure¦269783\add*.
+\q1
+\v 11 Discretion¦269785 will watch¦269786 over you.
+\q1 ≈Understanding will guard¦269789 you
+\q1
+\v 12 to rescue¦269791 you¦269791 off the path¦269792 of wicked¦269793 people—
+\q1 from \add #people\add* who speak¦269795 perversely¦269796—
+\q1
+\v 13 the ones who abandon¦269798 the paths¦269799 of \add ≈godliness\add*
+\q1 to walk in¦269802 the ways¦269802 of darkness¦269804,
+\q1
+\v 14 the ones who are glad to do evil.
+\q1 ≈They rejoice in¦269810 perverse¦269810 things¦269810 of evil,
+\q1
+\v 15 whose paths¦269814 are crooked¦269816
+\q1 ≈and¦269816 going astray in¦269817 their¦269817 tracks¦269817.
+\p
+\v 16 \add Being discreet and insightful\add* will rescue¦269819 you from a strange¦269821 woman—
+\q1 ≈from a foreign¦269822 woman who makes¦269824 her¦269823 sayings smooth¦269824,
+\q1
+\v 17 who's left \add ?≈her husband\add* from her younger days,
+\q1 ≈and has forgotten \add ?≈her promise to\add* her god¦269832.
+\q1
+\v 18 Her¦269840 house¦269840 sinks down to death¦269839,
+\q1 ≈and¦269841 her¦269840 paths¦269844 to the departed spirits.
+\q1
+\v 19 No one who goes into her¦269848 \add ?place\add* will return¦269850,
+\q1 ≈and¦269851 they¦269853 won't¦269849 find the paths¦269854 \add ?that lead to\add* life¦269855.
+\q1
+\v 20 So follow the ways of good \add people\add*,
+\q1 ≈and stay on¦269859 the path¦269859 \add ≈of those who want to do what's right¦269862\add*,
+\q1
+\v 21 because it's \add people\add* \add ≈who do what is right\add* who'll live in \add ?this\add* land,
+\q1 ≈and those who are blameless¦269873 will remain¦269874 in it.
+\q1
+\v 22 \add ≈However,\add* the wicked¦269877 \add people¦269881\add* will be \add ≈taken\add* off the land,
+\q1 ≈and¦269877 those¦269880 who are treacherous¦269880 will be torn away from it¦269882.
+\c 3
+\s1 Advice to the young
+\rem /s1 Advice to the Young; Trusting in the Lord; Admonition to Trust and Honour god
+\rem /s2 Further Benefits of Wisdom
+\q1
+\v 1 My¦269885 son, don't¦269887 forget¦269889 my instructions¦269886,
+\q1 ≈and¦269890 keep¦269891 my commands¦269890 in your¦269892 \add ≈thoughts\add*,
+\q1
+\v 2 →because they'll give you a longer lifetime
+\q1 ≈and add peace¦269899 to your \add life¦269898\add*.
+\q1
+\v 3 Don't¦269905 let loyal commitment and faithfulness¦269904 leave¦269907 you¦269907:
+\q1 tie them around your neck,
+\q1 ≈\add and\add* \add ≈inscribe them into your mind¦269916\add*.
+\q1
+\v 4 Then¦269918 you'll find favour¦269920 and good¦269923 insight¦269921
+\q1 in the eyes¦269924 of God¦269925 and man.\x + \xo 3:4: \xt Luk 2:52.\x*
+\q1
+\v 5 Trust in Yahweh¦269932 with \add ≈everything in you\add*,
+\q1 ^and don't¦269939 \add ≈rely on your own logic\add*.
+\q1
+\v 6 Acknowledge Yahweh's \add involvement\add* in everything you do,
+\q1 and he will \add ≈show you the best course to follow\add*.
+\q1
+\v 7 Don't¦269951 \add ≈pride yourself on¦269955 your¦269955 own wisdom\add*,\x + \xo 3:7: \xt Rom 12:16.\x*
+\q1 ^\add but rather\add* obey Yahweh¦269959 and¦269960 turn¦269960 away from evil¦269961.
+\q1
+\v 8 It will be healing for your \add ≈stomach\add*,
+\q1 ≈and refreshment¦269966 for your bones¦269967.
+\q1
+\v 9 Honour¦269969 Yahweh¦269972 from your wealth¦269973
+\q1 ≈and from the first¦269974 of \add ≈everything you harvest\add*,
+\q1
+\v 10 →then your barns¦269980 will be completely filled¦269979,
+\q1 ≈and¦269979 your vats will \add ≈overflow\add* with new wine.
+\q1
+\v 11 My¦269989 son, don't reject¦269992 correction from Yahweh¦269988,
+\q1 ≈and¦269993 don't resent his rebuke¦269996,\x + \xo 3:11: \xt Yob 5:17.\x*
+\q1
+\v 12 because Yahweh¦270002 disciplines those he loves¦270001,\x + \xo 3:12: \xt Rev 3:19.\x*
+\q1 ≈just like a father¦270004 does to his child that he appreciates.
+\rem /s1 The True Wealth
+\q1
+\v 13 The person¦270011 who discovers wisdom¦270013 is blessed¦270010,
+\q1 ≈as is the one who obtains¦270015 understanding¦270016,
+\q1
+\v 14 because it's better than \add ≈a good¦270019 income\add*.
+\q1 ≈\add ≡Being wise\add* is \add ≈of more value\add* than gold¦270024.
+\q1
+\v 15 \add @Wisdom\add* is more valuable than \add ≈jewelry¦270029\add*.
+\q1 →\add ≈There's nothing else you¦270033 could want that's worth as much as being wise\add*.
+\q1
+\v 16 \add ≈On one hand, wisdom leads to a longer life\add*.
+\q2 ≈\add ≈On the other hand, being wise will enable\add* riches and honour¦270044.
+\q1
+\v 17 The ways \add @of wisdom\add* are pleasant,
+\q1 ≈and all its ways are peaceful.
+\q1
+\v 18 Wisdom is a tree¦270055 of life¦270057 for those¦270059 who embrace¦270059 it.
+\q1 ≈\add ≈People who are consistently wise\add* are blessed¦270062.
+\q1
+\rem /s1 God's Wisdom in Creation
+\v 19 Yahweh¦270065 founded¦270067 the world using wisdom¦270066.
+\q1 ≈He established¦270070 the \add ≈atmosphere and sky\add* by understanding¦270072.
+\q1
+\v 20 As a result of his knowledge¦270074, the ocean depths¦270075 broke open,
+\q1 ≈and¦270077 the clouds¦270077 dripped¦270078 dew.
+\rem /s1 The True Security
+\b
+\q1
+\v 21 My son, don't¦270083 let \add @wisdom¦270088, knowledge, or understanding\add* \add ≈escape from your¦270086 sight¦270086\add*.
+\q1 Safeguard sound¦270088 wisdom and¦270089 discretion¦270089
+\q1
+\v 22 and they'll \add ≈liven your¦270093 mind\add*,
+\q1 and then¦270091 \add ?≈people will notice it about you\add*.
+\q1
+\v 23 Then you'll walk¦270098 in confidence¦270099
+\q1 without \add tripping or\add* stumbling.
+\q1
+\v 24 \add ≈When you go to bed, your mind won't¦270108 be filled with fear¦270110\add*.
+\q1 ≈You'll lie down and your sleep¦270113 will be relaxing.
+\q1
+\v 25 \add ≈Don't¦270115 worry about something terrible suddenly¦270119 happening\add* \add to you\add*,
+\q1 or about when \add you see\add* wicked¦270121 people facing ruin,
+\q1
+\v 26 because your confidence¦270129 will be in¦270129 Yahweh¦270127,
+\q1 and he¦270128 will \add ≈protect you on¦270129 your journey\add*.
+\b
+\q1
+\v 27 Don't¦270134 hold back \add ≈when you're able to do good¦270138 to someone\add*—
+\q1 when you have the \add ≈ability and opportunity\add* to act.
+\q1
+\v 28 Don't¦270146 tell your neighbour¦270149, “Go home now, but¦270153 come¦270153 back tomorrow¦270154 and I'll¦270155 give¦270155 it to you then,”
+\q1 when you had it there¦270156 the whole time.
+\q1
+\v 29 Don't¦270159 plot how to take advantage of your neighbour¦270164,
+\q1 when he's living¦270168 beside¦270170 you and trusting¦270169 you.
+\q1
+\v 30 Don't¦270172 quarrel with others for no reason—
+\q1 if they haven't done anything wrong to you¦270183.
+\q1
+\v 31 Don't¦270186 envy violent¦270190 \add #people\add*,
+\q1 and¦270191 don't¦270186 imitate how they behave,
+\q1
+\v 32 because Yahweh¦270200 detests crooked¦270201 people
+\q1 ^\add ≈but is friendly towards those who are godly\add*.
+\q1
+\v 33 Yahweh's¦270208 curse¦270207 is on the household¦270209 of wicked¦270210 people,
+\q1 ^but he blesses¦270213 the home of \add ≈those who do what's right¦270212\add*.
+\q1
+\v 34 He mocks¦270220 those who mock others,\x + \xo 3:34: \xt Jam 4:6; 1Pe 5:5.\x*
+\q1 \add ≈but¦270221\add* he shows favour¦270225 towards¦270217 those who are humble¦270221.
+\q1
+\v 35 Wise \add people\add* will inherit¦270229 honour,
+\q1 \add ≈but¦270230\add* fools¦270230 will \add ≈receive\add* shame¦270232.
+\c 4
+\s1 The teaching of children
+\rem /s1 The Benefits of Wisdom; Parental Advice; A Father's Wise Advice
+\rem /s2 Wisdom Is Supreme
+\q1
+\v 1 \add ≈My children¦270236, listen¦270235 to your father's¦270238 teachings\add*.
+\q1 ≈\add ≈Pay attention¦270239 so you'll learn well\add*,
+\q1
+\v 2 because I'll¦270246 give¦270246 you¦270247 good¦270245 teaching¦270244.
+\q1 Don't¦270249 abandon my instructions¦270248.
+\q1
+\v 3 When I was a \add ≈boy in my father's¦270257\add* house,
+\q1 ≈and¦270259 \add ≡I was\add* my mother's¦270261 tender¦270258 son,
+\q1
+\v 4 then¦270263 he¦270263 taught¦270263 me and told me,
+\q1 “\add ≈Remember what I have told you\add*.
+\q1 ≈\add ≈Follow my instructions and live¦270272\add*.
+\q1
+\v 5 Acquire¦270274 wisdom¦270275 and understanding¦270277.
+\q1 ≈\add ^Always remember\add* \add ≈what I've told you\add* and \add ^keep doing it\add*.
+\q1
+\v 6 Don't¦270288 abandon¦270290 \add @wisdom\add* and it'll preserve you.
+\q1 ≈Love it, and it will guard¦270293 you.
+\q1
+\v 7 Wisdom \add ≈is the priority—get hold of\add* \add *it\add*,
+\q1 and¦270299 \add ≈more than anything\add*, acquire¦270301 understanding¦270303.
+\q1
+\v 8 Esteem¦270305 \add @wisdom\add* and it will lift you up.
+\q1 ≈\add @Wisdom\add* will honour¦270307 you when you embrace¦270309 it.
+\q1
+\v 9 \add @Wisdom\add* will place a wreath¦270313 of grace¦270315 on your¦270312 head¦270312.
+\q1 ≈It'll present¦270318 you¦270318 with a crown¦270316 of beauty¦270317.
+\b
+\rem /s1 Admonition to Keep to the Right Path
+\q1
+\v 10 My¦270321 child, listen to my words¦270323 and¦270322 accept¦270322 them,
+\q1 →and that'll increase¦270324 the years¦270326 of your life¦270327.
+\q1
+\v 11 I taught¦270331 you how to \add ≈act wisely\add*,
+\q1 ≈and I directed you towards the right paths¦270333.
+\q1
+\v 12 When you walk¦270337, your steps¦270341 won't be hampered,
+\q1 ≈and if you run¦270344, you won't stumble¦270346.
+\q1
+\v 13 Take hold of my discipline¦270349—don't¦270350 let it go¦270352.
+\q1 ≈Guard it, because¦270354 it's your \add ≈lifeline\add*.
+\q1
+\v 14 Don't¦270361 \add ≈imitate what wicked¦270360 people do\add*,
+\q1 ≈and don't¦270361 go the same way as evil people.
+\q1
+\v 15 Avoid¦270370 \add @that path\add*—don't¦270371 even walk across it.
+\q1 ≈Keep right away from it and \add ≈go somewhere else\add*,
+\q1
+\v 16 because they can't¦270381 nap unless they've done some harm,
+\q1 ≈and they'll be robbed¦270387 of sleep if they haven't caused trouble.
+\q1
+\v 17 \add @Those evil people\add* eat¦270396 the bread¦270397 of wickedness¦270398,
+\q1 ≈and¦270399 drink¦270401 the wine of violence¦270400.
+\q1
+\v 18 \add ≈In contrast,\add* the path of those who do what is right¦270404, is like a bright light¦270405,
+\q1 →that \add ≈keeps getting brighter until¦270409 the brightest time of day¦270412\add*.
+\q1
+\v 19 The path¦270414 of wicked¦270415 people is like deep darkness¦270416,
+\q1 →\add ≈so they don't¦270417 even know¦270418 what they're stumbling¦270420 over\add*.
+\b
+\q1
+\v 20 My child, pay attention¦270425 to what I'm saying¦270426,
+\q1 ≈and let my words¦270424 \add ≈sink in\add*.
+\q1
+\v 21 Don't¦270431 let them out of your sight¦270434,
+\q1 ≈and keep¦270435 them in the centre of your \add ≈thoughts\add*,
+\q1
+\v 22 because they're life¦270441 to those¦270443 who find them,
+\q1 ≈and¦270444 healing¦270447 to their¦270446 entire¦270444 bodies.
+\q1
+\v 23 Guard your \add ≈mind¦270453 and thoughts\add* more than anything else,
+\q1 →because \add ≈the way you live all your life¦270458, bubbles out from\add* \add your values\add*.
+\q1
+\v 24 Remove¦270460 perverse talk from your mouth¦270463,
+\q1 ≈and¦270464 keep devious¦270464 words away from your lips¦270465.
+\q1
+\v 25 Keep your eyes looking towards the front¦270470,
+\q1 ≈and let your gaze be straight¦270473 ahead¦270470.
+\q1
+\v 26 Make the path level¦270476 for your footsteps,
+\q1 and let everything you do be \add ≈straight-forward\add*.
+\q1
+\v 27 Don't¦270484 veer to the left or to the right¦270488—
+\q1 keep your¦270491 feet away from evil¦270492 \add paths\add*.
+\c 5
+\s1 The warning concerning adultery
+\rem /s1 Avoid Immoral Women; Warning against Impurity and Infidelity; Warning against Adultery
+\rem /s2 Warning Against Adultery
+\q1
+\v 1 My child, pay attention¦270496 to my \add ≈wise words\add*,
+\q1 ≈and \add ≈listen carefully to what I've learnt\add*
+\q1
+\v 2 \add ≈so you won't lose your discretion¦270503\add*,
+\q1 ≈and so your lips¦270505 might guard¦270502 knowledge¦270504.
+\q1
+\v 3 Although the lips¦270511 of a \add ≈forbidden\add* woman drip honey¦270509,
+\q1 ≈and¦270513 her¦270515 speech¦270515 is smoother¦270513 than oil¦270514,
+\q1
+\v 4 in the end¦270517, she's as bitter¦270518 as wormwood¦270519,
+\q1 ≈and¦270517 sharper¦270520 than a double-sided sword¦270521.
+\q1
+\v 5 Her¦270527 feet are heading down \add towards\add* death¦270526,
+\q1 ≈and her steps¦270528 will take her to \add &her\add* grave.
+\q1
+\v 6 \add ≈She doesn't consider\add* the path of life¦270532.
+\q1 ≈Her¦270537 paths wander¦270536 \add ≈so she doesn't know where she'll end up\add*.
+\q1
+\v 7 \add ≈So¦270543\add* now my children¦270543, listen¦270544 to me,
+\q1 ≈and don't¦270547 deviate from my \add ≈advice\add*.
+\q1
+\v 8 Stay far away from her,
+\q1 ≈and don't¦270557 go near the entrance¦270562 to her house¦270563,
+\q1
+\v 9 in case you¦270567 end up giving your youthful strength to others¦270568,
+\q1 ≈and your \add best\add* years¦270570 to a cruel¦270571 \add person\add*.
+\q1
+\v 10 Then strangers¦270576 might make use of your¦270577 strength¦270577 \add ?(as a slave)\add*
+\q1 ≈and¦270578 you \add end up\add* working in a foreigner's¦270580 house¦270579.
+\q1
+\v 11 Then¦270582 you'll groan¦270582 \add ≈when you are about to die\add*
+\q1 ≈when your flesh¦270585 and¦270582 your body¦270586 are \add ≈worn out\add*
+\q1
+\v 12 and you¦270588 \add ≈recall\add*, “How I hated¦270590 discipline¦270591,
+\q1 ≈and \add ≈didn't like being told what not to do\add*.
+\q1
+\v 13 I didn't listen¦270598 to \add ≈those who were teaching¦270600 me\add*,
+\q1 ≈and¦270601 I didn't \add ≈take any notice\add* of \add ≈those who were instructing¦270601 me\add*.
+\q1
+\v 14 I¦270608 was so close to utter¦270609 calamity¦270611,
+\q1 \add ?≈and¦270614 everyone¦270609 would have noticed me\add*.
+\b
+\q1
+\v 15 Drink¦270616 water from your own \add ≈supply\add*\f + \fr 5:15 \ft Many commentators believe that the next several lines are alluding to the marital relationship between a man and his wife.\f*
+\q1 ≈and flowing¦270620 water from your own well.
+\q1
+\v 16 Should your¦270625 springs¦270625 overflow¦270624 out onto the streets,
+\q1 ≈with¦270627 streams¦270628 of water¦270630 in¦270627 the plaza?
+\q1
+\v 17 Let them be for you alone¦270635,
+\q1 ≈and not for any strangers¦270637 \add who are\add* with you.
+\q1
+\v 18 May your fountain¦270642 be blessed¦270643,
+\q1 and \add may you\add* rejoice¦270644 in the wife¦270645 of your youth¦270646—
+\q1
+\v 19 a loving doe, \add ≈yes,\add* a graceful¦270652 deer.
+\q1 Let her breasts¦270653 satisfy¦270654 you always.
+\q1 ≈Constantly be \add ≈overwhelmed\add* by her love¦270658.
+\q1
+\v 20 My¦270664 son, why would you stagger \add along\add* with¦270665 a strange¦270665 woman,
+\q1 ≈or embrace¦270666 the bosom¦270667 of a foreign¦270668 woman
+\q1
+\v 21 because \add ≈everything a person¦270677 does\add* is in front¦270671 of Yahweh's¦270674 eyes¦270673,
+\q1 ≈and he observes¦270681 \add ≈all of your decisions\add*?
+\q1
+\v 22 Wicked people get trapped by their own \add ≈disobedience\add*,
+\q1 and¦270689 they¦270685 get tangled in¦270689 their ropes¦270689 of rebellion.
+\q1
+\v 23 They'll die¦270694 from a lack of discipline¦270696,
+\q1 and¦270697 \add ≈their own stupidity\add* will lead them astray¦270699.
+\c 6
+\s1 The other still warning
+\rem /s1 More Warnings; Lessons for Daily Life; Practical Admonitions
+\rem /s2 Warnings Against Folly
+\q1
+\v 1 My¦270702 child, if you \add offer something as\add* a guarantee for your neighbour's¦270706 \add loan\add*,
+\q1 ≈\add or\add* you've¦270705 \add ≈shaken hands¦270709\add* \add on a deal\add* with a stranger¦270708,
+\q1
+\v 2 \add then\add* you've \add ≈become trapped\add* by your \add own\add* lips—
+\q1 ≈you've been caught¦270715 by the words out of your \add own\add* mouth.
+\q1
+\v 3 \add ≈In that case,\add* my child, \add go and\add* rescue¦270725 yourself¦270732:
+\q1 \add ≈Since you've¦270727 fallen into your neighbour's control\add*,
+\q1 go \add and\add* \add ≈humbly¦270732 appeal\add* to your neighbour \add to release you from that pledge\add*.
+\q1
+\v 4 \add ≈Don't say that you'll just sleep¦270739 on it\add*.
+\q1 ≈\add ≈Don't think that you'll just have a nap first\add*.
+\q1
+\v 5 Save yourself¦270744 \add immediately\add* like a deer when it's \add ≈snagged\add*,
+\q1 ≈\add ≈or\add* a bird fleeing from a trapper.
+\b
+\q1
+\v 6 You¦270757 lazy person, go¦270752 \add and watch\add* an ant.
+\q1 →Think about its¦270759 \add ≈behaviour\add*, and be wise.
+\q1
+\v 7 It doesn't \add even\add* have a commander¦270766,
+\q1 ≈\add or\add* overseer or ruler¦270768.
+\q1
+\v 8 It prepares¦270770 its food in the summer¦270771.
+\q1 ≈It stores up its \add ≈supplies\add* in the harvest¦270774 \add season\add*.
+\q1
+\v 9 How much longer will you lie there, lazy person?
+\q1 ≈When will you get up from your sleep¦270785?
+\q1
+\v 10 A little sleep¦270788, a quick nap,
+\q1 ≈a little folding¦270793 of your arms to rest,
+\q1
+\v 11 and poverty¦270800 will \add ≈sneak in\add* like a robber¦270799,
+\q1 ≈and need \add will threaten\add* like \add ≈an armed man¦270802\add*.
+\b
+\q1
+\v 12 The wicked¦270809 and worthless¦270807 man
+\q1 walks \add around\add* with a crooked¦270811 mouth¦270812,
+\q1
+\v 13 winking¦270814 with his eyes¦270815,
+\q1 shuffling his feet¦270819 along,
+\q1 and pointing¦270822 with his fingers¦270823.
+\q1
+\v 14 \add ≈People like that think perversely\add*—
+\q1 always devising¦270828 evil¦270829 \add plans\add*
+\q1 \add and\add* \add ≈spreading dissension\add*.
+\q1
+\v 15 Because of that, disaster¦270842 will come¦270841 suddenly¦270840—
+\q1 they'll be instantly broken¦270844 beyond¦270845 healing¦270846.
+\q1
+\v 16 There are six¦270849 \add things¦270855 that\add* Yahweh¦270853 hates¦270852,
+\q1 \add ≈actually\add* seven¦270854 that \add ≈he finds\add* detestable.
+\q1
+\rem /s1 Warning against Adultery
+\v 17 \add ₁\add* arrogant eyes,
+\q1 \add ₂\add* a lying tongue¦270862,
+\q1 \add ₃\add* hands¦270864 that¦270865 shed innocent¦270868 blood¦270866,
+\q1
+\v 18 \add ₄\add* a mind¦270870 that devises¦270871 wicked¦270873 plans¦270872,
+\q1 \add ₅\add* feet¦270874 that rush off to do \add something\add* evil¦270877,
+\q1
+\v 19 \add ₆\add* a dishonest witness¦270881 that breathes¦270879 out lies, and¦270883
+\q1 \add ₇\add* a person that stirs¦270883 up conflict within the \add ≈family\add*.
+\rem /s2 Warning Against Adultery
+\q1
+\v 20 My¦270892 child, \add ≈follow\add* \add your father's\add* commands¦270891,
+\q1 ≈and don't¦270893 abandon¦270895 \add ≈what your mother¦270897 taught you\add*.
+\q1
+\v 21 \add ≈Lock them into your mind¦270902\add*.
+\q1 ≈Tie them around your neck.
+\q1
+\v 22 When you walk¦270909 around, \add @what you learnt\add* will guide¦270912 you.
+\q1 When you lie down, it will preserve you.
+\q1 When you wake up, it'll speak¦270919 to \add ≈your mind\add*,
+\q1
+\v 23 because \add ≈rules\add* are \add like\add* a lamp and teaching¦270924 \add like\add* a light¦270925.
+\q1 Rebuke and discipline¦270929 are the pathway to life¦270927
+\q1
+\v 24 by keeping your from the evil woman—
+\q1 from the smooth¦270934 tongue¦270935 of a foreign¦270936 woman.
+\q1
+\v 25 Don't¦270938 \add ≈lust in¦270942 your mind¦270942\add* for her beauty¦270941,
+\q1 and don't¦270938 let her capture¦270945 you with¦270942 her eyelashes¦270946,
+\q1
+\v 26 because the price¦270949 of a prostitute¦270952 \add ?might be as cheap as\add* a loaf¦270955 of bread¦270956,
+\q1 but¦270957 \add another\add* man's wife¦270957 \add ≈might cost you\add* your precious¦270960 life¦270959.
+\q1
+\v 27 Can anyone carry¦270964 fire against their chest,
+\q1 without their clothes¦270968 \add ≈catching fire\add*.
+\q1
+\v 28 If a person walks on coals¦270978,
+\q1 won't¦270980 they¦270981 get their feet¦270979 burnt?
+\q1
+\v 29 It's like that for anyone¦270984 sleeping with¦270994 his neighbour's¦270988 wife¦270987,
+\q1 No one will go¦270990 unpunished¦270990 for \add ≈doing that\add*.
+\q1
+\v 30 They might not despite¦270998 a thief¦270999
+\q1 if they're stealing¦271001 to satisfy¦271002 their hunger,
+\q1
+\v 31 yet even \add the thief\add* has to pay back seven¦271009 times as much if they're caught¦271007—
+\q1 they might lose \add ≈everything\add* in their house¦271015.
+\q1
+\v 32 Anyone¦271018 who commits¦271018 adultery¦271018 lacks judgement—
+\q1 they \add end up\add* destroying¦271023 their own life.
+\q1
+\v 33 They'll discover pain and dishonour¦271030,
+\q1 and their shame¦271030 will never be wiped¦271034 away,
+\q1
+\v 34 because jealousy¦271038 arouses rage¦271039 in an \add offended\add* person
+\q1 who won't¦271042 show any compassion¦271044 when \add ≈it's time\add* to avenge.
+\q1
+\v 35 \add ≈You won't¦271055 just be able to pay them off\add*,
+\q1 even if you¦271059 try to \add ≈increase the amount\add*.
+\c 7
+\s1 The woman egpanpanlibug
+\rem /s1 The False Attractions of Adultery; Another Warning about Immoral Women
+\rem /s2 Warning Against the Adulteress
+\q1
+\v 1 My child, \add ≈obey what I've told you\add*,
+\q1 and \add ≈store my instructions securely inside\add* you.
+\q1
+\v 2 \add ≈Follow my instructions¦271074\add* and live¦271073,
+\q1 ≈and \add ≡keep\add* my teaching¦271074 as \add ≈the focus of your¦271076 eyes¦271076\add*.
+\q1
+\v 3 Tie them onto your fingers¦271081.
+\q1 ≈Write them onto your \add ≈mind¦271086\add*.
+\q1
+\v 4 Tell¦271089 wisdom¦271089 that she's your sister¦271090,
+\q1 ≈and¦271092 call understanding¦271093 a close relative¦271092,
+\q1
+\v 5 so they'll keep you from the \add ≈street\add* woman—
+\q1 ≈from the \add ≈ungodly woman whose words¦271100 sound so\add* smooth¦271101.
+\rem /s1 The Immoral Woman
+\q1
+\v 6 \add ≈Once\add* from the window¦271104 of my house¦271105,
+\q1 I looked¦271108 down through¦271106 the lattice¦271107 \add slits\add*,
+\q1
+\v 7 and¦271110 I¦271112 saw¦271110 a simple¦271111 \add lad\add*—
+\q1 a youth¦271113 lacking¦271115 \add ≈much judgement\add*.
+\q1
+\v 8 He was passing¦271119 through her street¦271120 near the corner¦271122,
+\q1 then he strode¦271125 along the path¦271123 to her house¦271124.
+\q1
+\v 9 In the twilight¦271127 as evening¦271129 began—
+\q1 halfway towards night¦271132 and¦271133 darkness¦271133.
+\q1
+\v 10 Then¦271135 look, a woman¦271136 greets him¦271137,
+\q1 \add ≈dressed\add* like a prostitute¦271139 and¦271140 \add ≈skilled at seduction\add*.
+\q1
+\v 11 She's boisterous¦271143 and defiant¦271145,
+\q1 and her¦271146 feet¦271150 \add don't¦271147 know how to\add* stay¦271149 home¦271146.
+\q1
+\v 12 She's often on¦271154 the street¦271154 or in the plazas,
+\q1 and¦271157 she¦271161 lies in wait at¦271154 every¦271158 corner¦271160.
+\q1
+\v 13 Then¦271163 she¦271171 grabbed him and kissed¦271168 him.
+\q1 She \add ≈looks serious\add* and tells him,
+\q1
+\v 14 “I¦271178 have meat at home from my sacrifice \add earlier\add*—
+\q1 today I've¦271180 \add ≈done my religious duties\add*.
+\q1
+\v 15 That's why I came out to meet you—
+\q1 \add ≈to look all around until I\add* found¦271190 you.
+\q1
+\v 16 I've¦271193 put nice covers on my couch¦271194—
+\q1 coloured¦271195 linen¦271196 fabric¦271195 from Egypt¦271197.
+\q1
+\v 17 I've¦271199 \add ≈perfumed\add* my bed¦271200
+\q1 with \add fragrant\add* myrrh¦271201 and aloes¦271202 and cinnamon¦271203.
+\q1
+\v 18 Come \add and\add* let's \add ≈enjoy making\add* love until¦271208 morning¦271210.
+\q1 We can delight¦271211 ourselves¦271211 in¦271212 our¦271206 love
+\q1
+\v 19 because the man¦271216 of the house¦271217 is away—
+\q1 he's gone away on¦271217 a long journey¦271219.
+\q1
+\v 20 He took a bag of money¦271224 with him¦271230.
+\q1 He won't be back home¦271230 until \add ≈the middle of the month\add*.”
+\q1
+\v 21 She persuades¦271234 him with her seductive¦271234 talk.
+\q1 She compels¦271237 him with her smooth¦271235 lips¦271236.
+\q1
+\v 22 He suddenly¦271241 started following her¦271240,
+\q1 like a cow¦271242 going to be slaughtered¦271245—
+\q1 like a fool with a noose¦271248 around his neck,
+\q1
+\v 23 until an arrow¦271256 pierces¦271255 his \add ≈stomach\add*,
+\q1 like a bird rushing¦271258 into a trap,
+\q1 not knowing that it will cost him his life¦271268.
+\b
+\q1
+\v 24 \add ≈So\add* listen¦271274 to me now my children¦271273,
+\q1 and pay attention¦271277 to \add ≈what I'm telling you\add*.
+\q1
+\v 25 Do let your \add ≈desires drive you in¦271292 her direction\add*.
+\q1 Don't¦271289 wander onto her pathways¦271292
+\q1
+\v 26 because she's caused many to be pierced and¦271299 fall—
+\q1 \add ≈it would be difficult to count¦271299 them all\add*.
+\q1
+\v 27 Her¦271305 house¦271306 is the pathway to the grave—
+\q1 descending downwards to \add ≈deathly¦271312 rooms\add*.
+\c 8
+\s1 Praising wisdom
+\rem /s1 The Gifts of Wisdom; Wisdom and folly; Wisdom Calls for a Hearing; In Praise of Wisdom
+\rem /s2 Wisdom's Call
+\q1
+\v 1 Doesn't wisdom¦271317 call out?\x + \xo 8:1-3: \xt Prv 1:20-21.\x*
+\q1 ≈\add ≡Doesn't\add* understanding¦271319 raise her¦271321 voice¦271321?
+\q1
+\v 2 On the high places by the road,
+\q1 ≈she¦271331 stations¦271331 herself¦271331 between¦271329 the paths.
+\q1
+\v 3 By the gates¦271335 at the \add ≈main entrance¦271339\add* to the city,
+\q1 ≈she¦271341 calls out loudly into the doorways¦271340.
+\q1
+\v 4 “To you, people¦271344, I call—
+\q1 ≈my voice¦271346 is \add ≡calling\add* all humankind¦271350.
+\q1
+\v 5 You¦271353 naive¦271353 people \add ≈must learn to be prudent¦271354\add*,
+\q1 ≈and you foolish people \add ≈must learn to be discerning\add*.
+\q1
+\v 6 Listen¦271359 because¦271360 I'll¦271363 speak¦271363 uplifting things¦271362,
+\q1 ≈and¦271364 open my lips¦271365 \add ≈about what is right\add*,
+\q1
+\v 7 because my mouth¦271372 will tell the truth¦271370,
+\q1 ≈and¦271373 my lips¦271374 detest wickedness¦271375.
+\q1
+\v 8 All the words¦271380 in my mouth¦271382 are \add ≈honest\add*—
+\q1 ≈there's¦271383 nothing twisted or crooked¦271386 among them.
+\q1
+\v 9 All of them are straightforward¦271389 to anyone who understands¦271390,
+\q1 ≈and¦271391 right¦271391 to those¦271392 looking for knowledge¦271393.
+\q1
+\v 10 \add ≈Choose my instruction¦271397 over silver¦271400\add*,
+\q1 ≈and knowledge¦271401 rather¦271402 than \add ≈shiny\add* gold¦271402,
+\q1
+\v 11 because wisdom¦271408 is better than jewels¦271409,
+\q1 ≈and¦271410 there's nothing more desirable than her¦271416.
+\q1
+\v 12 I, wisdom¦271420, live together with \add ≈good judgement\add*,
+\q1 ≈and I'm \add good at finding\add* knowledge¦271423 \add ≈and\add* discretion¦271424.
+\q1
+\v 13 \add ≈Those who strive to obey\add* Yahweh¦271428, hate evil,
+\q1 I, \add wisdom,\add* hate pride¦271431 and arrogance¦271432,
+\q1 evil \add activities\add*, and perverse¦271437 talk.
+\q1
+\v 14 \add ≈Good advice\add* and sound¦271443 wisdom¦271443 are mine.
+\q1 I have understanding¦271445 and strength¦271447.
+\q1
+\v 15 \add ≈I enable kings¦271450 to reign¦271451 well\add*,
+\q1 and¦271452 rulers¦271452 to \add ≈administer justice\add*.
+\q1
+\v 16 By me, princes¦271457 and¦271459 nobles¦271459 rule—
+\q1 judging \add ≈with impartiality\add*.
+\q1
+\v 17 I love those who love me,
+\q1 and those who search¦271469 for me will find me.
+\q1
+\v 18 Riches and honour¦271474 \add ≈accompany\add* me—
+\q1 enduring¦271477 wealth¦271476 and \add ≈fairness\add*.
+\q1
+\v 19 My fruit¦271481 is better than \add ≈purest\add* gold,
+\q1 and my produce¦271481 \add ≡is better than\add* choice silver¦271485.
+\q2 …
+\q1
+\v 20 I¦271491 walk¦271491 along the road of \add ≈doing what's right¦271490\add*,
+\q1 among the pathways¦271494 \add ≈that lead to\add* justice¦271495,
+\q1
+\v 21 \add ≈so those¦271498 who love¦271498 me can inherit¦271497 wealth\add*,
+\q1 \add ≈as\add* I¦271502 fill¦271502 their¦271501 storerooms.
+\b
+\q1
+\rem /s1 Wisdom's Part in Creation
+\v 22 Yahweh¦271505 created¦271506 me \add ≈among his first actions\add*—
+\q1 at the beginning of his works¦271510 \add ≈long ago\add*.\x + \xo 8:22: \xt Rev 3:14.\x*
+\q1
+\v 23 I¦271514 was established from eternity—
+\q1 before¦271516 the beginnings¦271516 of the \add ≈world\add*.
+\q1
+\v 24 I¦271523 was \add ≈revealed before the deep oceans existed\add*,
+\q1 when there weren't yet any springs¦271525 \add ≈gushing\add* water¦271528.
+\q1
+\v 25 Before¦271530 the mountains¦271531 were \add ≈set into place\add*,
+\q1 \add and\add* before¦271530 the hills¦271534 \add ≈were seen\add*, I¦271535 was \add ≈revealed\add*.
+\q1
+\v 26 \add yes, even\add* before he made the earth¦271541 and fields¦271542,
+\q1 or the first¦271543 dust \add ≈on the ground\add*.
+\q1
+\v 27 I¦271551 was there¦271550:
+\li1 when \add @Yahweh\add* made the skies¦271549,
+\li1 when he inscribed the \add horizon\add* circle¦271553 above the \add ≈oceans\add*,
+\li1
+\v 28 when he \add ≈pressed the clouds¦271560 into shape\add*,
+\li1 when he established¦271562 the springs¦271563 \add ≈way down in¦271562 the oceans\add*.
+\li1
+\v 29 when he determined the boundaries of the oceans so that the waters¦271571 wouldn't \add ≈go past his line\add*,
+\li1 when he marked¦271576 out the earth's¦271578 foundations¦271577.
+\q1
+\v 30 I was beside¦271581 him as a skilled craftsman¦271582—
+\q1 He \add ≈enjoyed my company every\add* day,
+\q1 ≈playing¦271588 in his¦271589 presence¦271589 all the time.
+\q1
+\v 31 I was \add enjoying\add* playing in¦271595 his world¦271595,
+\q1 and¦271597 enjoying humankind's¦271601 descendants.
+\b
+\q1
+\v 32 \add ≈So¦271605\add* now my children¦271605, listen¦271606 to me
+\q1 \add ≈because\add* those¦271610 who follow my ways¦271610 \add ≈will find happiness\add*.
+\q1
+\v 33 Listen¦271613 \add ≈when you're corrected¦271614\add*
+\q1 and don't¦271616 neglect¦271618 \add ≈wisdom\add*.
+\q1
+\v 34 \add ≈People who listen¦271622 to me will be blessed¦271620\add*
+\q1 keeping¦271624 watch¦271624 on my doors¦271627 \add ≈every day\add*—guarding¦271631 my doorway¦271633,
+\q1
+\v 35 because whoever finds me, finds life¦271640
+\q1 ≈and¦271641 obtains¦271641 favour¦271642 from Yahweh¦271643.
+\q1
+\v 36 Whoever misses¦271645 finding me harms themself,
+\q1 ≈and¦271645 those¦271650 who hate¦271650 me, love¦271651 death¦271652.
+\c 9
+\s1 Wisdom versus stupidity
+\rem /s1 Wisdom's Feast; Wisdom and Stupidity
+\rem /s2 Invitations of Wisdom and of Folly
+\q1
+\v 1 Wisdom has built¦271656 her¦271657 house¦271657—
+\q1 chiselling out its seven¦271660 pillars¦271659.
+\q1
+\v 2 She's¦271662 \add ≈butchered her meat\add* \add and\add* mixed¦271664 her wine—
+\q1 ≈her table¦271668 is \add already nicely\add* prepared.
+\q1
+\v 3 She's¦271670 sent¦271670 out her¦271671 young women.
+\q1 She calls¦271672 out from the heights¦271676 in the city.
+\q1
+\v 4 “Whoever is naive¦271681, let him¦271682 turn¦271682 aside¦271682 here,”
+\q1 she¦271687 says¦271687 to the one lacking¦271684 \add ?≈understanding\add*.
+\q1
+\v 5 “Come \add and\add* eat¦271691 my bread¦271692,
+\q1 ≈and drink¦271693 the wine I've¦271695 mixed¦271695.
+\q1
+\v 6 Abandon¦271697 foolish¦271698 \add ways\add* and live¦271699,
+\q1 ≈and walk¦271700 on¦271701 the path¦271701 of understanding¦271702.
+\rem /s1 General Maxims
+\p
+\v 7 Anyone¦271704 who \add tries to\add* correct a mocker¦271706 \add just\add* \add ≈gets insulted\add*,
+\q1 ≈and¦271710 anyone¦271704 who tells off a wicked¦271711 person \add ≈is likely to get hurt\add*.
+\q1
+\v 8 Don't¦271714 \add try to\add* correct a mocker¦271717 in case he \add just\add* hates you.
+\q1 ^Correct a wise person \add on the other hand\add*, and \add ≈it'll be appreciated\add*.
+\q1
+\v 9 Give to a wise person and they'll become wiser¦271727 still.
+\q1 ≈Inform an honest person and they'll keep learning¦271733.
+\q1
+\v 10 \add ≈The first step towards being wise is to strive to obey\add* Yahweh¦271739,
+\q1 and¦271740 \add ?≈being aware of the heavenly beings\add* is \add ≡the beginning¦271736\add* of understanding¦271742,
+\q1
+\v 11 because it's by me that you¦271750 days¦271748 \add ≈will be extended\add*,
+\q1 ≈and¦271749 years¦271751 will be added¦271749 to your¦271748 life¦271752.
+\q1
+\v 12 If you're¦271756 wise, you'll \add ≈be helping\add* yourself¦271758,
+\q1 ^and if you mock, then you alone¦271760 will \add ≈suffer the result\add*.
+\rem /s1 Folly Calls for a Hearing; Folly's Invitation and Promise
+\p
+\v 13 A foolish woman¦271763 is boisterous¦271765 and naive¦271766,
+\q1 ≈and she¦271769 doesn't know anything.
+\q1
+\v 14 She sits¦271772 at the \add ≈doorway¦271773\add* of her¦271774 house¦271774,
+\q1 \add or\add* on a seat¦271777 in the city heights¦271778,
+\q1
+\v 15 in order to call out to those who are passing by—
+\q1 those \add men\add* who are going straight¦271785 past on their¦271786 way¦271786.
+\q1
+\v 16 “Anyone who's naive¦271790 can turn¦271791 in here,”
+\q1 she¦271796 says¦271796 to those lacking¦271793 \add ≈sense\add*.
+\q1
+\v 17 “Stolen \add ≈drinks\add* are sweet¦271802,
+\q1 ≈and¦271803 secret¦271804 food¦271803 \add ≈tastes good\add*.”
+\q1
+\v 18 \add ≈But¦271815 he doesn't realise\add* that the dead are there¦271813,
+\q1 ≈\add or\add* that her¦271816 guests¦271816 are in¦271814 the depths¦271814 of the grave.
+\c 10
+\s1 Shelomoh's proverbs
+\rem /s1 The Proverbs of Solomon; Solomon's Proverbs; Proverbs of Solomon; A collection of wise sayings; Wise Sayings of Solomon
+\p
+\v 1 The proverbs¦271819 by Shelomoh \add (Solomon¦271820)\add*:
+\q1 A wise son makes¦271824 his father¦271826 happy,
+\q1 ^\add ≈but\add* a foolish son causes grief¦271829 for his mother¦271830.
+\q1
+\v 2 Ill-gotten treasures¦271835 profit¦271834 nothing,
+\q1 ^\add ≈but doing the right¦271837 thing\add* rescues \add >you\add* from death¦271839.
+\q1
+\v 3 Yahweh¦271844 doesn't allow¦271843 those \add ≈who do the right¦271846 thing\add* to \add ≈go hungry\add*,
+\q1 ^\add ≈but\add* he rejects¦271849 those who are wicked¦271848.
+\q1
+\v 4 \add ≈Idle hands lead to poverty\add*,
+\q1 ^\add ≈but those who work hard\add* gain wealth.
+\q1
+\v 5 Anyone¦271860 who stores their produce in¦271861 the summer¦271861 is being sensible,
+\q1 ^\add ≈but\add* the one who sleeps¦271864 during the harvest¦271865 is a disgraceful son.
+\q1
+\v 6 Blessings¦271869 \add ≈come to those who do what is right¦271871\add*,
+\q1 ^\add ≈but\add* wicked¦271873 people \add ≈lie to conceal¦271874\add* \add &their\add* violence¦271875.
+\q1
+\v 7 The memory¦271877 of a \add ≈godly¦271878\add* \add >person\add* is a blessing¦271879,
+\q1 ^\add ≈but\add* the name¦271880 of the wicked¦271881 \add >person\add* will rot.
+\q1
+\v 8 The wise \add >person\add* accepts¦271887 instructions,
+\q1 ^\add ≈but\add* \add #fools\add* will be ruined¦271891 by \add ≈their own words\add*.
+\q1
+\v 9 Anyone¦271893 who walks with integrity¦271894 will walk securely¦271896,
+\q1 ^\add ≈but\add* \add the person\add* with crooked¦271897 ways¦271898 will \add ≈soon get found out\add*.
+\q1
+\v 10 The person who winks¦271901 \add ≈at you\add* will cause grief,
+\q1 ≈and¦271907 those who speak foolishly will be ruined¦271909.
+\q1
+\v 11 The \add ≈words from a godly¦271914 person\add* are a fountain¦271911 of life¦271912,
+\q1 ^\add ≈but\add* the mouth of a wicked¦271916 person conceals¦271917 violence¦271918.
+\q1
+\v 12 Hatred¦271920 stirs¦271921 up quarrels,\x + \xo 10:12: \xt Jam 5:20; 1Pe 4:8.\x*
+\q1 ^\add ≈but\add* love¦271928 covers¦271927 over all wrongs.
+\q1
+\v 13 Wisdom is found¦271932 on the lips¦271930 of a person with discernment,
+\q1 ^\add ≈but\add* those lacking¦271936 \add ≈morals need to be punished\add*.
+\q1
+\v 14 Wise people store¦271941 up knowledge¦271943,
+\q1 ^\add ≈but\add* the mouth¦271944 of a fool \add ≈invites destruction\add*.
+\q1
+\v 15 The wealth¦271950 of a rich person \add ≈gives them security\add*,
+\q1 ^\add but\add* poor people are destroyed by their¦271956 poverty¦271956.
+\q1
+\v 16 The \add ≈reward\add* of a \add ≈godly¦271959\add* \add >person\add* is life¦271960,
+\q1 ^\add but\add* a wicked¦271962 person \add ≈ends up being punished¦271963\add*.
+\q1
+\v 17 The person who accepts instruction is on the path to life¦271966,
+\q1 ^\add ≈but\add* the one who rejects¦271969 rebuke¦271970 \add ≈ends up lost\add*.
+\q1
+\v 18 Anyone¦271973 who conceals¦271973 hatred¦271974, has lying lips¦271975,
+\q1 ≈and¦271978 anyone¦271973 who spreads¦271978 slander is foolish.
+\q1
+\v 19 A lot of talking doesn't mean that a person isn't¦271985 \add ≈doing something wrong\add*,
+\q1 ^\add ≈but\add* anyone¦271989 who \add ≈keeps their mouth closed\add* is being sensible.
+\q1
+\v 20 The tongue¦271995 of a \add ≈godly¦271996\add* person \add adds value like\add* good silver¦271993,
+\q1 ^\add ≈but\add* the \add ≈thoughts\add* of the wicked¦271998 are of little¦271999 \add value\add*.
+\q1
+\v 21 The lips¦272001 of a \add ≈godly¦272002\add* person shepherd many \add >people\add*,
+\q1 ^\add ≈but\add* foolish \add >people\add* die¦272009 from the lack of \add ?≈morals\add*.
+\q1
+\v 22 Yahweh's¦272012 blessing¦272011 leads to prosperity,
+\q1 and that's without adding \add ?≈forced\add* labour¦272018 to it.
+\q1
+\v 23 Doing wicked¦272024 things is like a sport¦272021 to foolish \add >people\add*,
+\q1 ^\add ≈but\add* a wise person¦272026 \add ≈enjoys doing sensible things\add*.
+\q1
+\v 24 The wicked¦272030 \add >person's\add* fears will \add ≈come¦272032 to pass\add*,
+\q1 ^\add ≈but\add* the \add ≈godly¦272034\add* \add >person's\add* desires¦272033 will be given to them.
+\q1
+\v 25 When a \add ≈tornado\add* passes¦272037 over, \add ≈it destroys\add* wicked¦272040 \add >people\add*,
+\q1 ^\add ≈but\add* \add ≈godly¦272041\add* \add >people\add* are \add like\add* an \add ≈enduring\add* foundation¦272042.
+\b
+\q1
+\v 26 Lazy \add >people\add* \add irritate\add* \add ≈their supervisors\add*
+\q1 →like vinegar¦272045 on their teeth¦272047 and¦272048 smoke¦272048 in their eyes¦272049.
+\q1
+\v 27 \add ≈Striving to obey\add* Yahweh¦272055 \add ≈prolongs your life\add*,
+\q1 ^\add ≈but\add* the years¦272058 of wicked¦272059 \add >people\add* will be short¦272060.
+\q1
+\v 28 \add ≈Godly\add* \add >people\add* \add ≈anticipate future happiness\add*,
+\q1 ^\add ≈but\add* wicked¦272066 \add >people\add* will \add ≈never gain what they expect¦272065\add*.
+\q1
+\v 29 \add Staying on\add* Yahweh's¦272072 paths is security for the godly,
+\q1 ^\add ≈but\add* ruin¦272073 for those¦272074 who do¦272074 evil.
+\q1
+\v 30 \add ≈Godly\add* \add >people\add* will \add ≈never\add* be shaken¦272081,
+\q1 ^\add ≈but\add* the wicked¦272082 won't¦272079 live \add ≡long\add* in the land.
+\q1
+\v 31 The mouth¦272088 of a \add ≈godly¦272090\add* \add >person\add* produces wisdom¦272092 as its fruit¦272091,
+\q1 ^\add ≈but\add* the tongues¦272093 of perverse¦272094 \add >people\add* will be cut off.
+\q1
+\v 32 The lips¦272097 of \add ≈godly¦272098\add* \add >person\add* experience pleasure¦272100,
+\q1 ^\add ≈but\add* the mouth¦272101 of the wicked¦272102 \add ≡experience\add* perversity¦272103.
+\c 11
+\q1
+\v 1 Yahweh¦272108 hates dishonest scales,
+\q1 ^\add ≈but\add* he delights¦272111 in an \add ≈accurate weight\add*
+\q1
+\v 2 When presumption¦272115 comes¦272113, shame¦272117 \add ≈follows\add*,
+\q1 ^\add ≈but\add* modesty¦272120 \add ≡is followed by\add* wisdom¦272121.
+\q1
+\v 3 \add ≈Godly\add* \add >people\add* will be guarded by their integrity¦272123,
+\q1 ^\add ≈but\add* treacherous¦272127 \add >people\add* will be destroyed¦272128 by their deceit.
+\q1
+\v 4 Wealth doesn't help in the day¦272135 of rage,
+\q1 ^\add ≈but\add* \add ≈doing what's right¦272137\add* will rescue \add you\add* from death¦272139.
+\q1
+\v 5 \add When\add* an innocent \add >person\add* \add ≈does what's right¦272141\add* \add ≈things go straightforwardly¦272143\add*,
+\q1 ^\add ≈but\add* the wicked \add >person\add* will fall due to their own wickedness.
+\q1
+\v 6 The \add ≈godliness\add* of good \add >people\add* will rescue them,
+\q1 ^\add ≈but\add* treacherous¦272153 \add >people\add* will be caught¦272154 out by their own schemes¦272152.
+\q1
+\v 7 When the wicked¦272158 \add >person\add* dies¦272156, \add ≈all hope is lost\add*,
+\q1 ≈and¦272161 the expectation¦272161 of strength¦272162 \add ≈disappears\add*.
+\q1
+\v 8 The \add ≈godly¦272165\add* \add >person\add* is rescued from trouble¦272166,
+\q1 ^\add ≈but\add* the wicked¦272169 \add >person\add* gets it¦272170 instead¦272170.
+\q1
+\v 9 A godless¦272173 person destroys his neighbour¦272175 with¦272176 his mouth¦272172,
+\q1 ^\add ≈but\add* the \add ≈godly¦272177\add* will be rescued by knowledge¦272176.
+\q1
+\v 10 When the \add ≈godly¦272181\add* do well, the city celebrates,
+\q1 ^and when the wicked¦272185 perish¦272184, there's a cheerful¦272186 shout¦272186.
+\q1
+\v 11 A blessing¦272188 from the upright¦272189 \add >people\add* helps to elevate a city,
+\q1 ^\add ≈but\add* it gets torn down by the mouth¦272192 of the wicked¦272193.
+\q1
+\v 12 A person who despises¦272196 their neighbour¦272198 lacks \add ≈good morals\add*,
+\q1 ^\add ≈but\add* a person with understanding¦272203 will stay quiet¦272204.
+\q2
+\v 13 A gossip goes¦272206 around revealing¦272208 secrets¦272210,
+\q1 ^\add ≈but\add* a trustworthy¦272211 \add >person\add* \add ≈keeps things private\add*.
+\q1
+\v 14 When there are no directions, a nation falls¦272219,
+\q1 ^\add ≈but\add* there's safety¦272222 in¦272223 having lots of advisers.
+\q1
+\v 15 \add ≈You'll end up getting burnt\add* if \add ≈you guarantee a stranger's¦272232 loan\add*,
+\q1 ^\add ≈but\add* \add ≈avoiding shaking on deals\add* will \add lead to\add* security¦272235.
+\q1
+\v 16 A woman¦272237 \add ≈who displays\add* grace¦272239 \add >to others\add* will obtain honour¦272241,
+\q1 ^\add ≈but\add* ruthless¦272242 \add >people\add* seize wealth¦272245.
+\b
+\q1
+\v 17 \add People\add* who display loyal¦272250 commitment benefit themselves,
+\q1 ^\add ≈but\add* cruel¦272253 \add >people\add* harm their own \add ≈selves\add*.
+\q1
+\v 18 A wicked¦272255 \add >person\add* \add ≈can make a living from telling lies\add*,
+\q1 ^\add ≈but\add* someone who sows goodness \add ≡gets\add* a \add ≈genuine\add* wage.
+\q1
+\v 19 True goodness leads¦272268 to life¦272268,
+\q1 ^\add ≈but\add* those who chase after evil¦272270, \add receive\add* death¦272271.
+\q1
+\v 20 Yahweh¦272274 hates those with perverse¦272275 \add ≈motives\add*,
+\q1 ^\add ≈but\add* he appreciates those who \add choose\add* blameless¦272279 ways.
+\q1
+\v 21 \add ≈Most certainly,\add* an evil¦272287 \add >person\add* won't¦272284 go¦272286 unpunished¦272286,
+\q1 ^\add ≈but\add* the descendants of a \add ≈godly¦272289\add* person will be rescued.
+\q1
+\v 22 A beautiful¦272297 woman¦272296 without¦272298 discretion
+\q1 →is like a gold¦272293 ring in¦272294 a pig's nose¦272294.
+\q1
+\v 23 Godly \add >people\add* long for good¦272305 \add >things\add*,
+\q1 ^\add ≈but\add* wicked¦272307 \add >people\add* \add ≈can only expect to receive\add* fury.
+\q1
+\v 24 Someone who \add ≈helps generously\add*, gains¦272312 even more,
+\q1 ^\add ≈but\add* those who without¦272315 what's due, \add ≈end up poor\add*.
+\q1
+\v 25 A person¦272320 who blesses¦272322 will \add ≈prosper\add*,
+\q1 ≈and¦272324 those who give water¦272324, will also \add ≈be satisfied\add*.
+\q1
+\v 26 People will curse¦272332 the person who hoards up grain,
+\q1 ^\add ≈but\add* the one who sells¦272336 \add *it\add* \add ≈will be blessed¦272334 by them\add*.
+\q1
+\v 27 Anyone¦272338 who strives diligently¦272338, strives for favour¦272341,
+\q1 ^\add ≈but\add* if you strive for evil¦272343, it'll come¦272344 to you.
+\q1
+\v 28 Anyone¦272346 who trusts¦272346 in¦272347 their riches¦272347 will fall,
+\q1 ^\add ≈but\add* godly¦272351 \add >people\add* will thrive like green¦272350 leaves.
+\q1
+\v 29 Those who cause trouble¦272354 for their households¦272355 will inherit¦272356 the wind¦272358,
+\q1 ≈and¦272359 the fool will become a slave to those \add ≈with sensible values\add*.
+\q1
+\v 30 The fruit¦272365 of \add ≈doing what's right¦272367\add* is a tree¦272368 of life¦272369,
+\q1 ≈and¦272370 those who win people¦272371 \add over\add* are wise.
+\b
+\q1
+\v 31 Listen, anyone who \add ≈does what's right¦272376\add* will be rewarded¦272378 \add appropriately\add*,
+\q1 \add so\add* how more so the wicked¦272382 and¦272383 disobedient \add >person\add*!
+\c 12
+\q1
+\v 1 Anyone¦272385 who loves discipline¦272386, loves knowledge¦272390,
+\q1 ^\add ≈but\add* those who hate correction are stupid¦272393.
+\q1
+\v 2 A good¦272395 \add >person¦272399\add* receives favour¦272397 from Yahweh¦272398,
+\q1 ^\add ≈but\add* he will condemn¦272401 \add ≈the person\add* with wicked plans.
+\q1
+\v 3 No one can \add become\add* established¦272405 by means of wickedness¦272407,
+\q1 ^\add ≈but\add* \add ≈the foundations\add* of righteous¦272409 \add >people\add* can't¦272410 be moved¦272412.
+\q1
+\v 4 A capable wife is the crown¦272417 of her¦272418 husband¦272418,
+\q1 ^\add ≈but\add* \add ≡a wife\add* who acts shamefully¦272421 is like rottenness¦272419 in¦272420 his bones¦272420.
+\q1
+\v 5 The plans¦272423 of \add ≈godly¦272424\add* \add >people\add* are \add to do\add* justice¦272425,
+\q1 ^\add ≈but\add* wicked¦272427 \add >people\add* \add ≈lean towards\add* deceit¦272428.
+\q1
+\v 6 The words¦272430 of wicked¦272431 \add >people\add* lie in wait for blood¦272434,
+\q1 ^\add ≈but\add* the speech¦272435 of godly \add >people\add* rescues them.
+\q1
+\v 7 The wicked¦272440 get overthrown¦272439 then \add ≈disappear\add*,
+\q1 ^\add ≈but\add* the homes of \add ≈godly¦272443\add* \add >people\add* endure¦272444.
+\q1
+\v 8 A person¦272451 will be praised¦272449 for their insightful¦272448 \add ≈words\add*,
+\q1 ^\add ≈but\add* \add anyone¦272452\add* with a warped \add ≈mind¦272454\add* will \add ≈end up\add* despised¦272456.
+\q1
+\v 9 It's better to be \add ≈little known\add* yet have a servant¦272460,
+\q1 than to be self-important \add ≈but¦272460 have nothing to eat\add*.
+\q1
+\v 10 A \add ≈godly¦272468\add* person cares for the life¦272469 of their animal¦272470,
+\q1 ^\add ≈but\add* wicked¦272472 \add >people\add* \add display\add* cruelty¦272473 rather than compassion¦272471.
+\q1
+\v 11 The \add >person\add* who tills¦272475 the ground \add ≈will have enough food\add*,
+\q1 ^\add ≈but\add* anyone¦272475 chasing worthless¦272481 \add >things\add* \add ≈has the wrong values\add*.
+\q1
+\v 12 The wicked¦272487 \add >person\add* covets¦272486 evil¦272489 \add >gain\add*,
+\q1 ^\add ≈but\add* \add ≈godly¦272491\add* \add >people\add* produce¦272492 \add like a deep-rooted tree\add*.
+\q1
+\v 13 An evil¦272497 \add >person\add* \add ≈entices others\add* with their \add ≈rebellious\add* lips¦272495,
+\q1 ^\add ≈but\add* \add ≈godly¦272500\add* \add >people\add* stay out of trouble¦272499.
+\q1
+\v 14 A person will be \add ≈rewarded\add* with good \add >things\add* from the fruit¦272502 of their mouth¦272503,
+\q1 ≈and a person's labour will be repaid to them \add by its results\add*.
+\q1
+\v 15 The fools' paths seem like the right¦272519 ones in¦272520 their own eyes¦272520,
+\q1 ^\add ≈but\add* a wise \add >person\add* listens¦272521 to advice¦272522.
+\q1
+\v 16 A fool's anger¦272528 is made known¦272527 straightaway,
+\q1 ^\add ≈but\add* a sensible¦272531 person \add ≈overlooks being disrespected\add*.
+\q1
+\v 17 Anyone who breathes¦272533 out faithfulness¦272534, \add unashamedly\add* \add ≈says what's right¦272536\add*,
+\q1 ^\add ≈but\add* a \add ≈biased\add* witness¦272537 \add ≡speaks\add* \add ≈deceitfully¦272539\add*.
+\q1
+\v 18 Some \add >people\add* speak¦272542 recklessly, like a sword¦272546 \add ≈thrashing around\add*,
+\q1 ^\add ≈but\add* wise \add >people\add* \add ≈bring healing¦272549 with their words\add*.
+\q1
+\v 19 Lips¦272558 \add ≈that produce reliable¦272553 words\add* will \add ≈always be trusted\add*,
+\q1 ^\add ≈but\add* a tongue¦272559 \add ≈that spurts out lies\add* \add will be believed\add* \add ≈only for a moment\add*.
+\q1
+\v 20 Those who make evil¦272566 plans, do it from a deceitful \add ≈mind¦272563\add*,
+\q1 ^\add ≈but\add* those¦272565 who promote¦272567 peace¦272568, \add end up\add* contented.
+\q1
+\v 21 Trouble doesn't come towards \add people\add* \add ≈who do what's right¦272574\add*,
+\q1 ^\add ≈but\add* wicked¦272578 \add >people\add* are full of distress¦272580.
+\q1
+\v 22 Yahweh¦272583 hates lying lips¦272584,
+\q1 ^\add ≈but\add* he's pleased by those¦272587 who \add ≈are trustworthy\add*.
+\q1
+\v 23 A sensible¦272592 person¦272591 \add ≈doesn't show off everything they know¦272594\add*,
+\q1 ^\add ≈but\add* foolish \add >people\add* \add like to\add* proclaim¦272597 their foolishness.
+\q1
+\v 24 \add ≈Those who work hard\add* will rule,
+\q1 ^\add ≈but\add* an idle \add >person\add* will become¦272608 forced¦272609 labour¦272609.
+\q1
+\v 25 A person¦272614 who's \add ≈full of\add* anxiety gets weighed¦272615 down \add by it\add*,
+\q1 ^\add ≈but\add* good¦272617 \add ≈news\add* cheers¦272618 them up.
+\q1
+\v 26 A \add ≈godly¦272622\add* \add >person\add* \add ≈keeps an eye on\add* their neighbour¦272621,
+\q1 ^\add ≈but\add* the ways of wicked¦272624 \add >people\add* leads¦272625 them astray¦272625.
+\q1
+\v 27 A slack¦272630 \add >hunter\add* doesn't roast¦272629 his kill,
+\q1 ^\add ≈but\add* a diligent¦272636 \add >person\add* \add ≈values all their possessions\add*.
+\q1
+\v 28 Life \add can be found by following\add* the path¦272642 of \add ≈doing what's right¦272640\add*,
+\q1 ≈and¦272642 there's no death¦272646 if \add ?you stay on\add* the pathway¦272643.
+\c 13
+\q1
+\v 1 A wise son \add accepts\add* his father's¦272651 discipline¦272650,
+\q1 ^\add ≈but\add* a scoffer¦272652 doesn't listen¦272655 to rebuke¦272656.
+\q1
+\v 2 A person¦272661 can eat well as a result of the fruit¦272658 of their mouth¦272659,
+\q1 ^\add ≈but\add* the appetite¦272664 of treacherous¦272665 \add >people\add* is violence¦272666.
+\q1
+\v 3 The \add >person\add* who \add ≈zips\add* their \add ≈lips¦272673\add*, protects¦272670 their life¦272671,
+\q1 ^\add but\add* those who open their \add ≈mouths¦272669\add*, destroy themselves.
+\q1
+\v 4 Lazy \add >people\add* want a lot but¦272679 get nothing¦272679,
+\q1 ^\add ≈but\add* those who are diligent¦272683 will \add ≈have plenty\add*.
+\q1
+\v 5 \add ≈Godly\add* \add >people\add* hate \add ≈fake news\add*,
+\q1 ^\add ≈but\add* the wicked¦272691 \add >person\add* causes a stink and disgrace¦272693.
+\q1
+\v 6 \add ≈doing what's right¦272695\add* preserves¦272696 \add those who like to display\add* integrity¦272697,
+\q1 ^\add ≈but\add* wickedness¦272700 \add ?≈overcomes the sinner\add*.
+\q1
+\v 7 \add ≈Some people pretend to be wealthy, but have very little\add*.
+\q1 \add ≈Others act as if they're poor, but are actually very wealthy\add*.
+\q1
+\v 8 The rich man's wealth¦272716 \add might be needed to\add* ransom¦272712 his life¦272713,
+\q1 ^\add ≈but\add* the poor person¦272715 hears¦272720 no threat¦272721.
+\b
+\q1
+\v 9 The \add person\add* \add ≈who does what's right¦272725\add* has a light¦272723 that \add ?≈shines brightly\add*,
+\q1 ^\add ≈but\add* the lamp of the wicked¦272728 \add >person\add* gets put out.
+\q1
+\v 10 Insolence only \add ≈causes friction\add*,
+\q1 ^\add ≈but\add* those¦272738 who take advice¦272738, \add advance in¦272733\add* wisdom¦272739.
+\q1
+\v 11 Wealth¦272741 gained dishonestly \add ≈gets frittered away\add*,
+\q1 ^\add ≈but\add* \add ≈what's earnt through hard work\add* will increase¦272748.
+\q1
+\v 12 \add ≈Hoping for something that¦272758 never happens\add* \add ≈causes stress\add*,
+\q1 ^\add ≈but\add* when a longing is fulfilled, it's like a \add ≈new lease\add* of life¦272756.
+\q1
+\v 13 Anyone¦272760 who despises¦272760 \add ≈instruction\add* \add ?≈will pay for it\add*,
+\q1 ^\add ≈but\add* \add @a person\add* who respects¦272764 a command¦272765 will be rewarded¦272767.
+\q1
+\v 14 Instruction from the wise is a fountain¦272771 of life¦272772,
+\q1 →turning \add a person\add* away from deadly traps.
+\q1
+\v 15 Good insight gives¦272780 favour¦272782,
+\q1 ^\add ≈but\add* the path¦272783 of treacherous¦272784 \add >people\add* is hard.
+\q1
+\v 16 Every¦272787 sensible¦272789 person \add ≈makes use of\add* knowledge¦272791,
+\q1 ^\add ≈but\add* the fool displays his foolishness¦272794.
+\q1
+\v 17 A wicked¦272797 messenger gets into trouble¦272799,
+\q1 ^\add ≈but\add* reliable messengers \add ≈help the situation\add*.
+\q1
+\v 18 Poverty¦272804 and disgrace¦272805 are for those who ignore¦272806 discipline¦272807,
+\q1 ^\add ≈but\add* the person who heeds¦272808 correction¦272809 will \add end up\add* being honoured¦272810.
+\q1
+\v 19 A desire¦272812 that gets fulfilled makes \add a person¦272815\add* \add ≈feel pleased¦272814\add*,
+\q1 ^\add ≈but\add* foolish \add >people\add* hate to turn¦272818 away from evil¦272819.
+\q1
+\v 20 \add The person\add* who walks¦272821 with wise \add >people\add* will become wise,
+\q1 ^\add ≈but\add* anyone¦272821 associating¦272830 with fools¦272831 will get harmed¦272832.
+\q1
+\v 21 Calamity chases after sinners,
+\q1 ^\add ≈but\add* goodness will reward¦272840 \add ≈those who do what's right¦272839\add*.
+\q1
+\v 22 A good \add >person\add* leaves¦272845 an inheritance¦272845 for their children,
+\q1 ^\add ≈but\add* a sinner's¦272852 wealth¦272851 will be saved for \add ≈those who do what's right¦272850\add*.
+\q1
+\v 23 The unused field of a poor person could produce a lot of food,
+\q1 ^\add ≈but\add* injustice sweeps it¦272859 away from them.
+\q1
+\v 24 \add The parent\add* who \add ≈doesn't spank\add* their children \add ≈must hate them\add*,
+\q1 ^\add ≈but\add* the \add >one\add* who loves¦272868 them, is diligent¦272869 in disciplining¦272870 them.
+\q1
+\v 25 The \add >person\add* \add ≈who does what's right¦272872\add* will be able to satisfy¦272874 their appetite¦272875,
+\q1 ^\add ≈but\add* the stomach¦272876 of wicked¦272877 \add >people\add* \add ≈doesn't get enough\add*.
+\c 14
+\q1
+\v 1 The wisest woman builds¦272883 her \add ≈house¦272884\add*,
+\q1 ^\add ≈but\add* the foolish¦272885 \add >one\add* tears¦272887 it¦272887 down with¦272886 her own hands¦272886.
+\q1
+\v 2 A \add ≈good citizen\add* \add ≈respects and¦272893 honours\add* Yahweh¦272892,
+\q1 ^\add ≈but\add* a devious¦272893 \add >person\add* despises¦272895 him¦272895.
+\q1
+\v 3 \add ≈What comes out of a fool's mouth¦272897 is prodded on by pride¦272901\add*,
+\q1 ^\add ≈but\add* the lips¦272902 of wise \add >people\add* protect¦272904 them.
+\q1
+\v 4 Where there's¦272906 no cattle¦272907, the feeding¦272908 trough¦272908 will be spotless,
+\q1 ^\add ≈but\add* a good harvest requires the strength¦272913 of the bull¦272914.
+\q1
+\v 5 A trustworthy witness doesn't tell lies,
+\q1 ^\add ≈but\add* a \add ≈biased\add* witness \add just\add* breathes¦272920 out lies.
+\q1
+\v 6 A mocker¦272927 searches for wisdom¦272928, but¦272929 \add finds\add* none¦272929,
+\q1 ^\add ≈but\add* knowledge¦272930 is simple \add ≡to find\add* for the one who understands¦272931.
+\q1
+\v 7 Go away from where a fool is,
+\q1 →\add ≈otherwise\add* you¦272940 won't¦272938 find knowledgable¦272943 lips¦272941.
+\q1
+\v 8 a sensible¦272946 \add >person\add* has the wisdom¦272945 to understand¦272947 their \add ≈direction\add*,
+\q1 ^\add ≈but\add* fools¦272950 \add ≈are deceived¦272951 by their own foolishness¦272949\add*.
+\q1
+\v 9 Fools¦272953 mock \add ≈the idea of feeling guilty¦272955\add*,
+\q1 →\add ≈so\add* \add ≈good citizens favour¦272958 each other\add*.
+\q1
+\v 10 A person \add ≈holds their own bitterness¦272962 inside\add*,
+\q1 ≈and¦272964 they don't¦272965 share¦272967 their happiness with¦272964 a stranger¦272968 \add either\add*.
+\q1
+\v 11 The wicked¦272971 person's house¦272970 will be destroyed¦272972,
+\q1 ^\add ≈but\add* the good citizen's tent¦272973 will do well.
+\q1
+\v 12 There's¦272977 a \add ≈nice\add* path¦272978 right¦272979 in front¦272980 of a person¦272982,
+\q1 →\add ≈but\add* there's death¦272986 at the end¦272983 of that road.
+\q1
+\v 13 \add ≈People who are laughing¦272990 can still be aching inside\add*,
+\q1 ≈and¦272994 the end¦272994 of happiness might be grief¦272998.
+\q1
+\v 14 Someone who \add ≈turns back on their morals\add* will be satisfied by their ways¦273000,
+\q1 ^\add ≈but\add* a good¦273006 person¦273005 \add ≡will be satisfied by what they do\add*.
+\q1
+\v 15 Naive \add >people\add* believe¦273009 everything \add they hear\add*,
+\q1 ^\add ≈but\add* smart \add >people\add* \add carefully\add* consider¦273014 their steps¦273015.
+\q1
+\v 16 A wise \add >person\add* fears trouble and turns¦273019 away from it,
+\q1 ^\add ≈but\add* a stupid \add >one\add* is careless¦273023 and overconfident.
+\q1
+\v 17 People who quickly become angry, act foolishly¦273029,
+\q1 ≈and¦273030 those planning evil¦273031 schemes are hated¦273032.
+\q1
+\v 18 Naive \add >people\add* inherit¦273034 foolishness¦273036,
+\q1 ^\add ≈but\add* clever¦273037 \add >people\add* are surrounded¦273038 by knowledge¦273039.
+\q1
+\v 19 Evil \add >people\add* will \add be forced to\add* bow down in front¦273043 of those who are good¦273044,
+\q1 ≈and¦273045 wicked¦273045 \add >people\add* at the gates¦273048 of those who do what's right¦273049.
+\q1
+\v 20 A poor person is hated¦273054 even by their neighbour¦273053,
+\q1 ^\add ≈but\add* there are many who love¦273056 the rich.
+\q1
+\v 21 Anyone¦273060 who despises¦273060 their neighbour¦273062 \add ≈disobeys God\add*,
+\q1 ^\add ≈but\add* the person who is kind to the poor¦273065 will be happy¦273067.
+\b
+\q1
+\v 22 Don't¦273069 those who devise evil¦273073 \add schemes\add* \add end up\add* \add ≈losing their way\add*?
+\q1 ^\add ≈However,\add* those with loyal¦273074 commitment and faithfulness¦273075 devise good¦273077 \add >things\add*.
+\q1
+\v 23 Hard work \add results\add* in a profit¦273083,
+\q1 ^\add ≈but\add* words from lips¦273086 only lead to poverty¦273089.
+\q1
+\v 24 The crown¦273091 of wise \add >people\add* is their¦273093 wealth¦273093.
+\q1 ^The foolishness of fools¦273095 is \add really\add* foolish.
+\q1
+\v 25 A truthful witness¦273100 saves lives¦273099,
+\q1 ^\add ≈but\add* a deceitful¦273104 \add >one\add* breathes¦273102 out lies.
+\q1
+\v 26 \add ≈Respecting and obeying\add* Yahweh¦273107 \add leads to\add* confidence¦273108 of strength¦273110,
+\q1 and that will be a safe place for their children¦273111.
+\q1
+\v 27 \add ≈Respecting and obeying\add* Yahweh¦273116 is a fountain¦273117 of life¦273118,
+\q1 →to turn¦273119 \add >people\add* from deadly traps.
+\q1
+\v 28 The \add ≈pride\add* of a king¦273128 is \add being over\add* lots of people,
+\q1 ^\add ≈but\add* a shortage¦273129 of people \add signals\add* the ruin of a ruler¦273132.
+\q1
+\v 29 People who are slow to get angry, have more understanding¦273138,
+\q1 ^\add ≈but\add* a quick-tempered person¦273139 prioritises foolishness¦273143.
+\q1
+\v 30 A \add ≈peaceful mind¦273147\add* \add gives\add* a healthy¦273148 body,
+\q1 ^\add ≈but\add* envy \add causes\add* the bones¦273150 to rot.
+\q1
+\v 31 \add Anyone¦273153\add* who oppresses¦273153 the poor, taunts their maker¦273158,
+\q1 ^\add ≈but\add* showing favour¦273160 to a needy¦273161 \add >person\add* honours¦273159 him¦273159.
+\q1
+\v 32 Wicked \add >people\add* destroy themselves by doing evil \add >things\add*,
+\q1 ^\add ≈but\add* \add ≈those who do what's right¦273168\add* find a safe place in¦273167 their death¦273167.
+\q1
+\v 33 Wisdom resides in¦273174 an understanding \add ≈mind¦273170\add*,
+\q1 →and it's made known¦273176 \add even\add* among foolish \add >people\add*.
+\q1
+\v 34 \add ≈Doing what's right¦273178\add* makes a nation¦273181 great,
+\q1 ^\add ≈but\add* \add ≈disobeying God\add* \add brings\add* disgrace¦273182 to people¦273183 groups.
+\q1
+\v 35 The king¦273188 shows favour¦273186 to a servant¦273189 who acts with insight,
+\q1 ^\add ≈but\add* his rage is for those who act shamefully¦273193.
+\c 15
+\q1
+\v 1 A gentle answer¦273195 turns¦273198 fury away,
+\q1 ^\add ≈but\add* a hurtful reply makes \add >people\add* angrier.
+\q1
+\v 2 A wise person's tongue¦273207 advances knowledge¦273210,
+\q1 ^\add ≈but\add* the mouth¦273211 of fools¦273212 pours¦273213 out nonsense.
+\q1
+\v 3 Yahweh's¦273220 eyes¦273219 are everywhere—
+\q1 →watching \add both\add* good¦273223 and¦273223 evil¦273222 \add >people\add*.
+\q1
+\v 4 A soothing tongue¦273227 is a tree¦273228 of life¦273229,
+\q1 ^\add ≈but\add* perversity¦273230 crushes the spirit¦273233.
+\q1
+\v 5 Fools reject discipline¦273237 from their father¦273238,
+\q1 ^\add ≈but\add* sensible \add >people\add* accept correction¦273240.
+\q1
+\v 6 There's great¦273246 wealth¦273245 in¦273247 the home of \add a person\add* \add ≈who does what's right¦273244\add*,
+\q1 ^\add ≈but\add* the income¦273247 of a wicked¦273248 \add >person\add* will \add just\add* be trouble¦273249.
+\q1
+\v 7 The lips¦273251 of the wise spread knowledge¦273254,
+\q1 ^\add ≈but\add* it's not so for the \add ≈minds\add* of fools¦273256.
+\q1
+\v 8 The sacrifices¦273261 of wicked¦273262 \add >people\add* are hated by Yahweh¦273264,
+\q1 ^\add ≈but\add* he delights¦273267 in the prayer¦273265 of a \add ≈godly\add* \add >person\add*.
+\q1
+\v 9 Yahweh¦273270 detests \add ≈what wicked¦273272 people do\add*,
+\q1 ^\add ≈but\add* he loves¦273275 those who \add ≈strive to do what's right¦273274\add*.
+\q1
+\v 10 Severe discipline is coming for those who abandon the \add right\add* path,
+\q1 ≈and those who hate correction¦273282 will die¦273283.
+\q1
+\v 11 \add ≈The¦273286 grave and place of destruction\add* \add ^aren't hidden\add* from Yahweh¦273288,
+\q1 →\add ≈so how much more\add* the \add ≈thoughts and values\add* of humankind¦273295.
+\q1
+\v 12 Mockers never love the \add >one\add* who corrects them,
+\q1 →\add and\add* they never approach the wise.
+\q1
+\v 13 \add ≈Inner happiness\add* makes¦273311 a face¦273312 glad,
+\q1 ^\add ≈but\add* a spirit¦273316 is crushed by a \add ≈broken\add* heart.
+\q1
+\v 14 A discerning¦273320 \add ≈mind¦273319\add* wants knowledge¦273323,
+\q1 ^\add ≈but\add* the mouth¦273324 of fools¦273326 feeds¦273327 on foolishness¦273328.
+\q1
+\v 15 Every day is bad for those who are suffering,
+\q1 ^\add ≈but\add* cheerful \add >people\add* have a continual¦273339 feast¦273338.
+\q1
+\v 16 It's better to have a little¦273343 along with \add ≈respect\add* for Yahweh¦273345,
+\q1 ^than having great¦273347 wealth, and¦273348 then turmoil¦273348 with it.
+\q1
+\v 17 It's better to have a meal of vegetables¦273353 where there's love¦273354,
+\q1 ^than to have \add ≈roast meat\add* where there's hate.
+\q1
+\v 18 Quick-tempered \add >people\add* stir up trouble,
+\q1 ^\add ≈but\add* a patient \add >person\add* calms a quarrel.
+\q1
+\v 19 The path¦273373 of a slacker is like a hedge¦273375 of thorns¦273376,
+\q1 ^\add ≈but\add* the road for \add ≈godly\add* people is \add ≈a level highway\add*.
+\q1
+\v 20 A wise child brings happiness to their father¦273385,
+\q1 ^\add ≈but\add* a foolish¦273386 person¦273387 despises¦273388 their mother¦273389.
+\q1
+\v 21 Foolishness¦273391 brings happiness to those \add ≈who lack morals\add*,
+\q1 ^\add ≈but\add* an understanding¦273397 \add >person\add* \add ≈makes¦273398 sensible decisions\add*.
+\q1
+\v 22 Plans go¦273402 wrong¦273402 where no \add ≈one gets advice\add*,
+\q1 ^\add ≈but\add* they get implemented where there's¦273404 many advisers.
+\q1
+\v 23 A person¦273411 is \add always\add* pleased \add ≈to give the right answer¦273412\add*,
+\q1 ≈and¦273415 the right thing said at¦273412 the right time¦273416 is so good¦273419.
+\q1
+\v 24 Life's¦273427 path is upward¦273423 for the wise \add >person\add*,
+\q1 →to prevent them \add ≈going down to the grave\add*.
+\q1
+\v 25 Yahweh¦273434 tears¦273432 down the houses¦273430 of the proud¦273431,
+\q1 ^\add ≈but\add* he'll protect a widow's¦273437 boundary.
+\q1
+\v 26 Evil plans¦273441 are hated by Yahweh¦273440,
+\q1 ^\add ≈but\add* kind messages¦273444 are pure.
+\q1
+\v 27 The \add person\add* who makes unjust¦273450 gains¦273450, brings troubles¦273448 on their own home,
+\q1 ^\add ≈but\add* the \add >one\add* who hates¦273452 bribes will live¦273454.
+\q1
+\v 28 The \add ≈person who does what's right¦273457\add*, \add ≈thinks carefully before answering¦273459\add*,
+\q1 ^\add ≈but\add* the mouth¦273460 of the wicked¦273461 pours¦273462 out evil¦273463.
+\q1
+\v 29 Yahweh¦273466 is far from the wicked¦273467,
+\q1 ^\add ≈but\add* he¦273470 hears¦273470 the prayer¦273468 of \add ≈those who do what's right¦273469\add*.
+\q1
+\v 30 \add ?≈A bright look\add* makes \add ?≈others\add* glad.
+\q1 ≈Good news¦273478 makes your bones \add ≈healthy\add*.
+\q1
+\v 31 The ear¦273484 that¦273485 listens to correction¦273488 lives—
+\q1 →it will remain¦273492 among the wise \add >people\add*.
+\q1
+\v 32 Someone who ignores¦273494 discipline¦273495, despises themself,
+\q1 ^\add ≈but\add* anyone¦273494 who listens¦273500 to correction¦273501 \add ≈strengthens their values\add*.
+\q1
+\v 33 Wise instructions \add lead to\add* \add ≈striving to obey\add* Yahweh¦273506,
+\q1 ≈and¦273509 humility¦273511 \add leads to\add* honour¦273510.
+\c 16
+\q1
+\v 1 \add ≈People make their own\add* plans¦273514,
+\q1 →then Yahweh¦273517 \add ?≈decides what will happen\add*.
+\q1
+\v 2 \add ≈People always tell themselves that they're doing the right thing\add*,
+\q1 ^\add ≈but\add* Yahweh¦273530 \add ≈evaluates their motives\add*.
+\q1
+\v 3 \add ≈Entrust what you're doing to Yahweh¦273535\add*,
+\q1 →and your plans¦273538 \add ≈will be effective\add*.
+\q1
+\v 4 Yahweh¦273543 makes¦273542 everything for his purpose¦273544,
+\q1 →even the wicked¦273547 for the day¦273548 of disaster.
+\q1
+\v 5 Yahweh¦273552 detests every¦273553 person who's arrogant—
+\q1 →they \add ≈certainly\add* won't¦273560 go¦273561 unpunished¦273561.
+\q1
+\v 6 \add ≈Disobedience can be made up for\add* by faithfulness¦273564 and loyal¦273563 commitment,
+\q1 and those who \add ≈respect and honour\add* Yahweh¦273568 avoid \add doing what's\add* evil¦273570.
+\q1
+\v 7 When Yahweh¦273573 is pleased¦273572 with a person's¦273576 behaviour,
+\q1 →he causes¦273580 even his enemies¦273579 to be at peace¦273580 with them.
+\q1
+\v 8 It's better to have \add just\add* a little¦273585 \add ≈from doing what's right¦273586\add*,
+\q1 than a \add ≈large income\add* \add ≈acquired dishonestly\add*.
+\q1
+\v 9 People plan their ways in their minds,
+\q1 →but Yahweh¦273596 directs¦273597 their steps¦273598.
+\q1
+\v 10 \add ≈Inspired judgements\add* \add come from\add* the king's lips¦273604.
+\q1 When making judgements, his mouth¦273611 must¦273609 not betray justice.
+\q1
+\v 11 Honest scales and¦273615 balances¦273615 come from Yahweh¦273617.
+\q1 ≈The weights¦273621 in the bag are his work¦273618.
+\q1
+\v 12 \add ≈Wicked behavior\add* is detestable for kings¦273626,
+\q1 ≈because¦273629 a throne¦273632 is established¦273631 by \add ≈doing what's right¦273630\add*.
+\q1
+\v 13 Kings \add ≈appreciate\add* lips¦273636 \add ≈that say what's right¦273638\add*,
+\q1 and¦273639 they \add ≈value people who tell the truth\add*.
+\q1
+\v 14 A king's rage¦273643 is a messenger¦273646 of death¦273648,
+\q1 →and wise people will appease¦273651 it¦273651.
+\q1
+\v 15 \add ≈When a king's face¦273655 brightens\add*, there's life¦273658.
+\q1 His favour¦273659 is like a rain cloud¦273660 in the spring¦273661.
+\q1
+\v 16 It's better to acquire¦273663 wisdom¦273665 than gold¦273669,
+\q1 and¦273670 to choose understanding¦273671 rather¦273673 than silver¦273673.
+\q1
+\v 17 The highway¦273675 of \add ≈godly\add* people \add ≈steers them away\add* from evil¦273678.
+\q1 ≈Anyone¦273681 who \add ≈carefully considers\add* their path, protects¦273679 their life¦273680.
+\q1
+\v 18 Pride goes before destruction,
+\q1 ≈and¦273688 arrogance before a stumble¦273689.
+\q1
+\v 19 It's better to \add live\add* humbly¦273699 among poor¦273699 \add >people\add*,
+\q1 ^than to be dividing¦273701 up the plunder¦273702 with the proud¦273705.
+\q1
+\v 20 The person who gives¦273707 attention¦273707 to a matter \add ≈will succeed\add*,
+\q1 ≈and¦273714 those who \add put their\add* trust¦273714 in¦273715 Yahweh¦273715 will be blessed¦273716.
+\q1
+\v 21 A person \add ≈with a wise nature\add* will be called¦273721 ‘understanding¦273722’,
+\q1 and¦273723 pleasant¦273723 lips¦273724 are more persuasive¦273726.
+\q1
+\v 22 Having insight is \add like\add* a fountain¦273728 of life¦273729,
+\q1 ^\add ≈but\add* disciplining¦273732 fools¦273733 would be foolishness¦273734.
+\q1
+\v 23 The wise \add >person's\add* \add ≈mind¦273736\add* gives¦273738 insight¦273738 to their mouth¦273739,
+\q1 ≈and¦273740 adds persuasiveness¦273744 to their lips¦273742.
+\q1
+\v 24 Kind messages¦273749 are like the honey¦273748 in a honeycomb,
+\q1 →sweet¦273752 for the \add ≈self-esteem\add*, and¦273754 healing¦273754 for the bones¦273755.
+\q1
+\v 25 There's¦273757 a clear path¦273758 right¦273759 in front¦273760 of a person¦273762,
+\q1 →but its¦273763 end¦273763 is the ways¦273764 to death¦273766.
+\q1
+\v 26 The workers' appetites¦273768 work on their behalf,
+\q1 →because their hunger¦273776 presses¦273774 them on.
+\q1
+\q2 …
+\v 27 A worthless¦273779 person¦273778 \add ≈dredges up scandal\add*,
+\q1 →and¦273782 it's like scorching¦273787 fire¦273786 on their lips.
+\q1
+\v 28 Perverse people \add ≈stir up\add* strife¦273792,
+\q1 →then it separates¦273795 close¦273796 friends¦273796.
+\q1
+\v 29 Violent people deceive¦273800 their neighbours¦273801,
+\q1 →and lead them on¦273803 a path¦273803 that isn't¦273804 good¦273806.
+\q1
+\v 30 Those who shut their eyes¦273809 are planning perverse¦273811 things¦273811.
+\q1 ≈\add >People\add* who purse¦273812 their lips¦273813 are doing evil¦273815.
+\q1
+\v 31 Gray hair¦273819 is a crown¦273817 of splendour¦273818,
+\q1 that's found¦273822 with¦273820 a life¦273820 of \add ≈doing what's right¦273821\add*.
+\q1
+\v 32 It's better to be slow to get angry than to be powerful,
+\q1 ≈and¦273828 better \add to be able\add* to control¦273828 yourself than to capture¦273830 a city¦273831.
+\q1
+\v 33 The \add ≈dice are thrown onto the table\add*,
+\q1 ^\add ≈but\add* Yahweh¦273838 determines their¦273841 \add ≈fall\add*.
+\c 17
+\p
+\v 1 It's better to have a dry piece¦273844 of bread¦273844 in¦273848 quietness¦273846,
+\q1 ^than a house¦273849 full of \add ?≈feasting\add* with¦273848 strife¦273853.
+\q1
+\v 2 A servant¦273855 who acts wisely will rule over a \add ≈shameful¦273860\add* son,
+\q1 →and¦273861 he'll share¦273863 in¦273859 the inheritance¦273864 along with¦273859 the brothers¦273862.
+\q1
+\v 3 There's a crucible¦273866 and furnace¦273868 for gold¦273869 and silver¦273867,
+\q1 ^\add ≈but\add* it's Yahweh¦273872 who tests¦273870 hearts¦273871.
+\q1
+\v 4 Those who do evil pay attention¦273875 to wicked¦273880 lips.
+\q1 ≈A liar listens to a destructive¦273886 tongue¦273885.
+\q1
+\v 5 Anyone¦273888 who mocks¦273888 the poor, taunts their maker¦273891.
+\q1 ≈Someone who's happy about a calamity¦273893 won't¦273894 go¦273895 unpunished¦273895.
+\q1
+\v 6 Grandchildren are the crown¦273897 of the aged,
+\q1 ≈and children are proud of their¦273903 parents¦273903.
+\q1
+\v 7 Excellent lips wouldn't be suitable¦273907 for a fool,
+\q1 ≈\add and\add* certainly deceptive¦273918 lips \add ≡don't suit\add* a ruler¦273915.
+\q1
+\v 8 \add Doing\add* a favour¦273922 can act like a bribe¦273923 for the \add ≈donor\add*.
+\q1 →It causes everything they do to prosper¦273932.
+\q1
+\v 9 The person who conceals¦273934 an offence is seeking¦273937 \add ≈acceptance\add*,
+\q1 ^\add ≈but\add* the \add >one\add* repeating¦273939 the matter¦273940 separates¦273941 close¦273942 friends¦273942.
+\q1
+\v 10 Rebukes \add ≈work\add* on a sensible person¦273946,
+\q1 more than a hundred¦273949 lashes on a fool.
+\q1
+\q1
+\v 11 Only an evil¦273956 person seeks¦273954 rebellion¦273953
+\q1 →and¦273957 \add so\add* a cruel¦273958 opponent will be sent¦273959 against him.
+\q1
+\v 12 It's better to meet a mother bear robbed¦273965 of its cubs,
+\q1 →than to meet a fool \add displaying\add* their foolishness¦273970.
+\q1
+\v 13 Someone who returns¦273972 evil for good,
+\q1 →\add will find that\add* evil never departs¦273978 from their house¦273981.
+\q1
+\v 14 The beginning¦273985 of a dispute¦273989 is \add like\add* a small water¦273984 leak,
+\q1 →\add ≈so stop\add* it before¦273987 it breaks out into a quarrel¦273989.
+\q1
+\v 15 The \add >person\add* who justifies¦273992 wicked¦273993 \add >people\add*,
+\q1 ≈and¦273994 the \add >one\add* who condemns¦273994 an innocent \add >person\add*,
+\q1 →are both detestable to Yahweh¦273997.
+\q1
+\v 16 Why would a fool need money in¦274006 their hand¦274006
+\q1 when they have no \add ≈intention of acquiring¦274009\add* wisdom¦274010.
+\p
+\v 17 A \add true\add* friend¦274019 loves at all times,
+\q1 ≈and¦274020 relatives are born \add to help during periods\add* of difficulty.
+\q1
+\v 18 A person¦274024 lacking¦274025 \add ≈integrity\add* is quick to \add ≈give a handshake\add*—
+\q1 →guaranteeing a loan in front¦274032 of their neighbour¦274033.
+\q1
+\v 19 The \add >one\add* who loves \add ≈to disobey\add*, loves contention¦274038.
+\q1 The \add >person\add* who \add ?≈builds a high fence\add*, \add ≈invites\add* destruction.
+\b
+\q1
+\v 20 The \add >person\add* with \add ≈twisted values\add* won't¦274048 find goodness,
+\q1 ≈and¦274052 the \add >one\add* with a perverse¦274045 tongue¦274053 will descend into disaster.
+\q1
+\v 21 It's sad for the parents of a \add ≈child who makes bad choices\add*,
+\q1 ≈and¦274061 the father¦274064 of a fool \add ≈won't¦274061 be a happy person\add*.
+\q1
+\v 22 A cheerful \add ≈attitude promotes\add* healing¦274070,
+\q1 ^\add ≈but\add* a crushed spirit¦274071 makes¦274069 \add &your\add* bones dry up.
+\q1
+\v 23 A wicked¦274079 \add >person\add* accepts¦274080 a secret¦274078 bribe¦274077
+\q1 →to pervert¦274081 the paths¦274082 of justice¦274083.
+\q1
+\v 24 Wisdom is present¦274087 with¦274092 the understanding¦274088 \add >person\add*,
+\q1 ^\add ≈but\add* a fool's eyes¦274090 \add ?≈are unable to concentrate\add*.
+\q1
+\v 25 A foolish child brings grief¦274096 to his¦274101 father¦274097,
+\q1 ≈and¦274100 bitterness¦274100 to the mother who gave birth to them.
+\q1
+\v 26 It's not good to impose¦274104 a fine on the innocent¦274105.
+\q1 Beating up an official isn't¦274106 a good thing to do.
+\q1
+\v 27 A \add >person¦274123\add* who's truly knowledgable¦274118, restrains¦274115 \add ≈what they say\add*,
+\q1 ≈and¦274119 an understanding¦274124 person \add ≈stays calm\add*.
+\q1
+\v 28 Even a fool who stays silent¦274128 is considered¦274130 to be wise.
+\q1 ≈The \add >one\add* with closed lips¦274132 \add appears to\add* have understanding¦274133.
+\c 18
+\q1
+\v 1 \add >People\add* who keep themselves separate¦274137, seek \add their own\add* desires¦274135,
+\q1 They \add ≈reject\add* sound¦274140 wisdom¦274140.
+\q1
+\v 2 Fools don't enjoy \add ≈learning\add*,
+\q1 ^\add ≈but\add* \add ≈always like to make their opinions known\add*.
+\q1
+\v 3 When a wicked¦274156 \add >person\add* arrives, contempt¦274160 \add from others\add* also comes,
+\q1 ≈and when shame¦274163 \add ≡arrives\add*, so does reproach¦274164.
+\q1
+\v 4 The utterances from a person's¦274171 mouth¦274169 are deep waters¦274166.
+\q1 ≈A fountain¦274174 of wisdom¦274175 \add produces\add* a flowing¦274173 stream.
+\q1
+\v 5 It's not good¦274183 to \add ≈show partiality to\add* the wicked¦274180
+\q1 ≈or to deprive an innocent \add >person\add* of justice.
+\q1
+\v 6 The fool's lips¦274188 brings strife¦274191,
+\q1 ≈and¦274192 \add @the fool's\add* mouth¦274192 invites a beating¦274193.
+\q1
+\v 7 The fool's mouth¦274196 \add will bring\add* ruin¦274199,
+\q1 ≈and¦274202 the lips¦274202 \add @of fools\add* are a trap for their \add ≈minds\add*.
+\q1
+\v 8 \add ≈‘News’ snippets\add* from a gossip are like delicious¦274208 snacks—
+\q1 →they \add get absorbed like food\add* going down into your stomach.
+\q1
+\v 9 The person who is slack in¦274217 their work¦274217,
+\q1 →is \add ≈a cousin\add* to the one who destroys¦274221.
+\q1
+\v 10 Yahweh's¦274227 name¦274226 is a strong tower¦274223.
+\q1 →\add ≈Godly\add* people run into it to be safe.
+\q1
+\v 11 The rich person's wealth¦274234 is \add like\add* a fortified city,
+\q1 ≈and¦274238 in¦274240 their imagination¦274240, like a high¦274239 wall¦274238.
+\q1
+\v 12 Before destruction¦274244 \add hits\add*, a person¦274248 is proud,
+\q1 ^\add ≈but\add* humility¦274251 \add ≈precedes\add* honour¦274250.
+\q1
+\v 13 Someone who answers before¦274255 they've \add even\add* listened¦274256
+\q1 →is being foolish and¦274261 shameful¦274261.
+\q1
+\v 14 A person's¦274265 spirit can endure¦274266 \add through\add* sickness¦274267,
+\q1 ^\add ≈but\add* who can bear a crushed spirit?
+\q1
+\v 15 Understanding people acquire¦274275 knowledge,
+\q1 ≈and¦274278 wise \add >people\add* want \add ≈information\add*.
+\q1
+\v 16 A person's¦274285 donation can make space¦274286 for them,
+\q1 ≈and it will \add ≈give them access to\add* important people.
+\q1
+\v 17 The first¦274293 person to state their case \add sounds\add* right¦274292,
+\q1 →\add until\add* their \add ≈opponent\add* cross-examines them.
+\b
+\q1
+\v 18 \add ≈Tossing a coin\add* ends quarrels,
+\q1 →and it settles \add >things\add* between¦274304 powerful \add >people\add*.
+\q1
+\v 19 Someone who's offended \add is as approachable as\add* a fortified city¦274310,
+\q1 ≈and¦274313 quarrels¦274313 are like the bars on a fortress¦274316.
+\q1
+\v 20 The fruit¦274318 of a person's¦274321 mouth¦274319 satisfies their stomach¦274323,
+\q1 ≈and they'll be satisfied with the product¦274324 of their lips¦274325.
+\q1
+\v 21 The tongue¦274332 has power¦274330 over life¦274329 and death,
+\q1 →and those¦274333 who love¦274333 \add using\add* it will eat¦274334 its¦274333 fruit¦274335.
+\q1
+\v 22 A man who finds a wife¦274338, finds a good¦274340 \add >thing\add*,
+\q1 →and receives \add ≈favour\add* from Yahweh¦274343.
+\q1
+\v 23 Poor \add >people\add* \add ≈make\add* requests,
+\q1 ^\add ≈but\add* the rich \add >person\add* answers¦274350 \add ≈harshly\add*.
+\q1
+\v 24 A person¦274353 with many companions \add will come to\add* ruin,
+\q1 ^\add ≈but\add* there¦274356 is \add ≡a companion\add* that \add ≈sticks\add* closer than a brother¦274359.
+\c 19
+\q1
+\v 1 It's better to walk with integrity¦274365,
+\q1 ^than to be a foolish \add >person\add* with perverse¦274366 speech¦274367.
+\q1
+\v 2 \add ≈What's more\add*, a person¦274375 without knowledge¦274374 isn't¦274376 good¦274378,
+\q1 and¦274379 \add anyone¦274379\add* who shifts their feet¦274380 quickly¦274379, misses their way.
+\q1
+\v 3 A person's¦274384 foolishness subverts¦274385 their course,
+\q1 →then their \add ≈mind¦274391\add* rages¦274390 against¦274387 Yahweh¦274389.
+\q1
+\v 4 Wealth¦274393 adds many friends¦274395,
+\q1 ^\add ≈but\add* the poor friend¦274398 \add ≈ends up being isolated\add*.
+\q1
+\v 5 A false witness¦274402 won't go¦274405 unpunished¦274405,
+\q1 ≈and¦274406 the \add >one\add* who tells lies, won't escape¦274409 \add the consequences\add*.
+\q1
+\v 6 Many \add >people\add* make requests to a generous leader,
+\q1 ≈and¦274416 everyone is the friend¦274418 of the person¦274419 who gives gifts.
+\q1
+\v 7 All the relatives of a poor person hates them,
+\q1 →\add ≈so\add* how much more do their friends¦274430 avoid them.
+\q1 \add @The poor person\add* sends messages¦274434 after them, \add ≈but they're no longer around\add*.
+\q1
+\v 8 Anyone¦274440 who acquires¦274440 \add ?≈integrity\add*, loves their own life.
+\q1 ≈The \add >one\add* who preserves understanding¦274446 will find \add ?≈success\add*.
+\q1
+\v 9 A lying witness¦274451 won't¦274453 go¦274454 unpunished¦274454,
+\q1 ≈and¦274455 the \add >one\add* who tells lies will die.
+\q1
+\v 10 Luxury is not suitable¦274462 for a fool—
+\q1 ≈\add ≈even worse\add* for a slave¦274468 to rule over princes¦274471.
+\q1
+\v 11 A person's¦274474 insight makes¦274475 them \add ≈slow to anger¦274476\add*,
+\q1 ≈and¦274477 it's their \add ≈privilege\add* to overlook an offense.
+\q1
+\v 12 The king's rage¦274486 is like a lion's roar,
+\q1 ^\add ≈but\add* his favour¦274492 is like dew on the grass¦274491.
+\q1
+\v 13 A foolish child \add leads to\add* their father's¦274495 destruction¦274494,
+\q1 ≈and¦274498 an argumentative wife¦274501 \add is like something\add* constantly dripping¦274498.
+\q1
+\v 14 Houses¦274503 and wealth¦274504 are an inheritance¦274505 from your parents,
+\q1 →\add ≈but\add* a sensible wife¦274508 is from Yahweh¦274507.
+\q1
+\v 15 Laziness¦274511 makes¦274512 \add a person\add* fall into a deep sleep¦274513,
+\q1 ≈and a slack¦274515 person will go hungry¦274516.
+\q1
+\v 16 The \add >ones\add* who obey \add Yahweh's\add* instructions will preserve their lives.
+\q1 ^Anyone who despises¦274522 his ways¦274523, will die¦274524.
+\q1
+\v 17 Someone who's kind to a poor \add >person\add* is lending¦274527 to Yahweh¦274528,
+\q1 →and he¦274532 will repay¦274532 \add ≈for the good deed\add*.
+\q1
+\v 18 Discipline¦274536 your child because¦274538 \add ?≈that gives\add* hope,
+\q1 ^\add ≈but\add* don't¦274545 \add ?≈think about\add* their death¦274544.
+\q1
+\v 19 \add ?≈People who get very angry will end up paying a fine\add*,
+\q1 →because if you rescue¦274559 \add <them\add*, you'll \add ?≈have to do it again and again\add*.
+\q1
+\v 20 Listen¦274563 to advise and¦274565 accept¦274565 correction¦274566
+\q1 →so that you'll become¦274568 wise \add ≈for your¦274569 life ahead\add*.
+\q1
+\v 21 People make many plans¦274572 in¦274573 their \add ≈minds\add*,
+\q1 ^\add ≈but\add* Yahweh's¦274577 advice will endure \add time\add*.
+\q1
+\v 22 People desire¦274581 loyal¦274583 commitment from others,
+\q1 ≈and¦274584 it's better to have a poor \add friend\add* than \add one\add* who lies.
+\q1
+\v 23 \add ≈Respecting and¦274593 honouring\add* Yahweh¦274591 leads¦274592 to life¦274592,
+\q1 →and \add that person\add* will have \add peaceful\add* nights¦274594 without trouble¦274598 arriving.
+\q1
+\v 24 The lazy person hides¦274600 their hands in¦274603 the dish—
+\q1 →not even \add troubling\add* to lift it¦274610 to their mouth¦274608.
+\q1
+\v 25 Beat a mocker¦274612 then \add that\add* simple¦274614 one will become¦274615 sensible,
+\q1 ≈and correct an intelligent¦274617 \add >person\add* and they'll \add ≈know¦274619 even more\add*.
+\q1
+\v 26 Children who assault¦274621 their fathers¦274623 and drive¦274624 away their mothers¦274625
+\q1 →bring shame¦274627 and reproach¦274628.
+\q1
+\v 27 My¦274632 child, if you want to stray¦274636 from knowledge¦274639,
+\q1 →stop listening¦274634 to correction¦274635.
+\q1
+\v 28 A worthless¦274642 witness¦274641 \add ≈makes a mockery of\add* justice¦274644,
+\q1 and¦274645 the mouth¦274645 of the wicked \add >person\add* gulps in \add more\add* wickedness.
+\q1
+\v 29 Judgements are prepared¦274651 for scoffers¦274652,
+\q1 ≈and¦274654 beatings¦274654 for the backs¦274655 of fools¦274656.
+\c 20
+\q1
+\v 1 Wine is a mocker¦274658 and¦274663 strong¦274662 drink¦274662 \add ≈makes you boisterous\add*,
+\q1 →and everyone¦274665 who staggers¦274665 due to it, isn't¦274667 wise.
+\q1
+\v 2 A king's \add ≈rage\add* is like a roaring¦274670 lion¦274671.
+\q1 →Anyone who provokes¦274674 him¦274674 to anger¦274674 \add ≈risks\add* their life¦274676.
+\q1
+\v 3 It's honourable¦274678 for a person¦274679 to \add ≈step away\add* from strife¦274681,
+\q1 ^\add ≈but\add* every fool would \add rather\add* break¦274685 out \add an argument\add*.
+\q1
+\v 4 A lazy \add >person\add* won't¦274689 plough \add ≈when it's still cold\add*,
+\q1 →then he¦274691 looks at¦274694 harvest¦274694 \add >time\add* and¦274695 there's¦274695 nothing¦274695.
+\q1
+\v 5 The plans in¦274700 a person's \add ≈mind¦274700\add* are \add like\add* deep water¦274697,
+\q1 ^\add ≈but\add* an understanding¦274704 person will draw them out.
+\q1
+\v 6 Many people¦274707 \add ≈talk about\add* their loyalty¦274712,
+\q1 ^\add ≈but\add* who can \add actually\add* find a faithful¦274714 person¦274709.
+\q1
+\v 7 \add ≈Godly\add* \add #people\add* act with¦274719 integrity¦274719.
+\q1 →Their children¦274722 will be blessed¦274721 after¦274723 them.
+\q1
+\v 8 A king¦274725 sitting on¦274733 his throne¦274729 to make a judgement¦274731,
+\q1 →sifts all evil¦274736 out with¦274733 his eyes¦274733.
+\q1
+\v 9 Who can say¦274740, “I've kept¦274741 my \add ≈motives\add* pure—
+\q1 ≈I've been \add ≈freed\add* from sin¦274744”?
+\q1
+\v 10 \add ≈Differing¦274751 weights¦274746 and unequal\add* measures—
+\q1 →Yahweh¦274751 \add ≈hates\add* both of them.
+\q1
+\v 11 Even young people are known¦274758 by their actions
+\q1 →if they're \add ≈honest and¦274764 obedient\add*.
+\q1
+\v 12 The ear¦274769 that hears¦274770 and¦274771 the eye¦274771 that sees¦274772—
+\q1 →it was Yahweh¦274773 that made both of them.
+\q1
+\v 13 Don't¦274779 love¦274781 sleep¦274782 or you¦274785 might end up in poverty.
+\q1 ≈Open your¦274787 eyes¦274787 then you'll have enough food.
+\q1
+\v 14 “Worthless, worthless,” say the buyers¦274795,
+\q1 ^\add ≈but\add* as soon as they've left, they boast¦274799 \add about the good deal\add*.
+\q1
+\v 15 There's¦274801 gold¦274802 \add around\add*, and plenty of jewels¦274805,
+\q1 ^\add ≈but\add* lips¦274808 with knowledge¦274810 are \add ≈a rare commodity\add*.
+\q1
+\v 16 Take the person's coat if they've used it to guarantee the loan of a stranger¦274818,
+\q1 ≈and hold it in pledge¦274822 \add ≡if they did it for\add* a foreign¦274820 \add >woman\add*.\x + \xo 20:16 \xt 27:13.\x*
+\q1
+\v 17 The bread of lies tastes good \add at first\add*,
+\q1 ^\add ≈but\add* afterwards¦274828 it's \add like\add* a mouthful¦274831 of gravel¦274832.
+\q1
+\v 18 Plans¦274834 are established¦274836 with¦274835 advisers,
+\q1 →\add ≈so\add* wise guidance¦274837 \add is required for\add* war.
+\q1
+\v 19 The person who gossips reveals a secret¦274843,
+\q1 →so don't¦274848 get involved¦274849 \add with someone\add* with a big¦274846 mouth¦274847.
+\q1
+\v 20 The \add >one\add* who curses¦274851 their father¦274852 and¦274853 mother¦274853,
+\q1 →will have their lamp extinguished¦274854 in¦274856 deep darkness¦274858.
+\q1
+\v 21 An inheritance¦274860 that's gained¦274861 at¦274863 \add ?≈too young an age\add*,
+\q1 →won't be a blessing¦274866 in¦274863 the end¦274864.
+\q1
+\v 22 Don't¦274868 say¦274870, “I'll¦274871 repay¦274871 \add that\add* evil¦274873.”
+\q1 →Wait for Yahweh¦274875 and¦274876 he'll rescue¦274876 you.
+\q1
+\v 23 \add ≈Fiddling with\add* the weights is hated by Yahweh¦274880,
+\q1 ≈and deceitful¦274884 scales¦274883 aren't¦274885 good¦274887.
+\q1
+\v 24 It's Yahweh¦274889 \add ≈that determines\add* a person's steps¦274893,
+\q1 →\add ≈so\add* how does a \add mere\add* human¦274896 understand¦274899 their course?
+\q1
+\v 25 It's a trap for a person¦274903 to rashly¦274904 declare something as sacred¦274905,
+\q1 →and then to \add only\add* reflect¦274908 \add later\add* after¦274906 making vows.
+\q1
+\v 26 A wise king¦274912 winnows¦274910 out the wicked¦274911 \add to separate them\add*.
+\q1 ≈He uses the thresher \add to break them off\add*.
+\q1
+\v 27 The human¦274921 spirit is Yahweh's¦274919 lamp,
+\q1 →searching¦274922 all the \add ≈innermost parts\add*.
+\q1
+\v 28 Loyal¦274929 commitment and faithfulness¦274930 to king¦274933 preserves¦274931 him,
+\q1 ≈and his throne¦274936 is upheld¦274934 by \add that\add* loyal¦274935 commitment.
+\q1
+\v 29 The splendour¦274941 of young¦274939 men¦274939 is their strength¦274940,
+\q1 ≈and the adornment of old \add >people\add* is their gray hair¦274943.
+\q1
+\v 30 Lashes and wounds clean out evil¦274949,
+\q1 ≈and beatings¦274950 \add ≈clean out\add* the \add ≈innermost parts\add*.
+\c 21
+\q1
+\v 1 The king's \add ≈thoughts\add* are like streams¦274955 of water¦274957 to Yahweh¦274963—
+\q1 →he directs them to go wherever he wants.
+\q1
+\v 2 All a person's¦274976 ways seem right in¦274978 their own eyes¦274978,
+\q1 ^\add ≈but\add* Yahweh¦274981 \add ≈evaluates motives\add*.
+\q1
+\v 3 To do¦274983 \add ≈what's right¦274984 and¦274985 fair\add*
+\q1 →is \add ≈more desirable\add* to Yahweh¦274987 than sacrificing¦274988.
+\q1
+\v 4 \add ≈Arrogance and¦274993 pride\add*—the lamp of wicked¦274997 \add >people\add*,
+\q1 →is \add ≈disobeying\add* \add Yahweh\add*.
+\q1
+\v 5 The plans¦275000 of diligent¦275001 \add >people\add* will only \add lead\add* to abundance¦275004,
+\q1 ^\add ≈but\add* those who \add just\add* \add ≈rush around\add* will only \add get\add* poverty¦275010.
+\q1
+\v 6 \add ≈Wealth that's acquired¦275012 via a lying\add* tongue¦275014,
+\q1 →will be like a \add ?quick\add* breath¦275016 for those seeking death¦275020.
+\q1
+\v 7 The violence¦275022 of wicked¦275024 \add >people\add* will drag them away,
+\q1 because¦275026 they¦275027 refuse¦275027 to \add apply\add* justice¦275029.
+\q1
+\v 8 The paths of a guilty¦275034 person¦275033 are crooked¦275031,
+\q1 ^\add ≈but\add* well-behaved \add >people\add* \add ≈act with decency\add*.
+\q1
+\v 9 It's better to live¦275040 in the corner¦275043 of \add ≈the attic\add*\f + \fr 21:9 \ft We made an adjustment here for most of our readers in houses with sloping roofs, as distinct from living in an arid climate and having a flat roof.\f*
+\q1 than inside the \add main\add* house¦275048 with the company of an argumentative wife¦275046.
+\q1
+\v 10 Wicked \add >people\add* have a strong, inner craving for evil¦275055.
+\q1 →\add Even\add* their neighbours¦275060 won't¦275056 be shown¦275058 any favour¦275058.
+\q1
+\v 11 By punishing¦275062 a mocker¦275064, a naive¦275068 person¦275068 becomes¦275066 wise,
+\q1 ≈and¦275069 when wise \add >people\add* are instructed¦275069, they acquire knowledge¦275073.
+\q1
+\v 12 \add ≈People¦275081 who do what's right¦275076\add* pay attention¦275075 to the wicked \add >person's\add* house¦275077,
+\q1 →subverting¦275079 the wicked until \add ?≈they're ruined\add*.
+\q1
+\v 13 Any person who shuts¦275083 their ears to the cry¦275085 of the poor
+\q1 →will also call out \add for help\add* but¦275092 won't¦275092 be answered¦275093.
+\q1
+\v 14 A discreet gift¦275095 subdues¦275097 anger¦275099,
+\q1 ≈and¦275100 a bribe¦275100 \add ≡quietens down\add* a strong¦275103 rage¦275102.
+\q1
+\v 15 The \add ≈godly¦275106\add* \add >person\add* enjoys \add ≈promoting\add* justice¦275108,
+\q1 ^\add ≈but\add* \add brings\add* terror¦275109 to \add ≈those¦275110 doing wicked¦275111 things\add*.
+\q1
+\v 16 Anyone¦275113 who wanders¦275114 \add away\add* from the path¦275115 of insight¦275116,
+\q1 →will rest in¦275117 the assembly¦275117 \add ≈of the dead\add*.
+\q1
+\v 17 The lover of pleasure¦275124 will become poor.
+\q1 ≈Anyone¦275123 who loves wine and \add ≈rich food\add* won't¦275129 become wealthy.
+\q1
+\v 18 \add ?≈A wicked¦275134 person becomes the payment to free someone who does what's right¦275133\add*,
+\q1 ≈and a treacherous¦275137 person \add ?≡to free\add* a \add ≈godly¦275133 person\add*.
+\q1
+\v 19 It's better to live in a wilderness¦275143 \add ≈region¦275141\add*,
+\q1 than with a wife¦275144 who's \add ≈argumentative and negative\add*.
+\q1
+\v 20 Precious treasures and oil¦275152 will be in¦275153 the house¦275153 of a wise \add >person¦275156\add*,
+\q1 ^\add ≈but\add* a foolish¦275155 person consumes it \add all\add*.
+\q1
+\v 21 The \add >person\add* who \add ≈strives to do what's right\add* and who \add shows\add* loyal¦275161 commitment,
+\q1 →will find life¦275163, \add ?≈forgiveness\add*, and honour¦275165.
+\q1
+\v 22 A wise man can climb up into a city¦275167 of warriors¦275168,
+\q1 →and bring down the strength¦275172 of its¦275173 confidence¦275173.
+\q1
+\v 23 Any person who guards¦275175 their mouth¦275176 and¦275177 tongue¦275177
+\q1 →will keep trouble¦275179 away from their life¦275180.
+\q1
+\v 24 A proud¦275183 and arrogant person is called a mocker¦275184,
+\q1 →\add because\add* they act with¦275187 arrogant presumption¦275188.
+\q1
+\v 25 The craving of \add #slackers\add* will kill¦275192 them,
+\q1 because¦275193 their hands¦275196 refuse¦275195 to work.
+\q1
+\v 26 All day¦275201 long, they \add ?≈fantasise\add* their craving¦275203,
+\q1 ^\add ≈but\add* \add ≈people who do what's right¦275204\add*, give without holding back.
+\q1
+\v 27 The wicked¦275210 \add >person's\add* sacrifice¦275209 is detestable,
+\q1 because¦275213 it's brought with¦275215 evil¦275215 intent¦275215.
+\q1
+\v 28 A lying witness¦275218 will die,
+\q1 ^\add ≈but\add* a \add good\add* listener¦275223 will speak¦275225 out success¦275224.
+\q1
+\v 29 The wicked¦275229 person¦275228 \add ≈makes¦275227 their face¦275230 look stern\add*,
+\q1 ^\add ≈but\add* \add ≈godly\add* \add >people\add* \add carefully\add* consider¦275234 their ways¦275236.
+\q1
+\v 30 There's¦275239 no wisdom¦275240 or understanding¦275242
+\q1 or advice that would oppose¦275245 Yahweh¦275246.
+\q1
+\v 31 A horse¦275249 is prepared¦275250 for the day¦275251 of battle¦275252,
+\q1 ^\add ≈but\add* the victory¦275254 belongs¦275253 to Yahweh¦275253.
+\c 22
+\q1
+\v 1 A \add ≈good reputation¦275257\add* is more desirable than great¦275259 wealth¦275258,
+\q1 ≈and good favour¦275262 \add ≡more\add* than gold¦275261 or silver¦275260.
+\q1
+\v 2 Rich and¦275266 poor meet each other \add ?at their¦275269 end\add*.
+\q1 ≈Yahweh¦275270 is the creator of all of them.
+\q1
+\v 3 A prudent person \add ≈notices\add* trouble¦275275 and \add ≈avoids it\add*,
+\q1 \add ≈whereas\add* naive¦275278 \add >people\add* \add ≈just blunder onwards\add* and suffer¦275280.
+\q1
+\v 4 The consequence¦275282 of humility¦275283 and \add ≈respecting and honouring\add* Yahweh¦275285
+\q1 →\add is\add* riches and honour¦275287 and life¦275288.
+\q1
+\v 5 Thorns¦275290 \add and\add* traps are on¦275292 the perverse¦275293 \add >person's\add* path¦275292,
+\q1 ^\add ≈but\add* \add #those\add* who guard¦275294 their \add own\add* \add ≈self-esteem\add* keep far away from them.
+\q1
+\v 6 Train¦275299 \add &your\add* \add #children\add* in the way¦275304 they should go,
+\q1 →then when they're older they won't¦275309 turn¦275311 away from it¦275312.
+\b
+\q1
+\v 7 A rich person¦275319 rules¦275316 over those¦275315 who are poor,
+\q1 ≈and¦275317 the one who borrows¦275318 is enslaved to the lender.
+\q1
+\v 8 The \add >person\add* who sows \add ≈evil\add* will harvest trouble¦275327,
+\q1 and¦275328 the \add ?≈power from his anger\add* will end¦275330.
+\q1
+\v 9 \add ≈Generous\add* \add >people\add* will be blessed¦275336,
+\q1 because¦275337 they share their food with the poor.
+\q1
+\v 10 Drive¦275343 away a mocker¦275344 and then strife¦275346 will disappear,
+\q1 →and abuse¦275349 and disputes¦275348 will stop.
+\q1
+\v 11 The \add >person\add* who \add ≈values pure motives\add*, who speaks graciously,
+\q1 →will have the king¦275359 for a friend.
+\q1
+\v 12 Yahweh's¦275362 eyes¦275361 guard¦275363 knowledge¦275364,
+\q1 ^\add ≈but\add* he overthrows¦275365 the \add ≈plans\add* of \add >those who\add* behave treacherously¦275367.
+\q1
+\v 13 The lazy \add >person\add* says¦275369, “There's a lion¦275371 outside—
+\q1 →I'll be killed¦275375 \add ≈if I go outside\add*!”
+\q1
+\v 14 The mouth¦275379 of a \add ≈loose\add* woman is a deep pit.
+\q1 →Those who are cursed¦275381 by Yahweh¦275382 will fall into it.
+\q1
+\v 15 Foolish¦275388 \add >ideas\add* \add ≈are natural in¦275390 the mind¦275390\add* of a youth¦275392.
+\q1 →\add but\add* the rod \add ≈bringing\add* discipline¦275394 drives¦275395 it¦275395 far from them.
+\q1
+\v 16 Those who oppress¦275398 the poor or give to the rich, \add ≈in order to make a profit\add*,
+\q1 →will \add just\add* end up in poverty¦275406 \add themselves\add*.
+\s1 The thirty sayings
+\rem /s1 Sayings of the Wise; Thirty Sayings of the Wise; Thirty wise sayings; The Thirty Wise Sayings
+\p
+\v 17 Listen carefully to what wise \add >people\add* \add ≈have said\add*.
+\q1 ≈Set your mind¦275413 to \add ≈apply what I'm teaching you¦275414\add*
+\q1
+\v 18 because \add ≈internalising my instructions will be worthwhile\add*—
+\q1 →\add then\add* they'll be \add ≈easy for you¦275423 to share with¦275423 others\add*.
+\q1
+\v 19 I'll¦275433 instruct you today
+\q1 →so that \add you'll put\add* your trust¦275432 in¦275431 Yahweh¦275431.
+\q1
+\v 20 Actually, I've written¦275440 thirty proverbs
+\q1 to \add ≈advise and¦275445 teach\add* \add <you\add*—
+\q1
+\v 21 to show you true and reliable \add ≈principles\add*
+\q1 so that you can give¦275452 accurate answers to \add those¦275455\add* sent¦275455 to you.
+\s2 -1-
+\p
+\v 22 Don't¦275458 rob those in¦275471 poverty just because¦275463 they're poor
+\q1 ≈and don't¦275458 ‘crush¦275469’ a poor person at¦275471 the \add community\add* gate¦275471
+\q1
+\v 23 →because Yahweh¦275475 will \add ≈take their¦275477 side\add*.
+\q1 ≈\add Yes,\add* he'll plunder the lives of those¦275481 who plunder them.
+\s2 -2-
+\p
+\v 24 Don't¦275484 associate¦275486 with \add ≈angry people\add*,
+\q1 ≈and¦275491 don't¦275484 go¦275496 along with a \add hot-headed person¦275493\add*,
+\q1
+\v 25 →in case you \add ≈end up copying their habits\add*,
+\q1 ≈and get yourself tangled in \add that\add* trap.
+\s2 -3-
+\p
+\v 26 Don't¦275507 be among those¦275510 quick to \add ≈shake hands\add*
+\q1 to guarantee the loans \add of others\add*,
+\q1
+\v 27 because if you're unable to make the payment,
+\q1 →you could have your¦275524 bed¦275524 taken out from under¦275525 you.
+\s2 -4-
+\p
+\v 28 Don't¦275527 move an ancient boundary¦275530 \add marker\add*,
+\q1 which¦275532 your¦275534 ancestors¦275534 had placed \add >there\add*.
+\s2 -5-
+\p
+\v 29 You've seen a man who's skilled¦275539 at¦275540 his work—
+\q1 →he'll take his position in¦275540 front¦275541 of kings¦275543.
+\q1 ^He won't¦275545 \add ≈do his work\add* \add just\add* \add ≈for anybody\add*.
+\q1
+\c 23
+\s2 -6-
+\p
+\v 1 When you sit¦275554 down to eat¦275555 with a \add ≈political leader\add*,
+\q1 \add ≈pay attention\add* to \add ?≈what's\add* in front of you,
+\q1
+\v 2 and¦275566 put a knife¦275567 to your¦275568 throat¦275568,
+\q1 if you¦275573 have an \add ≈enormous\add* appetite¦275572.
+\q1
+\v 3 Don't¦275575 crave¦275577 their delicacies¦275580,
+\q1 because it's the food of lies.
+\s2 -7-
+\p
+\v 4 Don't¦275585 \add just\add* work to get rich.
+\q1 Your wisdom \add should tell you to\add* stop.
+\q1
+\v 5 \add ≈You glance at\add* \add @wealth\add* then \add ≈it'll be gone\add*,
+\q1 because¦275597 it'll make wings¦275602 for itself and \add ?fly away into\add* the sky like an eagle¦275603.
+\s2 -8-
+\p
+\v 6 Don't¦275609 eat¦275611 the food of a \add ≈stingy person\add*,
+\q1 and¦275617 don't¦275609 crave¦275619 for their delicacies¦275621,
+\q1
+\v 7 because they're always calculating¦275627 \add ≈internally\add*—
+\q1 telling you¦275639 to eat¦275632 and drink¦275633 \add ≈but¦275633 it's not really genuine\add*.
+\q1
+\v 8 You'll vomit¦275644 up the bit that¦275643 you've¦275643 eaten¦275643
+\q1 and¦275645 your¦275646 pleasant¦275647 \add ≈greetings\add* will have been wasted¦275645.
+\s2 -9-
+\p
+\v 9 Don't¦275651 \add bother\add* speaking¦275653 to a foolish \add >person\add*
+\q1 because¦275654 they'll despise¦275656 the \add ≈wise things that you say\add*.
+\s2 -10-
+\p
+\v 10 Don't¦275660 move an ancient boundary¦275663 marker,
+\q1 or encroach on¦275665 the fields¦275665 of \add ≈those who are disadvantaged\add*,
+\q1
+\v 11 because the \add ≈one who watches out for them\add* is strong¦275674
+\q1 and he'll take up their case against¦275681 you¦275681.
+\q1
+\s2 -11-
+\p
+\v 12 \add ≈Make continual learning part of your values\add*,
+\q1 and use your ears for \add gaining\add* knowledge¦275689.
+\s2 -12-
+\p
+\v 13 \add ^It's important\add* to discipline¦275695 your children¦275694.
+\q1 They won't¦275691 die¦275701 \add ≈from getting a spanking\add*.
+\q1
+\v 14 \add ≈Spank¦275707 them with¦275704 a stick\add*
+\q1 and¦275706 you'll \add ≈keep them from the grave\add*.
+\s2 -13-
+\p
+\v 15 My child, if you \add ≈value wisdom\add*
+\q1 then \add ≈I'll certainly be very happy\add*.
+\q1
+\v 16 My \add ≈mind\add* will be \add ≈celebrating\add*
+\q1 when your¦275724 lips¦275724 speak¦275723 out \add ≈what's right\add*.
+\s2 -14-
+\p
+\v 17 Don't let \add ≈yourself\add* \add start\add* envying sinners¦275731—
+\q1 instead it¦275729 should¦275729 be Yahweh¦275737 that you \add ≈respect and strive to obey\add*,
+\q1
+\v 18 because then there'll¦275745 certainly be a future.
+\q1 Your hope \add ≡for the future\add* won't¦275748 be chopped off.
+\s2 -15-
+\p
+\v 19 My¦275753 child, listen and become wise,
+\q1 ≈and channel your¦275758 values in¦275757 the right direction¦275756.
+\q1
+\v 20 Don't¦275760 associate with those drinking¦275763 too much wine,
+\q1 ≈or with those who gorge themselves¦275768 on¦275763 meat,
+\q1
+\v 21 →because drunkards¦275772 and gluttons¦275773 will become¦275774 impoverished¦275774,
+\q1 ≈and \add &their\add* drowsiness¦275777 will leave them dressed in rags.
+\s2 -16-
+\p
+\v 22 Listen¦275779 to what your father¦275780 \add tells you¦275782\add*,
+\q1 and don't¦275783 despise¦275785 your mother¦275789 when she¦275788 gets old.
+\q1
+\v 23 Acquire truth and don't¦275793 sell \add <it\add*,
+\q1 and \add similarly for\add* wisdom¦275796, instruction¦275797, understanding¦275798.
+\q1
+\v 24 The father¦275804 of \add ≈someone who does what's right¦275805\add* will be \add ≈encouraged\add*.
+\q1 \add ≈Yes,\add* whoever fathers a \add ≈sensible\add* \add >child\add* will be glad.
+\q1
+\v 25 Let¦275816 \add @your¦275817 father\add* be happy.
+\q1 and may your mother¦275817 \add ≈celebrate\add*.
+\s2 -17-
+\p
+\v 26 My¦275823 child, \add ≈follow me with sincerity\add*,
+\q1 ≈and let your eyes¦275826 observe¦275828 my ways¦275827,
+\q1
+\v 27 because¦275832 a prostitute¦275836 is a deep pit,
+\q1 ≈and¦275837 an adulteress is a narrow¦275838 well.
+\q1
+\v 28 They lie in¦275847 wait like a robber¦275844 would,
+\q1 and¦275846 \add ≈keep adding\add* to the number of men¦275847 who become unfaithful.
+\s2 -18-
+\p
+\v 29 Who has dread or sorrow or contentions¦275855?
+\q1 ≈Who has complaints¦275859, or needless wounds, or \add ≈bloodshot\add* eyes¦275865.
+\q1
+\v 30 \add It's\add* those who linger¦275867 over wine,
+\q1 or try various mixed¦275873 \add ≈drinks\add*.
+\q1
+\v 31 Don't¦275875 look at¦275884 wine when it's red and sparkling¦275886 in¦275884 the cup,
+\q1 \add and when\add* \add ≈it would slide down smoothly¦275888\add*.
+\q1
+\v 32 →In the end it bites like a snake¦275891,
+\q1 ≈and stings¦275894 like a viper¦275893.
+\q1
+\v 33 →\add Then\add* your eyes will see strange¦275898 things,
+\q1 ≈and perverse¦275901 things in your mind¦275899 \add ≈will get spoken\add*.
+\q1
+\v 34 →You'll feel like someone sleeping out in¦275905 the ocean—
+\q1 ≈just like someone lying down at¦275905 the top of a mast.
+\q1
+\v 35 \add You'll say,\add* “They hit me \add but\add* it didn't¦275913 hurt.
+\q1 They beat me \add but\add* I \add ≈couldn't feel it\add*.
+\q1 When will I wake up? I'll¦275922 have some more—\add ≈where is it?\add*”
+\c 24
+\s2 -19-
+\p
+\v 1 Don't¦275926 be envious of evil¦275930 men¦275929,
+\q1 ≈and¦275931 don't¦275926 try to associate with¦275929 them,
+\q1
+\v 2 because \add ≈they¦275947 have violent¦275940 thoughts\add*,
+\q1 and their lips¦275946 \add ≈cause trouble¦275945\add*.
+\s2 -20-
+\p
+\v 3 It's through wisdom¦275949 that a house¦275951 is built¦275950,
+\q1 ≈and¦275952 it's established¦275953 by understanding¦275952.
+\q1
+\v 4 It's through knowledge¦275955 that its rooms¦275956 get filled¦275957
+\q1 →with beautiful and¦275962 valuable treasures.
+\s2 -21-
+\p
+\v 5 A wise \add >person\add* is strong,
+\q1 and¦275968 those with¦275967 knowledge¦275970 \add ≈increase their\add* power,
+\q1
+\v 6 →because you¦275977 need wise guidance¦275976 to go to war,
+\q1 ≈and¦275981 victory¦275981 requires many advisers.
+\s2 -22-
+\p
+\v 7 Wisdom is too \add ≈much\add* for fools.
+\q1 →They don't¦275989 open their mouths¦275992 at¦275988 the \add city\add* gate¦275988.
+\s2 -23-
+\p
+\v 8 The \add >person\add* who plans¦275994 to do¦275995 evil¦275995,
+\q1 will be known by \add ≈others\add* as a master¦275997 schemer.
+\s2 -24-
+\p
+\v 9 A¦276006 foolish¦276003 plan is sinful,
+\q1 and¦276005 \add >people\add* hate a mocker¦276007.
+\s2 -24-
+\p
+\v 10 If you display a lack of courage¦276009 \add ≈when you have\add* troubles¦276011,
+\q1 →your strength¦276013 is \add ≈limited\add*.
+\s2 -25-
+\p
+\v 11 Rescue those¦276016 being¦276016 led away to \add &their\add* death¦276017,
+\q1 ≈and¦276018 \add >those\add* who will be staggering¦276018 to \add &their\add* slaughter¦276019 if you¦276022 restrain¦276022.
+\q1
+\v 12 If¦276045 you \add just\add* say¦276026 that you didn't¦276028 know¦276043 anything about it,
+\q1 →then the one who weighs¦276034 \add ≈motives\add* will realise.
+\q1 →Then the one who guards¦276040 your life¦276041 will repay¦276044 everyone¦276034 according¦276046 to \add ≈what they've done\add*.
+\s2 -26-
+\p
+\v 13 My¦276050 child, eat honey¦276051 because¦276052 it's good¦276054,
+\q1 ≈and¦276055 honeycomb tastes¦276059 sweet¦276056.
+\q1
+\v 14 Wisdom is like that for your \add ≈mind\add*,
+\q1 and if you find it, there'll¦276069 be a future¦276070 for you,
+\q1 and \add ≈what you hope for\add* won't¦276072 be \add ≈taken away from you\add*.
+\s2 -27-
+\p
+\v 15 Don't lie in wait like a wicked¦276079 \add >person\add* does at a \add ≈good\add* \add >person's\add* home¦276080.
+\q1 Don't devastate¦276084 the place¦276085 where¦276085 a \add ≈good\add* person lives,
+\q1
+\v 16 because¦276090 a \add ≈good\add* person might fall several times¦276091 then get up \add again¦276095\add*,
+\q1 ^\add ≈but\add* the wicked¦276096 stumble¦276097 \add when\add* calamity¦276098 \add comes\add*.
+\s2 -28-
+\p
+\v 17 Don't¦276104 \add ≈cheer\add* when your enemy¦276101 falls¦276100,
+\q1 ≈and when they stumble¦276107, don't¦276104 \add ≈celebrate\add*
+\q1
+\v 18 →because Yahweh¦276116 will see¦276115 and \add ≈disapprove\add*,
+\q1 →and turn¦276119 his \add ≈anger¦276121\add* away from them.
+\s2 -29-
+\p
+\v 19 Don't get yourself¦276125 worrying because of evil \add >people\add*.
+\q1 ≈Don't be jealous¦276129 of the wicked¦276130,
+\q1
+\v 20 →because there's no future¦276137 for an evil¦276138 \add >person\add*.
+\q1 ≈The lamp of the wicked¦276140 will be extinguished¦276141.
+\s2 -30-
+\p
+\v 21 My child, \add ≈honour Yahweh¦276147 and the king¦276149 and strive to obey them\add*,
+\q1 Don't¦276153 get involved¦276155 with those¦276152 who change¦276152 \add sides\add*
+\q1
+\v 22 →because disaster¦276161 will suddenly¦276159 \add ≈hit\add* \add <them\add*
+\q1 and¦276162 who knows what ruin they both might bring \add then\add*?
+\s1 More wise sayings
+\rem /s1 More Wise Sayings; Further Sayings of the Wise; More Sayings of the Wise
+\p
+\v 23 These are more sayings of the wise:
+\p It's not good¦276178 to show partiality \add ≈when deciding a case\add*.
+\q1
+\v 24 ≈Anyone¦276180 who says¦276180 to the \add ≈guilty¦276182\add* that they're innocent,
+\q1 →will be cursed¦276185 by the peoples¦276186 and hated by the nations¦276188.
+\q1
+\v 25 \add ≈However,\add* those¦276190 who \add ≈convict\add* \add ≡the guilty\add* will \add ≈be admired\add*,
+\q1 →and they'll be blessed¦276194 by good¦276196 things¦276196 \add happening\add*.
+\p
+\v 26 \add ≈An honest answer\add* \add is like\add* \add ≈a kiss on the\add* lips.
+\p
+\v 27 Establish¦276204 your work¦276207 \add ≈for outsiders¦276205\add* and prepare your \add ≈food gardens\add*
+\q1 then after¦276211 that, build¦276212 your house¦276213.
+\p
+\v 28 Don't¦276216 be a witness¦276219 against your neighbour¦276222 without¦276221 \add ≈good reason\add*,
+\q1 or deceive¦276223 \add <others\add* with¦276222 what you¦276223 say.
+\q1
+\v 29 Don't¦276226 say¦276228, “I'll do¦276234 to him what he¦276230 did to me,
+\q1 ≈\add ≈I'll pay him back for what he's done¦276230\add*.”
+\p
+\v 30 I¦276247 passed¦276247 by the field¦276243 of a lazy person
+\q1 ≈and by the vineyard¦276250 of a person with \add ≈no initiative\add*.
+\q1
+\v 31 \add ≈Wow\add*, thorns had grown¦276257 up over all of it,
+\q1 ≈and it was \add completely\add* covered¦276261 with weeds¦276263,
+\q1 and its¦276258 stone¦276265 walls were broken¦276266 down.
+\q1
+\v 32 I looked and \add ≈made a decision\add*.
+\q1 ≈I saw it and \add ≈learnt from it\add*:
+\q1
+\v 33 A little sleep¦276277, a \add ≈quick\add* nap,
+\q1 ≈a little folding¦276282 your \add ≈arms\add* to rest,
+\q1
+\v 34 and poverty¦276289 will \add ≈sneak up\add* on you like a robber,
+\q1 and need will \add ≡approach\add* like an \add ≈armed bandit\add*.
+\c 25
+\s1 More of Shelomoh's sayings
+\rem /s1 Other collections of wise sayings; More of Solomon's Proverbs; Further Wise Sayings of Solomon; More Proverbs of Solomon
+\p
+\v 1 There are also these¦276297 other proverbs¦276298 from Shelomoh that¦276300 the men¦276302 \add working for\add* Yehudah's¦276307 King¦276305 Hizkiyah copied¦276301:
+\p
+\v 2 It is God's \add ≈privilege\add* to conceal¦276311 a matter,
+\q1 ^and the king's \add ≈privilege\add* to \add ≈try to discover\add* a matter.
+\p
+\v 3 The¦276319 skies are high and the earth¦276320 \add goes\add* deep,
+\q1 →and the \add ≈motives\add* of kings¦276323 are \add ≈unable to be predicted\add*.
+\p
+\v 4 Remove¦276327 the dross¦276328 from silver¦276329,
+\q1 →and then a container comes from the silversmith's \add hands\add*.
+\q1
+\v 5 Remove¦276334 \add the\add* wicked¦276335 \add >person\add* from the king's \add ≈presence\add*,
+\q1 →and then his \add ≈rule\add* will be established¦276339 \add ≈as being honest and fair\add*.
+\p
+\v 6 Don't¦276343 \add ≈promote\add* yourself in¦276349 \add ≈front¦276346 of\add* a king¦276348,
+\q1 ≈and don't¦276343 \add ≈claim¦276345 a place¦276349 among the well-known\add* \add >people\add*,\x + \xo 25:6-7: \xt Luk 14:8-10.\x*
+\q1
+\v 7 because it's better if they tell you, “Come up here,”
+\q1 than to be placed lower¦276362 \add right\add* in front¦276363 of a prince \add ≈as you look at him\add*.
+\p
+\v 8 Don't¦276369 \add ≈be in¦276378 a rush\add* to take someone to court¦276372.
+\q1 →What would you do¦276377 at¦276378 the end¦276378, if your neighbour¦276381 put you to shame¦276379?
+\p
+\v 9 \add ≈Sort out your case\add* with your neighbour¦276387,
+\q1 without revealing¦276392 \add ≈other people's secrets¦276388\add*,
+\q1
+\v 10 in case someone hears¦276397 \add <you\add* and \add ≈puts you to shame¦276396\add*
+\q1 and your¦276398 \add ≈bad¦276398 reputation¦276398 never gets repaired\add*.
+\p
+\v 11 \add ≈Good advice given at¦276404 the right time\add*
+\q1 is \add like\add* gold¦276403 apples set in¦276404 a silver¦276405 \add frame\add*.
+\p
+\v 12 A wise rebuke to a listening¦276422 ear¦276421
+\q1 is \add like\add* a gold earring¦276412 and a fine-gold ornament¦276414.
+\p
+\v 13 To those¦276432 who send¦276432 him¦276432, a faithful¦276431 messenger
+\q1 is like cool snow \add ≈when doing a day's hard work\add*,
+\q1 and¦276433 it refreshes the soul¦276433 of his¦276432 masters¦276434.
+\p
+\v 14 A person¦276442 who boasts¦276443 about a gift¦276444 \add ≈that never comes\add*
+\q1 is \add like\add* clouds¦276438 and wind without rain.
+\p
+\v 15 A ruler¦276451 can be persuaded¦276450 by \add ≈being patient\add*,
+\q1 ≈and¦276452 a soft tongue¦276452 can break¦276454 a bone.
+\p
+\v 16 \add When\add* you find honey, eat¦276460 \add ≈just what you need\add*,
+\q1 otherwise you might vomit¦276465 if you've¦276459 had too much.
+\p
+\v 17 \add ≈Don't set foot¦276468 in your¦276473 neighbour's¦276470 house¦276469 too often\add*,
+\q1 in case they get \add ≈fed up\add* with you and \add end up\add* hating you.
+\p
+\v 18 A man who gives a false¦276484 testimony¦276481 against¦276482 his neighbour¦276482,
+\q1 is like a club, or a sword¦276477, or a sharp¦276479 arrow¦276478.
+\p
+\v 19 Having confidence¦276490 in someone who acts treacherously¦276491 in a \add ≈time\add* of trouble¦276493,
+\q1 is \add like having\add* a broken¦276487 tooth¦276486, or \add having your\add* foot¦276488 slip.
+\p
+\v 20 Taking off your coat on a cold day¦276498,
+\q1 \add is like pouring\add* vinegar¦276500 on baking soda
+\q1 or singing songs¦276505 to someone \add ≈who's feeling\add* sad¦276509.
+\p
+\v 21 Give your¦276515 enemy¦276515 food to eat¦276516 if they're hungry¦276514,
+\q1 ≈and¦276518 water¦276522 to drink¦276521 if they're thirsty¦276520,
+\q1
+\v 22 because you're heaping burning¦276525 coals¦276525 on their head¦276530,
+\q1 and¦276531 Yahweh¦276531 will \add be the one\add* to repay¦276532 you.
+\p
+\v 23 The northerly¦276537 wind¦276536 brings¦276538 rain \add with it¦276538\add*,
+\q1 and¦276540 a \add ≈gossipping\add* tongue¦276542 \add ≡brings\add* indignant¦276541 looks¦276540.
+\p
+\v 24 If better to live in the corner¦276549 of an \add ≈attic\add*,
+\q1 than to live \add ≈inside\add* the house¦276555 with a contentious¦276553 wife¦276552.
+\p
+\v 25 Good news¦276564 from a distant¦276567 \add ≈country\add*,
+\q1 is \add like\add* cool water for a tired person¦276562.
+\p
+\v 26 A \add ≈godly¦276573\add* \add >person\add* \add ≈giving in\add* to someone wicked¦276577,
+\q1 is \add like\add* a spring¦276569 that gets muddied, or a well that gets ruined¦276572.
+\p
+\v 27 It isn't¦276582 good to eat¦276579 too much honey¦276580,
+\q1 and nor is \add ≈trying to make yourself look good\add*.
+\p
+\v 28 A person¦276593 who has no \add ≈self-control\add*,
+\q1 is \add like\add* a city¦276589 where the walls have been broken¦276590 down.
+\c 26
+\q1
+\v 1 Like snow in¦276601 the summer¦276601, or rain at¦276601 harvest¦276603 time,
+\q1 so \add too\add* honour¦276609 isn't¦276605 fitting for a fool.
+\q1
+\v 2 Like a fluttering¦276612 bird or a darting swallow¦276613,
+\q1 so \add too\add* an \add ≈undeserved\add* curse¦276616 won't \add ≈land on you\add*.
+\q1
+\v 3 \add There's¦276625\add* a whip for the horse¦276623 and a bridle¦276624 for the donkey¦276625,
+\q1 and a rod \add to beat\add* the fool's back.
+\q1
+\v 4 Don't¦276630 answer a fool with a foolish¦276634 answer,
+\q1 otherwise you'll \add just\add* \add ≈end up like them\add*.
+\q1
+\v 5 Answer¦276644 a fool according¦276646 to their \add ≈foolish¦276646 thinking\add*,
+\q1 \add ≈so they don't think they're cleverer than they are\add*.
+\q1
+\v 6 Sending a fool with¦276659 your message¦276658 to pass on¦276659
+\q1 is \add like\add* cutting off your feet¦276654 and drinking¦276656 in¦276659 violence¦276655.
+\q1
+\v 7 The legs of a lame \add >person\add* \add just\add* dangle down,
+\q1 \add like\add* a proverb¦276666 in¦276667 the mouth¦276667 of fools¦276668.
+\q1
+\v 8 Giving honour¦276677 to a fool,
+\q1 is like tying the stone¦276671 into the sling¦276672.
+\q1
+\v 9 A drunkard¦276683 getting thorns¦276679 in¦276681 his hand¦276681,
+\q1 is \add like\add* a fool \add ≈trying to explain a proverb¦276684\add*.
+\q1
+\v 10 Hiring a fool or an \add unknown\add* passer-by,
+\q1 is \add like\add* an archer¦276688 \add ≈just randomly shooting arrows\add*.
+\q1
+\v 11 A fool \add ≈who keeps doing the same foolish¦276704 things\add*,
+\q1 is like a dog that¦276698 returns¦276698 to its¦276701 vomit¦276701.\x + \xo 26:11: \xt 2Pe 2:22.\x*
+\q1
+\v 12 Do you see a person \add ≈who thinks they're clever\add*?
+\q1 There's more hope for a fool than for \add ≈that person\add*.
+\q1
+\v 13 The lazy \add >person\add* says, “There's a young lion on the road.
+\q1 ≈There's a lion out there on the streets¦276720.”
+\q1
+\v 14 The door¦276722 turns on its hinges¦276726,
+\q1 and the slacker turns in their bed¦276730.
+\q1
+\v 15 The sluggard¦276733 keeps their hand¦276734 in¦276735 the dish—
+\q1 they're too lazy to bring¦276737 it¦276737 back to their mouth¦276740.
+\q1
+\v 16 The slacker is wiser in¦276744 their own eyes¦276744,
+\q1 than seven¦276745 \add >people\add* who give \add ≈good advice\add*.
+\q1
+\v 17 The person who gets angry about a quarrel that's \add ≈nothing to do with¦276750 them\add*,
+\q1 is \add like\add* someone grabbing the ears¦276750 of a dog that's passing by.
+\q1
+\v 18-19 A person who deceives their neighbour then says they were just joking
+\q1 is like a madman¦276762 shooting flaming arrows.
+\q1
+\v 20 When there's no more firewood, the fire¦276785 goes out,
+\q1 and¦276786 when there's no gossiper, a conflict \add ≈dies down\add*.
+\q1
+\v 21 \add Like\add* wood \add gets the\add* fire¦276794 burning¦276794
+\q1 ≈and charcoal \add keeps the\add* embers¦276792 hot,
+\q1 →\add ≈so too\add* a contentious¦276796 \add >person\add* kindles¦276798 strife¦276800.
+\q1
+\v 22 The words¦276803 of a gossip are like delicious¦276805 morsels¦276805,
+\q1 and they go¦276807 right down \add ≈into the person's insides\add*.
+\q1
+\v 23 Burning lips¦276818 and¦276820 evil¦276822 \add ≈motives\add*
+\q1 are \add like\add* a silver overlay¦276814 on a clay pot.
+\q1
+\v 24 A person who hates¦276827 can disguise¦276826 it with¦276828 their lips¦276824,
+\q1 but¦276828 they're \add ≈accumulating deceit¦276830 inside\add*.
+\q1
+\v 25 When they say favourable¦276834 \add >things\add*, don't¦276836 trust¦276838 them,
+\q1 because¦276841 there's seven¦276842 \add ≈detestable things in¦276844 within them\add*.
+\q1
+\v 26 Hatred can be covered¦276846 by deception¦276848,
+\q1 →\add but\add* it¦276849 will be uncovered \add ≈when people gather together\add*.
+\q1
+\v 27 The \add >person\add* who digs¦276853 a pit will fall into it,
+\q1 ≈and the \add >one\add* who rolls¦276858 a stone¦276859 will \add ≈have it come back on¦276856 them\add*.
+\p
+\v 28 A lying tongue¦276863 \add ≈despises\add* those who are crushed¦276867 by it,
+\q1 ^and a flattering mouth¦276868 leads to calamity¦276871.
+\c 27
+\q1
+\v 1 Don't¦276873 boast¦276875 about \add what will happen\add* tomorrow¦276877,
+\q1 because¦276878 you don't¦276873 know what \add ≈the next day\add* will bring¦276884.\x + \xo 27:1: \xt Jam 4:13-16.\x*
+\q1
+\v 2 Let \add ≈some other person\add* praise¦276887 you¦276887, rather than your own mouth¦276891—
+\q1 ≈\add ≈someone from out of town\add* and not your own lips¦276895.
+\q1
+\v 3 Stones are heavy¦276904, and sand \add ≈weighs¦276897 you down\add*,
+\q1 →\add ≈but\add* \add ≈being provoked¦276902 by a fool\add* is heavier than either of them.
+\q1
+\v 4 Anger is overwhelming¦276909 and rage¦276908 is cruel¦276907,
+\q1 →\add ≈but\add* who can \add ≈tolerate\add* jealousy¦276914?
+\q1
+\v 5 Open rebuke¦276919 is better than concealed love¦276921.
+\q1
+\v 6 Wounds from a friend are faithful,
+\q1 ^\add ≈but\add* kisses¦276928 from an enemy are \add ≈confusing\add*.
+\q1
+\v 7 Honey \add ≈isn't so attractive when you're full\add*,
+\q1 ^\add ≈but\add* even bitter¦276939 \add food\add* is sweet¦276940 when you're hungry¦276936.
+\q1
+\v 8 A person¦276949 who wanders away from their home¦276951,
+\q1 is like a bird that¦276943 wanders from its¦276946 nest¦276946.
+\q1
+\v 9 \add ≈Lotions and perfumes¦276954 make a person¦276962 cheery\add*,
+\q1 →\add ≈but it's so pleasant¦276958 to be given good advice by a friend\add*.
+\q1
+\v 10 Don't¦276970 abandon¦276972 your friends or your father's friends,
+\q1 and don't¦276970 go¦276977 to your brother's house¦276973 \add ≈when calamity¦276979 hits you\add*.
+\q1 A¦276969 friend¦276967 nearby is better than a brother living a long way away.
+\q1
+\v 11 My¦276991 child, \add ≈make me happy by becoming wise\add*,
+\q1 and¦276988 then I'll¦276990 be able to answer¦276990 \add <anyone\add* who taunts¦276991 me.
+\q1
+\v 12 A sensible¦276994 \add >person\add* sees¦276995 evil¦276996 and \add ≈stays out of sight\add*
+\q1 \add but\add* naive¦276998 \add >people\add* continue on then get punished¦277000.
+\q1
+\v 13 If someone guarantees a stranger's¦277008 loan, then \add definitely\add* take their coat,
+\q1 or if they stand¦277007 as guarantee for a foreign¦277010 woman.\x + \xo 27:13 \xt 20:16.\x*
+\q1
+\v 14 If someone blesses¦277013 their neighbour¦277014 using a loud voice¦277016 early¦277019 in¦277016 the morning¦277018,
+\q1 →it will be considered as a curse¦277020.
+\q1
+\v 15 A contentious¦277029 woman is like a continual¦277025 dripping¦277024 on a rainy day¦277026,
+\q1
+\v 16 Restraining¦277033 her¦277033 is \add like\add* \add ≈stopping\add* the wind¦277036,
+\q1 or \add like\add* catching \add ≈something oily with one hand¦277038\add*.
+\q1
+\v 17 Iron sharpens iron,
+\q1 ≈and¦277044 \add ≈one neighbour¦277048 sharpens another\add*.
+\q1
+\v 18 The caretaker of a fig¦277051 tree¦277051 can eat¦277052 its¦277053 fruit¦277053,
+\q1 ≈and¦277054 \add someone\add* protecting¦277054 his master¦277055 should be honoured¦277056.
+\q1
+\v 19 As water¦277058 \add reflects\add* \add &your\add* face¦277059,
+\q1 so too, a person's behaviour \add reflects\add* their \add ≈values\add*.
+\q1
+\v 20 The¦277068 grave and destruction are never satisfied,
+\q1 ≈and people's eyes¦277072 are never satisfied.
+\q1
+\v 21 There's a smelting pot for silver¦277078, and a furnace¦277079 for gold¦277080,
+\q1 \add ≈but¦277079\add* a person¦277081 \add ≡is refined\add* \add ≈by the praise¦277083 they receive\add*.
+\q1
+\v 22 Even if you¦277086 could pound¦277086 a fool like grain¦277094 in¦277092 a mortar¦277092,
+\q1 →their foolishness¦277100 can't¦277096 be \add ≈separated\add* from them.
+\p
+\v 23 \add Make sure\add* you know the \add ≈state\add* of your flock¦277106 well.
+\q1 ≈Set your \add ≈mind¦277108\add* on your \add cattle\add* herds¦277109,
+\q1
+\v 24 because wealth¦277114 \add doesn't last\add* forever¦277113,
+\q1 and¦277115 a crown¦277117 \add ≈isn't¦277112 passed down to every\add* generation¦277118.
+\p
+\v 25 The grass \add ≈dries off\add* and then fresh¦277126 grass appears¦277124,
+\q1 and then the herbs are gathered¦277127 from the mountains¦277129.
+\q1
+\v 26 The lambs¦277131 will \add be for\add* your¦277132 clothing¦277132,
+\q1 and¦277133 the male goats¦277135 will become the price¦277133 for a field¦277134.
+\q1
+\v 27 The female goats¦277140 will give enough¦277137 milk¦277139 for your household¦277143,
+\q1 and¦277137 nourishment¦277144 for your servant¦277145 girls.
+\c 28
+\q1
+\v 1 The wicked¦277151 run away \add ≈when no one's even chasing them\add*,
+\q1 ^\add ≈but\add* \add ≈the godly¦277152 person\add* is as confident¦277154 as a lion¦277153.
+\q1
+\v 2 A country in¦277160 rebellion¦277156 has many rulers¦277159,
+\q1 ^\add ≈but\add* \add ≈an understanding¦277161 man¦277160 who know's what's right¦277163\add* will last long¦277164.
+\q1
+\v 3 Someone who's poor \add ≈but¦277168\add* oppresses¦277168 \add other\add* poor people,
+\q1 is \add like\add* \add ≈driving\add* rain \add ≈when you have nothing to eat\add*.
+\q1
+\v 4 Those who've abandoned¦277175 the law, praise¦277177 the wicked¦277178,
+\q1 ^\add ≈but\add* those¦277175 who keep¦277179 the law strive against them.
+\q1
+\v 5 Evil people¦277185 don't¦277188 understand justice¦277191,
+\q1 ^\add ≈but\add* those¦277192 who \add ≈strive after\add* Yahweh¦277193, understand everything¦277195.
+\q1
+\v 6 A poor person with¦277201 integrity¦277201
+\q1 ^is better than someone who's rich but¦277204 crooked¦277202.
+\q1
+\v 7 A sensible child \add ≈follows\add* \add Yahweh's\add* instructions,
+\q1 ^\add ≈but\add* those who carouse with gluttons¦277212, shame¦277213 their father¦277214.
+\q1
+\v 8 The person who increases¦277216 their wealth¦277217 by charging interest¦277218 and¦277219 by overcharging,
+\q1 gathers¦277223 it \add ≈but¦277219 it'll end up going to someone who's\add* kind to the poor.
+\q1
+\v 9 A person who turns¦277225 their ear¦277226 away from hearing¦277227 \add Yahweh's\add* instructions,
+\q1 →even their prayers¦277231 are detestable.
+\q1
+\v 10 The one who leads¦277234 good people astray¦277234 will fall into their own pit,
+\q1 ^\add ≈but\add* those who are blameless¦277243 will inherit¦277244 good.
+\q1
+\v 11 Rich people see themself as wise,
+\q1 ^\add ≈but\add* a poor person¦277250 with¦277249 understanding¦277253, sees¦277254 right through¦277254 them.
+\q1
+\v 12 When \add ≈godly¦277257\add* \add >people\add* triumph¦277256, there's great¦277258 celebration,
+\q1 ^\add ≈but\add* when it's the wicked¦277261, \add ≈people hide\add*.
+\q1
+\v 13 Someone covering their \add ≈faults\add* won't¦277267 prosper¦277268,
+\q1 ^\add ≈but\add* the one who confesses¦277269 and then abandons \add <their bad behaviour\add*, will be shown¦277271 mercy¦277271.
+\q1
+\v 14 The person¦277274 \add ≈who strives to allows obey\add* \add <Yahweh\add* will be blessed¦277273,
+\q1 ^\add ≈but\add* the one who \add ≈firmly resists\add* will fall into trouble.
+\q1
+\v 15 A wicked¦277288 ruler¦277287 over \add ≈struggling\add* people¦277290,
+\q1 is \add like\add* a lion¦277282 roaring¦277284 or a bear attacking.
+\q1
+\v 16 A ruler¦277294 lacking¦277295 understanding¦277296 \add can become\add* an oppressor.
+\q1 The person who hates¦277299 dishonest gain \add ≈will have a longer life\add*.
+\q1
+\v 17 A man tormented by the \add ≈killing of another\add* will flee to the pit.
+\q1 Don't¦277318 let anyone support¦277320 him.
+\q1
+\v 18 The person with¦277330 blameless¦277325 \add ≈behaviour\add* will be rescued,
+\q1 ^\add ≈but\add* the crooked¦277327 \add >one\add* will \add ≈suddenly\add* fall.
+\q1
+\v 19 The person working their land will \add ≈have enough food\add*,
+\q1 ^\add ≈but\add* those \add ≈wasting their time\add* will \add ≈have their fill of\add* poverty¦277341.
+\q1
+\v 20 A faithful¦277344 person¦277343 will have great¦277345 blessing¦277347,
+\q1 ^\add ≈but\add* the one \add ≈trying to get rich quick\add* won't¦277350 go¦277351 unpunished¦277351.
+\q1
+\v 21 It's not good¦277358 to \add ≈show partiality\add*,
+\q1 \add ≈yet\add* a person will \add ≈break the rules\add* for a piece¦277361 of bread¦277363.
+\q1
+\v 22 Those¦277369 who rush to get wealthy¦277369 \add ≈are greedy\add*,
+\q1 ^\add ≈but\add* they don't¦277373 realise that poverty¦277378 will come¦277379 to them.
+\q1
+\v 23 \add ≈If you correct another person¦277382, you'll be appreciated in the end\add*
+\q1 more than \add ≈someone who just says what they wanted to hear\add*.
+\q1
+\v 24 \add >People\add* who rob their parents and say \add ≈they've done nothing wrong\add*
+\q1 \add ≈are in the same class as\add* \add ≈those who are destructive¦277400\add*.
+\q1
+\v 25 \add ≈Greedy people\add* stir up strife¦277406,
+\q1 ^\add ≈but\add* \add the one\add* who trusts¦277407 Yahweh¦277410 will \add ≈prosper\add*.
+\q1
+\v 26 The person who trusts¦277413 \add ≈their own plans\add* is a fool,
+\q1 ^\add ≈but\add* \add the one\add* who walks¦277417 with¦277414 wisdom¦277418 will be rescued.
+\q1
+\v 27 Those who give to the poor \add ≈will have all they need\add*,
+\q1 ^\add ≈but\add* \add the one\add* who \add just\add* \add ≈looks away\add* \add ≈will receive many curses¦277430\add*.
+\q1
+\v 28 When wicked¦277433 \add >people\add* \add ≈come to power\add*, everyone¦277435 hides¦277434,
+\q1 ^\add ≈but\add* when they \add ≈die\add*, \add ≈godly¦277438\add* \add >people\add* increase¦277437.
+\c 29
+\q1
+\v 1 The person¦277440 who gets rebuked¦277441 but¦277447 \add just\add* stiffens¦277442 their neck,
+\q1 will be broken¦277446 suddenly¦277445 and¦277447 \add ≈beyond¦277447 recovery\add*.
+\q1
+\v 2 When it's the \add ≈godly¦277451\add* \add >ones\add* who increase¦277450, the people are happy,
+\q1 ^\add ≈but\add* when it's the wicked¦277455, a \add ≈nation\add* groans¦277456.
+\q1
+\v 3 Those who love wisdom¦277462, make their parents glad,
+\q1 ^\add ≈but\add* \add the one\add* who \add ≈spends time with\add* prostitutes¦277466, destroys¦277467 wealth¦277469.
+\q1
+\v 4 A king¦277471 establishes¦277473 the country with¦277472 justice¦277472,
+\q1 ^\add ≈but\add* \add ≈one who accepts bribes\add*, tears¦277477 it¦277477 down.
+\q1
+\v 5 Someone who \add ≈flatters¦277480\add* their neighbour¦277483
+\q2 \add ≈is spreading¦277485 out a net¦277484 to capture them\add*.
+\q1
+\v 6 The disobedience of an evil¦277492 person¦277491 \add ≈will trap them\add*,
+\q1 ^\add ≈but\add* the \add ≈godly¦277494\add* \add >person\add* \add ?≈sings\add* and \add ≈celebrates\add*.
+\q1
+\v 7 A \add ≈godly¦277499\add* person understands the poor person's \add court\add* case,
+\q1 ^\add ≈but\add* the wicked¦277502 \add >person\add* doesn't understand knowledge¦277506.
+\q1
+\v 8 Mockers inflame¦277510 a city,
+\q1 ^\add ≈but\add* wise \add >people\add* deflect anger¦277514.
+\q1
+\v 9 \add If\add* a wise person \add ≈takes a fool to court\add*,
+\q1 \add ≈then there'll¦277526 be rage and ridicule¦277525, but¦277524 no resolution\add*.
+\q1
+\v 10 \add ≈People¦277529 who've killed\add* hate¦277531 those who are blameless¦277533,
+\q1 ^\add ≈but\add* \add ≈good citizens try to protect them\add* .
+\q1
+\v 11 The fool \add ≈vents all their anger\add*,
+\q1 ^\add ≈but\add* a wise \add >person\add* holds¦277545 it back.
+\q1
+\v 12 A ruler¦277547 who pays attention¦277548 to lies,
+\q1 will \add only\add* have wicked¦277557 officials¦277556.
+\q1
+\v 13 A poor person¦277560 and¦277560 someone who's oppressed¦277561 \add ≈have lots in common\add*
+\q1 ^\add ≈but\add* it's Yahweh¦277567 who \add ?≈gives hope\add* to both of them.
+\q1
+\v 14 A king¦277569 who judges¦277570 the poor fairly,
+\q1 will \add ≈always¦277574 rule securely\add*.
+\q1
+\v 15 \add ≈A scolding and a spanking\add* give wisdom¦277580,
+\q1 ^\add ≈but\add* an \add ≈undisciplined\add* child¦277581 will bring shame¦277583 to their mother¦277584.
+\q1
+\v 16 When the wicked¦277587 increase, \add ≈crime\add* increases,
+\q1 ^\add ≈but\add* \add ≈those who do what's right¦277591\add* will \add live to\add* see their¦277592 downfall¦277592.
+\q1
+\v 17 Discipline¦277595 your child and \add ≈you'll be able to relax\add*,
+\q1 and they'll bring you happiness.
+\q1
+\v 18 When there's¦277603 no vision¦277604, the people¦277606 \add ≈have no boundaries\add*,
+\q1 ^\add ≈but\add* those who \add ≈follow\add* \add Yahweh's\add* instructions will be happy¦277609.
+\q1
+\v 19 A servant can't¦277612 be corrected \add just\add* with words¦277611,
+\q1 because¦277616 \add even\add* if they understand¦277618, they won't¦277612 answer¦277620.
+\q1
+\v 20 \add If\add* a person is \add ≈quick to speak out\add*,
+\q1 there's more hope for a fool than for them.
+\q1
+\v 21 Someone who's pampered¦277630 their \add #servants\add* since they were young,
+\q1 \add can only expect\add* insolence in the end¦277633.
+\q1
+\v 22 An angry person¦277637 stirs¦277640 up strife¦277641,
+\q1 and¦277642 someone who rages causes big \add ≈trouble\add*.
+\q1
+\v 23 A person's pride¦277648 will bring¦277650 them down,
+\q1 ^\add ≈but\add* a humble person will \add ≈be honoured¦277655\add*.
+\q1
+\v 24 Someone who \add ≈helps\add* a thief¦277660, hates their own life¦277662.
+\q1 \add ?≈They take the oath yet refuse to testify\add*.
+\q1
+\v 25 A person's¦277669 fear becomes a trap,
+\q1 ^\add ≈but\add* the one who trusts¦277672 Yahweh¦277673 \add ≈will be kept safe\add*.
+\q1
+\v 26 Many people \add ≈want to plead to\add* the ruler¦277680,
+\q1 ^\add ≈but\add* it's Yahweh¦277681 who gives a person¦277684 justice¦277682.
+\q1
+\v 27 \add ≈those who do what's right¦277687\add* detest \add ≈corrupt\add* people,
+\q1 ^\add ≈but\add* \add on the other hand\add*, the wicked¦277691 detest \add ≈good citizens\add*.
+\c 30
+\s1 Agur's sayings
+\rem /s1 The Words of Agur; The Sayings of Agur
+\p
+\v 1 \add These are\add* the \add ≈sayings\add* by Yakeh's¦277702 son Agur¦277699, the burden, told to Itiel¦277706 and¦277708 Ukal:
+\q1
+\v 2 I'm¦277712 certainly \add ≈among\add* the stupid¦277711 people
+\q1 ≈and¦277714 \add ≈lack the understanding¦277716 that most people have\add*,
+\q1
+\v 3 ≈and¦277724 I haven't \add ≈been well educated\add*,
+\q1 ^\add ≈but\add* I do know¦277726 about the holy ones.
+\q1
+\v 4 Who's been up to heaven¦277731 and come back down again?
+\q1 Who's captured the wind between their two hands¦277739?
+\q1 Who's wrapped¦277741 the oceans around them like a cloak¦277745?
+\q1 Who's set up all the earth's¦277752 boundaries?
+\q1 What's his name, and what's the name of his son?
+\q1 Surely you know?
+\p
+\v 5 Every¦277764 message¦277766 from God¦277767 is \add ≈flawless\add*.
+\q1 He \add ≈protects\add* those¦277771 \add ≈who go to him to be safe\add*.
+\q1
+\v 6 Don't¦277774 add to his messages¦277779
+\q1 in¦277783 case he¦277782 rebukes¦277782 you and¦277784 you're found¦277784 to be a liar.
+\s1 More sayings
+\rem /s1 More Proverbs
+\p
+\v 7 \add There's\add* two¦277787 things that I want from you¦277789—
+\q1 don't¦277790 keep them from me before¦277794 I die¦277795:
+\q1
+\v 8 Keep deceitfulness and lying far away from me,
+\q1 and don't¦277806 give me either poverty¦277804 or riches¦277805—
+\q1 \add just\add* give me the food that I need
+\q1
+\v 9 because if I \add ≈had plenty\add*, I might deny \add God¦277828\add*, asking, “Who is Yahweh¦277821?”
+\q1 and if I became poor, I might steal¦277825 and dishonour God's \add ≈reputation¦277827\add*.
+\p
+\v 10 Don't¦277831 \add ≈make false accusations\add* to a slave's¦277834 master¦277837,
+\q1 in case he¦277841 curses¦277841 you and you \add ≈have to bear the guilt¦277842\add*.
+\p
+\v 11 \add There's a\add* generation¦277844 that curses¦277846 their \add #fathers\add*
+\q1 ≈and¦277847 doesn't bless¦277851 their \add #mothers\add*.
+\p
+\v 12 \add There's a\add* generation¦277853 who are pure in¦277855 their own eyes¦277855,
+\q1 ^\add ≈but\add* they're not \add actually\add* washed¦277858 from their filthiness¦277856.
+\p
+\v 13 \add There's a\add* generation¦277860 \add ?≈with very proud eyes¦277864\add*,
+\q1 and¦277865 their \add ≈eyebrows\add* are \add also\add* raised¦277863.
+\p
+\v 14 \add There's a\add* generation¦277868 whose teeth¦277871 are swords¦277870,
+\q2 ≈and its fangs¦277873 are knives¦277872
+\q1 to eliminate from the earth¦277877 those who are suffering,
+\q2 ≈and the needy¦277878 from humankind¦277879.
+\p
+\v 15 The leech¦277882 has two daughters¦277885: Give! Give!”
+\p There are three¦277889, maybe four, things that are never satisfied¦277892—
+\q1 ≈four that never \add ≈have\add* enough¦277897:
+\li1
+\v 16 \add 1.\add* the grave,
+\li1 \add 2.\add* \add ≈a childless woman\add*,
+\li1 \add 3.\add* land that never has enough¦277911 water¦277906, and
+\li1 \add 4.\add* fire¦277907 that never \add ≈stops spreading\add*.
+\p
+\v 17 The eye¦277913 that¦277915 mocks¦277915 its father¦277916,
+\q1 ≈and scorns¦277917 its mother¦277920 \add ≈instead of obeying\add*,
+\q1 will be pecked¦277921 out by the ravens¦277922 in the valley,
+\q1 and the young¦277926 vultures will eat¦277925 it.
+\p
+\v 18 There's three¦277931 things that are too wonderful¦277933 for me,
+\q1 \add maybe\add* four¦277935 that I don't¦277937 understand¦277938:
+\li1
+\v 19 \add 1.\add* \add ≈how an eagle's¦277941 soars\add* in¦277943 the sky,
+\li1 \add 2.\add* \add ≈how a snake¦277945 slithers\add* over a rock,
+\li1 \add 3.\add* \add ≈how a ship sails\add* across the ocean, and
+\li1 \add 4.\add* \add ≈how a young man loves\add* a young woman¦277956.
+\p
+\v 20 This is the way¦277960 of a woman¦277961 who commits adultery¦277962:
+\q1 She eats¦277963 and wipes¦277964 her¦277965 mouth¦277965,
+\q1 and declares that she¦277963 hasn't done¦277969 \add ≈anything wrong\add*.
+\p
+\v 21 \add ≈There's\add* three¦277974 \add >things\add* that makes the earth¦277976 tremble—
+\q1 four¦277978 \add >things\add* it can't¦277979 \add ≈handle\add*:
+\li1
+\v 22 \add 1.\add* a slave¦277986 becoming¦277988 king¦277988,
+\li1 \add 2.\add* a fool who \add ≈has plenty to eat\add*,
+\li1
+\v 23 \add 3.\add* a hated¦277996 woman¦277996 who gets married¦277998, and¦277999
+\li1 \add 4.\add* a female¦277999 slave who supplants her¦278003 mistress¦278003.
+\p
+\v 24 There are four¦278006 \add >creatures\add* on the earth¦278010
+\q1 that are small¦278008 but¦278011 extremely wise:
+\li1
+\v 25 \add 1.\add* \add ≈Individual\add* ants aren't¦278017 strong¦278019, but¦278020 they¦278020 \add ≈store¦278020 up\add* food in¦278021 the summer¦278021.
+\li1
+\v 26 \add 2.\add* Rock badgers¦278024 \add ≈aren't¦278026 very powerful\add*, but¦278029 they¦278029 make their¦278031 homes¦278031 in¦278030 the cliffs.
+\li1
+\v 27 \add 3.\add* Locusts don't¦278034 have a king¦278033, but¦278036 they go out in formation \add like soldiers\add*.
+\li1
+\v 28 \add 4.\add* You can catch a lizard¦278040 in¦278041 your hands¦278041, yet they get into king's palaces¦278044.
+\p
+\v 29 There are three¦278048 things that take fancy steps—
+\q1 \add maybe\add* four¦278052 that walk¦278054 impressively.
+\li1
+\v 30 \add 1.\add* the lion¦278056 who's a powerful animal¦278058 that doesn't turn back from facing anything¦278064,
+\li1
+\v 31 \add 2.\add* the strutting rooster¦278066,
+\li1 \add 3.\add* male¦278070 goats, and
+\li1 \add 4.\add* a king¦278071 with his \add ≈bodyguards around\add* him.
+\p
+\v 32 If you've¦278077 been foolish¦278077 enough to brag about yourself¦278078,
+\q1 \add ?≈then plan to put your\add* hand¦278082 \add ≈over\add* \add &your\add* mouth¦278083,
+\q1
+\v 33 because churning milk¦278087 makes butter,
+\q1 squeezing¦278086 the nose¦278092 makes it bloody¦278094,
+\q1 and \add ≈stirring up\add* anger¦278096 \add ≈produces\add* strife¦278098.
+\c 31
+\s1 King Lemuel's sayings
+\rem /s1 The Sayings of King Lemuel; Sayings of King Lemuel; The Teaching of King Lemuel's Mother; Advice to a King
+\p
+\v 1 \add These are\add* the \add ≈sayings\add* by King¦278103 Lemuel¦278102, the burden, that¦278105 his mother¦278108 had taught¦278107 him¦278107:
+\p
+\v 2 Now what my son? My son \add ≈that I gave birth to\add*.
+\q1 ≈The son from my \add ≈marriage\add*.
+\q1
+\v 3 Don't¦278123 give¦278125 your strength¦278127 to women¦278126,
+\q1 or \add ≈use your intelligence\add* to destroy¦278129 kings¦278130.
+\q1
+\v 4 Lemuel¦278135, it's not for kings to drink wine
+\q1 or for rulers¦278141 to crave strong¦278144 drink,
+\q1
+\v 5 in case they drink¦278148 and forget¦278149 \add ≈their own laws\add*
+\q1 and \add end up\add* \add ≈depriving the poor of justice\add*.
+\q1
+\v 6 Give strong¦278161 drink¦278161 to those who are dying,
+\q1 ≈and¦278163 wine to those who are \add ≈bitterly¦278164 depressed\add*.
+\q1
+\v 7 They'll drink¦278167 \add <it\add* then forget¦278168 their poverty¦278169,
+\q1 ≈and not remember¦278172 their misery¦278170 any more.
+\p
+\v 8 Open your¦278178 mouth¦278178 for \add ≈those who can't speak\add*—
+\q1 for the cause¦278182 of all \add ≈those who are dying\add*.
+\q1
+\v 9 Open your¦278190 mouth¦278190 \add to\add* \add ≈promote justice\add*,
+\q1 and to defend¦278194 the poor and needy¦278196.
+\s1 The good spouse woman
+\rem /s1 A Wife of Noble Character; A good wife; Epilogue: The Wife of Noble Character; The Capable Wife; Ode to a Capable Wife
+\qa \bd א\bd* (Alef)
+\p
+\v 10 Who can find a \add ≈capable\add* wife¦278199,
+\q1 →and¦278204 she'll be worth¦278206 far more than jewels¦278205?
+\qa \bd ב\bd* (Beyt)
+\p
+\v 11 Her¦278211 husband¦278211 trusts¦278208 her¦278211 \add ≈completely\add*,
+\q1 →and he doesn't lack \add ≈in¦278209 prosperity\add*.
+\qa \bd ג\bd* (Gimel)
+\p
+\v 12 She \add ≈doesn't harm him\add*, but¦278218 does him good¦278217,
+\q1 \add ≈right throughout her¦278223 life¦278223\add*.
+\qa \bd ד\bd* (Dalet)
+\p
+\v 13 She searches for wool and flax,
+\q1 and works¦278229 eagerly with¦278230 her¦278231 hands¦278231.
+\qa \bd ה\bd* (He)
+\p
+\v 14 She's¦278233 like \add those\add* merchant ships¦278234—
+\q1 she¦278237 brings¦278237 her¦278238 food from far away.
+\qa \bd ו\bd* (Vav)
+\p
+\v 15 She gets up when it's still¦278242 dark
+\q1 \add ≈to\add* provide food for her household¦278246
+\q1 and¦278240 her servant¦278248 girls¦278248.
+\qa \bd ז\bd* (Zayin)
+\p
+\v 16 She appraises a field¦278251 and buys it.
+\q1 \add ≈Using her¦278254 own earnings\add*, she¦278255 plants¦278255 a vineyard¦278257.
+\qa \bd ח\bd* (Het)
+\p
+\v 17 She \add ≈keeps herself fit\add*,
+\q1 and¦278262 her¦278261 arms \add ≈are\add* strong¦278262.
+\qa \bd ט\bd* (Tet)
+\p
+\v 18 She's¦278265 aware that her¦278269 merchandise¦278269 is quality.
+\q1 Her¦278269 lamp doesn't go out at¦278273 night¦278273.
+\qa \bd י\bd* (Yod)
+\p
+\v 19 Her¦278277 hands¦278280 \add ≈work the spindle¦278282\add*—
+\q1 \add spinning thread for cloth\add*.
+\qa \bd כ\bd* (Kaf)
+\p
+\v 20 She's \add ≈generous\add* to the poor,
+\q1 ≈and¦278287 reaches out to the needy¦278289.
+\qa \bd ל\bd* (Lamed)
+\p
+\v 21 She's not worried about her¦278294 household when it snows¦278295,
+\q1 because¦278296 \add *they're\add* all \add ≈dressed in quality clothes¦278300\add*.
+\qa \bd מ\bd* (Mem)
+\p
+\v 22 She makes¦278304 \add ?≈blankets\add* for herself¦278306,
+\q1 ≈fine linen¦278307, and¦278308 her¦278309 purple¦278308 clothing¦278309.
+\qa \bd נ\bd* (Nun)
+\p
+\v 23 Her¦278313 husband¦278313 is well-known \add ≈in¦278312 the community\add*,
+\q1 where he sits¦278314 with¦278312 the \add ≈nation's\add* elders¦278317.
+\qa \bd ס\bd* (Samek)
+\p
+\v 24 She makes¦278322 linen clothes and sells¦278323 \add <them\add*,
+\q1 ≈and she supplies¦278325 sashes¦278324 to the merchants¦278326.
+\qa \bd ע\bd* (Ayin)
+\p
+\v 25 She's \add ≈clothed¦278331 with\add* strength¦278328 and dignity¦278330,
+\q1 and she laughs¦278332 \add ≈as she thinks about the\add* future¦278334.
+\qa \bd פ\bd* (Pe)
+\p
+\v 26 \add ≈It's always wisdom¦278338 that comes out of\add* her mouth¦278336,
+\q1 ≈and loyal¦278341 commitment \add guides\add* \add ≈the instructions¦278339 on¦278338 her tongue¦278344\add*.
+\qa \bd צ\bd* (Tsade)
+\p
+\v 27 She \add ≈keeps an eye on\add* the \add comings and\add* goings¦278347 of her¦278348 household¦278348,
+\q1 and she \add ≈doesn't indulge in\add* laziness¦278350.
+\qa \bd ק\bd* (Qof)
+\p
+\v 28 Her¦278355 sons¦278355 stand and \add ≈compliment her\add*,
+\q1 ≈and her husband¦278357 \add also\add* praises¦278358 her:
+\qa \bd ר\bd* (Resh)
+\p
+\v 29 “\add ≈There's many women¦278364 with ability¦278366\add*,
+\q1 ^\add ≈but\add* you're \add ≈better than any\add* of them.”
+\qa \bd ש\bd* (Sin/Shin)
+\p
+\v 30 Charm¦278375 is deceptive¦278373, and beauty¦278376 is fleeting,
+\q1 ^\add ≈but\add* a woman¦278377 that \add ≈honours and strives to obey\add* Yahweh¦278380 will be praised¦278382.
+\qa \bd ת\bd* (Tav)
+\p
+\v 31 Give her \add ?≈the honour that she deserves\add*,
+\q1 ≈and let her \add ≈abilities\add* praise¦278389 her at¦278390 the city¦278390 gates¦278390.

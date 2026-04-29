@@ -1,0 +1,8 @@
+OET-RV HAG 7
+0 startCV=('-1', '0') sectionIndexEntry=InternalBibleBookSectionIndexEntry object: (inclusive) endCV=-1:12 ix=0–12 (cnt=13) Headers='HAG'
+1 startCV=('-1', '13') sectionIndexEntry=InternalBibleBookSectionIndexEntry object: (inclusive) endCV=-1:22 ix=13–22 (cnt=10) is1='Introduction'
+2 startCV=('1', '1') sectionIndexEntry=InternalBibleBookSectionIndexEntry object: (inclusive) endCV=1:11 ix=25–71 (cnt=47) s1='God's command to rebuild the temple'
+3 startCV=('1', '12') sectionIndexEntry=InternalBibleBookSectionIndexEntry object: (inclusive) endCV=1:15 ix=72–90 (cnt=19) s1='The people start rebuilding'
+4 startCV=('2', '1') sectionIndexEntry=InternalBibleBookSectionIndexEntry object: (inclusive) endCV=2:9 ix=91–123 (cnt=33) s1='The splendour of the new temple'
+5 startCV=('2', '10') sectionIndexEntry=InternalBibleBookSectionIndexEntry object: (inclusive) endCV=2:19 ix=124–169 (cnt=46) s1='Haggai consults the priests'
+6 startCV=('2', '20') sectionIndexEntry=InternalBibleBookSectionIndexEntry object: (inclusive) endCV=2:23 ix=170–187 (cnt=18) s1='God's promise to Zerubavel'

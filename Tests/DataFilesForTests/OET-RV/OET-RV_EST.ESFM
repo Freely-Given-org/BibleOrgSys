@@ -1,0 +1,298 @@
+\id EST - Open English Translation—Readers' Version (OET-RV) v0.1.04
+\usfm 3.0
+\ide UTF-8
+\rem ESFM v0.6 EST
+\rem WORDTABLE OET-LV_OT_word_table.tsv
+\h Esther
+\toc1 Esther
+\toc2 Esther
+\toc3 Est.
+\mt1 Esther
+\is1 Introduction
+\ip This account tells about the life of a young Jewish woman named Esther. These events happened back when King Ahasuerus (more widely known as King Xerxes) ruled over the kingdom of Persia. After Queen Vashti was banished for refusing to dance in front the king's guests at a drinking party, Esther was chosen as the new queen without revealing her Jewish background. But there was a high official called Haman who was offended by Esther's Jewish guardian and in his anger, determined to annihilate all of the Jews from the kingdom. This account reveals how Ether's courage and her love for her Jewish people leads her to help them and eventually helps to save their lives.
+\ip The account also reveals the source of a Jewish feast named ‘Purim’, which to this day is a time when Jewish people celebrate how God saved them from their enemy, Haman.
+\iot Main components of this account
+\io1 Esther becomes Queen of Persia \ior 1:1–2:23\ior*
+\io1 Haman's threat to the Jews \ior 3:1–5:14\ior*
+\io1 Haman's execution \ior 6:1–7:10\ior*
+\io1 The Jewish people destroy their enemies \ior 8:1–10:3\ior*
+\rem This is still a very early look into the unfinished text of the Open English Translation of the Bible. Please double-check the text in advance before using in public.
+\ie
+\c 1
+\s1 Queen Vashti refuses King Ahasuerus
+\rem /s1 King Ahasuerus's banquet; Queen Vashti Deposed; Queen Vashti Defies King Xerxes; King Ahasuerus Deposes Queen Vashti; The King's Banquet
+\p
+\v 1 The following events happened during the reign¦228506 of \add King\add* Ahasuerus¦228503.\x + \xo 1:1: \xt Ezr 4:6.\x* (\add Also¦228501 known as King Xerxes,\add* he ruled \add the empire of Persia\add* with¦228502 127 provinces¦228514 from India¦228507 all the way across to Ethiopia¦228510.)
+\v 2 In those¦228517 days¦228516, he ruled his empire from \add a city called\add* Shushan¦228526,\f + \fr 1:2 \ft Known as ‘Susa’ in many 20th century translations, even though earlier English translations often got it correct.\f* \add Persia's\add* capital.
+\p
+\v 3 In the third year of his reign¦228531, he hosted a celebration for all of his officials and for every important person who worked for him, as well as the officers who served in the army of the \add combined empire\add* of Persia¦228540 and Media¦228541, the wealthy landowners, and the officials of the provinces¦228544. The king was present¦228545 in person \add to host the celebration\add*
+\v 4 which, over a period of six months, would display¦228547 the incredible wealth and prestige of his empire and his personal wealth and power.
+\p
+\v 5 Then¦228564 at¦228564 the end of that time, the king¦228569 hosted \add another\add* celebration, but¦228564 this time for all the people¦228572 in the royal fort in Shushan¦228574, from the nobles to the least prestigious. He held this celebration over an entire week in the enclosed garden¦228584 of the royal palace¦228585.
+\v 6 There were white and blue curtains hanging from white and purple¦228596 cords¦228593 attached to silver rings on marble pillars¦228601. The guests reclined on gold¦228605 and silver couches¦228603 set on a mosaic floor that was made of red and white marble, and mother-of-pearl¦228612 and other expensive stones¦228613.
+\v 7 Drinks were served¦228615 in¦228616 golden¦228617 goblets, and¦228621 each one was a unique design. The king's¦228625 wine seemed limitless as he displayed his generosity,
+\v 8 and¦228646 it was served according¦228628 to his rule: There¦228631 is no compulsion to drink¦228627, but¦228627 all of his servants were to give each guest however much they wanted.
+\p
+\v 9 Meanwhile, Queen Vashti¦228649 was hosting a celebration for the women¦228653 \add in a different part\add* of the king's royal¦228655 palace.
+\rem /s1 Queen Vashti Deposed
+\p
+\v 10 On the seventh day¦228661 of the celebrations, when the king was feeling cheery from his wine-drinking, he ordered seven of his chief servants (Mehuman¦228669, Biztha¦228670, Harbona¦228671, Bigtha¦228672, Abagtha¦228673, Zethar¦228674, and Karkas)
+\v 11 to bring¦228685 Queen Vashti¦228688, wearing her royal¦228693 crown¦228692, to him in¦228692 order¦228694 to show her beauty¦228699 to the people¦228695 and the officials¦228696, because¦228700 she¦228704 was very attractive.
+\v 12 But¦228706 when the servants came and told her the king's command¦228710, Queen Vashti¦228708 refused¦228706 to come. When¦228706 the king found this out, he got very angry¦228715 and \add sat there\add* raging.
+\v 13 So¦228724 he \add called over\add* his advisors who knew the law and could make good decisions, and discussed with them what he should do.
+\v 14 (His closest¦228739 advisors were Karshena, Shethar¦228743, Admatha¦228744, Tarshish¦228745, Meres¦228746, Marsena¦228747, and Memukan. These seven¦228749 officials were from \add various places in the empire\add* of Persia¦228752 and Media¦228753 and they advised the king¦228756 personally, \add thus making them\add* the most powerful officials in the empire.)
+\v 15 “According¦228761 to \add our\add* law,” \add the king¦228776 asked,\add* “what should be done with¦228765 Queen¦228773 Vashti¦228766, since she¦228772 refused to obey my command¦228775 when the servants passed it on¦228765 to her?”
+\p
+\v 16 Then Memukan answered the king, \add speaking loudly enough that\add* both the king and his officials could hear. “Queen Vashti¦228794 has done wrong,” he said, “and not only against the king. She has also done wrong against all the officials and people¦228806 groups in all the provinces¦228810 that King¦228786 Ahasuerus¦228812 \add rules\add*!
+\v 17 \add Soon\add* women all over the empire will hear about what the queen¦228819 did and they'll say, ‘King¦228829 Ahasuerus¦228830 commanded his¦228837 servants to bring¦228832 Queen Vashti¦228835 to him, but¦228838 she didn't¦228838 go! Then women will stop respecting their¦228826 husbands¦228826.
+\v 18 Even today, the leading women of Persia¦228847 and Media¦228849 will hear what the queen¦228855 did and start doing the same to \add their husbands who are\add* officials¦228857, and this will cause \add a wave of\add* contempt¦228860 and anger¦228861.
+\v 19 If it pleases you \add to do so\add*, \add your majesty\add*, you should personally issue a royal decree and have it added to the laws of Persia¦228876 and Media¦228878 which cannot be repealed. This decree should say that Vashti¦228885 can never again come¦228884 into your presence, and then you should choose a different woman¦228892 for the royal position¦228889—someone who's better¦228893 than her¦228889.
+\v 20 Your¦228905 decree¦228897 will be proclaimed¦228896 right through your empire, even though it's so huge¦228906, and¦228896 then¦228896 all women¦228910, irrespective of their status or position, will honour¦228912 their husbands¦228913.
+\p
+\v 21 This seemed like a good idea to the king and¦228919 his officials¦228923, so King¦228922 Ahasuerus followed the advice¦228920 of Memukan
+\v 22 and sent letters to every province in his empire. He wrote to every province using its own alphabet and to each people¦228944 group in its own language. The letters said that men should be the masters over their wives and children, and that a husband should be able to give orders to his wife in his own native language \add that she should understand and obey\add*.
+\c 2
+\s1 Beautiful Esther enters the king's harem
+\rem /s1 Esther becomes queen; Esther Becomes Queen; Esther Made Queen
+\p
+\v 1 Some time later when King¦228963 Ahasuerus¦228964 no longer felt so angry, he \add started to miss\add* Vashti¦228968. But¦228969 when she'd disobeyed his command, he had made a decree \add that¦228970 she could never come into his presence again¦228977\add*.
+\v 2 So¦228979 some of the young men who served the king suggested to him, “\add Your majesty, you should¦228984 get a new wife for yourself.\add* You could tell your servants to look for young virgins¦228987 who are very beautiful.
+\v 3 You could assign officers in each province¦228996 of your empire to bring every¦229001 virgin who is very beautiful here to your capital city of Shushan¦229010. They could stay in the harem for virgins under the custody of Hegai¦229019, the castrated royal guardian who takes care of the young women who live there and¦228991 he could arrange for them to receive beauty treatments¦229025.
+\v 4 Then¦229027 you could decide which young¦229027 woman¦229027 you like best and¦229027 then¦229027 make her queen instead of Vashti¦229034.”
+\p The king liked what they suggested¦229036, so he did it.
+\p
+\v 5 At that time, there was a Jewish man named Mordekai living in¦229046 the capital city of Shushan¦229046. (He was from the tribe of Benjamin: his father was Jair, his grandfather was Shimei¦229054, and his great-grandfather was Kish¦229057
+\v 6 who'd been taken away from Jerusalem and led to Babylon when King¦229071 Nebuchadnezzer¦229076 of Babylon had exiled¦229066 Jeconiah¦229070, the king of Judah, along with many of his people.)\x + \xo 2:6: \xt 2Ki 24:10-16; 2Ch 36:10.\x*
+\v 7 Now Mordekai was taking care of his cousin, who was an orphan. When¦229080 her father¦229093 and mother had died, Mordekai had adopted¦229104 her as his own daughter¦229087. Her¦229102 \add Hebrew\add* name was Hadassah¦229084, and her \add Persian\add* name was Esther. Esther was now a young¦229095 woman¦229095 and she was exceptionally attractive.
+\p
+\v 8 So¦229109 when the king's command and decree became known, many young¦229116 women were being brought into the capital city of Shushan¦229120 and placed under Hegai's charge, and this is what happened to Esther¦229127. (Hegai was the overseer of the women.)
+\v 9 Hegai was very impressed with¦229141 Esther, and he treated her favourably¦229143. He quickly¦229145 arranged for Esther to receive her beauty¦229148 treatments and her allotment of food, as well as choosing seven¦229155 female servants from the king's palace¦229161 and assigning¦229158 them to be her personal attendants. He also moved¦229163 Esther and her attendants to the best rooms in¦229141 the harem for virgins.
+\v 10 (Esther¦229174 hadn't revealed her family ties or her Jewishness to anyone, because¦229181 Mordekai had instructed¦229183 her not to.)
+\p
+\v 11 Every day Mordekai would walk¦229195 around in¦229209 front¦229196 of the courtyard¦229197 of the women's¦229200 harem to find out \add from others\add* how Esther¦229205 was doing and¦229190 how she was being treated.
+\p
+\v 12 Each young¦229213 woman¦229213 would get twelve months of beauty¦229233 treatment¦229233 according¦229224 to the \add Persian\add* law for women—there would be six months of applying oil¦229236 of myrrh¦229237, then¦229211 six months of perfumes¦229240 and¦229211 other lotions \add designed for\add* women. Then¦229211 their¦229233 turn would come, one at¦229211 a time¦229232, to be taken to King¦229219 Ahasuerus¦229220.
+\v 13 The¦229250 young¦229245 woman¦229245 was allowed to take¦229257 whatever she wanted from the harem¦229259 when she went to the king's¦229264 house¦229263.
+\v 14 She'd be taken across in the evening¦229266, and in the morning¦229270 she'd be led out to the other harem which was for the concubines¦229285. (That harem was overseen by Shaashgaz¦229281, another castrated royal guardian.) The women¦229276 taken there wouldn't go again¦229289 to the king's house¦229275 unless he had especially liked them and summoned¦229299 her back by name¦229300.
+\s1 Esther becomes queen
+\p
+\v 15 Now Esther was the daughter of Mordekai's uncle¦229309, Abihail¦229308, from whom Mordekai had adopted her as his own daughter. When¦229302 it was her turn to go to the king, she didn't¦229320 ask for anything¦229322 other than what Hegai¦229329, the king's trusted official in¦229302 charge of the harem, had advised, and¦229302 everyone¦229333 who saw Esther liked her.
+\v 16 So¦229344 Esther¦229345 was taken¦229344 to King¦229348 Ahasuerus¦229349 at¦229354 his royal palace in January¦229359, in the seventh¦229362 year¦229360 of his reign¦229363,
+\v 17 and the king¦229366 loved¦229365 Esther¦229369 more than any of the other women. He treated her more kindly and more favourably¦229375 than any of the other young women \add who had become his concubines\add*. He put a royal¦229384 crown¦229382 on¦229385 her head¦229385 and made her the \add new\add* queen¦229386 to replace Vashti¦229388.
+\v 18 Then¦229390 the king¦229391 hosted a large¦229393 celebration and invited all his officials¦229396 and servants¦229397 to a feast to celebrate Esther¦229400 \add becoming queen\add*. He proclaimed that this would be a time to celebrate for people in all of the provinces¦229402 of his empire when they wouldn't have to pay taxes, and he gave¦229404 \add many\add* generous gifts.
+\s1 Mordekai and Esther earn the king's favour
+\rem /s1 Mordecai Discovers a Plot; Mordecai and Haman; Mordecai Saves the King's Life; Mordecai Uncovers a Conspiracy
+\p
+\v 19 \add Later on¦229409,\add* King¦229416 Ahasuerus had \add his officers\add* bring more virgins¦229410 \add to Shushan\add*. During this time, Mordekai \add had been given a position by the king so\add* he sat \add there\add* at¦229409 the king's¦229416 gate¦229414.
+\v 20 Esther¦229419 had still not told¦229426 anyone that \add she was Jewish\add* because Mordekai had warned her¦229421 not to tell anyone. \add What's more,\add* she continued to follow all of Mordekai's instructions¦229426, just as she had done when she was still under his guardianship¦229437.
+\rem /s1 Mordekai's Loyalty to the King
+\p
+\v 21 One day when Mordekai was \add on¦229445 duty\add* at¦229445 the king's gate¦229445, two of the king's guards¦229455 who protected the doorway \add to the king's private rooms\add* became angry¦229448 with¦229445 the king and so they planned to assassinate King¦229447 Ahasuerus¦229461. (Their names were Bigthan¦229449 and Teresh¦229450.)
+\v 22 But¦229463 when Mordekai heard what they were planning, he told Queen Esther¦229467 about it and¦229469 she told the king¦229471, explaining that Mordekai had given her the information.
+\v 23 When¦229475 the matter¦229485 was investigated¦229475 and \add the facts\add* discovered, both conspirators were impaled on¦229484 \add sharpened wooden\add* poles, and in the presence of the king¦229488, the incident was recorded in the royal record of events.
+\c 3
+\s1 Haman plans to annihilate the Jews
+\rem /s1 Haman's Plot against the Jews; Haman Plots to Destroy the Jews; Haman Undertakes to Destroy the Jews; Haman's Plot to Destroy the Jews
+\p
+\v 1 Some time later, King¦229496 Ahasuerus¦229497 promoted Haman, one of his officials (and the son of Hammedatha¦229503 \add who was a descendant\add* of Agag). The king¦229496 gave Haman a very important position¦229509—more important than any of his other officials.
+\v 2 Then¦229517 the king commanded¦229531 that all his other officials had to bow down in¦229523 front of Haman to honour him, and¦229517 they were doing this at¦229523 the king's gate¦229523, except for Mordekai who refused to bow down to reverence Haman.
+\v 3 “Why¦229552 are you¦229550 disobeying the king's command¦229553?” asked the other royal servants¦229542 at¦229546 the king's gate¦229546.
+\v 4 Mordekai told them that it was because¦229571 he was a Jew \add (and¦229556 Jews only worship Yahweh)\add*. He didn't¦229562 listen¦229563 to their \add warnings\add* so they told Haman¦229566 about it to see¦229567 if he would tolerate¦229568 Mordekai in¦229557 keeping refusing to bow down.
+\v 5 When¦229580 Haman saw¦229580 that Mordekai would not bow down to him or show him reverence, he¦229589 was furious.
+\v 6 But¦229593 Haman despised¦229593 the idea of just punishing Mordekai because he'd been told that Mordekai \add didn't bow to him because\add* Mordekai was a Jew. So¦229593 Haman¦229609 decided to annihilate¦229610 all of Mordekai's people, i.e., all the Jews throughout the kingdom¦229619 of Ahasuerus¦229620.
+\p
+\v 7 In early April of the twelfth year of King¦229633 Ahasuerus' reign, Haman¦229640 got his servants to throw¦229635 dice \add to select the best month and the best day to kill the Jews\add*, and the 13th of March was chosen.
+\p
+\v 8 Then Haman¦229656 \add went to\add* King¦229657 Ahasuerus¦229658 and said, “\add Your Majesty,\add* there¦229659 is a certain group of people who live among¦229665 the other peoples in every province¦229668 of your empire. They have their¦229670 own set of laws, so they don't¦229682 obey your laws. It's not good for you to allow them to continue to live in your empire.
+\v 9 Your majesty, if you approve of this plan, then write a decree saying that all of the Jews must¦229700 be destroyed¦229694. \add When they're dead, we can take all of their¦229694 possessions, and¦229695 from that\add* I will give 300 tons of silver¦229699 to your administrators for them to put into your royal treasuries¦229709.”
+\p
+\v 10 \add This seemed sensible to\add* the king so he removed¦229712 his signet ring from his finger and¦229712 he gave¦229719 it\f + \fr 3:10 \ft Having the king's signet ring enabled Haman to stamp the king's seal (like a signature) onto the newly drafted laws.\f* to Haman (the son of Hammedatha¦229723, the Agagite¦229724, the adversary of the Jews).
+\v 11 The king¦229729 told Haman¦229730, “You can keep the money¦229731 for yourself, and¦229728 you can do whatever you want to do with¦229738 those people¦229734.”
+\p
+\v 12 On the thirteenth day¦229747 of that same month¦229743, Haman called in the royal scribes, and he dictated a letter to them. He told¦229754 them to send copies to the royal officials¦229771, the governors¦229762 of each province, and the leaders of each people group \add within the empire\add*. The scribes translated the letter so it could be sent to each province using its own alphabet and to each people group in its own language¦229779. To show that he was sending the letter under the king's own authority, Haman sealed¦229784 each copy of the letter with¦229743 the ring that had the king's official seal on¦229743 it.
+\v 13 Couriers delivered the letters to the officials in every province¦229796 in the empire. The letters said to completely destroy¦229798 all the Jews, including¦229800 the children and¦229788 women¦229811, on¦229790 a single day. That was to be the thirteenth day of March early in the following year. The letters also stated that those who killed the Jews could take everything that belonged to them.
+\v 14 The letter told the officials to display¦229835 copies where everyone could see them—that way all the people¦229838 in every single province¦229833 would know that the king had commanded this, and¦229834 they could get ready¦229840 for when the day¦229841 came.
+\p
+\v 15 So couriers¦229844 hurried¦229846 off with¦229847 the letters as the king had commanded¦229847. A herald in the capital city¦229857 of Shushan also proclaimed what the letters said. Then the king and Haman¦229854 relaxed and drank together, but¦229849 there was \add total\add* confusion¦229859 in Shushan \add about how all of this would work out\add*.
+\c 4
+\s1 Mordekai asks the queen for help
+\rem /s1 Mordecai Asks for Esther's Help; Esther Agrees to Help the Jews; Esther plans to rescue the Jews; Mordecai Requests Esther's Help; Mordecai Persuades Esther to Help
+\p
+\v 1 When Mordekai found out about what had been done¦229869, he tore his clothes¦229874 and dressed in sackcloth¦229876 and \add threw\add* ashes¦229877 \add over himself (as a sign of mourning or distress)\add* and went¦229878 out into the city¦229880 centre, wailing loudly¦229883 and bitterly¦229884.
+\v 2 But¦229886 no one was wearing mourning garb was allowed inside the king's gate, so when Mordekai reached the gate, he had to stay just outside it.
+\v 3 In every province¦229904 of the empire, the letter that said to destroy the Jews was publicly displayed and when the Jews heard about it¦229921, they were incredibly upset. They skipped meals and wailed loudly, and many of them also wore sackcloth¦229919 and threw ashes¦229920 on themselves and lay on the ground.
+\p
+\v 4 When¦229924 \add Queen\add* Esther's¦229929 young female attendants came¦229924 with her guardians and¦229924 told her \add what was going on outside\add*, even the queen¦229934 became very scared. She sent¦229936 Mordekai some good clothes¦229938 to wear instead of the sackcloth¦229943, but¦229924 he wouldn't accept¦229946 them.
+\v 5 The king¦229952 had assigned some of the royal guardians to Esther personally, so Esther called¦229948 for one of them—a man named Hathak¦229950. She told¦229956 him to go out and speak with Mordekai and find out what he was so distressed about.
+\v 6 So¦229970 Hathak¦229971 went¦229970 out to \add talk to\add* Mordekai¦229974 who was out in the plaza in front¦229980 of the king's¦229983 gate¦229981.
+\v 7 Mordekai told him everything that¦229998 Haman was planning to do and¦229985 even told him how much money¦229997 Haman had said the king would get for his treasuries¦230004 if \add the king commanded people\add* to kill¦230009 all the Jews.
+\v 8 Mordekai also gave¦230022 Hathak a copy of the letter that the announcers had read out loud in¦230020 Shushan¦230020, that said that people must kill all the Jews. He told Hathak to show the letter to Esther¦230027 so that she would know exactly what it said and also told him to urge her to go to the king¦230035 personally and to beg him desperately to save her people \add from destruction¦230021\add*.
+\v 9 So¦230045 Hathak¦230046 returned to the queen and¦230047 told her what Mordekai had said,
+\v 10 and¦230056 Esther¦230054 told¦230056 him¦230056 to go back to Mordekai with this message:
+\v 11 “There's a law about going to the king that applies to everyone¦230071 in the kingdom, both men and women. If anyone¦230089 goes into the inner¦230084 courtyard¦230083 of the palace, where the king can see them, and the king has not summoned them, that person will be executed. Only if the king holds¦230094 out his golden¦230101 scepter¦230100 to them, then they will live. (Everyone¦230089 in the whole empire knows this law.) The king hasn't called for me in over a month\add , and if I go in without being summoned, I could be put to death¦230091\add*.”
+\p
+\v 12 \add So¦230117 Hathak\add* went back to Mordekai and¦230117 told him what the queen had said.
+\v 13 Mordekai told \add Hathak\add* to tell this to Esther¦230129: “Don't¦230130 imagine¦230132 that just because you live there in¦230133 the king's palace that you'll be safe when they kill all the other Jews.
+\v 14 If you say nothing at¦230147 all now, someone from some other place¦230153 will rescue the Jews, but¦230150 you and your relatives will not survive. Who knows, perhaps it was for a time just like this that \add God allowed\add* you to become queen¦230167?”
+\p
+\v 15 Then¦230169 Esther¦230170 sent this reply¦230171 to Mordekai¦230174:
+\v 16 “Go and assemble all the Jews who live here in Shushan¦230184, and tell them to fast and pray for my sake—tell them to not eat or drink¦230192 anything for three days and three nights¦230195. My female attendants and I will also fast in the same way. At the end of the three days, I will go in to talk to the king even though it's against the law. I will do that¦230208 even if it costs me my life.”
+\p
+\v 17 So¦230216 Mordekai¦230217 went¦230216 and¦230218 did everything¦230219 that Esther¦230224 had told¦230222 him to do.
+\c 5
+\s1 Esther goes to the king without an invitation
+\rem /s1 Esther's Banquet; Esther Invites the King and Haman to a Banquet; Esther's Request to the King
+\p
+\v 1 Three days later, the \add Queen\add* Esther¦230232 put on her royal robes¦230231 and \add went and\add* stood¦230234 in the inner¦230239 courtyard¦230235 of the palace, across from the king's house. He was in the royal palace, sitting¦230244 on the royal throne¦230247 and facing the room's entrance¦230252.
+\v 2 As soon as the king noticed¦230256 Esther standing¦230262 there in¦230263 the courtyard¦230263, he was very pleased to see her. So¦230255 he held out his golden¦230273 scepter to her and Esther came up \add to the throne\add* and touched¦230278 the top of the scepter.
+\v 3 “Why have you come here, Queen Esther¦230289?” the king¦230285 asked. “What do you want? Tell me, and I'll give you anything you ask for—even half of the empire.”
+\p
+\v 4 “If it pleases your majesty,” Esther¦230302 replied, “please come¦230309 with Haman¦230311 today to the banquet¦230315 that¦230316 I've¦230318 prepared for you.”
+\p
+\v 5 The king said to his servants, “\add Go and\add* get Haman” the king told his servants, “and bring¦230323 him quickly¦230323 so that we can do what the queen has asked us.” So¦230321 the king and Haman went¦230332 to the banquet¦230337 that Esther¦230331 had had prepared for them.
+\v 6 While they were drinking¦230346 wine, the king¦230344 said¦230343 to Esther¦230345, “Now please tell me what you \add really\add* want. I'll give you anything you ask for, no matter how much it is. I truly mean what I am saying.”
+\p
+\v 7 “This is what I \add really\add* want.” Esther¦230363 replied.
+\v 8 “Your majesty, if you're pleased with me and if you're happy to give me what I want, please come¦230388 with Haman¦230390 to \add another\add* banquet¦230393 that¦230394 I'll prepare for you tomorrow¦230397 and I'll answer your question then.”
+\s1 Haman's anger with Mordekai and his execution plan
+\rem /s1 Haman Plots to Kill Mordecai; Haman's Plan to Kill Mordecai; Haman Plans to Have Mordecai Hanged; Haman's Rage Against Mordecai
+\p
+\v 9 Haman was feeling very happy as he left \add the banquet\add* that day¦230404. But¦230402 then¦230402 he saw¦230409 Mordekai sitting at¦230414 the king's gate¦230414 and¦230402 noticed¦230409 that Mordekai didn't¦230416 stand up or show fearful reverence to him. This made Haman furious with¦230414 Mordekai
+\v 10 but¦230430 he restrained¦230430 himself¦230430 and went¦230432 home¦230435. Then¦230430 he sent¦230436 for his friends¦230440 and brought¦230437 in his wife, Zeresh¦230443,
+\v 11 boasting to them about how rich he was and about how many sons he had, and how the king had promoted¦230463 him \add many times\add* and given him a position above¦230464 all of the other officials¦230466 and administrators.
+\v 12 “And that is not all,” Haman¦230471 added. “I was the only one that Queen Esther¦230476 invited to go with the king to a banquet¦230483 that she prepared¦230486 for us today. And she's also invited only me to go with the king again tomorrow¦230493.
+\v 13 However, I still can't¦230505 be happy as long as I keep seeing¦230513 that Jew, Mordekai, sitting¦230518 there at¦230519 the king's¦230520 gate¦230519.”
+\p
+\v 14 Then Zeresh¦230524 his wife and all his friends¦230528 said to him, “Get them to install 25-metre high pole, and in¦230535 the morning¦230535 get permission from the king, and get them to impale Mordekai on¦230535 it. Then you can go with¦230535 the king to the banquet¦230553 and enjoy yourself.”
+\p That idea sounded good to Haman¦230558, so he got the pole erected.
+\c 6
+\s1 The king honours Mordekai
+\rem /s1 Haman executed; The King Honours Mordecai; Mordecai Honoured
+\p
+\v 1 That¦230570 night¦230563 the king was unable to sleep¦230566 so he ordered the royal records¦230573 to be fetched and to be read to him.
+\v 2 The records¦230582 mentioned that Bigthan¦230588 and¦230581 Teresh¦230589, two of the royal guardians¦230593 who protected the doorway to the king's private quarters, had planned to assassinate the king, but¦230581 that Mordekai had reported it.
+\v 3 “What honour¦230607 or recognition did I give Mordekai for saving my life?” the king asked.
+\p “Nothing was done for him,” replied the young¦230614 men who were attending¦230616 him.
+\p
+\v 4 At that moment, Haman¦230627 had entered the outer¦230633 courtyard of the king's house¦230630. He had come to tell the king that he wanted to execute Mordekai on¦230626 the pole that he'd had set up for him.
+\p “Who's out in¦230626 the courtyard?” the king asked.
+\p
+\v 5 “Haman's¦230653 out there¦230652 standing¦230654 in the courtyard¦230655,” replied the young men.
+\p “Bring him in then¦230648,” the king instructed.
+\p
+\v 6 When¦230660 Haman came in¦230668, the king asked him, “What should I do for a man that I would really like to honour?”
+\p Haman thought to himself, “Surely it must¦230677 be me that the king would like to honour more than anyone else?”
+\v 7 so he replied to the king, “If¦230685 you really want to honour¦230693 someone,
+\v 8 tell your servants to bring one of your own royal robes that you have already worn yourself and also bring a horse¦230703 that you have already ridden¦230705 yourself and put a royal crown on¦230712 its head¦230712.
+\v 9 Then¦230714 have one of your most noble¦230724 officials¦230722 present the man with¦230732 the robe and the horse. Have your servants put the robe on the man whom you really want to honour and have them seat that man on the horse and then¦230714 lead the horse through the public square¦230737 of the city¦230738 while they shout out \add to everyone¦230722\add* in¦230732 front of them, ‘The king is doing this because he really wants to honour this man!’ ”
+\p
+\v 10 The king \add agreed so\add* he replied to Haman¦230751, “Go quickly and take the robe and the horse¦230759 and do what you've just described for Mordekai the Jew who sits by the gate¦230768 to the palace. Make sure that you do absolutely everything that you've said.”
+\p
+\v 11 So¦230778 Haman¦230779 got the robe and the horse and put the robe on Mordekai, seated him on the horse, and then¦230778 led the horse through the public square¦230791 of the city¦230792. As he did, he shouted out to everyone in¦230791 front of him, “The king is doing this because he really wants to honour¦230801 this man!”
+\p
+\v 12 Afterwards, Mordekai returned¦230803 to the king's gate¦230807 but¦230803 Haman¦230809 hurried¦230810 to his house¦230813, covering¦230815 his head¦230816 like a mourner¦230814.
+\v 13 \add At home\add* he explained to Zeresh his wife and to all his friends¦230824 everything that had happened¦230829 to him. Then¦230818 his advisors¦230833 and his wife said¦230830 to him, “Mordekai has begun¦230841 to defeat you and since he is one of the Jewish¦230838 people¦230837, you won't¦230844 win against him—instead, he'll certainly¦230850 defeat you.”
+\s1 Haman's execution
+\rem /s1 Haman Is Put to Death; Haman's Downfall and Mordecai's Advancement
+\p
+\v 14 While they were still talking¦230855 together, \add some of\add* the royal guardians arrived¦230859 to bring¦230861 Haman¦230864 quickly to the banquet¦230867 that¦230868 Esther¦230871 had had prepared¦230870.
+\c 7
+\rem /s1 The King Executes Haman; Haman Hanged
+\p
+\v 1 So¦230873 the king¦230874 and¦230875 Haman¦230875 went¦230873 to Queen Esther's¦230879 \add banquet\add*.
+\v 2 While they were drinking¦230888 wine at¦230888 that second¦230887 banquet, the king¦230883 asked Esther again, “Now please tell me what you really want, Queen Esther. Tell me, and¦230882 I'll do it for you—I'll give you anything you ask for, no matter what it is.”
+\p
+\v 3 “Your majesty,” Queen Esther¦230907 replied, “if you are pleased with¦230914 me, I hope you'll be willing to do what I ask. Please allow me to live, and¦230906 please save my people¦230927. That is what I am asking for
+\v 4 because someone has turned me and my people¦230933 over \add to our enemies\add* and they're going to completely destroy¦230934 us. If someone had \add just\add* sold the men and even the women to be slaves, I wouldn't have said anything, because that wouldn't have been important enough to bother your majesty with¦230946.”
+\p
+\v 5 “Who has done this?” King¦230951 Ahasuerus¦230952 asked her. “Where is the man who has dared to do such a thing?”
+\p
+\v 6 “The man who is our bitter enemy¦230975 is this evil man Haman!” answered Esther¦230972.
+\p \add By this time,\add* Haman was terrified¦230980 standing there in front of the king¦230982 and¦230970 the queen¦230983.
+\v 7 Now the king became so angry that he got up and abandoned his wine-drinking at¦230987 the banquet and went outside into the palace¦230993 garden¦230992. But¦230985 Haman¦230994 stayed inside to beg his life from Queen Esther¦231000 because¦231002 he recognized that the king wanted to \add execute\add* him.
+\v 8 \add As he was pleading for his life,\add* Haman \add knelt down\add* very close to Esther¦231028 as she was \add reclining\add* on¦231038 a couch¦231026. When¦231012 the king returned¦231013 from the palace¦231015 garden¦231014 to the room where they had been drinking wine, he \add saw this and\add* exclaimed, “\add Now\add* he's even trying to rape the queen¦231036 in my presence and in my own house¦231018!”
+\p As soon as the king said this, some of his servants covered¦231045 Haman's face¦231043 \add (as a sign that¦231027 he would be executed)\add*.
+\v 9 Then Harbona¦231049, who was one of the guardians who served the king personally, said, “Your majesty, Haman has also set up a pole twenty-five metres high at his house¦231073 because he wants to hang Mordekai on it. But¦231048 Mordekai saved your life.”
+\p “Execute Haman on it!” the king commanded.
+\p
+\v 10 So¦231083 they impaled Haman¦231086 on the pole that¦231090 he had set up for Mordekai¦231093, and¦231083 then¦231083 the king's anger¦231094 dissipated.
+\c 8
+\s1 The Jews are enabled to defend themselves
+\rem /s1 Esther Saves the Jews; The King's Edict in Behalf of the Jews; A Decree to Help the Jews; The Jews Are Told to Fight Back
+\p
+\v 1 That same day¦231099, King¦231102 Ahasuerus¦231103 gave Queen Esther all the property that had belonged to Haman¦231109, the enemy of the Jews. Esther told the king that Mordekai was \add her cousin and that he had been like a father\add* to her, and \add so the king summoned\add* Mordekai to come to him.
+\v 2 Then¦231126 the king¦231127 removed¦231126 his signet¦231130 ring which¦231131 he had retrieved from Haman, and¦231126 gave¦231134 it to Mordekai. The queen also put Mordekai in charge of all the property that¦231131 had belonged to Haman.
+\rem /s1 The triumphant Jews destroy their enemies
+\p
+\v 3 Then Esther¦231148 came to speak to the king again¦231147, and she knelt down and put her face right on top of his feet. She cried as she begged him to stop Haman's¦231163 terrible plan to destroy the Jews.
+\v 4 The¦231180 king held out his golden¦231178 scepter¦231177 toward Esther¦231175, so she stood¦231181 up and¦231173 waited facing the king.
+\v 5 “Your majesty,” she said¦231185, “if you think that it's the right¦231197 thing to do, and¦231192 if you're pleased with¦231203 me, please write a new letter revoking¦231205 the letters¦231208 that Haman¦231210 (the son of Hammedatha¦231213, the Agagite¦231214) sent out \add instructing the people\add* to destroy¦231217 all the Jews throughout your empire.
+\v 6 I couldn't bear to see the terrible thing that¦231232 is about to happen to my people¦231237. I \add certainly\add* couldn't bear to see \add all\add* my relatives destroyed¦231241!”
+\p
+\v 7 Then king¦231246 Ahasuerus¦231247 said¦231245 to Queen Esther and to Mordekai the Jew, “Listen, I've¦231256 given¦231256 the house¦231253 of Haman¦231255 to Esther, and they've executed him on¦231268 the pole because he attempted to destroy the Jews.
+\v 8 But¦231271 as you \add both\add* know, no one can revoke¦231296 a letter that¦231286 has my name and my official seal on it. So¦231271 this is what you should do: write¦231272 \add a new letter\add* to help the Jews¦231275, as you think best and put my name on it and seal the letter with¦231277 my signet ring.”
+\p
+\v 9 It was now June, and the king¦231301 sent for his scribes and they wrote a letter to the Jews containing everything that¦231330 Mordekai dictated. It was also addressed to royal officials¦231328, and to the governors¦231327 and leaders in each province. The empire had 127 provinces, extending all the way from India¦231332 \add in the east\add* to Ethiopia¦231335 \add in the west\add*. The scribes wrote to every province using its own alphabet and to each people group in its own language, and to the Jews in their language and using their alphabet.
+\v 10 The letters were written in¦231357 King¦231354 Ahasuerus' name, and¦231352 \add each one\add* was sealed¦231356 with¦231357 the king's signet¦231357 ring. Then¦231352 the letters were distributed by mounted¦231363 couriers¦231362 riding on¦231357 swift horses¦231365 bred from the royal¦231366 mares¦231368.
+\p
+\v 11 The letters stated that¦231396 the king permitted¦231371 the Jews in each and every¦231391 city to get together and defend¦231382 themselves, and what's more to destroy¦231386, kill¦231386, and annihilate¦231388 all the forces of any people¦231394 or province¦231395 hostile to them, including¦231380 women¦231399 and children, and \add then\add* to plunder¦231401 their possessions.
+\v 12 \add This was to take place\add* on a certain day in¦231410 every province¦231407 throughout the empire: the 13th of March\x + \xo 8:12: \xt 3:7.\x* \add (the same day on which Haman's law was to take effect)\add*.
+\v 13 A copy of the decree was to be included as law in every province¦231427 and to be displayed¦231429 to all the people¦231432 so that the Jews could be prepared to fight back against their¦231441 enemies¦231441 on that day¦231438.
+\v 14 So the couriers¦231443 on¦231450 the royal¦231446 horses¦231445 rode out quickly under the king's orders to deliver the letters. The new law was also proclaimed throughout the capital city of Shushan¦231454.
+\p
+\v 15 The king¦231462 \add gave\add* Mordekai royal¦231464 clothing¦231463 that was blue and white¦231466, with¦231463 a large¦231469 gold¦231468 crown¦231467, and a purple¦231472 robe¦231470 made from fine linen¦231471. The people of Shushan¦231474 cheered happily when Mordekai exited \add the palace\add*.
+\v 16 For the Jews, it¦231479 was \add a time\add* of light¦231480 and happiness, and they were honoured \add by those around them\add*.
+\v 17 In every single province¦231487 and in every single city, wherever¦231494 the letter announcing the king's decree was brought, the Jews were very cheerful¦231501 and had big celebrations. Many people¦231507 from other groups in the empire became afraid of the Jews, so they \add converted to Judaism\add* themselves.
+\c 9
+\s1 The Jews destroy their enemies
+\rem /s1 The Jews Destroy Their Enemies; Triumph of the Jews; The Victory of the Jews; Destruction of the Enemies of the Jews
+\p
+\v 1 \add Finally\add* when the 13th of March arrived, it was time for everyone to do what the letters from the king said that he had decreed for them to do. The enemies of the Jews had expected to destroy the Jews on¦231518 that day but¦231518 just the opposite happened—instead, it was the Jews who destroyed their¦231549 enemies.
+\v 2 Throughout the empire, the Jews joined together in their¦231571 cities¦231553 to defend themselves against those¦231561 who wanted to harm them. No one was able to fight back against them because¦231568 everyone¦231563 \add else\add* in the empire had become afraid of them.
+\v 3 All the leaders in each province¦231581, the royal officials¦231580, the governors¦231583, and¦231578 everyone who worked for the king¦231587 helped the Jews because¦231592 they had become afraid of Mordekai
+\v 4 because¦231611 he was \add now\add* a very important royal official, and his¦231606 fame spread throughout the provinces¦231610 as he became more and more powerful¦231616.
+\v 5 So the Jews took their weapons and fought against all of their enemies and completely destroyed¦231628 them. They were able to do everything that they¦231631 wanted to do against their enemies.
+\p
+\v 6 In the capital city of Shushan, the Jews killed¦231635 500 men
+\v 7 including¦231645 \add Haman's ten sons\add* Parshandatha¦231644, Dalphon¦231647, Aspatha¦231650,
+\v 8 Poratha¦231654, Adalia¦231657, Aridatha¦231660,
+\v 9 Parmashta¦231664, Arisai¦231667, Aridai¦231670, and¦231662 Vaizatha¦231673.
+\v 10 Those were the ten¦231675 sons¦231676 of Haman¦231677 (son of Hammedatha¦231680), the enemy of the Jews, but¦231684 the Jews didn't¦231685 take their¦231689 possessions.
+\p
+\v 11 At the end of the day¦231691, the king¦231699 received a report about how many people the Jews had killed¦231695 in¦231696 the capital city of Shushan¦231696
+\v 12 and he told Queen Esther¦231704, “Here in¦231706 the capital city of Shushan¦231706 the Jews have killed 500 men, including¦231702 Haman's¦231718 ten sons¦231716. In the rest of my empire, they must¦231727 have killed many more than that! So tell me what else you want and I'll do it for you. I'll do whatever you ask, so do tell me.”
+\p
+\v 13 “If it seems like a good¦231742 plan to you, your majesty,” Esther¦231736 replied, “then¦231735 please allow the Jews who live here in¦231749 Shushan¦231749 to do again tomorrow¦231746 what you allowed them to do today. Also¦231735, command that the bodies of Haman's¦231757 ten¦231754 sons¦231755 be impaled on¦231749 the wooden pole.”
+\v 14 Then¦231763 the king¦231764 ordered for this to be done¦231765 and a decree was made throughout in¦231769 Shushan¦231769, and they \add publicly\add* impaled \add the bodies of \add* Haman's¦231774 ten¦231771 sons¦231772.
+\v 15 So¦231777 the next day¦231784 on¦231782 the 14th, the Jews in Shushan gathered¦231777 together again and¦231777 killed¦231789 300 \add more\add* men in Shushan. But¦231777 \add once again\add* they¦231796 did not take the things that belonged to those men.
+\p
+\v 16 The Jews in¦231804 the other parts of the empire, who had gathered together to fight for their lives¦231811 had defeated their enemies and¦231801 killed¦231814 75,000 of them. But¦231801 they \add too\add* did not take the things that had belonged to their enemies.
+\v 17 That¦231831 all happened on the 13th \add (as the law had said)\add*, and then they stopped on the 14th and made it a day of feasting¦231839 and celebration.
+\rem /s1 Purim Celebrated; The Feast of Purim Inaugurated
+\v 18 But¦231842 the Jews in¦231846 Shushan¦231846 had gathered together \add and fought their enemies\add* on both the 13th and the 14th, so they stopped on the 15th and made it a day¦231860 of feasting¦231861 and celebration.
+\v 19 So¦231864 that's why the Jews who live¦231870 in¦231871 the rural¦231872 villages observe¦231873 this holiday on¦231871 the 14th rather than the 15th. They celebrate with¦231871 feasting¦231881 and by giving gifts to each other.
+\s1 The celebration named ‘Purim’
+\rem /s1 The Festival of Purim; The feast of Purim
+\p
+\v 20 Now Mordekai recorded¦231890 everything that had happened and sent¦231896 letters¦231897 to all the Jews throughout the empire, in both the near provinces¦231906 and the far away ones.
+\v 21 That decree established an annual holiday on the 14th and 15th of March every year,\f + \fr 9:21 \ft The OET-RV gives an approximate time of the year in our calendars, but the Jewish calendar is largely a lunar calendar so the dates of the feast in our calendars moves around a little. In 2024 for example, ‘Purim’ begins on the evening of March 23 in Yisrael/Israel and concludes at sundown on March 24.\f*
+\v 22 because those were the days when the Jews no longer \add had to oppose\add* their enemies¦231939 and that was the month¦231940 when their sorrow¦231944 and mourning¦231946 had changed¦231942 into a good day. Now they were instructed to make them days of feasting¦231952 and happiness, and sending¦231954 of gifts¦231958—to each other but¦231940 also to the needy.
+\v 23 The Jews had already celebrated those days that¦231964 way, so they¦231966 \add readily\add* agreed to do what Mordekai had written¦231971.
+\p
+\v 24 Yes, Haman¦231976 (the son of Hammedatha¦231979, the Agagite¦231980), the enemy of all the Jews, had plotted to annihilate them, and he had thrown¦231990 a ‘Pur’ (which is ‘lot’ or perhaps ‘dice’) \add choose the date\add* to crush¦231994 them and to destroy them.
+\v 25 But¦231997 \add instead they would remember how Queen Esther stood\add* in front¦231998 of the king¦231999, and how he had said¦232000 in the letter¦232003, “Let his evil¦232006 plot that¦232007 he plotted concerning the Jews return¦232004 on his head¦232015, and let them execute him and his sons¦232020 on the pole.”
+\v 26 Therefore¦232025 they called¦232028 this celebration ‘Purim¦232031’\f + \fr 9:26 \ft Plural of Hebrew ‘Pur’ meaning ‘lot/dice’.\f* because of what they had experienced and because of the contents of \add Mordekai's¦232035\add* letter¦232044.
+\v 27 The Jews agreed to establish those two days as holidays and to observe¦232075 them on those specific days as they'd been instructed. They agreed that they and their¦232066 descendants¦232066 and everyone who became part of the Jewish people would celebrate it every year.
+\v 28 So¦232087 that's why every Jewish family¦232096 in every generation¦232093 \add since\add* has celebrated these days as holidays, wherever they live. The Jewish community and¦232087 its descendants¦232112 will always faithfully observe¦232090 this festival of ‘Purim¦232102’.
+\p
+\v 29 Then Queen Esther¦232116 (the daughter¦232118 of Abihail¦232120), with \add help from\add* Mordekai the Jew, wrote¦232115 a second¦232133 letter¦232130 about ‘Purim¦232131’.
+\v 30 He sent¦232135 this \add second \add* letter¦232136 to all the Jews throughout the empire of King Ahasuerus¦232149, with words¦232150 of peace¦232151 and¦232145 truth¦232152
+\v 31 to set up the ‘Purim¦232158’ celebration on¦232160 the given dates according to what Mordekai the Jew and Queen Esther¦232166 had determined for them. \add They also confirmed¦232154\add* that the Jews should continue the times¦232160 of fasting¦232177 and mourning that they¦232169 had established¦232154 for themselves and their¦232172 future descendants¦232175.
+\v 32 So¦232180 Esther's¦232181 decree confirmed¦232182 these¦232185 regulations about ‘Purim¦232184’ and¦232180 they were written¦232186 into the \add official\add* record.
+\c 10
+\s1 The grandeur of King Ahasuerus and Mordekai
+\rem /s1 The Greatness of Mordecai; The Greatness of Xerxes and Mordecai
+\p
+\v 1 Then King¦232191 Ahasuerus¦232192 imposed a tax¦232195 \add on everyone\add* throughout his empire, including¦232190 \add those\add* on the islands¦232199 of the \add Mediterranean\add* Sea.
+\v 2 Everything he accomplished through his power¦232205 and strength is written¦232216 down in the \add royal\add* records of the kings¦232222 of Media¦232223 and Persia¦232224, as well as the complete account¦232207 of the high position to which the king¦232212 promoted Mordekai.
+\v 3 Mordekai the Jew was second-in-command¦232230 to the king Ahasuerus¦232232, and a leader among¦232234 the Jews. He was popular¦232235 with most of his own people¦232240, seeking¦232238 good for them and teaching all his descendants \add how to live in\add* peace¦232242.

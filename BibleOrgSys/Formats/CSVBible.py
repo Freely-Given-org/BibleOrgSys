@@ -67,10 +67,10 @@ from BibleOrgSys.Bible import Bible, BibleBook
 from BibleOrgSys.OriginalLanguages import Hebrew, Greek
 
 
-LAST_MODIFIED_DATE = '2026-02-03' # by RJH
+LAST_MODIFIED_DATE = '2026-04-26' # by RJH
 SHORT_PROGRAM_NAME = "CSVBible"
 PROGRAM_NAME = "CSV Bible format handler"
-PROGRAM_VERSION = '0.49'
+PROGRAM_VERSION = '0.50'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -724,7 +724,7 @@ class CSVBible( Bible ):
             # if fgWRef.startswith('MRK'): print( f"{fgWRef} {originalLanguageWord=} got {text=}")
             try: startIndex,count = word_table_indexes[word_table_filename][fgRef]
             except KeyError:
-                logging.critical( f"Why couldn't Berean {self.abbreviation} appendWordNumber( {fgWRef}, {originalLanguageWord=} ) find a table entry ???" )
+                logging.error( f"Why couldn't Berean {self.abbreviation} appendWordNumber( {fgWRef}, {originalLanguageWord=} ) find a table entry ???" )
                 return text
             # This code was too slow and inefficient
             # for n,tableRow in enumerate( self.ESFMWordTables[word_table_filename][startIndex:startIndex+count] ):
@@ -775,7 +775,7 @@ class CSVBible( Bible ):
                         #     print( f"    Found {startIndex+n} for {text=} so returning {result=}" )
                         return result
                     else: # didn't match
-                        print( f"    Failed comparing {self.abbreviation} {fgWRef} {originalLanguageWord=} {adjustedOriginalLanguageWord=} with {tableRowBits[1]=}")
+                        logging.error( f"    Failed comparing {self.abbreviation} {fgWRef} {originalLanguageWord=} {adjustedOriginalLanguageWord=} with {tableRowBits[1]=}")
                 if 'w' in tableRowBits[0]:
                     thisWordNumber = int( tableRowBits[0].split('w')[1] )
                     # if fgWRef.startswith('MRK'): print( f"    {thisWordNumber}/{fgwRefWordNumber} {tableRowBits=}")
@@ -1044,7 +1044,7 @@ class CSVBible( Bible ):
                 try: thisSortNumber = int(row['Heb Sort' if isOT else 'Greek Sort'])
                 except ValueError: thisSortNumber = int( float( row['Heb Sort' if isOT else 'Greek Sort'] ) )
                 wordNumberInVerse = thisSortNumber - wordBSBOffset
-                if fgRef.startswith( 'MAT' ): print( f"{row=}\n  {fgRef} {thisSortNumber=} {wordBSBOffset=} -> {wordNumberInVerse=}" )
+                if DEBUGGING_THIS_MODULE and fgRef.startswith( 'MAT' ): print( f"{row=}\n  {fgRef} {thisSortNumber=} {wordBSBOffset=} -> {wordNumberInVerse=}" )
                 if ( fgRef not in ('NUM_26:1','SA1_21:15','NEH_7:68', 'MRK_10:24')
                 # and BBB not in ('MAT','MRK','LUK','JHN','ACT','ROM','CO1','CO2','GAL','EPH','PHP','COL')
                 ):

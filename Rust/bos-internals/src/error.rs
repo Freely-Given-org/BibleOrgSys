@@ -15,8 +15,8 @@ pub enum ValidationError {
     #[error("Marker '{0}' contains invalid characters (backslash, space, or asterisk)")]
     InvalidMarkerCharacters(String),
 
-    #[error("Clean text cannot contain backslashes")]
-    BackslashInCleanText,
+    #[error("Unexpected backslash in clean text: '{0}'")]
+    BackslashInCleanText(String),
 
     #[error("Note text cannot be empty")]
     EmptyNoteText,
@@ -42,6 +42,9 @@ pub enum ValidationError {
 pub enum ParseError {
     #[error("No leading integer found in '{0}'")]
     NoLeadingInt(String),
+
+    #[error("Integer {0} out of range in '{1}'")]
+    IntOutOfRange(i32, String),
 
     #[error("Invalid word attribute format: {0}")]
     InvalidWordAttribute(String),
@@ -98,6 +101,9 @@ pub enum IndexError {
 
     #[error("Invalid marker sequence: {0}")]
     InvalidMarkerSequence(String),
+
+    #[error("Inconsistent verse numbers at {0}: found {1}")]
+    InconsistentVerseNumbers(ChapterVerse, String),
 }
 
 /// A combined result type for convenience.

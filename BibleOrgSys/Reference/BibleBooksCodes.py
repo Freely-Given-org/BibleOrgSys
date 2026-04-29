@@ -50,6 +50,11 @@ from BibleOrgSys.Misc.singleton import singleton
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
+try:
+    import bos_books_codes_py
+except ImportError:
+    bos_books_codes_py = None
+
 
 LAST_MODIFIED_DATE = '2025-12-14' # by RJH
 SHORT_PROGRAM_NAME = "BibleBooksCodes"
@@ -143,7 +148,7 @@ class BibleBooksCodes:
                 logging.warning( _("Bible books codes are already loaded -- your given filepath of {!r} was ignored").format(XMLFileOrFilepath) )
             bbcc = BibleBooksCodesConverter()
             bbcc.loadAndValidate( XMLFileOrFilepath ) # Load the XML (if not done already)
-            self.__DataDicts = bbcc.importDataToPythonIfNecessary() # Get the various dictionaries organised for quick lookup
+            self.__DataDicts = bbcc.importDataToPython() # Get the various dictionaries organised for quick lookup
         return self # So this command can be chained after the object creation
     # end of BibleBooksCodes.loadData
 
@@ -195,6 +200,8 @@ class BibleBooksCodes:
         """
         Returns True or False.
         """
+        if bos_books_codes_py:
+            return bos_books_codes_py.is_valid_reference_abbreviation_py( BBB )
         return BBB in self.__DataDicts['referenceAbbreviationDict']
     # end of BibleBooksCodes.isValidBBB
 
@@ -224,6 +231,11 @@ class BibleBooksCodes:
         """
         Return the referenceNumber 1..999 for the given book code (referenceAbbreviation).
         """
+        if bos_books_codes_py:
+            try:
+                return bos_books_codes_py.get_reference_number_py( BBB )
+            except:
+                pass
         return self.__DataDicts['referenceAbbreviationDict'][BBB]['referenceNumber']
 
 
@@ -300,6 +312,11 @@ class BibleBooksCodes:
         """
         Return the USFM abbreviation string for the given book code (referenceAbbreviation).
         """
+        if bos_books_codes_py:
+            try:
+                return bos_books_codes_py.reference_abbrev_to_usfm_abbrev_py( BBB )
+            except:
+                pass
         return self.__DataDicts['referenceAbbreviationDict'][BBB]['USFMAbbreviation']
 
 
@@ -386,6 +403,11 @@ class BibleBooksCodes:
 
         Also tries the Sword book codes unless strict is set to True.
         """
+        if bos_books_codes_py:
+            try:
+                return bos_books_codes_py.osis_abbrev_to_reference_abbrev_py( osisAbbreviation )
+            except:
+                pass
         if strict:
             return self.__DataDicts['OSISAbbreviationDict'][osisAbbreviation.upper()][1]
         # else: # not strict
@@ -399,6 +421,11 @@ class BibleBooksCodes:
         Return the reference abbreviation string for the given USFM (Paratext) book code string.
         """
         assert len(USFMAbbreviation) == 3, f"{USFMAbbreviation=} {strict=}"
+        if bos_books_codes_py:
+            try:
+                return bos_books_codes_py.usfm_abbrev_to_reference_abbrev_py( USFMAbbreviation )
+            except:
+                pass
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, USFMAbbreviation, self.__DataDicts['USFMAbbreviationDict'][USFMAbbreviation.upper()] )
         result = self.__DataDicts['USFMAbbreviationDict'][USFMAbbreviation.upper()][1] # Can be a string or a list
         if isinstance( result, str ): return result
@@ -435,6 +462,10 @@ class BibleBooksCodes:
         fnPrint( DEBUGGING_THIS_MODULE, "BibleBooksCodes.getBBBFromEnglishText( {} )".format( someText ) )
         if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert someText and isinstance( someText, str )
+
+        if bos_books_codes_py:
+            res = bos_books_codes_py.english_name_to_reference_abbrev_py( someText )
+            if res: return res
 
         SomeUppercaseText = someText.upper()
         # if SomeUppercaseText in self.__DataDicts['referenceAbbreviationDict']:
@@ -770,6 +801,8 @@ class BibleBooksCodes:
         Returns True if the given referenceAbbreviation indicates a European Protestant Old Testament book (39).
             NOTE: This is not truly international so it's not a recommended function.
         """
+        if bos_books_codes_py:
+            return bos_books_codes_py.is_ot_py( BBB )
         return 1 <= self.getReferenceNumber(BBB) <= 39
     # end of BibleBooksCodes.isOldTestament_NR
 
@@ -778,6 +811,8 @@ class BibleBooksCodes:
         Returns True if the given referenceAbbreviation indicates a European Protestant New Testament book (27).
             NOTE: This is not truly international so it's not a recommended function.
         """
+        if bos_books_codes_py:
+            return bos_books_codes_py.is_nt_py( BBB )
         return 40 <= self.getReferenceNumber(BBB) <= 66
     # end of BibleBooksCodes.isNewTestament_NR
 
@@ -786,6 +821,8 @@ class BibleBooksCodes:
         Returns True if the given referenceAbbreviation indicates a European Deuterocanon/Apocrypha book (15).
             NOTE: This is not truly international so it's not a recommended function.
         """
+        if bos_books_codes_py:
+            return bos_books_codes_py.is_dc_py( BBB )
         return BBB in ('TOB','JDT','ESG','WIS','SIR','BAR','LJE','PAZ','SUS','BEL','MA1','MA2','GES','LES','MAN',)
     # end of BibleBooksCodes.isDeuterocanon_NR
 

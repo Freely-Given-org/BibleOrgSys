@@ -3,6 +3,8 @@ resolver = "3"
 members = [
     "Rust/bible_organisational_system",
     "Rust/bos-internals",
+    "Rust/bos_books_codes",
+    "Rust/bos_books_codes_py",
 ]
 
 [workspace.package]
@@ -11,5 +13,23 @@ license = "GPL-3.0-or-later"
 authors = ["Robert Hunt <Freely.Given.org+BOS@gmail.com>"]
 
 [workspace.dependencies]
+# local dependencies
+bos-internals = { path = "Rust/bos-internals" }
+bos_books_codes = { path = "Rust/bos_books_codes" }
+
+compact_str = { version = "0.9.0", features = ["rkyv"] }
+indexmap = "2.14"
+pretty_assertions = "1.4"
+log = "0.4"
+pyo3-log = "0.13"
+pyo3 = { version = "0.28.3", features = ["extension-module", "abi3-py38", "generate-import-lib"] }
+regex = "1.12"
+rayon = "1.10"
+rkyv = { version = "0.8", features = ["indexmap-2"] }
 thiserror = "2.0"
-pyo3 = { version = "0.27", features = ["extension-module", "abi3-py38", "generate-import-lib"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+# While we're still debugging
+[profile.release]
+debug = true

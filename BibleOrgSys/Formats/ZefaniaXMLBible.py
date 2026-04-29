@@ -6,7 +6,7 @@
 #
 # Module handling Zefania XML Bibles
 #
-# Copyright (C) 2013-2024 Robert Hunt
+# Copyright (C) 2013-2026 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -66,6 +66,7 @@ CHANGELOG:
     2023-04-20 Allowed for up to five lines of XML comments before the '<XMLBIBLE'
     2023-10-11 Better handling of Strongs numbers
     2024-06-13 Work on making the class able to be pickled
+    2026-04-08 Reduce some verbosity
 """
 from gettext import gettext as _
 import logging
@@ -79,10 +80,10 @@ from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisational
 from BibleOrgSys.Bible import Bible, BibleBook
 
 
-LAST_MODIFIED_DATE = '2024-06-13' # by RJH
+LAST_MODIFIED_DATE = '2026-04-08' # by RJH
 SHORT_PROGRAM_NAME = "ZefaniaBible"
 PROGRAM_NAME = "Zefania XML Bible format handler"
-PROGRAM_VERSION = '0.40'
+PROGRAM_VERSION = '0.41'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -506,7 +507,7 @@ class ZefaniaXMLBible( Bible ):
             BBB = self.genericBOS.getBBBFromText( bookName )
 
         if BBB:
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Validating Zefania {BBB} {bookName=} {bookShortName=}…" )
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Validating Zefania {BBB} {bookName=} {bookShortName=}…" )
             thisBook = BibleBook( self, BBB )
             thisBook.objectNameString = 'Zefania XML Bible Book object'
             thisBook.objectTypeString = 'Zefania'

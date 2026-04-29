@@ -1,6 +1,6 @@
 [package]
 name = "bos-internals"
-version = "0.1.0"
+version = "0.1.1"
 edition.workspace = true
 license.workspace = true
 authors.workspace = true
@@ -10,15 +10,25 @@ categories = ["text-processing", "parser-implementations"]
 publish = false
 
 [dependencies]
-thiserror.workspace = true
-regex = "1"
-compact_str = "0.9"
-indexmap = "2"
+log.workspace = true
+bos_books_codes = { workspace = true }
+compact_str = { workspace = true, features = ["rkyv"] }
+indexmap = { workspace = true, features = ["rayon"] }
+num-format = "0.4.4"
 pyo3 = { workspace = true, optional = true }
+rayon = { workspace = true }
+regex = { workspace = true }
+
+rkyv.workspace = true
+serde = { workspace = true }
+serde_json = { workspace = true }
+thiserror.workspace = true
 
 [dev-dependencies]
-pretty_assertions = "1"
+pretty_assertions.workspace = true
+env_logger = "0.11"
 
 [features]
 default = []
 python = ["dep:pyo3"]
+
