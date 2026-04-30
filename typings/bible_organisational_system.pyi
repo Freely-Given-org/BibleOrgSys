@@ -11,6 +11,7 @@ __all__ = [
     "processLines",
     "discoverBook",
     "discoverBible",
+    "parseWordAttributes",
     "InternalBibleExtra",
     "InternalBibleExtraList",
     "PyInternalBibleExtraListIter",
@@ -49,6 +50,11 @@ def processLines(
 ) -> InternalBibleEntryList: ...
 def discoverBook(entries: InternalBibleEntryList, bbb: str) -> BookDiscoveryResults: ...
 def discoverBible(books_dict: dict) -> BibleDiscoveryResults: ...
+def parseWordAttributes(*args, **_kwargs) -> dict:
+    """
+    Parse word attributes from a USFM3 `\w` field.
+    Returns a dict for backward compatibility with the old Python implementation.
+    """
 
 @t.final
 class InternalBibleExtra:

@@ -77,7 +77,7 @@ import copy
 
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
-from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntryList, InternalBibleEntry
+from bible_organisational_system import InternalBibleEntryList, InternalBibleEntry
 from BibleOrgSys.Internals.InternalBibleBook import BCV_VERSION, BOS_EXTRA_TYPES, BOS_EXTRA_MARKERS
 from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
 from BibleOrgSys.Reference.BibleBooksCodes import BOOKLIST_OT39, BOOKLIST_NT27

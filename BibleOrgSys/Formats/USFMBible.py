@@ -764,7 +764,7 @@ def briefDemo() -> None:
                 vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "newObj is", newObj )
             if 0: # Not for briefDemo()
                 from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
-                from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntry
+                from bible_organisational_system import InternalBibleEntry
                 vPrint( 'Info', DEBUGGING_THIS_MODULE, _("Displaying text from some given references…") )
                 for BBB,C,V in ( ('MAT','1','1'),('MAT','1','2'),('MAT','1','3'),('MAT','1','4'),('MAT','1','5'),('MAT','1','6'),('MAT','1','7'),('MAT','1','8') ):
                     svk = SimpleVerseKey( BBB, C, V )
@@ -935,7 +935,7 @@ def fullDemo() -> None:
                     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "newObj is", newObj )
                 if 1:
                     from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
-                    from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntry
+                    from bible_organisational_system import InternalBibleEntry
                     vPrint( 'Info', DEBUGGING_THIS_MODULE, _("Displaying text from some given references…") )
                     for BBB,C,V in ( ('MAT','1','1'),('MAT','1','2'),('MAT','1','3'),('MAT','1','4'),('MAT','1','5'),('MAT','1','6'),('MAT','1','7'),('MAT','1','8') ):
                         svk = SimpleVerseKey( BBB, C, V )

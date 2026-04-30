@@ -68,7 +68,7 @@ from BibleOrgSys.InputOutput.USFMFilenames import USFMFilenames
 from BibleOrgSys.Formats.PTX7Bible import loadPTX7ProjectData
 from BibleOrgSys.InputOutput.ESFMFile import ESFMFile
 from BibleOrgSys.Formats.ESFMBibleBook import ESFMBibleBook, ESFM_SEMANTIC_TAGS
-from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntryList, InternalBibleEntry
+from bible_organisational_system import InternalBibleEntryList, InternalBibleEntry
 from BibleOrgSys.Bible import Bible
 from BibleOrgSys.Reference.BibleBooksCodes import BOOKLIST_88
 
@@ -1015,7 +1015,7 @@ def fullDemo() -> None:
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  {EsfmBib}" )
         if 1: # Not for briefDemo()
             from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
-            from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntry
+            from bible_organisational_system import InternalBibleEntry
             vPrint( 'Info', DEBUGGING_THIS_MODULE, "Displaying ESFM text from some given references…" )
             for BBB,C,V in ( ('MAT','1','1'),('MAT','1','2'),('MAT','1','3'),('MAT','1','4'),('MAT','1','5'),('MAT','1','6'),('MAT','1','7'),('MAT','1','8') ):
                 svk = SimpleVerseKey( BBB, C, V )

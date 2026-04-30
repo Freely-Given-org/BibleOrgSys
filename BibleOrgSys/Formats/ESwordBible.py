@@ -1165,7 +1165,7 @@ def createESwordBibleModule( self, outputFolder, controlDict ):
     """
     import zipfile
     from BibleOrgSys.Reference.USFM3Markers import OFTEN_IGNORED_USFM_HEADER_MARKERS, USFM_ALL_INTRODUCTION_MARKERS, USFM_BIBLE_PARAGRAPH_MARKERS, removeUSFMCharacterField, replaceUSFMCharacterFields
-    from BibleOrgSys.Internals.InternalBibleInternals import BOS_CUSTOM_NESTING_MARKERS, BOS_NESTING_MARKERS
+    from BibleOrgSys.Internals.InternalBibleBook import BOS_CUSTOM_NESTING_MARKERS, BOS_NESTING_MARKERS
     from BibleOrgSys.Formats.theWordBible import theWordOTBookLines, theWordNTBookLines, theWordBookLines, theWordIgnoredIntroMarkers
     def adjustLine( BBB:str, C:str, V:str, originalLine ):
         """

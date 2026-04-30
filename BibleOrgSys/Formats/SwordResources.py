@@ -41,7 +41,7 @@ from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 #from BibleOrgSys.Misc.singleton import singleton
 from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
-from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntryList, InternalBibleEntry
+from bible_organisational_system import InternalBibleEntryList, InternalBibleEntry
 
 
 LAST_MODIFIED_DATE = '2023-03-10' # by RJH

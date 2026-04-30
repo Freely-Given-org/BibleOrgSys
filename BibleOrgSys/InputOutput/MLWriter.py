@@ -42,7 +42,7 @@ from pathlib import Path
 
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
-from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleExtraList
+from bible_organisational_system import InternalBibleExtraList
 
 
 LAST_MODIFIED_DATE = '2022-11-22' # by RJH

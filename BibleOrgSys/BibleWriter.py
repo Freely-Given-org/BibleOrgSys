@@ -41,7 +41,7 @@ Contains functions:
     makeLists( outputFolderpath:Path|None=None )
     toBOSBCV( self, outputFolderpath:Path|None=None ) — one file per verse using our internal Bible format
     toPseudoUSFM( outputFolderpath:Path|None=None ) — this is our internal Bible format — exportable for debugging purposes
-            For more details see InternalBible.py, InternalBibleBook.py, InternalBibleInternals.py
+            For more details see InternalBible.py, InternalBibleBook.py
     toUSFM2( outputFolderpath:Path|None=None. removeVerseBridges=False )
     toUSFM3( outputFolderpath:Path|None=None. removeVerseBridges=False )
     toESFM( outputFolderpath:Path|None=None )

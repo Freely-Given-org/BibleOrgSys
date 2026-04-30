@@ -73,7 +73,7 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint, LARGE_DUMMY_VALUE
 from BibleOrgSys.Reference.USFM3Markers import USFM_ALL_BIBLE_PARAGRAPH_MARKERS, USFM_ALL_TITLE_MARKERS, USFM_ALL_INTRODUCTION_MARKERS, \
                         USFM_ALL_SECTION_HEADING_MARKERS, USFM_BIBLE_PARAGRAPH_MARKERS # OFTEN_IGNORED_USFM_HEADER_MARKERS
-from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntryList, InternalBibleEntry, InternalBibleExtra, InternalBibleExtraList, \
+from bible_organisational_system import InternalBibleEntryList, InternalBibleEntry, InternalBibleExtra, InternalBibleExtraList, \
     getSmallLeadingInt
 from bible_organisational_system import InternalBibleBookCVIndex, InternalBibleBookSectionIndex
 from BibleOrgSys.Reference.BibleReferences import BibleAnchorReference

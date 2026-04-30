@@ -43,7 +43,7 @@ import re
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Bible import Bible, BibleBook
-from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntryList, InternalBibleEntry
+from bible_organisational_system import InternalBibleEntryList, InternalBibleEntry
 from BibleOrgSys.Formats.uWNotesBible import loadYAML
 
 

@@ -35,7 +35,7 @@ import multiprocessing
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint, LARGE_DUMMY_VALUE
 from BibleOrgSys.Bible import Bible, BibleBook
-from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntryList, InternalBibleEntry
+from bible_organisational_system import InternalBibleEntryList, InternalBibleEntry
 
 
 LAST_MODIFIED_DATE = '2022-07-03' # by RJH
