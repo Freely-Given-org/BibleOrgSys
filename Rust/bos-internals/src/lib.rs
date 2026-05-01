@@ -79,6 +79,7 @@
 
 // Re-export core modules
 pub mod chapter_verse;
+pub mod checking;
 pub mod discovery;
 pub mod entry;
 pub mod entry_extras;

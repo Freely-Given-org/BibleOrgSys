@@ -431,7 +431,7 @@ mod tests {
             &ProcessLinesOptions::default(),
             &mut Vec::new(),
         );
-        println!("Adj text: {:?}", adj_text);
+        // println!("Adj text: {:?}", adj_text);
         assert_eq!(clean_text, " and¦29089= Parˊoh¦29090 =he¦29089_made¦29089_unresponsive¦29089 DOM¦29091 his/its¦29093=heart¦29093 also¦29094 at¦29095÷time¦29095 (the)¦29096÷this¦29096 and¦29097=not¦29097 he¦29098_let¦29098_go¦29098 DOM¦29099 the¦29101÷people¦29101.");
         assert!(extras.len() == 1); // Should have one footnote
         assert_eq!(extras[0].extra_type(), ExtraType::Footnote);
@@ -447,7 +447,7 @@ mod tests {
             &ProcessLinesOptions::default(),
             &mut Vec::new(),
         );
-        println!("Adj text: {:?}", adj_text);
+        // println!("Adj text: {:?}", adj_text);
         assert_eq!(clean_text, "The¦283645_vision¦283645_of¦283645 Yəshaˊyāh¦283646 the¦283647_son¦283647_of¦283647 ʼĀmōʦ¦283649 which¦283650 he¦283651_saw¦283651 on¦283652 Yəhūdāh/(Judah)¦283654 and¦283655÷Yərūshālam/(Jerusalem)¦283655 in¦283656÷the¦283656_days¦283656_of¦283656 ˊUzziyyāh¦283657 Yōtām/(Jotham)¦283658 ʼĀḩāz¦283659 Ḩizqiyyāh¦283660 the¦283661_kings¦283661_of¦283661 Yəhūdāh¦283662.");
         assert!(extras.is_empty());
 
@@ -461,7 +461,7 @@ mod tests {
             &ProcessLinesOptions::default(),
             &mut Vec::new(),
         );
-        println!("Adj text: {:?}", adj_text);
+        // println!("Adj text: {:?}", adj_text);
         assert_eq!(clean_text, "Hear¦283664 Oh¦283665_heavens¦283665 and¦283666÷give¦283666_ear¦283666 Oh¦283667_earth¦283667 if/because¦283668 YHWH¦283669 he¦283670_has¦283670_spoken¦283670 children¦283671 I¦283672_have¦283672_brought¦283672_up¦283672 and¦283673÷I¦283673_have¦283673_raised¦283673 and¦283674÷they¦283674 they¦283675_have¦283675_rebelled¦283675 against¦283676÷me¦283676.");
         assert!(extras.is_empty());
     }
@@ -553,13 +553,13 @@ mod tests {
         ];
         let options = ProcessLinesOptions::default();
         let processed = process_lines(raw_lines, "MRK", "GREEK", &options);
-        for entry in &processed {
-            println!("Marker: {}, Clean Text: '{}', Extras: {:?}", entry.marker(), entry.clean_text(), entry.extras());
-        }
+        // for entry in &processed {
+        //     println!("Greek Marker: {}, Clean Text: '{}', Extras: {:?}", entry.marker(), entry.clean_text(), entry.extras());
+        // }
 
         // Verification
         let markers: Vec<&str> = processed.iter().map(|e| e.marker()).collect();
-        println!("Markers: {:?}", markers);
+        // println!("Markers: {:?}", markers);
 
         // Should have start/end markers for chapters and verses due to nesting
         assert!(!markers.contains(&""), "{:?}", markers);
@@ -571,7 +571,7 @@ mod tests {
         assert!(markers.contains(&"¬p"), "{:?}", markers);
 
         // Find "Καὶ" at start of verse 24
-        let kai = processed.iter().find(|e| e.clean_text().contains("Καὶ")).expect("Should find Καὶ in verse 24");
+        let kai = processed.iter().find(|e| e.clean_text().starts_with("Καὶ")).expect("Should find Καὶ at beginning of verse 24");
         assert!(kai.has_extras());
         let extra = &kai.extras().unwrap()[0];
         assert_eq!(extra.extra_type(), ExtraType::WordWithAttributes);

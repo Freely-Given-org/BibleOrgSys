@@ -35,7 +35,7 @@ import pickle
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.OriginalLanguages import Hebrew
-from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntry, InternalBibleExtra, parseWordAttributes
+from bible_organisational_system import InternalBibleEntry, InternalBibleExtra, parseWordAttributes
 from BibleOrgSys.Formats.OSISXMLBible import OSISXMLBible
 from BibleOrgSys.Formats.PickledBible import PickledBible, ZIPPED_PICKLE_FILENAME_END
 
@@ -140,7 +140,7 @@ class HebrewWLCBibleAddon():
 
             if thisExtra.getType() == 'ww':
                 wwField = thisExtra.getText()
-                wwDict = parseWordAttributes( 'WLC', BBB, C, V, wwField, errorList=None )
+                wwDict = parseWordAttributes( wwField )
                 if 'morph' in wwDict and wwDict['morph'].startswith( 'OSHM:' ): # Open Scriptures Hebrew Morphology
                     wwDict['morph'] = wwDict['morph'][5:]
                 #if 'morph' in wwDict and wwDict['morph'].startswith( 'H' ): # H for Hebrew, A for Aramaic
@@ -719,7 +719,7 @@ def briefDemo() -> None:
     Main program to handle command line parameters and then run what they want.
     """
     from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
-    from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntryList, InternalBibleEntry
+    from bible_organisational_system import InternalBibleEntryList, InternalBibleEntry
 
     BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
@@ -872,7 +872,7 @@ def fullDemo() -> None:
     Full demo to check class is working
     """
     from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
-    from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntryList, InternalBibleEntry
+    from bible_organisational_system import InternalBibleEntryList, InternalBibleEntry
 
     BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 

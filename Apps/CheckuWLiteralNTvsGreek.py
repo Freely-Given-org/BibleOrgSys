@@ -54,8 +54,7 @@ This app also demonstrates how little actual code is required to use the BOS to 
 The (Python3) BOS is developed and well-tested on Linux (Ubuntu)
     but also runs on Windows and OS-X (although not so well tested).
 """
-# from gettext import gettext as _
-import logging
+# import logging
 
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
@@ -90,7 +89,7 @@ def main() -> None:
     door43CatalogResources = Door43CatalogResources()
     vPrint( 'Info', DEBUGGING_THIS_MODULE, door43CatalogResources )
     door43CatalogResources.fetchCatalog()
-    vPrint( 'Info', DEBUGGING_THIS_MODULE, '\n{door43CatalogResources}\n\n' )
+    vPrint( 'Info', DEBUGGING_THIS_MODULE, f'\n{door43CatalogResources}\n\n' )
 
     # Download and load all books from the UGNT = unfoldingWord® Greek New Testament
     UGNTDict = door43CatalogResources.searchBibles( 'el-x-koine', 'unfoldingWord® Greek New Testament' )

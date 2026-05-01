@@ -94,7 +94,6 @@ CHANGELOG:
     2025-05-31 Add useful rreplace function
     2025-11-19 Add mission critical flag to global parameters
 """
-from gettext import gettext as _
 import sys
 import logging
 import os.path
@@ -325,9 +324,8 @@ else: # we don't seem to have a pre-existing settings file -- save our default o
     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Writing default {APP_NAME} settings file v{SETTINGS_VERSION} to {BOS_SETTINGS_FILEPATH}")
     with open( BOS_SETTINGS_FILEPATH, 'wt', encoding='utf-8' ) as settingsFile: # It may or may not have previously existed
         # Put a (comment) heading in the file first
-        settingsFile.write( '# ' + _("{} settings file v{}").format( APP_NAME, SETTINGS_VERSION ) + '\n' )
-        settingsFile.write( '# ' + _("Originally saved {} as {}") \
-            .format( datetime.now().strftime('%Y-%m-%d %H:%M:%S'), BOS_SETTINGS_FILEPATH ) + '\n\n' )
+        settingsFile.write( f'# {APP_NAME} settings file v{SETTINGS_VERSION}\n' )
+        settingsFile.write( f"# Originally saved {datetime.now().strftime('%Y-%m-%d %H:%M:%S')} as {BOS_SETTINGS_FILEPATH}\n\n" )
 
         settingsData.write( settingsFile )
 if debugFlag and DEBUGGING_THIS_MODULE:
@@ -405,7 +403,7 @@ def setupLoggingToFile( SHORT_PROGRAM_NAMEParameter:str, programVersionParameter
     backupAnyExistingFile( filepath, numBackups=4 )
     #if os.access( filepath, os.F_OK ):
         #if DEBUGGING_THIS_MODULE or __name__ == '__main__':
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "setupLoggingToFile: {!r} already exists -- renaming it first!".format( filepath ) )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"setupLoggingToFile: {filepath!r} already exists -- renaming it first!" )
         #if os.access( filepath+'.bak', os.F_OK ):
             #os.remove( filepath+'.bak' )
         #os.rename( filepath, filepath+'.bak' )
@@ -414,7 +412,7 @@ def setupLoggingToFile( SHORT_PROGRAM_NAMEParameter:str, programVersionParameter
     # In Windows, doesn't seem to create the log file, even if given a filename rather than a filepath
     setLevel = logging.DEBUG if debugFlag else logging.INFO
     if DEBUGGING_THIS_MODULE: # otherwise the list of strings isn't declared above
-        dPrint( 'Verbose', DEBUGGING_THIS_MODULE, "BibleOrgSysGlobals.setBasicConfig to( {!r}, {}={}, {!r}, {!r} )".format( filepath, setLevel, LOGGING_NAME_DICT[setLevel], loggingLongFormat, loggingDateFormat ) )
+        dPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"BibleOrgSysGlobals.setBasicConfig to( {filepath!r}, {setLevel}={LOGGING_NAME_DICT[setLevel]}, {loggingLongFormat!r}, {loggingDateFormat!r} )" )
     # NOTE: This call to basicConfig MUST occur BEFORE any modules make any logging calls
     #   i.e., be careful of putting executable calls at module level that might log at module load time
     logging.basicConfig( filename=filepath, level=setLevel, format=loggingLongFormat, datefmt=loggingDateFormat )
@@ -1337,7 +1335,7 @@ def pickleObject( theObject, filename, folderName=None, disassembleObjectFlag=Fa
         if not os.access( folderName, os.R_OK ): # Make the folderName hierarchy if necessary
             os.makedirs( folderName )
         filepath = Path( folderName, filename )
-    vPrint( 'Info', DEBUGGING_THIS_MODULE, _("Saving object to {}…").format( filepath ) )
+    vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Saving object to {filepath}…" )
 
     if disassembleObjectFlag: # Pickles an object attribute by attribute (to help narrow down segfault)
         dPrint( 'Quiet', DEBUGGING_THIS_MODULE, '\nobject', disassembleObjectFlag, dir(theObject) )
@@ -1364,8 +1362,8 @@ def pickleObject( theObject, filename, folderName=None, disassembleObjectFlag=Fa
         try:
             pickle.dump( theObject, pickleOutputFile, pickle.HIGHEST_PROTOCOL )
         except pickle.PicklingError as err:
-            logging.critical( "BibleOrgSysGlobals: Unexpected error in pickleObject: {0} {1}".format( sys.exc_info()[0], err ) )
-            logging.critical( "BibleOrgSysGlobals.pickleObject: Unable to pickle into {}".format( filename ) )
+            logging.critical( f"BibleOrgSysGlobals: Unexpected error in pickleObject: {sys.exc_info()[0]} {err}" )
+            logging.critical( f"BibleOrgSysGlobals.pickleObject: Unable to pickle into {filename}" )
             for k,v in theObject.__dict__.items(): # Adapted from https://stackoverflow.com/questions/30499341/establishing-why-an-object-cant-be-pickled
                 try: pickle.dumps(v)
                 except:
@@ -1388,7 +1386,7 @@ def unpickleObject( filename, folderName=None ):
     if folderName is None: folderName = DEFAULT_WRITEABLE_CACHE_FOLDERPATH
 
     filepath = Path( folderName, filename )
-    vPrint( 'Info', DEBUGGING_THIS_MODULE, _("Loading object from pickle file {}…").format( filepath ) )
+    vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Loading object from pickle file {filepath}…" )
     with open( filepath, 'rb') as pickleInputFile:
         return pickle.load( pickleInputFile ) # The protocol version used is detected automatically, so we do not have to specify it
 # end of BibleOrgSysGlobals.unpickleObject
@@ -1413,8 +1411,8 @@ def setup( shortProgName:str, progVersion:str, lastModDate:str='', loggingFolder
     logging.info( f"{shortProgName} v{progVersion} started at {programStartTime.strftime('%H:%M')}" )
 
     # Handle command line parameters
-    parser = ArgumentParser( description='{} v{} {} {}'.format( shortProgName, progVersion, _("last modified"), lastModDate ) )
-    parser.add_argument( '--version', action='version', version='v{}'.format( progVersion ) )
+    parser = ArgumentParser( description=f'{shortProgName} v{progVersion} last modified {lastModDate}' )
+    parser.add_argument( '--version', action='version', version=f'v{progVersion}' )
     return parser
 # end of BibleOrgSysGlobals.setup
 
@@ -1491,12 +1489,12 @@ def introduceProgram( theirName:str, theirPROGRAM_NAME_VERSION:str, theirLastMod
         and maybe some modification dates if more verbose.
     """
     if verbosityLevel > 2:
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'{theirPROGRAM_NAME_VERSION} {_("last modified")} {theirLastModifiedDate}' )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'{theirPROGRAM_NAME_VERSION} last modified {theirLastModifiedDate}' )
         if theirName == '__main__':
             latestPythonModificationDate = getLatestPythonModificationDate()
             if verbosityLevel > 3 \
             or latestPythonModificationDate != theirLastModifiedDate:
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  ({_('Last BibleOrgSys code update was')} {latestPythonModificationDate})" )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  (Last BibleOrgSys code update was {latestPythonModificationDate})" )
     else:
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, theirPROGRAM_NAME_VERSION )
 

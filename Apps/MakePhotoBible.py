@@ -69,7 +69,6 @@ Because it repeatedly runs external programs (ImageMagick), the PhotoBible expor
 inputFolder = Path( '/mnt/HDs/Matigsalug/Bible/MBTV/' ) # Set your own here
 
 
-from gettext import gettext as _
 import os
 from pathlib import Path
 
@@ -100,7 +99,7 @@ def main() -> None:
         -v (verbose) is 4.
     """
     BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n{}: processing input folder {!r} …".format( SHORT_PROGRAM_NAME, inputFolder ) )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n{SHORT_PROGRAM_NAME}: processing input folder {!r} …" )
 
     # Try to detect and read/load the Bible file(s)
     unknownBible = UnknownBible( inputFolder ) # Tell it the folder to start looking in
@@ -111,7 +110,7 @@ def main() -> None:
     # If we were successful, do the export
     if loadedBible is not None:
         if BibleOrgSysGlobals.strictCheckingFlag: loadedBible.check()
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n{}: starting export (may take up to 60 minutes)…".format( SHORT_PROGRAM_NAME ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n{SHORT_PROGRAM_NAME}: starting export (may take up to 60 minutes)…" )
 
         # We only want to do the PhotoBible export (from the BibleWriter.py module)
         result = loadedBible.toPhotoBible() # Export as a series of small JPEG files (for cheap non-Java camera phones)
@@ -119,7 +118,7 @@ def main() -> None:
         #result = loadedBible.doAllExports( wantPhotoBible=True, wantODFs=True, wantPDFs=True )
         # Or you could choose a different export, for example:
         #result = loadedBible.toOSISXML()
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Result was: {}".format( result ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Result was: {result}" )
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Output should be in {os.path.join(os.getcwd(), BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH)} folder.")
 # end of main
 

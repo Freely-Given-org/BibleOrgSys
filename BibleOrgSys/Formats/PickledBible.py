@@ -58,7 +58,7 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Bible import Bible, BibleBook
 from BibleOrgSys.Internals.InternalBibleBook import InternalBibleBook
-from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntryList
+from bible_organisational_system import InternalBibleEntryList
 from bible_organisational_system import InternalBibleBookCVIndex, InternalBibleBookSectionIndex
 
 
@@ -291,8 +291,6 @@ def createPickledBible( BibleObject:Bible, outputFolder=None, metadataDict:dict[
     from BibleOrgSys.Internals.InternalBible import PROGRAM_NAME_VERSION as IBPROGRAM_NAME_VERSION
     from BibleOrgSys.Internals.InternalBibleBook import LAST_MODIFIED_DATE as IBBModifiedDate
     from BibleOrgSys.Internals.InternalBibleBook import PROGRAM_NAME_VERSION as IBBPROGRAM_NAME_VERSION
-    from BibleOrgSys.Internals.InternalBibleInternals import LAST_MODIFIED_DATE as IBIModifiedDate
-    from BibleOrgSys.Internals.InternalBibleInternals import PROGRAM_NAME_VERSION as IBIPROGRAM_NAME_VERSION
     filepath = os.path.join( outputFolder, VERSION_FILENAME )
     createdFilenames.append( VERSION_FILENAME )
     with open( filepath, 'wb' ) as pickleOutputFile:
@@ -302,7 +300,6 @@ def createPickledBible( BibleObject:Bible, outputFolder=None, metadataDict:dict[
                         datetime.now().isoformat(' '),
                         f'{IBPROGRAM_NAME_VERSION} {"last modified"} {IBModifiedDate}',
                         f'{IBBPROGRAM_NAME_VERSION} {"last modified"} {IBBModifiedDate}',
-                        f'{IBIPROGRAM_NAME_VERSION} {"last modified"} {IBIModifiedDate}',
                         BibleObject.getAName(), BibleObject.getBookList(),
                         metadataDict ):
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "String size", something, BibleOrgSysGlobals.totalSize( something ) )
@@ -842,7 +839,7 @@ def briefDemo() -> None:
                 vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "newObj is", newObj )
             if 1:
                 from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
-                from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntry
+                from bible_organisational_system import InternalBibleEntry
                 for BBB,C,V in ( ('MAT','1','1'),('MAT','1','2'),('MAT','1','3'),('MAT','1','4'),('MAT','1','5'),('MAT','1','6'),('MAT','1','7'),('MAT','1','8') ):
                     svk = SimpleVerseKey( BBB, C, V )
                     shortText = svk.getShortText()
@@ -1048,7 +1045,7 @@ def fullDemo() -> None:
                     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "newObj is", newObj )
                 if 1:
                     from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
-                    from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntry
+                    from bible_organisational_system import InternalBibleEntry
                     for BBB,C,V in ( ('MAT','1','1'),('MAT','1','2'),('MAT','1','3'),('MAT','1','4'),('MAT','1','5'),('MAT','1','6'),('MAT','1','7'),('MAT','1','8') ):
                         svk = SimpleVerseKey( BBB, C, V )
                         shortText = svk.getShortText()

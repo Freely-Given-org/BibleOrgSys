@@ -295,7 +295,7 @@ class BibleStylesheet():
     def validate( self ):
         """
         """
-        from BibleOrgSys.Internals.InternalBibleInternals import BOS_ALL_CUSTOM_MARKERS
+        from BibleOrgSys.Internals.InternalBibleBook import BOS_ALL_CUSTOM_MARKERS
         for USFMMarker, styleData in self.dataDict.items():
             dPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"validate {USFMMarker} {styleData}" )
             if USFMMarker.startswith( 'Heb' ) or USFMMarker.startswith( 'WordRef' ): continue

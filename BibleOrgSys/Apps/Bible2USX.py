@@ -58,7 +58,6 @@ There is also a minimum version of this same app (Apps/Bible2USX.minimal.py)
 The BOS is developed and well-tested on Linux (Ubuntu)
     but also runs on Windows (although not so well tested).
 """
-# from gettext import gettext as _
 import os
 import shutil
 

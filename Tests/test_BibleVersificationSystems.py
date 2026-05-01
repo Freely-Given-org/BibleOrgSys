@@ -38,6 +38,7 @@ from BibleOrgSys.Reference import BibleVersificationSystems
 
 
 LAST_MODIFIED_DATE = '2020-04-06' # by RJH
+SHORT_PROGRAM_NAME = "test_BVS"
 PROGRAM_NAME = "Bible Versification Systems tests"
 PROGRAM_VERSION = '0.48'
 PROGRAM_NAME_VERSION = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'

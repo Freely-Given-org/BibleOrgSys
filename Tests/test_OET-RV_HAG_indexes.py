@@ -35,7 +35,7 @@ import sys
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Formats.ESFMBible import ESFMBible
-from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntryList, InternalBibleEntry, \
+from bible_organisational_system import InternalBibleEntryList, InternalBibleEntry, \
     InternalBibleBookCVIndex, InternalBibleBookSectionIndex
 
 
@@ -62,7 +62,7 @@ def load_OET_RV_Haggai() -> ESFMBible|None:
 
     if 0: # Check that it loaded correctly
         from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
-        from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntry
+        from bible_organisational_system import InternalBibleEntry
         vPrint( 'Info', DEBUGGING_THIS_MODULE, "Displaying ESFM text from some given references…" )
         for thisBBB,C,V in ( (BBB,'1','1'),(BBB,'1','2'),(BBB,'1','3'),(BBB,'1','4'),(BBB,'1','5'),(BBB,'1','6'),(BBB,'2','1'),(BBB,'2','23') ):
             svk = SimpleVerseKey( thisBBB, C, V )
@@ -279,7 +279,7 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Formats.ESFMBible import ESFMBible
 from BibleOrgSys.Formats.ESFMBibleBook import ESFMBibleBook
-from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntryList, InternalBibleEntry, \
+from bible_organisational_system import InternalBibleEntryList, InternalBibleEntry, \
     InternalBibleBookCVIndex, InternalBibleBookSectionIndex
 
 
@@ -1503,7 +1503,7 @@ def load_OET_RV_Haggai() -> ESFMBible|None:
     
     if 1: # Check that it loaded correctly
         from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
-        from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntry
+        from bible_organisational_system import InternalBibleEntry
         vPrint( 'Info', DEBUGGING_THIS_MODULE, "Displaying ESFM text from some given references…" )
         for thisBBB,C,V in ( (BBB,'1','1'),(BBB,'1','2'),(BBB,'1','3'),(BBB,'1','4'),(BBB,'1','5'),(BBB,'1','6'),(BBB,'2','1'),(BBB,'2','23') ):
             svk = SimpleVerseKey( thisBBB, C, V )

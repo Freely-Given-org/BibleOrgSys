@@ -339,6 +339,7 @@ impl InternalBibleBookCVIndex {
             let mut is_cv_start = false;
             
             let marker = entry.marker();
+            assert!(!marker.is_empty() && !marker.contains('\\'), "Entry marker should not be empty and should not contain a backslash: found '{}'", marker);
             if marker == "c" {
                 next_chapter = CompactString::from(entry.clean_text());
                 next_verse = CompactString::from("0");

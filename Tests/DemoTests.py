@@ -479,15 +479,6 @@ def doAll( testType:str, failures:list[str], failureDetails:list[str],
         failureDetails.append( f"{moduleName}: {formatFailureDetails( err )}" )
 
 
-    moduleName = 'InternalBibleInternals'
-    try:
-        from BibleOrgSys.Internals import InternalBibleInternals
-        doTest( moduleName, InternalBibleInternals )
-    except KeyboardInterrupt: interrupted=True; return
-    except (ImportError, SyntaxError) as err:
-        print( f"{moduleName} import failed!" )
-        failures.append( f"{moduleName} import" )
-        failureDetails.append( f"{moduleName}: {formatFailureDetails( err )}" )
     moduleName = 'InternalBibleBook'
     try:
         from BibleOrgSys.Internals import InternalBibleBook

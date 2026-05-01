@@ -27,7 +27,6 @@
 Module which tests the regular expression for Bible Books Codes.
 """
 
-from gettext import gettext as _
 import sys
 import re
 from collections import defaultdict

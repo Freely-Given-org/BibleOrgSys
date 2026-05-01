@@ -11,6 +11,13 @@ __all__ = [
     "processLines",
     "discoverBook",
     "discoverBible",
+    "parseWordAttributes",
+    "validateMarkers",
+    "getVersification",
+    "getAddedUnits",
+    "checkBook",
+    "DiscoveryFlags",
+    "CheckOptions",
     "InternalBibleExtra",
     "InternalBibleExtraList",
     "PyInternalBibleExtraListIter",
@@ -49,6 +56,44 @@ def processLines(
 ) -> InternalBibleEntryList: ...
 def discoverBook(entries: InternalBibleEntryList, bbb: str) -> BookDiscoveryResults: ...
 def discoverBible(books_dict: dict) -> BibleDiscoveryResults: ...
+def parseWordAttributes(*args, **_kwargs) -> dict:
+    """
+    Parse word attributes from a USFM3 `\w` field.
+    Returns a dict for backward compatibility with the old Python implementation.
+    """
+
+def validateMarkers(
+    entries: InternalBibleEntryList,
+    book_code: str,
+    work_name: str,
+    strict_checking: bool,
+) -> dict: ...
+def getVersification(
+    entries: InternalBibleEntryList, book_code: str, work_name: str
+) -> dict: ...
+def getAddedUnits(entries: InternalBibleEntryList, book_code: str) -> dict: ...
+def checkBook(
+    entries: InternalBibleEntryList,
+    book_code: str,
+    work_name: str,
+    options: CheckOptions,
+    discovery: DiscoveryFlags,
+) -> dict: ...
+
+@t.final
+class DiscoveryFlags:
+    def __init__(
+        self,
+        partly_done: bool = False,
+        percentage_progress: float = 0.0,
+        seems_finished: bool = False,
+        have_main_headings: bool = False,
+        have_introductory_text: bool = False,
+    ) -> None: ...
+
+@t.final
+class CheckOptions:
+    def __init__(self) -> None: ...
 
 @t.final
 class InternalBibleExtra:

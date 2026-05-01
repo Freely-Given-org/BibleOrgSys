@@ -16,6 +16,10 @@ use crate::discovery_bindings::{
 use crate::extras_bindings::{PyInternalBibleExtra, PyInternalBibleExtraList, PyInternalBibleExtraListIter};
 use crate::processing_bindings::{PyObjectType, PyProcessLinesOptions, py_process_lines};
 use crate::section_index_bindings::{PyInternalBibleBookSectionIndex, PySectionIndexEntry, PySectionIndexIter};
+use crate::checking_bindings::{
+    py_validate_processed_markers, py_get_versification, py_get_added_units, py_check_book,
+    PyDiscoveryFlags, PyCheckOptions,
+};
 
 /// Python module for BibleOrgSys internals.
 #[pymodule]
@@ -31,6 +35,14 @@ fn bible_organisational_system(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(py_process_lines, m)?)?;
     m.add_function(wrap_pyfunction!(py_discover_book, m)?)?;
     m.add_function(wrap_pyfunction!(py_discover_bible, m)?)?;
+    m.add_function(wrap_pyfunction!(py_parse_word_attributes, m)?)?;
+    m.add_function(wrap_pyfunction!(py_validate_processed_markers, m)?)?;
+    m.add_function(wrap_pyfunction!(py_get_versification, m)?)?;
+    m.add_function(wrap_pyfunction!(py_get_added_units, m)?)?;
+    m.add_function(wrap_pyfunction!(py_check_book, m)?)?;
+
+    m.add_class::<PyDiscoveryFlags>()?;
+    m.add_class::<PyCheckOptions>()?;
 
     // Extra types
     m.add_class::<PyInternalBibleExtra>()?;
@@ -104,4 +116,43 @@ pub fn set_rust_debug(value: bool) {
 #[pyfunction]
 pub fn set_rust_strict_checking(value: bool) {
     STRICT_CHECKING.store(value, Ordering::Relaxed);
+}
+
+/// Parse word attributes from a USFM3 `\w` field.
+/// Returns a dict for backward compatibility with the old Python implementation.
+#[pyfunction]
+#[pyo3(name = "parseWordAttributes")]
+#[pyo3(signature = (*args, **_kwargs))]
+fn py_parse_word_attributes<'py>(
+    py: Python<'py>,
+    args: &Bound<'py, pyo3::types::PyTuple>,
+    _kwargs: Option<&Bound<'py, pyo3::types::PyDict>>,
+) -> PyResult<Bound<'py, pyo3::types::PyDict>> {
+    // The old Python version took: (workName, BBB, C, V, wwField, errorList=None)
+    // We only care about wwField (the 5th argument or the only argument if called with just the string)
+    let ww_field = if args.len() == 1 {
+        args.get_item(0)?.extract::<String>()?
+    } else if args.len() >= 5 {
+        args.get_item(4)?.extract::<String>()?
+    } else {
+        return Err(pyo3::exceptions::PyTypeError::new_err(
+            "parseWordAttributes expects at least 1 argument (wwField) or 5 (workName, BBB, C, V, wwField)",
+        ));
+    };
+
+    let result = parsing::parse_word_attributes(&ww_field)
+        .map_err(|e| pyo3::exceptions::PyValueError::new_err(e.to_string()))?;
+
+    let dict = pyo3::types::PyDict::new(py);
+    dict.set_item("word", result.word)?;
+    if let Some(lemma) = result.lemma {
+        dict.set_item("lemma", lemma)?;
+    }
+    if let Some(strong) = result.strong {
+        dict.set_item("strong", strong)?;
+    }
+    for (k, v) in result.extra {
+        dict.set_item(k, v)?;
+    }
+    Ok(dict)
 }

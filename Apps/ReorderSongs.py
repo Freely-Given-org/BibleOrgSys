@@ -46,7 +46,6 @@ Basically, read the file in, sort by the contents of \s and write it out with ne
 
     etc.
 """
-from gettext import gettext as _
 import sys
 import os
 
@@ -77,11 +76,11 @@ def main() -> None:
 
     # Read our sample data
     songsInputFilepath = os.path.join( testFolder, testFile ) # Relative to module call, not cwd
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Loading songs from {}…").format( songsInputFilepath ) )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Loading songs from {songsInputFilepath}…" )
     songs = SFMFile.SFMRecords()
     # Left the four default parameters at the end of the next line so you can see what's available
     songs.read( songsInputFilepath, key='c', ignoreSFMs=None, ignoreEntries=None, changePairs=None, encoding='utf-8' )
-    vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("  {} songs loaded").format( len(songs.records) ) )
+    vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  {len(songs.records} songs loaded" ) )
     vPrint( 'Never', DEBUGGING_THIS_MODULE, songs )
 
     # Extract the information out of the file that we want to use for sorting
@@ -96,19 +95,19 @@ def main() -> None:
 
     # Now we sort the records by the \s field and write them out to a new file in the new, sorted order
     songsOutputFilepath = os.path.join( outputFolder, testFile ) # Relative to module call, not cwd
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Writing reordered songs to {}…".format( songsOutputFilepath ) )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Writing reordered songs to {songsOutputFilepath}…" )
     with open( songsOutputFilepath, 'wt', encoding='utf-8' ) as outputFile:
         for k,keyPair in enumerate( sorted(keyPairs) ):
             vPrint( 'Never', DEBUGGING_THIS_MODULE, "keyPair", keyPair )
-            outputFile.write( '\n\\c {}\n'.format( k+1 ) ) # Output our new (numbered) c line at the start of the record
+            outputFile.write( f'\n\\c {k+1}\n' ) # Output our new (numbered) c line at the start of the record
             songRecord = songs.records[ keyPair[1] ] # Get the record (song) that we need
             for s,songLine in enumerate( songRecord ):
                 vPrint( 'Never', DEBUGGING_THIS_MODULE, "songLine", s, songLine )
                 if s == 0: continue # skip old c line
                 outputFile.write( '\\{} {}\n'.format( *songLine ) )
-    vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  {} songs written".format( k+1 ) )
+    vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  {k+1} songs written" )
 
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "{} finished.".format( PROGRAM_NAME_VERSION ) )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{PROGRAM_NAME_VERSION} finished." )
 #end of main
 
 def fullDemo() -> None:

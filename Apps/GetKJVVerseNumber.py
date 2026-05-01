@@ -53,7 +53,6 @@ The (Python3) BOS is developed and well-tested on Linux (Ubuntu)
     but also runs on Windows (although not so well tested).
 """
 
-from gettext import gettext as _
 
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
@@ -88,10 +87,10 @@ def main() -> None:
     ourVersificationSystem = ourBibleOrganisationalSystem.getVersificationSystemName()
     ourBibleSingleReference = BibleSingleReference( ourBibleOrganisationalSystem )
 
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Use QUIT or EXIT to finish.") )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Use QUIT or EXIT to finish." )
 
     while True: # Loop until they stop it
-        userInput = input( '\n' + _("Enter a verse number 1..31102 or a single Bible verse reference (or QUIT): ") )
+        userInput = input( '\n' + "Enter a verse number 1..31102 or a single Bible verse reference (or QUIT): " )
         if userInput.lower() in ('exit', 'quit', 'q', 'stop', 'halt',):
             break
 
@@ -101,9 +100,9 @@ def main() -> None:
         if userInt:
             if 1 <= userInt <= 31102:
                 BBB, C, V = ourBibleOrganisationalSystem.convertAbsoluteVerseNumber( userInt )
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("{} verse number {} is {} {}:{}").format( ourVersificationSystem, userInt, BBB, C, V ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{ourVersificationSystem} verse number {userInt} is {BBB} {C}:{V}" )
             else:
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Absolute verse numbers must be in range 1..31,102.") )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Absolute verse numbers must be in range 1..31,102." )
 
         else: # assume it's a Bible reference
             adjustedUserInput = userInput
@@ -116,13 +115,13 @@ def main() -> None:
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, results )
             successFlag, haveWarnings, BBB, C, V, S = results
             if successFlag:
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("{!r} converted to {} {}:{} in our internal system.").format( userInput, BBB, C, V ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{!r} converted to {userInput} {BBB}:{C} in our internal system." )
                 absoluteVerseNumber = ourBibleOrganisationalSystem.getAbsoluteVerseNumber( BBB, C, V )
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("  {} {}:{} is verse number {:,} in the {} versification system.").format( BBB, C, V, absoluteVerseNumber, ourVersificationSystem ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  {BBB} {C}:{V} is verse number {absoluteVerseNumber:,} in the {ourVersificationSystem} versification system." )
                 if BibleOrgSysGlobals.debugFlag:
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("  {} {}:{} is verse number 0x{:04x} in the {} versification system.").format( BBB, C, V, absoluteVerseNumber, ourVersificationSystem ) )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  {BBB} {C}:{V} is verse number 0x{absoluteVerseNumber:04x} in the {ourVersificationSystem} versification system." )
             else:
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Unable to find a valid single verse reference in your input: {!r}").format( userInput ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Unable to find a valid single verse reference in your input: {!r}" )
 # end of main
 
 def fullDemo() -> None:

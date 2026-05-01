@@ -404,6 +404,149 @@ pub fn all_end_markers() -> Vec<CompactString> {
     all_nesting_markers().iter().map(|m| end_marker(m)).collect()
 }
 
+/// Content type for a USFM marker.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum MarkerContentType {
+    /// Always has content
+    Always,
+    /// Sometimes has content
+    Sometimes,
+    /// Never has content
+    Never,
+}
+
+/// Closure type for a USFM marker.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum MarkerClosureType {
+    /// Always closed (e.g. \f ... \f*)
+    Always,
+    /// Optionally closed
+    Optional,
+    /// Never closed
+    Never,
+    /// Self-closing
+    SelfClosed,
+}
+
+/// Section where a marker commonly occurs.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum MarkerSection {
+    Header,
+    Introduction,
+    Numbering,
+    Text,
+    CanonicalText,
+    Poetry,
+    TableRow,
+    AcrosticVerse,
+    Other,
+}
+
+impl std::fmt::Display for MarkerSection {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let s = match self {
+            Self::Header => "Header",
+            Self::Introduction => "Introduction",
+            Self::Numbering => "Numbering",
+            Self::Text => "Text",
+            Self::CanonicalText => "Canonical Text",
+            Self::Poetry => "Poetry",
+            Self::TableRow => "Table row",
+            Self::AcrosticVerse => "Acrostic verse",
+            Self::Other => "Other",
+        };
+        write!(f, "{}", s)
+    }
+}
+
+/// Get the content type for a raw USFM marker.
+pub fn get_raw_marker_content_type(marker: &str) -> MarkerContentType {
+    let raw = normalize_marker(marker);
+    match raw {
+        "b" | "ib" | "ts" => MarkerContentType::Never,
+        _ => {
+            if paragraph_markers::is_paragraph(raw) || heading_markers::is_heading(raw) || introduction_markers::is_introduction(raw) {
+                MarkerContentType::Sometimes
+            } else {
+                MarkerContentType::Always
+            }
+        }
+    }
+}
+
+/// Get the content type for a processed USFM marker.
+pub fn get_processed_marker_content_type(marker: &str) -> MarkerContentType {
+    let raw = normalize_marker(marker);
+    match raw {
+        "b" | "ib" | "nb" | "ts" | "v" | "c" | "headers"|"¬headers" | "intro"|"¬intro" | "¬iot" | "chapters"|"¬chapters" => MarkerContentType::Never,
+        _ => {
+            if paragraph_markers::is_paragraph(raw) || heading_markers::is_heading(raw) || introduction_markers::is_introduction(raw) {
+                MarkerContentType::Sometimes
+            } else {
+                MarkerContentType::Always
+            }
+        }
+    }
+}
+
+/// Get the closure type for a USFM marker.
+pub fn get_marker_closure_type(marker: &str) -> MarkerClosureType {
+    let raw = normalize_marker(marker);
+    match raw {
+        "f" | "fe" | "x" | "fig" | "str" | "sem" | "ww" | "vp" => MarkerClosureType::Always,
+        "add" | "bk" | "dc" | "nd" | "ord" | "pn" | "qt" | "sig" | "sls" | "tl" | "wj" => MarkerClosureType::Always,
+        "bd" | "it" | "bdit" | "no" | "sc" | "sup" => MarkerClosureType::Always,
+        "ndx" | "pro" | "w" | "wg" | "wh" | "wa" => MarkerClosureType::Always,
+        "ca" | "va" | "vp" | "qs" | "qac" => MarkerClosureType::Always,
+        "jmp" => MarkerClosureType::Optional,
+        _ => MarkerClosureType::Never,
+    }
+}
+
+/// Get the section where a marker commonly occurs.
+pub fn marker_occurs_in(marker: &str) -> MarkerSection {
+    let raw = normalize_marker(marker);
+    if title_markers::ALL.contains(&raw) || matches!(raw, "id" | "ide" | "usfm" | "sts" | "rem") {
+        MarkerSection::Header
+    } else if introduction_markers::is_introduction(raw) {
+        MarkerSection::Introduction
+    } else if matches!(raw, "c" | "v" | "cp" | "vp" | "ca" | "va") {
+        MarkerSection::Numbering
+    } else if matches!(raw, "q" | "q1" | "q2" | "q3" | "q4" | "qr" | "qc" | "qa" | "qm" | "qm1" | "qm2" | "qm3" | "qm4") {
+        MarkerSection::Poetry
+    } else if matches!(raw, "li" | "li1" | "li2" | "li3" | "li4") {
+        MarkerSection::Text
+    } else if matches!(raw, "tr" | "th" | "tc" | "thr" | "tcr") {
+        MarkerSection::TableRow
+    } else if matches!(raw, "qac") {
+        MarkerSection::AcrosticVerse
+    } else if paragraph_markers::is_paragraph(raw) {
+        MarkerSection::Text
+    } else {
+        MarkerSection::Other
+    }
+}
+
+/// Check if a marker is a newline marker.
+pub fn is_newline_marker(marker: &str) -> bool {
+    let raw = normalize_marker(marker);
+    paragraph_markers::is_paragraph(raw)
+        || heading_markers::is_heading(raw)
+        || introduction_markers::is_introduction(raw)
+        || title_markers::ALL.contains(&raw)
+        || matches!(raw, "c" | "v" | "id" | "ide" | "usfm" | "sts" | "rem" | "cp" | "cl")
+}
+
+/// Check if a marker is a character marker (inline).
+pub fn is_internal_marker(marker: &str) -> bool {
+    !is_newline_marker(marker) && !is_end_marker(marker)
+}
+
+/// Check if a marker is a deprecated USFM marker.
+pub fn is_deprecated_marker(marker: &str) -> bool {
+    matches!(marker, "h1" | "h2" | "h3" | "mt" | "mte" | "imt" | "imte" | "s" | "ms" | "is" | "li" | "pi" | "ph" | "q" | "qm" | "th" | "thr" | "tc" | "tcr")
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
