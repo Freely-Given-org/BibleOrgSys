@@ -695,6 +695,57 @@ mod tests {
     use bos_books_codes::is_valid_reference_abbreviation;
 
     #[test]
+    fn test_oet_lv_discovery() {
+        let test_folder_path = "../../Tests/DataFilesForTests/OET-LV";
+        let mut books = IndexMap::new();
+
+        let paths = fs::read_dir(test_folder_path).expect("Could not read OET-LV folder");
+        for path in paths {
+            let path = path.unwrap().path();
+            if path.is_file() && path.extension().and_then(|s| s.to_str()) == Some("ESFM") {
+                let filename = path.file_name().unwrap().to_str().unwrap();
+                // OET-LV_HAG.ESFM -> HAG
+                let bos_book_code = filename.split('_').nth(1).unwrap().split('.').next().unwrap();
+                if bos_book_code != "DAG" && bos_book_code != "ES1" && bos_book_code != "ES2" { // Need to sort out these OET-LV filenames
+                    assert!(is_valid_reference_abbreviation(bos_book_code), "Invalid book code: {}", bos_book_code); // Not really required here, but a good test for bos_books_codes
+                }
+                
+                let content = fs::read_to_string(&path).expect("Could not read file");
+                let mut raw_lines = Vec::new();
+                for line in content.lines() {
+                    if line.trim().is_empty() { continue; }
+                    let (marker, text) = match line.split_once(' ') {
+                        Some((m, t)) => (m, t),
+                        None => (line, ""),
+                    };
+                    let marker = marker.strip_prefix('\\').unwrap_or(marker);
+                    raw_lines.push((marker.to_string(), text.to_string()));
+                }
+
+                let options = ProcessLinesOptions::default();
+                let processed = process_lines(raw_lines, bos_book_code, "OET-LV", &options);
+                books.insert(bos_book_code.to_string(), processed);
+            }
+        }
+
+        assert!(!books.is_empty(), "Should have loaded some books");
+        let results = discover_bible(&books);
+
+        // Basic verification
+        assert!(results.books.contains_key("HAG"));
+        let hag = &results.books["HAG"];
+        assert_eq!(hag.chapter_count, Some(2));
+        // OET-RV Haggai has 15 + 23 = 38 verses
+        assert_eq!(hag.verse_count, Some(38));
+        assert_eq!(hag.completed_verse_count, 38);
+        assert!(hag.word_count > 0);
+        assert_eq!(hag.seems_finished, Some(true));
+
+        println!("OET-RV Progress: {}", results.all.percentage_progress_by_verse);
+        assert!(!results.all.percentage_progress_by_verse.is_empty());
+    }
+
+    #[test]
     fn test_oet_rv_discovery() {
         let test_folder_path = "../../Tests/DataFilesForTests/OET-RV";
         let mut books = IndexMap::new();
@@ -707,7 +758,7 @@ mod tests {
                 // OET-RV_HAG.ESFM -> HAG
                 let bos_book_code = filename.split('_').nth(1).unwrap().split('.').next().unwrap();
                 if bos_book_code != "DAG" && bos_book_code != "ES1" && bos_book_code != "ES2" { // Need to sort out these OET-RV filenames
-                    assert!(is_valid_reference_abbreviation(bos_book_code), "Invalid book code: {}", bos_book_code); // Not really requred here, but a good test for bos_books_codes
+                    assert!(is_valid_reference_abbreviation(bos_book_code), "Invalid book code: {}", bos_book_code); // Not really required here, but a good test for bos_books_codes
                 }
                 
                 let content = fs::read_to_string(&path).expect("Could not read file");
