@@ -539,6 +539,7 @@ pub fn add_verse_start_markers(entries: InternalBibleEntryList) -> InternalBible
     for j in 0..num_entries {
         let entry = &entries_vec[j];
         let marker = entry.marker();
+        assert!(!marker.is_empty() && !marker.contains('\\'), "Entry marker should not be empty and should not contain a backslash: found '{}'", marker);
         
         if fields_preceded.contains(&marker) {
             // Look ahead for next 'v'
@@ -606,17 +607,20 @@ mod tests {
 
         let options = crate::processing::ProcessLinesOptions::default();
         let processed = crate::processing::process_lines(raw_lines, "HAG", "OET-LV", &options);
-        
-        println!("Final entries: {}", processed.len());
-
-        assert_eq!(processed.len(), 141, "{}", processed.iter().map(|e| e.marker()).collect::<Vec<_>>().join(","));
+        println!("Final OET-LV Haggai processed line entries: {}", processed.len());
         
         // Verify some key structural markers from the reference test
         assert_eq!(processed[9].marker(), "headers");
         assert_eq!(processed[16].marker(), "¬headers");
         assert_eq!(processed[17].marker(), "chapters");
         assert_eq!(processed[18].marker(), "c");
+        assert_eq!(processed[18].clean_text(), "1");
+        assert_eq!(processed[139].marker(), "¬c");
+        assert_eq!(processed[139].clean_text(), "2");
         assert_eq!(processed[140].marker(), "¬chapters");
+        assert!(processed[140].clean_text().is_empty());
+
+        assert_eq!(processed.len(), 141, "{}", processed.iter().map(|e| e.marker()).collect::<Vec<_>>().join(","));
     }
 
     #[test]
@@ -645,10 +649,7 @@ mod tests {
 
         let options = crate::processing::ProcessLinesOptions::default();
         let processed = crate::processing::process_lines(raw_lines, "HAG", "OET-RV", &options);
-        
-        println!("Final entries: {}", processed.len());
-
-        assert_eq!(processed.len(), 188, "Expected 188 entries after nesting and verse start markers");
+        println!("Final OET-RV Haggai processed line entries: {}", processed.len());
         
         // Verify some key structural markers from the reference test
         assert_eq!(processed[5].marker(), "headers");
@@ -657,8 +658,13 @@ mod tests {
         assert_eq!(processed[21].marker(), "¬intro");
         assert_eq!(processed[22].marker(), "chapters");
         assert_eq!(processed[23].marker(), "c");
+        assert_eq!(processed[23].clean_text(), "1");
         assert_eq!(processed[24].marker(), "v=");
         assert_eq!(processed[186].marker(), "¬c");
+        assert_eq!(processed[186].clean_text(), "2");
         assert_eq!(processed[187].marker(), "¬chapters");
+        assert!(processed[187].clean_text().is_empty());
+
+        assert_eq!(processed.len(), 188, "Expected 188 entries after nesting and verse start markers");
     }
 }

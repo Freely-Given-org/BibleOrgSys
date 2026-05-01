@@ -109,7 +109,7 @@ impl Default for CheckOptions {
 }
 
 /// Port of `InternalBibleBook.validateMarkers`.
-pub fn validate_markers(
+pub fn validate_processed_markers(
     entries: &InternalBibleEntryList,
     book_code: &str,
     _work_name: &str,
@@ -185,7 +185,7 @@ pub fn validate_markers(
 
         if !text.is_empty() && text.contains('\\') {
             static MARKER_RE: std::sync::LazyLock<regex::Regex> = std::sync::LazyLock::new(|| {
-                regex::Regex::new(r"\\(\+?[a-z0-9]{1,6})").unwrap()
+                regex::Regex::new(r"\\(\+?[a-z1-4]{1,6})").unwrap()
             });
 
             for cap in MARKER_RE.captures_iter(text) {
@@ -431,13 +431,13 @@ pub fn do_check_sfms(
 
         let line_location = format!("{} {}:{}", book_code, chapter, verse);
 
-        let content_type = markers::get_marker_content_type(marker);
+        let content_type = markers::get_processed_marker_content_type(marker);
         if marker_text_empty && extras.is_none() && (content_type == markers::MarkerContentType::Always || matches!(marker, "v~" | "c~" | "c#")) {
-            results.add_priority_error(empty_field_priority, book_code, &chapter, &verse, format!("Marker '{}' (from '{}') should always have text", marker, original_marker));
+            results.add_priority_error(empty_field_priority, book_code, &chapter, &verse, format!("Processed marker '{}' (from '{}') should always have text", marker, original_marker));
             if empty_field_priority >= high_empty_field_priority {
-                results.newline_marker_errors.push(format!("{} Marker {:?} has no content", line_location, marker));
+                results.newline_marker_errors.push(format!("{} Processed marker {:?} has no content", line_location, marker));
             } else {
-                results.newline_marker_errors.push(format!("{} Marker {:?} should always have text", line_location, original_marker));
+                results.newline_marker_errors.push(format!("{} Processed marker {:?} should always have text", line_location, original_marker));
             }
         }
 
@@ -464,7 +464,7 @@ pub fn do_check_sfms(
         if !text.is_empty() && text.contains('\\') {
             let mut hierarchy = Vec::new();
             static INT_MARKER_RE: std::sync::LazyLock<regex::Regex> = std::sync::LazyLock::new(|| {
-                regex::Regex::new(r"\\(\+?[a-z0-9]{1,6}\*?)").unwrap()
+                regex::Regex::new(r"\\(\+?[a-z1-4]{1,6}\*?)").unwrap()
             });
 
             for cap in INT_MARKER_RE.captures_iter(text) {
@@ -858,7 +858,7 @@ pub fn do_check_notes(
                 
                 // Extract markers from extra_text
                 static EXTRA_INT_MARKER_RE: std::sync::LazyLock<regex::Regex> = std::sync::LazyLock::new(|| {
-                    regex::Regex::new(r"\\(\+?[a-z0-9]{1,6}\*?)").unwrap()
+                    regex::Regex::new(r"\\(\+?[a-z1-4]{1,6}\*?)").unwrap()
                 });
                 for cap in EXTRA_INT_MARKER_RE.captures_iter(extra_text) {
                     let int_marker = cap.get(1).unwrap().as_str();

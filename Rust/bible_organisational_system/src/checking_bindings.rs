@@ -52,14 +52,14 @@ impl PyCheckOptions {
 
 #[pyfunction]
 #[pyo3(name = "validateMarkers")]
-pub fn py_validate_markers<'py>(
+pub fn py_validate_processed_markers<'py>(
     py: Python<'py>,
     entries: &PyInternalBibleEntryList,
     book_code: &str,
     work_name: &str,
     strict_checking: bool,
 ) -> PyResult<Bound<'py, PyDict>> {
-    let results = checking::validate_markers(&entries.inner, book_code, work_name, strict_checking);
+    let results = checking::validate_processed_markers(&entries.inner, book_code, work_name, strict_checking);
     
     let dict = PyDict::new(py);
     dict.set_item("validation_errors", results.validation_errors)?;

@@ -553,13 +553,13 @@ mod tests {
         ];
         let options = ProcessLinesOptions::default();
         let processed = process_lines(raw_lines, "MRK", "GREEK", &options);
-        for entry in &processed {
-            println!("Marker: {}, Clean Text: '{}', Extras: {:?}", entry.marker(), entry.clean_text(), entry.extras());
-        }
+        // for entry in &processed {
+        //     println!("Greek Marker: {}, Clean Text: '{}', Extras: {:?}", entry.marker(), entry.clean_text(), entry.extras());
+        // }
 
         // Verification
         let markers: Vec<&str> = processed.iter().map(|e| e.marker()).collect();
-        println!("Markers: {:?}", markers);
+        // println!("Markers: {:?}", markers);
 
         // Should have start/end markers for chapters and verses due to nesting
         assert!(!markers.contains(&""), "{:?}", markers);
@@ -571,7 +571,7 @@ mod tests {
         assert!(markers.contains(&"¬p"), "{:?}", markers);
 
         // Find "Καὶ" at start of verse 24
-        let kai = processed.iter().find(|e| e.clean_text().contains("Καὶ")).expect("Should find Καὶ in verse 24");
+        let kai = processed.iter().find(|e| e.clean_text().starts_with("Καὶ")).expect("Should find Καὶ at beginning of verse 24");
         assert!(kai.has_extras());
         let extra = &kai.extras().unwrap()[0];
         assert_eq!(extra.extra_type(), ExtraType::WordWithAttributes);

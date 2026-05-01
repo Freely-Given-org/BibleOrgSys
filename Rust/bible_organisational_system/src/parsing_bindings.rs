@@ -17,7 +17,7 @@ use crate::extras_bindings::{PyInternalBibleExtra, PyInternalBibleExtraList, PyI
 use crate::processing_bindings::{PyObjectType, PyProcessLinesOptions, py_process_lines};
 use crate::section_index_bindings::{PyInternalBibleBookSectionIndex, PySectionIndexEntry, PySectionIndexIter};
 use crate::checking_bindings::{
-    py_validate_markers, py_get_versification, py_get_added_units, py_check_book,
+    py_validate_processed_markers, py_get_versification, py_get_added_units, py_check_book,
     PyDiscoveryFlags, PyCheckOptions,
 };
 
@@ -36,7 +36,7 @@ fn bible_organisational_system(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(py_discover_book, m)?)?;
     m.add_function(wrap_pyfunction!(py_discover_bible, m)?)?;
     m.add_function(wrap_pyfunction!(py_parse_word_attributes, m)?)?;
-    m.add_function(wrap_pyfunction!(py_validate_markers, m)?)?;
+    m.add_function(wrap_pyfunction!(py_validate_processed_markers, m)?)?;
     m.add_function(wrap_pyfunction!(py_get_versification, m)?)?;
     m.add_function(wrap_pyfunction!(py_get_added_units, m)?)?;
     m.add_function(wrap_pyfunction!(py_check_book, m)?)?;

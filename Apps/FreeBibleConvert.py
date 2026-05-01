@@ -28,7 +28,6 @@ Given the MediaWiki text export of the Free Bible New Testament from LibreOffice
     convert it to USFM2 files.
 """
 
-from gettext import gettext as _
 import os.path
 import logging
 from pathlib import Path
@@ -87,13 +86,14 @@ def splitAndWriteBooks( entireBibleText, folderpath ):
         if splitText[-1] != '\n': splitText += '\n' # Ensure that we have a final newline character in each file
         # if bookID == 'FRT':
 
-        filepath = os.path.join( folderpath, 'FBV_{}.usfm'.format( bookID ) )
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "Writing {}…".format( filepath ) )
+        filepath = os.path.join( folderpath, f'FBV_{bookID}.usfm' )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Writing {filepath}…" )
         with open( filepath, 'wt', encoding='utf-8' ) as bookFile:
             bookFile.write( splitText )
-        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "  {} characters ({} lines) written".format( len(splitText), splitText.count('\n') ) )
+        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"  {len(splitText)} characters ({splitText.count('
+')} lines) written" )
         writtenCount += 1
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "{} books written to {}".format( writtenCount, folderpath ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{writtenCount} books written to {folderpath}" )
 # end of FreeBibleConvert.splitAndWriteBooks
 
 
@@ -119,16 +119,17 @@ def main() -> None:
     """
     BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Loading {}…").format( INPUT_FILEPATH ) )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Loading {INPUT_FILEPATH}…" )
     with open( INPUT_FILEPATH, 'rt', encoding='utf-8' ) as textFile:
         originalText = textFile.read()
-    vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("  Loaded {:,} characters ({:,} lines)").format( len(originalText), originalText.count('\n') ) )
+    vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  Loaded {len(originalText):,} characters ({originalText.count('
+'):,} lines)" )
 
     # Preparation by inserting some lines at the beginning
-    entireText = '\\id FRT -- {}\n'.format( ID_LINE )
-    entireText += '\\rem Converted by {!r}\n'.format( f'{PROGRAM_NAME_VERSION} {_("last modified")} {LAST_MODIFIED_DATE}' )
-    entireText += '\\rem Converted from \'{}\'\n'.format( INPUT_FILEPATH )
-    entireText += '\\rem Converted {}\n'.format( datetime.now() )
+    entireText = f'\\id FRT -- {ID_LINE}\n'
+    entireText += f'\\rem Converted by {!r}\n'
+    entireText += f'\\rem Converted from \'{INPUT_FILEPATH}\'\n'
+    entireText += f'\\rem Converted {datetime.now()}\n' )
     entireText += originalText
 
     # More preparation
@@ -195,7 +196,7 @@ def main() -> None:
     entireText = noisyReplaceAll( entireText,
         '\n\\v 21 May the grace of the Lord Jesus be with the believers. Amen.\n',
         '\n\\v 21 May the grace of the Lord Jesus be with the believers. Amen.'
-        '\n\\id BAK -- {}\n\\h Back matter\n\\toc1 Back matter\n'.format( ID_LINE ) )
+        f'\n\\id BAK -- {ID_LINE}\n\\h Back matter\n\\toc1 Back matter\n' )
     entireText = noisyRegExReplaceAll( entireText, '<div style="margin-left:0cm;margin-right:0cm;">(.+?)</div>', '\\\\m \\1' )
     entireText = noisyRegExReplaceAll( entireText, '\n<u>(.+?)</u>\n', '\n\\\\s1 \\1' )
     entireText = noisyReplaceAll( entireText, '<references/>', '' )
@@ -225,12 +226,12 @@ def main() -> None:
                         ('Jude','Jud','JUD'), ('Revelation','Rev','REV'), ):
         shortenedName = name.replace('First','1').replace('Second','2').replace('Third','3')
         entireText = entireText.replace( '\\id '+name,
-                                '\\id {} -- {}'.format( bookID, ID_LINE ) + \
-                                '\n\\h {}'.format( shortenedName ) + \
-                                '\n\\toc1 {}'.format( name ) + \
-                                '\n\\toc2 {}'.format( shortenedName ) + \
-                                '\n\\toc3 {}'.format( abbrev ) + \
-                                '\n\\mt1 {}'.format( name )
+                                f'\\id {bookID} -- {ID_LINE}' + \
+                                f'\n\\h {shortenedName}' + \
+                                f'\n\\toc1 {name}' + \
+                                f'\n\\toc2 {shortenedName}' + \
+                                f'\n\\toc3 {abbrev}' + \
+                                f'\n\\mt1 {name}'
                                 )
 
     # Check again
@@ -249,7 +250,7 @@ def main() -> None:
         if not os.path.exists( OUTPUT_FOLDERPATH):
             os.makedirs( OUTPUT_FOLDERPATH )
         filepath = OUTPUT_FOLDERPATH.joinpath( 'FBV.NT.usfm' )
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Writing temp file {}…".format( filepath ) )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Writing temp file {filepath}…" )
         with open( filepath, 'wt', encoding='utf-8' ) as BibleTextFile:
             BibleTextFile.write( entireText )
 

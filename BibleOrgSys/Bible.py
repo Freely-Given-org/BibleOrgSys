@@ -30,7 +30,6 @@ A class which extends BibleWriter (which itself extends InternalBible).
 
 TODO: Check if we really need this class at all???
 """
-from gettext import gettext as _
 import logging
 
 from BibleOrgSys import BibleOrgSysGlobals
@@ -74,7 +73,7 @@ class BibleBook( InternalBibleBook ):
         self.doExtraChecking = DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag
         if self.doExtraChecking:
             if isinstance( containerBibleObject, str ):
-                logger.critical( "containerBibleObject is a string '{}' (not a Bible object): presumably this is a test???".format( containerBibleObject ) )
+                logger.critical( f"containerBibleObject is a string '{containerBibleObject}' (not a Bible object): presumably this is a test???" )
             else: assert isinstance( containerBibleObject, Bible )
 
         super().__init__( containerBibleObject, BBB )
@@ -87,7 +86,7 @@ class BibleBook( InternalBibleBook ):
         @return: the name of a Bible object formatted as a string
         @rtype: string
         """
-        result = _("BibleBook object")
+        result = "BibleBook object"
         return result
     # end of __str__
 # end of class BibleBook

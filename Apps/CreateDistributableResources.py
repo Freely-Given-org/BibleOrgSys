@@ -38,7 +38,6 @@ CHANGELOG:
     2022-06-05 reenabled all demos
     2023-02-16 added OET RV & LV
 """
-from gettext import gettext as _
 import os
 from pathlib import Path
 import multiprocessing
@@ -62,7 +61,7 @@ SHORT_PROGRAM_NAME = "CreateDistributableResources"
 PROGRAM_NAME = "Create Distributable Resources"
 PROGRAM_VERSION = '0.33'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
-PROGRAM_NAME_VERSION_DATE = f'{PROGRAM_NAME_VERSION} {_("last modified")} {LAST_MODIFIED_DATE}'
+PROGRAM_NAME_VERSION_DATE = f'{PROGRAM_NAME_VERSION} {"last modified"} {LAST_MODIFIED_DATE}'
 
 DEBUGGING_THIS_MODULE = False
 
@@ -116,7 +115,7 @@ def runGitPull( gitFolderpath ) -> bool:
     programOutputBytes, programErrorOutputBytes = myProcess.communicate()
     os.chdir( cwdSave ) # Restore the original path again
     if myProcess.returncode == 124: # it timed out
-        programErrorOutputBytes += "git pull for {}: Timed out after {}".format( gitFolderpath, gitPullTimeout ).encode( 'utf-8' )
+        programErrorOutputBytes += f"git pull for {gitFolderpath}: Timed out after {gitPullTimeout}".encode( 'utf-8' )
     # Process the output
     if programOutputBytes:
         programOutputString = programOutputBytes.decode( encoding='utf-8', errors='replace' )
@@ -145,7 +144,7 @@ def makePickle( abbreviation:str, BibleObject, metadataDict:dict, outputFolderpa
 
     Test if necessary.
     """
-    fnPrint( DEBUGGING_THIS_MODULE, "makePickle( {}, {}, {}, {} )".format( abbreviation, BibleObject.getAName(), len(metadataDict), outputFolderpath ) )
+    fnPrint( DEBUGGING_THIS_MODULE, f"makePickle( {abbreviation}, {BibleObject.getAName()}, {len(metadataDict)}, {outputFolderpath} )" )
     assert isinstance( abbreviation, str )
     assert 1 < len(abbreviation) < 10
     assert isinstance( BibleObject, Bible )
@@ -154,7 +153,7 @@ def makePickle( abbreviation:str, BibleObject, metadataDict:dict, outputFolderpa
 
     BibleObject.toPickledBible( outputFolderpath=outputFolderpath, metadataDict=metadataDict,
                         dataLevel=DEFAULT_DATA_LEVEL, zipOnly=True )
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Created {} zipped PickledBible in {}".format( abbreviation, outputFolderpath ) )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Created {abbreviation} zipped PickledBible in {outputFolderpath}" )
 
     if BibleOrgSysGlobals.strictCheckingFlag or DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag:
         pickledBible = PickledBible( outputFolderpath.joinpath( abbreviation+ZIPPED_PICKLE_FILENAME_END ) )
@@ -192,7 +191,7 @@ def makeIt( abbreviation:str, BibleObject, metadataDict, outputFolderpath:Path, 
     assert isinstance( outputFolderpath, Path )
     assert isinstance( submit2BDB, bool )
 
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("\nLoading {}…").format( abbreviation ) )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nLoading {abbreviation}…" )
     BibleObject.loadBooks() # Load and process the books (if that applies to this kind of Bible)
 
     if BibleObject.suppliedMetadata is None: BibleObject.suppliedMetadata = {}
@@ -751,7 +750,7 @@ def runCreateAll( outputFolderpath:Path, submit2BDB:bool=False ) -> None:
         if (1 or PROCESS_ALL_FLAG or PROCESS_UNFOLDING_WORD_FLAG) and (not PROCESS_ONE or PROCESS_ONE=='UHB'):
             abbreviation, name = 'UHB', 'unfoldingWord® Hebrew Bible'
             uwFolderpath = BIBLES_FOLDERPATH.joinpath( 'Original languages/UHB/' )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nUpdating unfoldingWord® {} from internet…".format( abbreviation ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nUpdating unfoldingWord® {abbreviation} from internet…" )
             repo_changed = runGitPull( uwFolderpath ) # Make sure we have the latest version
             if repo_changed or not PROCESS_CHANGES_ONLY:
                 thisBible = USFMBible( uwFolderpath, givenName=name, givenAbbreviation=abbreviation )
@@ -769,7 +768,7 @@ def runCreateAll( outputFolderpath:Path, submit2BDB:bool=False ) -> None:
         if (1 or PROCESS_ALL_FLAG or PROCESS_UNFOLDING_WORD_FLAG) and (not PROCESS_ONE or PROCESS_ONE=='UGNT'):
             abbreviation, name = 'UGNT', 'unfoldingWord® Hebrew Bible'
             uwFolderpath = BIBLES_FOLDERPATH.joinpath( 'Original languages/UGNT/' )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nUpdating unfoldingWord® {} from internet…".format( abbreviation ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nUpdating unfoldingWord® {abbreviation} from internet…" )
             repo_changed = runGitPull( uwFolderpath ) # Make sure we have the latest version
             if repo_changed or not PROCESS_CHANGES_ONLY:
                 thisBible = USFMBible( uwFolderpath, givenName=name, givenAbbreviation=abbreviation )
@@ -787,7 +786,7 @@ def runCreateAll( outputFolderpath:Path, submit2BDB:bool=False ) -> None:
         if (1 or PROCESS_ALL_FLAG or PROCESS_UNFOLDING_WORD_FLAG) and (not PROCESS_ONE or PROCESS_ONE=='ULT'):
             abbreviation, name = 'ULT', 'unfoldingWord® Literal Text'
             uwFolderpath = BIBLES_FOLDERPATH.joinpath( 'English translations/unfoldingWordVersions/en_ult/' )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nUpdating unfoldingWord® {} from internet…".format( abbreviation ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nUpdating unfoldingWord® {abbreviation} from internet…" )
             repo_changed = runGitPull( uwFolderpath ) # Make sure we have the latest version
             if repo_changed or not PROCESS_CHANGES_ONLY:
                 thisBible = USFMBible( uwFolderpath, givenName=name, givenAbbreviation=abbreviation )
@@ -805,7 +804,7 @@ def runCreateAll( outputFolderpath:Path, submit2BDB:bool=False ) -> None:
         if (1 or PROCESS_ALL_FLAG or PROCESS_UNFOLDING_WORD_FLAG) and (not PROCESS_ONE or PROCESS_ONE=='UST'):
             abbreviation, name = 'UST', 'unfoldingWord® Simplified Text'
             uwFolderpath = BIBLES_FOLDERPATH.joinpath( 'English translations/unfoldingWordVersions/en_ust/' )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nUpdating unfoldingWord® {} from internet…".format( abbreviation ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nUpdating unfoldingWord® {abbreviation} from internet…" )
             repo_changed = runGitPull( uwFolderpath ) # Make sure we have the latest version
             if repo_changed or not PROCESS_CHANGES_ONLY:
                 thisBible = USFMBible( uwFolderpath, givenName=name, givenAbbreviation=abbreviation )
@@ -826,7 +825,7 @@ def runCreateAll( outputFolderpath:Path, submit2BDB:bool=False ) -> None:
         if (1 or PROCESS_ALL_FLAG or PROCESS_DOOR43_FLAG) and (not PROCESS_ONE or PROCESS_ONE=='HI-IRV'):
             abbreviation, name = 'HI-IRV', 'हिन्दी (Hindi)'
             door43Folderpath = DOOR43_SOURCE_FOLDERPATH.joinpath( 'hi_irv/' )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nUpdating Door43 {} from internet…".format( abbreviation ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nUpdating Door43 {abbreviation} from internet…" )
             repo_changed = runGitPull( door43Folderpath ) # Make sure we have the latest version
             if repo_changed or not PROCESS_CHANGES_ONLY:
                 thisBible = USFMBible( door43Folderpath, givenName=name, givenAbbreviation=abbreviation )
@@ -845,7 +844,7 @@ def runCreateAll( outputFolderpath:Path, submit2BDB:bool=False ) -> None:
         if (1 or PROCESS_ALL_FLAG or PROCESS_DOOR43_FLAG) and (not PROCESS_ONE or PROCESS_ONE=='TA-IRV'):
             abbreviation, name = 'TA-IRV', 'இண்டியன் ரிவைஸ்டு வெர்ஸன் (IRV) - தமிழ்'
             door43Folderpath = DOOR43_SOURCE_FOLDERPATH.joinpath( 'ta_irv/' )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nUpdating Door43 {} from internet…".format( abbreviation ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nUpdating Door43 {abbreviation} from internet…" )
             repo_changed = runGitPull( door43Folderpath ) # Make sure we have the latest version
             if repo_changed or not PROCESS_CHANGES_ONLY:
                 thisBible = USFMBible( door43Folderpath, givenName=name, givenAbbreviation=abbreviation )
@@ -864,7 +863,7 @@ def runCreateAll( outputFolderpath:Path, submit2BDB:bool=False ) -> None:
         # if 1 or PROCESS_ALL_FLAG:
         #     abbreviation, name = 'UEB', 'Unlocked English Bible'
         #     door43Folderpath = BIBLES_FOLDERPATH.joinpath( 'English translations/Door43Versions/UEB/en_ueb/' )
-        #     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nUpdating Door43 {} from internet…".format( abbreviation ) )
+        #     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nUpdating Door43 {abbreviation} from internet…" )
         #     repo_changed = runGitPull( door43Folderpath ) # Make sure we have the latest version
         #     if repo_changed or not PROCESS_CHANGES_ONLY:
         #         thisBible = USFMBible( door43Folderpath, givenName=name, givenAbbreviation=abbreviation )
@@ -881,7 +880,7 @@ def runCreateAll( outputFolderpath:Path, submit2BDB:bool=False ) -> None:
         #if 1 or PROCESS_ALL_FLAG:
             #abbreviation, name = 'UDB', 'Unlocked Dynamic Bible (obsolete)'
             #door43Folderpath = BIBLES_FOLDERPATH.joinpath( 'English translations/Door43Versions/UDB/en_udb/' )
-            #vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nUpdating Door43 {} from internet…".format( abbreviation ) )
+            #vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nUpdating Door43 {abbreviation} from internet…" )
             #repo_changed = runGitPull( door43Folderpath ) # Make sure we have the latest version
             #if repo_changed or not PROCESS_CHANGES_ONLY:
                 #thisBible = USFMBible( door43Folderpath, givenName=name, givenAbbreviation=abbreviation )
@@ -898,7 +897,7 @@ def runCreateAll( outputFolderpath:Path, submit2BDB:bool=False ) -> None:
         #if 1 or PROCESS_ALL_FLAG:
             #abbreviation, name = 'ULB', 'Unlocked Literal Bible (obsolete)'
             #door43Folderpath = BIBLES_FOLDERPATH.joinpath( 'English translations/Door43Versions/ULB/en_ulb/' )
-            #vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nUpdating Door43 {} from internet…".format( abbreviation ) )
+            #vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nUpdating Door43 {abbreviation} from internet…" )
             #repo_changed = runGitPull( door43Folderpath ) # Make sure we have the latest version
             #if repo_changed or not PROCESS_CHANGES_ONLY:
                 #thisBible = USFMBible( door43Folderpath, givenName=name, givenAbbreviation=abbreviation )
@@ -919,7 +918,7 @@ def runCreateAll( outputFolderpath:Path, submit2BDB:bool=False ) -> None:
         if (1 or PROCESS_ALL_FLAG or PROCESS_OPEN_BIBLE_FLAG) and (not PROCESS_ONE or PROCESS_ONE=='ELBBK'):
             abbreviation, name = 'ELBBK', 'Elberfelder Übersetzung (Version von bibelkommentare.de)'
             obFolderpath = OPEN_BIBLE_SOURCE_FOLDERPATH.joinpath( 'Elberfelder/f492a38d0e52db0f-rev4/release/USX_1/' )
-            # vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nUpdating unfoldingWord® {} from internet…".format( abbreviation ) )
+            # vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nUpdating unfoldingWord® {abbreviation} from internet…" )
             # repo_changed = runGitPull( obFolderpath ) # Make sure we have the latest version
             repo_changed = False
             if repo_changed or not PROCESS_CHANGES_ONLY:
@@ -938,7 +937,7 @@ def runCreateAll( outputFolderpath:Path, submit2BDB:bool=False ) -> None:
         # if 0 or PROCESS_ALL_FLAG:
         #     abbreviation, name = 'TAM-IRV', 'இண்டியன் ரிவைஸ்டு வெர்ஸன் (IRV) - தமிழ்'
         #     obFolderpath = OPEN_BIBLE_SOURCE_FOLDERPATH.joinpath( 'IRV/03a021185023710b-rev3/release/USX_1/' )
-        #     # vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nUpdating unfoldingWord® {} from internet…".format( abbreviation ) )
+        #     # vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nUpdating unfoldingWord® {abbreviation} from internet…" )
         #     # repo_changed = runGitPull( obFolderpath ) # Make sure we have the latest version
         #     repo_changed = False
         #     if repo_changed or not PROCESS_CHANGES_ONLY:
@@ -957,7 +956,7 @@ def runCreateAll( outputFolderpath:Path, submit2BDB:bool=False ) -> None:
         if (1 or PROCESS_ALL_FLAG or PROCESS_OPEN_BIBLE_FLAG) and (not PROCESS_ONE or PROCESS_ONE=='KCV'):
             abbreviation, name = 'KCV', 'Biblica® Open Kiswahili Contemporary Version'
             obFolderpath = OPEN_BIBLE_SOURCE_FOLDERPATH.joinpath( 'swONEN14_USFM/' )
-            # vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nUpdating unfoldingWord® {} from internet…".format( abbreviation ) )
+            # vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nUpdating unfoldingWord® {abbreviation} from internet…" )
             # repo_changed = runGitPull( obFolderpath ) # Make sure we have the latest version
             repo_changed = False
             if repo_changed or not PROCESS_CHANGES_ONLY:
@@ -1033,7 +1032,7 @@ def briefDemo() -> None:
     BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     if not os.path.exists( TEST_OUTPUT_FOLDERPATH ):
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Creating folder {}…").format( TEST_OUTPUT_FOLDERPATH ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Creating folder {TEST_OUTPUT_FOLDERPATH}…" )
         os.makedirs( TEST_OUTPUT_FOLDERPATH )
 
     global PROCESS_ALL_FLAG, PROCESS_WLC_FLAG, PROCESS_UNFOLDING_WORD_FLAG, PROCESS_DOOR43_FLAG, PROCESS_OPEN_BIBLE_FLAG, PROCESS_EBIBLE_FLAG, PROCESS_OTHERS_FLAG
@@ -1053,7 +1052,7 @@ def fullDemo() -> None:
     BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     if not os.path.exists( TEST_OUTPUT_FOLDERPATH ):
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Creating folder {}…".format( TEST_OUTPUT_FOLDERPATH ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Creating folder {TEST_OUTPUT_FOLDERPATH}…" )
         os.makedirs( TEST_OUTPUT_FOLDERPATH )
 
     global PROCESS_ALL_FLAG
@@ -1071,7 +1070,7 @@ def main() -> None:
     BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     if not os.path.exists( WRITEABLE_DISTRIBUTABLE_RESOURCES_FOLDERPATH ):
-        #vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Creating folder {}…".format( WRITEABLE_DISTRIBUTABLE_RESOURCES_FOLDERPATH ) )
+        #vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Creating folder {WRITEABLE_DISTRIBUTABLE_RESOURCES_FOLDERPATH}…" )
         os.makedirs( WRITEABLE_DISTRIBUTABLE_RESOURCES_FOLDERPATH )
         # halt # This folder should already exist
 

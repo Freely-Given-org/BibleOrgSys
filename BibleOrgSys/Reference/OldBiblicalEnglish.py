@@ -43,7 +43,7 @@ import BibleOrgSys.BibleOrgSysGlobals as BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2026-04-30' # by RJH
+LAST_MODIFIED_DATE = '2026-05-01' # by RJH
 SHORT_PROGRAM_NAME = "OldBiblicalEnglish"
 PROGRAM_NAME = "OpenBibleData English Language Handling functions"
 PROGRAM_VERSION = '0.97'
@@ -179,6 +179,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
 
     # Four words to four words
     (('booth winde and see ',),'both wind and sea '), # TNT Mrk 4:41
+    (('in to a boot',),'into a boat'), # Wycl Mrk 8:13
     (('let the damme go','let the dam go'),'let the dam/female go'), # Deu 22:7
     (('saye vnto the, aryse,',),'say unto thee, arise,'),(('saye vnto the aryse',),'say unto thee arise'), # Mrk 2:11
     (('which is the breede',),'which is the breadth'), # Wycl Eph 3:18

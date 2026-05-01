@@ -459,8 +459,23 @@ impl std::fmt::Display for MarkerSection {
     }
 }
 
-/// Get the content type for a USFM marker.
-pub fn get_marker_content_type(marker: &str) -> MarkerContentType {
+/// Get the content type for a raw USFM marker.
+pub fn get_raw_marker_content_type(marker: &str) -> MarkerContentType {
+    let raw = normalize_marker(marker);
+    match raw {
+        "b" | "ib" | "ts" => MarkerContentType::Never,
+        _ => {
+            if paragraph_markers::is_paragraph(raw) || heading_markers::is_heading(raw) || introduction_markers::is_introduction(raw) {
+                MarkerContentType::Sometimes
+            } else {
+                MarkerContentType::Always
+            }
+        }
+    }
+}
+
+/// Get the content type for a processed USFM marker.
+pub fn get_processed_marker_content_type(marker: &str) -> MarkerContentType {
     let raw = normalize_marker(marker);
     match raw {
         "b" | "ib" | "nb" | "ts" | "v" | "c" | "headers"|"¬headers" | "intro"|"¬intro" | "¬iot" | "chapters"|"¬chapters" => MarkerContentType::Never,
