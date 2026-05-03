@@ -26,7 +26,6 @@
 """
 Module handling BiblePunctuation_*.xml and to export to JSON, C, and Python data tables.
 """
-from gettext import gettext as _
 import os
 import logging
 
@@ -100,7 +99,7 @@ class BiblePunctuationSystems:
             # else: # We have to load the XML (much slower)
             from BibleOrgSys.Reference.Converters.BiblePunctuationSystemsConverter import BiblePunctuationSystemsConverter
             if XMLFolder is not None:
-                logging.warning( _("Bible Punctuation systems are already loaded -- your given filepath of {!r} was ignored").format(XMLFolder) )
+                logging.warning( f"Bible Punctuation systems are already loaded -- your given filepath of {XMLFolder!r} was ignored" )
             bvsc = BiblePunctuationSystemsConverter()
             bvsc.loadAndValidate( standardXMLFileOrFilepath ) # Load the XML (if not done already)
             self.__DataDict = bvsc.importDataToPython() # Get the various dictionaries organised for quick lookup
@@ -121,12 +120,12 @@ class BiblePunctuationSystems:
         #                     picklesGood = False; break
         #     if picklesGood:
         #         import pickle
-        #         vPrint( 'Info', DEBUGGING_THIS_MODULE, _("Loading pickle file {}…").format( standardPickleFilepath ) )
+        #         vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Loading pickle file {standardPickleFilepath}…" )
         #         with open( standardPickleFilepath, 'rb') as pickleFile:
         #             self.__DataDict = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
         #     else: # We have to load the XML (much slower)
         #         from BibleOrgSys.Reference.Converters.BiblePunctuationSystemsConverter import BiblePunctuationSystemsConverter
-        #         if XMLFolder is not None: logging.warning( _("Bible punctuation systems are already loaded -- your given folder of {!r} was ignored").format(XMLFolder) )
+        #         if XMLFolder is not None: logging.warning( f"Bible punctuation systems are already loaded -- your given folder of {XMLFolder!r} was ignored" )
         #         bpsc = BiblePunctuationSystemsConverter()
         #         bpsc.loadSystems( XMLFolder ) # Load the XML (if not done already)
         #         self.__DataDict = bpsc.importDataToPython() # Get the various dictionaries organised for quick lookup
@@ -142,7 +141,7 @@ class BiblePunctuationSystems:
         """
         assert self.__DataDict
         result = "BiblePunctuationSystems object"
-        result += ('\n  ' if result else '  ') + _("Number of systems = {:,}").format( len(self.__DataDict) )
+        result += ('\n  ' if result else '  ') + f"Number of systems = {len(self.__DataDict):,}"
         return result
     # end of __str__
 
@@ -176,8 +175,8 @@ class BiblePunctuationSystems:
         if systemName in self.__DataDict:
             return self.__DataDict[systemName]
         # else
-        logging.error( _("No {!r} system in Bible Punctuation Systems").format(systemName) )
-        if BibleOrgSysGlobals.verbosityLevel>2: logging.error( "  " + _("Available systems are {}").format(self.getAvailablePunctuationSystemNames()) )
+        logging.error( f"No {systemName!r} system in Bible Punctuation Systems" )
+        if BibleOrgSysGlobals.verbosityLevel>2: logging.error( "  " + f"Available systems are {self.getAvailablePunctuationSystemNames()}" )
     # end of getPunctuationSystem
 
     def checkPunctuationSystem( self, systemName, punctuationSchemeToCheck, exportFlag=False, debugFlag=False ):
@@ -195,38 +194,38 @@ class BiblePunctuationSystems:
         for punctuationSystemCode in self.Lists: # Step through the various reference schemes
             theseErrors = ''
             if self.Lists[punctuationSystemCode] == punctuationSchemeToCheck:
-                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Matches {!r} punctuation system".format( punctuationSystemCode ) )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Matches {punctuationSystemCode!r} punctuation system" )
                 systemMatchCount += 1
                 matchedPunctuationSystemCodes.append( punctuationSystemCode )
             else:
                 if len(self.Lists[punctuationSystemCode]) == len(punctuationSchemeToCheck):
                     for BBB1,BBB2 in zip(self.Lists[punctuationSystemCode],punctuationSchemeToCheck):
                         if BBB1 != BBB2: break
-                    thisError = "    Doesn't match {!r} system (Both have {} books, but {} instead of {})".format( punctuationSystemCode, len(punctuationSchemeToCheck), BBB1, BBB2 )
+                    thisError = f"    Doesn't match {punctuationSystemCode!r} system (Both have {len(punctuationSchemeToCheck)} books, but {BBB1} instead of {BBB2})"
                 else:
-                    thisError = "    Doesn't match {!r} system ({} books instead of {})".format( punctuationSystemCode, len(punctuationSchemeToCheck), len(self.Lists[punctuationSystemCode]) )
+                    thisError = f"    Doesn't match {punctuationSystemCode!r} system ({len(punctuationSchemeToCheck)} books instead of {len(self.Lists[punctuationSystemCode])})"
                 theseErrors += ("\n" if theseErrors else "") + thisError
                 errorSummary += ("\n" if errorSummary else "") + thisError
                 systemMismatchCount += 1
 
         if systemMatchCount:
             if systemMatchCount == 1: # What we hope for
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Matched {} punctuation (with these {} books)".format( matchedPunctuationSystemCodes[0], len(punctuationSchemeToCheck) ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Matched {matchedPunctuationSystemCodes[0]} punctuation (with these {len(punctuationSchemeToCheck)} books)" )
                 if debugFlag: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, errorSummary )
             else:
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Matched {} punctuation system(s): {} (with these {} books)".format( systemMatchCount, matchedPunctuationSystemCodes, len(punctuationSchemeToCheck) ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Matched {systemMatchCount} punctuation system(s): {matchedPunctuationSystemCodes} (with these {len(punctuationSchemeToCheck)} books)" )
                 if debugFlag: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, errorSummary )
         else:
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Mismatched {} punctuation systems (with these {} books)".format( systemMismatchCount, len(punctuationSchemeToCheck) ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Mismatched {systemMismatchCount} punctuation systems (with these {len(punctuationSchemeToCheck)} books)" )
             if debugFlag: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, allErrors )
             else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, errorSummary)
 
         if exportFlag and not systemMatchCount: # Write a new file
             outputFilepath = BibleOrgSysGlobals.BOS_DATAFILES_FOLDERPATH.joinpath( 'ScrapedFiles/', 'BiblePunctuation_'+systemName + '.xml' )
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("Writing {} books to {}…").format( len(punctuationSchemeToCheck), outputFilepath ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Writing {len(punctuationSchemeToCheck)} books to {outputFilepath}…" )
             with open( outputFilepath, 'wt', encoding='utf-8' ) as myFile:
                 for n,BBB in enumerate(punctuationSchemeToCheck):
-                    myFile.write( '  <book id="{}">{}</book>\n'.format( n+1,BBB ) )
+                    myFile.write( f'  <book id="{n+1}">{BBB}</book>\n' )
                 myFile.write( "</BiblePunctuationSystem>" )
     # end of checkPunctuationSystem
 # end of BiblePunctuationSystems class
@@ -258,11 +257,11 @@ class BiblePunctuationSystem:
         @rtype: string
         """
         result = "BiblePunctuationSystem object"
-        result += ('\n' if result else '') + "  " + _("{} Bible punctuation system").format( self.__systemName )
-        result += ('\n' if result else '') + "  " + _("Number of values = {:,}").format( len(self.__punctuationDict) )
+        result += ('\n' if result else '') + "  " + f"{self.__systemName} Bible punctuation system"
+        result += ('\n' if result else '') + "  " + f"Number of values = {len(self.__punctuationDict):,}"
         if BibleOrgSysGlobals.verbosityLevel > 2:
             for key in self.__punctuationDict.keys(): # List the contents of the dictionary
-                result += ('\n' if result else '') + "    " + _("{} is {!r}").format( key, self.__punctuationDict[key] )
+                result += ('\n' if result else '') + "    " + f"{key} is {self.__punctuationDict[key]!r}"
         return result
     # end of __str__
 
@@ -298,8 +297,8 @@ class BiblePunctuationSystem:
         return self.__punctuationDict[name]
         ##dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "yyy", self.__punctuationDict )
         #if name in self.__punctuationDict: return self.__punctuationDict[name]
-        #logging.error( _("No {!r} value in {} punctuation system").format(name,self.__systemName) )
-        #if BibleOrgSysGlobals.verbosityLevel > 3: logging.error( "  " + _("Available values are: {}").format(self.getAvailablePunctuationValueNames()) )
+        #logging.error( f"No {self.__systemName!r} value in {name} punctuation system" )
+        #if BibleOrgSysGlobals.verbosityLevel > 3: logging.error( "  " + f"Available values are: {self.getAvailablePunctuationValueNames()}" )
     # end of getPunctuationValue
 # end of BiblePunctuationSystem class
 
@@ -313,14 +312,14 @@ def briefDemo() -> None:
     # Demo the BiblePunctuationSystems object
     bpss = BiblePunctuationSystems().loadData() # Doesn't reload the XML unnecessarily :)
     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, bpss ) # Just print a summary
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Available system names are: {}").format(bpss.getAvailablePunctuationSystemNames()) )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Available system names are: {bpss.getAvailablePunctuationSystemNames()}" )
 
     # Demo the BiblePunctuationSystem object
     bps = BiblePunctuationSystem( "English" ) # Doesn't reload the XML unnecessarily :)
     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, bps ) # Just print a summary
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Variables are: {}".format(bps.getAvailablePunctuationValueNames()) )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Variables are: {bps.getAvailablePunctuationValueNames()}" )
     name = 'chapterVerseSeparator'
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "{} for {} is {!r}".format( name, bps.getPunctuationSystemName(), bps.getPunctuationValue(name) ) )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{name} for {bps.getPunctuationSystemName()} is {bps.getPunctuationValue(name)!r}" )
 # end of BiblePunctuationSystem.briefDemo
 
 def fullDemo() -> None:
@@ -332,14 +331,14 @@ def fullDemo() -> None:
     # Demo the BiblePunctuationSystems object
     bpss = BiblePunctuationSystems().loadData() # Doesn't reload the XML unnecessarily :)
     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, bpss ) # Just print a summary
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Available system names are: {}").format(bpss.getAvailablePunctuationSystemNames()) )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Available system names are: {bpss.getAvailablePunctuationSystemNames()}" )
 
     # Demo the BiblePunctuationSystem object
     bps = BiblePunctuationSystem( "English" ) # Doesn't reload the XML unnecessarily :)
     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, bps ) # Just print a summary
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Variables are: {}".format(bps.getAvailablePunctuationValueNames()) )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Variables are: {bps.getAvailablePunctuationValueNames()}" )
     name = 'chapterVerseSeparator'
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "{} for {} is {!r}".format( name, bps.getPunctuationSystemName(), bps.getPunctuationValue(name) ) )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{name} for {bps.getPunctuationSystemName()} is {bps.getPunctuationValue(name)!r}" )
 # end of BiblePunctuationSystem.fullDemo
 
 if __name__ == '__main__':

@@ -72,7 +72,6 @@ Limitations:
     <…> were converted to \\it …\\it* (Psalms and signatures to Paul's letters.)
     Need to do Bible books codes properly -- current implementation is just a hack
 """
-from gettext import gettext as _
 from pathlib import Path
 import logging
 import os
@@ -108,20 +107,20 @@ def DrupalBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=
     if autoLoad is true and exactly one DrupalBible Bible is found,
         returns the loaded DrupalBible object.
     """
-    fnPrint( DEBUGGING_THIS_MODULE, "DrupalBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
+    fnPrint( DEBUGGING_THIS_MODULE, f"DrupalBibleFileCheck( {givenFolderName}, {strictCheck}, {autoLoad}, {autoLoadBooks} )" )
     if BibleOrgSysGlobals.debugFlag: assert givenFolderName and isinstance( givenFolderName, (str,Path) )
     if BibleOrgSysGlobals.debugFlag: assert autoLoad in (True,False,)
 
     # Check that the given folder is readable
     if not os.access( givenFolderName, os.R_OK ):
-        logging.critical( _("DrupalBibleFileCheck: Given {!r} folder is unreadable").format( givenFolderName ) )
+        logging.critical( f"DrupalBibleFileCheck: Given {givenFolderName!r} folder is unreadable" )
         return False
     if not os.path.isdir( givenFolderName ):
-        logging.critical( _("DrupalBibleFileCheck: Given {!r} path is not a folder").format( givenFolderName ) )
+        logging.critical( f"DrupalBibleFileCheck: Given {givenFolderName!r} path is not a folder" )
         return False
 
     # Find all the files and folders in this folder
-    vPrint( 'Verbose', DEBUGGING_THIS_MODULE, " DrupalBibleFileCheck: Looking for files in given {}".format( givenFolderName ) )
+    vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f" DrupalBibleFileCheck: Looking for files in given {givenFolderName}" )
     foundFolders, foundFiles = [], []
     for something in os.listdir( givenFolderName ):
         somepath = os.path.join( givenFolderName, something )
@@ -144,7 +143,7 @@ def DrupalBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=
                 firstLine = BibleOrgSysGlobals.peekIntoFile( thisFilename, givenFolderName )
                 if firstLine is None: continue # seems we couldn't decode the file
                 if ( not firstLine.startswith( '\ufeff*Bible' ) ) and ( not firstLine.startswith( "*Bible" ) ):
-                    vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "DrupalBible (unexpected) first line was {!r} in {}".format( firstLine, thisFilename ) )
+                    vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"DrupalBible (unexpected) first line was {thisFilename!r} in {firstLine}" )
                     continue
             lastFilenameFound = thisFilename
             numFound += 1
@@ -162,9 +161,9 @@ def DrupalBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=
     for thisFolderName in sorted( foundFolders ):
         tryFolderName = os.path.join( givenFolderName, thisFolderName+'/' )
         if not os.access( tryFolderName, os.R_OK ): # The subfolder is not readable
-            logging.warning( _("DrupalBibleFileCheck: {!r} subfolder is unreadable").format( tryFolderName ) )
+            logging.warning( f"DrupalBibleFileCheck: {tryFolderName!r} subfolder is unreadable" )
             continue
-        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "    DrupalBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
+        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"    DrupalBibleFileCheck: Looking for files in {tryFolderName}" )
         foundSubfolders, foundSubfiles = [], []
         try:
             for something in os.listdir( tryFolderName ):
@@ -184,7 +183,7 @@ def DrupalBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=
                     firstLine = BibleOrgSysGlobals.peekIntoFile( thisFilename, tryFolderName )
                     if firstLine is None: continue # seems we couldn't decode the file
                     if ( not firstLine.startswith( '\ufeff*Bible' ) ) and ( not firstLine.startswith( "*Bible" ) ):
-                        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "DrupalBible (unexpected) first line was {!r} in {}".format( firstLine, thisFilename ) ); halt
+                        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"DrupalBible (unexpected) first line was {thisFilename!r} in {firstLine}" ); halt
                         continue
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "BFC_here", repr(tryFolderName), repr(thisFilename) )
                 foundProjects.append( (tryFolderName, thisFilename,) )
@@ -210,7 +209,7 @@ class DrupalBible( Bible ):
         """
         Constructor: just sets up the Bible object.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, _("DrupalBible__init__ ( {!r}, {!r}, {!r} )").format( sourceFolder, givenName, encoding ) )
+        fnPrint( DEBUGGING_THIS_MODULE, f"DrupalBible__init__ ( {sourceFolder!r}, {givenName!r}, {encoding!r} )" )
         assert sourceFolder
         assert givenName
 
@@ -225,7 +224,7 @@ class DrupalBible( Bible ):
 
         # Do a preliminary check on the readability of our file
         if not os.access( self.sourceFilepath, os.R_OK ):
-            logging.critical( _("DrupalBible: File {!r} is unreadable").format( self.sourceFilepath ) )
+            logging.critical( f"DrupalBible: File {self.sourceFilepath!r} is unreadable" )
 
         self.name = self.givenName
         #if self.name is None:
@@ -237,7 +236,7 @@ class DrupalBible( Bible ):
         """
         Load a single source file and load book elements.
         """
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, _("Loading {}…").format( self.sourceFilepath ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Loading {self.sourceFilepath}…" )
 
         status = 0 # 1 = getting chapters, 2 = getting verse data
         lastLine, lineCount = '', 0
@@ -248,10 +247,10 @@ class DrupalBible( Bible ):
                 lineCount += 1
                 if lineCount==1:
                     if line[0]==BibleOrgSysGlobals.BOM:
-                        logging.info( "DrupalBible.load1: Detected Unicode Byte Order Marker (BOM) in {}".format( self.sourceFilepath ) )
+                        logging.info( f"DrupalBible.load1: Detected Unicode Byte Order Marker (BOM) in {self.sourceFilepath}" )
                         line = line[1:] # Remove the UTF-16 Unicode Byte Order Marker (BOM)
                     elif line[:3] == 'ï»¿': # 0xEF,0xBB,0xBF
-                        logging.info( "DrupalBible.load2: Detected Unicode Byte Order Marker (BOM) in {}".format( self.sourceFilepath ) )
+                        logging.info( f"DrupalBible.load2: Detected Unicode Byte Order Marker (BOM) in {self.sourceFilepath}" )
                         line = line[3:] # Remove the UTF-8 Unicode Byte Order Marker (BOM)
                 if line and line[-1]=='\n': line=line[:-1] # Removing trailing newline character
                 if not line: continue # Just discard blank lines
@@ -261,7 +260,7 @@ class DrupalBible( Bible ):
                 lastLine = line
                 if lineCount == 1:
                     if line != '*Bible':
-                        logging.warning( "Unknown DrupalBible first line: {}".format( repr(line) ) )
+                        logging.warning( f"Unknown DrupalBible first line: {repr(line)}" )
 
                 elif status == 0:
                     if line == '*Chapter': status = 1
@@ -316,8 +315,8 @@ def testDB( TUBfilename ):
     from BibleOrgSys.Reference import VerseReferences
     TUBfolder = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'DrupalTest/') # Must be the same as below
 
-    vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("Demonstrating the DrupalBible Bible class…") )
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Test folder is {!r} {!r}".format( TUBfolder, TUBfilename ) )
+    vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Demonstrating the DrupalBible Bible class…" )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Test folder is {TUBfolder!r} {TUBfilename!r}" )
     db = DrupalBible( TUBfolder, TUBfilename )
     db.load() # Load and process the file
     vPrint( 'Normal', DEBUGGING_THIS_MODULE, db ) # Just print a summary
@@ -371,7 +370,7 @@ def briefDemo() -> None:
         nonEnglish = (  )
         bad = ( )
         for j, testFilename in enumerate( good ): # Choose one of the above: single, good, nonEnglish, bad
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nDrupalBible C{}/ Trying {}".format( j+1, testFilename ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nDrupalBible C{j+1}/ Trying {testFilename}" )
             #myTestFolder = os.path.join( testFolder, testFilename+'/' )
             #testFilepath = os.path.join( testFolder, testFilename+'/', testFilename+'_utf8.txt' )
             testDB( testFilename )
@@ -386,7 +385,7 @@ def briefDemo() -> None:
             elif os.path.isfile( somepath ): foundFiles.append( something )
 
         if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nTrying all {len(foundFolders)} discovered modules…" )
             parameters = [folderName for folderName in sorted(foundFolders)]
             BibleOrgSysGlobals.alreadyMultiprocessing = True
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
@@ -395,7 +394,7 @@ def briefDemo() -> None:
             BibleOrgSysGlobals.alreadyMultiprocessing = False
         else: # Just single threaded
             for j, someFolder in enumerate( sorted( foundFolders ) ):
-                vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nDrupalBible D{}/ Trying {}".format( j+1, someFolder ) )
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nDrupalBible D{j+1}/ Trying {someFolder}" )
                 #myTestFolder = os.path.join( testFolder, someFolder+'/' )
                 testDB( someFolder )
 # end of DrupalBible.briefDemo
@@ -429,7 +428,7 @@ def fullDemo() -> None:
         nonEnglish = (  )
         bad = ( )
         for j, testFilename in enumerate( good ): # Choose one of the above: single, good, nonEnglish, bad
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nDrupalBible C{}/ Trying {}".format( j+1, testFilename ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nDrupalBible C{j+1}/ Trying {testFilename}" )
             #myTestFolder = os.path.join( testFolder, testFilename+'/' )
             #testFilepath = os.path.join( testFolder, testFilename+'/', testFilename+'_utf8.txt' )
             testDB( testFilename )
@@ -443,7 +442,7 @@ def fullDemo() -> None:
             elif os.path.isfile( somepath ): foundFiles.append( something )
 
         if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nTrying all {len(foundFolders)} discovered modules…" )
             parameters = [folderName for folderName in sorted(foundFolders)]
             BibleOrgSysGlobals.alreadyMultiprocessing = True
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
@@ -452,7 +451,7 @@ def fullDemo() -> None:
             BibleOrgSysGlobals.alreadyMultiprocessing = False
         else: # Just single threaded
             for j, someFolder in enumerate( sorted( foundFolders ) ):
-                vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nDrupalBible D{}/ Trying {}".format( j+1, someFolder ) )
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nDrupalBible D{j+1}/ Trying {someFolder}" )
                 #myTestFolder = os.path.join( testFolder, someFolder+'/' )
                 testDB( someFolder )
 # end of DrupalBible.fullDemo

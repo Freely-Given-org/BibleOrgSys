@@ -53,7 +53,6 @@ CHANGELOG:
     2025-11-20 Added our wordtables for BibleHub TSV spreadsheet/table format
     2026-02-03 Updated for changes in BibleHub TSV spreadsheet format with improved column names
 """
-from gettext import gettext as _
 from pathlib import Path
 import logging
 import os
@@ -101,14 +100,14 @@ def CSVBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=Fal
 
     # Check that the given folder is readable
     if not os.access( givenFolderName, os.R_OK ):
-        logging.critical( _("CSVBibleFileCheck: Given {!r} folder is unreadable").format( givenFolderName ) )
+        logging.critical( f"CSVBibleFileCheck: Given {givenFolderName!r} folder is unreadable" )
         return False
     if not os.path.isdir( givenFolderName ):
-        logging.critical( _("CSVBibleFileCheck: Given {!r} path is not a folder").format( givenFolderName ) )
+        logging.critical( f"CSVBibleFileCheck: Given {givenFolderName!r} path is not a folder" )
         return False
 
     # Find all the files and folders in this folder
-    vPrint( 'Verbose', DEBUGGING_THIS_MODULE, " CSVBibleFileCheck: Looking for files in given {!r}".format( givenFolderName ) )
+    vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f" CSVBibleFileCheck: Looking for files in given {givenFolderName!r}" )
     foundFolders, foundFiles = [], []
     for something in os.listdir( givenFolderName ):
         somepath = os.path.join( givenFolderName, something )
@@ -140,7 +139,7 @@ def CSVBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=Fal
                 and not firstLine.startswith( 'Book,Chapter,Verse,' ) and not firstLine.startswith( '1,1,1,') \
                 and not firstLine.startswith( 'Book|Chapter|Verse|' ) \
                 and not '\tBSB Sort\t' in firstLine and not '\tMSB Sort\t' in firstLine:
-                    vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "CSVBibleFileCheck: (unexpected) first line was {!r} in {}".format( firstLine, thisFilename ) )
+                    vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"CSVBibleFileCheck: (unexpected) first line was {thisFilename!r} in {firstLine}" )
                     continue
             lastFilenameFound = thisFilename
             numFound += 1
@@ -159,9 +158,9 @@ def CSVBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=Fal
     for thisFolderName in sorted( foundFolders ):
         tryFolderName = os.path.join( givenFolderName, thisFolderName+'/' )
         if not os.access( tryFolderName, os.R_OK ): # The subfolder is not readable
-            logging.warning( _("CSVBibleFileCheck: {!r} subfolder is unreadable").format( tryFolderName ) )
+            logging.warning( f"CSVBibleFileCheck: {tryFolderName!r} subfolder is unreadable" )
             continue
-        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "    CSVBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
+        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"    CSVBibleFileCheck: Looking for files in {tryFolderName}" )
         foundSubfolders, foundSubfiles = [], []
         try:
             for something in os.listdir( tryFolderName ):
@@ -187,7 +186,7 @@ def CSVBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=Fal
                     if not firstLine.startswith( '"Book","Chapter","Verse",' ) and not firstLine.startswith( '"1","1","1",') \
                     and not firstLine.startswith( 'Book,Chapter,Verse,' ) and not firstLine.startswith( '1,1,1,') \
                     and not firstLine.startswith( 'Book|Chapter|Verse|' ):
-                        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "CSVBibleFileCheck: (unexpected) first line was {!r} in {}".format( firstLine, thisFilename ) )
+                        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"CSVBibleFileCheck: (unexpected) first line was {thisFilename!r} in {firstLine}" )
                         if DEBUGGING_THIS_MODULE: halt
                         continue
                 foundProjects.append( (tryFolderName, thisFilename,) )
@@ -266,7 +265,7 @@ class CSVBible( Bible ):
                             self.sourceBookFileExtension = filename[-3:]
                             break
                 else: # no files found
-                    logging.critical( _("CSVBible: Unable to discover a single filename in {}".format( self.sourceFolder )) )
+                    logging.critical( _(f"CSVBible: Unable to discover a single filename in {self.sourceFolder}") )
     # end of CSVBible.__init__
 
 
@@ -278,7 +277,7 @@ class CSVBible( Bible ):
             (because we don't always load them in the correct order)
         """
         fnPrint( DEBUGGING_THIS_MODULE, f"CSVBible._loadFile( {filepath}, {temporaryBookStore} )")
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, _("  Loading {}…").format( filepath ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Loading {filepath}…" )
 
         haveBereanWordSpreadsheet = False
         separator = numColumns = quoted = BBB = None # Empty defaults
@@ -295,7 +294,7 @@ class CSVBible( Bible ):
                 if not line: continue # Just discard blank lines
                 if line==' ': continue # Handle special case which has blanks on every second line -- HACK
                 lastLine = line
-                dPrint( 'Info', DEBUGGING_THIS_MODULE, "CSV file line {} is {!r}".format( lineCount, line ) )
+                dPrint( 'Info', DEBUGGING_THIS_MODULE, f"CSV file line {lineCount} is {line!r}" )
                 if line[0]=='#': continue # Just discard comment lines
                 if not separator and lineCount < 4:
                     if line.startswith( '"Book",' ):
@@ -356,7 +355,7 @@ class CSVBible( Bible ):
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "bString, chapterNumberString, verseNumberString, vText", bString, chapterNumberString, verseNumberString, vText )
 
                 #if not bookCode and not chapterNumberString and not verseNumberString:
-                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Skipping empty line in {} {} {} {}:{}".format( self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Skipping empty line in {self.givenName} {BBB} {bookCode} {chapterNumberString}:{verseNumberString}" )
                     #continue
                 #if BibleOrgSysGlobals.debugFlag: assert 2  <= len(bookCode) <= 4
                 #if BibleOrgSysGlobals.debugFlag: assert chapterNumberString.isdigit()
@@ -427,7 +426,7 @@ class CSVBible( Bible ):
                 if chapterNumber != lastChapterNumber: # We've started a new chapter
                     if BibleOrgSysGlobals.debugFlag: assert chapterNumber > lastChapterNumber or BBB=='ESG' # Esther Greek might be an exception
                     if chapterNumber == 0:
-                        logging.info( "Have chapter zero in {} {} {} {}:{}".format( self.givenName, BBB, bookNumber, chapterNumberString, verseNumberString ) )
+                        logging.info( f"Have chapter zero in {self.givenName} {BBB} {bookNumber} {chapterNumberString}:{verseNumberString}" )
                     thisBook.addLine( 'c', chapterNumberString )
                     lastChapterNumber = chapterNumber
                     lastVerseNumber = -1
@@ -465,18 +464,18 @@ class CSVBible( Bible ):
 
                 # Handle the verse info
                 if verseNumber==lastVerseNumber and vText==lastVText:
-                    logging.warning( _("Ignored duplicate verse line in {} {} {} {}:{}").format( self.givenName, BBB, bookNumber, chapterNumberString, verseNumberString ) )
+                    logging.warning( f"Ignored duplicate verse line in {self.givenName} {BBB} {bookNumber} {chapterNumberString}:{verseNumberString}" )
                     continue
                 if BBB=='PSA' and verseNumberString=='1' and vText.startswith('&lt;') and self.givenName=='basic_english':
                     # Move Psalm titles to verse zero
                     verseNumber = 0
                 if verseNumber < lastVerseNumber:
-                    logging.warning( _("Ignored receding verse number (from {} to {}) in {} {} {} {}:{}").format( lastVerseNumber, verseNumber, self.givenName, BBB, bookNumber, chapterNumberString, verseNumberString ) )
+                    logging.warning( f"Ignored receding verse number (from {lastVerseNumber} to {verseNumber}) in {self.givenName} {BBB} {bookNumber} {chapterNumberString}:{verseNumberString}" )
                 elif verseNumber == lastVerseNumber:
                     if vText == lastVText:
-                        logging.warning( _("Ignored duplicated {} verse in {} {} {} {}:{}").format( verseNumber, self.givenName, BBB, bookNumber, chapterNumberString, verseNumberString ) )
+                        logging.warning( f"Ignored duplicated {verseNumber} verse in {self.givenName} {BBB} {bookNumber} {chapterNumberString}:{verseNumberString}" )
                     else:
-                        logging.warning( _("Ignored duplicated {} verse number in {} {} {} {}:{}").format( verseNumber, self.givenName, BBB, bookNumber, chapterNumberString, verseNumberString ) )
+                        logging.warning( f"Ignored duplicated {verseNumber} verse number in {self.givenName} {BBB} {bookNumber} {chapterNumberString}:{verseNumberString}" )
                 thisBook.addLine( 'v', verseNumberString + ' ' + vText )
                 lastVText = vText
                 lastVerseNumber = verseNumber
@@ -500,7 +499,7 @@ class CSVBible( Bible ):
         from BibleOrgSys.Formats.ESFMBibleBook import ESFMBibleBook
 
         fnPrint( DEBUGGING_THIS_MODULE, f"CSVBible._loadBereanSpreadsheetTable( {filepath} )")
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, _("  Loading Berean word table from {}…").format( filepath ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Loading Berean word table from {filepath}…" )
 
         WORD_TABLE_FILENAMES = ('OET-LV_OT_word_table.tsv', 'OET-LV_NT_word_table.tsv')
         self.ESFMWordTables, self.ESFMColumnNameList = {}, {}
@@ -1240,7 +1239,7 @@ class CSVBible( Bible ):
 
         Load a single source file and load book elements.
         """
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, _("CSVBible: Loading {}…").format( self.sourceFilepath ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"CSVBible: Loading {self.sourceFilepath}…" )
         assert self.sourceFilepath is not None
 
         self._loadFile( self.sourceFilepath )
@@ -1259,7 +1258,7 @@ class CSVBible( Bible ):
             return self.load()
         # else: # we have a folder
         assert self.sourceBookFileExtension
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("Loading books from {}…").format( self.sourceFolder ) )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Loading books from {self.sourceFolder}…" )
 
         tempBookStore = {}
         for filename in os.listdir( self.sourceFolder ):
@@ -1291,8 +1290,8 @@ def testCSV( CSVfolder ):
     # Crudely demonstrate the CSV Bible class
     from BibleOrgSys.Reference import VerseReferences
 
-    vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("Demonstrating the CSV Bible class…") )
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Test folder is {!r}".format( CSVfolder ) )
+    vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Demonstrating the CSV Bible class…" )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Test folder is {CSVfolder!r}" )
     vb = CSVBible( CSVfolder, "demo" )
     vb.load() # Load and process the file
     vPrint( 'Normal', DEBUGGING_THIS_MODULE, vb ) # Just print a summary
@@ -1365,7 +1364,7 @@ def briefDemo() -> None:
             elif os.path.isfile( somepath ): foundFiles.append( something )
 
         if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nTrying all {len(foundFolders)} discovered modules…" )
             parameters = [folderName for folderName in sorted(foundFolders)]
             BibleOrgSysGlobals.alreadyMultiprocessing = True
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
@@ -1374,7 +1373,7 @@ def briefDemo() -> None:
             BibleOrgSysGlobals.alreadyMultiprocessing = False
         else: # Just single threaded
             for j, someFolder in enumerate( sorted( foundFolders ) ):
-                vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nCSV D{}/ Trying {}".format( j+1, someFolder ) )
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nCSV D{j+1}/ Trying {someFolder}" )
                 #myTestFolder = os.path.join( testFolder, someFolder+'/' )
                 testCSV( someFolder )
 # end of CSVBible.briefDemo
@@ -1419,7 +1418,7 @@ def fullDemo() -> None:
             elif os.path.isfile( somepath ): foundFiles.append( something )
 
         if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nTrying all {len(foundFolders)} discovered modules…" )
             parameters = [folderName for folderName in sorted(foundFolders)]
             BibleOrgSysGlobals.alreadyMultiprocessing = True
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
@@ -1428,7 +1427,7 @@ def fullDemo() -> None:
             BibleOrgSysGlobals.alreadyMultiprocessing = False
         else: # Just single threaded
             for j, someFolder in enumerate( sorted( foundFolders ) ):
-                vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nCSV D{}/ Trying {}".format( j+1, someFolder ) )
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nCSV D{j+1}/ Trying {someFolder}" )
                 #myTestFolder = os.path.join( testFolder, someFolder+'/' )
                 testCSV( someFolder )
 # end of CSVBible.fullDemo

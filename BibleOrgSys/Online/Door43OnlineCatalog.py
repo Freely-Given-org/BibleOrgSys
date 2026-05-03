@@ -37,7 +37,6 @@ We currently use version 3 of the API.
 
 More details are available from https://api-info.readthedocs.io/en/latest/index.html.
 """
-from gettext import gettext as _
 import os
 import logging
 import requests
@@ -104,7 +103,7 @@ class Door43CatalogResources:
         responseObject = requests.get( requestString )
         if responseObject.status_code != 200:
             #errorClass, exceptionInstance, traceback = sys.exc_info()
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, '{!r}  {!r}  {!r}'.format( errorClass, exceptionInstance, traceback ) )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'{errorClass!r}  {exceptionInstance!r}  {traceback!r}' )
             logging.error( f"Door43 {responseObject.status_code} URLError from {requestString}" )
             return None
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  HTTPResponseObject", HTTPResponseObject )
@@ -292,11 +291,11 @@ class Door43CatalogResources:
         """
         indent = 2
         result = f"Door43 v{Door43_API_Version} online catalog object"
-        if self.subjectNameList: result += ('\n' if result else '') + ' '*indent + _("Subjects: {}").format( len(self.subjectNameList) )
-        if self.catalogDict: result += ('\n' if result else '') + ' '*indent + _("Catalogs: {}").format( len(self.catalogDict) )
-        if self.languageDict: result += ('\n' if result else '') + ' '*indent + _("Languages: {}").format( len(self.languageDict) )
-        if self.resourceList: result += ('\n' if result else '') + ' '*indent + _("Resources: {}").format( len(self.resourceList) )
-        if self.BibleList: result += ('\n' if result else '') + ' '*indent + _("USFM resources: {}").format( len(self.BibleList) )
+        if self.subjectNameList: result += ('\n' if result else '') + ' '*indent + f"Subjects: {len(self.subjectNameList)}"
+        if self.catalogDict: result += ('\n' if result else '') + ' '*indent + f"Catalogs: {len(self.catalogDict)}"
+        if self.languageDict: result += ('\n' if result else '') + ' '*indent + f"Languages: {len(self.languageDict)}"
+        if self.resourceList: result += ('\n' if result else '') + ' '*indent + f"Resources: {len(self.resourceList)}"
+        if self.BibleList: result += ('\n' if result else '') + ' '*indent + f"USFM resources: {len(self.BibleList)}"
         return result
     # end of Door43CatalogResources.__str__
 
@@ -410,13 +409,13 @@ class Door43CatalogBible( USFMBible ):
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"alreadyDownloadedFlag: {alreadyDownloadedFlag}" )
 
         if alreadyDownloadedFlag:
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Skipping download because folder '{}' already exists.".format( unzippedFolderpath ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Skipping download because folder '{unzippedFolderpath}' already exists." )
         else: # Download the zip file (containing all the USFM files, LICENSE.md, manifest.yaml, etc.)
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Downloading {:,} bytes from '{}'…".format( size, zipURL ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Downloading {size:,} bytes from '{zipURL}'…" )
             responseObject = requests.get( zipURL )
             if responseObject.status_code != 200:
                 #errorClass, exceptionInstance, traceback = sys.exc_info()
-                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, '{!r}  {!r}  {!r}'.format( errorClass, exceptionInstance, traceback ) )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'{errorClass!r}  {exceptionInstance!r}  {traceback!r}' )
                 logging.critical( f"Door43 {responseObject.status_code} URLError from {zipURL}" )
                 return None
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  HTTPResponseObject", HTTPResponseObject )

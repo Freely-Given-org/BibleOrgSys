@@ -7,7 +7,7 @@
 # Script taking BibleBooksCodes TSV data table
 #       and formatting it into static declarations in a Rust include file.
 #
-# Copyright (C) 2025 Robert Hunt
+# Copyright (C) 2025-2026 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -30,13 +30,14 @@ Script taking BibleBooksCodes TSV data table
 
 CHANGELOG:
     2025-10-21 Allow insertChar in tidyBBB function
+    2026-05-03 Sort the field names with optional values output (so don't cause extra diffs)
 """
 from pathlib import Path
 from csv import DictReader
 import logging
 
 
-VERSION_STR = 'v0.1.9'
+VERSION_STR = 'v0.1.10'
 TSV_SOURCE = Path( 'BibleBooksCodes_Tables.tsv' )
 EXPECTED_TSV_HEADER = "originalLanguageCode\tbookName\tbookNameEnglishGuide\tBOSReferenceAbbreviation\tBOSReferenceNumber\tBOSSequenceNumber\texpectedChapters\tshortAbbreviation\tSBLAbbreviation\tOSISAbbreviation\tSwordAbbreviation\tCCELNumber\tUSFMAbbreviation\tUSFMNumber\tUSXNumber\tUnboundCode\tBibleditNumber\tLogosNumber\tLogosAbbreviation\tNETBibleAbbreviation\tDrupalBibleAbbreviation\tBibleWorksAbbreviation\tByzantineAbbreviation\tpossibleAlternativeAbbreviations\tpossibleAlternativeBooksCodes\tconsistsOfBooks\ttypicalSection\ttypicalSubsection\tallEnglishDerivedAbbreviations"
 NUM_EXPECTED_TSV_COLUMNS = 29
@@ -177,7 +178,8 @@ if __name__ == '__main__':
                 osisDictEntries[f'"{row['OSISAbbreviation']}"'] = f'=>{n},' # We always take the first one for any given abbreviation
 
     # The following field names should have 'Option' below (because they don't exist for every code)
-    text = f"{field_names_with_optional_values=}" # {'DrupalBibleAbbreviation', 'LogosNumber', 'USFMAbbreviation', 'typicalSubsection', 'OSISAbbreviation', 'allEnglishDerivedAbbreviations',
+    sorted_field_names_with_optional_values = sorted( field_names_with_optional_values )
+    text = f"{sorted_field_names_with_optional_values=}" # {'DrupalBibleAbbreviation', 'LogosNumber', 'USFMAbbreviation', 'typicalSubsection', 'OSISAbbreviation', 'allEnglishDerivedAbbreviations',
         # 'BibleditNumber', 'expectedChapters', 'possibleAlternativeBooksCodes', 'NETBibleAbbreviation', 'SwordAbbreviation', 'SBLAbbreviation', 'shortAbbreviation',
         # 'UnboundCode', 'possibleAlternativeAbbreviations', 'USXNumber', 'CCELNumber', 'ByzantineAbbreviation', 'USFMNumber', 'LogosAbbreviation', 'BibleWorksAbbreviation'}
     summary_text = f'{summary_text}\n{text}'

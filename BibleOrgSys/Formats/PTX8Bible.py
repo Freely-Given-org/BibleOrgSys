@@ -39,7 +39,6 @@ The raw material for this module is produced by the UBS/SIL Paratext program
 
 TODO: Check if PTX8Bible object should be based on USFMBible.
 """
-from gettext import gettext as _
 import sys
 import os
 from pathlib import Path
@@ -102,10 +101,10 @@ def PTX8BibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=Fa
 
     # Check that the given folder is readable
     if not os.access( givenFolderName, os.R_OK ):
-        logging.critical( _("PTX8BibleFileCheck: Given '{}' folder is unreadable").format( givenFolderName ) )
+        logging.critical( f"PTX8BibleFileCheck: Given '{givenFolderName}' folder is unreadable" )
         return False
     if not os.path.isdir( givenFolderName ):
-        logging.critical( _("PTX8BibleFileCheck: Given '{}' path is not a folder").format( givenFolderName ) )
+        logging.critical( f"PTX8BibleFileCheck: Given '{givenFolderName}' path is not a folder" )
         return False
 
     # Check that there's a USFM Bible here first
@@ -151,7 +150,7 @@ def PTX8BibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=Fa
     #dPrint( 'Info', DEBUGGING_THIS_MODULE, UFns )
     #filenameTuples = UFns.getConfirmedFilenames()
     #dPrint( 'Verbose', DEBUGGING_THIS_MODULE, "Confirmed:", len(filenameTuples), filenameTuples )
-    #if BibleOrgSysGlobals.verbosityLevel > 1 and filenameTuples: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Found {} USX files.".format( len(filenameTuples) ) )
+    #if BibleOrgSysGlobals.verbosityLevel > 1 and filenameTuples: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Found {len(filenameTuples)} USX files." )
     #if filenameTuples:
         #numFound += 1
 
@@ -171,9 +170,9 @@ def PTX8BibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=Fa
     for thisFolderName in sorted( foundFolders ):
         tryFolderName = os.path.join( givenFolderName, thisFolderName+'/' )
         if not os.access( tryFolderName, os.R_OK ): # The subfolder is not readable
-            logging.warning( _("PTX8BibleFileCheck: '{}' subfolder is unreadable").format( tryFolderName ) )
+            logging.warning( f"PTX8BibleFileCheck: '{tryFolderName}' subfolder is unreadable" )
             continue
-        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "    PTX8BibleFileCheck: Looking for files in {}".format( tryFolderName ) )
+        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"    PTX8BibleFileCheck: Looking for files in {tryFolderName}" )
         foundSubfolders, foundSubfiles = [], []
         try:
             for something in os.listdir( tryFolderName ):
@@ -204,8 +203,8 @@ def PTX8BibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=Fa
         #dPrint( 'Info', DEBUGGING_THIS_MODULE, UFns )
         #filenameTuples = UFns.getConfirmedFilenames()
         #dPrint( 'Verbose', DEBUGGING_THIS_MODULE, "Confirmed:", len(filenameTuples), filenameTuples )
-        #if BibleOrgSysGlobals.verbosityLevel > 2 and filenameTuples: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Found {} USX files: {}".format( len(filenameTuples), filenameTuples ) )
-        #elif BibleOrgSysGlobals.verbosityLevel > 1 and filenameTuples: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Found {} USX files".format( len(filenameTuples) ) )
+        #if BibleOrgSysGlobals.verbosityLevel > 2 and filenameTuples: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Found {len(filenameTuples)} USX files: {filenameTuples}" )
+        #elif BibleOrgSysGlobals.verbosityLevel > 1 and filenameTuples: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Found {len(filenameTuples)} USX files" )
         #if filenameTuples:
             #foundProjects.append( tryFolderName )
             #numFound += 1
@@ -229,7 +228,7 @@ def getFlagFromAttribute( attributeName, attributeValue ):
     """
     if attributeValue == 'true': return True
     if attributeValue == 'false': return False
-    logging.error( _("Unexpected {} attribute value of {}").format( attributeName, attributeValue ) )
+    logging.error( f"Unexpected {attributeName} attribute value of {attributeValue}" )
     return attributeValue
 # end of getFlagFromAttribute
 
@@ -239,7 +238,7 @@ def getFlagFromText( subelement ):
     """
     if subelement.text == 'true': return True
     if subelement.text == 'false': return False
-    logging.error( _("Unexpected {} text value of {}").format( subelement.tag, subelement.text ) )
+    logging.error( f"Unexpected {subelement.tag} text value of {subelement.text}" )
     return subelement.text
 # end of getFlagFromText
 
@@ -276,7 +275,7 @@ def loadPTX8ProjectData( BibleObject, sourceFolder, encoding='utf-8' ):
         # Now process the actual entries
         for element in settingsTree:
             elementLocation = element.tag + ' in ' + treeLocation
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Processing settings {}…".format( elementLocation ) )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Processing settings {elementLocation}…" )
             BibleOrgSysGlobals.checkXMLNoTail( element, elementLocation )
             BibleOrgSysGlobals.checkXMLNoSubelements( element, elementLocation )
             if element.tag == 'Naming':
@@ -287,7 +286,7 @@ def loadPTX8ProjectData( BibleObject, sourceFolder, encoding='utf-8' ):
                     elif attrib=='PostPart': postPart = value
                     elif attrib=='BookNameForm': bookNameForm = value
                     else:
-                        logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, elementLocation ) )
+                        logging.error( f"Unprocessed {elementLocation!r} attribute ({attrib}) in {value}" )
                         if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
                 PTXSettingsDict[element.tag] = { 'PrePart':prePart, 'PostPart':postPart, 'BookNameForm':bookNameForm }
             else:
@@ -295,12 +294,12 @@ def loadPTX8ProjectData( BibleObject, sourceFolder, encoding='utf-8' ):
                 PTXSettingsDict[element.tag] = element.text
 
     try: BibleObject.filepathsNotYetLoaded.remove( settingsFilepath )
-    except ValueError: logging.critical( "PTX8 settings file seemed unexpected: {}".format( settingsFilepath ) )
+    except ValueError: logging.critical( f"PTX8 settings file seemed unexpected: {settingsFilepath}" )
 
-    vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + "Got {} PTX8 settings entries:".format( len(PTXSettingsDict) ) )
+    vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + f"Got {len(PTXSettingsDict)} PTX8 settings entries:" )
     if BibleOrgSysGlobals.verbosityLevel > 3:
         for key in sorted(PTXSettingsDict):
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "    {}: {}".format( key, PTXSettingsDict[key] ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"    {key}: {PTXSettingsDict[key]}" )
 
     vPrint( 'Never', DEBUGGING_THIS_MODULE, '\nPTX8SettingsDict', len(PTXSettingsDict), PTXSettingsDict )
     return PTXSettingsDict
@@ -321,7 +320,7 @@ def loadPTX8Languages( BibleObject ):
         somepath = os.path.join( BibleObject.sourceFilepath, something )
         if os.path.isfile(somepath) and something.upper().endswith('.LDML'): languageFilenames.append( something )
     #if len(languageFilenames) > 1:
-        #logging.error( "Got more than one language file: {}".format( languageFilenames ) )
+        #logging.error( f"Got more than one language file: {languageFilenames}" )
     if not languageFilenames: return
 
     PTXLanguages = {}
@@ -332,7 +331,7 @@ def loadPTX8Languages( BibleObject ):
         assert languageName not in PTXLanguages
 
         languageFilepath = os.path.join( BibleObject.sourceFilepath, languageFilename )
-        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "PTX8Bible.loading language from {}…".format( languageFilepath ) )
+        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"PTX8Bible.loading language from {languageFilepath}…" )
 
         if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag or DEBUGGING_THIS_MODULE:
             thisLDMLFile = LDMLFile( BibleObject.sourceFilepath, languageFilename )
@@ -342,18 +341,17 @@ def loadPTX8Languages( BibleObject ):
                 thisLDMLFile = LDMLFile( BibleObject.sourceFilepath, languageFilename )
                 PTXLanguages[languageName] = thisLDMLFile.load()
             except Exception as err:
-                logging.error( 'LDMLFile load of {} failed with {} {}' \
-                                    .format( languageFilename, sys.exc_info()[0], err ) )
+                logging.error( f'LDMLFile load of {languageFilename} failed with {sys.exc_info()[0]} {err}' )
 
         try: BibleObject.filepathsNotYetLoaded.remove( languageFilepath )
-        except ValueError: logging.critical( "PTX8 language file seemed unexpected: {}".format( languageFilepath ) )
+        except ValueError: logging.critical( f"PTX8 language file seemed unexpected: {languageFilepath}" )
 
-    vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Loaded {} languages.".format( len(PTXLanguages) ) )
+    vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Loaded {len(PTXLanguages)} languages." )
     if BibleOrgSysGlobals.verbosityLevel > 3:
         for lgKey in PTXLanguages:
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "    {}:".format( lgKey ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"    {lgKey}:" )
             for key in PTXLanguages[lgKey]:
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "      {}: ({}) {}".format( key, len(PTXLanguages[lgKey][key]), PTXLanguages[lgKey][key] ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"      {key}: ({len(PTXLanguages[lgKey][key])}) {PTXLanguages[lgKey][key]}" )
     else: vPrint( 'Never', DEBUGGING_THIS_MODULE, '\nPTX8Languages', len(PTXLanguages), PTXLanguages )
     return PTXLanguages
 # end of PTX8Bible.loadPTX8Languages
@@ -369,7 +367,7 @@ def loadPTX8Versifications( BibleObject ):
 
     #versificationFilename = 'versification.vrs'
     #versificationFilepath = os.path.join( BibleObject.sourceFilepath, versificationFilename )
-    #dPrint( 'Info', DEBUGGING_THIS_MODULE, "PTX8Bible.loading versification from {}…".format( versificationFilepath ) )
+    #dPrint( 'Info', DEBUGGING_THIS_MODULE, f"PTX8Bible.loading versification from {versificationFilepath}…" )
 
     #PTXVersifications = { 'VerseCounts':{}, 'Mappings':{}, 'Omitted':[] }
 
@@ -378,7 +376,7 @@ def loadPTX8Versifications( BibleObject ):
         somepath = os.path.join( BibleObject.sourceFilepath, something )
         if os.path.isfile(somepath) and something.upper().endswith('.VRS'): versificationFilenames.append( something )
     #if len(versificationFilenames) > 1:
-        #logging.error( "Got more than one versification file: {}".format( versificationFilenames ) )
+        #logging.error( f"Got more than one versification file: {versificationFilenames}" )
     if not versificationFilenames: return
 
     PTXVersifications = {}
@@ -387,7 +385,7 @@ def loadPTX8Versifications( BibleObject ):
         versificationName = versificationFilename[:-4] # Remove the .vrs
 
         versificationFilepath = os.path.join( BibleObject.sourceFilepath, versificationFilename )
-        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "PTX8Bible.loading versification from {}…".format( versificationFilepath ) )
+        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"PTX8Bible.loading versification from {versificationFilepath}…" )
 
         assert versificationName not in PTXVersifications
         PTXVersifications[versificationName] = {}
@@ -397,7 +395,7 @@ def loadPTX8Versifications( BibleObject ):
             for line in vFile:
                 lineCount += 1
                 if lineCount==1 and line[0]==BibleOrgSysGlobals.BOM:
-                    logging.info( "loadPTX8Versifications: Detected Unicode Byte Order Marker (BOM) in {}".format( versificationFilename ) )
+                    logging.info( f"loadPTX8Versifications: Detected Unicode Byte Order Marker (BOM) in {versificationFilename}" )
                     line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
                 if line and line[-1]=='\n': line=line[:-1] # Removing trailing newline character
                 if not line: continue # Just discard blank lines
@@ -406,7 +404,7 @@ def loadPTX8Versifications( BibleObject ):
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, versificationName, "versification line", repr(line) )
 
                 if len(line)<7:
-                    vPrint( 'Never', DEBUGGING_THIS_MODULE, "Why was line #{} so short? {!r}".format( lineCount, line ) )
+                    vPrint( 'Never', DEBUGGING_THIS_MODULE, f"Why was line #{lineCount} so short? {line!r}" )
                     continue
 
                 if line.startswith( '#! -' ): # It's an excluded verse (or passage???)
@@ -416,7 +414,7 @@ def loadPTX8Versifications( BibleObject ):
                     C,V = line[8:].split( ':', 1 )
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "CV", repr(C), repr(V) )
                     if BibleOrgSysGlobals.debugFlag: assert C.isdigit() and V.isdigit()
-                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Omitted {} {}:{}".format( BBB, C, V ) )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Omitted {BBB} {C}:{V}" )
                     if 'Omitted' not in PTXVersifications[versificationName]:
                         PTXVersifications[versificationName]['Omitted'] = []
                     PTXVersifications[versificationName]['Omitted'].append( (BBB,C,V) )
@@ -429,7 +427,7 @@ def loadPTX8Versifications( BibleObject ):
                     C,V = line[5:].split( ':', 1 )
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "CV", repr(C), repr(V) )
                     if BibleOrgSysGlobals.debugFlag: assert C.isdigit() and V.isdigit()
-                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Omitted {} {}:{}".format( BBB, C, V ) )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Omitted {BBB} {C}:{V}" )
                     if 'Omitted' not in PTXVersifications[versificationName]:
                         PTXVersifications[versificationName]['Omitted'] = []
                     PTXVersifications[versificationName]['Omitted'].append( (BBB,C,V) )
@@ -460,12 +458,12 @@ def loadPTX8Versifications( BibleObject ):
                             if BibleOrgSysGlobals.debugFlag: assert C.isdigit() and V.isdigit()
                             PTXVersifications[versificationName]['VerseCounts'][BBB][C] = V
                     except KeyError:
-                        logging.error( "Unknown {!r} USFM book code in loadPTX8Versifications from {}".format( USFMBookCode, versificationFilepath ) )
+                        logging.error( f"Unknown {versificationFilepath!r} USFM book code in loadPTX8Versifications from {USFMBookCode}" )
 
         try: BibleObject.filepathsNotYetLoaded.remove( versificationFilepath )
-        except ValueError: logging.critical( "PTX8 versification file seemed unexpected: {}".format( versificationFilepath ) )
+        except ValueError: logging.critical( f"PTX8 versification file seemed unexpected: {versificationFilepath}" )
 
-    vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Loaded {} versifications.".format( len(PTXVersifications) ) )
+    vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Loaded {len(PTXVersifications)} versifications." )
     vPrint( 'Never', DEBUGGING_THIS_MODULE, '\nPTXVersifications', len(PTXVersifications), PTXVersifications )
     return PTXVersifications
 # end of PTX8Bible.loadPTX8Versifications
@@ -483,7 +481,7 @@ class PTX8Bible( Bible ):
         """
         Create the internal Paratext Bible object.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, "PTX8Bible.__init__( {!r}, {!r}, {!r}, {!r} )".format( givenFolderName, givenName, givenAbbreviation, encoding ) )
+        fnPrint( DEBUGGING_THIS_MODULE, f"PTX8Bible.__init__( {givenFolderName!r}, {givenName!r}, {givenAbbreviation!r}, {encoding!r} )" )
 
          # Setup and initialise the base class first
         Bible.__init__( self )
@@ -498,11 +496,11 @@ class PTX8Bible( Bible ):
         # Do a preliminary check on the readability of our folder
         if givenName:
             if not os.access( self.sourceFolder, os.R_OK ):
-                logging.error( "PTX8Bible: Folder '{}' is unreadable".format( self.sourceFolder ) )
+                logging.error( f"PTX8Bible: Folder '{self.sourceFolder}' is unreadable" )
             self.sourceFilepath = os.path.join( self.sourceFolder, self.givenName )
         else: self.sourceFilepath = self.sourceFolder
         if self.sourceFilepath and not os.access( self.sourceFilepath, os.R_OK ):
-            logging.error( "PTX8Bible: Folder '{}' is unreadable".format( self.sourceFilepath ) )
+            logging.error( f"PTX8Bible: Folder '{self.sourceFilepath}' is unreadable" )
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "self.sourceFolder", self.sourceFolder )
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "self.sourceFilepath", self.sourceFilepath )
 
@@ -521,7 +519,7 @@ class PTX8Bible( Bible ):
         Loads other metadata files that are provided.
         Tries to determine USFM filename pattern.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, "preload() from {}".format( self.sourceFolder ) )
+        fnPrint( DEBUGGING_THIS_MODULE, f"preload() from {self.sourceFolder}" )
         if BibleOrgSysGlobals.debugFlag or DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.verbosityLevel > 2:
             assert self.sourceFolder
 
@@ -530,7 +528,7 @@ class PTX8Bible( Bible ):
         def recurseFolder( folderpath, level=1 ):
             """
             """
-            fnPrint( DEBUGGING_THIS_MODULE, ('  '*level) + "recurseFolder( {}, {} )".format( folderpath, level ) )
+            fnPrint( DEBUGGING_THIS_MODULE, ('  '*level) + f"recurseFolder( {folderpath}, {level} )" )
             for something in os.listdir( folderpath ):
                 somethingUPPER = something.upper()
                 somepath = os.path.join( folderpath, something )
@@ -541,7 +539,7 @@ class PTX8Bible( Bible ):
                 elif os.path.isdir( somepath ):
                     foundFolders.append( something )
                     recurseFolder( somepath, level+1 ) # recursive call
-                else: logging.error( "preload: Not sure what {!r} is in {}!".format( somepath, self.sourceFolder ) )
+                else: logging.error( f"preload: Not sure what {self.sourceFolder!r} is in {somepath}!" )
         # end of preload recurseFolder
 
         # Main code for preload
@@ -556,9 +554,9 @@ class PTX8Bible( Bible ):
                 if folderName not in EXPECTED_FOLDER_NAMES:
                     unexpectedFolders.append( folderName )
             if unexpectedFolders:
-                logging.warning( _("PTX8 preload: Surprised to see subfolders in {!r}: {}").format( self.sourceFolder, unexpectedFolders ) )
+                logging.warning( f"PTX8 preload: Surprised to see subfolders in {unexpectedFolders!r}: {self.sourceFolder}" )
         if not foundFiles:
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "preload: Couldn't find any files in {!r}".format( self.sourceFolder ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"preload: Couldn't find any files in {self.sourceFolder!r}" )
             raise FileNotFoundError # No use continuing
 
         self.USFMFilenamesObject = USFMFilenames( self.sourceFolder )
@@ -621,55 +619,55 @@ class PTX8Bible( Bible ):
         else: # normal operation
             # Put all of these in try blocks so they don't crash us if they fail
             try: self.loadUniqueId() # Text file
-            except Exception as err: logging.error( 'loadUniqueId failed with {} {}'.format( sys.exc_info()[0], err ) )
+            except Exception as err: logging.error( f'loadUniqueId failed with {sys.exc_info()[0]} {err}' )
             try: self.loadPTX8BooksNames() # from XML (if it exists)
-            except Exception as err: logging.error( 'loadPTX8BooksNames failed with {} {}'.format( sys.exc_info()[0], err ) )
+            except Exception as err: logging.error( f'loadPTX8BooksNames failed with {sys.exc_info()[0]} {err}' )
             try: self.loadPTX8ProjectUserAccess() # from XML (if it exists)
-            except Exception as err: logging.error( 'loadPTX8ProjectUserAccess failed with {} {}'.format( sys.exc_info()[0], err ) )
+            except Exception as err: logging.error( f'loadPTX8ProjectUserAccess failed with {sys.exc_info()[0]} {err}' )
             try:
                 result = loadPTX8Languages( self ) # from LDML file(s)
                 if result: self.suppliedMetadata['PTX8']['Languages'] = result
-            except Exception as err: logging.error( 'loadPTX8Languages failed with {} {}'.format( sys.exc_info()[0], err ) )
+            except Exception as err: logging.error( f'loadPTX8Languages failed with {sys.exc_info()[0]} {err}' )
             try: self.loadPTX8Lexicon() # from XML (if it exists)
-            except Exception as err: logging.error( 'loadPTX8Lexicon failed with {} {}'.format( sys.exc_info()[0], err ) )
+            except Exception as err: logging.error( f'loadPTX8Lexicon failed with {sys.exc_info()[0]} {err}' )
             try: self.loadPTX8SpellingStatus() # from XML (if it exists)
-            except Exception as err: logging.error( 'loadPTX8SpellingStatus failed with {} {}'.format( sys.exc_info()[0], err ) )
+            except Exception as err: logging.error( f'loadPTX8SpellingStatus failed with {sys.exc_info()[0]} {err}' )
             try: self.loadPTX8WordAnalyses() # from XML (if it exists)
-            except Exception as err: logging.error( 'loadPTX8WordAnalyses failed with {} {}'.format( sys.exc_info()[0], err ) )
+            except Exception as err: logging.error( f'loadPTX8WordAnalyses failed with {sys.exc_info()[0]} {err}' )
             try: self.loadPTX8Canons() # from XML (if it exists)
-            except Exception as err: logging.error( 'loadPTX8Canons failed with {} {}'.format( sys.exc_info()[0], err ) )
+            except Exception as err: logging.error( f'loadPTX8Canons failed with {sys.exc_info()[0]} {err}' )
             try: self.loadPTX8CheckingStatus() # from XML (if it exists)
-            except Exception as err: logging.error( 'loadPTX8CheckingStatus failed with {} {}'.format( sys.exc_info()[0], err ) )
+            except Exception as err: logging.error( f'loadPTX8CheckingStatus failed with {sys.exc_info()[0]} {err}' )
             try: self.loadPTX8CommentTags() # from XML (if they exist)
-            except Exception as err: logging.error( 'loadPTX8CommentTags failed with {} {}'.format( sys.exc_info()[0], err ) )
+            except Exception as err: logging.error( f'loadPTX8CommentTags failed with {sys.exc_info()[0]} {err}' )
             try: self.loadPTX8DerivedTranslationStatus() # from XML (if it exists)
-            except Exception as err: logging.error( 'loadPTX8DerivedTranslationStatus failed with {} {}'.format( sys.exc_info()[0], err ) )
+            except Exception as err: logging.error( f'loadPTX8DerivedTranslationStatus failed with {sys.exc_info()[0]} {err}' )
             try: self.loadPTX8Notes() # from XML (if they exist) but we don't do the CommentTags.xml file yet
-            except Exception as err: logging.error( 'loadPTX8Notes failed with {} {}'.format( sys.exc_info()[0], err ) )
+            except Exception as err: logging.error( f'loadPTX8Notes failed with {sys.exc_info()[0]} {err}' )
             try: self.loadPTX8TermRenderings() # from XML (if they exist)
-            except Exception as err: logging.error( 'loadPTX8TermRenderings failed with {} {}'.format( sys.exc_info()[0], err ) )
+            except Exception as err: logging.error( f'loadPTX8TermRenderings failed with {sys.exc_info()[0]} {err}' )
             try:self.loadPTX8ParallelPassageStatus() # from XML (if it exists)
-            except Exception as err: logging.error( 'loadPTX8ParallelPassageStatus failed with {} {}'.format( sys.exc_info()[0], err ) )
+            except Exception as err: logging.error( f'loadPTX8ParallelPassageStatus failed with {sys.exc_info()[0]} {err}' )
             try:self.loadPTX8ProjectBiblicalTerms() # from XML (if it exists)
-            except Exception as err: logging.error( 'loadPTX8ProjectBiblicalTerms failed with {} {}'.format( sys.exc_info()[0], err ) )
+            except Exception as err: logging.error( f'loadPTX8ProjectBiblicalTerms failed with {sys.exc_info()[0]} {err}' )
             try:self.loadPTX8ProjectProgress() # from XML (if it exists)
-            except Exception as err: logging.error( 'loadPTX8ProjectProgress failed with {} {}'.format( sys.exc_info()[0], err ) )
+            except Exception as err: logging.error( f'loadPTX8ProjectProgress failed with {sys.exc_info()[0]} {err}' )
             try:self.loadPTX8ProjectProgressCSV() # from XML (if it exists)
-            except Exception as err: logging.error( 'loadPTX8ProjectProgressCSV failed with {} {}'.format( sys.exc_info()[0], err ) )
+            except Exception as err: logging.error( f'loadPTX8ProjectProgressCSV failed with {sys.exc_info()[0]} {err}' )
             try: self.loadPTX8PrintConfig() # from XML (if it exists)
-            except Exception as err: logging.error( 'loadPTX8PrintConfig failed with {} {}'.format( sys.exc_info()[0], err ) )
+            except Exception as err: logging.error( f'loadPTX8PrintConfig failed with {sys.exc_info()[0]} {err}' )
             try: self.loadPTX8Autocorrects() # from text file (if it exists)
-            except Exception as err: logging.error( 'loadPTX8Autocorrects failed with {} {}'.format( sys.exc_info()[0], err ) )
+            except Exception as err: logging.error( f'loadPTX8Autocorrects failed with {sys.exc_info()[0]} {err}' )
             try: self.loadPTX8Styles() # from text files (if they exist)
-            except Exception as err: logging.error( 'loadPTX8Styles failed with {} {}'.format( sys.exc_info()[0], err ) )
+            except Exception as err: logging.error( f'loadPTX8Styles failed with {sys.exc_info()[0]} {err}' )
             try: self.loadPTX8PrintDraftChanges() # from text files (if they exist)
-            except Exception as err: logging.error( 'loadPTX8PrintDraftChanges failed with {} {}'.format( sys.exc_info()[0], err ) )
+            except Exception as err: logging.error( f'loadPTX8PrintDraftChanges failed with {sys.exc_info()[0]} {err}' )
             try:
                 result = loadPTX8Versifications( self ) # from text file (if it exists)
                 if result: self.suppliedMetadata['PTX8']['Versifications'] = result
-            except Exception as err: logging.error( 'loadPTX8Versifications failed with {} {}'.format( sys.exc_info()[0], err ) )
+            except Exception as err: logging.error( f'loadPTX8Versifications failed with {sys.exc_info()[0]} {err}' )
             try: self.loadPTX8Licence() # from JSON file (if it exists)
-            except Exception as err: logging.error( 'loadPTX8Licence failed with {} {}'.format( sys.exc_info()[0], err ) )
+            except Exception as err: logging.error( f'loadPTX8Licence failed with {sys.exc_info()[0]} {err}' )
 
         self.preloadDone = True
     # end of PTX8Bible.preload
@@ -688,7 +686,7 @@ class PTX8Bible( Bible ):
         autocorrectFilepath = os.path.join( self.sourceFilepath, autocorrectFilename )
         if not os.path.exists( autocorrectFilepath ): return
 
-        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "PTX8Bible.loading autocorrect from {}…".format( autocorrectFilepath ) )
+        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"PTX8Bible.loading autocorrect from {autocorrectFilepath}…" )
         PTXAutocorrects = {}
 
         lineCount = 0
@@ -696,7 +694,7 @@ class PTX8Bible( Bible ):
             for line in vFile:
                 lineCount += 1
                 if lineCount==1 and line[0]==BibleOrgSysGlobals.BOM:
-                    logging.info( "loadPTX8Autocorrects: Detected Unicode Byte Order Marker (BOM) in {}".format( autocorrectFilename ) )
+                    logging.info( f"loadPTX8Autocorrects: Detected Unicode Byte Order Marker (BOM) in {autocorrectFilename}" )
                     line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
                 if line and line[-1]=='\n': line=line[:-1] # Removing trailing newline character
                 if not line: continue # Just discard blank lines
@@ -706,21 +704,21 @@ class PTX8Bible( Bible ):
 
                 if BibleOrgSysGlobals.verbosityLevel > 0:
                     if len(line)<4:
-                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Why was PTX8 autocorrect line #{} so short? {!r}".format( lineCount, line ) )
+                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Why was PTX8 autocorrect line #{lineCount} so short? {line!r}" )
                         continue
                     if len(line)>6:
-                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Why was PTX8 autocorrect line #{} so long? {!r}".format( lineCount, line ) )
+                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Why was PTX8 autocorrect line #{lineCount} so long? {line!r}" )
 
                 if '-->' in line:
                     bits = line.split( '-->', 1 )
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'bits', bits )
                     PTXAutocorrects[bits[0]] = bits[1]
-                else: logging.error( "Invalid {!r} autocorrect line in PTX8Bible.loading autocorrect".format( line ) )
+                else: logging.error( f"Invalid {line!r} autocorrect line in PTX8Bible.loading autocorrect" )
 
         try: self.filepathsNotYetLoaded.remove( autocorrectFilepath )
-        except ValueError: logging.critical( "PTX8 autocorrect file seemed unexpected: {}".format( autocorrectFilepath ) )
+        except ValueError: logging.critical( f"PTX8 autocorrect file seemed unexpected: {autocorrectFilepath}" )
 
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Loaded {} autocorrect elements.".format( len(PTXAutocorrects) ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Loaded {len(PTXAutocorrects)} autocorrect elements." )
         vPrint( 'Never', DEBUGGING_THIS_MODULE, '\nPTXAutocorrects', len(PTXAutocorrects), PTXAutocorrects )
         if PTXAutocorrects: self.suppliedMetadata['PTX8']['Autocorrects'] = PTXAutocorrects
     # end of PTX8Bible.loadPTX8Autocorrects
@@ -735,7 +733,7 @@ class PTX8Bible( Bible ):
         bookNamesFilepath = os.path.join( self.sourceFilepath, 'BookNames.xml' )
         if not os.path.exists( bookNamesFilepath ): return
 
-        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "PTX8Bible.loading books names data from {}…".format( bookNamesFilepath ) )
+        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"PTX8Bible.loading books names data from {bookNamesFilepath}…" )
         self.XMLTree = ElementTree().parse( bookNamesFilepath )
         assert self.XMLTree is not None # Fail here if we didn't load anything at all
 
@@ -744,7 +742,7 @@ class PTX8Bible( Bible ):
 
         # Find the main container
         if self.XMLTree.tag=='BookNames':
-            treeLocation = "PTX8 {} file".format( self.XMLTree.tag )
+            treeLocation = f"PTX8 {self.XMLTree.tag} file"
             BibleOrgSysGlobals.checkXMLNoAttributes( self.XMLTree, treeLocation )
             BibleOrgSysGlobals.checkXMLNoText( self.XMLTree, treeLocation )
             BibleOrgSysGlobals.checkXMLNoTail( self.XMLTree, treeLocation )
@@ -764,27 +762,27 @@ class PTX8Bible( Bible ):
                         elif attrib=='short': bnShort = value
                         elif attrib=='long': bnLong = value
                         else:
-                            logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, treeLocation ) )
+                            logging.error( f"Unprocessed {treeLocation!r} attribute ({attrib}) in {value}" )
                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, bnCode, booksNamesDict[bnCode] )
                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: assert len(bnCode)==3
                     try: BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromUSFMAbbreviation( bnCode )
                     except:
-                        logging.warning( "loadPTX8BooksNames can't find BOS code for PTX8 {!r} book".format( bnCode ) )
+                        logging.warning( f"loadPTX8BooksNames can't find BOS code for PTX8 {bnCode!r} book" )
                         BBB = bnCode # temporarily use their code
                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: assert BBB not in booksNamesDict
                     booksNamesDict[BBB] = (bnCode,bnAbbr,bnShort,bnLong,)
                 else:
-                    logging.error( _("Unprocessed {} element in {}").format( element.tag, elementLocation ) )
+                    logging.error( f"Unprocessed {element.tag} element in {elementLocation}" )
                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
         else:
-            logging.critical( _("Unrecognised PTX8 bookname settings tag: {}").format( self.XMLTree.tag ) )
+            logging.critical( f"Unrecognised PTX8 bookname settings tag: {self.XMLTree.tag}" )
             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
 
         try: self.filepathsNotYetLoaded.remove( bookNamesFilepath )
-        except ValueError: logging.critical( "PTX8 books names file seemed unexpected: {}".format( bookNamesFilepath ) )
+        except ValueError: logging.critical( f"PTX8 books names file seemed unexpected: {bookNamesFilepath}" )
 
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Loaded {} book names.".format( len(booksNamesDict) ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Loaded {len(booksNamesDict)} book names." )
         vPrint( 'Never', DEBUGGING_THIS_MODULE, "\nbooksNamesDict", len(booksNamesDict), booksNamesDict )
         if booksNamesDict: self.suppliedMetadata['PTX8']['BooksNames'] = booksNamesDict
     # end of PTX8Bible.loadPTX8BooksNames
@@ -799,7 +797,7 @@ class PTX8Bible( Bible ):
         lexiconFilepath = os.path.join( self.sourceFilepath, 'Lexicon.xml' )
         if not os.path.exists( lexiconFilepath ): return
 
-        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "PTX8Bible.loading project lexicon data from {}…".format( lexiconFilepath ) )
+        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"PTX8Bible.loading project lexicon data from {lexiconFilepath}…" )
         self.XMLTree = ElementTree().parse( lexiconFilepath )
         assert self.XMLTree is not None # Fail here if we didn't load anything at all
 
@@ -814,7 +812,7 @@ class PTX8Bible( Bible ):
             # Now process the actual items
             for subelement in element:
                 elementLocation = subelement.tag + ' in ' + treeLocation
-                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Processing {}…".format( elementLocation ) )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Processing {elementLocation}…" )
 
                 # Now process the subelements
                 if subelement.tag == 'Lexeme':
@@ -828,9 +826,9 @@ class PTX8Bible( Bible ):
                         elif attrib=='Form': lexemeForm = value
                         elif attrib=='Homograph': lexemeHomograph = value
                         else:
-                            logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, elementLocation ) )
+                            logging.error( f"Unprocessed {elementLocation!r} attribute ({attrib}) in {value}" )
                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
-                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Lexeme {} form={!r} homograph={}".format( lexemeType, lexemeForm, lexemeHomograph ) )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Lexeme {lexemeType} form={lexemeHomograph!r} homograph={lexemeForm}" )
                     assert lexemeType in ( 'Word', 'Phrase', 'Stem', 'Prefix' )
                     if lexemeType not in lexiconDict['Entries']: lexiconDict['Entries'][lexemeType] = {}
                     assert lexemeForm not in lexiconDict['Entries'][lexemeType]
@@ -841,7 +839,7 @@ class PTX8Bible( Bible ):
                     BibleOrgSysGlobals.checkXMLNoTail( subelement, elementLocation )
                     for sub2element in subelement:
                         sublocation = sub2element.tag + ' in ' + elementLocation
-                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Processing {}…".format( sublocation ) )
+                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Processing {sublocation}…" )
                         if sub2element.tag == 'Sense':
                             BibleOrgSysGlobals.checkXMLNoText( sub2element, sublocation )
                             BibleOrgSysGlobals.checkXMLNoTail( sub2element, sublocation )
@@ -850,13 +848,13 @@ class PTX8Bible( Bible ):
                             for attrib,value in sub2element.items():
                                 if attrib=='Id': senseID = value
                                 else:
-                                    logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, sublocation ) )
+                                    logging.error( f"Unprocessed {sublocation!r} attribute ({attrib}) in {value}" )
                                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
-                            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'senseID={!r}'.format( senseID ) )
+                            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'senseID={senseID!r}' )
                             assert senseID and senseID not in lexiconDict['Entries'][lexemeType][lexemeForm]['senseIDs']
                             for sub3element in sub2element:
                                 sub2location = sub3element.tag + ' in ' + sublocation
-                                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "    Processing {}…".format( sub2location ) )
+                                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"    Processing {sub2location}…" )
                                 if sub3element.tag == 'Gloss':
                                     BibleOrgSysGlobals.checkXMLNoSubelements( sub3element, sub2location )
                                     BibleOrgSysGlobals.checkXMLNoTail( sub3element, sub2location )
@@ -865,18 +863,18 @@ class PTX8Bible( Bible ):
                                     for attrib,value in sub3element.items():
                                         if attrib=='Language': glossLanguage = value
                                         else:
-                                            logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, sub2location ) )
+                                            logging.error( f"Unprocessed {sub2location!r} attribute ({attrib}) in {value}" )
                                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
                                 else:
-                                    logging.error( _("Unprocessed {} sub3element '{}' in {}").format( sub3element.tag, sub3element.text, sub2location ) )
+                                    logging.error( f"Unprocessed {sub3element.tag} sub3element '{sub3element.text}' in {sub2location}" )
                                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
                                 assert senseID not in lexiconDict['Entries'][lexemeType][lexemeForm]['senseIDs']
                                 lexiconDict['Entries'][lexemeType][lexemeForm]['senseIDs'][senseID] = (sub3element.text, glossLanguage)
                         else:
-                            logging.error( _("Unprocessed {} sub2element '{}' in {}").format( sub2element.tag, sub2element.text, sublocation ) )
+                            logging.error( f"Unprocessed {sub2element.tag} sub2element '{sub2element.text}' in {sublocation}" )
                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
                 else:
-                    logging.error( _("Unprocessed {} subelement in {}").format( subelement.tag, elementLocation ) )
+                    logging.error( f"Unprocessed {subelement.tag} subelement in {elementLocation}" )
                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  returning", lexiconDict['Entries'][lexemeType][lexemeForm] )
         # end of processLexiconItem
@@ -884,7 +882,7 @@ class PTX8Bible( Bible ):
 
         # Find the main container
         if self.XMLTree.tag == 'Lexicon':
-            treeLocation = "PTX8 {} file".format( self.XMLTree.tag )
+            treeLocation = f"PTX8 {self.XMLTree.tag} file"
             BibleOrgSysGlobals.checkXMLNoAttributes( self.XMLTree, treeLocation )
             BibleOrgSysGlobals.checkXMLNoText( self.XMLTree, treeLocation )
             BibleOrgSysGlobals.checkXMLNoTail( self.XMLTree, treeLocation )
@@ -892,7 +890,7 @@ class PTX8Bible( Bible ):
             # Now process the actual entries
             for element in self.XMLTree:
                 elementLocation = element.tag + ' in ' + treeLocation
-                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Processing {}…".format( elementLocation ) )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Processing {elementLocation}…" )
 
                 # Now process the subelements
                 if element.tag in ( 'Language', 'FontName', 'FontSize', ):
@@ -911,29 +909,29 @@ class PTX8Bible( Bible ):
                     BibleOrgSysGlobals.checkXMLNoTail( element, elementLocation )
                     for subelement in element:
                         sublocation = subelement.tag + ' in ' + elementLocation
-                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Processing {}…".format( sublocation ) )
+                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Processing {sublocation}…" )
                         if subelement.tag == 'item':
                             BibleOrgSysGlobals.checkXMLNoText( subelement, sublocation )
                             BibleOrgSysGlobals.checkXMLNoAttributes( subelement, sublocation )
                             BibleOrgSysGlobals.checkXMLNoTail( subelement, sublocation )
                             processLexiconItem( subelement, sublocation )
                         else:
-                            logging.error( _("Unprocessed {} subelement '{}' in {}").format( subelement.tag, subelement.text, sublocation ) )
+                            logging.error( f"Unprocessed {subelement.tag} subelement '{subelement.text}' in {sublocation}" )
                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
                 else:
-                    logging.error( _("Unprocessed {} element in {}").format( element.tag, elementLocation ) )
+                    logging.error( f"Unprocessed {element.tag} element in {elementLocation}" )
                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
         else:
-            logging.critical( _("Unrecognised PTX8 lexicon tag: {}").format( self.XMLTree.tag ) )
+            logging.critical( f"Unrecognised PTX8 lexicon tag: {self.XMLTree.tag}" )
             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
 
         try: self.filepathsNotYetLoaded.remove( lexiconFilepath )
-        except ValueError: logging.critical( "PTX8 lexicon file seemed unexpected: {}".format( lexiconFilepath ) )
+        except ValueError: logging.critical( f"PTX8 lexicon file seemed unexpected: {lexiconFilepath}" )
 
         if BibleOrgSysGlobals.verbosityLevel > 2:
             totalEntries = 0
             for lType in lexiconDict['Entries']: totalEntries += len( lexiconDict['Entries'][lType] )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Loaded {} lexicon types ({:,} total entries).".format( len(lexiconDict['Entries']), totalEntries ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Loaded {len(lexiconDict['Entries'])} lexicon types ({totalEntries:,} total entries)." )
         vPrint( 'Never', DEBUGGING_THIS_MODULE, "\nlexiconDict", len(lexiconDict), lexiconDict )
         if lexiconDict: self.suppliedMetadata['PTX8']['Lexicon'] = lexiconDict
     # end of PTX8Bible.loadPTX8Lexicon
@@ -948,7 +946,7 @@ class PTX8Bible( Bible ):
         projectUsersFilepath = os.path.join( self.sourceFilepath, 'ProjectUserAccess.xml' )
         if not os.path.exists( projectUsersFilepath ): return
 
-        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "PTX8Bible.loading project user data from {}…".format( projectUsersFilepath ) )
+        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"PTX8Bible.loading project user data from {projectUsersFilepath}…" )
         self.XMLTree = ElementTree().parse( projectUsersFilepath )
         assert self.XMLTree is not None # Fail here if we didn't load anything at all
 
@@ -957,7 +955,7 @@ class PTX8Bible( Bible ):
 
         # Find the main container
         if self.XMLTree.tag=='ProjectUserAccess':
-            treeLocation = "PTX8 {} file".format( self.XMLTree.tag )
+            treeLocation = f"PTX8 {self.XMLTree.tag} file"
             BibleOrgSysGlobals.checkXMLNoText( self.XMLTree, treeLocation )
             BibleOrgSysGlobals.checkXMLNoTail( self.XMLTree, treeLocation )
 
@@ -966,14 +964,14 @@ class PTX8Bible( Bible ):
             for attrib,value in self.XMLTree.items():
                 if attrib=='PeerSharing': peerSharingFlag = getFlagFromAttribute( attrib, value )
                 else:
-                    logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, treeLocation ) )
+                    logging.error( f"Unprocessed {treeLocation!r} attribute ({attrib}) in {value}" )
                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
             projectUsersDict['PeerSharingFlag'] = peerSharingFlag
 
             # Now process the actual entries
             for element in self.XMLTree:
                 elementLocation = element.tag + ' in ' + treeLocation
-                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Processing {}…".format( elementLocation ) )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Processing {elementLocation}…" )
                 BibleOrgSysGlobals.checkXMLNoText( element, elementLocation )
                 BibleOrgSysGlobals.checkXMLNoTail( element, elementLocation )
 
@@ -986,7 +984,7 @@ class PTX8Bible( Bible ):
                         elif attrib=='FirstUser': firstUserFlag = getFlagFromAttribute( attrib, value )
                         elif attrib=='UnregisteredUser': unregisteredUserFlag = getFlagFromAttribute( attrib, value )
                         else:
-                            logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, treeLocation ) )
+                            logging.error( f"Unprocessed {treeLocation!r} attribute ({attrib}) in {value}" )
                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
                     if 'Users' not in projectUsersDict: projectUsersDict['Users'] = {}
                     assert userName not in projectUsersDict['Users'] # no duplicates allowed presumably
@@ -996,7 +994,7 @@ class PTX8Bible( Bible ):
 
                     for subelement in element:
                         sublocation = subelement.tag + ' in ' + elementLocation
-                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Processing {}…".format( sublocation ) )
+                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Processing {sublocation}…" )
                         BibleOrgSysGlobals.checkXMLNoAttributes( subelement, sublocation )
                         BibleOrgSysGlobals.checkXMLNoTail( subelement, sublocation )
 
@@ -1011,7 +1009,7 @@ class PTX8Bible( Bible ):
                                 projectUsersDict['Users'][userName][subelement.tag] = []
                             for sub2element in subelement:
                                 sub2location = sub2element.tag + ' in ' + sublocation
-                                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Processing {}…".format( sub2location ) )
+                                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Processing {sub2location}…" )
                                 BibleOrgSysGlobals.checkXMLNoText( sub2element, sub2location )
                                 BibleOrgSysGlobals.checkXMLNoSubelements( sub2element, sub2location )
                                 BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub2location )
@@ -1020,11 +1018,11 @@ class PTX8Bible( Bible ):
                                     for attrib,value in sub2element.items():
                                         if attrib=='Id': bookID = value
                                         else:
-                                            logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, sub2location ) )
+                                            logging.error( f"Unprocessed {sub2location!r} attribute ({attrib}) in {value}" )
                                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
                                     projectUsersDict['Users'][userName][subelement.tag].append( bookID )
                                 else:
-                                    logging.error( _("Unprocessed {} sub2element '{}' in {}").format( sub2element.tag, sub2element.text, sub2location ) )
+                                    logging.error( f"Unprocessed {sub2element.tag} sub2element '{sub2element.text}' in {sub2location}" )
                                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
                         elif subelement.tag in ('Permissions','AutomaticPermissions',):
                             BibleOrgSysGlobals.checkXMLNoText( subelement, sublocation )
@@ -1032,7 +1030,7 @@ class PTX8Bible( Bible ):
                                 projectUsersDict['Users'][userName][subelement.tag] = {}
                             for sub2element in subelement:
                                 sub2location = sub2element.tag + ' in ' + sublocation
-                                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Processing {}…".format( sub2location ) )
+                                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Processing {sub2location}…" )
                                 BibleOrgSysGlobals.checkXMLNoText( sub2element, sub2location )
                                 BibleOrgSysGlobals.checkXMLNoSubelements( sub2element, sub2location )
                                 BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub2location )
@@ -1045,26 +1043,26 @@ class PTX8Bible( Bible ):
                                                 assert permissionType in ('TermsList','Renderings','Spellings','Passages','Progress',)
                                         elif attrib=='Granted': grantedFlag = getFlagFromAttribute( attrib, value )
                                         else:
-                                            logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, sub2location ) )
+                                            logging.error( f"Unprocessed {sub2location!r} attribute ({attrib}) in {value}" )
                                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
                                     projectUsersDict['Users'][userName][subelement.tag][permissionType] = grantedFlag
                                 else:
-                                    logging.error( _("Unprocessed {} sub2element '{}' in {}").format( sub2element.tag, sub2element.text, sub2location ) )
+                                    logging.error( f"Unprocessed {sub2element.tag} sub2element '{sub2element.text}' in {sub2location}" )
                                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
                         else:
-                            logging.error( _("Unprocessed {} subelement '{}' in {}").format( subelement.tag, subelement.text, sublocation ) )
+                            logging.error( f"Unprocessed {subelement.tag} subelement '{subelement.text}' in {sublocation}" )
                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
                 else:
-                    logging.error( _("Unprocessed {} element in {}").format( element.tag, elementLocation ) )
+                    logging.error( f"Unprocessed {element.tag} element in {elementLocation}" )
                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
         else:
-            logging.critical( _("Unrecognised PTX8 project users settings tag: {}").format( self.XMLTree.tag ) )
+            logging.critical( f"Unrecognised PTX8 project users settings tag: {self.XMLTree.tag}" )
             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
 
         try: self.filepathsNotYetLoaded.remove( projectUsersFilepath )
-        except ValueError: logging.critical( "PTX8 project users file seemed unexpected: {}".format( projectUsersFilepath ) )
+        except ValueError: logging.critical( f"PTX8 project users file seemed unexpected: {projectUsersFilepath}" )
 
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Loaded {} project users.".format( len(projectUsersDict['Users']) ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Loaded {len(projectUsersDict['Users'])} project users." )
         if DEBUGGING_THIS_MODULE:
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nprojectUsersDict", len(projectUsersDict), projectUsersDict )
             for somekey in projectUsersDict:
@@ -1084,7 +1082,7 @@ class PTX8Bible( Bible ):
         canonsFilepath = os.path.join( self.sourceFilepath, 'Canons.xml' )
         if not os.path.exists( canonsFilepath ): return
 
-        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "PTX8Bible.loading canons data from {}…".format( canonsFilepath ) )
+        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"PTX8Bible.loading canons data from {canonsFilepath}…" )
         self.XMLTree = ElementTree().parse( canonsFilepath )
         assert self.XMLTree is not None # Fail here if we didn't load anything at all
 
@@ -1093,7 +1091,7 @@ class PTX8Bible( Bible ):
 
         # Find the main container
         if self.XMLTree.tag == 'Canons':
-            treeLocation = "PTX8 {} file".format( self.XMLTree.tag )
+            treeLocation = f"PTX8 {self.XMLTree.tag} file"
             BibleOrgSysGlobals.checkXMLNoText( self.XMLTree, treeLocation, 'CA01' )
             BibleOrgSysGlobals.checkXMLNoTail( self.XMLTree, treeLocation, 'CA02' )
 
@@ -1102,13 +1100,13 @@ class PTX8Bible( Bible ):
             for attrib,value in self.XMLTree.items():
                 if attrib=='NextId': nextId = value
                 else:
-                    logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, treeLocation ) )
+                    logging.error( f"Unprocessed {treeLocation!r} attribute ({attrib}) in {value}" )
                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
 
             # Now process the actual entries
             for element in self.XMLTree:
                 elementLocation = element.tag + ' in ' + treeLocation
-                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Processing {}…".format( elementLocation ) )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Processing {elementLocation}…" )
 
                 # Now process the subelements
                 if element.tag == 'Canon':
@@ -1126,7 +1124,7 @@ class PTX8Bible( Bible ):
                         elif attrib=='LjeInBar': LjeInBarFlag = getFlagFromAttribute( attrib, value )
                         elif attrib=='DagPartial': DagPartialFlag = getFlagFromAttribute( attrib, value )
                         else:
-                            logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, treeLocation ) )
+                            logging.error( f"Unprocessed {treeLocation!r} attribute ({attrib}) in {value}" )
                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
                     tempDict['DefaultFlag'] = defaultFlag
                     tempDict['Psa151inPsaFlag'] = Psa151inPsaFlag
@@ -1136,7 +1134,7 @@ class PTX8Bible( Bible ):
                     bookList = []
                     for subelement in element:
                         sublocation = subelement.tag + ' in ' + elementLocation
-                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Processing {}…".format( sublocation ) )
+                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Processing {sublocation}…" )
                         BibleOrgSysGlobals.checkXMLNoAttributes( subelement, sublocation )
                         BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation )
                         BibleOrgSysGlobals.checkXMLNoTail( subelement, sublocation )
@@ -1149,27 +1147,27 @@ class PTX8Bible( Bible ):
                             BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromUSFMAbbreviation( subelement.text )
                             bookList.append( BBB )
                         else:
-                            logging.error( _("Unprocessed {} subelement '{}' in {}").format( subelement.tag, subelement.text, sublocation ) )
+                            logging.error( f"Unprocessed {subelement.tag} subelement '{subelement.text}' in {sublocation}" )
                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
                     if bookList:
                         assert 'BookList' not in tempDict
                         tempDict['BookList'] = bookList
                 else:
-                    logging.error( _("Unprocessed {} element in {}").format( element.tag, elementLocation ) )
+                    logging.error( f"Unprocessed {element.tag} element in {elementLocation}" )
                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
                 assert Id not in canonsDict
                 canonsDict[Id] = tempDict
         else:
-            logging.critical( _("Unrecognised PTX8 checking tag: {}").format( self.XMLTree.tag ) )
+            logging.critical( f"Unrecognised PTX8 checking tag: {self.XMLTree.tag}" )
             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
 
         try: self.filepathsNotYetLoaded.remove( canonsFilepath )
-        except ValueError: logging.critical( "PTX8 checking status file seemed unexpected: {}".format( canonsFilepath ) )
+        except ValueError: logging.critical( f"PTX8 checking status file seemed unexpected: {canonsFilepath}" )
 
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Loaded {:,} canons.".format( len(canonsDict) ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Loaded {len(canonsDict):,} canons." )
         vPrint( 'Never', DEBUGGING_THIS_MODULE, "\ncanonsDict", len(canonsDict), canonsDict )
         #for something in canonsDict:
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n  {} = {}".format( something, canonsDict[something] ) )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n  {something} = {canonsDict[something]}" )
         if canonsDict: self.suppliedMetadata['PTX8']['Canons'] = canonsDict
     # end of PTX8Bible.loadPTX8Canons
 
@@ -1183,7 +1181,7 @@ class PTX8Bible( Bible ):
         checkingStatusFilepath = os.path.join( self.sourceFilepath, 'CheckingStatus.xml' )
         if not os.path.exists( checkingStatusFilepath ): return
 
-        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "PTX8Bible.loading checking status data from {}…".format( checkingStatusFilepath ) )
+        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"PTX8Bible.loading checking status data from {checkingStatusFilepath}…" )
         self.XMLTree = ElementTree().parse( checkingStatusFilepath )
         assert self.XMLTree is not None # Fail here if we didn't load anything at all
 
@@ -1192,7 +1190,7 @@ class PTX8Bible( Bible ):
 
         # Find the main container
         if self.XMLTree.tag == 'CheckingStatuses':
-            treeLocation = "PTX8 {} file".format( self.XMLTree.tag )
+            treeLocation = f"PTX8 {self.XMLTree.tag} file"
             BibleOrgSysGlobals.checkXMLNoAttributes( self.XMLTree, treeLocation )
             BibleOrgSysGlobals.checkXMLNoText( self.XMLTree, treeLocation )
             BibleOrgSysGlobals.checkXMLNoTail( self.XMLTree, treeLocation )
@@ -1200,7 +1198,7 @@ class PTX8Bible( Bible ):
             # Now process the actual entries
             for element in self.XMLTree:
                 elementLocation = element.tag + ' in ' + treeLocation
-                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Processing {}…".format( elementLocation ) )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Processing {elementLocation}…" )
                 BibleOrgSysGlobals.checkXMLNoAttributes( element, elementLocation )
                 BibleOrgSysGlobals.checkXMLNoText( element, elementLocation )
                 BibleOrgSysGlobals.checkXMLNoTail( element, elementLocation )
@@ -1210,7 +1208,7 @@ class PTX8Bible( Bible ):
                     tempDict = {}
                     for subelement in element:
                         sublocation = subelement.tag + ' ' + elementLocation
-                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Processing {}…".format( sublocation ) )
+                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Processing {sublocation}…" )
                         BibleOrgSysGlobals.checkXMLNoAttributes( subelement, sublocation )
                         BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation )
                         BibleOrgSysGlobals.checkXMLNoTail( subelement, sublocation )
@@ -1219,7 +1217,7 @@ class PTX8Bible( Bible ):
                             assert subelement.tag not in tempDict
                             tempDict[subelement.tag] = subelement.text
                         else:
-                            logging.error( _("Unprocessed {} subelement '{}' in {}").format( subelement.tag, subelement.text, sublocation ) )
+                            logging.error( f"Unprocessed {subelement.tag} subelement '{subelement.text}' in {sublocation}" )
                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
                     assert tempDict and 'BookName' in tempDict and 'Check' in tempDict
                     bn, chk = tempDict['BookName'], tempDict['Check']
@@ -1231,21 +1229,21 @@ class PTX8Bible( Bible ):
                     assert bn not in checkingStatusByCheckDict[chk] # Duplicates not expected
                     checkingStatusByCheckDict[chk][bn] = tempDict # Saved both ways
                 else:
-                    logging.error( _("Unprocessed {} element in {}").format( element.tag, elementLocation ) )
+                    logging.error( f"Unprocessed {element.tag} element in {elementLocation}" )
                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
         else:
-            logging.critical( _("Unrecognised PTX8 checking tag: {}").format( self.XMLTree.tag ) )
+            logging.critical( f"Unrecognised PTX8 checking tag: {self.XMLTree.tag}" )
             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
 
         try: self.filepathsNotYetLoaded.remove( checkingStatusFilepath )
-        except ValueError: logging.critical( "PTX8 checking status file seemed unexpected: {}".format( checkingStatusFilepath ) )
+        except ValueError: logging.critical( f"PTX8 checking status file seemed unexpected: {checkingStatusFilepath}" )
 
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Loaded {:,} checking status books.".format( len(checkingStatusByBookDict) ) )
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Loaded {:,} checking status checks.".format( len(checkingStatusByCheckDict) ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Loaded {len(checkingStatusByBookDict):,} checking status books." )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Loaded {len(checkingStatusByCheckDict):,} checking status checks." )
         dPrint( 'Never', DEBUGGING_THIS_MODULE, "\ncheckingStatusByBookDict", len(checkingStatusByBookDict), checkingStatusByBookDict )
         dPrint( 'Never', DEBUGGING_THIS_MODULE, "\ncheckingStatusByCheckDict", len(checkingStatusByCheckDict), checkingStatusByCheckDict )
         #for something in checkingStatusDict:
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n  {} = {}".format( something, checkingStatusDict[something] ) )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n  {something} = {checkingStatusDict[something]}" )
         if checkingStatusByBookDict: self.suppliedMetadata['PTX8']['CheckingStatusByBook'] = checkingStatusByBookDict
         if checkingStatusByCheckDict: self.suppliedMetadata['PTX8']['CheckingStatusByCheck'] = checkingStatusByCheckDict
     # end of PTX8Bible.loadPTX8CheckingStatus
@@ -1263,14 +1261,14 @@ class PTX8Bible( Bible ):
         commentTagDict = {}
         #loadErrors:list[str] = []
 
-        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "PTX8Bible.loading comment tags from {}…".format( commentTagFilepath ) )
+        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"PTX8Bible.loading comment tags from {commentTagFilepath}…" )
 
         self.XMLTree = ElementTree().parse( commentTagFilepath )
         assert self.XMLTree is not None # Fail here if we didn't load anything at all
 
         # Find the main container
         if self.XMLTree.tag == 'TagList':
-            treeLocation = "PTX8 {} file".format( self.XMLTree.tag )
+            treeLocation = f"PTX8 {self.XMLTree.tag} file"
             BibleOrgSysGlobals.checkXMLNoAttributes( self.XMLTree, treeLocation )
             BibleOrgSysGlobals.checkXMLNoText( self.XMLTree, treeLocation )
             BibleOrgSysGlobals.checkXMLNoTail( self.XMLTree, treeLocation )
@@ -1278,7 +1276,7 @@ class PTX8Bible( Bible ):
             # Now process the actual entries
             for element in self.XMLTree:
                 elementLocation = element.tag + ' in ' + treeLocation
-                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Processing {}…".format( elementLocation ) )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Processing {elementLocation}…" )
                 BibleOrgSysGlobals.checkXMLNoTail( element, elementLocation )
                 BibleOrgSysGlobals.checkXMLNoSubelements( element, elementLocation )
 
@@ -1293,23 +1291,23 @@ class PTX8Bible( Bible ):
                         elif attrib=='Icon': icon = value
                         elif attrib=='CreatorResolve': creatorResolveFlag = getFlagFromAttribute( attrib, value )
                         else:
-                            logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, treeLocation ) )
+                            logging.error( f"Unprocessed {treeLocation!r} attribute ({attrib}) in {value}" )
                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
                     commentTagDict[element.tag] = { 'Id':Id, 'Name':name, 'Icon':icon, 'CreatorResolve':creatorResolveFlag }
                 elif element.tag == 'LastUsedID':
                     BibleOrgSysGlobals.checkXMLNoAttributes( element, elementLocation )
                     commentTagDict[element.tag] = element.text
                 else:
-                    logging.error( _("Unprocessed {} element in {}").format( element.tag, elementLocation ) )
+                    logging.error( f"Unprocessed {element.tag} element in {elementLocation}" )
                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
         else:
-            logging.critical( _("Unrecognised PTX8 comment tag list tag: {}").format( self.XMLTree.tag ) )
+            logging.critical( f"Unrecognised PTX8 comment tag list tag: {self.XMLTree.tag}" )
             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
 
         try: self.filepathsNotYetLoaded.remove( commentTagFilepath )
-        except ValueError: logging.critical( "PTX8 comment tag file seemed unexpected: {}".format( commentTagFilepath ) )
+        except ValueError: logging.critical( f"PTX8 comment tag file seemed unexpected: {commentTagFilepath}" )
 
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Loaded {} comment tags.".format( len(commentTagDict) ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Loaded {len(commentTagDict)} comment tags." )
         vPrint( 'Never', DEBUGGING_THIS_MODULE, "\ncommentTagDict", len(commentTagDict), commentTagDict )
         if commentTagDict: self.suppliedMetadata['PTX8']['CommentTags'] = commentTagDict
     # end of PTX8Bible.loadPTX8CommentTags
@@ -1327,7 +1325,7 @@ class PTX8Bible( Bible ):
         derivedTranslationStatusFilepath = os.path.join( self.sourceFilepath, 'DerivedTranslationStatus.xml' )
         if not os.path.exists( derivedTranslationStatusFilepath ): return
 
-        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "PTX8Bible.loading derived translation status data from {}…".format( derivedTranslationStatusFilepath ) )
+        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"PTX8Bible.loading derived translation status data from {derivedTranslationStatusFilepath}…" )
         self.XMLTree = ElementTree().parse( derivedTranslationStatusFilepath )
         assert self.XMLTree is not None # Fail here if we didn't load anything at all
 
@@ -1336,7 +1334,7 @@ class PTX8Bible( Bible ):
 
         # Find the main container
         if self.XMLTree.tag == 'DerivedTranslationVerseList':
-            treeLocation = "PTX8 {} file".format( self.XMLTree.tag )
+            treeLocation = f"PTX8 {self.XMLTree.tag} file"
             BibleOrgSysGlobals.checkXMLNoAttributes( self.XMLTree, treeLocation )
             BibleOrgSysGlobals.checkXMLNoText( self.XMLTree, treeLocation )
             BibleOrgSysGlobals.checkXMLNoTail( self.XMLTree, treeLocation )
@@ -1344,7 +1342,7 @@ class PTX8Bible( Bible ):
             # Now process the actual entries
             for element in self.XMLTree:
                 elementLocation = element.tag + ' in ' + treeLocation
-                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Processing {}…".format( elementLocation ) )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Processing {elementLocation}…" )
                 BibleOrgSysGlobals.checkXMLNoTail( element, elementLocation )
                 BibleOrgSysGlobals.checkXMLNoSubelements( element, elementLocation )
 
@@ -1357,7 +1355,7 @@ class PTX8Bible( Bible ):
                         if attrib=='ref': referenceString = value
                         elif attrib=='derived': derivedCode = value
                         else:
-                            logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, treeLocation ) )
+                            logging.error( f"Unprocessed {treeLocation!r} attribute ({attrib}) in {value}" )
                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
                     assert referenceString.count( ' ' ) == 1
                     assert referenceString.count( ':' ) == 1
@@ -1372,19 +1370,19 @@ class PTX8Bible( Bible ):
                     derivedFrom = element.text
                     derivedTranslationStatusByBookDict[BBB][(C,V)] = (derivedCode,derivedFrom)
                 else:
-                    logging.error( _("Unprocessed {} element in {}").format( element.tag, elementLocation ) )
+                    logging.error( f"Unprocessed {element.tag} element in {elementLocation}" )
                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
         else:
-            logging.critical( _("Unrecognised PTX8 derived translation tag: {}").format( self.XMLTree.tag ) )
+            logging.critical( f"Unrecognised PTX8 derived translation tag: {self.XMLTree.tag}" )
             if BibleOrgSysGlobals.strictDerivedTranslationFlag or BibleOrgSysGlobals.debugFlag: halt
 
         try: self.filepathsNotYetLoaded.remove( derivedTranslationStatusFilepath )
-        except ValueError: logging.critical( "PTX8 derived translation status file seemed unexpected: {}".format( derivedTranslationStatusFilepath ) )
+        except ValueError: logging.critical( f"PTX8 derived translation status file seemed unexpected: {derivedTranslationStatusFilepath}" )
 
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Loaded {:,} derived translation status books.".format( len(derivedTranslationStatusByBookDict) ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Loaded {len(derivedTranslationStatusByBookDict):,} derived translation status books." )
         dPrint( 'Never', DEBUGGING_THIS_MODULE, "\nderivedTranslationStatusByBookDict", len(derivedTranslationStatusByBookDict), derivedTranslationStatusByBookDict )
         #for something in derivedTranslationStatusByBookDict:
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n  {} = {}".format( something, derivedTranslationStatusByBookDict[something] ) )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n  {something} = {derivedTranslationStatusByBookDict[something]}" )
         if derivedTranslationStatusByBookDict:
             self.suppliedMetadata['PTX8']['DerivedTranslationStatusByBook'] = derivedTranslationStatusByBookDict
     # end of PTX8Bible.loadPTX8DerivedTranslationStatus
@@ -1400,22 +1398,22 @@ class PTX8Bible( Bible ):
         licenceFilepath = os.path.join( self.sourceFilepath, licenceFilename )
         if not os.path.exists( licenceFilepath ): return
 
-        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "PTX8Bible.loading PTX8 license from {}…".format( licenceFilepath ) )
+        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"PTX8Bible.loading PTX8 license from {licenceFilepath}…" )
 
         with open( licenceFilepath, 'rt', encoding='utf-8' ) as lFile: # Automatically closes the file when done
             licenceString = lFile.read()
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "licenceString", licenceString )
         if licenceString[0]==BibleOrgSysGlobals.BOM:
-            logging.info( "loadPTX8Licence: Detected Unicode Byte Order Marker (BOM) in {}".format( licenceFilename ) )
+            logging.info( f"loadPTX8Licence: Detected Unicode Byte Order Marker (BOM) in {licenceFilename}" )
             licenceString = licenceString[1:] # Remove the Unicode Byte Order Marker (BOM)
         jsonData = json.loads( licenceString )
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "jsonData", jsonData )
         if BibleOrgSysGlobals.debugFlag or DEBUGGING_THIS_MODULE: assert isinstance( jsonData, dict )
 
         try: self.filepathsNotYetLoaded.remove( licenceFilepath )
-        except ValueError: logging.critical( "PTX8 license file seemed unexpected: {}".format( licenceFilepath ) )
+        except ValueError: logging.critical( f"PTX8 license file seemed unexpected: {licenceFilepath}" )
 
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Loaded {} license elements.".format( len(jsonData) ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Loaded {len(jsonData)} license elements." )
         vPrint( 'Never', DEBUGGING_THIS_MODULE, '\nPTX8Licence', len(jsonData), jsonData )
         if jsonData: self.suppliedMetadata['PTX8']['Licence'] = jsonData
     # end of PTX8Bible.loadPTX8Licence
@@ -1434,7 +1432,7 @@ class PTX8Bible( Bible ):
             if os.path.isfile(somepath) and somethingUPPER.startswith('NOTES_') and somethingUPPER.endswith('.XML'):
                 noteFilenames.append( something )
         #if len(noteFilenames) > 1:
-            #logging.error( "Got more than one note file: {}".format( noteFilenames ) )
+            #logging.error( f"Got more than one note file: {noteFilenames}" )
         if not noteFilenames: return
 
         notesDictByName, notesDictByThread = {}, {}
@@ -1446,15 +1444,15 @@ class PTX8Bible( Bible ):
             notesDictByName[noterName] = []
 
             noteFilepath = os.path.join( self.sourceFilepath, noteFilename )
-            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "PTX8Bible.loading notes from {}…".format( noteFilepath ) )
+            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"PTX8Bible.loading notes from {noteFilepath}…" )
 
             self.XMLTree = ElementTree().parse( noteFilepath )
             if not len( self.XMLTree ):
-                logging.info( "Notes for {} seems empty.".format( noterName ) )
+                logging.info( f"Notes for {noterName} seems empty." )
 
             # Find the main container
             if self.XMLTree.tag == 'CommentList':
-                treeLocation = "PTX8 notes file ({}) for {}".format( self.XMLTree.tag, noterName )
+                treeLocation = f"PTX8 notes file ({self.XMLTree.tag}) for {noterName}"
                 BibleOrgSysGlobals.checkXMLNoAttributes( self.XMLTree, treeLocation )
                 BibleOrgSysGlobals.checkXMLNoText( self.XMLTree, treeLocation )
                 BibleOrgSysGlobals.checkXMLNoTail( self.XMLTree, treeLocation )
@@ -1462,7 +1460,7 @@ class PTX8Bible( Bible ):
                 # Now process the actual entries
                 for element in self.XMLTree:
                     elementLocation = element.tag + ' in ' + treeLocation
-                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Processing {}…".format( elementLocation ) )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Processing {elementLocation}…" )
                     BibleOrgSysGlobals.checkXMLNoText( element, elementLocation )
                     BibleOrgSysGlobals.checkXMLNoTail( element, elementLocation )
 
@@ -1477,14 +1475,14 @@ class PTX8Bible( Bible ):
                             elif attrib=='Language': language = value
                             elif attrib=='Date': date = value
                             else:
-                                logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, treeLocation ) )
+                                logging.error( f"Unprocessed {treeLocation!r} attribute ({attrib}) in {value}" )
                                 if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
                         commentDict = { 'Noter':noterName, 'Thread':thread, 'User':user,
                                         'VerseRef':verseRef, 'Language':language, 'Date':date }
 
                         for subelement in element:
                             sublocation = subelement.tag + ' in ' + elementLocation
-                            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Processing {}…".format( sublocation ) )
+                            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Processing {sublocation}…" )
                             BibleOrgSysGlobals.checkXMLNoAttributes( subelement, sublocation, 'CM01' )
                             BibleOrgSysGlobals.checkXMLNoTail( subelement, sublocation, 'CM02' )
                             assert subelement.tag not in commentDict # No duplicates please
@@ -1506,59 +1504,59 @@ class PTX8Bible( Bible ):
                                     #BibleOrgSysGlobals.checkXMLNoSubelements( sub2element, sub2location )
                                     #BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub2location )
                                     #if sub2element.text:
-                                        #contentsText += '<{}>{}</{}>'.format( sub2element.tag, sub2element.text, sub2element.tag )
-                                    #else: contentsText += '<{}/>'.format( sub2element.tag )
+                                        #contentsText += f'<{sub2element.tag}>{sub2element.text}</{sub2element.tag}>'
+                                    #else: contentsText += f'<{sub2element.tag}/>'
                                 ##dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'contentsText', repr(contentsText) )
                                 commentDict[subelement.tag] = BibleOrgSysGlobals.getFlattenedXML( subelement, sublocation )
                             else:
-                                logging.error( _("Unprocessed {} subelement '{}' in {}").format( subelement.tag, subelement.text, sublocation ) )
+                                logging.error( f"Unprocessed {subelement.tag} subelement '{subelement.text}' in {sublocation}" )
                                 if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
                     #elif element.tag == 'ConflictType':halt
                     else:
-                        logging.error( _("Unprocessed {} element in {}").format( element.tag, elementLocation ) )
+                        logging.error( f"Unprocessed {element.tag} element in {elementLocation}" )
                         if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "commentDict", commentDict )
                     if commentDict['ConflictType'] == 'verseText':
-                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "{}/ Noter: {} @ {} @ {}".format( len(self.conflicts)+1, noterName, commentDict['VerseRef'], commentDict['Date'].split('T',1)[0] ) )
-                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Type: {}".format( commentDict['Type'] ) )
-                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  ConflictType: {}".format( commentDict['ConflictType'] ) )
-                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Status: {}".format( commentDict['Status'] ) )
-                        #try: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  ConflictResolutionAction: {}".format( commentDict['ConflictResolutionAction'] ) )
+                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{len(self.conflicts)+1}/ Noter: {noterName} @ {commentDict['VerseRef']} @ {commentDict['Date'].split('T',1)[0]}" )
+                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Type: {commentDict['Type']}" )
+                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  ConflictType: {commentDict['ConflictType']}" )
+                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Status: {commentDict['Status']}" )
+                        #try: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  ConflictResolutionAction: {commentDict['ConflictResolutionAction']}" )
                         #except KeyError: pass
-                        ##dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  AcceptedChangeXml: {}".format( commentDict['AcceptedChangeXml'] ) )
+                        ##dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  AcceptedChangeXml: {commentDict['AcceptedChangeXml']}" )
                         self.conflicts.append( commentDict )
                     notesDictByName[noterName].append( commentDict )
                     assert thread
                     if thread not in notesDictByThread: notesDictByThread[thread] = []
                     notesDictByThread[thread].append( commentDict )
             else:
-                logging.critical( _("Unrecognised PTX8 {} note/comment list tag: {}").format( noterName, self.XMLTree.tag ) )
+                logging.critical( f"Unrecognised PTX8 {noterName} note/comment list tag: {self.XMLTree.tag}" )
                 if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
 
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nNotes for {}: ({}) {}".format( noterName, len(notesDictByName[noterName]), notesDictByName[noterName] ) )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nNotes for {noterName}: ({len(notesDictByName[noterName])}) {notesDictByName[noterName]}" )
 
             try: self.filepathsNotYetLoaded.remove( noteFilepath )
-            except ValueError: logging.critical( "PTX8 notes file seemed unexpected: {}".format( noteFilepath ) )
+            except ValueError: logging.critical( f"PTX8 notes file seemed unexpected: {noteFilepath}" )
 
         if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag or DEBUGGING_THIS_MODULE:
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Checking {} possible conflicts…".format( len(self.conflicts) ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Checking {len(self.conflicts)} possible conflicts…" )
         for commentDict1 in self.conflicts.copy(): # Work on a copy since we modify it
             noterName = commentDict1['Noter']
             threadNumber = commentDict1['Thread']
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Have possible conflict thread {} by {}".format( threadNumber, noterName ) )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Have possible conflict thread {threadNumber} by {noterName}" )
             threadNotes = notesDictByThread[threadNumber]
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  {}".format( threadNotes ) )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  {threadNotes}" )
             for threadNoteDict in threadNotes:
                 assert threadNoteDict['Thread'] == threadNumber
-                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  {} status is {}".format( threadNoteDict['Noter'], threadNoteDict['Status'] ) )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  {threadNoteDict['Noter']} status is {threadNoteDict['Status']}" )
                 if threadNoteDict['Status'] == 'deleted': # Remove from conflicts
                     self.conflicts.remove( commentDict1 )
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  removed!" )
                     break
         if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag or DEBUGGING_THIS_MODULE:
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "    Now have {} remaining conflicts".format( len(self.conflicts) ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"    Now have {len(self.conflicts)} remaining conflicts" )
 
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Loaded {} noters.".format( len(notesDictByName) ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Loaded {len(notesDictByName)} noters." )
         vPrint( 'Never', DEBUGGING_THIS_MODULE, "\nnotesDictByName", len(notesDictByName), notesDictByName )
         # Call this 'PTXNotes' rather than just 'Notes' which might just be a note on the particular version
         if notesDictByName: self.suppliedMetadata['PTX8']['PTXNotesByName'] = notesDictByName
@@ -1575,7 +1573,7 @@ class PTX8Bible( Bible ):
         parallelPassageStatusFilepath = os.path.join( self.sourceFilepath, 'ParallelPassageStatus.xml' )
         if not os.path.exists( parallelPassageStatusFilepath ): return
 
-        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "PTX8Bible.loading parallel passage status data from {}…".format( parallelPassageStatusFilepath ) )
+        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"PTX8Bible.loading parallel passage status data from {parallelPassageStatusFilepath}…" )
         self.XMLTree = ElementTree().parse( parallelPassageStatusFilepath )
         assert self.XMLTree is not None # Fail here if we didn't load anything at all
 
@@ -1584,7 +1582,7 @@ class PTX8Bible( Bible ):
 
         # Find the main container
         if self.XMLTree.tag == 'PassageStatus':
-            treeLocation = "PTX8 {} file".format( self.XMLTree.tag )
+            treeLocation = f"PTX8 {self.XMLTree.tag} file"
             BibleOrgSysGlobals.checkXMLNoAttributes( self.XMLTree, treeLocation )
             BibleOrgSysGlobals.checkXMLNoText( self.XMLTree, treeLocation )
             BibleOrgSysGlobals.checkXMLNoTail( self.XMLTree, treeLocation )
@@ -1592,7 +1590,7 @@ class PTX8Bible( Bible ):
             # Now process the actual entries
             for element in self.XMLTree:
                 elementLocation = element.tag + ' in ' + treeLocation
-                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Processing {}…".format( elementLocation ) )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Processing {elementLocation}…" )
 
                 # Now process the subelements
                 if element.tag == 'Status':
@@ -1607,7 +1605,7 @@ class PTX8Bible( Bible ):
                         elif attrib=='status':
                             passageStatus = value
                         else:
-                            logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, treeLocation ) )
+                            logging.error( f"Unprocessed {treeLocation!r} attribute ({attrib}) in {value}" )
                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
                     assert passageKey
                     assert passageKey not in parallelPassageStatusDict # no duplicates allowed presumably
@@ -1617,7 +1615,7 @@ class PTX8Bible( Bible ):
 
                     for subelement in element:
                         sublocation = subelement.tag + ' ' + elementLocation
-                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Processing {}…".format( sublocation ) )
+                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Processing {sublocation}…" )
                         BibleOrgSysGlobals.checkXMLNoAttributes( subelement, sublocation )
                         BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation )
                         BibleOrgSysGlobals.checkXMLNoTail( subelement, sublocation )
@@ -1640,19 +1638,19 @@ class PTX8Bible( Bible ):
                                     assert subelement.tag not in parallelPassageStatusDict[passageKey]
                                     parallelPassageStatusDict[passageKey][subelement.tag] = subelement.text
                         else:
-                            logging.error( _("Unprocessed {} subelement '{}' in {}").format( subelement.tag, subelement.text, sublocation ) )
+                            logging.error( f"Unprocessed {subelement.tag} subelement '{subelement.text}' in {sublocation}" )
                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
                 else:
-                    logging.error( _("Unprocessed {} element in {}").format( element.tag, elementLocation ) )
+                    logging.error( f"Unprocessed {element.tag} element in {elementLocation}" )
                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
         else:
-            logging.critical( _("Unrecognised PTX8 parallel passage status tag: {}").format( self.XMLTree.tag ) )
+            logging.critical( f"Unrecognised PTX8 parallel passage status tag: {self.XMLTree.tag}" )
             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
 
         try: self.filepathsNotYetLoaded.remove( parallelPassageStatusFilepath )
-        except ValueError: logging.critical( "PTX8 parallel passage status file seemed unexpected: {}".format( parallelPassageStatusFilepath ) )
+        except ValueError: logging.critical( f"PTX8 parallel passage status file seemed unexpected: {parallelPassageStatusFilepath}" )
 
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Loaded {:,} parallel passage status entries.".format( len(parallelPassageStatusDict) ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Loaded {len(parallelPassageStatusDict):,} parallel passage status entries." )
         vPrint( 'Never', DEBUGGING_THIS_MODULE, "\nparallelPassageStatusDict", len(parallelPassageStatusDict), parallelPassageStatusDict )
         if parallelPassageStatusDict: self.suppliedMetadata['PTX8']['ParallelPassageStatus'] = parallelPassageStatusDict
     # end of PTX8Bible.loadPTX8ParallelPassageStatus
@@ -1670,14 +1668,14 @@ class PTX8Bible( Bible ):
         projectBiblicalTermsDict = {}
         #loadErrors:list[str] = []
 
-        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "PTX8Bible.loading Biblical terms from {}…".format( projectBiblicalTermsFilepath ) )
+        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"PTX8Bible.loading Biblical terms from {projectBiblicalTermsFilepath}…" )
 
         self.XMLTree = ElementTree().parse( projectBiblicalTermsFilepath )
         assert self.XMLTree is not None # Fail here if we didn't load anything at all
 
         # Find the main container
         if self.XMLTree.tag=='BiblicalTermsList':
-            treeLocation = "PTX8 {} in project Biblical terms".format( self.XMLTree.tag )
+            treeLocation = f"PTX8 {self.XMLTree.tag} in project Biblical terms"
             BibleOrgSysGlobals.checkXMLNoAttributes( self.XMLTree, treeLocation )
             BibleOrgSysGlobals.checkXMLNoText( self.XMLTree, treeLocation )
             BibleOrgSysGlobals.checkXMLNoTail( self.XMLTree, treeLocation )
@@ -1685,7 +1683,7 @@ class PTX8Bible( Bible ):
             # Now process the actual entries
             for element in self.XMLTree:
                 elementLocation = element.tag + ' in ' + treeLocation
-                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Processing {}…".format( elementLocation ) )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Processing {elementLocation}…" )
                 BibleOrgSysGlobals.checkXMLNoTail( element, elementLocation )
 
                 # Now process the elements
@@ -1697,7 +1695,7 @@ class PTX8Bible( Bible ):
                     for attrib,value in element.items():
                         if attrib=='Id': termId = value
                         else:
-                            logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, sublocation ) )
+                            logging.error( f"Unprocessed {sublocation!r} attribute ({attrib}) in {value}" )
                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
 
                     for subelement in element:
@@ -1713,7 +1711,7 @@ class PTX8Bible( Bible ):
                             referenceList = []
                             for sub2element in subelement:
                                 sub2location = sub2element.tag + ' in ' + sublocation
-                                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Processing {}…".format( sub2location ) )
+                                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Processing {sub2location}…" )
 
                                 if sub2element.tag == 'Verse':
                                     BibleOrgSysGlobals.checkXMLNoAttributes( sub2element, sub2location )
@@ -1724,11 +1722,11 @@ class PTX8Bible( Bible ):
                                     assert verseCode.isdigit()
                                     referenceList.append( verseCode )
                                 else:
-                                    logging.error( _("Unprocessed {} sub2element '{}' in {}").format( sub2element.tag, sub2element.text, sub2location ) )
+                                    logging.error( f"Unprocessed {sub2element.tag} sub2element '{sub2element.text}' in {sub2location}" )
                                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
                             if referenceList: termRenderingEntryDict['referenceList'] = referenceList
                         else:
-                            logging.error( _("Unprocessed {} subelement '{}' in {}").format( subelement.tag, subelement.text, sublocation ) )
+                            logging.error( f"Unprocessed {subelement.tag} subelement '{subelement.text}' in {sublocation}" )
                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
                     assert termId not in projectBiblicalTermsDict
                     projectBiblicalTermsDict[termId] = termRenderingEntryDict
@@ -1737,19 +1735,19 @@ class PTX8Bible( Bible ):
                     BibleOrgSysGlobals.checkXMLNoSubelements( element, elementLocation )
                     projectBiblicalTermsDict[element.tag] = element.text
                 else:
-                    logging.error( _("Unprocessed {} element '{}' in {}").format( element.tag, element.text, elementLocation ) )
+                    logging.error( f"Unprocessed {element.tag} element '{element.text}' in {elementLocation}" )
                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
         else:
-            logging.critical( _("Unrecognised PTX8 {} project Biblical terms tag: {}").format( versionName, self.XMLTree.tag ) )
+            logging.critical( f"Unrecognised PTX8 {versionName} project Biblical terms tag: {self.XMLTree.tag}" )
             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
 
         try: self.filepathsNotYetLoaded.remove( projectBiblicalTermsFilepath )
-        except ValueError: logging.critical( "PTX8 project Biblical terms file seemed unexpected: {}".format( projectBiblicalTermsFilepath ) )
+        except ValueError: logging.critical( f"PTX8 project Biblical terms file seemed unexpected: {projectBiblicalTermsFilepath}" )
 
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Loaded {} project Biblical terms entries.".format( len(projectBiblicalTermsDict) ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Loaded {len(projectBiblicalTermsDict)} project Biblical terms entries." )
         vPrint( 'Never', DEBUGGING_THIS_MODULE, "\nprojectBiblicalTermsDict", len(projectBiblicalTermsDict), projectBiblicalTermsDict )
         #for someKey, someValue in projectBiblicalTermsDict.items():
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n  {} = {}".format( someKey, someValue ) )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n  {someKey} = {someValue}" )
         if projectBiblicalTermsDict: self.suppliedMetadata['PTX8']['ProjectBiblicalTerms'] = projectBiblicalTermsDict
     # end of PTX8Bible.loadPTX8ProjectBiblicalTerms
 
@@ -1766,14 +1764,14 @@ class PTX8Bible( Bible ):
         projectProgressDict = {}
         #loadErrors:list[str] = []
 
-        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "PTX8Bible.loading Progress from {}…".format( projectProgressFilepath ) )
+        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"PTX8Bible.loading Progress from {projectProgressFilepath}…" )
 
         self.XMLTree = ElementTree().parse( projectProgressFilepath )
         assert self.XMLTree is not None # Fail here if we didn't load anything at all
 
         # Find the main container
         if self.XMLTree.tag=='ProgressInfo':
-            treeLocation = "PTX8 {} in Project Progress".format( self.XMLTree.tag )
+            treeLocation = f"PTX8 {self.XMLTree.tag} in Project Progress"
             BibleOrgSysGlobals.checkXMLNoAttributes( self.XMLTree, treeLocation )
             BibleOrgSysGlobals.checkXMLNoText( self.XMLTree, treeLocation )
             BibleOrgSysGlobals.checkXMLNoTail( self.XMLTree, treeLocation )
@@ -1781,7 +1779,7 @@ class PTX8Bible( Bible ):
             # Now process the actual entries
             for element in self.XMLTree:
                 elementLocation = element.tag + ' in ' + treeLocation
-                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Processing {}…".format( elementLocation ) )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Processing {elementLocation}…" )
                 BibleOrgSysGlobals.checkXMLNoTail( element, elementLocation )
                 assert element.tag not in projectProgressDict
                 projectProgressDict[element.tag] = {}
@@ -1793,7 +1791,7 @@ class PTX8Bible( Bible ):
                     stages = {}
                     for subelement in element:
                         sublocation = subelement.tag + ' in ' + elementLocation
-                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Processing {}…".format( sublocation ) )
+                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Processing {sublocation}…" )
                         BibleOrgSysGlobals.checkXMLNoText( subelement, sublocation )
                         BibleOrgSysGlobals.checkXMLNoTail( subelement, sublocation )
 
@@ -1802,13 +1800,13 @@ class PTX8Bible( Bible ):
                             for attrib,value in subelement.items():
                                 if attrib=='id': StageId = value
                                 else:
-                                    logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, sublocation ) )
+                                    logging.error( f"Unprocessed {sublocation!r} attribute ({attrib}) in {value}" )
                                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
                             stage = {}
 
                             for sub2element in subelement:
                                 sub2location = sub2element.tag + ' in ' + sublocation
-                                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Processing {}…".format( sub2location ) )
+                                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Processing {sub2location}…" )
                                 BibleOrgSysGlobals.checkXMLNoText( sub2element, sub2location )
                                 BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub2location )
                                 assert sub2element.tag not in stage
@@ -1818,7 +1816,7 @@ class PTX8Bible( Bible ):
                                     BibleOrgSysGlobals.checkXMLNoAttributes( sub2element, sub2location )
                                     for sub3element in sub2element:
                                         sub3location = sub3element.tag + ' in ' + sub2location
-                                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Processing {}…".format( sub3location ) )
+                                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Processing {sub3location}…" )
                                         BibleOrgSysGlobals.checkXMLNoText( sub3element, sub3location )
                                         BibleOrgSysGlobals.checkXMLNoTail( sub3element, sub3location )
                                         if sub3element.tag not in stage['BookStatus']:
@@ -1828,7 +1826,7 @@ class PTX8Bible( Bible ):
                                             BibleOrgSysGlobals.checkXMLNoAttributes( sub3element, sub3location )
                                             for sub4element in sub3element:
                                                 sub4location = sub4element.tag + ' in ' + sub3location
-                                                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Processing {}…".format( sub4location ) )
+                                                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Processing {sub4location}…" )
                                                 BibleOrgSysGlobals.checkXMLNoAttributes( sub4element, sub4location )
                                                 BibleOrgSysGlobals.checkXMLNoText( sub4element, sub4location )
                                                 BibleOrgSysGlobals.checkXMLNoSubelements( sub4element, sub4location )
@@ -1839,12 +1837,12 @@ class PTX8Bible( Bible ):
                                             for attrib,value in sub3element.items():
                                                 if attrib=='BookNum': bookNum = value
                                                 else:
-                                                    logging.error( _("Unprocessed sub3 {!r} attribute ({}) in {}").format( attrib, value, sub3location ) )
+                                                    logging.error( f"Unprocessed sub3 {sub3location!r} attribute ({attrib}) in {value}" )
                                                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
 
                                             for j,sub4element in enumerate( sub3element ):
                                                 sub4location = sub4element.tag + ' in ' + sub3location
-                                                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Processing {}…".format( sub4location ) )
+                                                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Processing {sub4location}…" )
                                                 BibleOrgSysGlobals.checkXMLNoAttributes( sub4element, sub4location )
                                                 BibleOrgSysGlobals.checkXMLNoText( sub4element, sub4location )
                                                 BibleOrgSysGlobals.checkXMLNoSubelements( sub4element, sub4location )
@@ -1853,28 +1851,28 @@ class PTX8Bible( Bible ):
                                                 if sub4element.tag == 'ChapRevId':
                                                     stage['BookStatus']['CompletedChapters'][bookNum] = ('ChapRevId',j+1,'XXX')
                                                 else:
-                                                    logging.error( _("Unprocessed {} sub4element '{}' in {}").format( sub4element.tag, sub4element.text, sub4location ) )
+                                                    logging.error( f"Unprocessed {sub4element.tag} sub4element '{sub4element.text}' in {sub4location}" )
                                                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
                                         else:
-                                            logging.error( _("Unprocessed {} sub3element '{}' in {}").format( sub3element.tag, sub3element.text, sub3location ) )
+                                            logging.error( f"Unprocessed {sub3element.tag} sub3element '{sub3element.text}' in {sub3location}" )
                                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
                                 elif sub2element.tag == 'TargetCompletionDateMap':
                                     BibleOrgSysGlobals.checkXMLNoAttributes( sub2element, sub2location, 'TCDM11' )
                                     if stage['TargetCompletionDateMap']:
-                                        logging.critical( "Got extra TargetCompletionDateMap (ignored): {}".format( BibleOrgSysGlobals.elementStr(sub2element) ) )
+                                        logging.critical( f"Got extra TargetCompletionDateMap (ignored): {BibleOrgSysGlobals.elementStr(sub2element)}" )
                                         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Had", stage['TargetCompletionDateMap'] )
                                         halt
 
                                     for sub3element in sub2element:
                                         sub3location = sub3element.tag + ' in ' + sub2location
-                                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Processing {}…".format( sub3location ) )
+                                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Processing {sub3location}…" )
                                         BibleOrgSysGlobals.checkXMLNoAttributes( sub3element, sub3location, 'TCDM21' )
                                         BibleOrgSysGlobals.checkXMLNoText( sub3element, sub3location, 'TCDM22' )
                                         BibleOrgSysGlobals.checkXMLNoTail( sub3element, sub3location, 'TCDM24' )
                                         if sub3element.tag == 'item':
                                             for sub4element in sub3element:
                                                 sub4location = sub4element.tag + ' in ' + sub3location
-                                                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "    Processing {}…".format( sub4location ) )
+                                                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"    Processing {sub4location}…" )
                                                 BibleOrgSysGlobals.checkXMLNoAttributes( sub4element, sub4location, 'INT11' )
                                                 BibleOrgSysGlobals.checkXMLNoSubelements( sub4element, sub4location, 'INT12' )
                                                 BibleOrgSysGlobals.checkXMLNoTail( sub4element, sub4location, 'INT14' )
@@ -1882,23 +1880,23 @@ class PTX8Bible( Bible ):
                                                     assert sub4element.tag not in stage['TargetCompletionDateMap']
                                                     stage['TargetCompletionDateMap'][sub4element.tag] = sub4element.text
                                                 else:
-                                                    logging.error( _("Unprocessed {} sub4element '{}' in {}").format( sub4element.tag, sub4element.text, sub4location ) )
+                                                    logging.error( f"Unprocessed {sub4element.tag} sub4element '{sub4element.text}' in {sub4location}" )
                                                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
                                         else:
-                                            logging.error( _("Unprocessed {} sub3element '{}' in {}").format( sub3element.tag, sub3element.text, sub3location ) )
+                                            logging.error( f"Unprocessed {sub3element.tag} sub3element '{sub3element.text}' in {sub3location}" )
                                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
                                 elif sub2element.tag == 'Task':
                                     taskId = None
                                     for attrib,value in sub2element.items():
                                         if attrib=='id': taskId = value
                                         else:
-                                            logging.error( _("Unprocessed sub2 {!r} attribute ({}) in {}").format( attrib, value, sub2location ) )
+                                            logging.error( f"Unprocessed sub2 {sub2location!r} attribute ({attrib}) in {value}" )
                                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
 
                                     taskDict = {}
                                     for sub3element in sub2element:
                                         sub3location = sub3element.tag + ' in ' + sub2location
-                                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Processing {}…".format( sub3location ) )
+                                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Processing {sub3location}…" )
                                         BibleOrgSysGlobals.checkXMLNoTail( sub3element, sub3location )
                                         if sub3element.tag == 'Assignments':
                                             BibleOrgSysGlobals.checkXMLNoText( sub3element, sub3location )
@@ -1907,7 +1905,7 @@ class PTX8Bible( Bible ):
                                             for attrib,value in sub3element.items():
                                                 if attrib=='book': bookAbbrev = value
                                                 else:
-                                                    logging.error( _("Unprocessed sub3 {!r} attribute ({}) in {}").format( attrib, value, sub3location ) )
+                                                    logging.error( f"Unprocessed sub3 {sub3location!r} attribute ({attrib}) in {value}" )
                                                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
                                         elif sub3element.tag in ( 'Type', 'EasiestBooksVPD', 'EasyBooksVPD', 'ModerateBooksVPD', 'DifficultBooksVPD', 'Availability', ):
                                             BibleOrgSysGlobals.checkXMLNoAttributes( sub3element, sub3location )
@@ -1921,30 +1919,30 @@ class PTX8Bible( Bible ):
                                             BibleOrgSysGlobals.checkXMLNoAttributes( sub3element, sub3location )
                                             for sub4element in sub3element:
                                                 sub4location = sub4element.tag + ' in ' + sub3location
-                                                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Processing {}…".format( sub4location ) )
+                                                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Processing {sub4location}…" )
                                                 BibleOrgSysGlobals.checkXMLNoAttributes( sub4element, sub4location )
                                                 BibleOrgSysGlobals.checkXMLNoText( sub4element, sub4location )
                                                 BibleOrgSysGlobals.checkXMLNoTail( sub4element, sub4location )
                                                 if sub4element.tag == 'item':
                                                     for sub5element in sub4element:
                                                         sub5location = sub5element.tag + ' in ' + sub4location
-                                                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Processing {}…".format( sub5location ) )
+                                                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Processing {sub5location}…" )
                                                         BibleOrgSysGlobals.checkXMLNoAttributes( sub5element, sub5location )
                                                         BibleOrgSysGlobals.checkXMLNoSubelements( sub5element, sub5location )
                                                         BibleOrgSysGlobals.checkXMLNoTail( sub5element, sub5location )
                                                         if sub5element.tag == 'string':
                                                             pass
                                                         else:
-                                                            logging.error( _("Unprocessed {} sub5element '{}' in {}").format( sub5element.tag, sub5element.text, sub5location ) )
+                                                            logging.error( f"Unprocessed {sub5element.tag} sub5element '{sub5element.text}' in {sub5location}" )
                                                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
                                                 else:
-                                                    logging.error( _("Unprocessed {} sub4element '{}' in {}").format( sub4element.tag, sub4element.text, sub4location ) )
+                                                    logging.error( f"Unprocessed {sub4element.tag} sub4element '{sub4element.text}' in {sub4location}" )
                                                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
                                         elif sub3element.tag == 'Descriptions':
                                             BibleOrgSysGlobals.checkXMLNoAttributes( sub3element, sub3location )
                                             BibleOrgSysGlobals.checkXMLNoSubelements( sub3element, sub3location )
                                         else:
-                                            logging.error( _("Unprocessed {} sub3element '{}' in {}").format( sub3element.tag, sub3element.text, sub3location ) )
+                                            logging.error( f"Unprocessed {sub3element.tag} sub3element '{sub3element.text}' in {sub3location}" )
                                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
                                     if sub2element.tag not in stage:
                                         stage[sub2element.tag] = {}
@@ -1954,13 +1952,13 @@ class PTX8Bible( Bible ):
                                     for attrib,value in sub2element.items():
                                         if attrib=='id': checkId = value
                                         else:
-                                            logging.error( _("Unprocessed sub2 {!r} attribute ({}) in {}").format( attrib, value, sub2location ) )
+                                            logging.error( f"Unprocessed sub2 {sub2location!r} attribute ({attrib}) in {value}" )
                                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
 
                                     checkDict = {}
                                     for sub3element in sub2element:
                                         sub3location = sub3element.tag + ' in ' + sub2location
-                                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Processing {}…".format( sub3location ) )
+                                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Processing {sub3location}…" )
                                         BibleOrgSysGlobals.checkXMLNoTail( sub3element, sub3location )
                                         if sub3element.tag == 'Assignments':
                                             BibleOrgSysGlobals.checkXMLNoText( sub3element, sub3location )
@@ -1969,7 +1967,7 @@ class PTX8Bible( Bible ):
                                             for attrib,value in sub3element.items():
                                                 if attrib=='book': bookAbbrev = value
                                                 else:
-                                                    logging.error( _("Unprocessed sub3 {!r} attribute ({}) in {}").format( attrib, value, sub3location ) )
+                                                    logging.error( f"Unprocessed sub3 {sub3location!r} attribute ({attrib}) in {value}" )
                                                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
                                             if sub3element.tag not in checkDict: checkDict[sub3element.tag] = []
                                             checkDict[sub3element.tag].append( bookAbbrev )
@@ -1987,7 +1985,7 @@ class PTX8Bible( Bible ):
                                             BibleOrgSysGlobals.checkXMLNoSubelements( sub3element, sub3location )
                                             pass
                                         else:
-                                            logging.error( _("Unprocessed {} sub3element '{}' in {}").format( sub3element.tag, sub3element.text, sub3location ) )
+                                            logging.error( f"Unprocessed {sub3element.tag} sub3element '{sub3element.text}' in {sub3location}" )
                                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
                                     if sub2element.tag not in stage:
                                         stage[sub2element.tag] = {}
@@ -1997,24 +1995,24 @@ class PTX8Bible( Bible ):
                                     namesDict = []
                                     for sub3element in sub2element:
                                         sub3location = sub3element.tag + ' in ' + sub2location
-                                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Processing {}…".format( sub3location ) )
+                                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Processing {sub3location}…" )
                                         BibleOrgSysGlobals.checkXMLNoAttributes( sub3element, sub3location )
                                         BibleOrgSysGlobals.checkXMLNoText( sub3element, sub3location )
                                         BibleOrgSysGlobals.checkXMLNoTail( sub3element, sub3location )
                                         if sub3element.tag == 'item':
                                             for sub4element in sub3element:
                                                 sub4location = sub4element.tag + ' in ' + sub3location
-                                                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Processing {}…".format( sub4location ) )
+                                                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Processing {sub4location}…" )
                                                 BibleOrgSysGlobals.checkXMLNoAttributes( sub4element, sub4location )
                                                 BibleOrgSysGlobals.checkXMLNoSubelements( sub4element, sub4location )
                                                 BibleOrgSysGlobals.checkXMLNoTail( sub4element, sub4location )
                                                 if sub4element.tag == 'string':
                                                     pass
                                                 else:
-                                                    logging.error( _("Unprocessed {} sub4element '{}' in {}").format( sub4element.tag, sub4element.text, sub4location ) )
+                                                    logging.error( f"Unprocessed {sub4element.tag} sub4element '{sub4element.text}' in {sub4location}" )
                                                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
                                         else:
-                                            logging.error( _("Unprocessed {} sub3element '{}' in {}").format( sub3element.tag, sub3element.text, sub3location ) )
+                                            logging.error( f"Unprocessed {sub3element.tag} sub3element '{sub3element.text}' in {sub3location}" )
                                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
                                     #if sub2element.tag not in stage:
                                         #stage[sub2element.tag] = {}
@@ -2024,13 +2022,13 @@ class PTX8Bible( Bible ):
                                     BibleOrgSysGlobals.checkXMLNoSubelements( sub2element, sub2location )
                                     pass
                                 else:
-                                    logging.error( _("Unprocessed {} sub2element '{}' in {}").format( sub2element.tag, sub2element.text, sub2location ) )
+                                    logging.error( f"Unprocessed {sub2element.tag} sub2element '{sub2element.text}' in {sub2location}" )
                                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
                             if stage:
                                 assert StageId not in stages
                                 stages[StageId] = stage
                         else:
-                            logging.error( _("Unprocessed {} subelement '{}' in {}").format( subelement.tag, subelement.text, sublocation ) )
+                            logging.error( f"Unprocessed {subelement.tag} subelement '{subelement.text}' in {sublocation}" )
                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
                     if stages:
                         assert not projectProgressDict['Stages']
@@ -2042,7 +2040,7 @@ class PTX8Bible( Bible ):
                     #projectProgressDict[element.tag] = {}
                     for subelement in element:
                         sublocation = subelement.tag + ' ' + elementLocation
-                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Processing {}…".format( sublocation ) )
+                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Processing {sublocation}…" )
                         if subelement.tag == 'Books':
                             BibleOrgSysGlobals.checkXMLNoAttributes( subelement, sublocation )
                             BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation )
@@ -2050,28 +2048,28 @@ class PTX8Bible( Bible ):
                             assert subelement.tag not in projectProgressDict[element.tag] # Detect duplicates
                             projectProgressDict[element.tag][subelement.tag] = subelement.text
                         else:
-                            logging.error( _("Unprocessed {} subelement '{}' in {}").format( subelement.tag, subelement.text, sublocation ) )
+                            logging.error( f"Unprocessed {subelement.tag} subelement '{subelement.text}' in {sublocation}" )
                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
                 elif element.tag == 'BasePlanType':
                     BibleOrgSysGlobals.checkXMLNoAttributes( element, elementLocation )
                     BibleOrgSysGlobals.checkXMLNoSubelements( element, elementLocation )
                     projectProgressDict[element.tag] = element.text
                 else:
-                    logging.error( _("Unprocessed {} element in {}").format( element.tag, elementLocation ) )
+                    logging.error( f"Unprocessed {element.tag} element in {elementLocation}" )
                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "bookStatusDict", bookStatusDict )
                 #projectProgressDict.append( bookStatusDict )
         else:
-            logging.critical( _("Unrecognised PTX8 {} project progress tag: {}").format( versionName, self.XMLTree.tag ) )
+            logging.critical( f"Unrecognised PTX8 {versionName} project progress tag: {self.XMLTree.tag}" )
             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
 
         try: self.filepathsNotYetLoaded.remove( projectProgressFilepath )
-        except ValueError: logging.critical( "PTX8 project progress file seemed unexpected: {}".format( projectProgressFilepath ) )
+        except ValueError: logging.critical( f"PTX8 project progress file seemed unexpected: {projectProgressFilepath}" )
 
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Loaded {} project progress entries.".format( len(projectProgressDict) ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Loaded {len(projectProgressDict)} project progress entries." )
         vPrint( 'Never', DEBUGGING_THIS_MODULE, "\nprojectProgressDict", len(projectProgressDict), projectProgressDict )
         #for someKey, someValue in projectProgressDict.items():
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n  {} = {}".format( someKey, someValue ) )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n  {someKey} = {someValue}" )
         if projectProgressDict: self.suppliedMetadata['PTX8']['ProjectProgress'] = projectProgressDict
     # end of PTX8Bible.loadPTX8ProjectProgress
 
@@ -2086,18 +2084,18 @@ class PTX8Bible( Bible ):
         projectProgressCSVFilepath = os.path.join( self.sourceFilepath, projectProgressCSVFilename )
         if not os.path.exists( projectProgressCSVFilepath ): return
 
-        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "PTX8Bible.loading project progress CSV from {}…".format( projectProgressCSVFilepath ) )
+        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"PTX8Bible.loading project progress CSV from {projectProgressCSVFilepath}…" )
         lineCount = 0
         lines = []
         with open( projectProgressCSVFilepath, 'rt', encoding='utf-8' ) as projectProgressCSVFile:
             for line in projectProgressCSVFile:
                 lineCount += 1
                 if lineCount==1 and line[0]==BibleOrgSysGlobals.BOM:
-                    logging.info( "loadPTX8ProjectProgressCSV: Detected Unicode Byte Order Marker (BOM) in {}".format( projectProgressCSVFilename ) )
+                    logging.info( f"loadPTX8ProjectProgressCSV: Detected Unicode Byte Order Marker (BOM) in {projectProgressCSVFilename}" )
                     line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
                 if line and line[-1]=='\n': line=line[:-1] # Removing trailing newline character
                 lastLine = line
-                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  loadPTX8ProjectProgressCSV: ({}) {!r}".format( lineCount, line ) )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  loadPTX8ProjectProgressCSV: ({lineCount}) {line!r}" )
                 # Each line is in the format: '2PE,61,0,10,0,30'
                 if line: assert line.count( ',' ) == 5 # five commas between six values
                 lines.append( line )
@@ -2105,7 +2103,7 @@ class PTX8Bible( Bible ):
         self.suppliedMetadata['PTX8']['ProjectProgressCSV'] = lines
 
         try: self.filepathsNotYetLoaded.remove( projectProgressCSVFilepath )
-        except ValueError: logging.critical( "PTX8 project progress CSV file seemed unexpected: {}".format( projectProgressCSVFilepath ) )
+        except ValueError: logging.critical( f"PTX8 project progress CSV file seemed unexpected: {projectProgressCSVFilepath}" )
     # end of PTX8Bible.loadPTX8ProjectProgressCSV
 
 
@@ -2123,7 +2121,7 @@ class PTX8Bible( Bible ):
             if os.path.isfile(somepath) and somethingUPPER.startswith('PRINT') and somethingUPPER.endswith('.XML'):
                 printConfigFilenames.append( something )
         if len(printConfigFilenames) > 1:
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Got more than one printConfig file: {}".format( printConfigFilenames ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Got more than one printConfig file: {printConfigFilenames}" )
         if not printConfigFilenames: return
 
         printConfigDict = {}
@@ -2135,14 +2133,14 @@ class PTX8Bible( Bible ):
             printConfigDict[printConfigType] = {}
 
             printConfigFilepath = os.path.join( self.sourceFilepath, printConfigFilename )
-            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "PTX8Bible.loading PrintConfig from {}…".format( printConfigFilepath ) )
+            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"PTX8Bible.loading PrintConfig from {printConfigFilepath}…" )
 
             self.XMLTree = ElementTree().parse( printConfigFilepath )
             assert self.XMLTree is not None # Fail here if we didn't load anything at all
 
             # Find the main container
             if self.XMLTree.tag == 'PrintDraftConfiguration':
-                treeLocation = "PTX8 {} file for {}".format( self.XMLTree.tag, printConfigType )
+                treeLocation = f"PTX8 {self.XMLTree.tag} file for {printConfigType}"
                 BibleOrgSysGlobals.checkXMLNoAttributes( self.XMLTree, treeLocation )
                 BibleOrgSysGlobals.checkXMLNoText( self.XMLTree, treeLocation )
                 BibleOrgSysGlobals.checkXMLNoTail( self.XMLTree, treeLocation )
@@ -2150,7 +2148,7 @@ class PTX8Bible( Bible ):
                 # Now process the actual entries
                 for element in self.XMLTree:
                     elementLocation = element.tag + ' in ' + treeLocation
-                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Processing {}…".format( elementLocation ) )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Processing {elementLocation}…" )
 
                     # Now process the subelements
                     if element.tag in ( 'Stylesheet', 'PaperWidth', 'PaperHeight', 'MarginUnit', 'TopMarginFactor',
@@ -2176,7 +2174,7 @@ class PTX8Bible( Bible ):
                         BibleOrgSysGlobals.checkXMLNoTail( element, elementLocation )
                         for subelement in element:
                             sublocation = subelement.tag + ' ' + elementLocation
-                            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Processing {}…".format( sublocation ) )
+                            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Processing {sublocation}…" )
                             if subelement.tag == 'Books':
                                 BibleOrgSysGlobals.checkXMLNoAttributes( subelement, sublocation )
                                 BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation )
@@ -2184,21 +2182,21 @@ class PTX8Bible( Bible ):
                                 assert element.tag not in printConfigDict[printConfigType] # Detect duplicates
                                 printConfigDict[printConfigType][element.tag] = subelement.text
                             else:
-                                logging.error( _("Unprocessed {} subelement '{}' in {}").format( subelement.tag, subelement.text, sublocation ) )
+                                logging.error( f"Unprocessed {subelement.tag} subelement '{subelement.text}' in {sublocation}" )
                                 if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
                     else:
-                        logging.error( _("Unprocessed {} element in {}").format( element.tag, elementLocation ) )
+                        logging.error( f"Unprocessed {element.tag} element in {elementLocation}" )
                         if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "bookStatusDict", bookStatusDict )
                     #printConfigDict[printConfigType].append( bookStatusDict )
             else:
-                logging.critical( _("Unrecognised PTX8 {} print configuration tag: {}").format( printConfigType, self.XMLTree.tag ) )
+                logging.critical( f"Unrecognised PTX8 {printConfigType} print configuration tag: {self.XMLTree.tag}" )
                 if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
 
             try: self.filepathsNotYetLoaded.remove( printConfigFilepath )
-            except ValueError: logging.critical( "PTX8 print config file seemed unexpected: {}".format( progressFilepath ) )
+            except ValueError: logging.critical( f"PTX8 print config file seemed unexpected: {progressFilepath}" )
 
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Loaded {} printConfig.".format( len(printConfigDict) ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Loaded {len(printConfigDict)} printConfig." )
         vPrint( 'Never', DEBUGGING_THIS_MODULE, "\nprintConfigDict", len(printConfigDict), printConfigDict )
         if printConfigDict: self.suppliedMetadata['PTX8']['PrintConfig'] = printConfigDict
     # end of PTX8Bible.loadPTX8PrintConfig
@@ -2222,7 +2220,7 @@ class PTX8Bible( Bible ):
             """
             """
             #if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "processUnicode( {} {!r}={} )".format( len(changesString), changesString, changesString ) )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"processUnicode( {len(changesString)} {changesString!r}={changesString} )" )
 
             import re
             while True:
@@ -2235,7 +2233,7 @@ class PTX8Bible( Bible ):
                     assert len(newChar) == 1
                     changesString = changesString[:match.start()] + newChar + changesString[match.end():]
                 else:
-                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Return {} {!r}={}".format( len(changesString), changesString, changesString ) )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Return {len(changesString)} {changesString!r}={changesString}" )
                     break
 
             return changesString
@@ -2260,14 +2258,14 @@ class PTX8Bible( Bible ):
                 8: processing comment
             """
             #if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "processPrintDraftChangesLine( {}, {!r} )".format( lineNumber, line ) )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"processPrintDraftChangesLine( {lineNumber}, {line!r} )" )
 
             pdState = ix = 0
             quoteStart = leftSide = rightSide = comment = ''
             lenLine = len( line )
             while ix < lenLine:
                 char = line[ix]
-                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "processPrintDraftChangesLine {}: {!r} at state {} position {}".format( lineNumber, char, pdState, ix ) )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"processPrintDraftChangesLine {lineNumber}: {ix!r} at state {char} position {pdState}" )
 
                 if pdState == 0:
                     if char.isspace(): pass
@@ -2277,8 +2275,7 @@ class PTX8Bible( Bible ):
                     elif char == '#':
                         pdState = 8
                     else:
-                        logging.error( "Unexpected print-draft changes {!r} char at state {} position {} in line {}: {!r}" \
-                                        .format( char, pdState, ix+1, lineNumber, line ) )
+                        logging.error( f"Unexpected print-draft changes {char!r} char at state {pdState} position {ix+1} in line {lineNumber}: {line!r}" )
                 elif pdState == 1:
                     if char == quoteStart:
                         pdState = 3
@@ -2289,8 +2286,7 @@ class PTX8Bible( Bible ):
                     elif char == '>':
                         pdState = 4
                     else:
-                        logging.error( "Unexpected print-draft changes {!r} char at state {} position {} in line {}: {!r}" \
-                                        .format( char, pdState, ix+1, lineNumber, line ) )
+                        logging.error( f"Unexpected print-draft changes {char!r} char at state {pdState} position {ix+1} in line {lineNumber}: {line!r}" )
                 elif pdState == 4:
                     if char.isspace(): pass
                     elif char in ( '"', "'" ):
@@ -2299,8 +2295,7 @@ class PTX8Bible( Bible ):
                     elif char == '#':
                         pdState = 8
                     else:
-                        logging.error( "Unexpected print-draft changes {!r} char at state {} position {} in line {}: {!r}" \
-                                        .format( char, pdState, ix+1, lineNumber, line ) )
+                        logging.error( f"Unexpected print-draft changes {char!r} char at state {pdState} position {ix+1} in line {lineNumber}: {line!r}" )
 
                 elif pdState == 5:
                     if char == quoteStart:
@@ -2312,20 +2307,17 @@ class PTX8Bible( Bible ):
                     elif char == '#':
                         pdState = 8
                     else:
-                        logging.error( "Unexpected print-draft changes {!r} char at state {} position {} in line {}: {!r}" \
-                                        .format( char, pdState, ix+1, lineNumber, line ) )
+                        logging.error( f"Unexpected print-draft changes {char!r} char at state {pdState} position {ix+1} in line {lineNumber}: {line!r}" )
 
                 elif pdState == 8: # accept anything in a comment
                     comment += char
 
                 else:
-                    logging.error( "Unexpected print-draft changes {} state at position {} in line {}: {!r}" \
-                                    .format( pdState, ix+1, lineNumber, line ) )
+                    logging.error( f"Unexpected print-draft changes {pdState} state at position {ix+1} in line {lineNumber}: {line!r}" )
                 ix += 1
 
             if pdState < 7:
-                logging.error( "Unexpected print-draft changes {} end state at end of line {}: {!r}" \
-                                .format( pdState, lineNumber, line ) )
+                logging.error( f"Unexpected print-draft changes {pdState} end state at end of line {lineNumber}: {line!r}" )
             else:
                 assert leftSide or comment
                 if leftSide:
@@ -2336,7 +2328,7 @@ class PTX8Bible( Bible ):
 
 
         # Main code for loadPTX8PrintDraftChanges
-        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "PTX8Bible.loading print draft changes from {}…".format( autocorrectFilepath ) )
+        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"PTX8Bible.loading print draft changes from {autocorrectFilepath}…" )
         PTXPrintDraftChanges = {}
 
         # NOTE: These lines are actually regex's on the left side
@@ -2345,7 +2337,7 @@ class PTX8Bible( Bible ):
             for line in vFile:
                 lineCount += 1
                 if lineCount==1 and line[0]==BibleOrgSysGlobals.BOM:
-                    logging.info( "loadPTX8PrintDraftChanges: Detected Unicode Byte Order Marker (BOM) in {}".format( autocorrectFilename ) )
+                    logging.info( f"loadPTX8PrintDraftChanges: Detected Unicode Byte Order Marker (BOM) in {autocorrectFilename}" )
                     line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
                 if line and line[-1]=='\n': line=line[:-1] # Removing trailing newline character
                 if not line: continue # Just discard blank lines
@@ -2354,18 +2346,18 @@ class PTX8Bible( Bible ):
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Print draft changes line", repr(line) )
 
                 if len(line)<4:
-                    logging.error( "Why was print draft changes line #{} so short? {!r}".format( lineCount, line ) )
+                    logging.error( f"Why was print draft changes line #{lineCount} so short? {line!r}" )
                     continue
                 if len(line)>100:
-                    logging.warning( "Why was print draft changes line #{} so long? {!r}".format( lineCount, line ) )
+                    logging.warning( f"Why was print draft changes line #{lineCount} so long? {line!r}" )
                 if line and '>' not in line and '#' not in line:
-                    logging.error( "What is this print draft changes line #{}? {!r}".format( lineCount, line ) )
+                    logging.error( f"What is this print draft changes line #{lineCount}? {line!r}" )
                 else: processPrintDraftChangesLine( line, lineCount )
 
         try: self.filepathsNotYetLoaded.remove( autocorrectFilepath )
-        except ValueError: logging.critical( "PTX8 print draft changes file seemed unexpected: {}".format( autocorrectFilepath ) )
+        except ValueError: logging.critical( f"PTX8 print draft changes file seemed unexpected: {autocorrectFilepath}" )
 
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Loaded {} print draft changes elements.".format( len(PTXPrintDraftChanges) ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Loaded {len(PTXPrintDraftChanges)} print draft changes elements." )
         vPrint( 'Never', DEBUGGING_THIS_MODULE, '\nPTXPrintDraftChanges', len(PTXPrintDraftChanges), PTXPrintDraftChanges )
         if PTXPrintDraftChanges: self.suppliedMetadata['PTX8']['PrintDraftChanges'] = PTXPrintDraftChanges
     # end of PTX8Bible.loadPTX8PrintDraftChanges
@@ -2380,7 +2372,7 @@ class PTX8Bible( Bible ):
         spellingStatusFilepath = os.path.join( self.sourceFilepath, 'SpellingStatus.xml' )
         if not os.path.exists( spellingStatusFilepath ): return
 
-        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "PTX8Bible.loading spelling status data from {}…".format( spellingStatusFilepath ) )
+        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"PTX8Bible.loading spelling status data from {spellingStatusFilepath}…" )
         self.XMLTree = ElementTree().parse( spellingStatusFilepath )
         assert self.XMLTree is not None # Fail here if we didn't load anything at all
 
@@ -2389,7 +2381,7 @@ class PTX8Bible( Bible ):
 
         # Find the main container
         if self.XMLTree.tag == 'SpellingStatus':
-            treeLocation = "PTX8 {} file".format( self.XMLTree.tag )
+            treeLocation = f"PTX8 {self.XMLTree.tag} file"
             BibleOrgSysGlobals.checkXMLNoAttributes( self.XMLTree, treeLocation )
             BibleOrgSysGlobals.checkXMLNoText( self.XMLTree, treeLocation )
             BibleOrgSysGlobals.checkXMLNoTail( self.XMLTree, treeLocation )
@@ -2397,7 +2389,7 @@ class PTX8Bible( Bible ):
             # Now process the actual entries
             for element in self.XMLTree:
                 elementLocation = element.tag + ' in ' + treeLocation
-                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Processing {}…".format( elementLocation ) )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Processing {elementLocation}…" )
                 BibleOrgSysGlobals.checkXMLNoText( element, elementLocation )
                 BibleOrgSysGlobals.checkXMLNoTail( element, elementLocation )
 
@@ -2409,7 +2401,7 @@ class PTX8Bible( Bible ):
                         if attrib=='Word': word = value
                         elif attrib=='State': state = value; assert state in 'RW' # right/wrong
                         else:
-                            logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, treeLocation ) )
+                            logging.error( f"Unprocessed {treeLocation!r} attribute ({attrib}) in {value}" )
                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
                     assert word not in spellingStatusDict # no duplicates allowed presumably
                     spellingStatusDict[word] = {}
@@ -2417,7 +2409,7 @@ class PTX8Bible( Bible ):
 
                     for subelement in element:
                         sublocation = subelement.tag + ' ' + elementLocation
-                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Processing {}…".format( sublocation ) )
+                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Processing {sublocation}…" )
                         BibleOrgSysGlobals.checkXMLNoAttributes( subelement, sublocation )
                         BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation )
                         BibleOrgSysGlobals.checkXMLNoTail( subelement, sublocation )
@@ -2426,19 +2418,19 @@ class PTX8Bible( Bible ):
                             assert subelement.tag not in spellingStatusDict[word]
                             spellingStatusDict[word][subelement.tag] = subelement.text
                         else:
-                            logging.error( _("Unprocessed {} subelement '{}' in {}").format( subelement.tag, subelement.text, sublocation ) )
+                            logging.error( f"Unprocessed {subelement.tag} subelement '{subelement.text}' in {sublocation}" )
                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
                 else:
-                    logging.error( _("Unprocessed {} element in {}").format( element.tag, elementLocation ) )
+                    logging.error( f"Unprocessed {element.tag} element in {elementLocation}" )
                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
         else:
-            logging.critical( _("Unrecognised PTX8 spelling status tag: {}").format( self.XMLTree.tag ) )
+            logging.critical( f"Unrecognised PTX8 spelling status tag: {self.XMLTree.tag}" )
             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
 
         try: self.filepathsNotYetLoaded.remove( spellingStatusFilepath )
-        except ValueError: logging.critical( "PTX8 spelling status file seemed unexpected: {}".format( spellingStatusFilepath ) )
+        except ValueError: logging.critical( f"PTX8 spelling status file seemed unexpected: {spellingStatusFilepath}" )
 
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Loaded {:,} spelling status entries.".format( len(spellingStatusDict) ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Loaded {len(spellingStatusDict):,} spelling status entries." )
         vPrint( 'Never', DEBUGGING_THIS_MODULE, "\nspellingStatusDict", len(spellingStatusDict), spellingStatusDict )
         if spellingStatusDict: self.suppliedMetadata['PTX8']['SpellingStatus'] = spellingStatusDict
     # end of PTX8Bible.loadPTX8SpellingStatus
@@ -2455,7 +2447,7 @@ class PTX8Bible( Bible ):
             somepath = os.path.join( self.sourceFilepath, something )
             if os.path.isfile(somepath) and something.upper().endswith('.STY'): styleFilenames.append( something )
         #if len(styleFilenames) > 1:
-            #logging.error( "Got more than one style file: {}".format( styleFilenames ) )
+            #logging.error( f"Got more than one style file: {styleFilenames}" )
         if not styleFilenames: return
 
         PTXStyles = {}
@@ -2464,7 +2456,7 @@ class PTX8Bible( Bible ):
             styleName = styleFilename[:-4] # Remove the .sty
 
             styleFilepath = os.path.join( self.sourceFilepath, styleFilename )
-            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "PTX8Bible.loading style from {}…".format( styleFilepath ) )
+            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"PTX8Bible.loading style from {styleFilepath}…" )
 
             assert styleName not in PTXStyles
             PTXStyles[styleName] = {}
@@ -2479,7 +2471,7 @@ class PTX8Bible( Bible ):
                             lineCount += 1
                             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, lineCount, "line1", repr(line) )
                             if lineCount==1 and line[0]==BibleOrgSysGlobals.BOM:
-                                logging.info( "loadPTX8Styles: Detected Unicode Byte Order Marker (BOM) in {}".format( styleFilename ) )
+                                logging.info( f"loadPTX8Styles: Detected Unicode Byte Order Marker (BOM) in {styleFilename}" )
                                 line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
                             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, lineCount, "line2", repr(line) )
                             if line and line[-1]=='\n': line=line[:-1] # Removing trailing newline character
@@ -2489,7 +2481,7 @@ class PTX8Bible( Bible ):
                             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, lineCount, "line3", repr(line) )
 
                             if len(line)<5: # '\Bold' is the shortest valid line
-                                logging.warning( "Why was PTX8 style line #{} so short? {!r}".format( lineCount, line ) )
+                                logging.warning( f"Why was PTX8 style line #{lineCount} so short? {line!r}" )
                                 continue
 
                             if line[0] == '\\':
@@ -2511,22 +2503,22 @@ class PTX8Bible( Bible ):
                                     if name == 'color': name = 'Color' # fix inconsistency
                                     elif name == 'Fontsize': name = 'FontSize' # fix inconsistency
                                     if name in currentStyle: # already
-                                        logging.error( "loadPTX8Styles found duplicate {!r}={!r} in {} {} at line #{}".format( name, value, styleName, styleMarker, lineCount ) )
+                                        logging.error( f"loadPTX8Styles found duplicate {styleMarker!r}={lineCount!r} in {name} {value} at line #{styleName}" )
                                     currentStyle[name] = value
                                 else:
-                                    logging.error( "What's this style marker? {!r}".format( line ) )
+                                    logging.error( f"What's this style marker? {line!r}" )
                                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
                             else:
-                                logging.error( "What's this style line? {!r}".format( line ) )
+                                logging.error( f"What's this style line? {line!r}" )
                                 if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
                     break; # Get out of decoding loop because we were successful
                 except UnicodeDecodeError:
-                    logging.error( _("loadPTX8Styles fails with encoding: {} on {}{}").format( encoding, styleFilepath, {} if encoding==encodings[-1] else ' -- trying again' ) )
+                    logging.error( f"loadPTX8Styles fails with encoding: {encoding} on {styleFilepath}{'' if encoding==encodings[-1] else ' -- trying again'}" )
 
             try: self.filepathsNotYetLoaded.remove( styleFilepath )
-            except ValueError: logging.critical( "PTX8 style file seemed unexpected: {}".format( styleFilepath ) )
+            except ValueError: logging.critical( f"PTX8 style file seemed unexpected: {styleFilepath}" )
 
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Loaded {} style files.".format( len(PTXStyles) ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Loaded {len(PTXStyles)} style files." )
         vPrint( 'Never', DEBUGGING_THIS_MODULE, '\nPTXStyles', len(PTXStyles), PTXStyles )
         if PTXStyles: self.suppliedMetadata['PTX8']['Styles'] = PTXStyles
     # end of PTX8Bible.loadPTX8Styles
@@ -2541,7 +2533,7 @@ class PTX8Bible( Bible ):
         renderingTermsFilepath = os.path.join( self.sourceFilepath, 'TermRenderings.xml' )
         if not os.path.exists( renderingTermsFilepath ): return
 
-        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "PTX8Bible.loading TermRenderings from {}…".format( renderingTermsFilepath ) )
+        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"PTX8Bible.loading TermRenderings from {renderingTermsFilepath}…" )
 
         TermRenderingsDict = {}
 
@@ -2550,7 +2542,7 @@ class PTX8Bible( Bible ):
 
         # Find the main container
         if self.XMLTree.tag == 'TermRenderingsList':
-            treeLocation = "PTX8 {} file".format( self.XMLTree.tag )
+            treeLocation = f"PTX8 {self.XMLTree.tag} file"
             BibleOrgSysGlobals.checkXMLNoAttributes( self.XMLTree, treeLocation )
             BibleOrgSysGlobals.checkXMLNoText( self.XMLTree, treeLocation )
             BibleOrgSysGlobals.checkXMLNoTail( self.XMLTree, treeLocation )
@@ -2558,7 +2550,7 @@ class PTX8Bible( Bible ):
             # Now process the actual entries
             for element in self.XMLTree:
                 elementLocation = element.tag + ' in ' + treeLocation
-                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Processing {}…".format( elementLocation ) )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Processing {elementLocation}…" )
                 BibleOrgSysGlobals.checkXMLNoText( element, elementLocation )
                 BibleOrgSysGlobals.checkXMLNoTail( element, elementLocation )
 
@@ -2570,7 +2562,7 @@ class PTX8Bible( Bible ):
                         if attrib=='Id': Id = value
                         elif attrib=='Guess': guessFlag = getFlagFromAttribute( attrib, value )
                         else:
-                            logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, sublocation ) )
+                            logging.error( f"Unprocessed {sublocation!r} attribute ({attrib}) in {value}" )
                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
                     termRenderingEntryDict['guessFlag'] = guessFlag
 
@@ -2609,32 +2601,32 @@ class PTX8Bible( Bible ):
                                     #versification = None
                                     #for attrib,value in sub2element.items():
                                         #if attrib=='Versification': versification = value
-                                        #else: logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, sub2location ) )
+                                        #else: logging.error( f"Unprocessed {sub2location!r} attribute ({attrib}) in {value}" )
                                     #termRenderingEntryDict[subelement.tag].append( (sub2element.text,versification) )
                                 if sub2element.tag == 'Denial':
                                     termRenderingEntryDict[subelement.tag].append ( (sub2element.tag,sub2element.text) )
                                 else:
-                                    logging.error( _("Unprocessed {} sub2element '{}' in {}").format( sub2element.tag, sub2element.text, sub2location ) )
+                                    logging.error( f"Unprocessed {sub2element.tag} sub2element '{sub2element.text}' in {sub2location}" )
                                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
                                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "termRenderingEntryDict", termRenderingEntryDict ); halt
                         else:
-                            logging.error( _("Unprocessed {} subelement '{}' in {}").format( subelement.tag, subelement.text, sublocation ) )
+                            logging.error( f"Unprocessed {subelement.tag} subelement '{subelement.text}' in {sublocation}" )
                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
                 else:
-                    logging.error( _("Unprocessed {} element '{}' in {}").format( element.tag, element.text, elementLocation ) )
+                    logging.error( f"Unprocessed {element.tag} element '{element.text}' in {elementLocation}" )
                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "termRenderingEntryDict", termRenderingEntryDict )
                 assert Id not in TermRenderingsDict # No duplicate ids allowed
                 TermRenderingsDict[Id] = termRenderingEntryDict
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "termRenderingEntryDict", termRenderingEntryDict ); halt
         else:
-            logging.critical( _("Unrecognised PTX8 {} term renderings tag: {}").format( versionName, self.XMLTree.tag ) )
+            logging.critical( f"Unrecognised PTX8 {versionName} term renderings tag: {self.XMLTree.tag}" )
             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
 
         try: self.filepathsNotYetLoaded.remove( renderingTermsFilepath )
-        except ValueError: logging.critical( "PTX8 rendering terms file seemed unexpected: {}".format( renderingTermsFilepath ) )
+        except ValueError: logging.critical( f"PTX8 rendering terms file seemed unexpected: {renderingTermsFilepath}" )
 
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Loaded {:,} term renderings.".format( len(TermRenderingsDict) ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Loaded {len(TermRenderingsDict):,} term renderings." )
         vPrint( 'Never', DEBUGGING_THIS_MODULE, "\nTermRenderingsDict", len(TermRenderingsDict), TermRenderingsDict )
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, TermRenderingsDict['חָנוּן'] )
         if TermRenderingsDict: self.suppliedMetadata['PTX8']['TermRenderings'] = TermRenderingsDict
@@ -2657,22 +2649,22 @@ class PTX8Bible( Bible ):
         uniqueIdFilepath = os.path.join( self.sourceFilepath, uniqueIdFilename )
         if not os.path.exists( uniqueIdFilepath ): return
 
-        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "PTX8Bible.loading unique id from {}…".format( uniqueIdFilepath ) )
+        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"PTX8Bible.loading unique id from {uniqueIdFilepath}…" )
         with open( uniqueIdFilepath, 'rt', encoding='utf-8' ) as uniqueIdFile:
             uniqueId = uniqueIdFile.read() # This is a Windows GUID
 
         if uniqueId[0] == BibleOrgSysGlobals.BOM:
-            logging.info( "loadUniqueId: Detected Unicode Byte Order Marker (BOM) in {}".format( uniqueIdFilename ) )
+            logging.info( f"loadUniqueId: Detected Unicode Byte Order Marker (BOM) in {uniqueIdFilename}" )
             uniqueId = uniqueId[1:] # Delete the BOM
 
-        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "uniqueId: ({}) {}".format( len(uniqueId), uniqueId ))
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"uniqueId: ({len(uniqueId)}) {uniqueId}")
         assert len( uniqueId ) == 36 # 12-4-4-4-8 lowercase hex chars (128-bits)
         assert uniqueId.count( '-' ) == 4
         for char in uniqueId: assert char in '0123456789abcdef-'
         self.suppliedMetadata['PTX8']['UniqueId'] = uniqueId
 
         try: self.filepathsNotYetLoaded.remove( uniqueIdFilepath )
-        except ValueError: logging.critical( "PTX8 unique id file seemed unexpected: {}".format( uniqueIdFilepath ) )
+        except ValueError: logging.critical( f"PTX8 unique id file seemed unexpected: {uniqueIdFilepath}" )
     # end of PTX8Bible.loadUniqueId
 
 
@@ -2685,7 +2677,7 @@ class PTX8Bible( Bible ):
         wordAnalysesFilepath = os.path.join( self.sourceFilepath, 'WordAnalyses.xml' )
         if not os.path.exists( wordAnalysesFilepath ): return
 
-        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "PTX8Bible.loading word analysis data from {}…".format( wordAnalysesFilepath ) )
+        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"PTX8Bible.loading word analysis data from {wordAnalysesFilepath}…" )
         self.XMLTree = ElementTree().parse( wordAnalysesFilepath )
         assert self.XMLTree is not None # Fail here if we didn't load anything at all
 
@@ -2696,14 +2688,14 @@ class PTX8Bible( Bible ):
         def processWordAnalysis( word, element, treeLocation ):
             """
             """
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "processWordAnalysis( {} )".format( word ) )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"processWordAnalysis( {word} )" )
 
             analysisDict = {}
 
             # Now process the actual items
             for subelement in element:
                 elementLocation = subelement.tag + ' in ' + treeLocation
-                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Processing {}…".format( elementLocation ) )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Processing {elementLocation}…" )
                 BibleOrgSysGlobals.checkXMLNoAttributes( subelement, elementLocation )
                 BibleOrgSysGlobals.checkXMLNoSubelements( subelement, elementLocation )
                 BibleOrgSysGlobals.checkXMLNoTail( subelement, elementLocation )
@@ -2713,7 +2705,7 @@ class PTX8Bible( Bible ):
                     #assert subelement.tag not in analysisDict # TODO: XXXXXXXXXXXXXXXXXXXXX DISABLED!!!
                     analysisDict[subelement.tag] = subelement.text
                 else:
-                    logging.error( _("Unprocessed {} subelement in {}").format( subelement.tag, elementLocation ) )
+                    logging.error( f"Unprocessed {subelement.tag} subelement in {elementLocation}" )
                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  returning", lexiconDict['Entries'][lexemeType][lexemeForm] )
             return analysisDict
@@ -2722,7 +2714,7 @@ class PTX8Bible( Bible ):
 
         # Find the main container
         if self.XMLTree.tag == 'WordAnalyses':
-            treeLocation = "PTX8 {} file".format( self.XMLTree.tag )
+            treeLocation = f"PTX8 {self.XMLTree.tag} file"
             BibleOrgSysGlobals.checkXMLNoAttributes( self.XMLTree, treeLocation )
             BibleOrgSysGlobals.checkXMLNoText( self.XMLTree, treeLocation )
             BibleOrgSysGlobals.checkXMLNoTail( self.XMLTree, treeLocation )
@@ -2730,7 +2722,7 @@ class PTX8Bible( Bible ):
             # Now process the actual entries
             for element in self.XMLTree:
                 elementLocation = element.tag + ' in ' + treeLocation
-                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Processing {}…".format( elementLocation ) )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Processing {elementLocation}…" )
                 BibleOrgSysGlobals.checkXMLNoText( element, elementLocation )
                 BibleOrgSysGlobals.checkXMLNoTail( element, elementLocation )
 
@@ -2741,14 +2733,14 @@ class PTX8Bible( Bible ):
                     for attrib,value in element.items():
                         if attrib=='Word': word = value
                         else:
-                            logging.error( _("Unprocessed {!r} attribute ({}) in {}").format( attrib, value, treeLocation ) )
+                            logging.error( f"Unprocessed {treeLocation!r} attribute ({attrib}) in {value}" )
                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
                     assert word not in wordAnalysesDict # no duplicates allowed presumably
                     #wordAnalysesDict[word] = {}
 
                     for subelement in element:
                         sublocation = subelement.tag + ' ' + elementLocation
-                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Processing {}…".format( sublocation ) )
+                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Processing {sublocation}…" )
                         BibleOrgSysGlobals.checkXMLNoAttributes( subelement, sublocation )
                         BibleOrgSysGlobals.checkXMLNoText( subelement, sublocation )
                         BibleOrgSysGlobals.checkXMLNoTail( subelement, sublocation )
@@ -2757,19 +2749,19 @@ class PTX8Bible( Bible ):
                             assert word not in wordAnalysesDict
                             wordAnalysesDict[word] = processWordAnalysis( word, subelement, sublocation )
                         else:
-                            logging.error( _("Unprocessed {} subelement '{}' in {}").format( subelement.tag, subelement.text, sublocation ) )
+                            logging.error( f"Unprocessed {subelement.tag} subelement '{subelement.text}' in {sublocation}" )
                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
                 else:
-                    logging.error( _("Unprocessed {} element in {}").format( element.tag, elementLocation ) )
+                    logging.error( f"Unprocessed {element.tag} element in {elementLocation}" )
                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
         else:
-            logging.critical( _("Unrecognised PTX8 word analysis tag: {}").format( self.XMLTree.tag ) )
+            logging.critical( f"Unrecognised PTX8 word analysis tag: {self.XMLTree.tag}" )
             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
 
         try: self.filepathsNotYetLoaded.remove( wordAnalysesFilepath )
-        except ValueError: logging.critical( "PTX8 word analyses file seemed unexpected: {}".format( wordAnalysesFilepath ) )
+        except ValueError: logging.critical( f"PTX8 word analyses file seemed unexpected: {wordAnalysesFilepath}" )
 
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Loaded {:,} word analysis entries.".format( len(wordAnalysesDict) ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Loaded {len(wordAnalysesDict):,} word analysis entries." )
         vPrint( 'Never', DEBUGGING_THIS_MODULE, "\nwordAnalysesDict", len(wordAnalysesDict), wordAnalysesDict )
         if wordAnalysesDict: self.suppliedMetadata['PTX8']['WordAnalyses'] = wordAnalysesDict
     # end of PTX8Bible.loadPTX8WordAnalyses
@@ -2782,28 +2774,28 @@ class PTX8Bible( Bible ):
 
         NOTE: You should ensure that preload() has been called first.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, "PTX8Bible.loadBook( {}, {} )".format( BBB, filename ) )
+        fnPrint( DEBUGGING_THIS_MODULE, f"PTX8Bible.loadBook( {BBB}, {filename} )" )
 
         if BBB not in self.bookNeedsReloading or not self.bookNeedsReloading[BBB]:
             if BBB in self.books:
-                dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  {} is already loaded -- returning".format( BBB ) )
+                dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  {BBB} is already loaded -- returning" )
                 return # Already loaded
             if BBB in self.triedLoadingBook:
-                logging.warning( "We had already tried loading PTX8 USFM {} for {}".format( BBB, self.name ) )
+                logging.warning( f"We had already tried loading PTX8 USFM {BBB} for {self.name}" )
                 return # We've already attempted to load this book
         self.triedLoadingBook[BBB] = True
-        if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("  PTX8Bible: Loading {} from {} from {}…").format( BBB, self.name, self.sourceFolder ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  PTX8Bible: Loading {BBB} from {self.name} from {self.sourceFolder}…" )
         if filename is None and BBB in self.possibleFilenameDict: filename = self.possibleFilenameDict[BBB]
-        if filename is None: raise FileNotFoundError( "PTX8Bible.loadBook: Unable to find file for {}".format( BBB ) )
+        if filename is None: raise FileNotFoundError( f"PTX8Bible.loadBook: Unable to find file for {BBB}" )
         UBB = USFMBibleBook( self, BBB )
         UBB.load( filename, self.sourceFolder, self.encoding )
         if UBB._rawLines:
             UBB.validateMarkers() # Usually activates InternalBibleBook.processLines()
             self.stashBook( UBB )
-        else: logging.info( "PTX8 USFM book {} was completely blank".format( BBB ) )
+        else: logging.info( f"PTX8 USFM book {BBB} was completely blank" )
         bookfilepath = os.path.join( self.sourceFolder, filename )
         try: self.filepathsNotYetLoaded.remove( bookfilepath )
-        except ValueError: logging.critical( "PTX8 {} book file seemed unexpected: {}".format( BBB, bookfilepath ) )
+        except ValueError: logging.critical( f"PTX8 {BBB} book file seemed unexpected: {bookfilepath}" )
         self.bookNeedsReloading[BBB] = False
     # end of PTX8Bible.loadBook
 
@@ -2815,28 +2807,28 @@ class PTX8Bible( Bible ):
 
         Parameter is a 2-tuple containing BBB and the filename.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, "_loadBookMP( {} )".format( BBB_Filename_Tuple ) )
+        fnPrint( DEBUGGING_THIS_MODULE, f"_loadBookMP( {BBB_Filename_Tuple} )" )
 
         BBB, filename = BBB_Filename_Tuple
         if BBB not in self.bookNeedsReloading or not self.bookNeedsReloading[BBB]:
             if BBB in self.books:
-                dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  {} is already loaded -- returning".format( BBB ) )
+                dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  {BBB} is already loaded -- returning" )
                 return # Already loaded
             if BBB in self.triedLoadingBook:
-                logging.warning( "We had already tried loading PTX8 USFM {} for {}".format( BBB, self.name ) )
+                logging.warning( f"We had already tried loading PTX8 USFM {BBB} for {self.name}" )
                 return # We've already attempted to load this book
         self.triedLoadingBook[BBB] = True
         if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag:
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '  ' + "Loading {} from {} from {}…".format( BBB, self.name, self.sourceFolder ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '  ' + f"Loading {BBB} from {self.name} from {self.sourceFolder}…" )
         if filename is None and BBB in self.possibleFilenameDict: filename = self.possibleFilenameDict[BBB]
-        if filename is None: raise FileNotFoundError( "PTX8Bible._loadBookMP: Unable to find file for {}".format( BBB ) )
+        if filename is None: raise FileNotFoundError( f"PTX8Bible._loadBookMP: Unable to find file for {BBB}" )
         UBB = USFMBibleBook( self, BBB )
         UBB.load( self.possibleFilenameDict[BBB], self.sourceFolder, self.encoding )
         if UBB._rawLines:
             UBB.validateMarkers() # Usually activates InternalBibleBook.processLines()
-        else: logging.info( "PTX8 USFM book {} was completely blank".format( BBB ) )
+        else: logging.info( f"PTX8 USFM book {BBB} was completely blank" )
         self.bookNeedsReloading[BBB] = False
-        if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("    Finishing loading USFM book {}.").format( BBB ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"    Finishing loading USFM book {BBB}." )
         return UBB
     # end of PTX8Bible._loadBookMP
 
@@ -2845,7 +2837,7 @@ class PTX8Bible( Bible ):
         """
         Load all the books.
         """
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("Loading {} from {}…").format( self.name, self.sourceFolder ) )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Loading {self.name} from {self.sourceFolder}…" )
 
         if not self.preloadDone: self.preload()
 
@@ -2854,8 +2846,8 @@ class PTX8Bible( Bible ):
             and not BibleOrgSysGlobals.alreadyMultiprocessing: # Load all the books as quickly as possible
                 #parameters = [BBB for BBB,filename in self.maximumPossibleFilenameTuples] # Can only pass a single parameter to map
                 if BibleOrgSysGlobals.verbosityLevel > 1:
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Loading {} PTX8 books using {} processes…").format( len(self.maximumPossibleFilenameTuples), BibleOrgSysGlobals.maxProcesses ) )
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("  NOTE: Outputs (including error and warning messages) from loading various books may be interspersed.") )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Loading {len(self.maximumPossibleFilenameTuples)} PTX8 books using {BibleOrgSysGlobals.maxProcesses} processes…" )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  NOTE: Outputs (including error and warning messages) from loading various books may be interspersed." )
                 BibleOrgSysGlobals.alreadyMultiprocessing = True
                 with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                     results = pool.map( self._loadBookMP, self.maximumPossibleFilenameTuples ) # have the pool do our loads
@@ -2864,17 +2856,17 @@ class PTX8Bible( Bible ):
                         bBook.containerBibleObject = self # Because the pickling and unpickling messes this up
                         self.stashBook( bBook ) # Saves them in the correct order
                         try: self.filepathsNotYetLoaded.remove( bBook.sourceFilepath ) # Can't do this in _loadBookMP() because it's not atomic
-                        except ValueError: logging.critical( "PTX8 {} book file seemed unexpected: {}".format( bBook.BBB, bBook.sourceFilepath ) )
+                        except ValueError: logging.critical( f"PTX8 {bBook.BBB} book file seemed unexpected: {bBook.sourceFilepath}" )
                 BibleOrgSysGlobals.alreadyMultiprocessing = False
             else: # Just single threaded
                 # Load the books one by one -- assuming that they have regular Paratext style filenames
                 for BBB,filename in self.maximumPossibleFilenameTuples:
                     #if BibleOrgSysGlobals.verbosityLevel>1 or BibleOrgSysGlobals.debugFlag:
-                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("  PTX8Bible: Loading {} from {} from {}…").format( BBB, self.name, self.sourceFolder ) )
+                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  PTX8Bible: Loading {BBB} from {self.name} from {self.sourceFolder}…" )
                     #if BBB not in self.books:
                     self.loadBook( BBB, filename ) # also saves it
         else:
-            logging.critical( "PTX8Bible: " + _("No books to load in folder '{}'!").format( self.sourceFolder ) )
+            logging.critical( "PTX8Bible: " + f"No books to load in folder '{self.sourceFolder}'!" )
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, self.getBookList() )
         self.doPostLoadProcessing()
     # end of PTX8Bible.loadBooks
@@ -2890,10 +2882,10 @@ class PTX8Bible( Bible ):
             and will already be populated with dictionaries for each book.
         """
         fnPrint( DEBUGGING_THIS_MODULE, "discoverPTX8()" )
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "Discovering PTX8 stats for {}…".format( self.name ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Discovering PTX8 stats for {self.name}…" )
 
         for BBB in self.books: # Do individual book prechecks
-            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, '  ' + "PTX8 discovery for {}…".format( BBB ) )
+            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, '  ' + f"PTX8 discovery for {BBB}…" )
             assert BBB in self.discoveryResults
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, self.discoveryResults[BBB].keys() )
 
@@ -2915,7 +2907,7 @@ def __processPTX8Bible( parametersTuple ): # for demo
     Special shim function used below for multiprocessing.
     """
     codeLetter, mainFolderName, subFolderName = parametersTuple
-    vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nPTX8 {} Trying {}".format( codeLetter, subFolderName ) )
+    vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nPTX8 {codeLetter} Trying {subFolderName}" )
     PTX8_Bible = PTX8Bible( mainFolderName, subFolderName )
     PTX8_Bible.load()
     if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: # Print the index of a small book
@@ -2937,7 +2929,7 @@ def briefDemo() -> None:
         for standardTestFolder in (
                             BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'PTX8Test1/' ),
                             ):
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nStandard testfolder is: {}".format( standardTestFolder ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nStandard testfolder is: {standardTestFolder}" )
             result1 = PTX8BibleFileCheck( standardTestFolder )
             vPrint( 'Normal', DEBUGGING_THIS_MODULE, "PTX8 TestA1", result1 )
             result2 = PTX8BibleFileCheck( standardTestFolder, autoLoad=True )
@@ -2947,14 +2939,14 @@ def briefDemo() -> None:
 
     specificTestFolder = Path( '/mnt/SSDs/Work/VirtualBox_Shared_Folder/My Paratext 8 Projects Latest/MBTV/' )
     if 0: # specify specificTestFolder containing a single module
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nPTX8 B/ Trying single module in {}".format( specificTestFolder ) )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nPTX8 B/ Trying single module in {specificTestFolder}" )
         PTX8_Bible = PTX8Bible( specificTestFolder )
         PTX8_Bible.load()
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, PTX8_Bible )
 
     if 00: # specified single installed module
         singleModule = 'eng-asv_dbl_06125adad2d5898a-rev1-2014-08-30'
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nPTX8 C/ Trying installed {} module".format( singleModule ) )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nPTX8 C/ Trying installed {singleModule} module" )
         PTX8_Bible = PTX8Bible( specificTestFolder, singleModule )
         PTX8_Bible.load()
         if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: # Print the index of a small book
@@ -2969,7 +2961,7 @@ def briefDemo() -> None:
         nonEnglish = ( '', )
         bad = ( )
         for j, testFilename in enumerate( good ): # Choose one of the above: good, nonEnglish, bad
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nPTX8 D{}/ Trying {}".format( j+1, testFilename ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nPTX8 D{j+1}/ Trying {testFilename}" )
             #myTestFolder = os.path.join( specificTestFolder, testFilename+'/' )
             #testFilepath = os.path.join( specificTestFolder, testFilename+'/', testFilename+'_utf8.txt' )
             PTX8_Bible = PTX8Bible( specificTestFolder, testFilename )
@@ -2984,7 +2976,7 @@ def briefDemo() -> None:
 
         if BibleOrgSysGlobals.maxProcesses > 1 \
         and not BibleOrgSysGlobals.alreadyMultiprocessing: # Get our subprocesses ready and waiting for work
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nTrying all {len(foundFolders)} discovered modules…" )
             parameters = [('E',specificTestFolder,folderName) for folderName in sorted(foundFolders)]
             BibleOrgSysGlobals.alreadyMultiprocessing = True
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
@@ -2993,7 +2985,7 @@ def briefDemo() -> None:
             BibleOrgSysGlobals.alreadyMultiprocessing = False
         else: # Just single threaded
             for j, someFolder in enumerate( sorted( foundFolders ) ):
-                vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nPTX8 E{}/ Trying {}".format( j+1, someFolder ) )
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nPTX8 E{j+1}/ Trying {someFolder}" )
                 #myTestFolder = os.path.join( specificTestFolder, someFolder+'/' )
                 PTX8Bible( specificTestFolder, someFolder )
 
@@ -3015,14 +3007,13 @@ def briefDemo() -> None:
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, PTX8_Bible.getAddedUnits() )
                 #for ref in ('GEN','Genesis','GeNeSiS','Gen','MrK','mt','Prv','Xyz',):
                     ##dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Looking for", ref )
-                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Tried finding '{}' in '{}': got '{}'".format( ref, name, UB.getXRefBBB( ref ) ) )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Tried finding '{ref}' in '{name}': got '{UB.getXRefBBB( ref )}'" )
 
                 # Print unloaded metadata filepaths
                 if PTX8_Bible.filepathsNotYetLoaded and BibleOrgSysGlobals.verbosityLevel > 0:
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nFollowing {} file paths have not been processed in folder {}:" \
-                                .format( len(PTX8_Bible.filepathsNotYetLoaded), testFolder ) )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nFollowing {len(PTX8_Bible.filepathsNotYetLoaded)} file paths have not been processed in folder {testFolder}:" )
                     for filepath in PTX8_Bible.filepathsNotYetLoaded:
-                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Failed to load PTX8 file: {}".format( filepath ) )
+                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Failed to load PTX8 file: {filepath}" )
                     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
 
                 # Test discovery code
@@ -3034,7 +3025,7 @@ def briefDemo() -> None:
 
                 # if 0: # Test BDB code for display PTX8 metadata files
                 #     if BibleOrgSysGlobals.verbosityLevel > 0:
-                #         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Creating test settings page for {}…".format( testName ) )
+                #         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Creating test settings page for {testName}…" )
                 #     import sys; sys.path.insert( 0, BibleOrgSysGlobals.BADBAD_PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../home/autoprocesses/Scripts/' ) )
                 #     from ProcessTemplates import webPageTemplate, doGlobalTemplateFixes
                 #     readyWebPageTemplate = doGlobalTemplateFixes( 'Test', testName, "Test", webPageTemplate )
@@ -3044,7 +3035,7 @@ def briefDemo() -> None:
                 #             os.makedirs( outputFolderpath, 0o755 )
                 #     makeSettingsPage( 'Matigsalug', PTX8_Bible, readyWebPageTemplate, outputFolderpath )
                 break
-            else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Sorry, test folder '{}' is not readable on this computer.".format( testFolder ) )
+            else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Sorry, test folder '{testFolder}' is not readable on this computer." )
 
     if 1:
         # Look at various projects inside various copies of the Paratext 8 folder made over time
@@ -3059,14 +3050,14 @@ def briefDemo() -> None:
             if os.path.isdir( somepath ):
                 if something.startswith( searchFolderHead ):
                     if BibleOrgSysGlobals.verbosityLevel > 0:
-                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n\nG Looking for projects in folder: {}".format( somepath ) )
+                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n\nG Looking for projects in folder: {somepath}" )
 
                     for something2 in sorted( os.listdir( somepath ) ):
                         somepath2 = os.path.join( somepath, something2 )
                         if os.path.isdir( somepath2 ):
                             if something2 in possibleProjectFolders:
                                 if BibleOrgSysGlobals.verbosityLevel > 0:
-                                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Found {}".format( somepath2 ) )
+                                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Found {somepath2}" )
 
                                 if os.access( somepath2, os.R_OK ):
                                     PTX8_Bible = PTX8Bible( somepath2 )
@@ -3079,13 +3070,13 @@ def briefDemo() -> None:
                                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, PTX8_Bible.getAddedUnits() )
                                     #for ref in ('GEN','Genesis','GeNeSiS','Gen','MrK','mt','Prv','Xyz',):
                                         ##dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Looking for", ref )
-                                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Tried finding '{}' in '{}': got '{}'".format( ref, name, UB.getXRefBBB( ref ) ) )
+                                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Tried finding '{ref}' in '{name}': got '{UB.getXRefBBB( ref )}'" )
                                     break
-                                else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Sorry, test folder '{}' is not readable on this computer.".format( somepath2 ) )
+                                else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Sorry, test folder '{somepath2}' is not readable on this computer." )
                     break
 
     #if BibleOrgSysGlobals.commandLineArguments.export:
-    #    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "NOTE: This is {} V{} -- i.e., not even alpha quality software!".format( PROGRAM_NAME, PROGRAM_VERSION ) )
+    #    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"NOTE: This is {PROGRAM_NAME} V{PROGRAM_VERSION} -- i.e., not even alpha quality software!" )
     #       pass
 # end of PTX8Bible.briefDemo
 
@@ -3113,7 +3104,7 @@ def fullDemo() -> None:
                             BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_USFM3_Reexport/' ),
                             'MadeUpFolder/',
                             ):
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nStandard testfolder is: {}".format( standardTestFolder ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nStandard testfolder is: {standardTestFolder}" )
             result1 = PTX8BibleFileCheck( standardTestFolder )
             vPrint( 'Normal', DEBUGGING_THIS_MODULE, "PTX8 TestA1", result1 )
             result2 = PTX8BibleFileCheck( standardTestFolder, autoLoad=True )
@@ -3123,14 +3114,14 @@ def fullDemo() -> None:
 
     specificTestFolder = Path( '/mnt/SSDs/Work/VirtualBox_Shared_Folder/My Paratext 8 Projects Latest/MBTV/' )
     if 0: # specify specificTestFolder containing a single module
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nPTX8 B/ Trying single module in {}".format( specificTestFolder ) )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nPTX8 B/ Trying single module in {specificTestFolder}" )
         PTX8_Bible = PTX8Bible( specificTestFolder )
         PTX8_Bible.load()
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, PTX8_Bible )
 
     if 00: # specified single installed module
         singleModule = 'eng-asv_dbl_06125adad2d5898a-rev1-2014-08-30'
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nPTX8 C/ Trying installed {} module".format( singleModule ) )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nPTX8 C/ Trying installed {singleModule} module" )
         PTX8_Bible = PTX8Bible( specificTestFolder, singleModule )
         PTX8_Bible.load()
         if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: # Print the index of a small book
@@ -3145,7 +3136,7 @@ def fullDemo() -> None:
         nonEnglish = ( '', )
         bad = ( )
         for j, testFilename in enumerate( good ): # Choose one of the above: good, nonEnglish, bad
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nPTX8 D{}/ Trying {}".format( j+1, testFilename ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nPTX8 D{j+1}/ Trying {testFilename}" )
             #myTestFolder = os.path.join( specificTestFolder, testFilename+'/' )
             #testFilepath = os.path.join( specificTestFolder, testFilename+'/', testFilename+'_utf8.txt' )
             PTX8_Bible = PTX8Bible( specificTestFolder, testFilename )
@@ -3160,7 +3151,7 @@ def fullDemo() -> None:
 
         if BibleOrgSysGlobals.maxProcesses > 1 \
         and not BibleOrgSysGlobals.alreadyMultiprocessing: # Get our subprocesses ready and waiting for work
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nTrying all {len(foundFolders)} discovered modules…" )
             parameters = [('E',specificTestFolder,folderName) for folderName in sorted(foundFolders)]
             BibleOrgSysGlobals.alreadyMultiprocessing = True
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
@@ -3169,7 +3160,7 @@ def fullDemo() -> None:
             BibleOrgSysGlobals.alreadyMultiprocessing = False
         else: # Just single threaded
             for j, someFolder in enumerate( sorted( foundFolders ) ):
-                vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nPTX8 E{}/ Trying {}".format( j+1, someFolder ) )
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nPTX8 E{j+1}/ Trying {someFolder}" )
                 #myTestFolder = os.path.join( specificTestFolder, someFolder+'/' )
                 PTX8Bible( specificTestFolder, someFolder )
 
@@ -3195,14 +3186,13 @@ def fullDemo() -> None:
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, PTX8_Bible.getAddedUnits() )
                 #for ref in ('GEN','Genesis','GeNeSiS','Gen','MrK','mt','Prv','Xyz',):
                     ##dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Looking for", ref )
-                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Tried finding '{}' in '{}': got '{}'".format( ref, name, UB.getXRefBBB( ref ) ) )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Tried finding '{ref}' in '{name}': got '{UB.getXRefBBB( ref )}'" )
 
                 # Print unloaded metadata filepaths
                 if PTX8_Bible.filepathsNotYetLoaded and BibleOrgSysGlobals.verbosityLevel > 0:
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nFollowing {} file paths have not been processed in folder {}:" \
-                                .format( len(PTX8_Bible.filepathsNotYetLoaded), testFolder ) )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nFollowing {len(PTX8_Bible.filepathsNotYetLoaded)} file paths have not been processed in folder {testFolder}:" )
                     for filepath in PTX8_Bible.filepathsNotYetLoaded:
-                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Failed to load PTX8 file: {}".format( filepath ) )
+                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Failed to load PTX8 file: {filepath}" )
                     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
 
                 # Test discovery code
@@ -3214,7 +3204,7 @@ def fullDemo() -> None:
 
                 # if 0: # Test BDB code for display PTX8 metadata files
                 #     if BibleOrgSysGlobals.verbosityLevel > 0:
-                #         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Creating test settings page for {}…".format( testName ) )
+                #         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Creating test settings page for {testName}…" )
                 #     import sys; sys.path.insert( 0, BibleOrgSysGlobals.BADBAD_PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../home/autoprocesses/Scripts/' ) )
                 #     from ProcessTemplates import webPageTemplate, doGlobalTemplateFixes
                 #     readyWebPageTemplate = doGlobalTemplateFixes( 'Test', testName, "Test", webPageTemplate )
@@ -3223,7 +3213,7 @@ def fullDemo() -> None:
                 #     if not os.path.exists( outputFolderpath ):
                 #             os.makedirs( outputFolderpath, 0o755 )
                 #     makeSettingsPage( 'Matigsalug', PTX8_Bible, readyWebPageTemplate, outputFolderpath )
-            else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Sorry, test folder '{}' is not readable on this computer.".format( testFolder ) )
+            else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Sorry, test folder '{testFolder}' is not readable on this computer." )
 
     if 0:
         # Look at various projects inside various copies of the Paratext 8 folder made over time
@@ -3240,14 +3230,14 @@ def fullDemo() -> None:
             if os.path.isdir( somepath ):
                 if something.startswith( searchFolderHead ):
                     if BibleOrgSysGlobals.verbosityLevel > 0:
-                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n\nG Looking for projects in folder: {}".format( somepath ) )
+                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n\nG Looking for projects in folder: {somepath}" )
 
                     for something2 in sorted( os.listdir( somepath ) ):
                         somepath2 = os.path.join( somepath, something2 )
                         if os.path.isdir( somepath2 ):
                             if something2 in possibleProjectFolders:
                                 if BibleOrgSysGlobals.verbosityLevel > 0:
-                                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Found {}".format( somepath2 ) )
+                                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Found {somepath2}" )
 
                                 if os.access( somepath2, os.R_OK ):
                                     PTX8_Bible = PTX8Bible( somepath2 )
@@ -3260,11 +3250,11 @@ def fullDemo() -> None:
                                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, PTX8_Bible.getAddedUnits() )
                                     #for ref in ('GEN','Genesis','GeNeSiS','Gen','MrK','mt','Prv','Xyz',):
                                         ##dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Looking for", ref )
-                                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Tried finding '{}' in '{}': got '{}'".format( ref, name, UB.getXRefBBB( ref ) ) )
-                                else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Sorry, test folder '{}' is not readable on this computer.".format( somepath2 ) )
+                                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Tried finding '{ref}' in '{name}': got '{UB.getXRefBBB( ref )}'" )
+                                else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Sorry, test folder '{somepath2}' is not readable on this computer." )
 
     #if BibleOrgSysGlobals.commandLineArguments.export:
-    #    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "NOTE: This is {} V{} -- i.e., not even alpha quality software!".format( PROGRAM_NAME, PROGRAM_VERSION ) )
+    #    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"NOTE: This is {PROGRAM_NAME} V{PROGRAM_VERSION} -- i.e., not even alpha quality software!" )
     #       pass
 # end of PTX8Bible.fullDemo
 

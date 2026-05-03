@@ -65,7 +65,6 @@ CHANGELOG:
     2025-02-13 Changed special characters in getVerseText() function and add includeNonCanonical parameter
 """
 from __future__ import annotations # So we can use typing -> ClassName (before Python 3.10)
-from gettext import gettext as _
 import os
 import sys
 import logging
@@ -153,22 +152,22 @@ class InternalBible:
         result = self.objectNameString
         indent = 2
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2: result += ' v' + PROGRAM_VERSION
-        if self.name: result += ('\n' if result else '') + ' '*indent + _("Name: {}").format( self.name )
-        if self.abbreviation: result += ('\n' if result else '') + ' '*indent + _("Abbreviation: {}").format( self.abbreviation )
-        if self.sourceFolder: result += ('\n' if result else '') + ' '*indent + _("Source folder: {}").format( self.sourceFolder )
-        elif self.sourceFilepath: result += ('\n' if result else '') + ' '*indent + _("Source: {}").format( self.sourceFilepath )
+        if self.name: result += ('\n' if result else '') + ' '*indent + f"Name: {self.name}"
+        if self.abbreviation: result += ('\n' if result else '') + ' '*indent + f"Abbreviation: {self.abbreviation}"
+        if self.sourceFolder: result += ('\n' if result else '') + ' '*indent + f"Source folder: {self.sourceFolder}"
+        elif self.sourceFilepath: result += ('\n' if result else '') + ' '*indent + f"Source: {self.sourceFilepath}"
         if BibleOrgSysGlobals.verbosityLevel > 1:
             for fieldName in set1:
                 fieldContents = self.getSetting( fieldName )
                 if fieldContents:
-                    result += ('\n' if result else '') + ' '*indent + _("{}: {!r}").format( fieldName, fieldContents )
+                    result += ('\n' if result else '') + ' '*indent + f"{fieldName}: {fieldContents!r}"
             if 'uWencoded' in self.__dict__ and self.uWencoded:
-                result += ('\n' if result else '') + ' '*indent + _("Contains translation alignments: True")
+                result += ('\n' if result else '') + ' '*indent + "Contains translation alignments: True"
         if BibleOrgSysGlobals.verbosityLevel > 2:
             for fieldName in ( 'Status', 'Font', 'Copyright', 'Licence', ):
                 fieldContents = self.getSetting( fieldName )
                 if fieldContents:
-                    result += ('\n' if result else '') + ' '*indent + _("{}: {!r}").format( fieldName, fieldContents )
+                    result += ('\n' if result else '') + ' '*indent + f"{fieldName}: {fieldContents!r}"
         if (BibleOrgSysGlobals.debugFlag or DEBUGGING_THIS_MODULE) and BibleOrgSysGlobals.verbosityLevel > 3 \
         and self.suppliedMetadata and self.objectTypeString not in ('PTX7','PTX8'): # There's too much potential Paratext metadata
             for metadataType in self.suppliedMetadata:
@@ -176,11 +175,10 @@ class InternalBible:
                     if fieldName not in set3:
                         fieldContents = self.suppliedMetadata[metadataType][fieldName]
                         if fieldContents:
-                            result += ('\n' if result else '') + '  '*indent + _("{}: {!r}").format( fieldName, fieldContents )
-        #if self.revision: result += ('\n' if result else '') + ' '*indent + _("Revision: {}").format( self.revision )
-        #if self.version: result += ('\n' if result else '') + ' '*indent + _("Version: {}").format( self.version )
-        result += ('\n' if result else '') + ' '*indent + _("Number of{} books: {}{}") \
-                                        .format( '' if self.loadedAllBooks else ' loaded', len(self.books), ' {}'.format( self.getBookList() ) if 0<len(self.books)<7 else '' )
+                            result += ('\n' if result else '') + '  '*indent + f"{fieldName}: {fieldContents!r}"
+        #if self.revision: result += ('\n' if result else '') + ' '*indent + f"Revision: {self.revision}"
+        #if self.version: result += ('\n' if result else '') + ' '*indent + f"Version: {self.version}"
+        result += ('\n' if result else '') + ' '*indent + f"Number of{'' if self.loadedAllBooks else ' loaded'} books: {len(self.books)}{f' {self.getBookList()}' if 0<len(self.books)<7 else ''}"
         return result
     # end of InternalBible.__str__
 
@@ -190,7 +188,7 @@ class InternalBible:
         This method returns the number of loaded books in the Bible.
         """
         if BibleOrgSysGlobals.debugFlag and not self.loadedAllBooks:
-            logging.critical( _("__len__ result is unreliable because all books not loaded!") )
+            logging.critical( "__len__ result is unreliable because all books not loaded!" )
         return len( self.books )
     # end of InternalBible.__len__
 
@@ -206,7 +204,7 @@ class InternalBible:
         """
         if BibleOrgSysGlobals.debugFlag: assert isinstance(BBB,str) and len(BBB)==3
         if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE and not self.loadedAllBooks:
-            logging.critical( _("__contains__ result is unreliable because all books not loaded!") )
+            logging.critical( "__contains__ result is unreliable because all books not loaded!" )
 
         return BBB in self.books
     # end of InternalBible.__contains__
@@ -239,7 +237,7 @@ class InternalBible:
         If it's just the BBBs that you want, use self.books.keys() directly.
         """
         if BibleOrgSysGlobals.debugFlag and not self.loadedAllBooks:
-            logging.critical( _("__iter__ result is unreliable because all books not loaded!") )
+            logging.critical( "__iter__ result is unreliable because all books not loaded!" )
 
         for BBB in self.books:
             yield self.books[BBB]
@@ -298,7 +296,7 @@ class InternalBible:
         Returns True if any of the 39 common OT books are present.
         """
         if BibleOrgSysGlobals.debugFlag and not self.loadedAllBooks:
-            logging.critical( _("containsAnyOT39Books result is unreliable because all books not loaded!") )
+            logging.critical( "containsAnyOT39Books result is unreliable because all books not loaded!" )
         for BBB in BOOKLIST_OT39:
             if BBB in self: return True
         return False
@@ -310,7 +308,7 @@ class InternalBible:
         Returns True if any of the 27 common NT books are present.
         """
         if BibleOrgSysGlobals.debugFlag and not self.loadedAllBooks:
-            logging.critical( _("containsAnyNT27Books result is unreliable because all books not loaded!") )
+            logging.critical( "containsAnyNT27Books result is unreliable because all books not loaded!" )
         for BBB in BOOKLIST_NT27:
             if BBB in self: return True
         return False
@@ -371,31 +369,28 @@ class InternalBible:
         If not, tries to load the book.
         """
         fnPrint( DEBUGGING_THIS_MODULE, f"InternalBible.loadBookIfNecessary( {BBB} )" )
-        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "b {} tlb {}".format( self.books, self.triedLoadingBook ) )
-        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "bnr {}".format( self.bookNeedsReloading ) )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"b {self.books} tlb {self.triedLoadingBook}" )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"bnr {self.bookNeedsReloading}" )
 
         if (BBB not in self.books and BBB not in self.triedLoadingBook) \
         or (BBB in self.bookNeedsReloading and self.bookNeedsReloading[BBB]):
             try: self.loadBook( BBB ) # Some types of Bibles have this function (so an entire Bible doesn't have to be loaded at startup)
             except AttributeError: # Could be that our Bible doesn't have the ability to load individual books
                 errorClass, exceptionInstance, traceback = sys.exc_info()
-                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, '{!r}  {!r}  {!r}'.format( errorClass, exceptionInstance, traceback ) )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'{errorClass!r}  {exceptionInstance!r}  {traceback!r}' )
                 if "object has no attribute 'loadBook'" in str(exceptionInstance):
-                    logging.info( _("No 'loadBook()' function to load individual {} Bible book for {}") \
-                        .format( BBB, self.getAName( abbrevFirst=True ) ) ) # Ignore errors
+                    logging.info( f"No 'loadBook()' function to load individual {BBB} Bible book for {self.getAName( abbrevFirst=True )}" ) # Ignore errors
                 else: # it's some other attribute error in the loadBook function
                     raise
             except KeyError:
                 errorClass, exceptionInstance, traceback = sys.exc_info()
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'loadBookIfNecessary {!r}  {!r}  {!r}'.format( errorClass, exceptionInstance, traceback ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'loadBookIfNecessary {errorClass!r}  {exceptionInstance!r}  {traceback!r}' )
                 # TODO: Fix the text in the following line
                 if "object has no attribute 'loadBook'" in str(exceptionInstance):
-                    logging.critical( _("No individual {} Bible book available for {}") \
-                                    .format( BBB, self.getAName( abbrevFirst=True ) ) ) # Ignore errors
+                    logging.critical( f"No individual {BBB} Bible book available for {self.getAName( abbrevFirst=True )}" ) # Ignore errors
                 else: # it's some other key error in the loadBook function
                     raise
-            except FileNotFoundError: logging.critical( _("Unable to find and load individual {} Bible book for {}") \
-                                    .format( BBB, self.getAName( abbrevFirst=True ) ) ) # Ignore errors
+            except FileNotFoundError: logging.critical( f"Unable to find and load individual {BBB} Bible book for {self.getAName( abbrevFirst=True )}" ) # Ignore errors
             self.triedLoadingBook[BBB] = True
             self.bookNeedsReloading[BBB] = False
         else: # didn't try loading the book
@@ -411,8 +406,8 @@ class InternalBible:
 
         #if BBB not in self.books and BBB not in self.triedLoadingBook:
         try: self.loadBook( BBB ) # Some types of Bibles have this function (so an entire Bible doesn't have to be loaded at startup)
-        except AttributeError: logging.info( "No function to load individual Bible book: {}".format( BBB ) ) # Ignore errors
-        except FileNotFoundError: logging.info( "Unable to find and load individual Bible book: {}".format( BBB ) ) # Ignore errors
+        except AttributeError: logging.info( f"No function to load individual Bible book: {BBB}" ) # Ignore errors
+        except FileNotFoundError: logging.info( f"Unable to find and load individual Bible book: {BBB}" ) # Ignore errors
         self.triedLoadingBook[BBB] = True
         self.bookNeedsReloading[BBB] = False
 
@@ -430,7 +425,7 @@ class InternalBible:
 
         #try: del self.discoveryResults # These are now out-of-date
         #except KeyError:
-            #if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("reloadBook has no discoveryResults to delete") )
+            #if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "reloadBook has no discoveryResults to delete" )
 
         if 'discoveryResults' in self.__dict__: # need to update them
             # Need to double-check that this doesn't cause any double-ups …XXXXXXXXXXXXXXXXXXXXXX
@@ -465,7 +460,7 @@ class InternalBible:
         #"""
         #Called to unload books, usually coz one or more of them has been edited.
         #"""
-        #if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("unloadBooks()…") )
+        #if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "unloadBooks()…" )
         #self.books = {}
         #self.BBBToNameDict, self.bookNameDict, self.combinedBookNameDict, self.bookAbbrevDict = {}, {}, {}, {} # Used to store book name and abbreviations (pointing to the BBB codes)
         #self.reverseDict, self.guesses = {}, '' # A program history
@@ -476,7 +471,7 @@ class InternalBible:
 
         #try: del self.discoveryResults # These are now irrelevant
         #except KeyError:
-            #if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("unloadBooks has no discoveryResults to delete") )
+            #if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "unloadBooks has no discoveryResults to delete" )
     ## end of InternalBible.unloadBooks
 
 
@@ -494,13 +489,13 @@ class InternalBible:
                 but check for duplicates first.
             """
             if fieldName in self.suppliedMetadata['File']: # We have a duplicate
-                logging.warning("About to replace {!r}={!r} from supplied metadata file with {!r}".format( fieldName, self.suppliedMetadata['File'][fieldName], contents ) )
+                logging.warning(f"About to replace {fieldName!r}={self.suppliedMetadata['File'][fieldName]!r} from supplied metadata file with {contents!r}" )
             else: # Also check for "duplicates" with a different case
                 ucFieldName = fieldName.upper()
                 for key in self.suppliedMetadata['File']:
                     ucKey = key.upper()
                     if ucKey == ucFieldName:
-                        logging.warning("About to add {!r} from supplied metadata file even though already have {!r}".format( fieldName, key ) )
+                        logging.warning(f"About to add {fieldName!r} from supplied metadata file even though already have {key!r}" )
                         break
             self.suppliedMetadata['File'][fieldName] = BibleOrgSysGlobals.makeSafeString( contents )
         # end of loadMetadataTextFile.saveMetadataField
@@ -512,23 +507,23 @@ class InternalBible:
 
         # Loads the metadata into self.suppliedMetadata
         logging.info( "Loading supplied project metadata…" )
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("Loading supplied project metadata…") )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Loading supplied project metadata…" )
         #dPrint( 'Info', DEBUGGING_THIS_MODULE, "Old metadata settings", len(self.suppliedMetadata), self.suppliedMetadata )
         self.suppliedMetadata['File'] = {}
         lineCount, continuedFlag = 0, False
         with open( mdFilepath, 'rt', encoding='utf-8' ) as mdFile:
             for line in mdFile:
                 while line and line[-1] in '\n\r': line=line[:-1] # Remove trailing newline characters (Linux or Windows)
-                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "MD line: {!r}".format( line ) )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"MD line: {line!r}" )
                 if not line: continue # Just discard additional blank lines
                 lineCount += 1
                 if line[0] == '#': continue # Just discard comment lines
                 if not continuedFlag:
                     if '=' not in line:
-                        logging.warning( _("loadMetadataTextFile: Missing equals sign from metadata line (ignored): {!r}").format( line ) )
+                        logging.warning( f"loadMetadataTextFile: Missing equals sign from metadata line (ignored): {line!r}" )
                     else: # Seems like a field=something type line
                         if line.count( '=' ) > 1:
-                            logging.warning( _("loadMetadataTextFile: Surprised to find multiple equal signs in line: {!r}").format( line ) )
+                            logging.warning( f"loadMetadataTextFile: Surprised to find multiple equal signs in line: {line!r}" )
                         bits = line.split( '=', 1 )
                         assert len(bits) == 2
                         fieldName = bits[0]
@@ -538,16 +533,16 @@ class InternalBible:
                             fieldContents = fieldContents[:-1] # Remove the continuation character
                         else:
                             if not fieldContents:
-                                logging.warning( "Metadata line has a blank entry for {!r}".format( fieldName ) )
+                                logging.warning( f"Metadata line has a blank entry for {fieldName!r}" )
                             saveMetadataField( fieldName, fieldContents )
                 else: # continuedFlag
                     if line.endswith( '\\' ): line = line[:-1] # Remove the continuation character
                     else: continuedFlag = False
                     fieldContents += line
                     if not continuedFlag:
-                        logging.warning( _("loadMetadataTextFile: Metadata lines result in a blank entry for {!r}").format( fieldName ) )
+                        logging.warning( f"loadMetadataTextFile: Metadata lines result in a blank entry for {fieldName!r}" )
                         saveMetadataField( fieldName, fieldContents )
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  {} non-blank lines read from uploaded metadata file".format( lineCount ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  {lineCount} non-blank lines read from uploaded metadata file" )
         vPrint( 'Info', DEBUGGING_THIS_MODULE, "New metadata settings", len(self.suppliedMetadata), self.suppliedMetadata )
 
         # Now move the information into our settingsDict
@@ -591,9 +586,9 @@ class InternalBible:
             return
 
         if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE and BibleOrgSysGlobals.verbosityLevel > 2:
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Supplied {} metadata ({}):".format( applyMetadataType, len(self.suppliedMetadata[applyMetadataType]) ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Supplied {applyMetadataType} metadata ({len(self.suppliedMetadata[applyMetadataType])}):" )
             for key,value in sorted( self.suppliedMetadata[applyMetadataType].items() ):
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  {} = {!r}".format( key, value ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  {key} = {value!r}" )
 
         if applyMetadataType in ( 'File', 'BCV','Online','theWord','Unbound','VerseView','Forge4SS','VPL' ):
             # These types copy ALL the data across, but through a name-changing dictionary if necessary
@@ -608,19 +603,19 @@ class InternalBible:
             nameChangeDict['Forge4SS'] = { 'TITLE':'FullName', 'ABBREVIATION':'Abbreviation', 'AUTHORDETAIL':'AuthorDetailHTML' }
             nameChangeDict['VPL'] = { 'TITLE':'FullName', 'ABBREVIATION':'Abbreviation', } # Not sure if these two are needed here???
             if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>3:
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "applySuppliedMetadata is processing {} {!r} metadata items".format( len(self.suppliedMetadata[applyMetadataType]), applyMetadataType ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"applySuppliedMetadata is processing {len(self.suppliedMetadata[applyMetadataType])} {applyMetadataType!r} metadata items" )
             for oldKey,value in self.suppliedMetadata[applyMetadataType].items():
                 if not value: # We don't expect blank metadata values
-                    logging.warning( "Why did we get a blank {} {!r} metadata key?".format( applyMetadataType, oldKey ) )
+                    logging.warning( f"Why did we get a blank {applyMetadataType} {oldKey!r} metadata key?" )
                 newKey = nameChangeDict[applyMetadataType][oldKey] if oldKey in nameChangeDict[applyMetadataType] else oldKey
                 if newKey in self.settingsDict: # We have a duplicate
-                    logging.warning("About to replace {}={!r} from {} metadata file with {!r}".format( newKey, self.settingsDict[newKey], applyMetadataType, value ) )
+                    logging.warning(f"About to replace {newKey}={self.settingsDict[newKey]!r} from {applyMetadataType} metadata file with {value!r}" )
                 else: # Also check for "duplicates" with a different case
                     ucNewKey = newKey.upper()
                     for key in self.settingsDict:
                         ucKey = key.upper()
                         if ucKey == ucNewKey:
-                            logging.warning("About to copy {!r} from {} metadata file even though already have {!r}".format( newKey, applyMetadataType, key ) )
+                            logging.warning(f"About to copy {applyMetadataType!r} from {newKey} metadata file even though already have {key!r}" )
                             break
                 self.settingsDict[newKey] = value
 
@@ -631,20 +626,20 @@ class InternalBible:
             #   WantODFs, WantPDFs, WantPhotoBible
             wantedDict = { 'ProjectName':'ProjectName', }
             if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>3:
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "applySuppliedMetadata is processing {} {!r} metadata items".format( len(self.suppliedMetadata[applyMetadataType]), applyMetadataType ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"applySuppliedMetadata is processing {len(self.suppliedMetadata[applyMetadataType])} {applyMetadataType!r} metadata items" )
             for oldKey,value in self.suppliedMetadata[applyMetadataType].items():
                 if oldKey in wantedDict: #  Only copy wanted entries
                     if not value: # We don't expect blank metadata values
-                        logging.warning( "Why did we get a blank {} {!r} metadata key?".format( applyMetadataType, oldKey ) )
+                        logging.warning( f"Why did we get a blank {applyMetadataType} {oldKey!r} metadata key?" )
                     newKey = wantedDict[oldKey]
                     if newKey in self.settingsDict: # We have a duplicate
-                        logging.warning("About to replace {}={!r} from {} metadata file with {!r}".format( newKey, self.settingsDict[newKey], applyMetadataType, value ) )
+                        logging.warning(f"About to replace {newKey}={self.settingsDict[newKey]!r} from {applyMetadataType} metadata file with {value!r}" )
                     else: # Also check for "duplicates" with a different case
                         ucNewKey = newKey.upper()
                         for key in self.settingsDict:
                             ucKey = key.upper()
                             if ucKey == ucNewKey:
-                                logging.warning("About to copy {}={!r} from {} metadata file even though already have {!r} (different case)={!r}".format( newKey, value, applyMetadataType, key, self.settingsDict[key] ) )
+                                logging.warning(f"About to copy {newKey}={value!r} from {applyMetadataType} metadata file even though already have {key!r} (different case)={self.settingsDict[key]!r}" )
                                 break
                     self.settingsDict[newKey] = value
 
@@ -654,18 +649,18 @@ class InternalBible:
             # This is a special case (coz it's inside the PTX7 metadata)
             wantedDict = { 'Copyright':'Copyright', 'FullName':'WorkName', 'LanguageIsoCode':'ISOLanguageCode' }
             if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>3:
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "applySuppliedMetadata is processing {} {!r} metadata items".format( len(self.suppliedMetadata['PTX7']['SSF']), applyMetadataType ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"applySuppliedMetadata is processing {len(self.suppliedMetadata['PTX7']['SSF'])} {applyMetadataType!r} metadata items" )
             for oldKey,value in self.suppliedMetadata['PTX7']['SSF'].items():
                 if value and oldKey in wantedDict: # Only copy wanted, non-blank entries
                     newKey = wantedDict[oldKey]
                     if newKey in self.settingsDict: # We have a duplicate
-                        logging.warning("About to replace {}={!r} from {} metadata file with {!r}".format( newKey, self.settingsDict[newKey], applyMetadataType, value ) )
+                        logging.warning(f"About to replace {newKey}={self.settingsDict[newKey]!r} from {applyMetadataType} metadata file with {value!r}" )
                     else: # Also check for "duplicates" with a different case
                         ucNewKey = newKey.upper()
                         for key in self.settingsDict:
                             ucKey = key.upper()
                             if ucKey == ucNewKey:
-                                logging.warning("About to copy {}={!r} from {} metadata file even though already have {!r} (different case)={!r}".format( newKey, value, applyMetadataType, key, self.settingsDict[key] ) )
+                                logging.warning(f"About to copy {newKey}={value!r} from {applyMetadataType} metadata file even though already have {key!r} (different case)={self.settingsDict[key]!r}" )
                                 break
                     self.settingsDict[newKey] = value
             # Determine our encoding while we're at it
@@ -674,42 +669,42 @@ class InternalBible:
                 if ssfEncoding == '65001': adjSSFencoding = 'utf-8'
                 else:
                     if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 1:
-                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("__init__: File encoding in SSF is set to {!r}").format( ssfEncoding ) )
+                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"__init__: File encoding in SSF is set to {ssfEncoding!r}" )
                     if ssfEncoding.isdigit():
                         adjSSFencoding = 'cp' + ssfEncoding
                         if BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.verbosityLevel > 2:
-                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("__init__: Adjusted to {!r} file encoding").format( adjSSFencoding ) )
+                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"__init__: Adjusted to {adjSSFencoding!r} file encoding" )
                     else:
-                        logging.critical( _("__init__: Unsure how to handle {!r} file encoding").format( ssfEncoding ) )
+                        logging.critical( f"__init__: Unsure how to handle {ssfEncoding!r} file encoding" )
                         adjSSFencoding = ssfEncoding
                 if self.encoding is None:
                     self.encoding = adjSSFencoding
                     if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("__init__: Switched to {!r} file encoding").format( self.encoding ) )
+                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"__init__: Switched to {self.encoding!r} file encoding" )
                 elif self.encoding == adjSSFencoding:
                     if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("__init__: Confirmed {!r} file encoding").format( self.encoding ) )
+                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"__init__: Confirmed {self.encoding!r} file encoding" )
                 else: # we have a conflict of encodings for some reason !
-                    logging.critical( _("__init__: We were already set to  {!r} file encoding").format( self.encoding ) )
+                    logging.critical( f"__init__: We were already set to  {self.encoding!r} file encoding" )
                     self.encoding = adjSSFencoding
-                    logging.critical( _("__init__: Switched now to  {!r} file encoding").format( self.encoding ) )
+                    logging.critical( f"__init__: Switched now to  {self.encoding!r} file encoding" )
 
         elif applyMetadataType == 'PTX8':
             # This is a special case (coz it's inside 'Settings' inside the PTX8 metadata)
             wantedDict = { 'Copyright':'Copyright', 'FullName':'WorkName', 'LanguageIsoCode':'ISOLanguageCode', }
             if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>3:
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "applySuppliedMetadata is processing {} {!r} metadata items".format( len(self.suppliedMetadata['PTX8']['Settings']), applyMetadataType ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"applySuppliedMetadata is processing {len(self.suppliedMetadata['PTX8']['Settings'])} {applyMetadataType!r} metadata items" )
             for oldKey,value in self.suppliedMetadata['PTX8']['Settings'].items():
                 if value and oldKey in wantedDict: # Only copy wanted, non-blank entries
                     newKey = wantedDict[oldKey]
                     if newKey in self.settingsDict: # We have a duplicate
-                        logging.warning("About to replace {}={!r} from {} metadata file with {!r}".format( newKey, self.settingsDict[newKey], applyMetadataType, value ) )
+                        logging.warning(f"About to replace {newKey}={self.settingsDict[newKey]!r} from {applyMetadataType} metadata file with {value!r}" )
                     else: # Also check for "duplicates" with a different case
                         ucNewKey = newKey.upper()
                         for key in self.settingsDict:
                             ucKey = key.upper()
                             if ucKey == ucNewKey:
-                                logging.warning("About to copy {}={!r} from {} metadata file even though already have {!r} (different case)={!r}".format( newKey, value, applyMetadataType, key, self.settingsDict[key] ) )
+                                logging.warning(f"About to copy {newKey}={value!r} from {applyMetadataType} metadata file even though already have {key!r} (different case)={self.settingsDict[key]!r}" )
                                 break
                     self.settingsDict[newKey] = value
             # Determine our encoding while we're at it
@@ -718,30 +713,30 @@ class InternalBible:
                 if settingsEncoding == '65001': adjSettingsEncoding = 'utf-8'
                 else:
                     if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 1:
-                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("__init__: File encoding in settings is set to {!r}").format( settingsEncoding ) )
+                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"__init__: File encoding in settings is set to {settingsEncoding!r}" )
                     if settingsEncoding.isdigit():
                         adjSettingsEncoding = 'cp' + settingsEncoding
                         if BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.verbosityLevel > 2:
-                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("__init__: Adjusted to {!r} file encoding").format( adjSettingsEncoding ) )
+                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"__init__: Adjusted to {adjSettingsEncoding!r} file encoding" )
                     else:
-                        logging.critical( _("__init__: Unsure how to handle {!r} file encoding").format( settingsEncoding ) )
+                        logging.critical( f"__init__: Unsure how to handle {settingsEncoding!r} file encoding" )
                         adjSettingsEncoding = settingsEncoding
                 if self.encoding is None:
                     self.encoding = adjSettingsEncoding
                     if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("__init__: Switched to {!r} file encoding").format( self.encoding ) )
+                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"__init__: Switched to {self.encoding!r} file encoding" )
                 elif self.encoding == adjSettingsEncoding:
                     if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("__init__: Confirmed {!r} file encoding").format( self.encoding ) )
+                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"__init__: Confirmed {self.encoding!r} file encoding" )
                 else: # we have a conflict of encodings for some reason !
-                    logging.critical( _("__init__: We were already set to  {!r} file encoding").format( self.encoding ) )
+                    logging.critical( f"__init__: We were already set to  {self.encoding!r} file encoding" )
                     self.encoding = adjSettingsEncoding
-                    logging.critical( _("__init__: Switched now to  {!r} file encoding").format( self.encoding ) )
+                    logging.critical( f"__init__: Switched now to  {self.encoding!r} file encoding" )
 
         elif applyMetadataType == 'uW':
             # This is a special case (coz it's inside 'Manifest' inside the uW metadata)
             if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>3:
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "applySuppliedMetadata is processing {} {!r} metadata items".format( len(self.suppliedMetadata['uW']['Manifest']), applyMetadataType ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"applySuppliedMetadata is processing {len(self.suppliedMetadata['uW']['Manifest'])} {applyMetadataType!r} metadata items" )
                 assert len(self.suppliedMetadata['uW']['Manifest']) >= 3
                 assert 'dublin_core' in self.suppliedMetadata['uW']['Manifest']
                 assert 'checking' in self.suppliedMetadata['uW']['Manifest']
@@ -784,20 +779,20 @@ class InternalBible:
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "here3450", self.suppliedMetadata )
             wantedDict = { 'Rights':'Rights', }
             if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>3:
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "applySuppliedMetadata is processing {} {!r} metadata items".format( len(self.suppliedMetadata[applyMetadataType]), applyMetadataType ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"applySuppliedMetadata is processing {len(self.suppliedMetadata[applyMetadataType])} {applyMetadataType!r} metadata items" )
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "here3452", self.suppliedMetadata[applyMetadataType] )
             for oldKey,value in self.suppliedMetadata[applyMetadataType].items():
                 if oldKey in wantedDict: #  Only copy wanted entries
                     if BibleOrgSysGlobals.debugFlag: assert value
                     newKey = wantedDict[oldKey]
                     if newKey in self.settingsDict: # We have a duplicate
-                        logging.warning("About to replace {}={!r} from {} metadata file with {!r}".format( newKey, self.settingsDict[newKey], applyMetadataType, value ) )
+                        logging.warning(f"About to replace {newKey}={self.settingsDict[newKey]!r} from {applyMetadataType} metadata file with {value!r}" )
                     else: # Also check for "duplicates" with a different case
                         ucNewKey = newKey.upper()
                         for key in self.settingsDict:
                             ucKey = key.upper()
                             if ucKey == ucNewKey:
-                                logging.warning("About to copy {}={!r} from {} metadata file even though already have {!r} (different case)={!r}".format( newKey, value, applyMetadataType, key, self.settingsDict[key] ) )
+                                logging.warning(f"About to copy {newKey}={value!r} from {applyMetadataType} metadata file even though already have {key!r} (different case)={self.settingsDict[key]!r}" )
                                 break
                     self.settingsDict[newKey] = value
 
@@ -806,19 +801,19 @@ class InternalBible:
             #                           Publisher, Scope, Coverage, RefSystem, Language, Rights
             wantedDict = { 'language':'Language', 'description':'FullName', 'detailed_info':'Description' }
             if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>3:
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "applySuppliedMetadata is processing {} {!r} metadata items".format( len(self.suppliedMetadata[applyMetadataType]), applyMetadataType ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"applySuppliedMetadata is processing {len(self.suppliedMetadata[applyMetadataType])} {applyMetadataType!r} metadata items" )
             for oldKey,value in self.suppliedMetadata[applyMetadataType].items():
                 if oldKey in wantedDict: #  Only copy wanted entries
                     if BibleOrgSysGlobals.debugFlag: assert value
                     newKey = wantedDict[oldKey]
                     if newKey in self.settingsDict: # We have a duplicate
-                        logging.warning("About to replace {}={!r} from {} metadata file with {!r}".format( newKey, self.settingsDict[newKey], applyMetadataType, value ) )
+                        logging.warning(f"About to replace {newKey}={self.settingsDict[newKey]!r} from {applyMetadataType} metadata file with {value!r}" )
                     else: # Also check for "duplicates" with a different case
                         ucNewKey = newKey.upper()
                         for key in self.settingsDict:
                             ucKey = key.upper()
                             if ucKey == ucNewKey:
-                                logging.warning("About to copy {}={!r} from {} metadata file even though already have {!r} (different case)={!r}".format( newKey, value, applyMetadataType, key, self.settingsDict[key] ) )
+                                logging.warning(f"About to copy {newKey}={value!r} from {applyMetadataType} metadata file even though already have {key!r} (different case)={self.settingsDict[key]!r}" )
                                 break
                     self.settingsDict[newKey] = value
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, self.settingsDict ); halt
@@ -828,31 +823,31 @@ class InternalBible:
             #                           RightToLeft, Strong, Version
             wantedDict = { 'Abbreviation':'Abbreviation', 'Description':'Description', }
             if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>3:
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "applySuppliedMetadata is processing {} {!r} metadata items".format( len(self.suppliedMetadata[applyMetadataType]), applyMetadataType ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"applySuppliedMetadata is processing {len(self.suppliedMetadata[applyMetadataType])} {applyMetadataType!r} metadata items" )
             for oldKey,value in self.suppliedMetadata[applyMetadataType].items():
                 if oldKey in wantedDict: #  Only copy wanted entries
                     if not value: # We don't expect blank metadata values
-                        logging.warning( "Why did we get a blank {} {!r} metadata key?".format( applyMetadataType, oldKey ) )
+                        logging.warning( f"Why did we get a blank {applyMetadataType} {oldKey!r} metadata key?" )
                     newKey = wantedDict[oldKey]
                     if newKey in self.settingsDict: # We have a duplicate
-                        logging.warning("About to replace {}={!r} from {} metadata file with {!r}".format( newKey, self.settingsDict[newKey], applyMetadataType, value ) )
+                        logging.warning(f"About to replace {newKey}={self.settingsDict[newKey]!r} from {applyMetadataType} metadata file with {value!r}" )
                     else: # Also check for "duplicates" with a different case
                         ucNewKey = newKey.upper()
                         for key in self.settingsDict:
                             ucKey = key.upper()
                             if ucKey == ucNewKey:
-                                logging.warning("About to copy {}={!r} from {} metadata file even though already have {!r} (different case)={!r}".format( newKey, value, applyMetadataType, key, self.settingsDict[key] ) )
+                                logging.warning(f"About to copy {newKey}={value!r} from {applyMetadataType} metadata file even though already have {key!r} (different case)={self.settingsDict[key]!r}" )
                                 break
                     self.settingsDict[newKey] = value
 
         else:
-            logging.critical( "Unknown {!r} metadata type given to applySuppliedMetadata".format( applyMetadataType ) )
+            logging.critical( f"Unknown {applyMetadataType!r} metadata type given to applySuppliedMetadata" )
             if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: halt
 
         if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE and BibleOrgSysGlobals.verbosityLevel>3:
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Updated settings dict ({}):".format( len(self.settingsDict) ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Updated settings dict ({len(self.settingsDict)}):" )
             for key,value in sorted( self.settingsDict.items() ):
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  {} = {!r}".format( key, value ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  {key} = {value!r}" )
 
         # Ensure that self.name and self.abbreviation are set
         for fieldName in ('FullName','WorkName','Name','ProjectName',):
@@ -936,7 +931,7 @@ class InternalBible:
         Returns a list of loaded book codes.
         """
         if BibleOrgSysGlobals.debugFlag and not self.loadedAllBooks:
-            logging.critical( _("getBookList result is unreliable because all books not loaded!") )
+            logging.critical( "getBookList result is unreliable because all books not loaded!" )
         return [BBB for BBB in self.books]
 
 
@@ -949,7 +944,7 @@ class InternalBible:
 
         BBB = bookData.BBB
         if BBB in self.books: # already
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, _("stashBook: Already have"), self.getBookList() )
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, "stashBook: Already have", self.getBookList() )
             import __main__
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "main file", __main__.__file__ )
             suppressErrorFlag = False
@@ -958,7 +953,7 @@ class InternalBible:
                     suppressErrorFlag = True
             except AttributeError: pass
             if not suppressErrorFlag:
-                logging.critical( _("stashBook: stashing already stashed {} book!").format( BBB ) )
+                logging.critical( f"stashBook: stashing already stashed {BBB} book!" )
         self.books[BBB] = bookData
         self.availableBBBs.add( BBB )
 
@@ -993,8 +988,7 @@ class InternalBible:
             # assert not filename.endswith( '.pickle' )
         if not filename.endswith( '.pickle' ):
             filename = f'{BibleOrgSysGlobals.makeSafeFilename( filename )}.pickle'
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, _("pickle: Saving {} to {}…") \
-                .format( self.objectNameString, filename if folderpath is None else os.path.join( folderpath, filename ) ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"pickle: Saving {self.objectNameString} to {filename if folderpath is None else os.path.join( folderpath, filename )}…" )
         
         try: del self.XMLTree # No need to hold onto this XML source code
         except AttributeError: pass
@@ -1055,7 +1049,7 @@ class InternalBible:
                 count += 1
         if count == 1: # Found exactly one
             self.bookAbbrevDict[adjRefString] = BBB # Save to make it faster next time
-            self.guesses += ('\n' if self.guesses else '') + "Guessed {!r} to be {} (startswith1)".format( referenceString, BBB )
+            self.guesses += ('\n' if self.guesses else '') + f"Guessed {BBB!r} to be {referenceString} (startswith1)"
             self.reverseDict[BBB] = referenceString
             return BBB
         elif count == 2: # Found exactly two but one of them might have a different abbreviation that we already know
@@ -1066,11 +1060,11 @@ class InternalBible:
                     if BBBx not in self.reverseDict: BBB = BBBx; secondCount += 1
             if secondCount == 1: # Found exactly one
                 self.bookAbbrevDict[adjRefString] = BBB # Save to make it faster next time
-                self.guesses += ('\n' if self.guesses else '') + "Guessed {!r} to be {} (startswith1SECOND)".format( referenceString, BBB )
+                self.guesses += ('\n' if self.guesses else '') + f"Guessed {BBB!r} to be {referenceString} (startswith1SECOND)"
                 self.reverseDict[BBB] = referenceString
                 return BBB
         if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE and count > 1:
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("  guessXRefBBB has multiple startswith matches for {!r} in {}").format( adjRefString, self.combinedBookNameDict ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  guessXRefBBB has multiple startswith matches for {self.combinedBookNameDict!r} in {adjRefString}" )
         if count == 0:
             vPrint( 'Never', DEBUGGING_THIS_MODULE, "  getXRefBBB using startswith2…" )
             for bookName in self.combinedBookNameDict:
@@ -1079,7 +1073,7 @@ class InternalBible:
                     count += 1
             if count == 1: # Found exactly one now
                 self.bookAbbrevDict[adjRefString] = BBB # Save to make it faster next time
-                self.guesses += ('\n' if self.guesses else '') + "Guessed {!r} to be {} (startswith2)".format( referenceString, BBB )
+                self.guesses += ('\n' if self.guesses else '') + f"Guessed {BBB!r} to be {referenceString} (startswith2)"
                 self.reverseDict[BBB] = referenceString
                 return BBB
         elif count == 2: # Found exactly two but one of them might have a different abbreviation that we already know
@@ -1090,7 +1084,7 @@ class InternalBible:
                     if BBBx not in self.reverseDict: BBB = BBBx; secondCount += 1
             if secondCount == 1: # Found exactly one now
                 self.bookAbbrevDict[adjRefString] = BBB # Save to make it faster next time
-                self.guesses += ('\n' if self.guesses else '') + "Guessed {!r} to be {} (startswith2SECOND)".format( referenceString, BBB )
+                self.guesses += ('\n' if self.guesses else '') + f"Guessed {BBB!r} to be {referenceString} (startswith2SECOND)"
                 self.reverseDict[BBB] = referenceString
                 return BBB
 
@@ -1105,18 +1099,18 @@ class InternalBible:
                             count += 1
             if count == 1: # Found exactly one
                 self.bookAbbrevDict[adjRefString] = BBB # Save to make it faster next time
-                self.guesses += ('\n' if self.guesses else '') + "Guessed {!r} to be {} (word startswith)".format( referenceString, BBB )
+                self.guesses += ('\n' if self.guesses else '') + f"Guessed {BBB!r} to be {referenceString} (word startswith)"
                 self.reverseDict[BBB] = referenceString
                 return BBB
             if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE and count > 1:
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("  guessXRefBBB has multiple startswith matches for {!r} in {}").format( adjRefString, self.bookNameDict ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  guessXRefBBB has multiple startswith matches for {self.bookNameDict!r} in {adjRefString}" )
 
         # See if a book name starts with the same letter plus contains the letters in this string (slow)
         if count == 0:
-            vPrint( 'Never', DEBUGGING_THIS_MODULE, _("  guessXRefBBB using first plus other characters…") )
+            vPrint( 'Never', DEBUGGING_THIS_MODULE, "  guessXRefBBB using first plus other characters…" )
             for bookName in self.bookNameDict:
                 if not bookName: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, self.bookNameDict ); halt # temp……
-                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "aRS={!r}, bN={!r}".format( adjRefString, bookName ) )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"aRS={adjRefString!r}, bN={bookName!r}" )
                 if adjRefString[0] != bookName[0]: continue # The first letters don't match
                 found = True
                 for char in adjRefString[1:]:
@@ -1129,10 +1123,10 @@ class InternalBible:
                 count += 1
             if count == 1: # Found exactly one
                 self.bookAbbrevDict[adjRefString] = BBB # Save to make it faster next time
-                self.guesses += ('\n' if self.guesses else '') + "Guessed {!r} to be {} (firstletter+)".format( referenceString, BBB )
+                self.guesses += ('\n' if self.guesses else '') + f"Guessed {BBB!r} to be {referenceString} (firstletter+)"
                 return BBB
             if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE and count > 1:
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("  guessXRefBBB has first and other character multiple matches for {!r} in {}").format( adjRefString, self.bookNameDict ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  guessXRefBBB has first and other character multiple matches for {self.bookNameDict!r} in {adjRefString}" )
 
         if 0: # Too error prone!!!
             # See if a book name contains the letters in this string (slow)
@@ -1150,14 +1144,14 @@ class InternalBible:
                     count += 1
                 if count == 1: # Found exactly one
                     self.bookAbbrevDict[adjRefString] = BBB # Save to make it faster next time
-                    self.guesses += ('\n' if self.guesses else '') + "Guessed {!r} to be {} (letters)".format( referenceString, BBB )
+                    self.guesses += ('\n' if self.guesses else '') + f"Guessed {BBB!r} to be {referenceString} (letters)"
                     return BBB
                 if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE and count > 1:
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("  guessXRefBBB has character multiple matches for {!r} in {}").format( adjRefString, self.bookNameDict ) )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  guessXRefBBB has character multiple matches for {self.bookNameDict!r} in {adjRefString}" )
 
         if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.verbosityLevel>2:
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("  guessXRefBBB failed for {!r} with {} and {}").format( referenceString, self.bookNameDict, self.bookAbbrevDict ) )
-        string = "Couldn't guess {!r}".format( referenceString[:5] )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  guessXRefBBB failed for {self.bookAbbrevDict!r} with {referenceString} and {self.bookNameDict}" )
+        string = f"Couldn't guess {referenceString[:5]!r}"
         if string not in self.guesses: self.guesses += ('\n' if self.guesses else '') + string
     # end of InternalBible.guessXRefBBB
 
@@ -1240,12 +1234,12 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
         """
         fnPrint( DEBUGGING_THIS_MODULE, "InternalBible:discover() using Rust" )
         if 'discoveryResults' in self.__dict__:
-            logging.warning( _("discover: We had done this already!") )
+            logging.warning( "discover: We had done this already!" )
             if DEBUGGING_THIS_MODULE: halt
 
         from bible_organisational_system import discoverBible
 
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, _("Running multi-core discover on {}…").format( self.name ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Running multi-core discover on {self.name}…" )
         
         # Collect entries for all books
         booksEntries = {}
@@ -1368,7 +1362,7 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
                     if 0.0 <= value <= 1.0:
                         if key not in aggregateResults: aggregateResults[key] = [value]
                         else: aggregateResults[key].append( value )
-                    elif value != -1.0: logging.warning( _("discover: invalid ratio (float) {} {} {!r}").format( BBB, key, value ) )
+                    elif value != -1.0: logging.warning( f"discover: invalid ratio (float) {BBB} {key} {value!r}" )
                 elif isinstance( value, int ): # e.g., completedVerseCount and also booleans such as havePopulatedCVmarkers
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "igot", BBB, key, value )
                     if key not in aggregateResults: aggregateResults[key] = value
@@ -1402,7 +1396,7 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
                     #halt
                     #pass # No action needed here
                 else:
-                    logging.warning( _("discover: unactioned discovery result {} {} {!r}").format( BBB, key, value ) )
+                    logging.warning( f"discover: unactioned discovery result {BBB} {key} {value!r}" )
 
         for arKey in list(aggregateResults.keys()): # Make a list first so we can delete entries later
             # Create summaries of lists with entries for various books
@@ -1488,13 +1482,13 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
 
         self.sectionIndex = {}
 
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, _("Running makeSectionIndex on {}…").format( self.name ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Running makeSectionIndex on {self.name}…" )
         # NOTE: We can't pickle sqlite3.Cursor objects so can not use multiprocessing here for e-Sword Bibles or commentaries
         # NOTE: Multiprocessing index build is considerably slower, hence disabled
         if 0 and BibleOrgSysGlobals.maxProcesses > 1 \
         and not BibleOrgSysGlobals.alreadyMultiprocessing:
             BibleOrgSysGlobals.alreadyMultiprocessing = True
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("Making section index for {} books using {} processes…").format( len(self.books), BibleOrgSysGlobals.maxProcesses ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Making section index for {len(self.books)} books using {BibleOrgSysGlobals.maxProcesses} processes…" )
             vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  NOTE: Outputs (including error and warning messages) from scanning various books may be interspersed." )
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                 results = pool.map( self._makeBookSectionIndexMP, [BBB for BBB in self.books] ) # have the pool do our loads
@@ -1532,27 +1526,27 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
         """
         # Get our recommendations for added units -- only load this once per Bible
         if BibleOrgSysGlobals.verbosityLevel > 1:
-            if givenBookList is None: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Checking {} Bible…").format( self.name ) )
-            else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Checking {} Bible books {}…").format( self.name, givenBookList ) )
+            if givenBookList is None: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Checking {self.name} Bible…" )
+            else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Checking {self.name} Bible books {givenBookList}…" )
         if 'discoveryResults' not in self.__dict__: self.discover()
 
         import pickle
         pickleFolder = os.path.join( os.path.dirname(__file__), 'DataFiles/', 'ScrapedFiles/' ) # Relative to module, not cwd
         pickleFilepath = os.path.join( pickleFolder, "AddedUnitData.pickle" )
-        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, _("Importing from {}…").format( pickleFilepath ) )
+        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"Importing from {pickleFilepath}…" )
         try:
             with open( pickleFilepath, 'rb' ) as pickleFile:
                 typicalAddedUnitData = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
         except FileNotFoundError:
-                logging.error( "InternalBible.check: Unable to find file for typical added units checks: {}".format( pickleFilepath ) )
+                logging.error( f"InternalBible.check: Unable to find file for typical added units checks: {pickleFilepath}" )
                 typicalAddedUnitData = None
 
         if BibleOrgSysGlobals.debugFlag: assert self.discoveryResults
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, _("Running checks on {}…").format( self.name ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Running checks on {self.name}…" )
         if givenBookList is None:
             givenBookList = self.books.keys()
         for BBB in givenBookList: # Do individual book checks
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + _("Checking {}…").format( BBB ) )
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + f"Checking {BBB}…" )
             self.books[BBB].checkBook( self.discoveryResults['ALL'], typicalAddedUnitData )
 
         # Do overall Bible checks here
@@ -1569,17 +1563,17 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
 
         Returns a dictionary of result flags.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"InternalBible-V{PROGRAM_VERSION}.doExtensiveChecks: " + _("Doing extensive checks on {} ({})").format( self.name, self.objectTypeString ) )
+        fnPrint( DEBUGGING_THIS_MODULE, f"InternalBible-V{PROGRAM_VERSION}.doExtensiveChecks: " + f"Doing extensive checks on {self.name} ({self.objectTypeString})" )
 
         if givenOutputFolderName is None:
             givenOutputFolderName = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'CheckResultFiles/' )
             if not os.access( givenOutputFolderName, os.F_OK ):
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "BibleWriter.doExtensiveChecks: " + _("creating {!r} output folder").format( givenOutputFolderName ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "BibleWriter.doExtensiveChecks: " + f"creating {givenOutputFolderName!r} output folder" )
                 os.makedirs( givenOutputFolderName ) # Make the empty folder if there wasn't already one there
         if BibleOrgSysGlobals.debugFlag:
             assert givenOutputFolderName and isinstance( givenOutputFolderName, (str,Path) )
         if not os.access( givenOutputFolderName, os.W_OK ): # Then our output folder is not writeable!
-            logging.critical( "BibleWriter.doExtensiveChecks: " + _("Given {!r} folder is unwritable" ).format( givenOutputFolderName ) )
+            logging.critical( "BibleWriter.doExtensiveChecks: " + f"Given {givenOutputFolderName!r} folder is unwritable" )
             return False
 
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Should be doing extensive checks here!" )
@@ -1691,7 +1685,7 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
                         tempResult.append( (wordDict[word],word,) ); total += wordDict[word]
                         # Seems we don't know the BCV reference here unfortunately
                         if 'Possible Word Errors' not in errors['ByBook']['All Books']['Words']: errors['ByBook']['All Books']['Words']['Possible Word Errors'] = []
-                        errors['ByBook']['All Books']['Words']['Possible Word Errors'].append( _("Word {!r} appears to have unusual capitalization").format( word ) )
+                        errors['ByBook']['All Books']['Words']['Possible Word Errors'].append( f"Word {word!r} appears to have unusual capitalization" )
                         if total == lcTotal: break # no more to find
 
             if total < lcTotal:
@@ -1771,7 +1765,7 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
                     results = getCapsList( word, lcCount, errors['ByBook']['All Books']['Words']['All Word Counts'] )
                     if len(results) > 2:
                         if 'Possible Word Errors' not in errors['ByBook']['All Books']['Words']: errors['ByBook']['All Books']['Words']['Possible Word Errors'] = []
-                        errors['ByBook']['All Books']['Words']['Possible Word Errors'].append( _("Lots of ways of capitalizing {}").format( results ) )
+                        errors['ByBook']['All Books']['Words']['Possible Word Errors'].append( f"Lots of ways of capitalizing {results}" )
                 if lcCount < threshold: # look for uncommon words
                     if word not in errors['ByBook']['All Books']['Words']['All Word Counts']: # then it ONLY occurs capitalized in some way
                         adjWord = getCapsList( word, lcCount, errors['ByBook']['All Books']['Words']['All Word Counts'] )[0]
@@ -1845,7 +1839,7 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
         try: os.mkdir( pagesFolder, 0o755 )
         except FileExistsError: pass # Must be redoing it
 
-        ourTitle = _("Bible Checks")
+        ourTitle = "Bible Checks"
         if titlePrefix is None: titlePrefix = self.abbreviation
         if titlePrefix: ourTitle = titlePrefix + ' ' + ourTitle
 
@@ -1865,7 +1859,7 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
                     if not errorDictionary['ByBook'][BBB][thisKey]: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "HEY 1—Should not have had", BBB, thisKey )
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'ByBook', BBB, thisKey )
                     if errorDictionary['ByBook'][BBB][thisKey]:
-                        BBBPart += "<h1>{}</h1>".format( thisKey )
+                        BBBPart += f"<h1>{thisKey}</h1>"
                         if thisKey == 'Priority Errors': # it should be a list
                             if BibleOrgSysGlobals.debugFlag: assert isinstance( errorDictionary['ByBook'][BBB][thisKey], list )
                             count, lastError, lastBk, lastCh, lastVs = 0, '', '', '', ''
@@ -1879,13 +1873,13 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
                                 bk, ch, vs = ref
                                 if errorText != lastError:
                                     if count: BBBPart += '</p>'
-                                    BBBPart += "<p>{} in {} {}:{}".format( errorText, bk, ch, vs )
+                                    BBBPart += f"<p>{errorText} in {bk} {ch}:{vs}"
                                     count += 1
-                                elif bk and bk!=lastBk: BBBPart += "; {} {}:{}".format( bk, ch, vs )
-                                elif ch and ch!=lastCh: BBBPart += "; {}:{}".format( ch, vs )
-                                elif vs and vs!=lastVs: BBBPart += ",{}".format( vs )
+                                elif bk and bk!=lastBk: BBBPart += f"; {bk} {ch}:{vs}"
+                                elif ch and ch!=lastCh: BBBPart += f"; {ch}:{vs}"
+                                elif vs and vs!=lastVs: BBBPart += f",{vs}"
                                 if count>=20 or priority<30:
-                                    BBBPart += "</p><p><small>Showing {} out of {} priority errors</small></p>".format( count, len(errorDictionary['ByBook'][BBB][thisKey]) )
+                                    BBBPart += f"</p><p><small>Showing {count} out of {len(errorDictionary['ByBook'][BBB][thisKey])} priority errors</small></p>"
                                     break
                                 if bk: lastBk = bk
                                 if ch: lastCh = ch
@@ -1896,14 +1890,14 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
                             for error in errorDictionary['ByBook'][BBB][thisKey]:
                                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "nice1", 'ByBook', BBB, thisKey, error )
                                 if BibleOrgSysGlobals.debugFlag: assert isinstance( error, str )
-                                BBBPart += "<p>{}</p>".format( error )
+                                BBBPart += f"<p>{error}</p>"
                         elif thisKey.endswith('List'): # it should be a list
                             NEVER_HAPPENS
                             if BibleOrgSysGlobals.debugFlag: assert isinstance( errorDictionary['ByBook'][BBB][thisKey], list )
-                            BBBPart += "<h1>{}</h1>".format( thisKey )
+                            BBBPart += f"<h1>{thisKey}</h1>"
                             for error in errorDictionary['ByBook'][BBB][thisKey]:
                                 if BibleOrgSysGlobals.debugFlag: assert isinstance( error, str )
-                                BBBPart += "<p>{}</p>".format( error )
+                                BBBPart += f"<p>{error}</p>"
                         elif thisKey.endswith('Lines'): # it should be a list
                             NEVER_HAPPENS
                             if BibleOrgSysGlobals.debugFlag: assert isinstance( errorDictionary['ByBook'][BBB][thisKey], list )
@@ -1913,13 +1907,13 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
                             for subCategory in errorDictionary['ByBook'][BBB][thisKey]:
                                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "subCategory1", subCategory )
                                 if subCategory.endswith('Errors'):
-                                    BBBPart += "<h2>{}</h2>".format( subCategory )
+                                    BBBPart += f"<h2>{subCategory}</h2>"
                                     for error in errorDictionary['ByBook'][BBB][thisKey][subCategory]:
-                                        BBBPart += "<p>{}</p>".format( error )
+                                        BBBPart += f"<p>{error}</p>"
                                 elif subCategory.endswith('Counts'):
-                                    BBBPart += "<h2>{}</h2>".format( subCategory ) + "<p>"
+                                    BBBPart += f"<h2>{subCategory}</h2>" + "<p>"
                                     for something in sorted(errorDictionary['ByBook'][BBB][thisKey][subCategory]):
-                                        BBBPart += "&nbsp;<b>{}</b>:&nbsp;{}&nbsp;&nbsp; ".format( something, errorDictionary['ByBook'][BBB][thisKey][subCategory][something] )
+                                        BBBPart += f"&nbsp;<b>{something}</b>:&nbsp;{errorDictionary['ByBook'][BBB][thisKey][subCategory][something]}&nbsp;&nbsp; "
                                     BBBPart += "</p>"
                                 else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "A weird 1" ); halt
                         else: # Have a category with subcategories
@@ -1929,10 +1923,10 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
                                     if secondKey.endswith('Errors'): # it should be a list
                                         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "BBB Have ..Errors", BBB, thisKey, secondKey )
                                         if BibleOrgSysGlobals.debugFlag: assert isinstance( errorDictionary['ByBook'][BBB][thisKey][secondKey], list )
-                                        BBBPart += "<h2>{}</h2>".format( secondKey )
+                                        BBBPart += f"<h2>{secondKey}</h2>"
                                         for error in errorDictionary['ByBook'][BBB][thisKey][secondKey]:
                                             if BibleOrgSysGlobals.debugFlag: assert isinstance( error, str )
-                                            BBBPart += "<p>{}</p>".format( error )
+                                            BBBPart += f"<p>{error}</p>"
                                     elif secondKey.endswith('List'): # it should be a list
                                         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "BBB Have ..List", BBB, thisKey, secondKey, len(errorDictionary['ByBook'][BBB][thisKey][secondKey]), len(errorDictionary['ByBook'][BBB][thisKey][secondKey][0]) )
                                         if BibleOrgSysGlobals.debugFlag: assert isinstance( errorDictionary['ByBook'][BBB][thisKey][secondKey], list )
@@ -1943,91 +1937,91 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
                                                 if thisKey=='USFMs' and secondKey=='Modified Marker List' and entry[0]=='[' and entry[-1]==']':
                                                     if BBB!='All Books': continue # Don't display the BBB book reference code
                                                     if BBB=='All Books' and jj: ListPart += "</p>\n<p>" # Start each new book on a new line
-                                                ListPart += "{} ".format( entry )
+                                                ListPart += f"{entry} "
                                             ListPart += '</p>'
-                                            webPage = webPageTemplate.replace( "__TITLE__", ourTitle+" USFM {}".format(secondKey) ).replace( "__HEADING__", ourTitle+" USFM Bible {}".format(secondKey) ) \
+                                            webPage = webPageTemplate.replace( "__TITLE__", ourTitle+f" USFM {secondKey}" ).replace( "__HEADING__", ourTitle+f" USFM Bible {secondKey}" ) \
                                                         .replace( "__MAIN_PART__", ListPart ).replace( "__EXTRAS__", '' ) \
                                                         .replace( "__TOP_PATH__", defaultTopPath ).replace( '__SUB_PATH__', "/Software/" ).replace( '__SUB_SUB_PATH__', '/Software/BibleDropBox/' )
                                                         #.replace( "__TOP_PATH__", '../'*6 ).replace( '__SUB_PATH__', '../'*5 ).replace( '__SUB_SUB_PATH__', '../'*4 )
-                                            webPageFilename = "{}_{}.html".format( BBB, secondKey.replace(' ','') )
+                                            webPageFilename = f"{BBB}_{secondKey.replace(' ','')}.html"
                                             with open( os.path.join(pagesFolder, webPageFilename), 'wt', encoding='utf-8' ) as myFile: # Automatically closes the file when done
                                                 myFile.write( webPage )
-                                            BBBPart += '<p><a href="{}">{}</a></p>'.format( webPageFilename, secondKey )
+                                            BBBPart += f'<p><a href="{webPageFilename}">{secondKey}</a></p>'
                                         else: # Just show it inline
-                                            BBBPart += "<h2>{}</h2><p>".format( secondKey )
+                                            BBBPart += f"<h2>{secondKey}</h2><p>"
                                             for jj,entry in enumerate( errorDictionary['ByBook'][BBB][thisKey][secondKey] ):
                                                 if BibleOrgSysGlobals.debugFlag: assert isinstance( entry, str )
                                                 if thisKey=='USFMs' and secondKey=='Modified Marker List' and entry[0]=='[' and entry[-1]==']':
                                                     if BBB!='All Books': continue # Don't display the BBB book reference code
                                                     if BBB=='All Books' and jj: BBBPart += "</p>\n<p>" # Start each new book on a new line
-                                                BBBPart += "{} ".format( entry )
+                                                BBBPart += f"{entry} "
                                             BBBPart += '</p>'
                                     elif secondKey.endswith('Lines'): # it should be a list
                                         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "BBB Have ..Lines", BBB, thisKey, secondKey )
                                         if BibleOrgSysGlobals.debugFlag: assert isinstance( errorDictionary['ByBook'][BBB][thisKey][secondKey], list )
-                                        BBBPart += "<h2>{}</h2><table>".format( secondKey )
+                                        BBBPart += f"<h2>{secondKey}</h2><table>"
                                         for line in errorDictionary['ByBook'][BBB][thisKey][secondKey]: # Line them up nicely in a table
-                                            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "line {} {!r}".format( len(line), line ) )
+                                            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"line {len(line)} {line!r}" )
                                             if BibleOrgSysGlobals.debugFlag: assert isinstance( line, str ) and line[-1]=="'"
                                             #if line[-1] != "'": vPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, thisKey, secondKey, line )
                                             bits = line[:-1].split( " '", 1 ); assert len(bits) == 2 # Remove the final quote and split at the first quote
                                             if "Main Title 1" in bits[0]: bits[1] = "<b>" + bits[1] + "</b>"
-                                            BBBPart += "<tr><td>{}</td><td>{}</td></tr>".format( bits[0], bits[1] ) # Put in a table row
+                                            BBBPart += f"<tr><td>{bits[0]}</td><td>{bits[1]}</td></tr>" # Put in a table row
                                         BBBPart += '</table>'
                                     elif secondKey.endswith('Counts'): # it should be an ordered dict
                                         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "BBB Have ..Counts", BBB, thisKey, secondKey )
                                         if BibleOrgSysGlobals.debugFlag: assert isinstance( errorDictionary['ByBook'][BBB][thisKey][secondKey], dict )
                                         if len(errorDictionary['ByBook'][BBB][thisKey][secondKey]) < 50: # Small list -- just include it in this page
-                                            BBBPart += "<h2>{}</h2>".format( secondKey ) + "<p>"
+                                            BBBPart += f"<h2>{secondKey}</h2>" + "<p>"
                                             for something, count in sorted( errorDictionary['ByBook'][BBB][thisKey][secondKey].items(), key=lambda theTuple: theTuple[0].lower() ): # Sort by lower-case values
-                                                BBBPart += "&nbsp;<b>{}</b>:&nbsp;{}&nbsp;&nbsp; ".format( something, count )
+                                                BBBPart += f"&nbsp;<b>{something}</b>:&nbsp;{count}&nbsp;&nbsp; "
                                             BBBPart += "</p>"
-                                            BBBPart += "<h2>{} (sorted by count)</h2>".format( secondKey ) + "<p>"
+                                            BBBPart += f"<h2>{secondKey} (sorted by count)</h2>" + "<p>"
                                             for something, count in sorted( errorDictionary['ByBook'][BBB][thisKey][secondKey].items(), key=lambda theTuple: theTuple[1] ): # Sort by count
-                                                BBBPart += "&nbsp;<b>{}</b>:&nbsp;{}&nbsp;&nbsp; ".format( something, count )
+                                                BBBPart += f"&nbsp;<b>{something}</b>:&nbsp;{count}&nbsp;&nbsp; "
                                             BBBPart += "</p>"
                                         else: # Large list of counts -- put it on a separate page
                                             CountPart = ''
                                             for something,count in sorted( errorDictionary['ByBook'][BBB][thisKey][secondKey].items(), key=lambda theTuple: theTuple[0].lower() ): # Sort by lower-case values
-                                                CountPart += "&nbsp;<b>{}</b>:&nbsp;{}&nbsp;&nbsp; ".format( something, count )
-                                            webPage = webPageTemplate.replace( "__TITLE__", ourTitle+" USFM {}".format(secondKey) ).replace( "__HEADING__", ourTitle+" USFM Bible {}".format(secondKey) ) \
+                                                CountPart += f"&nbsp;<b>{something}</b>:&nbsp;{count}&nbsp;&nbsp; "
+                                            webPage = webPageTemplate.replace( "__TITLE__", ourTitle+f" USFM {secondKey}" ).replace( "__HEADING__", ourTitle+f" USFM Bible {secondKey}" ) \
                                                         .replace( "__MAIN_PART__", CountPart ).replace( "__EXTRAS__", '' ) \
                                                         .replace( "__TOP_PATH__", defaultTopPath ).replace( '__SUB_PATH__', "/Software/" ).replace( '__SUB_SUB_PATH__', '/Software/BibleDropBox/' )
                                                         #.replace( "__TOP_PATH__", '../'*6 ).replace( '__SUB_PATH__', '../'*5 ).replace( '__SUB_SUB_PATH__', '../'*4 )
-                                            webPageFilename = "{}_{}.html".format( BBB, secondKey.replace(' ','') )
+                                            webPageFilename = f"{BBB}_{secondKey.replace(' ','')}.html"
                                             with open( os.path.join(pagesFolder, webPageFilename), 'wt', encoding='utf-8' ) as myFile: # Automatically closes the file when done
                                                 myFile.write( webPage )
-                                            BBBPart += '<p><a href="{}">{}</a></p>'.format( webPageFilename, secondKey )
+                                            BBBPart += f'<p><a href="{webPageFilename}">{secondKey}</a></p>'
                                             CountPart = ''
                                             for something,count in sorted( errorDictionary['ByBook'][BBB][thisKey][secondKey].items(), key=lambda theTuple: theTuple[1] ): # Sort by count
-                                                CountPart += "&nbsp;<b>{}</b>:&nbsp;{}&nbsp;&nbsp; ".format( something, count )
-                                            webPage = webPageTemplate.replace( "__TITLE__", ourTitle+" USFM {}".format(secondKey) ).replace( "__HEADING__", ourTitle+" USFM Bible {}".format(secondKey) ) \
+                                                CountPart += f"&nbsp;<b>{something}</b>:&nbsp;{count}&nbsp;&nbsp; "
+                                            webPage = webPageTemplate.replace( "__TITLE__", ourTitle+f" USFM {secondKey}" ).replace( "__HEADING__", ourTitle+f" USFM Bible {secondKey}" ) \
                                                         .replace( "__MAIN_PART__", CountPart ).replace( "__EXTRAS__", '' ) \
                                                         .replace( "__TOP_PATH__", defaultTopPath ).replace( '__SUB_PATH__', "/Software/" ).replace( '__SUB_SUB_PATH__', '/Software/BibleDropBox/' )
                                                         #.replace( "__TOP_PATH__", '../'*6 ).replace( '__SUB_PATH__', '../'*5 ).replace( '__SUB_SUB_PATH__', '../'*4 )
-                                            webPageFilename = "{}_{}_byCount.html".format( BBB, secondKey.replace(' ','') )
+                                            webPageFilename = f"{BBB}_{secondKey.replace(' ','')}_byCount.html"
                                             with open( os.path.join(pagesFolder, webPageFilename), 'wt', encoding='utf-8' ) as myFile: # Automatically closes the file when done
                                                 myFile.write( webPage )
-                                            BBBPart += '<p><a href="{}">{} (sorted by count)</a></p>'.format( webPageFilename, secondKey )
+                                            BBBPart += f'<p><a href="{webPageFilename}">{secondKey} (sorted by count)</a></p>'
                                     else: raise KeyError
                 if BBBPart: # Create the error page for this book
-                    webPage = webPageTemplate.replace( "__TITLE__", ourTitle ).replace( "__HEADING__", ourTitle+" USFM Bible {} Checks".format(BBB) ) \
+                    webPage = webPageTemplate.replace( "__TITLE__", ourTitle ).replace( "__HEADING__", ourTitle+f" USFM Bible {BBB} Checks" ) \
                                 .replace( "__MAIN_PART__", BBBPart ).replace( "__EXTRAS__", '' ) \
                                 .replace( "__TOP_PATH__", defaultTopPath ).replace( '__SUB_PATH__', "/Software/" ).replace( '__SUB_SUB_PATH__', '/Software/BibleDropBox/' )
                                 #.replace( "__TOP_PATH__", '../'*6 ).replace( '__SUB_PATH__', '../'*5 ).replace( '__SUB_SUB_PATH__', '../'*4 )
-                    webPageFilename = "{}.html".format( BBB )
+                    webPageFilename = f"{BBB}.html"
                     with open( os.path.join(pagesFolder, webPageFilename), 'wt', encoding='utf-8' ) as myFile: # Automatically closes the file when done
                         myFile.write( webPage )
-                    #BBBIndexPart += '<p>Errors for book <a href="{}">{}</a></p>'.format( webPageFilename, BBB )
-                    if BBB == 'All Books': BBBIndexPart += '<tr><td><a href="{}">ALL</a></td><td>All Books</td></tr>'.format( webPageFilename )
-                    else: BBBIndexPart += '<tr><td><a href="{}">{}</a></td><td>{}</td></tr>'.format( webPageFilename, BBB, self.getAssumedBookName(BBB) )
+                    #BBBIndexPart += f'<p>Errors for book <a href="{webPageFilename}">{BBB}</a></p>'
+                    if BBB == 'All Books': BBBIndexPart += f'<tr><td><a href="{webPageFilename}">ALL</a></td><td>All Books</td></tr>'
+                    else: BBBIndexPart += f'<tr><td><a href="{webPageFilename}">{BBB}</a></td><td>{self.getAssumedBookName(BBB)}</td></tr>'
             BBBIndexPart += '</table>'
             categoryIndexPart += '<table>'
             for category in errorDictionary['ByCategory']: # Create an error page for each book (and for all books)
                 if not errorDictionary['ByCategory'][category]: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "HEY 2—Should not have had", category )
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "ProcessUSFMUploads.makeErrorHTML: Processing category", category, "…" )
                 categoryPart = ""
-                categoryPart += "<h1>{}</h1>".format( category )
+                categoryPart += f"<h1>{category}</h1>"
                 if category == 'Priority Errors': # it should be a list
                     if BibleOrgSysGlobals.debugFlag: assert isinstance( errorDictionary['ByCategory'][category], list )
                     count, lastError, lastBk, lastCh, lastVs = 0, '', '', '', ''
@@ -2041,13 +2035,13 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
                         bk, ch, vs = ref
                         if errorText != lastError:
                             if count: categoryPart += '</p>'
-                            categoryPart += "<p>{} in {} {}:{}".format( errorText, bk, ch, vs )
+                            categoryPart += f"<p>{errorText} in {bk} {ch}:{vs}"
                             count += 1
-                        elif bk and bk!=lastBk: categoryPart += "; {} {}:{}".format( bk, ch, vs )
-                        elif ch and ch!=lastCh: categoryPart += "; {}:{}".format( ch, vs )
-                        elif vs and vs!=lastVs: categoryPart += ",{}".format( vs )
+                        elif bk and bk!=lastBk: categoryPart += f"; {bk} {ch}:{vs}"
+                        elif ch and ch!=lastCh: categoryPart += f"; {ch}:{vs}"
+                        elif vs and vs!=lastVs: categoryPart += f",{vs}"
                         if count>=50:
-                            categoryPart += "</p><p><small>Showing {} out of {} priority errors</small></p>".format( count, len(errorDictionary['ByCategory'][category]) )
+                            categoryPart += f"</p><p><small>Showing {count} out of {len(errorDictionary['ByCategory'][category])} priority errors</small></p>"
                             break
                         if bk: lastBk = bk
                         if ch: lastCh = ch
@@ -2057,34 +2051,34 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
                     if BibleOrgSysGlobals.debugFlag: assert isinstance( errorDictionary['ByCategory'][category], list )
                     for error in errorDictionary['ByCategory'][category]:
                         if BibleOrgSysGlobals.debugFlag: assert isinstance( error, str )
-                        categoryPart += "<p>{}</p>".format( error )
+                        categoryPart += f"<p>{error}</p>"
                 elif category.endswith('Counts'): # it should be an ordered dict
                     NEVER_HAPPENS
                     for thisKey in errorDictionary['ByCategory'][category]:
                         if thisKey.endswith('Errors'): # it should be a list
                             if BibleOrgSysGlobals.debugFlag: assert isinstance( errorDictionary['ByCategory'][category][thisKey], list )
-                            categoryPart += "<h1>{}</h1>".format( thisKey )
+                            categoryPart += f"<h1>{thisKey}</h1>"
                             for error in errorDictionary['ByCategory'][category][thisKey]:
                                 if BibleOrgSysGlobals.debugFlag: assert isinstance( error, str )
-                                categoryPart += "<p>{}</p>".format( error )
+                                categoryPart += f"<p>{error}</p>"
                         elif thisKey.endswith('Counts'): # it should be a list
                             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Counts key", thisKey )
-                            categoryPart += "<h1>{}</h1>".format( thisKey )
+                            categoryPart += f"<h1>{thisKey}</h1>"
                             if isinstance( errorDictionary['ByCategory'][category][thisKey], list ): # always true
                             #    for error in errorDictionary['ByCategory'][category][thisKey]:
                             #        if BibleOrgSysGlobals.debugFlag: assert isinstance( error, str )
-                            #        categoryPart += "<p>{}</p>".format( error )
+                            #        categoryPart += f"<p>{error}</p>"
                             #elif isinstance( errorDictionary['ByCategory'][category][thisKey], dict ):
                                 for subCategory in errorDictionary['ByCategory'][category][thisKey]:
                                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, subCategory )
                                     if subCategory.endswith('Errors'):
-                                        categoryPart += "<h2>{}</h2>".format( subCategory )
+                                        categoryPart += f"<h2>{subCategory}</h2>"
                                         for error in errorDictionary['ByCategory'][category][BBB][subCategory]:
-                                            categoryPart += "<p>{}</p>".format( error )
+                                            categoryPart += f"<p>{error}</p>"
                                     elif subCategory.endswith('Counts'):
-                                        categoryPart += "<h2>{}</h2>".format( subCategory ) + "<p>"
+                                        categoryPart += f"<h2>{subCategory}</h2>" + "<p>"
                                         for something in sorted(errorDictionary['ByCategory'][category][BBB][subCategory]):
-                                            categoryPart += "{}:{} ".format( something, errorDictionary['ByCategory'][category][BBB][subCategory][something] )
+                                            categoryPart += f"{something}:{errorDictionary['ByCategory'][category][BBB][subCategory][something]} "
                                         categoryPart += "</p>"
                                     else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "A weird 2" ); halt
                         else:
@@ -2095,46 +2089,46 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
                     for thisKey in errorDictionary['ByCategory'][category]:
                         if thisKey.endswith('Errors'): # it should be a list
                             if BibleOrgSysGlobals.debugFlag: assert isinstance( errorDictionary['ByCategory'][category][thisKey], list )
-                            categoryPart += "<h1>{}</h1>".format( thisKey )
+                            categoryPart += f"<h1>{thisKey}</h1>"
                             for error in errorDictionary['ByCategory'][category][thisKey]:
                                 if BibleOrgSysGlobals.debugFlag: assert isinstance( error, str )
-                                categoryPart += "<p>{}</p>".format( error )
+                                categoryPart += f"<p>{error}</p>"
                         elif thisKey.endswith('List'): # it should be a list
                             if BibleOrgSysGlobals.debugFlag: assert isinstance( errorDictionary['ByCategory'][category][thisKey], list )
-                            categoryPart += "<h2>{}</h2><p>".format( thisKey )
+                            categoryPart += f"<h2>{thisKey}</h2><p>"
                             for jj,entry in enumerate( errorDictionary['ByCategory'][category][thisKey] ):
                                 if BibleOrgSysGlobals.debugFlag: assert isinstance( entry, str )
                                 if thisKey=='Modified Marker List' and entry[0]=='[' and entry[-1]==']' and jj:
                                     categoryPart += "</p>\n<p>" # Start each new book on a new line
-                                categoryPart += "{} ".format( entry )
+                                categoryPart += f"{entry} "
                             categoryPart += '</p>'
                         elif thisKey.endswith('Lines'): # it should be a list
                             if BibleOrgSysGlobals.debugFlag: assert isinstance( errorDictionary['ByCategory'][category][thisKey], list )
-                            categoryPart += "<h2>{}</h2><table>".format( thisKey )
+                            categoryPart += f"<h2>{thisKey}</h2><table>"
                             for line in errorDictionary['ByCategory'][category][thisKey]: # Line them up nicely in a table
                                 if BibleOrgSysGlobals.debugFlag: assert isinstance( line, str ) and line[-1]=="'"
                                 bits = line[:-1].split( " '", 1 ); assert len(bits) == 2 # Remove the final quote and split at the first quote
                                 if "Main Title 1" in bits[0]: bits[1] = "<b>" + bits[1] + "</b>"
-                                categoryPart += "<tr><td>{}</td><td>{}</td></tr>".format( bits[0], bits[1] ) # Put in a table row
+                                categoryPart += f"<tr><td>{bits[0]}</td><td>{bits[1]}</td></tr>" # Put in a table row
                             categoryPart += '</table>'
                         elif thisKey.endswith('Counts'): # it should be a list
                             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Counts key", thisKey )
-                            categoryPart += "<h1>{}</h1>".format( thisKey )
+                            categoryPart += f"<h1>{thisKey}</h1>"
                             if isinstance( errorDictionary['ByCategory'][category][thisKey], list ): # always true
                             #    for error in errorDictionary['ByCategory'][category][thisKey]:
                             #        if BibleOrgSysGlobals.debugFlag: assert isinstance( error, str )
-                            #        categoryPart += "<p>{}</p>".format( error )
+                            #        categoryPart += f"<p>{error}</p>"
                             #elif isinstance( errorDictionary['ByCategory'][category][thisKey], dict ):
                                 for subCategory in errorDictionary['ByCategory'][category][thisKey]:
                                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, subCategory )
                                     if subCategory.endswith('Errors'):
-                                        categoryPart += "<h2>{}</h2>".format( subCategory )
+                                        categoryPart += f"<h2>{subCategory}</h2>"
                                         for error in errorDictionary['ByCategory'][category][BBB][subCategory]:
-                                            categoryPart += "<p>{}</p>".format( error )
+                                            categoryPart += f"<p>{error}</p>"
                                     elif subCategory.endswith('Counts'):
-                                        categoryPart += "<h2>{}</h2>".format( subCategory ) + "<p>"
+                                        categoryPart += f"<h2>{subCategory}</h2>" + "<p>"
                                         for something in sorted(errorDictionary['ByCategory'][category][BBB][subCategory]):
-                                            categoryPart += "{}:{} ".format( something, errorDictionary['ByCategory'][category][BBB][subCategory][something] )
+                                            categoryPart += f"{something}:{errorDictionary['ByCategory'][category][BBB][subCategory][something]} "
                                         categoryPart += "</p>"
                                     else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "A weird 2" ); halt
                         else:
@@ -2142,11 +2136,11 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
                             continue # ignore for now temp …
                             raise KeyError# it wasn't a list or a dictionary
                 if categoryPart: # Create the error page for this catebory
-                    webPage = webPageTemplate.replace( "__TITLE__", ourTitle ).replace( "__HEADING__", ourTitle+" USFM Bible {} Checks".format(BBB) ) \
+                    webPage = webPageTemplate.replace( "__TITLE__", ourTitle ).replace( "__HEADING__", ourTitle+f" USFM Bible {BBB} Checks" ) \
                                 .replace( "__MAIN_PART__", categoryPart ).replace( "__EXTRAS__", '' ) \
                                 .replace( "__TOP_PATH__", defaultTopPath ).replace( '__SUB_PATH__', "/Software/" ).replace( '__SUB_SUB_PATH__', '/Software/BibleDropBox/' )
                                 #.replace( "__TOP_PATH__", '../'*6 ).replace( '__SUB_PATH__', '../'*5 ).replace( '__SUB_SUB_PATH__', '../'*4 )
-                    webPageFilename = "{}.html".format( category )
+                    webPageFilename = f"{category}.html"
                     with open( os.path.join(pagesFolder, webPageFilename), 'wt', encoding='utf-8' ) as myFile: # Automatically closes the file when done
                         myFile.write( webPage )
                     categoryCommentDict = { 'Priority Errors': 'Errors that the program thinks are most important',
@@ -2174,7 +2168,7 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
                     '<p><b>Counts</b> entries list counts of characters and words, etc. and are usually provided sorted in different ways. It’s often helpful to look at items that only occur one or two times in your work as they might indicate possible mistakes.</p>' + \
                     '<p>We are still working on improving error detection, removing false alarms, and better prioritising the errors and warnings. If you have any suggestions, feel free to let us know. Thanks.</p>'
         if BBBIndexPart: # Create the by book index page
-            BBBIndexPart += '<small>{}</small>'.format( help1Part )
+            BBBIndexPart += f'<small>{help1Part}</small>'
             webPage = webPageTemplate.replace( "__TITLE__", ourTitle ).replace( "__HEADING__", ourTitle + " by Book" ) \
                         .replace( "__MAIN_PART__", BBBIndexPart ).replace( "__EXTRAS__", '' ) \
                         .replace( "__TOP_PATH__", defaultTopPath ).replace( '__SUB_PATH__', "/Software/" ).replace( '__SUB_SUB_PATH__', '/Software/BibleDropBox/' )
@@ -2183,11 +2177,11 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
             with open( os.path.join(pagesFolder, webPageFilename), 'wt', encoding='utf-8' ) as myFile: # Automatically closes the file when done
                 myFile.write( webPage )
             if len(givenBookList) == 1:
-                #indexPart += '<p><a href="{}">All books</a></p>'.format( "All Books.html" )
+                #indexPart += f'<p><a href="{"All Books.html"}">All books</a></p>'
                 pass
             else:
-                indexPart += '<p><a href="{}">All books</a></p>'.format( "All Books.html" )
-                indexPart += '<p><a href="{}">By Bible book</a></p>'.format( webPageFilename )
+                indexPart += f'<p><a href="{"All Books.html"}">All books</a></p>'
+                indexPart += f'<p><a href="{webPageFilename}">By Bible book</a></p>'
         if categoryIndexPart: # Create the by category index page
             webPage = webPageTemplate.replace( "__TITLE__", ourTitle ).replace( "__HEADING__", ourTitle + " by Category" ) \
                         .replace( "__MAIN_PART__", categoryIndexPart ).replace( "__EXTRAS__", '' ) \
@@ -2196,22 +2190,22 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
             webPageFilename = "categoryIndex.html"
             with open( os.path.join(pagesFolder, webPageFilename), 'wt', encoding='utf-8' ) as myFile: # Automatically closes the file when done
                 myFile.write( webPage )
-            indexPart += '<p><a href="{}">By error category</a></p>'.format( webPageFilename )
+            indexPart += f'<p><a href="{webPageFilename}">By error category</a></p>'
         if indexPart:
             # Create the main index page
             if BBBIndexPart.count('<tr>') + categoryIndexPart.count('<tr>') < 10: # Let's just combine them (ignoring the two files already written above)
                 indexPart = "<h1>By Bible book</h1>" + BBBIndexPart + "<h1>By error category</h1>" + categoryIndexPart
-            indexPart += '<small>{}</small>'.format( help2Part )
+            indexPart += f'<small>{help2Part}</small>'
             webPage = webPageTemplate.replace( "__TITLE__", ourTitle ).replace( "__HEADING__", ourTitle ) \
                         .replace( "__MAIN_PART__", indexPart ).replace( "__EXTRAS__", '' ) \
                         .replace( "__TOP_PATH__", defaultTopPath ).replace( '__SUB_PATH__', "/Software/" ).replace( '__SUB_SUB_PATH__', '/Software/BibleDropBox/' )
                         #.replace( "__TOP_PATH__", '../'*6 ).replace( '__SUB_PATH__', '../'*5 ).replace( '__SUB_SUB_PATH__', '../'*4 )
             webPageFilename = "index.html"
             webPagePath = os.path.join( pagesFolder, webPageFilename )
-            if BibleOrgSysGlobals.verbosityLevel>3: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Writing error checks web index page at {}".format( webPagePath ) )
+            if BibleOrgSysGlobals.verbosityLevel>3: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Writing error checks web index page at {webPagePath}" )
             with open( webPagePath, 'wt', encoding='utf-8' ) as myFile: # Automatically closes the file when done
                 myFile.write( webPage )
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Test web page at {}".format( webPageURL ) )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Test web page at {webPageURL}" )
 
         return webPagePath if len(indexPart) > 0 else None
     # end of InternalBible.makeErrorHTML
@@ -2248,7 +2242,7 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
         if BBB in self:
             # NOTE: The next call will handle type conversion for the C parameter -- no need to do it here as well
             # if isinstance( C, int ): # Just double-check the parameter
-            #     logging.debug( _("InternalBible.getNumVerses() was passed an integer chapter instead of a string with {} {}").format( BBB, C ) )
+            #     logging.debug( f"InternalBible.getNumVerses() was passed an integer chapter instead of a string with {BBB} {C}" )
             #     C = str( C )
             return self.books[BBB].getNumVerses( C )
     # end of InternalBible.getNumVerses
@@ -2337,7 +2331,7 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
         result = self.getContextVerseData( BCVReference )
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  gVD", self.name, BCVReference, verseData )
         if result is None:
-            dPrint( 'Info', DEBUGGING_THIS_MODULE, "InternalBible.getVerseDataList: no VerseData for {} {} got {}".format( self.name, BCVReference, result ) )
+            dPrint( 'Info', DEBUGGING_THIS_MODULE, f"InternalBible.getVerseDataList: no VerseData for {self.name} {BCVReference} got {result}" )
             #if BibleOrgSysGlobals.debugFlag: assert BCVReference.getChapterNumStr()=='0' or BCVReference.getVerseNumStr()=='0' # Why did we get nothing???
         else:
             verseData, _context = result
@@ -2444,7 +2438,7 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
                 'currentBCV', )
         for someKey in optionsDict:
             if someKey not in optionsList:
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "findText warning: unexpected {!r} option = {!r}".format( someKey, optionsDict[someKey] ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"findText warning: unexpected {someKey!r} option = {optionsDict[someKey]!r}" )
                 if DEBUGGING_THIS_MODULE: halt
 
         # Go through all the given options
@@ -2495,15 +2489,15 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
         if optionsDict['caselessFlag']: ourFindText = ourFindText.lower()
         searchLen = len( ourFindText )
         if BibleOrgSysGlobals.debugFlag: assert searchLen
-        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Searching for {!r} in {} loaded books".format( ourFindText, len(self) ) )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Searching for {ourFindText!r} in {len(self)} loaded books" )
 
         # Now do the actual search
         resultSummaryDict = { 'searchedBookList':[], 'foundBookList':[], }
         resultList = [] # Contains 4-tuples or 5-tuples -- first entry is the SimpleVerseKey
         for BBB,bookObject in self.books.items():
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("  findText: got book {}").format( BBB ) )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  findText: got book {BBB}" )
             if optionsDict['bookList'] is None or optionsDict['bookList']=='ALL' or BBB in optionsDict['bookList']:
-                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("  findText: will search book {}").format( BBB ) )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  findText: will search book {BBB}" )
                 #self.loadBookIfNecessary( BBB )
                 resultSummaryDict['searchedBookList'].append( BBB )
                 C, V = '-1', '-1' # So first/id line starts at -1:0
@@ -2522,18 +2516,18 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
                         if marker not in ourMarkerList and not (marker in ('v~','p~') and lastParagraphMarker in ourMarkerList):
                             continue
                     elif C=='-1' and not optionsDict['includeIntroFlag']: continue
-                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Searching in {} {}:{} {} = {}".format( BBB, C, V, marker, cleanText ) )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Searching in {BBB} {C}:{V} {marker} = {cleanText}" )
 
                     if optionsDict['chapterList'] is None \
                     or C in optionsDict['chapterList'] \
                     or int(C) in optionsDict['chapterList']:
                         #if optionsDict['chapterList'] and V=='0':
-                            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("  findText: will search {} chapter {}").format( BBB, C ) )
+                            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  findText: will search {BBB} chapter {C}" )
 
                         # Get our text to search
                         origTextToBeSearched = lineEntry.getFullText() if optionsDict['includeExtrasFlag'] else cleanText
                         if C != '0' and not optionsDict['includeMainTextFlag']:
-                            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Got {!r} but  don't include main text".format( origTextToBeSearched ) )
+                            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Got {origTextToBeSearched!r} but  don't include main text" )
                             if marker in ('v~','p~') or marker in BibleOrgSysGlobals.USFMParagraphMarkers:
                                 origTextToBeSearched = ''
                                 if origTextToBeSearched != cleanText: # we must have extras -- we need to remove the main text
@@ -2545,11 +2539,11 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
                                         extraStart = ''
                                         if optionsDict['includeMarkerTextFlag']:
                                             eTypeIndex = BOS_EXTRA_TYPES.index( extra.getType() )
-                                            extraStart = '\\{} '.format( BOS_EXTRA_MARKERS[eTypeIndex] )
+                                            extraStart = f'\\{BOS_EXTRA_MARKERS[eTypeIndex]} '
                                         origTextToBeSearched += ' ' if origTextToBeSearched else '' + extraStart + extra.getText()
                                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Now", repr(origTextToBeSearched) )
                         if optionsDict['includeMarkerTextFlag']:
-                            origTextToBeSearched = '\\{} {}'.format( marker, origTextToBeSearched )
+                            origTextToBeSearched = f'\\{marker} {origTextToBeSearched}'
                         if not origTextToBeSearched: continue
                         textToBeSearched = origTextToBeSearched
                         if optionsDict['ignoreDiacriticsFlag']: textToBeSearched = BibleOrgSysGlobals.removeAccents( textToBeSearched )
@@ -2606,7 +2600,7 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
                                 resultList.append( resultTuple )
                                 if BBB not in resultSummaryDict['foundBookList']: resultSummaryDict['foundBookList'].append( BBB )
 
-        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("findText: returning {}").format( resultList ) )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"findText: returning {resultList}" )
         return optionsDict, resultSummaryDict, resultList
     # end of InternalBible.findText
 
@@ -2625,12 +2619,12 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
             bookObject.writeBOSBCVFiles( bookFolderpath )
 
         # Write the Bible metadata
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + _("Writing BCV metadata…") )
-        metadataLines = 'BCVVersion = {}\n'.format( BCV_VERSION )
-        if self.projectName: metadataLines += 'ProjectName = {}\n'.format( self.projectName )
-        if self.name: metadataLines += 'Name = {}\n'.format( self.name )
-        if self.abbreviation: metadataLines += 'Abbreviation = {}\n'.format( self.abbreviation )
-        metadataLines += 'BookList = {}\n'.format( BBBList )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + "Writing BCV metadata…" )
+        metadataLines = f'BCVVersion = {BCV_VERSION}\n'
+        if self.projectName: metadataLines += f'ProjectName = {self.projectName}\n'
+        if self.name: metadataLines += f'Name = {self.name}\n'
+        if self.abbreviation: metadataLines += f'Abbreviation = {self.abbreviation}\n'
+        metadataLines += f'BookList = {BBBList}\n'
         with open( os.path.join( outputFolderpath, 'Metadata.txt' ), 'wt', encoding='utf-8' ) as metadataFile:
             if BibleOrgSysGlobals.prependBOMFlag:
                 metadataFile.write( BibleOrgSysGlobals.BOM )
@@ -3424,25 +3418,25 @@ def briefDemo() -> None:
             searchOptions['bookList'] = None #['JNA','PE1']
             searchOptions['chapterList'] = None #[0]
             for searchString in ( "keen", "Keen", "junk", ):
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n{}:".format( searchString ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n{searchString}:" )
                 searchOptions['findText'] = searchString
                 searchOptions['wordMode'] = 'Any'
                 searchOptions['caselessFlag'] = False
                 optionsDict, resultSummaryDict, sResult = iB.findText( searchOptions )
-                adjResult = '({}) {}'.format( len(sResult), sResult if len(sResult)<20 else str(sResult[:20])+' …' )
+                adjResult = f"({len(sResult)}) {sResult if len(sResult)<20 else str(sResult[:20])+' …'}"
                 if BibleOrgSysGlobals.verbosityLevel > 0:
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n  sResult for {!r} is {}  {}".format( searchString, resultSummaryDict, adjResult ) )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n  sResult for {adjResult!r} is {searchString}  {resultSummaryDict}" )
                 searchOptions['wordMode'] = 'Whole'
                 optionsDict, resultSummaryDict, sResult = iB.findText( searchOptions )
-                adjResult = '({}) {}'.format( len(sResult), sResult if len(sResult)<20 else str(sResult[:20])+' …' )
+                adjResult = f"({len(sResult)}) {sResult if len(sResult)<20 else str(sResult[:20])+' …'}"
                 if BibleOrgSysGlobals.verbosityLevel > 0:
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n  sResult for whole word {!r} is {}  {}".format( searchString, resultSummaryDict, adjResult ) )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n  sResult for whole word {adjResult!r} is {searchString}  {resultSummaryDict}" )
                 searchOptions['wordMode'] = 'Any'
                 searchOptions['caselessFlag'] = True
                 optionsDict, resultSummaryDict, sResult = iB.findText( searchOptions )
-                adjResult = '({}) {}'.format( len(sResult), sResult if len(sResult)<20 else str(sResult[:20])+' …' )
+                adjResult = f"({len(sResult)}) {sResult if len(sResult)<20 else str(sResult[:20])+' …'}"
                 if BibleOrgSysGlobals.verbosityLevel > 0:
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n  sResult for caseless {!r} is {}  {}".format( searchString, resultSummaryDict, adjResult ) )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n  sResult for caseless {adjResult!r} is {searchString}  {resultSummaryDict}" )
 # end of InternalBible.briefDemo
 
 def fullDemo() -> None:
@@ -3476,25 +3470,25 @@ def fullDemo() -> None:
             searchOptions['bookList'] = None #['JNA','PE1']
             searchOptions['chapterList'] = None #[0]
             for searchString in ( "keen", "Keen", "junk", ):
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n{}:".format( searchString ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n{searchString}:" )
                 searchOptions['findText'] = searchString
                 searchOptions['wordMode'] = 'Any'
                 searchOptions['caselessFlag'] = False
                 optionsDict, resultSummaryDict, sResult = iB.findText( searchOptions )
-                adjResult = '({}) {}'.format( len(sResult), sResult if len(sResult)<20 else str(sResult[:20])+' …' )
+                adjResult = f"({len(sResult)}) {sResult if len(sResult)<20 else str(sResult[:20])+' …'}"
                 if BibleOrgSysGlobals.verbosityLevel > 0:
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n  sResult for {!r} is {}  {}".format( searchString, resultSummaryDict, adjResult ) )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n  sResult for {adjResult!r} is {searchString}  {resultSummaryDict}" )
                 searchOptions['wordMode'] = 'Whole'
                 optionsDict, resultSummaryDict, sResult = iB.findText( searchOptions )
-                adjResult = '({}) {}'.format( len(sResult), sResult if len(sResult)<20 else str(sResult[:20])+' …' )
+                adjResult = f"({len(sResult)}) {sResult if len(sResult)<20 else str(sResult[:20])+' …'}"
                 if BibleOrgSysGlobals.verbosityLevel > 0:
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n  sResult for whole word {!r} is {}  {}".format( searchString, resultSummaryDict, adjResult ) )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n  sResult for whole word {adjResult!r} is {searchString}  {resultSummaryDict}" )
                 searchOptions['wordMode'] = 'Any'
                 searchOptions['caselessFlag'] = True
                 optionsDict, resultSummaryDict, sResult = iB.findText( searchOptions )
-                adjResult = '({}) {}'.format( len(sResult), sResult if len(sResult)<20 else str(sResult[:20])+' …' )
+                adjResult = f"({len(sResult)}) {sResult if len(sResult)<20 else str(sResult[:20])+' …'}"
                 if BibleOrgSysGlobals.verbosityLevel > 0:
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n  sResult for caseless {!r} is {}  {}".format( searchString, resultSummaryDict, adjResult ) )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n  sResult for caseless {adjResult!r} is {searchString}  {resultSummaryDict}" )
 # end of InternalBible.fullDemo
 
 if __name__ == '__main__':

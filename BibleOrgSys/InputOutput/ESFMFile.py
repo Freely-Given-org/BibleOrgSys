@@ -37,7 +37,6 @@ CHANGELOG:
 """
 
 
-from gettext import gettext as _
 import logging
 import sys
 import requests
@@ -93,7 +92,7 @@ class ESFMFile:
         @rtype: list
         @return: list of lists containing the records
         """
-        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "ESFMFile.read( {}, {}, {} )".format( repr(esfm_filename), repr(ignoreSFMs), repr(encoding) ) )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"ESFMFile.read( {repr(esfm_filename)}, {repr(ignoreSFMs)}, {repr(encoding)} )" )
 
         # Check/handle parameters
         if ignoreSFMs is None: ignoreSFMs = ()
@@ -124,7 +123,7 @@ class ESFMFile:
         for line in fileLines:
             lineCount += 1
             if lineCount==1 and line[0]==BibleOrgSysGlobals.BOM:
-                logging.info( "ESFMFile: Detected Unicode Byte Order Marker (BOM) in {}".format( esfm_filepath ) )
+                logging.info( f"ESFMFile: Detected Unicode Byte Order Marker (BOM) in {esfm_filepath}" )
                 line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
             if line and line[-1]=='\n': line=line[:-1] # Removing trailing newline character
             if not line: continue # Just discard blank lines
@@ -168,7 +167,7 @@ def briefDemo() -> None:
 
     import os.path
     filepath = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'MatigsalugDictionaryA.sfm' )
-    vPrint( 'Info', DEBUGGING_THIS_MODULE, "Using {} as test file…".format( filepath ) )
+    vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Using {filepath} as test file…" )
 
     linesDB = ESFMFile()
     linesDB.read( filepath, ignoreSFMs=('mn','aMU','aMW','cu','cp') )

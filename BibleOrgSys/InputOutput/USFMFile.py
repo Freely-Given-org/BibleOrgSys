@@ -33,7 +33,6 @@ Module for reading UTF-8 USFM (Unified Standard Format Marker) Bible file.
   Raises an IOError error if file doesn't exist.
 """
 
-from gettext import gettext as _
 import sys
 import logging
 
@@ -149,7 +148,7 @@ class USFMFile:
                 for line in ourFile:
                     lineCount += 1
                     if lineCount==1 and encoding.lower()=='utf-8' and line[0]==BibleOrgSysGlobals.BOM:
-                        logging.info( "USFMFile: Detected Unicode Byte Order Marker (BOM) in {}".format( USFMFilepath ) )
+                        logging.info( f"USFMFile: Detected Unicode Byte Order Marker (BOM) in {USFMFilepath}" )
                         line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
                     if line and line[-1]=='\n': line=line[:-1] # Removing trailing newline character
                     if not line: continue # Just discard blank lines
@@ -199,7 +198,7 @@ def briefDemo() -> None:
 
     import os.path
     filepath = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'MatigsalugDictionaryA.sfm' )
-    vPrint( 'Info', DEBUGGING_THIS_MODULE, "Using {} as test file…".format( filepath ) )
+    vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Using {filepath} as test file…" )
 
     linesDB = USFMFile()
     linesDB.read( filepath, ignoreSFMs=('mn','aMU','aMW','cu','cp') )

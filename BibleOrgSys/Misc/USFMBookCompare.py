@@ -33,10 +33,9 @@ Given two file paths, reads and compares the USFM Bible books
 
 This also functions as a stand-alone program.
 
-TODO: Needs internationalisation _("around strings")
+TODO: Needs internationalisation "around strings"
 """
 
-from gettext import gettext as _
 import os
 import logging
 from pathlib import Path
@@ -52,7 +51,7 @@ LAST_MODIFIED_DATE = '2020-04-12' # by RJH
 SHORT_PROGRAM_NAME = "USFMBookCompare"
 PROGRAM_NAME = "USFM book file comparator"
 PROGRAM_VERSION = '0.17'
-PROGRAM_NAME_VERSION = '{} v{}'.format( SHORT_PROGRAM_NAME, PROGRAM_VERSION )
+PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
 
@@ -62,8 +61,8 @@ def USFMBookCompare( filepath1, filepath2, file1Name='file1', file2Name='file2' 
     """
     """
     vPrint( 'Info', DEBUGGING_THIS_MODULE, "\nUSFMBookCompare() for USFM Bible books" )
-    vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "  comparing {}".format( filepath1 ) )
-    vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "        and {}".format( filepath2 ) )
+    vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"  comparing {filepath1}" )
+    vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"        and {filepath2}" )
 
 
     # Set up empty results dictionaries
@@ -90,14 +89,14 @@ def USFMBookCompare( filepath1, filepath2, file1Name='file1', file2Name='file2' 
     else:
         resultDict['Different']['Filesize'] = (resultDict['File1']['Filesize'],resultDict['File2']['Filesize'])
         if s1.st_size > s2.st_size:
-            resultDict['Summary']['Filesize'] = "{} is bigger (by {:,} bytes)".format( file1Name, s1.st_size - s2.st_size )
+            resultDict['Summary']['Filesize'] = f"{file1Name} is bigger (by {s1.st_size - s2.st_size:,} bytes)"
         elif s1.st_size < s2.st_size:
-            resultDict['Summary']['Filesize'] = "{} is bigger (by {:,} bytes)".format( file2Name, s2.st_size - s1.st_size )
+            resultDict['Summary']['Filesize'] = f"{file2Name} is bigger (by {s2.st_size - s1.st_size:,} bytes)"
     resultDict['File1']['ModifiedTimeStamp'], resultDict['File2']['ModifiedTimeStamp'] = s1.st_mtime, s2.st_mtime
     if s1.st_mtime - s2.st_mtime > 1.0:
-        resultDict['Summary']['ModifiedTime'] = "{} is newer".format( file1Name )
+        resultDict['Summary']['ModifiedTime'] = f"{file1Name} is newer"
     elif s2.st_mtime - s1.st_mtime > 1.0:
-        resultDict['Summary']['ModifiedTime'] = "{} is newer".format( file2Name )
+        resultDict['Summary']['ModifiedTime'] = f"{file2Name} is newer"
     t1, t2 = datetime.fromtimestamp( s1.st_mtime ), datetime.fromtimestamp( s2.st_mtime )
     resultDict['File1']['ModifiedDate'], resultDict['File2']['ModifiedDate'] = t1.strftime('%Y-%m-%d'), t2.strftime('%Y-%m-%d')
     if resultDict['File1']['ModifiedDate'] == resultDict['File2']['ModifiedDate']:
@@ -145,7 +144,7 @@ def USFMBookCompare( filepath1, filepath2, file1Name='file1', file2Name='file2' 
             startedCVs = True
             if intC != lastC + 1:
                 if 'File1Chapters' not in resultDict['Summary']: # only record the first one
-                    resultDict['Summary']['File1Chapters'] = "{} has chapters out of order ({} after {})".format( file1Name, C, lastC )
+                    resultDict['Summary']['File1Chapters'] = f"{file1Name} has chapters out of order ({C} after {lastC})"
             lastC = intC
         elif marker=='v':
             resultDict['File1']['VerseMarkerCount'] += 1
@@ -158,14 +157,14 @@ def USFMBookCompare( filepath1, filepath2, file1Name='file1', file2Name='file2' 
             startedCVs = True # Some one chapter books don't include a chapter marker
             if intV != lastV + 1:
                 if 'File1Verses' not in resultDict['Summary']: # only record the first one
-                    resultDict['Summary']['File1Verses'] = "{} has verses out of order ({}:{} after {}:{})".format( file1Name, C, V, C, lastV )
+                    resultDict['Summary']['File1Verses'] = f"{file1Name} has verses out of order ({C}:{V} after {C}:{lastV})"
             if V2: lastV = int( V2 )
             else: lastV = intV
         if not startedCVs: resultDict['File1']['IntroLineCount'] += 1
         if line.strip(): resultDict['File1']['HasContentCount'] += 1
         if '<<<<' in line or '====' in line or '>>>>' in line:
             if 'File1Conflicts' not in resultDict['Summary']: # only record the first one
-                resultDict['Summary']['File1Conflicts'] = "{} may have a merge conflict around {}:{}".format( file1Name, C, V )
+                resultDict['Summary']['File1Conflicts'] = f"{file1Name} may have a merge conflict around {C}:{V}"
 
     startedCVs = False
     lastC = lastV = 0
@@ -180,7 +179,7 @@ def USFMBookCompare( filepath1, filepath2, file1Name='file1', file2Name='file2' 
             startedCVs = True
             if intC != lastC + 1:
                 if 'File2Chapters' not in resultDict['Summary']: # only record the first one
-                    resultDict['Summary']['File2Chapters'] = "{} has chapters out of order ({} after {})".format( file2Name, C, lastC )
+                    resultDict['Summary']['File2Chapters'] = f"{file2Name} has chapters out of order ({C} after {lastC})"
             lastC = intC
         elif marker=='v':
             resultDict['File2']['VerseMarkerCount'] += 1
@@ -193,14 +192,14 @@ def USFMBookCompare( filepath1, filepath2, file1Name='file1', file2Name='file2' 
             startedCVs = True # Some one chapter books don't include a chapter marker
             if intV != lastV + 1:
                 if 'File2Verses' not in resultDict['Summary']: # only record the first one
-                    resultDict['Summary']['File2Verses'] = "{} has verses out of order ({}:{} after {}:{})".format( file2Name, C, V, C, lastV )
+                    resultDict['Summary']['File2Verses'] = f"{file2Name} has verses out of order ({C}:{V} after {C}:{lastV})"
             if V2: lastV = int( V2 )
             else: lastV = intV
         if not startedCVs: resultDict['File2']['IntroLineCount'] += 1
         if line.strip(): resultDict['File2']['HasContentCount'] += 1
         if '<<<<' in line or '====' in line or '>>>>' in line:
             if 'File2Conflicts' not in resultDict['Summary']: # only record the first one
-                resultDict['Summary']['File2Conflicts'] = "{} may have a merge conflict around {}:{}".format( file2Name, C, V )
+                resultDict['Summary']['File2Conflicts'] = f"{file2Name} may have a merge conflict around {C}:{V}"
 
     if resultDict['File1']['IntroLineCount'] == resultDict['File2']['IntroLineCount']:
         resultDict['Same']['IntroLineCount'] = resultDict['File1']['IntroLineCount']
@@ -208,10 +207,10 @@ def USFMBookCompare( filepath1, filepath2, file1Name='file1', file2Name='file2' 
         resultDict['Different']['IntroLineCount'] = (resultDict['File1']['IntroLineCount'],resultDict['File2']['IntroLineCount'])
         if resultDict['File1']['IntroLineCount'] > resultDict['File2']['IntroLineCount']:
             difference = resultDict['File1']['IntroLineCount'] - resultDict['File2']['IntroLineCount']
-            resultDict['Summary']['IntroLineCount'] = "{} has {} more intro marker{}".format( file1Name, difference, '' if difference==1 else 's' )
+            resultDict['Summary']['IntroLineCount'] = f"{file1Name} has {difference} more intro marker{'' if difference==1 else 's'}"
         elif resultDict['File1']['IntroLineCount'] < resultDict['File2']['IntroLineCount']:
             difference = resultDict['File2']['IntroLineCount'] - resultDict['File1']['IntroLineCount']
-            resultDict['Summary']['IntroLineCount'] = "{} has {} more intro marker{}".format( file2Name, difference, '' if difference==1 else 's' )
+            resultDict['Summary']['IntroLineCount'] = f"{file2Name} has {difference} more intro marker{'' if difference==1 else 's'}"
     if resultDict['File1']['ChapterMarkerCount'] == resultDict['File2']['ChapterMarkerCount']:
         resultDict['Same']['ChapterMarkerCount'] = resultDict['File1']['ChapterMarkerCount']
     else:
@@ -221,27 +220,27 @@ def USFMBookCompare( filepath1, filepath2, file1Name='file1', file2Name='file2' 
             resultDict['Summary']['ChapterMarkerCount'] = "{} has {} more chapter marker{}".format( file1Name,  )
         elif resultDict['File1']['ChapterMarkerCount'] < resultDict['File2']['ChapterMarkerCount']:
             difference = resultDict['File2']['ChapterMarkerCount'] - resultDict['File1']['ChapterMarkerCount']
-            resultDict['Summary']['ChapterMarkerCount'] = "{} has {} more chapter marker{}".format( file2Name, difference, '' if difference==1 else 's' )
+            resultDict['Summary']['ChapterMarkerCount'] = f"{file2Name} has {difference} more chapter marker{'' if difference==1 else 's'}"
     if resultDict['File1']['VerseMarkerCount'] == resultDict['File2']['VerseMarkerCount']:
         resultDict['Same']['VerseMarkerCount'] = resultDict['File1']['VerseMarkerCount']
     else:
         resultDict['Different']['VerseMarkerCount'] = (resultDict['File1']['VerseMarkerCount'],resultDict['File2']['VerseMarkerCount'])
         if resultDict['File1']['VerseMarkerCount'] > resultDict['File2']['VerseMarkerCount']:
             difference = resultDict['File1']['VerseMarkerCount'] - resultDict['File2']['VerseMarkerCount']
-            resultDict['Summary']['VerseMarkerCount'] = "{} has {} more verse marker{}".format( file1Name, difference, '' if difference==1 else 's' )
+            resultDict['Summary']['VerseMarkerCount'] = f"{file1Name} has {difference} more verse marker{'' if difference==1 else 's'}"
         elif resultDict['File1']['VerseMarkerCount'] < resultDict['File2']['VerseMarkerCount']:
             difference = resultDict['File2']['VerseMarkerCount'] - resultDict['File1']['VerseMarkerCount']
-            resultDict['Summary']['VerseMarkerCount'] = "{} has {} more verse marker{}".format( file2Name, difference, '' if difference==1 else 's' )
+            resultDict['Summary']['VerseMarkerCount'] = f"{file2Name} has {difference} more verse marker{'' if difference==1 else 's'}"
     if resultDict['File1']['HasContentCount'] == resultDict['File2']['HasContentCount']:
         resultDict['Same']['HasContentCount'] = resultDict['File1']['HasContentCount']
     else:
         resultDict['Different']['HasContentCount'] = (resultDict['File1']['HasContentCount'],resultDict['File2']['HasContentCount'])
         if resultDict['File1']['HasContentCount'] > resultDict['File2']['HasContentCount']:
             difference = resultDict['File1']['HasContentCount'] - resultDict['File2']['HasContentCount']
-            resultDict['Summary']['HasContentCount'] = "{} has {} more content line{}".format( file1Name, difference, '' if difference==1 else 's' )
+            resultDict['Summary']['HasContentCount'] = f"{file1Name} has {difference} more content line{'' if difference==1 else 's'}"
         elif resultDict['File1']['HasContentCount'] < resultDict['File2']['HasContentCount']:
             difference = resultDict['File2']['HasContentCount'] - resultDict['File1']['HasContentCount']
-            resultDict['Summary']['HasContentCount'] = "{} has {} more content line{}".format( file2Name, difference, '' if difference==1 else 's' )
+            resultDict['Summary']['HasContentCount'] = f"{file2Name} has {difference} more content line{'' if difference==1 else 's'}"
 
 
     # Work through the files again comparing lines
@@ -287,11 +286,11 @@ def briefDemo() -> None:
     fp1 = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFMTest2/MBT01GEN.SCP' )
     fp2 = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFMTest2/MBT01GEN.SCP.BAK' )
     allOkay = True
-    if not os.path.exists( fp1 ): logging.critical( "Filepath1 {!r} is invalid -- aborting".format( fp1 ) ); allOkay = False
-    if not os.path.exists( fp2 ): logging.critical( "Filepath2 {!r} is invalid -- aborting".format( fp2 ) ); allOkay = False
+    if not os.path.exists( fp1 ): logging.critical( f"Filepath1 {fp1!r} is invalid -- aborting" ); allOkay = False
+    if not os.path.exists( fp2 ): logging.critical( f"Filepath2 {fp2!r} is invalid -- aborting" ); allOkay = False
     if allOkay:
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nFile1 is: {}".format( fp1 ) )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "File2 is: {}".format( fp2 ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nFile1 is: {fp1}" )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"File2 is: {fp2}" )
 
         result = USFMBookCompare( fp1, fp2, file1Name='SCP file', file2Name='BAK file' )
         if BibleOrgSysGlobals.verbosityLevel > 0:
@@ -304,9 +303,9 @@ def briefDemo() -> None:
                 if division in ('Same','Different') and BibleOrgSysGlobals.verbosityLevel < 3 \
                 and not BibleOrgSysGlobals.debugFlag:
                     continue
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  {} results are:".format( division ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  {division} results are:" )
                 for field,fResult in dResults.items():
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "    {}: {}".format( field,fResult ) )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"    {field}: {fResult}" )
 # end of USFMBookCompare.briefDemo
 
 def fullDemo() -> None:
@@ -318,11 +317,11 @@ def fullDemo() -> None:
     fp1 = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFMTest2/MBT01GEN.SCP' )
     fp2 = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFMTest2/MBT01GEN.SCP.BAK' )
     allOkay = True
-    if not os.path.exists( fp1 ): logging.critical( "Filepath1 {!r} is invalid -- aborting".format( fp1 ) ); allOkay = False
-    if not os.path.exists( fp2 ): logging.critical( "Filepath2 {!r} is invalid -- aborting".format( fp2 ) ); allOkay = False
+    if not os.path.exists( fp1 ): logging.critical( f"Filepath1 {fp1!r} is invalid -- aborting" ); allOkay = False
+    if not os.path.exists( fp2 ): logging.critical( f"Filepath2 {fp2!r} is invalid -- aborting" ); allOkay = False
     if allOkay:
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nFile1 is: {}".format( fp1 ) )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "File2 is: {}".format( fp2 ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nFile1 is: {fp1}" )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"File2 is: {fp2}" )
 
         result = USFMBookCompare( fp1, fp2, file1Name='SCP file', file2Name='BAK file' )
         if BibleOrgSysGlobals.verbosityLevel > 0:
@@ -335,9 +334,9 @@ def fullDemo() -> None:
                 if division in ('Same','Different') and BibleOrgSysGlobals.verbosityLevel < 3 \
                 and not BibleOrgSysGlobals.debugFlag:
                     continue
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  {} results are:".format( division ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  {division} results are:" )
                 for field,fResult in dResults.items():
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "    {}: {}".format( field,fResult ) )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"    {field}: {fResult}" )
 # end of USFMBookCompare.fullDemo
 
 
@@ -349,8 +348,8 @@ def main() -> None:
 
     fp1, fp2 = BibleOrgSysGlobals.commandLineArguments.file1, BibleOrgSysGlobals.commandLineArguments.file2
     allOkay = True
-    if not os.path.exists( fp1 ): logging.critical( "Filepath1 {!r} is invalid—aborting".format( fp1 ) ); allOkay = False
-    if not os.path.exists( fp2 ): logging.critical( "Filepath2 {!r} is invalid—aborting".format( fp2 ) ); allOkay = False
+    if not os.path.exists( fp1 ): logging.critical( f"Filepath1 {fp1!r} is invalid—aborting" ); allOkay = False
+    if not os.path.exists( fp2 ): logging.critical( f"Filepath2 {fp2!r} is invalid—aborting" ); allOkay = False
     if allOkay:
         result = USFMBookCompare( fp1, fp2 )
         if BibleOrgSysGlobals.verbosityLevel > 0:
@@ -362,9 +361,9 @@ def main() -> None:
                 if division in ('Same','Different') and BibleOrgSysGlobals.verbosityLevel < 3 \
                 and not BibleOrgSysGlobals.debugFlag:
                     continue
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  {} results are:".format( division ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  {division} results are:" )
                 for field,fResult in dResults.items():
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "    {}: {}".format( field,fResult ) )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"    {field}: {fResult}" )
 # end of USFMBookCompare.main
 
 if __name__ == '__main__':

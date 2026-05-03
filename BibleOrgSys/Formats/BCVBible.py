@@ -26,7 +26,6 @@
 """
 Module for defining and manipulating complete or partial BCV Bibles.
 """
-from gettext import gettext as _
 import os
 from pathlib import Path
 import logging
@@ -67,20 +66,20 @@ def BCVBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=Fal
     if autoLoad is true and exactly one BCV Bible is found,
         returns the loaded BCVBible object.
     """
-    fnPrint( DEBUGGING_THIS_MODULE, "BCVBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
+    fnPrint( DEBUGGING_THIS_MODULE, f"BCVBibleFileCheck( {givenFolderName}, {strictCheck}, {autoLoad}, {autoLoadBooks} )" )
     if BibleOrgSysGlobals.debugFlag: assert givenFolderName and isinstance( givenFolderName, (str,Path) )
     if BibleOrgSysGlobals.debugFlag: assert autoLoad in (True,False,) and autoLoadBooks in (True,False,)
 
     # Check that the given folder is readable
     if not os.access( givenFolderName, os.R_OK ):
-        logging.critical( "BCVBibleFileCheck: Given {!r} folder is unreadable".format( givenFolderName ) )
+        logging.critical( f"BCVBibleFileCheck: Given {givenFolderName!r} folder is unreadable" )
         return False
     if not os.path.isdir( givenFolderName ):
-        logging.critical( "BCVBibleFileCheck: Given {!r} path is not a folder".format( givenFolderName ) )
+        logging.critical( f"BCVBibleFileCheck: Given {givenFolderName!r} path is not a folder" )
         return False
 
     # Find all the files and folders in this folder
-    vPrint( 'Verbose', DEBUGGING_THIS_MODULE, " BCVBibleFileCheck: Looking for files in given {}".format( givenFolderName ) )
+    vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f" BCVBibleFileCheck: Looking for files in given {givenFolderName}" )
     foundFolders, foundFiles = [], []
     for something in os.listdir( givenFolderName ):
         somepath = os.path.join( givenFolderName, something )
@@ -107,7 +106,7 @@ def BCVBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=Fal
                 if folderName not in BibleOrgSysGlobals.loadedBibleBooksCodes:
                     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "BCVBibleFileCheck: Surprised to find folder:", folderName )
     if numFound:
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "BCVBibleFileCheck got {} in {}".format( numFound, givenFolderName ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"BCVBibleFileCheck got {numFound} in {givenFolderName}" )
         if numFound == 1 and (autoLoad or autoLoadBooks):
             bcvB = BCVBible( givenFolderName )
             if autoLoad: bcvB.preload()
@@ -121,9 +120,9 @@ def BCVBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=Fal
     for thisFolderName in sorted( foundFolders ):
         tryFolderName = os.path.join( givenFolderName, thisFolderName+'/' )
         if not os.access( tryFolderName, os.R_OK ): # The subfolder is not readable
-            logging.warning( _("BCVBibleFileCheck: {!r} subfolder is unreadable").format( tryFolderName ) )
+            logging.warning( f"BCVBibleFileCheck: {tryFolderName!r} subfolder is unreadable" )
             continue
-        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "    BCVBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
+        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"    BCVBibleFileCheck: Looking for files in {tryFolderName}" )
         foundSubfolders, foundSubfiles = [], []
         try:
             for something in os.listdir( tryFolderName ):
@@ -148,7 +147,7 @@ def BCVBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=Fal
                     if folderName not in BibleOrgSysGlobals.loadedBibleBooksCodes:
                         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "BCVBibleFileCheckSurprised to find folder:", folderName )
     if numFound:
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "BCVBibleFileCheck foundProjects {} {}".format( numFound, foundProjects ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"BCVBibleFileCheck foundProjects {numFound} {foundProjects}" )
         if numFound == 1 and (autoLoad or autoLoadBooks):
             bcvB = BCVBible( foundProjects[0] )
             if autoLoad: bcvB.preload()
@@ -184,7 +183,7 @@ class BCVBible( Bible ):
         """
         Loads the Metadata file if it can be found.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, _("preload() from {}").format( self.sourceFolder ) )
+        fnPrint( DEBUGGING_THIS_MODULE, f"preload() from {self.sourceFolder}" )
 
         # Do a preliminary check on the contents of our folder
         foundFiles, foundFolders = [], []
@@ -192,7 +191,7 @@ class BCVBible( Bible ):
             somepath = os.path.join( self.sourceFolder, something )
             if os.path.isdir( somepath ): foundFolders.append( something )
             elif os.path.isfile( somepath ): foundFiles.append( something )
-            else: logging.error( _("BCVBible.preload: Not sure what {!r} is in {}!").format( somepath, self.sourceFolder ) )
+            else: logging.error( f"BCVBible.preload: Not sure what {somepath!r} is in {self.sourceFolder}!" )
         if foundFolders:
             unexpectedFolders = []
             for folderName in foundFolders:
@@ -201,9 +200,9 @@ class BCVBible( Bible ):
                     continue
                 unexpectedFolders.append( folderName )
             if unexpectedFolders:
-                logging.info( _("BCVBible.preload: Surprised to see subfolders in {!r}: {}").format( self.sourceFolder, unexpectedFolders ) )
+                logging.info( f"BCVBible.preload: Surprised to see subfolders in {self.sourceFolder!r}: {unexpectedFolders}" )
         if not foundFiles:
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("BCVBible.preload: Couldn't find any files in {!r}").format( self.sourceFolder ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"BCVBible.preload: Couldn't find any files in {self.sourceFolder!r}" )
             raise FileNotFoundError # No use continuing
 
         #if self.metadataFilepath is None: # it might have been loaded first
@@ -230,7 +229,7 @@ class BCVBible( Bible ):
 
         Sets some class variables and puts a dictionary into self.settingsDict.
         """
-        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, _("Loading metadata from {!r}").format( metadataFilepath ) )
+        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"Loading metadata from {metadataFilepath!r}" )
         #if encoding is None: encoding = 'utf-8'
         self.metadataFilepath = metadataFilepath
         if self.suppliedMetadata is None: self.suppliedMetadata = {}
@@ -243,10 +242,10 @@ class BCVBible( Bible ):
                 lineCount += 1
                 if lineCount==1:
                     if line[0]==BibleOrgSysGlobals.BOM:
-                        logging.info( "loadMetadata1: Detected Unicode Byte Order Marker (BOM) in {}".format( metadataFilepath ) )
+                        logging.info( f"loadMetadata1: Detected Unicode Byte Order Marker (BOM) in {metadataFilepath}" )
                         line = line[1:] # Remove the UTF-16 Unicode Byte Order Marker (BOM)
                     elif line[:3] == 'ï»¿': # 0xEF,0xBB,0xBF
-                        logging.info( "loadMetadata2: Detected Unicode Byte Order Marker (BOM) in {}".format( metadataFilepath ) )
+                        logging.info( f"loadMetadata2: Detected Unicode Byte Order Marker (BOM) in {metadataFilepath}" )
                         line = line[3:] # Remove the UTF-8 Unicode Byte Order Marker (BOM)
                 if line and line[-1]=='\n': line = line[:-1] # Remove trailing newline character
                 line = line.strip() # Remove leading and trailing whitespace
@@ -259,12 +258,12 @@ class BCVBible( Bible ):
                         self.suppliedMetadata['BCV'][fieldName] = line[len(fieldName)+3:]
                         processed = True
                         break
-                if not processed: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("ERROR: Unexpected {!r} line in metadata file").format( line ) )
+                if not processed: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"ERROR: Unexpected {line!r} line in metadata file" )
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'SD', self.suppliedMetadata['BCV'] ); halt
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + _("Got {} metadata entries:").format( len(self.suppliedMetadata['BCV']) ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + f"Got {len(self.suppliedMetadata['BCV'])} metadata entries:" )
         if BibleOrgSysGlobals.verbosityLevel > 3:
             for key in sorted(self.suppliedMetadata['BCV']):
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "    {}: {}".format( key, self.suppliedMetadata['BCV'][key] ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"    {key}: {self.suppliedMetadata['BCV'][key]}" )
 
         if 'BCVVersion' in self.suppliedMetadata['BCV']:
             assert self.suppliedMetadata['BCV']['BCVVersion'] == '1.0'
@@ -282,7 +281,7 @@ class BCVBible( Bible ):
             if isinstance( self.givenBookList, list ):
                 # del self.suppliedMetadata['BCV']['BookList']
                 pass
-            else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("ERROR: Unexpected {!r} format in metadata file").format( BL ) )
+            else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"ERROR: Unexpected {BL!r} format in metadata file" )
             #bl = self.suppliedMetadata['BCV']['BookList']
             #if bl[0]=='[' and bl[-1]==']':
                 #for something in bl[1:-1].split( ',' ):
@@ -290,9 +289,9 @@ class BCVBible( Bible ):
                     #if something[0]=="'" and something[-1]=="'": something = something[1:-1]
                     #if something in BibleOrgSysGlobals.loadedBibleBooksCodes:
                         #self.givenBookList.append( something )
-                    #else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "ERROR: Unexpected {!r} booklist entry in metadata file".format( something ) )
+                    #else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"ERROR: Unexpected {something!r} booklist entry in metadata file" )
                 #del self.suppliedMetadata['BCV']['BookList']
-            #else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "ERROR: Unexpected {!r} format in metadata file".format( bl ) )
+            #else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"ERROR: Unexpected {bl!r} format in metadata file" )
 
         if self.suppliedMetadata['BCV']:
             self.applySuppliedMetadata( 'BCV' ) # Copy some to self.settingsDict
@@ -309,19 +308,19 @@ class BCVBible( Bible ):
         fnPrint( DEBUGGING_THIS_MODULE, f"BCVBible.loadBook( {BBB} )" )
         if BBB in self.books: return # Already loaded
         if BBB in self.triedLoadingBook:
-            logging.warning( "We had already tried loading BCV {} for {}".format( BBB, self.name ) )
+            logging.warning( f"We had already tried loading BCV {BBB} for {self.name}" )
             return # We've already attempted to load this book
         self.triedLoadingBook[BBB] = True
         if BBB in self.givenBookList:
-            if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("  BCVBible: Loading {} from {} from {}…").format( BBB, self.name, self.sourceFolder ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  BCVBible: Loading {BBB} from {self.name} from {self.sourceFolder}…" )
             bcvBB = BCVBibleBook( self, BBB )
             bcvBB.load( self.sourceFolder )
             if bcvBB._processedLines:
                 bcvBB.validateMarkers()
                 self.stashBook( bcvBB )
-            else: logging.info( "BCV book {} was completely blank".format( BBB ) )
+            else: logging.info( f"BCV book {BBB} was completely blank" )
             self.availableBBBs.add( BBB )
-        else: logging.info( "BCV book {} is not listed as being available".format( BBB ) )
+        else: logging.info( f"BCV book {BBB} is not listed as being available" )
     # end of BCVBible.loadBook
 
 
@@ -330,18 +329,18 @@ class BCVBible( Bible ):
         Multiprocessing version!
         Load the requested book if it's not already loaded (but doesn't save it as that is not safe for multiprocessing)
         """
-        fnPrint( DEBUGGING_THIS_MODULE, _("loadBookMP( {} )").format( BBB ) )
+        fnPrint( DEBUGGING_THIS_MODULE, f"loadBookMP( {BBB} )" )
         assert BBB not in self.books
         self.triedLoadingBook[BBB] = True
         if BBB in self.givenBookList:
             if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag:
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '  ' + "Loading {} from {} from {}…".format( BBB, self.name, self.sourceFolder ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Loading {BBB} from {self.name} from {self.sourceFolder}…" )
             bcvBB = BCVBibleBook( self, BBB )
             bcvBB.load( self.sourceFolder )
             bcvBB.validateMarkers()
-            if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("    Finishing loading BCV book {}.").format( BBB ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"    Finishing loading BCV book {BBB}." )
             return bcvBB
-        else: logging.info( "BCV book {} is not listed as being available".format( BBB ) )
+        else: logging.info( f"BCV book {BBB} is not listed as being available" )
     # end of BCVBible.loadBookMP
 
 
@@ -349,15 +348,15 @@ class BCVBible( Bible ):
         """
         Load all the books.
         """
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("Loading {} from {}…").format( self.name, self.sourceFolder ) )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Loading {self.name} from {self.sourceFolder}…" )
 
         if not self.preloadDone: self.preload()
 
         if self.givenBookList:
             if BibleOrgSysGlobals.maxProcesses > 1: # Load all the books as quickly as possible
                 if BibleOrgSysGlobals.verbosityLevel > 1:
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Loading {} BCV books using {} processes…").format( len(self.givenBookList), BibleOrgSysGlobals.maxProcesses ) )
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("  NOTE: Outputs (including error and warning messages) from loading various books may be interspersed.") )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Loading {len(self.givenBookList)} BCV books using {BibleOrgSysGlobals.maxProcesses} processes…" )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  NOTE: Outputs (including error and warning messages) from loading various books may be interspersed." )
                 BibleOrgSysGlobals.alreadyMultiprocessing = True
                 with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                     results = pool.map( self._loadBookMP, self.givenBookList ) # have the pool do our loads
@@ -370,10 +369,10 @@ class BCVBible( Bible ):
                 # Load the books one by one -- assuming that they have regular Paratext style filenames
                 for BBB in self.givenBookList:
                     #if BibleOrgSysGlobals.verbosityLevel>1 or BibleOrgSysGlobals.debugFlag:
-                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("  BCVBible: Loading {} from {} from {}…").format( BBB, self.name, self.sourceFolder ) )
+                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  BCVBible: Loading {BBB} from {self.name} from {self.sourceFolder}…" )
                     loadedBook = self.loadBook( BBB ) # also saves it
         else:
-            logging.critical( "BCVBible: " + _("No books to load in folder '{}'!").format( self.sourceFolder ) )
+            logging.critical( f"BCVBible: No books to load in folder {self.sourceFolder!r}!" )
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, self.getBookList() )
         self.doPostLoadProcessing()
     # end of BCVBible.load
@@ -403,7 +402,7 @@ class BCVBibleBook( BibleBook ):
         Sets some class variables and puts a dictionary into self.settingsDict.
         """
         if BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.verbosityLevel > 2:
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '  ' + "Loading {} metadata from {!r}…".format( self.BBB, metadataFilepath ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Loading {self.BBB} metadata from {metadataFilepath!r}…" )
         #if encoding is None: encoding = 'utf-8'
         self.metadataFilepath = metadataFilepath
         self.givenCVList = None
@@ -412,7 +411,7 @@ class BCVBibleBook( BibleBook ):
             for line in myFile:
                 lineCount += 1
                 if lineCount==1 and line and line[0]==BibleOrgSysGlobals.BOM:
-                    logging.info( "loadBookMetadata: Detected Unicode Byte Order Marker (BOM) in {}".format( metadataFilepath ) )
+                    logging.info( f"loadBookMetadata: Detected Unicode Byte Order Marker (BOM) in {metadataFilepath}" )
                     line = line[1:] # Remove the Byte Order Marker (BOM)
                 if line and line[-1]=='\n': line = line[:-1] # Remove trailing newline character
                 line = line.strip() # Remove leading and trailing whitespace
@@ -427,12 +426,12 @@ class BCVBibleBook( BibleBook ):
                         settingsDict[fieldName] = line[len(fieldName)+3:]
                         processed = True
                         break
-                if not processed: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "ERROR: Unexpected {!r} line in metadata file".format( line ) )
+                if not processed: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"ERROR: Unexpected {line!r} line in metadata file" )
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'SD', settingsDict )
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + "Got {} metadata entries:".format( len(settingsDict) ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + f"Got {len(settingsDict)} metadata entries:" )
         if BibleOrgSysGlobals.verbosityLevel > 3:
             for key in sorted(settingsDict):
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "    {}: {}".format( key, settingsDict[key] ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"    {key}: {settingsDict[key]}" )
 
         if 'BCVVersion' in settingsDict: settingsDict['BCVVersion'] == '1.0'; del settingsDict['BCVVersion']
         if 'WorkName' in settingsDict: self.workName = settingsDict['WorkName']; del settingsDict['WorkName']
@@ -444,7 +443,7 @@ class BCVBibleBook( BibleBook ):
             if CVL and CVL[0]=='[' and CVL[-1]==']': self.givenCVList = eval( CVL )
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'x1', repr(self.givenCVList) )
             if isinstance( self.givenCVList, list ): del settingsDict['CVList']
-            else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "ERROR: Unexpected {!r} format in metadata file".format( CVL ) )
+            else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"ERROR: Unexpected {CVL!r} format in metadata file" )
 
         if settingsDict:
             self.settingsDict = settingsDict
@@ -471,25 +470,25 @@ class BCVBibleBook( BibleBook ):
 
             Also convert ~ to a proper non-break space.
             """
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "doaddLine( {}, {} )".format( repr(originalMarker), repr(originalText) ) )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"doaddLine( {repr(originalMarker)}, {repr(originalText)} )" )
             marker, text = originalMarker, originalText.replace( '~', ' ' )
             if '\\' in text: # Check markers inside the lines
                 markerList = BibleOrgSysGlobals.BCVMarkers.getMarkerListFromText( text )
                 ix = 0
                 for insideMarker, iMIndex, nextSignificantChar, fullMarker, characterContext, endIndex, markerField in markerList: # check paragraph markers
                     if insideMarker == '\\': # it's a free-standing backspace
-                        loadErrors.append( _("{} {}:{} Improper free-standing backspace character within line in \\{}: {!r}").format( self.BBB, C, V, marker, text ) )
-                        logging.error( _("Improper free-standing backspace character within line after {} {}:{} in \\{}: {!r}").format( self.BBB, C, V, marker, text ) ) # Only log the first error in the line
-                        self.addPriorityError( 100, C, V, _("Improper free-standing backspace character inside a line") )
+                        loadErrors.append( f"{self.BBB} {C}:{V} Improper free-standing backspace character within line in \\{marker}: {text!r}" )
+                        logging.error( f"Improper free-standing backspace character within line after {self.BBB} {C}:{V} in \\{marker}: {text!r}" ) # Only log the first error in the line
+                        self.addPriorityError( 100, C, V, "Improper free-standing backspace character inside a line" )
                     elif BibleOrgSysGlobals.BCVMarkers.isNewlineMarker(insideMarker): # Need to split the line for everything else to work properly
                         if ix==0:
-                            loadErrors.append( _("{} {}:{} NewLine marker {!r} shouldn't appear within line in \\{}: {!r}").format( self.BBB, C, V, insideMarker, marker, text ) )
-                            logging.error( _("NewLine marker {!r} shouldn't appear within line after {} {}:{} in \\{}: {!r}").format( insideMarker, self.BBB, C, V, marker, text ) ) # Only log the first error in the line
-                            self.addPriorityError( 96, C, V, _("NewLine marker \\{} shouldn't be inside a line").format( insideMarker ) )
+                            loadErrors.append( f"{self.BBB} {C}:{V} NewLine marker {insideMarker!r} shouldn't appear within line in \\{marker}: {text!r}" )
+                            logging.error( f"NewLine marker {insideMarker!r} shouldn't appear within line after {self.BBB} {C}:{V} in \\{marker}: {text!r}" ) # Only log the first error in the line
+                            self.addPriorityError( 96, C, V, f"NewLine marker \\{insideMarker} shouldn't be inside a line" )
                         thisText = text[ix:iMIndex].rstrip()
                         self.addLine( marker, thisText )
                         ix = iMIndex + 1 + len(insideMarker) + len(nextSignificantChar) # Get the start of the next text -- the 1 is for the backslash
-                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Did a split from {}:{!r} to {}:{!r} leaving {}:{!r}".format( originalMarker, originalText, marker, thisText, insideMarker, text[ix:] ) )
+                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Did a split from {originalMarker}:{originalText!r} to {marker}:{thisText!r} leaving {insideMarker}:{text[ix:]!r}" )
                         marker = insideMarker # setup for the next line
                 if ix != 0: # We must have separated multiple lines
                     text = text[ix:] # Get the final bit of the line
@@ -497,7 +496,7 @@ class BCVBibleBook( BibleBook ):
         # end of doaddLine
 
 
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + _("Loading {} from {}…").format( self.BBB, folder ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + f"Loading {self.BBB} from {folder}…" )
         self.sourceFolder = os.path.join( folder, self.BBB+'/' )
 
         # Read book metadata
@@ -519,7 +518,7 @@ class BCVBibleBook( BibleBook ):
                 for line in myFile:
                     lineCount += 1
                     if lineCount==1 and line and line[0]==BibleOrgSysGlobals.BOM:
-                        logging.info( "loadBCVBibleBook: Detected Unicode Byte Order Marker (BOM) in {}".format( metadataFilepath ) )
+                        logging.info( f"loadBCVBibleBook: Detected Unicode Byte Order Marker (BOM) in {metadataFilepath}" )
                         line = line[1:] # Remove the Byte Order Marker (BOM)
                     if line and line[-1]=='\n': line = line[:-1] # Remove trailing newline character
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, CV, "line", line )
@@ -610,7 +609,7 @@ def briefDemo() -> None:
             elif os.path.isfile( somepath ): foundFiles.append( something )
 
         if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nTrying all {len(foundFolders)} discovered modules…" )
             parameters = [folderName for folderName in sorted(foundFolders)]
             BibleOrgSysGlobals.alreadyMultiprocessing = True
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
@@ -619,7 +618,7 @@ def briefDemo() -> None:
             BibleOrgSysGlobals.alreadyMultiprocessing = False
         else: # Just single threaded
             for j, someFolder in enumerate( sorted( foundFolders ) ):
-                vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nBCV D{}/ Trying {}".format( j+1, someFolder ) )
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nBCV D{j+1}/ Trying {someFolder}" )
                 #myTestFolder = os.path.join( testFolder, someFolder+'/' )
                 testBCV( someFolder )
 
@@ -633,7 +632,7 @@ def briefDemo() -> None:
                                         ):
             count += 1
             if os.access( testFolder, os.R_OK ):
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nBCV A{}/".format( count ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nBCV A{count}/" )
                 bcvB = BCVBible( testFolder, name, encoding=encoding )
                 bcvB.load()
                 if BibleOrgSysGlobals.verbosityLevel > 1:
@@ -705,7 +704,7 @@ def fullDemo() -> None:
             elif os.path.isfile( somepath ): foundFiles.append( something )
 
         if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nTrying all {len(foundFolders)} discovered modules…" )
             parameters = [folderName for folderName in sorted(foundFolders)]
             BibleOrgSysGlobals.alreadyMultiprocessing = True
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
@@ -714,7 +713,7 @@ def fullDemo() -> None:
             BibleOrgSysGlobals.alreadyMultiprocessing = False
         else: # Just single threaded
             for j, someFolder in enumerate( sorted( foundFolders ) ):
-                vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nBCV D{}/ Trying {}".format( j+1, someFolder ) )
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nBCV D{j+1}/ Trying {someFolder}" )
                 #myTestFolder = os.path.join( testFolder, someFolder+'/' )
                 testBCV( someFolder )
 
@@ -728,7 +727,7 @@ def fullDemo() -> None:
                                         ):
             count += 1
             if os.access( testFolder, os.R_OK ):
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nBCV A{}/".format( count ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nBCV A{count}/" )
                 bcvB = BCVBible( testFolder, name, encoding=encoding )
                 bcvB.load()
                 if BibleOrgSysGlobals.verbosityLevel > 1:

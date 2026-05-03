@@ -26,7 +26,6 @@
 """
 Module for creating and manipulating USFM filenames.
 """
-from gettext import gettext as _
 from pathlib import Path
 import os
 import logging
@@ -103,7 +102,7 @@ class USFMFilenames:
 
         # Check that the given folder is readable
         if not os.access( self.givenFolderName, os.R_OK ):
-            logging.critical( _("USFMFilenames: Given {!r} folder is unreadable").format( self.givenFolderName ) )
+            logging.critical( f"USFMFilenames: Given {self.givenFolderName!r} folder is unreadable" )
             return
 
         # Get the data tables that we need for proper checking
@@ -127,7 +126,7 @@ class USFMFilenames:
                 if os.path.isfile( filepath ): # It's a file not a folder
                     self.fileList.append( possibleFilename )
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "fL", self.fileList )
-        #if not self.fileList: logging.error( _("No files at all in given folder: {!r}").format( self.givenFolderName) ); return
+        #if not self.fileList: logging.error( f"No files at all in given folder: {self.givenFolderName!r}" ); return
 
         # See if we can find a pattern for these filenames
         matched = False
@@ -205,7 +204,7 @@ class USFMFilenames:
                             fillerSize = self.pattern.count( '*' )
                             fillerIndex = self.pattern.find( '*' )
                             if fillerIndex!=-1 and fillerSize==1: self.pattern = self.pattern[:fillerIndex] + foundFilename[fillerIndex] + self.pattern[fillerIndex+1:]
-                            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "Pattern is {!r}".format( self.pattern ) )
+                            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"Pattern is {self.pattern!r}" )
                             if '*' not in self.pattern: matched = True
                             else: # we'll try to be even more generic
                                 self.languageIndex = self.digitsIndex = None
@@ -213,7 +212,7 @@ class USFMFilenames:
                                 self.USFMBookCodeIndex = USFMBookCodeIndex
                                 self.pattern = '*' * foundLength
                                 self.pattern = self.pattern[:USFMBookCodeIndex] + 'bbb' + self.pattern[USFMBookCodeIndex+3:]
-                                vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "More generic pattern is {!r}".format( self.pattern ) )
+                                vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"More generic pattern is {self.pattern!r}" )
                                 matched = True
                         if matched:
                             if self.languageCode and self.languageCode.isupper(): self.pattern = self.pattern.replace( 'l', 'L' )
@@ -222,8 +221,8 @@ class USFMFilenames:
                             break
                 if matched: break
             if matched: break
-        #if not matched: logging.info( _("Unable to recognize pattern of valid USFM files in ") + self.givenFolderName )
-        #dPrint( 'Verbose', DEBUGGING_THIS_MODULE, "USFMFilenames: pattern={!r} fileExtension={!r}".format( self.pattern, self.fileExtension ) )
+        #if not matched: logging.info( "Unable to recognize pattern of valid USFM files in " + self.givenFolderName )
+        #dPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"USFMFilenames: pattern={self.pattern!r} fileExtension={self.fileExtension!r}" )
 
         # Also, try looking inside the files
         self.getUSFMIDsFromFiles( self.givenFolderName ) # Fill the above dictionaries
@@ -240,10 +239,10 @@ class USFMFilenames:
         """
         result = "USFM Filenames object:"
         indent = 2
-        if self.givenFolderName: result += ('\n' if result else '') + ' '*indent + _("Folder: {}").format( self.givenFolderName )
-        if self.pattern: result += ('\n' if result else '') + ' '*indent + _("Filename pattern: {}").format( self.pattern )
-        if self.fileExtension: result += ('\n' if result else '') + ' '*indent + _("File extension: {}").format( self.fileExtension )
-        if self.fileList and BibleOrgSysGlobals.verbosityLevel > 2: result += ('\n' if result else '') + ' '*indent + _("File list: ({}) {}").format( len(self.fileList), self.fileList )
+        if self.givenFolderName: result += ('\n' if result else '') + ' '*indent + f"Folder: {self.givenFolderName}"
+        if self.pattern: result += ('\n' if result else '') + ' '*indent + f"Filename pattern: {self.pattern}"
+        if self.fileExtension: result += ('\n' if result else '') + ' '*indent + f"File extension: {self.fileExtension}"
+        if self.fileList and BibleOrgSysGlobals.verbosityLevel > 2: result += ('\n' if result else '') + ' '*indent + f"File list: ({len(self.fileList)}) {self.fileList}"
         return result
     # end of USFMFilenames.__str___
 
@@ -264,7 +263,7 @@ class USFMFilenames:
         """
         Try to intelligently get the USFMId from the first line in the file (which should be the \\id line).
         """
-        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "getUSFMIDFromFile( {} {} {} {} )".format( repr(folder), repr(thisFilename), repr(filepath), encoding ) )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"getUSFMIDFromFile( {repr(folder)} {repr(thisFilename)} {repr(filepath)} {encoding} )" )
         if encoding is None: encoding = 'utf-8'
         # Look for the USFM id in the ID line (which should be the first line in a USFM file)
         try:
@@ -275,10 +274,10 @@ class USFMFilenames:
                     if line[-1]=='\n': line = line[:-1] # Removing trailing newline character
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, thisFilename, lineNumber, line )
                     if line.startswith( '\\id ' ):
-                        if len(line)<5: logging.warning( "id line {!r} in {} is too short".format( line, filepath ) )
+                        if len(line)<5: logging.warning( f"id line {filepath!r} in {line} is too short" )
                         idContent = line[4:]
                         tokens = idContent.split()
-                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Have id tokens: {}".format( tokens ) )
+                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Have id tokens: {tokens}" )
                         UCToken0 = tokens[0].upper()
                         if UCToken0=='I': UCToken0 = '1'
                         if UCToken0=='II': UCToken0 = '2'
@@ -290,17 +289,17 @@ class USFMFilenames:
                         if len(UCToken0)>2 and UCToken0[1] in ('_','-'): UCToken0 = UCToken0[0] + UCToken0[2:] # Change something like 1_SA to 1SA
                         if UCToken0 in self._USFMBooksCodesUpper: return UCToken0 # it's a valid one -- we have the most confidence in this one
                         elif UCToken0[:3] in self._USFMBooksCodesUpper: return UCToken0[:3] # perhaps an abbreviated version is valid (but could think Judges is JUD=Jude)
-                        else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "But {!r} wasn't a valid USFM ID in {}!!!".format( UCToken0, thisFilename ) )
+                        else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"But {thisFilename!r} wasn't a valid USFM ID in {UCToken0}!!!" )
                         break
                     elif lineNumber == 1:
                         if line.startswith ( '\\' ):
-                            logging.warning( "First line in {} in {} starts with a backslash but not an id line {!r}".format( thisFilename, folder, line ) )
+                            logging.warning( f"First line in {thisFilename} in {folder} starts with a backslash but not an id line {line!r}" )
                         elif not line:
-                            logging.info( "First line in {} in {} appears to be blank".format( thisFilename, folder ) )
+                            logging.info( f"First line in {thisFilename} in {folder} appears to be blank" )
                     if lineNumber >= 2: break # We only look at the first one or two lines
         except UnicodeDecodeError:
             if thisFilename != 'usfm-color.sty': # Seems this file isn't UTF-8, but we don't need it here anyway so ignore it
-                logging.info( "getUSFMIDFromFile: Seems we couldn't decode Unicode in {!r}".format( filepath ) ) # Could be binary or a different encoding
+                logging.info( f"getUSFMIDFromFile: Seems we couldn't decode Unicode in {filepath!r}" ) # Could be binary or a different encoding
         return None
     # end of USFMFilenames.getUSFMIDFromFile
 
@@ -334,10 +333,10 @@ class USFMFilenames:
                         assert filepath not in self._fileDictionary
                         BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromUSFMAbbreviation( USFMId )
                         self._fileDictionary[(givenFolder,possibleFilename,)] = BBB
-                        if BBB in self._BBBDictionary: logging.error( "{}Oops, already found {!r} in {}, now we have a duplicate in {}".format( 'getUSFMIDsFromFiles: ' if BibleOrgSysGlobals.debugFlag else '', BBB, self._BBBDictionary[BBB], possibleFilename ) )
+                        if BBB in self._BBBDictionary: logging.error( f"{'getUSFMIDsFromFiles: ' if BibleOrgSysGlobals.debugFlag else ''}Oops, already found {BBB!r} in {self._BBBDictionary[BBB]}, now we have a duplicate in {possibleFilename}" )
                         self._BBBDictionary[BBB] = (givenFolder,possibleFilename,)
         if len(self._fileDictionary) != len(self._BBBDictionary):
-            logging.warning( "getUSFMIDsFromFiles: Oops, something went wrong because dictionaries have {} and {} entries".format( len(self._fileDictionary), len(self._BBBDictionary) ) )
+            logging.warning( f"getUSFMIDsFromFiles: Oops, something went wrong because dictionaries have {len(self._fileDictionary)} and {len(self._BBBDictionary)} entries" )
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "fD2", self._fileDictionary )
         return len(self._fileDictionary)
     # end of USFMFilenames.getUSFMIDsFromFiles
@@ -372,10 +371,10 @@ class USFMFilenames:
         removeBBB = removeFilename = None
         for existingBBB, existingFilename in givenList:
             if existingBBB == BBB:
-                if BibleOrgSysGlobals.verbosityLevel > 2: logging.warning( "{} tried to add duplicate {} {} when already had {} (removed both)".format( caller, BBB, filename, existingFilename ) )
+                if BibleOrgSysGlobals.verbosityLevel > 2: logging.warning( f"{caller} tried to add duplicate {BBB} {filename} when already had {existingFilename} (removed both)" )
                 removeBBB, removeFilename = existingBBB, existingFilename
             if existingFilename == filename:
-                if BibleOrgSysGlobals.verbosityLevel > 2: logging.warning( "{} tried to add duplicate {} {} when already had {} (removed both)".format( caller, filename, BBB, existingBBB ) )
+                if BibleOrgSysGlobals.verbosityLevel > 2: logging.warning( f"{caller} tried to add duplicate {filename} {BBB} when already had {existingBBB} (removed both)" )
                 removeBBB, removeFilename = existingBBB, existingFilename
         if removeFilename:givenList.remove( (removeBBB,removeFilename,) )
         else: givenList.append( (BBB,filename,) )
@@ -433,11 +432,11 @@ class USFMFilenames:
                 if strictCheck:
                     USFMId = self.getUSFMIDFromFile( self.givenFolderName, derivedFilename, derivedFilepath )
                     if USFMId is None:
-                        logging.error( "{}internal USFM Id missing for {} in {}".format( 'getConfirmedFilenameTuples: ' if BibleOrgSysGlobals.debugFlag else '', BBB, derivedFilename ) )
+                        logging.error( f"{'getConfirmedFilenameTuples: ' if BibleOrgSysGlobals.debugFlag else ''}internal USFM Id missing for {BBB} in {derivedFilename}" )
                         continue # so it doesn't get added
                     BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromUSFMAbbreviation( USFMId )
                     if BBB != BBB:
-                        logging.error( "{}Internal USFM Id ({}{}) doesn't match {} for {}".format( 'getConfirmedFilenameTuples: ' if BibleOrgSysGlobals.debugFlag else '', USFMId, '' if BBB==USFMId else " -> {}".format(BBB), BBB, derivedFilename ) )
+                        logging.error( "{}Internal USFM Id ({}{}) doesn't match {} for {}".format( 'getConfirmedFilenameTuples: ' if BibleOrgSysGlobals.debugFlag else '', USFMId, '' if BBB==USFMId else f" -> {BBB}", BBB, derivedFilename ) )
                         continue # so it doesn't get added
                 self.doListAppend( BBB, derivedFilename, resultList, "getConfirmedFilenameTuples" )
         self.lastTupleList = resultList
@@ -518,7 +517,7 @@ class USFMFilenames:
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'UFN', repr(firstLine) )
                 if firstLine is None: resultList.remove( (BBB,filename) ); continue # seems we couldn't decode the file
                 if firstLine and firstLine[0]==BibleOrgSysGlobals.BOM:
-                    logging.info( "USFMBibleFileCheck: Detected Unicode Byte Order Marker (BOM) in {}".format( filename ) )
+                    logging.info( f"USFMBibleFileCheck: Detected Unicode Byte Order Marker (BOM) in {filename}" )
                     firstLine = firstLine[1:] # Remove the Unicode Byte Order Marker (BOM)
                 if not firstLine or firstLine[0] != '\\': # don't allow a blank first line and must start with a backslash
                     resultList.remove( (BBB,filename) )
@@ -599,7 +598,7 @@ def briefDemo() -> None:
                    Path( '/srv/AutoProcesses/Processed/Test/' ),
                    )
     for j, testFolder in enumerate( testFolders ):
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '\n{}'.format( j+1 ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'\n{j+1}' )
         if os.access( testFolder, os.R_OK ):
             UFns = USFMFilenames( testFolder )
             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, UFns )

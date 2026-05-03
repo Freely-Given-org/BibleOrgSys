@@ -1,4 +1,4 @@
-name: Rust Tests
+name: Rust and Python Checks
 
 on:
   pull_request:
@@ -8,8 +8,13 @@ on:
 
 jobs:
   test:
-    name: Run Cargo Test
+    name: Build and Test (Python ${{ matrix.python-version }})
     runs-on: ubuntu-latest
+    strategy:
+      # If one version fails, keep the others running to see the full picture
+      fail-fast: false
+      matrix:
+        python-version: ["3.12", "3.13", "3.14"]
 
     steps:
       - name: Checkout code
@@ -18,9 +23,24 @@ jobs:
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@stable
 
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          enable-cache: true
+          version: "latest"
+
+      - name: Set up Python ${{ matrix.python-version }}
+        run: uv python install ${{ matrix.python-version }}
+
       - name: Rust Cache
         uses: Swatinem/rust-cache@v2
+        with:
+          key: ${{ matrix.python-version }}
 
-      - name: Run tests
-        run: cargo test --verbose
-
+      - name: Run Tests with uv
+        run: |
+          # 'uv run' creates a transient virtualenv, installs maturin, 
+          # builds your rust code, and runs the command.
+          uv run --with maturin maturin develop --manifest-path Rust/bible_organisational_system/Cargo.toml
+          uv run cargo test --verbose
+          uv run python Tests/test_OET-RV_HAG_indexes.py

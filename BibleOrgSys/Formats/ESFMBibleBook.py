@@ -48,7 +48,6 @@ NOTE: We've started adding coding for the ESFM v0.6 spec,
 CHANGELOG:
     2026-04-12 Allow for an online folder to be used
 """
-from gettext import gettext as _
 import os
 from pathlib import Path
 import logging
@@ -109,7 +108,7 @@ class ESFMBibleBook( BibleBook ):
         Note: the base class later on will try to break apart lines with a paragraph marker in the middle --
                 we don't need to worry about doing that here.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, "ESFMBibleBook.load( {}, {} )".format( filename, folder ) )
+        fnPrint( DEBUGGING_THIS_MODULE, f"ESFMBibleBook.load( {filename}, {folder} )" )
 
 
         def oldESFMPreprocessing( BBB:str, C:str, V:str, marker, originalText ):
@@ -133,13 +132,13 @@ class ESFMBibleBook( BibleBook ):
                 which were one word in the original, e.g., went_down
             """
             if len(originalText)>5: # Don't display for "blank" lines (like '\\v 10 ')
-                fnPrint( DEBUGGING_THIS_MODULE, "ESFMBibleBook.oldESFMPreprocessing( {} {}:{}, {}, '{}' )".format( BBB, C, V, marker, originalText ) )
+                fnPrint( DEBUGGING_THIS_MODULE, f"ESFMBibleBook.oldESFMPreprocessing( {BBB} {C}:{V}, {marker}, '{originalText}' )" )
 
 
             def saveWord( BBB:str, C:str, V:str, word ):
                 """
                 """
-                # fnPrint( DEBUGGING_THIS_MODULE, "ESFMBibleBook.saveWord( {}, {}:{}, '{}' )".format( BBB, C, V, word ) )
+                # fnPrint( DEBUGGING_THIS_MODULE, f"ESFMBibleBook.saveWord( {BBB}, {C}:{V}, '{word}' )" )
                 assert word and ' ' not in word
             # end of saveWord
 
@@ -155,16 +154,16 @@ class ESFMBibleBook( BibleBook ):
                 Returns a character SFM field to be inserted into the line
                     (for better compatibility with the software chain).
                 """
-                fnPrint( DEBUGGING_THIS_MODULE, "ESFMBibleBook.saveSemanticTag( {} {}:{}, '{}', '{}' )".format( BBB, C, V, word, tag ) )
+                fnPrint( DEBUGGING_THIS_MODULE, f"ESFMBibleBook.saveSemanticTag( {BBB} {C}:{V}, '{word}', '{tag}' )" )
                 assert word and ' ' not in word
                 assert tag and tag[0]=='=' and len(tag)>=2
                 tagMarker, tagContent = tag[1], tag[2:]
 
                 thisDict = self.containerBibleObject.semanticDict
                 if tagMarker not in ESFM_SEMANTIC_TAGS:
-                    loadErrors.append( _("{} {}:{} unknown ESFM {!r} tag content {!r}").format( self.BBB, C, V, tagMarker, tagContent ) )
-                    logging.error( "ESFM tagging error in {} {}:{}: unknown {!r} tag in {!r}".format( BBB, C, V, tagMarker, tag ) )
-                    self.addPriorityError( 15, C, V, _("Unknown ESFM semantic tag") )
+                    loadErrors.append( f"{self.BBB} {C}:{V} unknown ESFM {tagMarker!r} tag content {tagContent!r}" )
+                    logging.error( f"ESFM tagging error in {BBB} {C}:{V}: unknown {tagMarker!r} tag in {tag!r}" )
+                    self.addPriorityError( 15, C, V, "Unknown ESFM semantic tag" )
                     if 'Tag errors' not in thisDict: thisDict['Tag errors'] = []
                     thisDict['Tag errors'].append( (BBB,C,V,tag[1:]) )
                 if not tagContent: tagContent = word
@@ -173,19 +172,19 @@ class ESFMBibleBook( BibleBook ):
                 if tagMarker in thisDict \
                 and tagContent in thisDict[tagMarker]:
                     thisDict[tagMarker][tagContent].append( (BBB,C,V,word) )
-                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Now have {}:{}={}".format( tagMarker, tagContent, thisDict[tagMarker][tagContent] ) )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Now have {tagMarker}:{tagContent}={thisDict[tagMarker][tagContent]}" )
                 else: # couldn't find it
-                    loadErrors.append( _("{} {}:{} unknown ESFM {!r} tag content {!r}").format( self.BBB, C, V, tagMarker, tagContent ) )
-                    logging.error( "ESFM tagging error in {} {}:{}: unknown {!r} tag content {!r}".format( BBB, C, V, tagMarker, tagContent ) )
-                    self.addPriorityError( 15, C, V, _("Unknown ESFM semantic tag") )
+                    loadErrors.append( f"{self.BBB} {C}:{V} unknown ESFM {tagMarker!r} tag content {tagContent!r}" )
+                    logging.error( f"ESFM tagging error in {BBB} {C}:{V}: unknown {tagMarker!r} tag content {tagContent!r}" )
+                    self.addPriorityError( 15, C, V, "Unknown ESFM semantic tag" )
                     if 'Missing' not in thisDict: thisDict['Missing'] = {}
                     if tagMarker not in thisDict['Missing']: thisDict['Missing'][tagMarker] = {}
                     if tagContent not in thisDict['Missing'][tagMarker]: thisDict['Missing'][tagMarker][tagContent] = []
                     thisDict['Missing'][tagMarker][tagContent].append( (BBB,C,V) if word==tagContent else (BBB,C,V,word) )
 
                 if word==tagContent:
-                    return "\\sem {} {}\\sem*".format( tagMarker, word )
-                return "\\sem {} {}={}\\sem*".format( tagMarker, word, tagContent )
+                    return f"\\sem {tagMarker} {word}\\sem*"
+                return f"\\sem {tagMarker} {word}={tagContent}\\sem*"
             # end of saveSemanticTag
 
 
@@ -194,16 +193,16 @@ class ESFMBibleBook( BibleBook ):
                 Returns a character SFM field to be inserted into the line
                     (for better compatibility with the software chain).
                 """
-                fnPrint( DEBUGGING_THIS_MODULE, "ESFMBibleBook.saveStrongsTag( {}, {}:{}, '{}', '{}' )".format( BBB, C, V, word, tag ) )
+                fnPrint( DEBUGGING_THIS_MODULE, f"ESFMBibleBook.saveStrongsTag( {BBB}, {C}:{V}, '{word}', '{tag}' )" )
                 assert word and ' ' not in word
                 assert tag and tag[0]=='=' and tag[1]=='S' and len(tag)>=3
                 tagMarker, tagContent = tag[2], tag[3:]
 
                 thisDict = self.containerBibleObject.StrongsDict
                 if tagMarker not in ESFM_STRONGS_TAGS:
-                    loadErrors.append( _("{} {}:{} unknown ESFM {!r} tag content {!r}").format( self.BBB, C, V, tagMarker, tagContent ) )
-                    logging.error( "ESFM tagging error in {} {}:{}: unknown {!r} tag in {!r}".format( BBB, C, V, tagMarker, tag ) )
-                    self.addPriorityError( 10, C, V, _("Unknown ESFM Strong's tag") )
+                    loadErrors.append( f"{self.BBB} {C}:{V} unknown ESFM {tagMarker!r} tag content {tagContent!r}" )
+                    logging.error( f"ESFM tagging error in {BBB} {C}:{V}: unknown {tagMarker!r} tag in {tag!r}" )
+                    self.addPriorityError( 10, C, V, "Unknown ESFM Strong's tag" )
                     if 'Tag errors' not in thisDict: thisDict['Tag errors'] = []
                     thisDict['Tag errors'].append( (BBB,C,V,tag[1:]) )
                 if not tagContent: tagContent = word
@@ -216,17 +215,17 @@ class ESFMBibleBook( BibleBook ):
                         thisDict[tagMarker][tagContent] = [thisEntry] # Convert from a string to a list with the string as the first list item
                     thisDict[tagMarker][tagContent].append( (BBB,C,V,word) )
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, " ", tagMarker, tagContent, thisEntry )
-                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Now have {}:{}={}".format( tagMarker, tagContent, thisDict[tagMarker][tagContent] ) )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Now have {tagMarker}:{tagContent}={thisDict[tagMarker][tagContent]}" )
                 else: # couldn't find it
-                    loadErrors.append( _("{} {}:{} unknown ESFM {!r} tag content {!r}").format( self.BBB, C, V, tagMarker, tagContent ) )
-                    logging.error( "ESFM tagging error in {} {}:{}: unknown {!r} tag content {!r}".format( BBB, C, V, tagMarker, tagContent ) )
-                    self.addPriorityError( 10, C, V, _("Unknown ESFM Strong's tag") )
+                    loadErrors.append( f"{self.BBB} {C}:{V} unknown ESFM {tagMarker!r} tag content {tagContent!r}" )
+                    logging.error( f"ESFM tagging error in {BBB} {C}:{V}: unknown {tagMarker!r} tag content {tagContent!r}" )
+                    self.addPriorityError( 10, C, V, "Unknown ESFM Strong's tag" )
                     if 'Missing' not in thisDict: thisDict['Missing'] = {}
                     if tagMarker not in thisDict['Missing']: thisDict['Missing'][tagMarker] = {}
                     if tagContent not in thisDict['Missing'][tagMarker]: thisDict['Missing'][tagMarker][tagContent] = []
                     thisDict['Missing'][tagMarker][tagContent].append( (BBB,C,V) if word==tagContent else (BBB,C,V,word) )
 
-                return "\\str {} {}={}\\str*".format( tagMarker, tagContent, word )
+                return f"\\str {tagMarker} {tagContent}={word}\\str*"
             # end of saveStrongsTag
 
 
@@ -241,7 +240,7 @@ class ESFMBibleBook( BibleBook ):
             #textLen = len( originalText )
             resultText = ''
             firstWordFlag = True
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'oldESFMPreprocessing {} {}:{}'.format( BBB, C, V ) )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'oldESFMPreprocessing {BBB} {C}:{V}' )
             for j, originalChar in enumerate( originalText ):
                 char = originalChar
                 #nextChar = originalText[j+1] if j<textLen-1 else ''
@@ -259,7 +258,7 @@ class ESFMBibleBook( BibleBook ):
                         #assert resultText[-1] == ' '
                         #resultText = resultText[:-1] # Remove the space from the underline otherwise we'll get two spaces
                     if lastChar != '_' and (not underlineGroupFlag) and hangingUnderlineCount!=0:
-                        #if underlineGroup: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "underlineGroup was: {!r}".format( underlineGroup ) )
+                        #if underlineGroup: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"underlineGroup was: {underlineGroup!r}" )
                         underlineGroup = ''
                 #if lastChar == ' ':
                     #startsWithUnderline =  char == '_'
@@ -268,9 +267,9 @@ class ESFMBibleBook( BibleBook ):
                     if lastChar == ' ':
                         hangingUnderlineCount -= 1
                         if hangingUnderlineCount < 0:
-                            loadErrors.append( _("{} {}:{} missing first part of ESFM underline group at position {}").format( self.BBB, C, V, j ) )
-                            logging.error( "ESFM underlining error at {} in {} {}:{}".format( j, BBB, C, V ) )
-                            self.addPriorityError( 10, C, V, _("Missing first part of ESFM underline group") )
+                            loadErrors.append( f"{self.BBB} {C}:{V} missing first part of ESFM underline group at position {j}" )
+                            logging.error( f"ESFM underlining error at {j} in {BBB} {C}:{V}" )
+                            self.addPriorityError( 10, C, V, "Missing first part of ESFM underline group" )
                             hangingUnderlineCount = 0 # recover
 
                 if bracedGroupFlag:
@@ -295,7 +294,7 @@ class ESFMBibleBook( BibleBook ):
                             elif bracedGroupText or word:
                                 resultText += saveSemanticTag( BBB, C, V, bracedGroupText if bracedGroupText else word, tagText )
                             else: # WEB Luke 16:7 contains a footnote: \f + \ft 100 cors = about 2,110 liters or 600 bushels.\f*
-                                logging.critical( "Something funny with special symbol {!r} at {} {}:{}".format( char, BBB, C, V ) )
+                                logging.critical( f"Something funny with special symbol {V!r} at {char} {BBB}:{C}" )
                                 if BibleOrgSysGlobals.debugFlag or DEBUGGING_THIS_MODULE: halt
                             if char == '_':
                                 if not underlineGroupFlag: # it's just starting now
@@ -311,9 +310,9 @@ class ESFMBibleBook( BibleBook ):
                                 word = bracedGroupText = tagText = ''
                                 if char!='}': resultText += char
                         else:
-                            loadErrors.append( _("{} {}:{} unexpected short ESFM tag at {}={!r} in {!r}").format( self.BBB, C, V, j, originalChar, originalText ) )
-                            logging.error( "ESFM tagging error in {} {}:{}: unexpected short tag at {}={!r} in {!r}".format( BBB, C, V, j, originalChar, originalText ) )
-                            self.addPriorityError( 21, C, V, _("Unexpected ESFM short tag") )
+                            loadErrors.append( f"{self.BBB} {C}:{V} unexpected short ESFM tag at {j}={originalChar!r} in {originalText!r}" )
+                            logging.error( f"ESFM tagging error in {BBB} {C}:{V}: unexpected short tag at {j}={originalChar!r} in {originalText!r}" )
+                            self.addPriorityError( 21, C, V, "Unexpected ESFM short tag" )
                     else: # still in tag
                         tagText += char
                 else: # not in tag
@@ -323,9 +322,9 @@ class ESFMBibleBook( BibleBook ):
                     else: # still not in tag
                         if char == '{':
                             if (lastChar and lastChar!=' ') or tagText or bracedGroupFlag or bracedGroupText:
-                                loadErrors.append( _("{} {}:{} unexpected ESFM opening brace at {}={!r} in {!r}").format( self.BBB, C, V, j, originalChar, originalText ) )
-                                logging.error( "ESFM tagging error in {} {}:{}: unexpected opening brace at {}={!r} in {!r}".format( BBB, C, V, j, originalChar, originalText ) )
-                                self.addPriorityError( 20, C, V, _("Unexpected ESFM opening brace") )
+                                loadErrors.append( f"{self.BBB} {C}:{V} unexpected ESFM opening brace at {j}={originalChar!r} in {originalText!r}" )
+                                logging.error( f"ESFM tagging error in {BBB} {C}:{V}: unexpected opening brace at {j}={originalChar!r} in {originalText!r}" )
+                                self.addPriorityError( 20, C, V, "Unexpected ESFM opening brace" )
                             bracedGroupFlag = True
                             char = '' # nothing to go into resultText
                         elif char in ' _' or char in BibleOrgSysGlobals.DASH_CHARS:
@@ -371,8 +370,8 @@ class ESFMBibleBook( BibleBook ):
                 #resultText = resultText.replace('{','').replace('}','').replace('_(',' ').replace(')_',' ').replace('_',' ')
 
             if DEBUGGING_THIS_MODULE and resultText != originalText:
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "from: {!r}".format( originalText ) )
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " got: {!r}".format( resultText ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"from: {originalText!r}" )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f" got: {resultText!r}" )
                 #assert originalText.count('_') == resultText.count('_') Not necessarily true
             elif BibleOrgSysGlobals.strictCheckingFlag or (BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE) \
             and ('{'  in originalText or '}' in originalText or '=' in originalText):
@@ -394,37 +393,37 @@ class ESFMBibleBook( BibleBook ):
             """
             #if (DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.verbosityLevel > 1) \
                 #and (originalMarker not in ('c','v') or len(originalText)>5): # Don't display for "blank" lines (like '\v 10 ')
-                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "ESFM doaddLine( {!r}, {!r} )".format( originalMarker, originalText ) )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"ESFM doaddLine( {originalMarker!r}, {originalText!r} )" )
 
             marker, text = originalMarker, originalText.replace( '~', ' ' )
             marker = BibleOrgSysGlobals.loadedUSFMMarkers.toStandardMarker( originalMarker )
             if marker != originalMarker:
-                loadErrors.append( _("{} {}:{} ESFM doesn't allow unnumbered marker \\{}: {!r}").format( self.BBB, C, V, originalMarker, originalText ) )
-                logging.error( _("ESFM doesn't allow the unnumbered marker after {} {}:{} in \\{}: {!r}").format( self.BBB, C, V, originalMarker, originalText ) )
-                self.addPriorityError( 90, C, V, _("ESFM doesn't allow unnumbered markers") )
+                loadErrors.append( f"{self.BBB} {C}:{V} ESFM doesn't allow unnumbered marker \\{originalMarker}: {originalText!r}" )
+                logging.error( f"ESFM doesn't allow the unnumbered marker after {self.BBB} {C}:{V} in \\{originalMarker}: {originalText!r}" )
+                self.addPriorityError( 90, C, V, "ESFM doesn't allow unnumbered markers" )
 
             if '\\' in text: # Check markers inside the lines
                 markerList = BibleOrgSysGlobals.loadedUSFMMarkers.getMarkerListFromText( text )
                 ix = 0
                 for insideMarker, iMIndex, nextSignificantChar, fullMarker, characterContext, endIndex, markerField in markerList: # check paragraph markers
                     if insideMarker == '\\': # it's a free-standing backspace
-                        loadErrors.append( _("{} {}:{} Improper free-standing backspace character within line in \\{}: {!r}").format( self.BBB, C, V, marker, text ) )
-                        logging.error( _("Improper free-standing backspace character within line after {} {}:{} in \\{}: {!r}").format( self.BBB, C, V, marker, text ) ) # Only log the first error in the line
-                        self.addPriorityError( 100, C, V, _("Improper free-standing backspace character inside a line") )
+                        loadErrors.append( f"{self.BBB} {C}:{V} Improper free-standing backspace character within line in \\{marker}: {text!r}" )
+                        logging.error( f"Improper free-standing backspace character within line after {self.BBB} {C}:{V} in \\{marker}: {text!r}" ) # Only log the first error in the line
+                        self.addPriorityError( 100, C, V, "Improper free-standing backspace character inside a line" )
                     elif BibleOrgSysGlobals.loadedUSFMMarkers.isNewlineMarker(insideMarker): # Need to split the line for everything else to work properly
                         if ix==0:
-                            loadErrors.append( _("{} {}:{} NewLine marker {!r} shouldn't appear within line in \\{}: {!r}").format( self.BBB, C, V, insideMarker, marker, text ) )
-                            logging.error( _("NewLine marker {!r} shouldn't appear within line after {} {}:{} in \\{}: {!r}").format( insideMarker, self.BBB, C, V, marker, text ) ) # Only log the first error in the line
-                            self.addPriorityError( 96, C, V, _("NewLine marker \\{} shouldn't be inside a line").format( insideMarker ) )
+                            loadErrors.append( f"{self.BBB} {C}:{V} NewLine marker {marker!r} shouldn't appear within line in \\{insideMarker}: {text!r}" )
+                            logging.error( f"NewLine marker {marker!r} shouldn't appear within line after {insideMarker} {self.BBB}:{C} in \\{V}: {text!r}" ) # Only log the first error in the line
+                            self.addPriorityError( 96, C, V, f"NewLine marker \\{insideMarker} shouldn't be inside a line" )
                         thisText = text[ix:iMIndex].rstrip()
                         self.addLine( marker, thisText )
                         ix = iMIndex + 1 + len(insideMarker) + len(nextSignificantChar) # Get the start of the next text -- the 1 is for the backslash
-                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Did a split from {}:{!r} to {}:{!r} leaving {}:{!r}".format( originalMarker, originalText, marker, thisText, insideMarker, text[ix:] ) )
+                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Did a split from {originalMarker}:{originalText!r} to {marker}:{thisText!r} leaving {insideMarker}:{text[ix:]!r}" )
                         marker = BibleOrgSysGlobals.loadedUSFMMarkers.toStandardMarker( insideMarker ) # setup for the next line
                         if marker != insideMarker:
-                            loadErrors.append( _("{} {}:{} ESFM doesn't allow unnumbered marker within line \\{}: {!r}").format( self.BBB, C, V, insideMarker, originalText ) )
-                            logging.error( _("ESFM doesn't allow the unnumbered marker within line after {} {}:{} in \\{}: {!r}").format( self.BBB, C, V, insideMarker, originalText ) )
-                            self.addPriorityError( 90, C, V, _("ESFM doesn't allow unnumbered markers") )
+                            loadErrors.append( f"{self.BBB} {C}:{V} ESFM doesn't allow unnumbered marker within line \\{insideMarker}: {originalText!r}" )
+                            logging.error( f"ESFM doesn't allow the unnumbered marker within line after {self.BBB} {C}:{V} in \\{insideMarker}: {originalText!r}" )
+                            self.addPriorityError( 90, C, V, "ESFM doesn't allow unnumbered markers" )
 
                 if ix != 0: # We must have separated multiple lines
                     text = text[ix:] # Get the final bit of the line
@@ -433,18 +432,18 @@ class ESFMBibleBook( BibleBook ):
                 # Should this code be somewhere more general, e.g., in InternalBibleBook.py ???
                 leftCount, rightCount = text.count( '_ ' ), text.count( ' _' )
                 if leftCount > rightCount:
-                    loadErrors.append( _("{} {}:{} Too many '_ ' sequences in {} text: {}").format( self.BBB, C, V, marker, text ) )
-                    logging.warning( _("Too many '_ ' sequences in {} line after {} {}:{} at beginning of line with text: {!r}").format( marker, self.BBB, C, V, text ) )
+                    loadErrors.append( f"{self.BBB} {C}:{V} Too many '_ ' sequences in {marker} text: {text}" )
+                    logging.warning( f"Too many '_ ' sequences in {marker} line after {self.BBB} {C}:{V} at beginning of line with text: {text!r}" )
                 elif leftCount < rightCount:
-                    loadErrors.append( _("{} {}:{} Too many ' _' sequences in {} text: {}").format( self.BBB, C, V, marker, text ) )
-                    logging.warning( _("Too many ' _' sequences in {} line after {} {}:{} at beginning of line with text: {!r}").format( marker, self.BBB, C, V, text ) )
+                    loadErrors.append( f"{self.BBB} {C}:{V} Too many ' _' sequences in {marker} text: {text}" )
+                    logging.warning( f"Too many ' _' sequences in {marker} line after {self.BBB} {C}:{V} at beginning of line with text: {text!r}" )
 
             self.addLine( marker, text ) # Call the function in the base class to save the line (or the remainder of the line if we split it above)
         # end of ESFMBibleBook.doaddLine
 
 
         # Main code for ESFMBibleBook.load
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + _("Loading {}…").format( filename ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + f"Loading {filename}…" )
         #self.BBB = BBB
         #self.isSingleChapterBook = BibleOrgSysGlobals.loadedBibleBooksCodes.isSingleChapterBook( BBB )
         self.sourceFilename = filename
@@ -458,9 +457,9 @@ class ESFMBibleBook( BibleBook ):
         lastMarker = lastText = ''
         loadErrors:list[str] = []
         for marker,originalText in originalBook.lines: # Always process a line behind in case we have to combine lines
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "After {} {}:{} \\{} {!r}".format( self.BBB, C, V, marker, originalText ) )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"After {self.BBB} {C}:{V} \\{marker} {originalText!r}" )
             if not marker:
-                logging.critical( "After {} {}:{} \\{} {!r}".format( self.BBB, C, V, marker, originalText ) )
+                logging.critical( f"After {self.BBB} {C}:{V} \\{marker} {originalText!r}" )
                 if DEBUGGING_THIS_MODULE: halt
                 continue
 
@@ -485,66 +484,66 @@ class ESFMBibleBook( BibleBook ):
             elif BibleOrgSysGlobals.loadedUSFMMarkers.isInternalMarker( marker ) \
             or (marker and marker.endswith('*') and BibleOrgSysGlobals.loadedUSFMMarkers.isInternalMarker( marker[:-1] ) ): # the line begins with an internal marker -- append it to the previous line
                 if text:
-                    loadErrors.append( _("{} {}:{} Found '\\{}' internal marker at beginning of line with text: {!r}").format( self.BBB, C, V, marker, text ) )
-                    logging.warning( _("Found '\\{}' internal marker after {} {}:{} at beginning of line with text: {!r}").format( marker, self.BBB, C, V, text ) )
+                    loadErrors.append( f"{self.BBB} {C}:{V} Found '\\{marker}' internal marker at beginning of line with text: {text!r}" )
+                    logging.warning( f"Found '\\{marker}' internal marker after {self.BBB} {C}:{V} at beginning of line with text: {text!r}" )
                 else: # no text
-                    loadErrors.append( _("{} {}:{} Found '\\{}' internal marker at beginning of line (with no text)").format( self.BBB, C, V, marker ) )
-                    logging.warning( _("Found '\\{}' internal marker after {} {}:{} at beginning of line (with no text)").format( marker, self.BBB, C, V ) )
-                self.addPriorityError( 27, C, V, _("Found \\{} internal marker on new line in file").format( marker ) )
+                    loadErrors.append( f"{self.BBB} {C}:{V} Found '\\{marker}' internal marker at beginning of line (with no text)" )
+                    logging.warning( f"Found '\\{marker}' internal marker after {self.BBB} {C}:{V} at beginning of line (with no text)" )
+                self.addPriorityError( 27, C, V, f"Found \\{marker} internal marker on new line in file" )
                 if not lastText.endswith(' '): lastText += ' ' # Not always good to add a space, but it's their fault!
                 lastText +=  '\\' + marker + ' ' + text
-                vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "{} {} {} Appended {}:{!r} to get combined line {}:{!r}".format( self.BBB, C, V, marker, text, lastMarker, lastText ) )
+                vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"{self.BBB} {C} {V} Appended {marker}:{lastMarker!r} to get combined line {text}:{lastText!r}" )
             elif BibleOrgSysGlobals.loadedUSFMMarkers.isNoteMarker( marker ) \
             or marker and marker.endswith('*') and BibleOrgSysGlobals.loadedUSFMMarkers.isNoteMarker( marker[:-1] ): # the line begins with a note marker -- append it to the previous line
                 if text:
-                    loadErrors.append( _("{} {}:{} Found '\\{}' note marker at beginning of line with text: {!r}").format( self.BBB, C, V, marker, text ) )
-                    logging.warning( _("Found '\\{}' note marker after {} {}:{} at beginning of line with text: {!r}").format( marker, self.BBB, C, V, text ) )
+                    loadErrors.append( f"{self.BBB} {C}:{V} Found '\\{marker}' note marker at beginning of line with text: {text!r}" )
+                    logging.warning( f"Found '\\{marker}' note marker after {self.BBB} {C}:{V} at beginning of line with text: {text!r}" )
                 else: # no text
-                    loadErrors.append( _("{} {}:{} Found '\\{}' note marker at beginning of line (with no text)").format( self.BBB, C, V, marker ) )
-                    logging.warning( _("Found '\\{}' note marker after {} {}:{} at beginning of line (with no text)").format( marker, self.BBB, C, V ) )
-                self.addPriorityError( 26, C, V, _("Found \\{} note marker on new line in file").format( marker ) )
+                    loadErrors.append( f"{self.BBB} {C}:{V} Found '\\{marker}' note marker at beginning of line (with no text)" )
+                    logging.warning( f"Found '\\{marker}' note marker after {self.BBB} {C}:{V} at beginning of line (with no text)" )
+                self.addPriorityError( 26, C, V, f"Found \\{marker} note marker on new line in file" )
                 if not lastText.endswith(' ') and marker!='f': lastText += ' ' # Not always good to add a space, but it's their fault! Don't do it for footnotes, though.
                 lastText +=  '\\' + marker + ' ' + text
-                vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "{} {} {} Appended {}:{!r} to get combined line {}:{!r}".format( self.BBB, C, V, marker, text, lastMarker, lastText ) )
+                vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"{self.BBB} {C} {V} Appended {marker}:{lastMarker!r} to get combined line {text}:{lastText!r}" )
             else: # the line begins with an unknown marker (ESFM doesn't allow custom markers)
                 if text:
-                    loadErrors.append( _("{} {}:{} Found '\\{}' unknown marker at beginning of line with text: {!r}").format( self.BBB, C, V, marker, text ) )
-                    logging.error( _("Found '\\{}' unknown marker after {} {}:{} at beginning of line with text: {!r}").format( marker, self.BBB, C, V, text ) )
+                    loadErrors.append( f"{self.BBB} {C}:{V} Found '\\{marker}' unknown marker at beginning of line with text: {text!r}" )
+                    logging.error( f"Found '\\{marker}' unknown marker after {self.BBB} {C}:{V} at beginning of line with text: {text!r}" )
                 else: # no text
-                    loadErrors.append( _("{} {}:{} Found '\\{}' unknown marker at beginning of line (with no text)").format( self.BBB, C, V, marker ) )
-                    logging.error( _("Found '\\{}' unknown marker after {} {}:{} at beginning of line (with no text)").format( marker, self.BBB, C, V ) )
-                self.addPriorityError( 100, C, V, _("Found \\{} unknown marker on new line in file").format( marker ) )
+                    loadErrors.append( f"{self.BBB} {C}:{V} Found '\\{marker}' unknown marker at beginning of line (with no text)" )
+                    logging.error( f"Found '\\{marker}' unknown marker after {self.BBB} {C}:{V} at beginning of line (with no text)" )
+                self.addPriorityError( 100, C, V, f"Found \\{marker} unknown marker on new line in file" )
                 for tryMarker in sortedNLMarkers: # Try to do something intelligent here -- it might be just a missing space
                     if marker.startswith( tryMarker ): # Let's try changing it
                         if lastMarker: doaddLine( lastMarker, lastText )
                         lastMarker, lastText = tryMarker, marker[len(tryMarker):] + ' ' + text
-                        loadErrors.append( _("{} {}:{} Changed '\\{}' unknown marker to {!r} at beginning of line: {}").format( self.BBB, C, V, marker, tryMarker, text ) )
-                        logging.warning( _("Changed '\\{}' unknown marker to {!r} after {} {}:{} at beginning of line: {}").format( marker, tryMarker, self.BBB, C, V, text ) )
+                        loadErrors.append( f"{self.BBB} {C}:{V} Changed '\\{marker}' unknown marker to {text!r} at beginning of line: {tryMarker}" )
+                        logging.warning( f"Changed '\\{marker}' unknown marker to {text!r} after {tryMarker} {self.BBB}:{C} at beginning of line: {V}" )
                         break
                 # Otherwise, don't bother processing this line -- it'll just cause more problems later on
         if lastMarker: doaddLine( lastMarker, lastText ) # Process the final line
 
         if not originalBook.lines: # There were no lines!!!
-            loadErrors.append( _("{} This ESFM file was totally empty: {}").format( self.BBB, self.sourceFilename ) )
-            logging.error( _("ESFM file for {} was totally empty: {}").format( self.BBB, self.sourceFilename ) )
+            loadErrors.append( f"{self.BBB} This ESFM file was totally empty: {self.sourceFilename}" )
+            logging.error( f"ESFM file for {self.BBB} was totally empty: {self.sourceFilename}" )
             lastMarker, lastText = 'rem', 'This (ESFM) file was completely empty' # Save something since we had a file at least
 
         if loadErrors: self.checkResultsDictionary['Load Errors'] = loadErrors
         if 0 and BibleOrgSysGlobals.debugFlag and self.BBB=='JNA':
             for name,thisDict in  ( ('SEM',self.containerBibleObject.semanticDict), ('STR',self.containerBibleObject.StrongsDict) ):
                 if 'Tag errors' in thisDict:
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n{} Tag errors: {}".format( name, thisDict['Tag errors'] ) )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n{name} Tag errors: {thisDict['Tag errors']}" )
                 if 'Missing' in thisDict:
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n{} Missing: {}".format( name, thisDict['Missing'] ) )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n{name} Missing: {thisDict['Missing']}" )
                 if thisDict == self.containerBibleObject.semanticDict:
                     for tag in ESFM_SEMANTIC_TAGS:
                         if tag in thisDict:
-                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n{} Found {}: {}".format( name, tag, thisDict[tag] ) )
+                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n{name} Found {tag}: {thisDict[tag]}" )
                 elif thisDict == self.containerBibleObject.StrongsDict:
                     for tag in ESFM_STRONGS_TAGS:
                         for num in thisDict[tag]:
                             if isinstance( thisDict[tag][num], list ):
-                                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n{} Found {} {}: {}".format( name, tag, num, thisDict[tag][num] ) )
+                                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n{name} Found {tag} {num}: {thisDict[tag][num]}" )
             halt
         #if debugging: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, self._rawLines ); halt
 
@@ -625,12 +624,12 @@ def briefDemo() -> None:
     BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     def demoFile( name, filename, folder, BBB ):
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("Loading {} from {}{}…").format( BBB, filename, f" from {folder}" if BibleOrgSysGlobals.verbosityLevel > 2 else '' ) )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Loading {} from {}{}…".format( BBB, filename, f" from {folder}" if BibleOrgSysGlobals.verbosityLevel > 2 else '' ) )
         EBB = ESFMBibleBook( name, BBB )
         EBB.load( filename, folder )
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  ID is {!r}".format( EBB.getField( 'id' ) ) )
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  Header is {!r}".format( EBB.getField( 'h' ) ) )
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  Main titles are {!r} and {!r}".format( EBB.getField( 'mt1' ), EBB.getField( 'mt2' ) ) )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  ID is {EBB.getField( 'id' )!r}" )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  Header is {EBB.getField( 'h' )!r}" )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  Main titles are {EBB.getField( 'mt1' )!r} and {EBB.getField( 'mt2' )!r}" )
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, EBB )
         EBB.validateMarkers()
         EBBVersification = EBB.getVersification()
@@ -662,7 +661,7 @@ def briefDemo() -> None:
         name, testFolder = "Matigsalug", Path( '/mnt/HDs/Matigsalug/Bible/MBTV/' ) # You can put your test folder here
         #name, testFolder = "WEB", Path( '/srv/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/' ) # You can put your test folder here
         if os.access( testFolder, os.R_OK ):
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("Scanning {} from {}…").format( name, testFolder ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Scanning {name} from {testFolder}…" )
             fileList = USFMFilenames.USFMFilenames( testFolder ).getMaximumPossibleFilenameTuples()
             for BBB,filename in fileList:
                 demoFile( name, filename, testFolder, BBB )
@@ -676,12 +675,12 @@ def fullDemo() -> None:
     BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     def demoFile( name, filename, folder, BBB ):
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("Loading {} from {}{}…").format( BBB, filename, f" from {folder}" if BibleOrgSysGlobals.verbosityLevel > 2 else '' ) )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Loading {} from {}{}…".format( BBB, filename, f" from {folder}" if BibleOrgSysGlobals.verbosityLevel > 2 else '' ) )
         EBB = ESFMBibleBook( name, BBB )
         EBB.load( filename, folder )
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  ID is {!r}".format( EBB.getField( 'id' ) ) )
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  Header is {!r}".format( EBB.getField( 'h' ) ) )
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  Main titles are {!r} and {!r}".format( EBB.getField( 'mt1' ), EBB.getField( 'mt2' ) ) )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  ID is {EBB.getField( 'id' )!r}" )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  Header is {EBB.getField( 'h' )!r}" )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  Main titles are {EBB.getField( 'mt1' )!r} and {EBB.getField( 'mt2' )!r}" )
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, EBB )
         EBB.validateMarkers()
         EBBVersification = EBB.getVersification()
@@ -713,7 +712,7 @@ def fullDemo() -> None:
         name, testFolder = "Matigsalug", Path( '/mnt/HDs/Matigsalug/Bible/MBTV/' ) # You can put your test folder here
         #name, testFolder = "WEB", Path( '/srv/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/' ) # You can put your test folder here
         if os.access( testFolder, os.R_OK ):
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("Scanning {} from {}…").format( name, testFolder ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Scanning {name} from {testFolder}…" )
             fileList = USFMFilenames.USFMFilenames( testFolder ).getMaximumPossibleFilenameTuples()
             for BBB,filename in fileList:
                 demoFile( name, filename, testFolder, BBB )

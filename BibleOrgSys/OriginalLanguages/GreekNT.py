@@ -42,7 +42,6 @@ Module handling xxx to produce C and Python data tables.
     010102 C- -------- δὲ δὲ δέ δέ
     010102 V- 3AAI-S-- ἐγέννησεν ἐγέννησεν ἐγέννησε(ν) γεννάω
 """
-from gettext import gettext as _
 import os
 from pathlib import Path
 import logging
@@ -100,11 +99,11 @@ class GreekNT( Bible ):
             for filename in fileList:
                 if filename.lower().endswith('.txt'):
                     thisFilepath = os.path.join( self.sourceFilepath, filename )
-                    #if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Trying {}…".format( thisFilepath ) )
+                    #if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Trying {thisFilepath}…" )
                     if os.access( thisFilepath, os.R_OK ): # we can read that file
                         self.possibleFilenames.append( filename )
         elif not os.access( self.sourceFilepath, os.R_OK ):
-            logging.critical( "GreekNT: File {!r} is unreadable".format( self.sourceFilepath ) )
+            logging.critical( f"GreekNT: File {self.sourceFilepath!r} is unreadable" )
             return # No use continuing
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, self.possibleFilenames ); halt
 
@@ -124,12 +123,12 @@ class GreekNT( Bible ):
         #"""
         #result = "Greek Bible converter object"
         ##if self.title: result += ('\n' if result else '') + self.title
-        ##if self.version: result += ('\n' if result else '') + "Version: {} ".format( self.version )
-        ##if self.date: result += ('\n' if result else '') + "Date: {}".format( self.date )
+        ##if self.version: result += ('\n' if result else '') + f"Version: {self.version} "
+        ##if self.date: result += ('\n' if result else '') + f"Date: {self.date}"
         #if len(self.books)==1:
             #for BBB in self.books: break # Just get the first one
-            #result += ('\n' if result else '') + "  " + _("Contains one book: {}").format( BBB )
-        #else: result += ('\n' if result else '') + "  " + _("Number of books = {:,}").format( len(self.books) )
+            #result += ('\n' if result else '') + "  " + f"Contains one book: {BBB}"
+        #else: result += ('\n' if result else '') + "  " + f"Number of books = {len(self.books):,}"
         #return result
     ## end of __str__
 
@@ -138,11 +137,11 @@ class GreekNT( Bible ):
         """
         """
         fnPrint( DEBUGGING_THIS_MODULE, "GreekNT.loadBooks()" )
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, _("Loading Greek NT from {}…").format( self.sourceFilepath ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Loading Greek NT from {self.sourceFilepath}…" )
         for BBB in Greek.MORPHGNT_BOOKLIST:
             self.loadBook( BBB )
             break
-        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "{} books loaded.".format( len(self.books) ) )
+        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"{len(self.books)} books loaded." )
         #if self.possibleFilenames: # then we possibly have multiple files, probably one for each book
             #for filename in self.possibleFilenames:
                 #pathname = os.path.join( self.sourceFilepath, filename )
@@ -209,7 +208,7 @@ class GreekNT( Bible ):
         self.thisBook.objectNameString = 'Morph Greek NT Bible Book object'
         self.thisBook.objectTypeString = 'MorphGNT'
         filepath = os.path.join( self.sourceFilepath, filename )
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Loading {}…".format( filename ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Loading {filename}…" )
         lastLine, lineCount = '', 0
         lastC = lastV = None
         with open( filepath, encoding=encoding ) as myFile: # Automatically closes the file when done
@@ -217,7 +216,7 @@ class GreekNT( Bible ):
                 for line in myFile:
                     lineCount += 1
                     if lineCount==1 and encoding.lower()=='utf-8' and line and line[0]==BibleOrgSysGlobals.BOM:
-                        logging.info( "GreekNT: Detected Unicode Byte Order Marker (BOM) in {}".format( filename ) )
+                        logging.info( f"GreekNT: Detected Unicode Byte Order Marker (BOM) in {filename}" )
                         line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
                     if line and line[-1]=='\n': line = line[:-1] # Removing trailing newline character
                     #if not line: continue # Just discard blank lines
@@ -237,7 +236,7 @@ class GreekNT( Bible ):
                         self.thisBook.addLine( 'v', vn )
                         lastV = vn
                     self.thisBook.appendToLastLine( f' \\w {wordOnly}|lemma="{wordLemma}" x-pos="{POSCode}" x-morph="{parsingCode}"\\w*{wordWithPunctuation[len(wordOnly):]}', 'v' )
-                    # self.thisBook.addLine( 'g', "{}/{}".format( POSCode, parsingCode ) )
+                    # self.thisBook.addLine( 'g', f"{POSCode}/{parsingCode}" )
                     #reference = BBB,bits[0][1],bits[0][2], # Put the BBB into the reference
                     #lineTuples.append( (reference,bits[1],bits[2],) )
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, reference,bits[1],bits[2] ); halt
@@ -246,7 +245,7 @@ class GreekNT( Bible ):
                 #if lineCount > 1: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'Previous line was: ', lastLine )
                 #else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'Possible encoding error -- expected', encoding )
         if self.thisBook:
-            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "    {:,} words loaded from {}".format( len(self.thisBook), filename ) )
+            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"    {len(self.thisBook):,} words loaded from {filename}" )
             self.stashBook( self.thisBook )
             #self.books[BBB] = self.thisBook
     # end of loadBook
@@ -259,7 +258,7 @@ class GreekNT( Bible ):
         Used by the interlinearizer app.
         """
         fnPrint( DEBUGGING_THIS_MODULE, "GreekNT.analyzeWords()" )
-        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "analyzeWords: have {} books in the loaded NT".format( len(self.books) ) )
+        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"analyzeWords: have {len(self.books)} books in the loaded NT" )
 
         self.wordCounts = {} # Wordcount organised by BBB
         self.wordCounts['Total'] = 0

@@ -37,8 +37,7 @@ There are three kinds of SFM encoded files which can be loaded:
 
   Raises IOError if file doesn't exist.
 """
-# from gettext import gettext as _
-import logging
+# import logging
 import sys
 
 from BibleOrgSys import BibleOrgSysGlobals
@@ -98,7 +97,7 @@ class SFMLines:
                 for line in myFile:
                     lineCount += 1
                     if lineCount==1 and encoding.lower()=='utf-8' and line[0]==BibleOrgSysGlobals.BOM:
-                        logging.info( "SFMLines: Detected Unicode Byte Order Marker (BOM) in {}".format( SFMFilepath ) )
+                        logging.info( f"SFMLines: Detected Unicode Byte Order Marker (BOM) in {SFMFilepath}" )
                         line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
                     if line and line[-1]=='\n': line=line[:-1] # Removing trailing newline character
                     if not line: continue # Just discard blank lines
@@ -222,7 +221,7 @@ class SFMRecords:
                 for line in myFile:
                     lineCount += 1
                     if lineCount==1 and encoding.lower()=='utf-8' and line and line[0]==BibleOrgSysGlobals.BOM:
-                        logging.info( "SFMRecords: Detected Unicode Byte Order Marker (BOM) in {}".format( SFMFilepath ) )
+                        logging.info( f"SFMRecords: Detected Unicode Byte Order Marker (BOM) in {SFMFilepath}" )
                         line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
                     if line and line[-1]=='\n': line = line[:-1] # Removing trailing newline character
                     if not line: continue # Just discard blank lines
@@ -343,7 +342,7 @@ class SFMRecords:
                     elif isinstance( self.dataDict[key], dict ):
                         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, j, key, marker, value )
                         if marker in self.dataDict[key]:
-                            logging.warning( "Multiple {} lines in {} record--will be overwritten".format( marker, key ) )
+                            logging.warning( f"Multiple {marker} lines in {key} record--will be overwritten" )
                         self.dataDict[key][marker] = value
         return self.dataDict
     # end of SFMRecords.copyToDict
@@ -360,7 +359,7 @@ def briefDemo() -> None:
     BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     filepath = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'MatigsalugDictionaryA.sfm' )
-    vPrint( 'Info', DEBUGGING_THIS_MODULE, "Using {} as test file…".format( filepath ) )
+    vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Using {filepath} as test file…" )
 
     linesDB = SFMLines()
     linesDB.read( filepath, ignoreSFMs=('mn','aMU','aMW','cu','cp') )
@@ -388,7 +387,7 @@ def fullDemo() -> None:
     BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     filepath = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'MatigsalugDictionaryA.sfm' )
-    vPrint( 'Info', DEBUGGING_THIS_MODULE, "Using {} as test file…".format( filepath ) )
+    vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Using {filepath} as test file…" )
 
     linesDB = SFMLines()
     linesDB.read( filepath, ignoreSFMs=('mn','aMU','aMW','cu','cp') )

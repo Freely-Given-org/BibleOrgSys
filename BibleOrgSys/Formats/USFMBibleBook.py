@@ -31,7 +31,6 @@ CHANGELOG:
     2025-05-30 Handled /tc1 on new line (after /tr) which was being completely lost
     2025-06-24 Improved some error handling for invalid markers
 """
-from gettext import gettext as _
 from typing import Any
 import os
 from pathlib import Path
@@ -116,19 +115,19 @@ class USFMBibleBook( BibleBook ):
                 ix = 0
                 for insideMarker, iMIndex, nextSignificantChar, fullMarker, characterContext, endIndex, markerField in markerList: # check paragraph markers
                     if insideMarker == '\\': # it's a free-standing backspace
-                        loadErrors.append( _("{} {}:{} Improper free-standing backspace character within line in \\{}: {!r}").format( self.BBB, C, V, marker, text ) )
-                        logging.error( _("Improper free-standing backspace character within line after {} {}:{} in \\{}: {!r}").format( self.BBB, C, V, marker, text ) ) # Only log the first error in the line
-                        self.addPriorityError( 100, C, V, _("Improper free-standing backspace character inside a line") )
+                        loadErrors.append( f"{self.BBB} {C}:{V} Improper free-standing backspace character within line in \\{marker}: {text!r}" )
+                        logging.error( f"Improper free-standing backspace character within line after {self.BBB} {C}:{V} in \\{marker}: {text!r}" ) # Only log the first error in the line
+                        self.addPriorityError( 100, C, V, "Improper free-standing backspace character inside a line" )
                     elif BibleOrgSysGlobals.loadedUSFMMarkers.isNewlineMarker(insideMarker) \
                     or insideMarker == 'zaln-e': # Need to split the line for everything else to work properly
                         if ix==0:
-                            loadErrors.append( _("{} {}:{} NewLine marker {!r} shouldn't appear within line in \\{}: {!r}").format( self.BBB, C, V, insideMarker, marker, text ) )
-                            logging.error( _("NewLine marker {!r} shouldn't appear within line after {} {}:{} in \\{}: {!r}").format( insideMarker, self.BBB, C, V, marker, text ) ) # Only log the first error in the line
-                            self.addPriorityError( 96, C, V, _("NewLine marker \\{} shouldn't be inside a line").format( insideMarker ) )
+                            loadErrors.append( f"{self.BBB} {C}:{V} NewLine marker {marker!r} shouldn't appear within line in \\{insideMarker}: {text!r}" )
+                            logging.error( f"NewLine marker {marker!r} shouldn't appear within line after {insideMarker} {self.BBB}:{C} in \\{V}: {text!r}" ) # Only log the first error in the line
+                            self.addPriorityError( 96, C, V, f"NewLine marker \\{insideMarker} shouldn't be inside a line" )
                         thisText = text[ix:iMIndex].rstrip()
                         self.addLine( marker, thisText )
                         ix = iMIndex + 1 + len(insideMarker) + len(nextSignificantChar) # Get the start of the next text -- the 1 is for the backslash
-                        dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Did a split from {}:{!r} to {}:{!r} leaving {}:{!r}".format( addMarker, addText, marker, thisText, insideMarker, text[ix:] ) )
+                        dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Did a split from {addMarker}:{addText!r} to {marker}:{thisText!r} leaving {insideMarker}:{text[ix:]!r}" )
                         marker = insideMarker # setup for the next line
                 if ix != 0: # We must have separated multiple lines
                     text = text[ix:] # Get the final bit of the line
@@ -273,10 +272,8 @@ class USFMBibleBook( BibleBook ):
                     assert 'zaln-e' not in text[:ixAlignmentStart] # Make sure our nesting isn't confused
                     ixAlignmentStartEnding = text.find( '\\*' ) # Even start marker should be (self-)closed
                     if ixAlignmentStartEnding == -1: # Wasn't self-closing
-                        loadErrors.append( _("{} {}:{} Unclosed '\\{}' Door43 custom alignment marker at beginning of line (with no text)") \
-                                        .format( self.BBB, C, V, marker ) )
-                        logging.warning( _("Unclosed '\\{}' Door43 custom alignment marker after {} {}:{} at beginning of line (with no text)") \
-                                        .format( marker, self.BBB, C, V ) )
+                        loadErrors.append( f"{self.BBB} {C}:{V} Unclosed '\\{marker}' Door43 custom alignment marker at beginning of line (with no text)" )
+                        logging.warning( f"Unclosed '\\{marker}' Door43 custom alignment marker after {self.BBB} {C}:{V} at beginning of line (with no text)" )
                         dPrint( 'Info', debuggingThisFunction, "The above warnings and error messages need fixing!")
                         if debuggingThisFunction or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag: halt # Error messages need fixing
                     else: # self-closing was ok
@@ -398,7 +395,7 @@ class USFMBibleBook( BibleBook ):
                 issueLinePositioningErrors = False
         except AttributeError: pass # Don't worry about it
 
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + _("Loading {}…").format( filename ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + f"Loading {filename}…" )
         #self.BBB = BBB
         #self.isSingleChapterBook = BibleOrgSysGlobals.loadedBibleBooksCodes.isSingleChapterBook( BBB )
         self.sourceFilename = filename
@@ -435,36 +432,30 @@ class USFMBibleBook( BibleBook ):
             #         ixWordEndIndex = text.index( '|' )
             #         firstWord = text[:ixWordEndIndex]
             #         if not firstWord.isdigit():
-            #             loadErrors.append( _("{} {}:{} Found suspect concatenated w fields in \\{}='{}'") \
+            #             loadErrors.append( "{} {}:{} Found suspect concatenated w fields in \\{}='{}'" \
             #                         .format( self.BBB, C, V, marker, text ) )
-            #             logging.warning( _("Found suspect concatenated w fields in \\{}='{}' after {} {} {}:{}") \
+            #             logging.warning( "Found suspect concatenated w fields in \\{}='{}' after {} {} {}:{}" \
             #                         .format( marker, text, self.workName, self.BBB, C, V ) )
             #         # else: print( f"handleUWEncoding(): Got '{text[ixWordEndIndex+1:]}' immediately following '{firstWord}' in '{self.workName}' {self.BBB}_{C}:{V}")
             #     else: print( f"Mismatched in \\w fields {marker}='{text}'" ); halt # Some other marker
 
             if (marker=='w' and text.count('\\w ')+1 !=  text.count('\\w*')) \
             or (marker!='w' and text.count('\\w ') !=  text.count('\\w*')):
-                loadErrors.append( _("{} {}:{} Found wrongly coded w fields in \\{}='{}'") \
-                                    .format( self.BBB, C, V, marker, text ) )
-                logging.error( _("Found wrongly coded w fields in \\{}='{}' after {} {} {}:{}") \
-                                    .format( marker, text, self.workName, self.BBB, C, V ) )
+                loadErrors.append( f"{self.BBB} {C}:{V} Found wrongly coded w fields in \\{marker}='{text}'" )
+                logging.error( f"Found wrongly coded w fields in \\{marker}='{text}' after {self.workName} {self.BBB} {C}:{V}" )
                 text = f'{text}\\w*' if marker=='w' else ' '
             if (marker == 'w' and text.count('\\w ')+1 !=  text.count('\\w*')) \
             or (marker != 'w' and  text.count('\\w ') !=  text.count('\\w*')):
-                loadErrors.append( _("{} {}:{} Found mismatched w fields in \\{}='{}'") \
-                            .format( self.BBB, C, V, marker, text ) )
-                logging.critical( _("Found mismatched w fields in \\{}='{}' after {} {} {}:{}") \
-                            .format( marker, text, self.workName, self.BBB, C, V ) )
+                loadErrors.append( f"{self.BBB} {C}:{V} Found mismatched w fields in \\{marker}='{text}'" )
+                logging.critical( f"Found mismatched w fields in \\{marker}='{text}' after {self.workName} {self.BBB} {C}:{V}" )
 
             if marker == 's5': # it's a Door43 translatable section, i.e., not a section heading at all but an obsolete chunking marker
                 # We remove these
                 # TODO: Shouldn't we be converting these to the correct \\ts\\* ???
                 if text:
                     if text.strip():
-                        loadErrors.append( _("{} {}:{} Removed '\\{}' Door43 custom marker at beginning of line (WITH text)") \
-                                            .format( self.BBB, C, V, marker ) )
-                        logging.error( _("Removed '\\{}' Door43 custom marker after {} {} {}:{} at beginning of line (WITH text)") \
-                                            .format( marker, self.workName, self.BBB, C, V ) )
+                        loadErrors.append( f"{self.BBB} {C}:{V} Removed '\\{marker}' Door43 custom marker at beginning of line (WITH text)" )
+                        logging.error( f"Removed '\\{marker}' Door43 custom marker after {self.workName} {self.BBB} {C}:{V} at beginning of line (WITH text)" )
                         text = text.lstrip() # Can be an extra space in here!!! (eg., ULT MAT 12:17)
                         if text.startswith( '\\v ' ):
                             marker, text = 'v', text[3:] # Drop s5 and adjust marker
@@ -472,26 +463,20 @@ class USFMBibleBook( BibleBook ):
                             dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"USFMBibleBook.load() {self.workName} {self.BBB} s5 {text=}" )
                             if self.doExtraChecking: halt
                     else: # was just whitespace
-                        loadErrors.append( _("{} {}:{} Removed '\\{}' Door43 custom marker at beginning of line (with following whitespace)") \
-                                            .format( self.BBB, C, V, marker ) )
-                        logging.warning( _("Removed '\\{}' Door43 custom marker after {} {}:{} at beginning of line (with following whitespace)") \
-                                            .format( marker, self.BBB, C, V ) )
+                        loadErrors.append( f"{self.BBB} {C}:{V} Removed '\\{marker}' Door43 custom marker at beginning of line (with following whitespace)" )
+                        logging.warning( f"Removed '\\{marker}' Door43 custom marker after {self.BBB} {C}:{V} at beginning of line (with following whitespace)" )
                         continue # so it just gets ignored, effectively deleted
                 else: # have s5 field without text!
-                    loadErrors.append( _("{} {}:{} Removed '\\{}' Door43 custom marker at beginning of line (with no text)") \
-                                        .format( self.BBB, C, V, marker ) )
-                    logging.warning( _("Removed '\\{}' Door43 custom marker after {} {}:{} at beginning of line (with no text)") \
-                                        .format( marker, self.BBB, C, V ) )
+                    loadErrors.append( f"{self.BBB} {C}:{V} Removed '\\{marker}' Door43 custom marker at beginning of line (with no text)" )
+                    logging.warning( f"Removed '\\{marker}' Door43 custom marker after {self.BBB} {C}:{V} at beginning of line (with no text)" )
                     continue # so it just gets ignored, effectively deleted
             elif marker == 'ts\\*': # it's a Door43 translatable section, i.e., self-closed chunking milestone
                 # We remove these
                 # TODO: Shouldn't we be keeping these?
                 if text:
                     if text.strip():
-                        loadErrors.append( _("{} {}:{} Removed '\\{}' Door43 chunking marker at beginning of line (WITH text)") \
-                                            .format( self.BBB, C, V, marker ) )
-                        logging.error( _("Removed '\\{}' Door43 chunking marker after {} {} {}:{} at beginning of line (WITH text)") \
-                                            .format( marker, self.workName, self.BBB, C, V ) )
+                        loadErrors.append( f"{self.BBB} {C}:{V} Removed '\\{marker}' Door43 chunking marker at beginning of line (WITH text)" )
+                        logging.error( f"Removed '\\{marker}' Door43 chunking marker after {self.workName} {self.BBB} {C}:{V} at beginning of line (WITH text)" )
                         text = text.lstrip() # Can be an extra space in here!!! (eg., ULT MAT 12:17)
                         if text.startswith( '\\v ' ):
                             marker, text = 'v', text[3:] # Drop \ts\\* and adjust marker
@@ -503,16 +488,12 @@ class USFMBibleBook( BibleBook ):
                             dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"USFMBibleBook.load() {self.workName} {self.BBB} {C}:{V} ts\\* {text=}" )
                             if self.doExtraChecking: halt
                     else: # was just whitespace
-                        loadErrors.append( _("{} {}:{} Removed '\\{}' Door43 chunking marker at beginning of line (with following whitespace)") \
-                                            .format( self.BBB, C, V, marker ) )
-                        logging.warning( _("Removed '\\{}' Door43 chunking marker after {} {}:{} at beginning of line (with following whitespace)") \
-                                            .format( marker, self.BBB, C, V ) )
+                        loadErrors.append( f"{self.BBB} {C}:{V} Removed '\\{marker}' Door43 chunking marker at beginning of line (with following whitespace)" )
+                        logging.warning( f"Removed '\\{marker}' Door43 chunking marker after {self.BBB} {C}:{V} at beginning of line (with following whitespace)" )
                         continue # so it just gets ignored, effectively deleted
                 else: # have \\ts\\* field without text (as it should be)
-                    loadErrors.append( _("{} {}:{} Removed '\\{}' Door43 chunking marker at beginning of line (with no text)") \
-                                        .format( self.BBB, C, V, marker ) )
-                    logging.warning( _("Removed '\\{}' Door43 chunking marker after {} {}:{} at beginning of line (with no text)") \
-                                        .format( marker, self.BBB, C, V ) )
+                    loadErrors.append( f"{self.BBB} {C}:{V} Removed '\\{marker}' Door43 chunking marker at beginning of line (with no text)" )
+                    logging.warning( f"Removed '\\{marker}' Door43 chunking marker after {self.BBB} {C}:{V} at beginning of line (with no text)" )
                     continue # so it just gets ignored, effectively deleted
 
             # Keep track of where we are for more helpful error messages
@@ -520,21 +501,17 @@ class USFMBibleBook( BibleBook ):
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "bits", text.split() )
                 try: C = text.split()[0]
                 except IndexError: # Seems we had a \c field that's just whitespace
-                    loadErrors.append( _("{} {}:{} Found {!r} invalid chapter field") \
-                                        .format( self.BBB, C, V, text ) )
-                    logging.critical( _("Found {!r} invalid chapter field after {} {}:{}") \
-                                        .format( text, self.BBB, C, V ) )
-                    self.addPriorityError( 100, C, V, _("Found invalid/empty chapter field in file") )
+                    loadErrors.append( f"{self.BBB} {C}:{V} Found {text!r} invalid chapter field" )
+                    logging.critical( f"Found {text!r} invalid chapter field after {self.BBB} {C}:{V}" )
+                    self.addPriorityError( 100, C, V, "Found invalid/empty chapter field in file" )
                 V = '0'
             elif marker=='v' and text.strip():
                 # print( f"{self.workName} {self.BBB} {C}:{V} v {text=}" )
                 newV = text.split()[0] # Why does this give an IndexError if text==' '
                 if V=='0' and not ( newV=='1' or newV.startswith( '1-' ) ):
-                    loadErrors.append( _("{} {}:{} Expected v1 after chapter marker not {!r}") \
-                                        .format( self.BBB, C, V, newV ) )
-                    logging.error( _("Unexpected {!r} verse number immediately after chapter field after {} {}:{}") \
-                                        .format( newV, self.BBB, C, V ) )
-                    self.addPriorityError( 100, C, V, _("Got unexpected chapter number") )
+                    loadErrors.append( f"{self.BBB} {C}:{V} Expected v1 after chapter marker not {newV!r}" )
+                    logging.error( f"Unexpected {newV!r} verse number immediately after chapter field after {self.BBB} {C}:{V}" )
+                    self.addPriorityError( 100, C, V, "Got unexpected chapter number" )
                 V = newV
                 if C == '-1': C = '1' # Some single chapter books don't have an explicit chapter 1 marker
             elif C == '-1' and marker not in ('headers','intro'): V = str( int(V) + 1 )
@@ -553,12 +530,12 @@ class USFMBibleBook( BibleBook ):
                 if issueLinePositioningErrors \
                 and (not gotUWEncoding or marker!='w'):
                     if text:
-                        loadErrors.append( _("{} {}:{} Found '\\{}' internal marker at beginning of line with text: {!r}").format( self.BBB, C, V, marker, text ) )
-                        logging.warning( _("Found '\\{}' internal marker after {} {}:{} at beginning of line with text: {!r}").format( marker, self.BBB, C, V, text ) )
+                        loadErrors.append( f"{self.BBB} {C}:{V} Found '\\{marker}' internal marker at beginning of line with text: {text!r}" )
+                        logging.warning( f"Found '\\{marker}' internal marker after {self.BBB} {C}:{V} at beginning of line with text: {text!r}" )
                     else: # no text
-                        loadErrors.append( _("{} {}:{} Found '\\{}' internal marker at beginning of line (with no text)").format( self.BBB, C, V, marker ) )
-                        logging.warning( _("Found '\\{}' internal marker after {} {}:{} at beginning of line (with no text)").format( marker, self.BBB, C, V ) )
-                    self.addPriorityError( 27, C, V, _("Found \\{} internal marker on new line in file").format( marker ) )
+                        loadErrors.append( f"{self.BBB} {C}:{V} Found '\\{marker}' internal marker at beginning of line (with no text)" )
+                        logging.warning( f"Found '\\{marker}' internal marker after {self.BBB} {C}:{V} at beginning of line (with no text)" )
+                    self.addPriorityError( 27, C, V, f"Found \\{marker} internal marker on new line in file" )
                 if gotUWEncoding:
                     #  dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "HERE1", lastMarker, lastText, "now", marker, text)
                     marker, text = handleUWEncoding( marker, text, alignmentVariables )
@@ -602,12 +579,12 @@ class USFMBibleBook( BibleBook ):
             elif BibleOrgSysGlobals.loadedUSFMMarkers.isNoteMarker( marker ) \
             or (marker and marker.endswith('*') and BibleOrgSysGlobals.loadedUSFMMarkers.isNoteMarker(marker[:-1]) ): # the line begins with a note marker -- append it to the previous line
                 if text:
-                    loadErrors.append( _("{} {}:{} Found '\\{}' note marker at beginning of line with text: {!r}").format( self.BBB, C, V, marker, text ) )
-                    logging.warning( _("Found '\\{}' note marker after {} {}:{} at beginning of line with text: {!r}").format( marker, self.BBB, C, V, text ) )
+                    loadErrors.append( f"{self.BBB} {C}:{V} Found '\\{marker}' note marker at beginning of line with text: {text!r}" )
+                    logging.warning( f"Found '\\{marker}' note marker after {self.BBB} {C}:{V} at beginning of line with text: {text!r}" )
                 else: # no text
-                    loadErrors.append( _("{} {}:{} Found '\\{}' note marker at beginning of line (with no text)").format( self.BBB, C, V, marker ) )
-                    logging.warning( _("Found '\\{}' note marker after {} {}:{} at beginning of line (with no text)").format( marker, self.BBB, C, V ) )
-                self.addPriorityError( 26, C, V, _("Found \\{} note marker on new line in file").format( marker ) )
+                    loadErrors.append( f"{self.BBB} {C}:{V} Found '\\{marker}' note marker at beginning of line (with no text)" )
+                    logging.warning( f"Found '\\{marker}' note marker after {self.BBB} {C}:{V} at beginning of line (with no text)" )
+                self.addPriorityError( 26, C, V, f"Found \\{marker} note marker on new line in file" )
                 lastText =  f"{lastText}{'' if lastText.endswith(' ') else ' '}\\{marker} {text}" # Not always good to add a space, but it's their fault! Don't do it for footnotes, though.
                 dPrint( 'Never', DEBUGGING_THIS_MODULE, f"{self.BBB} {C} {V} Appended2 {marker}='{text}' to get combined line {lastMarker}='{lastText}'" )
             else: # the line begins with an unknown marker
@@ -633,28 +610,20 @@ class USFMBibleBook( BibleBook ):
                         if self.doExtraChecking: halt
                 elif marker and marker[0] == 'z': # it's a custom marker
                     if text:
-                        loadErrors.append( _("{} {}:{} Found '\\{}' unknown custom marker at beginning of line with text: {!r}") \
-                                            .format( self.BBB, C, V, marker, text ) )
-                        logging.warning( _("Found '\\{}' unknown custom marker after {} {}:{} at beginning of line with text: {!r}") \
-                                            .format( marker, self.BBB, C, V, text ) )
+                        loadErrors.append( f"{self.BBB} {C}:{V} Found '\\{marker}' unknown custom marker at beginning of line with text: {text!r}" )
+                        logging.warning( f"Found '\\{marker}' unknown custom marker after {self.BBB} {C}:{V} at beginning of line with text: {text!r}" )
                     else: # no text
-                        loadErrors.append( _("{} {}:{} Found '\\{}' unknown custom marker at beginning of line (with no text)") \
-                                            .format( self.BBB, C, V, marker ) )
-                        logging.warning( _("Found '\\{}' unknown custom marker after {} {}:{} at beginning of line (with no text)") \
-                                            .format( marker, self.BBB, C, V ) )
-                    self.addPriorityError( 80, C, V, _("Found \\{} unknown custom marker on new line in file").format( marker ) )
+                        loadErrors.append( f"{self.BBB} {C}:{V} Found '\\{marker}' unknown custom marker at beginning of line (with no text)" )
+                        logging.warning( f"Found '\\{marker}' unknown custom marker after {self.BBB} {C}:{V} at beginning of line (with no text)" )
+                    self.addPriorityError( 80, C, V, f"Found \\{marker} unknown custom marker on new line in file" )
                 else: # it's an unknown marker
                     if text:
-                        loadErrors.append( _("{} {}:{} Found '\\{}' unknown marker at beginning of line with text: {!r}") \
-                                            .format( self.BBB, C, V, marker, text ) )
-                        logging.error( _("Found '\\{}' unknown marker after {} {}:{} at beginning of line with text: {!r}") \
-                                            .format( marker, self.BBB, C, V, text ) )
+                        loadErrors.append( f"{self.BBB} {C}:{V} Found '\\{marker}' unknown marker at beginning of line with text: {text!r}" )
+                        logging.error( f"Found '\\{marker}' unknown marker after {self.BBB} {C}:{V} at beginning of line with text: {text!r}" )
                     else: # no text
-                        loadErrors.append( _("{} {}:{} Found '\\{}' unknown marker at beginning of line (with no text)") \
-                                            .format( self.BBB, C, V, marker ) )
-                        logging.error( _("Found '\\{}' unknown marker after {} {}:{} at beginning of line (with no text)") \
-                                            .format( marker, self.BBB, C, V ) )
-                    self.addPriorityError( 100, C, V, _("Found \\{} unknown marker on new line in file").format( marker ) )
+                        loadErrors.append( f"{self.BBB} {C}:{V} Found '\\{marker}' unknown marker at beginning of line (with no text)" )
+                        logging.error( f"Found '\\{marker}' unknown marker after {self.BBB} {C}:{V} at beginning of line (with no text)" )
+                    self.addPriorityError( 100, C, V, f"Found \\{marker} unknown marker on new line in file" )
                     # TODO: Should the following code be disabled by the 'strict' flag????
                     for tryMarker in sortedNLMarkers: # Try to do something intelligent here -- it might be just a missing space
                         if marker and marker.startswith( tryMarker ): # Let's try changing it
@@ -666,11 +635,11 @@ class USFMBibleBook( BibleBook ):
                             # Move the extra appendage to the marker into the actual text
                             marker, text = tryMarker, f"{marker[len(tryMarker):]} {text}"
                             if text:
-                                loadErrors.append( _("{} {}:{} Changed '\\{}' unknown marker to {!r} at beginning of line: {}").format( self.BBB, C, V, marker, tryMarker, text ) )
-                                logging.warning( _("Changed '\\{}' unknown marker to {!r} after {} {}:{} at beginning of line: {}").format( marker, tryMarker, self.BBB, C, V, text ) )
+                                loadErrors.append( f"{self.BBB} {C}:{V} Changed '\\{marker}' unknown marker to {text!r} at beginning of line: {tryMarker}" )
+                                logging.warning( f"Changed '\\{marker}' unknown marker to {text!r} after {tryMarker} {self.BBB}:{C} at beginning of line: {V}" )
                             else:
-                                loadErrors.append( _("{} {}:{} Changed '\\{}' unknown marker to {!r} at beginning of otherwise empty line").format( self.BBB, C, V, marker, tryMarker ) )
-                                logging.warning( _("Changed '\\{}' unknown marker to {!r} after {} {}:{} at beginning of otherwise empty line").format( marker, tryMarker, self.BBB, C, V ) )
+                                loadErrors.append( f"{self.BBB} {C}:{V} Changed '\\{marker}' unknown marker to {tryMarker!r} at beginning of otherwise empty line" )
+                                logging.warning( f"Changed '\\{marker}' unknown marker to {V!r} after {tryMarker} {self.BBB}:{C} at beginning of otherwise empty line" )
                             break
                     # Otherwise, don't bother processing this line -- it'll just cause more problems later on
                         loadErrors.append( f"{self.BBB} {C}:{V} Found Bad USFM line with {marker=} {text=}" )
@@ -682,8 +651,8 @@ class USFMBibleBook( BibleBook ):
 
         if not originalBook.lines: # There were no lines!!!
             assert not lastMarker and not lastText
-            loadErrors.append( _("{} This USFM file was totally empty: {}").format( self.BBB, self.sourceFilename ) )
-            logging.error( _("USFM file for {} was totally empty: {}").format( self.BBB, self.sourceFilename ) )
+            loadErrors.append( f"{self.BBB} This USFM file was totally empty: {self.sourceFilename}" )
+            logging.error( f"USFM file for {self.BBB} was totally empty: {self.sourceFilename}" )
             marker, text = 'rem', 'This (USFM) file was completely empty' # Save something since we had a file at least
 
         if lastMarker: doaddLine( lastMarker, lastText ) # Process the final line
@@ -717,12 +686,12 @@ def briefDemo() -> None:
     BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     def demoFile( name, filename, folder, BBB, encoding ):
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("Loading {} from {}{}…").format( BBB, filename, f" from {folder}" if BibleOrgSysGlobals.verbosityLevel > 2 else '' ) )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Loading {} from {}{}…".format( BBB, filename, f" from {folder}" if BibleOrgSysGlobals.verbosityLevel > 2 else '' ) )
         UBB = USFMBibleBook( name, BBB )
         UBB.load( filename, folder, encoding )
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  ID is {!r}".format( UBB.getField( 'id' ) ) )
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  Header is {!r}".format( UBB.getField( 'h' ) ) )
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  Main titles are {!r} and {!r}".format( UBB.getField( 'mt1' ), UBB.getField( 'mt2' ) ) )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  ID is {UBB.getField( 'id' )!r}" )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  Header is {UBB.getField( 'h' )!r}" )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  Main titles are {UBB.getField( 'mt1' )!r} and {UBB.getField( 'mt2' )!r}" )
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, UBB )
         UBB.validateMarkers()
         UBBVersification = UBB.getVersification()
@@ -749,17 +718,17 @@ def briefDemo() -> None:
         #name, encoding, testFolder, filename, BBB = "Matigsalug", 'utf-8', Path( '/mnt/HDs/Matigsalug/Bible/MBTV/'), "MBT67REV.SCP", "REV" # You can put your test file here
         if os.access( testFolder, os.R_OK ):
             demoFile( name, filename, testFolder, BBB, encoding )
-        else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Sorry, test folder '{}' doesn't exist on this computer.").format( testFolder ) )
+        else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Sorry, test folder '{testFolder}' doesn't exist on this computer." )
 
     if 0: # Test a whole folder full of files
         name, encoding, testFolder = "Matigsalug", 'utf-8', Path( '/mnt/HDs/Matigsalug/Bible/MBTV/' ) # You can put your test folder here
         #name, encoding, testFolder = "WEB", 'utf-8', Path( '/srv/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/' ) # You can put your test folder here
         if os.access( testFolder, os.R_OK ):
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("Scanning {} from {}…").format( name, testFolder ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Scanning {name} from {testFolder}…" )
             fileList = USFMFilenames.USFMFilenames( testFolder ).getMaximumPossibleFilenameTuples()
             for BBB,filename in fileList:
                 demoFile( name, filename, testFolder, BBB, encoding )
-        else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Sorry, test folder '{}' doesn't exist on this computer.").format( testFolder ) )
+        else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Sorry, test folder '{testFolder}' doesn't exist on this computer." )
 
     if 0: # Test with translationCore test files
         testFolder = Path( '/srv/Programming/ExternalPrograms/usfm-js/__tests__/resources/' )
@@ -779,12 +748,12 @@ def fullDemo() -> None:
     BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     def demoFile( name, filename, folder, BBB, encoding ):
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("Loading {} from {}{}…").format( BBB, filename, f" from {folder}" if BibleOrgSysGlobals.verbosityLevel > 2 else '' ) )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Loading {} from {}{}…".format( BBB, filename, f" from {folder}" if BibleOrgSysGlobals.verbosityLevel > 2 else '' ) )
         UBB = USFMBibleBook( name, BBB )
         UBB.load( filename, folder, encoding )
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  ID is {!r}".format( UBB.getField( 'id' ) ) )
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  Header is {!r}".format( UBB.getField( 'h' ) ) )
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  Main titles are {!r} and {!r}".format( UBB.getField( 'mt1' ), UBB.getField( 'mt2' ) ) )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  ID is {UBB.getField( 'id' )!r}" )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  Header is {UBB.getField( 'h' )!r}" )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  Main titles are {UBB.getField( 'mt1' )!r} and {UBB.getField( 'mt2' )!r}" )
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, UBB )
         UBB.validateMarkers()
         UBBVersification = UBB.getVersification()
@@ -811,17 +780,17 @@ def fullDemo() -> None:
         #name, encoding, testFolder, filename, BBB = "Matigsalug", 'utf-8', Path( '/mnt/HDs/Matigsalug/Bible/MBTV/'), "MBT67REV.SCP", "REV" # You can put your test file here
         if os.access( testFolder, os.R_OK ):
             demoFile( name, filename, testFolder, BBB, encoding )
-        else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Sorry, test folder '{}' doesn't exist on this computer.").format( testFolder ) )
+        else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Sorry, test folder '{testFolder}' doesn't exist on this computer." )
 
     if 0: # Test a whole folder full of files
         name, encoding, testFolder = "Matigsalug", 'utf-8', Path( '/mnt/HDs/Matigsalug/Bible/MBTV/' ) # You can put your test folder here
         #name, encoding, testFolder = "WEB", 'utf-8', Path( '/srv/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/' ) # You can put your test folder here
         if os.access( testFolder, os.R_OK ):
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("Scanning {} from {}…").format( name, testFolder ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Scanning {name} from {testFolder}…" )
             fileList = USFMFilenames.USFMFilenames( testFolder ).getMaximumPossibleFilenameTuples()
             for BBB,filename in fileList:
                 demoFile( name, filename, testFolder, BBB, encoding )
-        else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Sorry, test folder '{}' doesn't exist on this computer.").format( testFolder ) )
+        else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Sorry, test folder '{testFolder}' doesn't exist on this computer." )
 
     if 0: # Test with translationCore test files
         testFolder = Path( '/srv/Programming/ExternalPrograms/usfm-js/__tests__/resources/' )

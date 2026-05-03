@@ -25,7 +25,6 @@
 
 """
 """
-from gettext import gettext as _
 import os
 import logging
 import requests
@@ -82,7 +81,7 @@ class GenericOnlineBible:
         """
         indent = 2
         result = "Generic online Bible object"
-        if self.books: result += ('\n' if result else '') + ' '*indent + _("Books: {}").format( len(self.books) )
+        if self.books: result += ('\n' if result else '') + ' '*indent + f"Books: {len(self.books)}"
         return result
     # end of GenericOnlineBible.__str__
 
@@ -128,14 +127,14 @@ class GenericOnlineBible:
         #Returns None if the data cannot be fetched.
         #"""
         #if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE:
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("GenericOnlineBible.getOnlineData( {!r} {!r} )").format( fieldREST, additionalParameters ) )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"GenericOnlineBible.getOnlineData( {fieldREST!r} {additionalParameters!r} )" )
 
-        #dPrint( 'Info', DEBUGGING_THIS_MODULE, "Requesting data from {} for {}…".format( URL_BASE, self.damRoot ) )
-        #requestString = "{}{}{}{}".format( URL_BASE, fieldREST, self.URLFixedData, '&'+additionalParameters if additionalParameters else '' )
+        #dPrint( 'Info', DEBUGGING_THIS_MODULE, f"Requesting data from {URL_BASE} for {self.damRoot}…" )
+        #requestString = f"{URL_BASE}{fieldREST}{self.URLFixedData}{'&'+additionalParameters if additionalParameters else ''}"
         ##dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Request string is", repr(requestString) )
         #try: responseJSON = url lib.request.urlopen( requestString )
         #except url ib.error.URLError:
-            #if BibleOrgSysGlobals.debugFlag: logging.critical( "GenericOnlineBible.getOnlineData: error fetching {!r} {!r}".format( fieldREST, additionalParameters ) )
+            #if BibleOrgSysGlobals.debugFlag: logging.critical( f"GenericOnlineBible.getOnlineData: error fetching {fieldREST!r} {additionalParameters!r}" )
             #return None
         #responseSTR = responseJSON.read().decode('utf-8')
         #return json.loads( responseSTR )
@@ -149,7 +148,7 @@ class GenericOnlineBible:
         fnPrint( DEBUGGING_THIS_MODULE, f"GenericOnlineBible.cacheVerse( {key}, {verseData} )…" )
 
         if str(key) in self.cache:
-            vPrint( 'Never', DEBUGGING_THIS_MODULE, "  " + _("Retrieved from cache") )
+            vPrint( 'Never', DEBUGGING_THIS_MODULE, "  " + "Retrieved from cache" )
             self.cache.move_to_end( str(key) )
             cachedVerseData = self.cache[str(key)]
             if cachedVerseData != verseData:
@@ -169,7 +168,7 @@ class GenericOnlineBible:
         fnPrint( DEBUGGING_THIS_MODULE, f"GenericOnlineBible.getCachedVerseDataList( {key} )…" )
 
         if str(key) in self.cache:
-            vPrint( 'Never', DEBUGGING_THIS_MODULE, "  " + _("Retrieved from cache") )
+            vPrint( 'Never', DEBUGGING_THIS_MODULE, "  " + "Retrieved from cache" )
             self.cache.move_to_end( str(key) )
             return self.cache[str(key)]
 

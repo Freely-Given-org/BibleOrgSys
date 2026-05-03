@@ -1,5 +1,5 @@
 #!/usr/bin/env -S uv run
-# -\*- coding: utf-8 -\*-
+# -*- coding: utf-8 -*-
 # SPDX-License-Identifier: GPL-3.0-or-later
 #
 # UnknownBible.py
@@ -37,7 +37,6 @@ Currently aware of the following Bible types:
     Scripture Burrito which is JSON metadata plus USFM or USX
     Sword modules (binary).
 """
-from gettext import gettext as _
 import logging
 import os.path
 from pathlib import Path
@@ -105,7 +104,7 @@ class UnknownBible:
 
         # Check that the given folder is readable
         if not os.access( givenPathname, os.R_OK ):
-            logger.critical( _("Given {!r} pathname is unreadable").format( givenPathname ) )
+            logger.critical( f"Given {givenPathname!r} pathname is unreadable" )
             if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: halt
             self.folderReadable = False
         else: self.folderReadable = True
@@ -121,9 +120,9 @@ class UnknownBible:
         @return: the name of a Bible object formatted as a string
         @rtype: string
         """
-        result = _("Unknown Bible object")
-        result += ('\n' if result else '') + "  " + _("Folder: {}{}").format( self.givenFolderName, '' if self.folderReadable else ' UNREADABLE' )
-        if self.foundType: result += ('\n' if result else '') + "  " + _("Found type: {} ").format( self.foundType )
+        result = "Unknown Bible object"
+        result += ('\n' if result else '') + "  " + f"Folder: {self.givenFolderName}{'' if self.folderReadable else ' UNREADABLE'}"
+        if self.foundType: result += ('\n' if result else '') + "  " + f"Found type: {self.foundType} "
         return result
     # end of UnknownBible.__str__
 
@@ -145,7 +144,7 @@ class UnknownBible:
         or
             a loaded Bible
         """
-        fnPrint( DEBUGGING_THIS_MODULE, "UnknownBible.search( {}, {}, {}, {} )".format( strictCheck, autoLoad, autoLoadAlways, autoLoadBooks ) )
+        fnPrint( DEBUGGING_THIS_MODULE, f"UnknownBible.search( {strictCheck}, {autoLoad}, {autoLoadAlways}, {autoLoadBooks} )" )
 
         if not self.folderReadable: return None
         if autoLoadAlways or autoLoadBooks: autoLoad = True
@@ -159,7 +158,7 @@ class UnknownBible:
             Returns the three counters.
             """
             if BibleOrgSysGlobals.debugFlag or DEBUGGING_THIS_MODULE:
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "UnknownBible.recheckStrict( {}, {} )".format( folderName, oppositeStrictFlag ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"UnknownBible.recheckStrict( {folderName}, {oppositeStrictFlag} )" )
 
             totalBibleStrictCount, totalBibleStrictTypes, typesStrictlyFound = 0, 0, []
 
@@ -682,30 +681,28 @@ class UnknownBible:
                 #   so let's try again without the strict check
                 vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.search: retrying without strict checking criteria" )
                 totalBibleUnstrictCount, totalBibleStrictTypes, typesUnstrictlyFound = recheckStrict( self.givenFolderName, oppositeStrictFlag=False )
-                vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "UnknownBible.recheck: After {} {} {}".format( totalBibleCount, totalBibleTypes, typesFound ) )
-                vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "UnknownBible.recheck: Found {} {} {}".format( totalBibleUnstrictCount, totalBibleStrictTypes, typesUnstrictlyFound ) )
+                vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"UnknownBible.recheck: After {totalBibleCount} {totalBibleTypes} {typesFound}" )
+                vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"UnknownBible.recheck: Found {totalBibleUnstrictCount} {totalBibleStrictTypes} {typesUnstrictlyFound}" )
                 totalBibleCount, totalBibleTypes, typesFound = totalBibleUnstrictCount, totalBibleStrictTypes, typesUnstrictlyFound
         elif totalBibleCount > 1:
             if totalBibleTypes == 1:
                 if BibleOrgSysGlobals.verbosityLevel > 1:
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "UnknownBible.search: Multiple ({}) {} Bibles found in {}" \
-                                                        .format( totalBibleCount, typesFound[0], self.givenFolderName ) )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"UnknownBible.search: Multiple ({totalBibleCount}) {typesFound[0]} Bibles found in {self.givenFolderName}" )
                 else:
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "UnknownBible.search: Multiple ({}) {} Bibles found".format( totalBibleCount, typesFound[0] ) )
-                self.foundType = "Multiple found: {} Bibles".format( typesFound[0] )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"UnknownBible.search: Multiple ({totalBibleCount}) {typesFound[0]} Bibles found" )
+                self.foundType = f"Multiple found: {typesFound[0]} Bibles"
             else:
                 if BibleOrgSysGlobals.verbosityLevel > 1:
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "UnknownBible.search: Multiple ({}) Bibles found: {} in {}" \
-                                                        .format( totalBibleCount, typesFound, self.givenFolderName ) )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"UnknownBible.search: Multiple ({totalBibleCount}) Bibles found: {typesFound} in {self.givenFolderName}" )
                 else:
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "UnknownBible.search: Multiple ({}) Bibles found: {}".format( totalBibleCount, typesFound ) )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"UnknownBible.search: Multiple ({totalBibleCount}) Bibles found: {typesFound}" )
                 self.foundType = 'Many types found'
                 if not strictCheck:
                     # We didn't do a strict check the first time, so let's try that to try to reduce our found Bibles
                     vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.search: retrying with strict checking criteria" )
                     totalBibleStrictCount, totalBibleStrictTypes, typesStrictlyFound = recheckStrict( self.givenFolderName, oppositeStrictFlag=True )
-                    vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "UnknownBible.recheck: After {} {} {}".format( totalBibleCount, totalBibleTypes, typesFound ) )
-                    vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "UnknownBible.recheck: Found {} {} {}".format( totalBibleStrictCount, totalBibleStrictTypes, typesStrictlyFound ) )
+                    vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"UnknownBible.recheck: After {totalBibleCount} {totalBibleTypes} {typesFound}" )
+                    vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"UnknownBible.recheck: Found {totalBibleStrictCount} {totalBibleStrictTypes} {typesStrictlyFound}" )
                     totalBibleCount, totalBibleTypes, typesFound = totalBibleStrictCount, totalBibleStrictTypes, typesStrictlyFound
             if autoLoadAlways and BibleOrgSysGlobals.verbosityLevel > 0:
                 # If there's only one of a particular type, we'll go for that one
@@ -879,47 +876,47 @@ def briefDemo() -> None:
     # Now demo the class
     if 0: # Just test one folder
         testFolder = 'Put your folder here/'
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n\nUnknownBible A1/ Trying (but not loading) {}…".format( testFolder ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n\nUnknownBible A1/ Trying (but not loading) {testFolder}…" )
         uB = UnknownBible( testFolder )
         result1 = uB.search( autoLoad=False )
         result2 = uB.search( autoLoadBooks=True ) if result1 else None
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, uB )
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  A1 result1 is: {}".format( result1 ) )
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  A1 result2 is: {}".format( result2 ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  A1 result1 is: {result1}" )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  A1 result2 is: {result2}" )
         if result1 == 'Many types found':
             uB = UnknownBible( testFolder )
             result3 = uB.search( autoLoadAlways=False )
             result4 = uB.search( autoLoadAlways=True ) if result3 else None
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  A1 result3 is: {}".format( result3 ) )
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  A1 result4 is: {}".format( result4 ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  A1 result3 is: {result3}" )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  A1 result4 is: {result4}" )
 
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n\nUnknownBible A2/ (Strict as per BDB). Trying (but not loading) {}…".format( testFolder ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n\nUnknownBible A2/ (Strict as per BDB). Trying (but not loading) {testFolder}…" )
         uB = UnknownBible( testFolder )
         result1 = uB.search( strictCheck=True, autoLoad=False )
         result2 = uB.search( strictCheck=True, autoLoadBooks=True ) if result1 else None
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  A2 strict result1 is: {}".format( result1 ) )
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  A2 strict result2 is: {}".format( result2 ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  A2 strict result1 is: {result1}" )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  A2 strict result2 is: {result2}" )
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, uB )
         if result1 == 'Many types found':
             uB = UnknownBible( testFolder )
             result3 = uB.search( strictCheck=True, autoLoadAlways=False )
             result4 = uB.search( strictCheck=True, autoLoadAlways=True ) if result3 else None
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  A2 strict result3 is: {}".format( result3 ) )
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  A2 strict result4 is: {}".format( result4 ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  A2 strict result3 is: {result3}" )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  A2 strict result4 is: {result4}" )
             if result3 == 'Many types found':
                 uB = UnknownBible( testFolder )
                 result5 = uB.search( strictCheck=True, autoLoadAlways=False, autoLoadBooks=True )
                 result6 = uB.search( strictCheck=True, autoLoadAlways=True, autoLoadBooks=True ) if result5 else None
                 if BibleOrgSysGlobals.verbosityLevel > 1:
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  A2 strict result5 is: {}".format( result5 ) )
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  A2 strict result6 is: {}".format( result6 ) )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  A2 strict result5 is: {result5}" )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  A2 strict result6 is: {result6}" )
 
         #from BibleOrgSys.Bible import Bible
-        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n\nUnknownBible A3/ (Strict as per BDB). Trying {}…".format( testFolder ) )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n\nUnknownBible A3/ (Strict as per BDB). Trying {testFolder}…" )
         #uB = UnknownBible( testFolder )
         #result1 = uB.search( strictCheck=True, autoLoadAlways=True, autoLoadBooks=True )
         #if BibleOrgSysGlobals.verbosityLevel > 2:
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  A3 result1 is: {}".format( result1 ) )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  A3 result1 is: {result1}" )
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, uB )
         #if isinstance( result1, Bible ):
             #thisBible = result1
@@ -981,56 +978,56 @@ def briefDemo() -> None:
                     )
     if 1: # Just find the files
         testFolder = random.choice( testFolders )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n\nUnknownBible B/ Trying (but not loading) {}…".format( testFolder ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n\nUnknownBible B/ Trying (but not loading) {testFolder}…" )
         uB = UnknownBible( testFolder )
         result = uB.search( autoLoad=False )
         #result2 = uB.search( autoLoad=True ) if result1 else None
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Result is: {}".format( result ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Result is: {result}" )
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, uB )
 
     if 1: # Just load the Bible objects (only if exactly one found)
         testFolder = random.choice( testFolders )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n\nUnknownBible C/ Single loading (but not books) {}…".format( testFolder ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n\nUnknownBible C/ Single loading (but not books) {testFolder}…" )
         uB = UnknownBible( testFolder )
         result = uB.search( autoLoad=True )
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Result is: {}".format( result ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Result is: {result}" )
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, uB )
 
     if 1: # Fully load the Bible objects (only if exactly one found)
         testFolder = random.choice( testFolders )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n\nUnknownBible D/ Single loading (incl. books) {}…".format( testFolder ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n\nUnknownBible D/ Single loading (incl. books) {testFolder}…" )
         uB = UnknownBible( testFolder )
         result = uB.search( autoLoadBooks=True )
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Result is: {}".format( result ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Result is: {result}" )
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, uB )
 
     if 1: # Always load the Bible objects
         testFolder = random.choice( testFolders )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n\nUnknownBible E/ Always loading (but not books) {}…".format( testFolder ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n\nUnknownBible E/ Always loading (but not books) {testFolder}…" )
         uB = UnknownBible( testFolder )
         result = uB.search( autoLoadAlways=True )
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Result is: {}".format( result ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Result is: {result}" )
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, uB )
 
     if 1: # Always fully load the Bible objects
         testFolder = random.choice( testFolders )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n\nUnknownBible F/ Always loading (incl. books) {}…".format( testFolder ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n\nUnknownBible F/ Always loading (incl. books) {testFolder}…" )
         uB = UnknownBible( testFolder )
         result = uB.search( autoLoadAlways=True, autoLoadBooks=True )
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Result is: {}".format( result ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Result is: {result}" )
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, uB )
 
     if 0: # Load, check, and export the files
         testFolder = random.choice( testFolders )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n\nUnknownBible G/ Processing {}…".format( testFolder ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n\nUnknownBible G/ Processing {testFolder}…" )
         uB = UnknownBible( testFolder )
         result = uB.search( autoLoad=True )
-        #dPrint( 'Info', DEBUGGING_THIS_MODULE, "  Results are: {} and {}".format( result1, result2 ) )
+        #dPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Results are: {result1} and {result2}" )
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, uB )
         if result:
             result.check()
             results = result.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Results are: {}".format( results ) )
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Results are: {results}" )
 # end of UnknownBible.briefDemo
 
 def fullDemo() -> None:
@@ -1042,7 +1039,7 @@ def fullDemo() -> None:
     # Now demo the class
     if 1: # Just test one folder
         testFolder = 'Put your folder here/'
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n\nUnknownBible A1/ Trying (but not loading) {}…".format( testFolder ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n\nUnknownBible A1/ Trying (but not loading) {testFolder}…" )
         uB = UnknownBible( testFolder )
         result1 = uB.search( autoLoad=False )
         result2 = uB.search( autoLoadBooks=True ) if result1 else None
@@ -1053,36 +1050,36 @@ def fullDemo() -> None:
             uB = UnknownBible( testFolder )
             result3 = uB.search( autoLoadAlways=False )
             result4 = uB.search( autoLoadAlways=True ) if result3 else None
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  A1 result3 is: {}".format( result3 ) )
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  A1 result4 is: {}".format( result4 ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  A1 result3 is: {result3}" )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  A1 result4 is: {result4}" )
 
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n\nUnknownBible A2/ (Strict as per BDB). Trying (but not loading) {}…".format( testFolder ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n\nUnknownBible A2/ (Strict as per BDB). Trying (but not loading) {testFolder}…" )
         uB = UnknownBible( testFolder )
         result1 = uB.search( strictCheck=True, autoLoad=False )
         result2 = uB.search( strictCheck=True, autoLoadBooks=True ) if result1 else None
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  A2 strict result1 is: {}".format( result1 ) )
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  A2 strict result2 is: {}".format( result2 ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  A2 strict result1 is: {result1}" )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  A2 strict result2 is: {result2}" )
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, uB )
         if result1 == 'Many types found':
             uB = UnknownBible( testFolder )
             result3 = uB.search( strictCheck=True, autoLoadAlways=False )
             result4 = uB.search( strictCheck=True, autoLoadAlways=True ) if result3 else None
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  A2 strict result3 is: {}".format( result3 ) )
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  A2 strict result4 is: {}".format( result4 ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  A2 strict result3 is: {result3}" )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  A2 strict result4 is: {result4}" )
             if result3 == 'Many types found':
                 uB = UnknownBible( testFolder )
                 result5 = uB.search( strictCheck=True, autoLoadAlways=False, autoLoadBooks=True )
                 result6 = uB.search( strictCheck=True, autoLoadAlways=True, autoLoadBooks=True ) if result5 else None
                 if BibleOrgSysGlobals.verbosityLevel > 1:
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  A2 strict result5 is: {}".format( result5 ) )
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  A2 strict result6 is: {}".format( result6 ) )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  A2 strict result5 is: {result5}" )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  A2 strict result6 is: {result6}" )
 
         #from BibleOrgSys.Bible import Bible
-        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n\nUnknownBible A3/ (Strict as per BDB). Trying {}…".format( testFolder ) )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n\nUnknownBible A3/ (Strict as per BDB). Trying {testFolder}…" )
         #uB = UnknownBible( testFolder )
         #result1 = uB.search( strictCheck=True, autoLoadAlways=True, autoLoadBooks=True )
         #if BibleOrgSysGlobals.verbosityLevel > 2:
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  A3 result1 is: {}".format( result1 ) )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  A3 result1 is: {result1}" )
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, uB )
         #if isinstance( result1, Bible ):
             #thisBible = result1
@@ -1144,56 +1141,56 @@ def fullDemo() -> None:
                     )
     if 1: # Just find the files
         for j, testFolder in enumerate( testFolders ):
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n\nUnknownBible B{}/ Trying (but not loading) {}…".format( j+1, testFolder ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n\nUnknownBible B{j+1}/ Trying (but not loading) {testFolder}…" )
             uB = UnknownBible( testFolder )
             result = uB.search( autoLoad=False )
             #result2 = uB.search( autoLoad=True ) if result1 else None
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Result is: {}".format( result ) )
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Result is: {result}" )
             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, uB )
 
     if 1: # Just load the Bible objects (only if exactly one found)
         for j, testFolder in enumerate( testFolders ):
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n\nUnknownBible C{}/ Single loading (but not books) {}…".format( j+1, testFolder ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n\nUnknownBible C{j+1}/ Single loading (but not books) {testFolder}…" )
             uB = UnknownBible( testFolder )
             result = uB.search( autoLoad=True )
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Result is: {}".format( result ) )
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Result is: {result}" )
             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, uB )
 
     if 1: # Fully load the Bible objects (only if exactly one found)
         for j, testFolder in enumerate( testFolders ):
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n\nUnknownBible D{}/ Single loading (incl. books) {}…".format( j+1, testFolder ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n\nUnknownBible D{j+1}/ Single loading (incl. books) {testFolder}…" )
             uB = UnknownBible( testFolder )
             result = uB.search( autoLoadBooks=True )
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Result is: {}".format( result ) )
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Result is: {result}" )
             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, uB )
 
     if 1: # Always load the Bible objects
         for j, testFolder in enumerate( testFolders ):
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n\nUnknownBible E{}/ Always loading (but not books) {}…".format( j+1, testFolder ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n\nUnknownBible E{j+1}/ Always loading (but not books) {testFolder}…" )
             uB = UnknownBible( testFolder )
             result = uB.search( autoLoadAlways=True )
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Result is: {}".format( result ) )
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Result is: {result}" )
             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, uB )
 
     if 1: # Always fully load the Bible objects
         for j, testFolder in enumerate( testFolders ):
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n\nUnknownBible F{}/ Always loading (incl. books) {}…".format( j+1, testFolder ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n\nUnknownBible F{j+1}/ Always loading (incl. books) {testFolder}…" )
             uB = UnknownBible( testFolder )
             result = uB.search( autoLoadAlways=True, autoLoadBooks=True )
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Result is: {}".format( result ) )
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Result is: {result}" )
             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, uB )
 
     if 0: # Load, check, and export the files
         for j, testFolder in enumerate( testFolders ):
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n\nUnknownBible G{}/ Processing {}…".format( j+1, testFolder ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n\nUnknownBible G{j+1}/ Processing {testFolder}…" )
             uB = UnknownBible( testFolder )
             result = uB.search( autoLoad=True )
-            #dPrint( 'Info', DEBUGGING_THIS_MODULE, "  Results are: {} and {}".format( result1, result2 ) )
+            #dPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Results are: {result1} and {result2}" )
             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, uB )
             if result:
                 result.check()
                 results = result.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
-                vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Results are: {}".format( results ) )
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Results are: {results}" )
 # end of UnknownBible.fullDemo
 
 if __name__ == '__main__':

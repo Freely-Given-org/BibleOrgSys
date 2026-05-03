@@ -69,7 +69,6 @@ CHANGELOG:
     2024-09-20 Made BibleVersificationSystem iterable
     2025-08-29 Major change to use Copenhagen JSON versification files
 """
-from gettext import gettext as _
 import os
 import logging
 import json
@@ -164,7 +163,7 @@ class BibleVersificationSystems:
                 if not self.__DataDict: # We have to load the XML (much slower)
                     from BibleOrgSys.Reference.Converters.BibleVersificationSystemsConverter import BibleVersificationSystemsConverter
                     if XMLFolder is not None:
-                        logging.warning( _("Bible versification systems are already loaded -- your given filepath of {!r} was ignored").format(XMLFolder) )
+                        logging.warning( f"Bible versification systems are already loaded -- your given filepath of {XMLFolder!r} was ignored" )
                     bvsc = BibleVersificationSystemsConverter( XMLFolder )
                     bvsc.loadAndValidate( XMLFileOrFilepath ) # Load the XML (if not done already)
                     self.__DataDict = bvsc.importDataToPython() # Get the various dictionaries organised for quick lookup
@@ -185,12 +184,12 @@ class BibleVersificationSystems:
         #                     picklesGood = False; break
         #     if picklesGood:
         #         import pickle
-        #         vPrint( 'Info', DEBUGGING_THIS_MODULE, _("Loading pickle file {}…").format( standardPickleFilepath ) )
+        #         vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Loading pickle file {standardPickleFilepath}…" )
         #         with open( standardPickleFilepath, 'rb') as pickleFile:
         #             self.__DataDict = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
         #     else: # We have to load the XML (much slower)
         #         from BibleOrgSys.Reference.Converters.BibleVersificationSystemsConverter import BibleVersificationSystemsConverter
-        #         if XMLFolder is not None: logging.warning( _("Bible versification systems are already loaded -- your given folder of {!r} was ignored").format(XMLFolder) )
+        #         if XMLFolder is not None: logging.warning( f"Bible versification systems are already loaded -- your given folder of {XMLFolder!r} was ignored" )
         #         bvsc = BibleVersificationSystemsConverter()
         #         bvsc.loadSystems( XMLFolder ) # Load the XML (if not done already)
         #         self.__DataDict = bvsc.importDataToPython() # Get the various dictionaries organised for quick lookup
@@ -207,7 +206,7 @@ class BibleVersificationSystems:
         @rtype: string
         """
         result = "BibleVersificationSystems object"
-        result += ('\n' if result else '') + "  " + _("Number of systems = {:,}").format( len(self.__DataDict) )
+        result += ('\n' if result else '') + "  " + f"Number of systems = {len(self.__DataDict):,}"
         if BibleOrgSysGlobals.verbosityLevel > 2:
             for systemName in self.__DataDict:
                 CVData, OVData, CombVData, ReordVData = self.__DataDict[systemName]['CV'], self.__DataDict[systemName]['omitted'], self.__DataDict[systemName]['combined'], self.__DataDict[systemName]['reordered']
@@ -216,21 +215,21 @@ class BibleVersificationSystems:
                     numChapters = 0
                     for BBB,bookData in CVData.items():
                         numChapters += int( bookData['numChapters'] )
-                    result += ('\n' if result else '') + "    " + _("{} (data for {} books): chapter/verse data for {} total chapters").format( systemName, len(CVData), numChapters )
+                    result += ('\n' if result else '') + "    " + f"{systemName} (data for {len(CVData)} books): chapter/verse data for {numChapters} total chapters"
                     numOV = 0
                     for BBB,bookData in OVData.items():
                         numOV += len(bookData)
-                    if numOV: result += ('\n' if result else '') + "      " + _("{} omitted verse data segments").format( numOV )
+                    if numOV: result += ('\n' if result else '') + "      " + f"{numOV} omitted verse data segments"
                     numCmV = 0
                     for BBB,bookData in CombVData.items():
                         numCmV += len(bookData)
-                    if numCmV: result += ('\n' if result else '') + "      " + _("{} combined verse data segments").format( numCmV )
+                    if numCmV: result += ('\n' if result else '') + "      " + f"{numCmV} combined verse data segments"
                     numRV = 0
                     for BBB,bookData in ReordVData.items():
                         numRV += len(bookData)
-                    if numRV: result += ('\n' if result else '') + "      " + _("{} reordered verse data segments").format( numRV )
+                    if numRV: result += ('\n' if result else '') + "      " + f"{numRV} reordered verse data segments"
                 else: # not that verbose
-                    result += ('\n' if result else '') + "    " + _("{} (data for {} books)").format( systemName, len(CVData) )
+                    result += ('\n' if result else '') + "    " + f"{systemName} (data for {len(CVData)} books)"
         return result
     # end of BibleVersificationSystems.__str__
 
@@ -264,8 +263,8 @@ class BibleVersificationSystems:
         if systemName in self.__DataDict:
             return self.__DataDict[systemName]
         # else
-        logging.error( _("No {!r} system in Bible Versification Systems").format( systemName ) )
-        if BibleOrgSysGlobals.verbosityLevel > 2: logging.error( _("Available systems are {}").format( self.getAvailableVersificationSystemNames() ) )
+        logging.error( f"No {systemName!r} system in Bible Versification Systems" )
+        if BibleOrgSysGlobals.verbosityLevel > 2: logging.error( f"Available systems are {self.getAvailableVersificationSystemNames()}" )
     # end of BibleVersificationSystems.getVersificationSystem
 
 
@@ -295,20 +294,20 @@ class BibleVersificationSystems:
         for compareSystemName in compareList:
             if compareSystemName == system1Name: continue # Don't check against yourself
             if BibleOrgSysGlobals.verbosityLevel > 2 or len(compareList)>1:
-                result += ('\n' if result else '') + "  " + _("Comparing {} against {}…").format( system1Name, compareSystemName )
+                result += ('\n' if result else '') + "  " + f"Comparing {system1Name} against {compareSystemName}…"
             CVData1, OVData1, CoVData1, RVData1 = self.__DataDict[system1Name]['CV'], self.__DataDict[system1Name]['omitted'], self.__DataDict[system1Name]['combined'], self.__DataDict[system1Name]['reordered']
             CVData2, OVData2, CoVData2, RVData2 = self.__DataDict[compareSystemName]['CV'], self.__DataDict[compareSystemName]['omitted'], self.__DataDict[compareSystemName]['combined'], self.__DataDict[compareSystemName]['reordered']
             haveMajorDifferences, haveMinorDifferences, uncheckedBooks = False, False, []
             CVErrorCount, booksWithMajorDifferences, booksWithOnlyMinorDifferences, booksMatchExactly = 0, 0, 0, 0
             numBooks1 = len( CVData1 ); numBooks2 = len( CVData2 )
-            if numBooks1 != numBooks2: result += ('\n' if result else '') + "    " + _("{} has information for {} books; {} has information for {} books").format( system1Name, numBooks1, compareSystemName, numBooks2 )
-            elif BibleOrgSysGlobals.verbosityLevel>1: result += ('\n' if result else '') + "    " + _("Both systems have information for {} books").format( numBooks1 )
-            if OVData1 and not OVData2: result += ('\n' if result else '') + "      " + _("Only {} has omitted verse information").format( system1Name )
-            if not OVData1 and OVData2: result += ('\n' if result else '') + "      " + _("{} has no omitted verse information (but {} does)").format( system1Name, compareSystemName )
-            if CoVData1 and not CoVData2: result += ('\n' if result else '') + "      " + _("Only {} has combined verse information").format( system1Name )
-            if not CoVData1 and CoVData2: result += ('\n' if result else '') + "      " + _("{} has no combined verse information (but {} does)").format( system1Name, compareSystemName )
-            if RVData1 and not RVData2: result += ('\n' if result else '') + "      " + _("Only {} has reordered verse information").format( system1Name )
-            if not RVData1 and RVData2: result += ('\n' if result else '') + "      " + _("{} has no reordered verse information (but {} does)").format( system1Name, compareSystemName )
+            if numBooks1 != numBooks2: result += ('\n' if result else '') + "    " + f"{system1Name} has information for {numBooks1} books; {compareSystemName} has information for {numBooks2} books"
+            elif BibleOrgSysGlobals.verbosityLevel>1: result += ('\n' if result else '') + "    " + f"Both systems have information for {numBooks1} books"
+            if OVData1 and not OVData2: result += ('\n' if result else '') + "      " + f"Only {system1Name} has omitted verse information"
+            if not OVData1 and OVData2: result += ('\n' if result else '') + "      " + f"{system1Name} has no omitted verse information (but {compareSystemName} does)"
+            if CoVData1 and not CoVData2: result += ('\n' if result else '') + "      " + f"Only {system1Name} has combined verse information"
+            if not CoVData1 and CoVData2: result += ('\n' if result else '') + "      " + f"{system1Name} has no combined verse information (but {compareSystemName} does)"
+            if RVData1 and not RVData2: result += ('\n' if result else '') + "      " + f"Only {system1Name} has reordered verse information"
+            if not RVData1 and RVData2: result += ('\n' if result else '') + "      " + f"{system1Name} has no reordered verse information (but {compareSystemName} does)"
             for BBB,thisCVData1 in CVData1.items():
                 if BBB in CVData2:
                     bookHasMajorDifferences, bookHasMinorDifferences = False, False
@@ -316,7 +315,7 @@ class BibleVersificationSystems:
                     thisCVData2 = CVData2[BBB]
                     numChapters1 = thisCVData1['numChapters']; numChapters2 = thisCVData2['numChapters']
                     if numChapters1 != numChapters2:
-                        result += ('\n' if result else '') + "      " + _("{} {} has information for {} chapters; {} {} has information for {} chapters").format( system1Name, BBB, numChapters1, compareSystemName, BBB, numChapters2 )
+                        result += ('\n' if result else '') + "      " + f"{system1Name} {BBB} has information for {numChapters1} chapters; {compareSystemName} {BBB} has information for {numChapters2} chapters"
                         haveMajorDifferences, bookHasMajorDifferences = True, True
                     else:
                         for C in thisCVData1:
@@ -324,9 +323,9 @@ class BibleVersificationSystems:
                                 V1 = thisCVData1[C]; V2 = thisCVData2[C]
                                 if V1 != V2:
                                     if CVErrorCount<displayCount or displayCount==0:
-                                        result += ('\n' if result else '') + "        " + _("{} {} {} has {} verses; {} {} {} has {} verses").format( system1Name, BBB, C, V1, compareSystemName, BBB, C, V2 )
+                                        result += ('\n' if result else '') + "        " + f"{system1Name} {BBB} {C} has {V1} verses; {compareSystemName} {BBB} {C} has {V2} verses"
                                     elif CVErrorCount==displayCount:
-                                        result += '\n' + "          " + _("…") + '  ' + _("(Increase verbosity to see more differences)")
+                                        result += '\n' + "          " + "…" + '  ' + "(Increase verbosity to see more differences)"
                                     haveMajorDifferences, bookHasMajorDifferences = True, True
                                     CVErrorCount += 1
                     if OVData1 and OVData2: # Compare omitted verses
@@ -334,17 +333,17 @@ class BibleVersificationSystems:
                             thisOVData1 = OVData1[BBB]; thisOVData2 = OVData2[BBB]
                             for C,V in thisOVData1:
                                 if (C,V) not in thisOVData2:
-                                    result += ('\n' if result else '') + "        " + _("{}:{} is omitted in {} {} but not in {} {}").format( system1Name, BBB, C, V, compareSystemName, BBB )
+                                    result += ('\n' if result else '') + "        " + f"{system1Name}:{BBB} is omitted in {C} {V} but not in {compareSystemName} {BBB}"
                                     haveMinorDifferences, bookHasMinorDifferences = True, True
                             for C,V in thisOVData2:
                                 if (C,V) not in thisOVData1:
-                                    result += ('\n' if result else '') + "        " + _("{}:{} is not omitted in {} {} but is in {} {}").format( system1Name, BBB, C, V, compareSystemName, BBB )
+                                    result += ('\n' if result else '') + "        " + f"{system1Name}:{BBB} is not omitted in {C} {V} but is in {compareSystemName} {BBB}"
                                     haveMinorDifferences, bookHasMinorDifferences = True, True
                         elif BBB in OVData1 and not BBB in OVData2:
-                            result += ('\n' if result else '') + "      " + _("{} {} has omitted verse information but there is none for {} {}").format( system1Name, BBB, compareSystemName, BBB )
+                            result += ('\n' if result else '') + "      " + f"{system1Name} {BBB} has omitted verse information but there is none for {compareSystemName} {BBB}"
                             haveMinorDifferences, bookHasMinorDifferences = True, True
                         elif BBB not in OVData1 and BBB in OVData2:
-                            result += ('\n' if result else '') + "      " + _("{} {} has no omitted verse information but {} {} does").format( system1Name, BBB, compareSystemName, BBB )
+                            result += ('\n' if result else '') + "      " + f"{system1Name} {BBB} has no omitted verse information but {compareSystemName} {BBB} does"
                             haveMinorDifferences, bookHasMinorDifferences = True, True
                         else: raise Exception( "OV programming error" )
                     if CoVData1 and CoVData2: # Compare combined verses
@@ -352,17 +351,17 @@ class BibleVersificationSystems:
                             thisCoVData1 = CoVData1[BBB]; thisCoVData2 = CoVData2[BBB]
                             for C,V in thisCoVData1:
                                 if (C,V) not in thisCoVData2:
-                                    result += ('\n' if result else '') + "        " + _("{}:{} is combined in {} {} but not in {} {}").format( system1Name, BBB, C, V, compareSystemName, BBB )
+                                    result += ('\n' if result else '') + "        " + f"{system1Name}:{BBB} is combined in {C} {V} but not in {compareSystemName} {BBB}"
                                     haveMinorDifferences, bookHasMinorDifferences = True, True
                             for C,V in thisCoVData2:
                                 if (C,V) not in thisCoVData1:
-                                    result += ('\n' if result else '') + "        " + _("{}:{} is not combined in {} {} but is in {} {}").format( system1Name, BBB, C, V, compareSystemName, BBB )
+                                    result += ('\n' if result else '') + "        " + f"{system1Name}:{BBB} is not combined in {C} {V} but is in {compareSystemName} {BBB}"
                                     haveMinorDifferences, bookHasMinorDifferences = True, True
                         elif BBB in CoVData1 and not BBB in CoVData2:
-                            result += ('\n' if result else '') + "      " + _("{} {} has combined verse information but there is none for {} {}").format( system1Name, BBB, compareSystemName, BBB )
+                            result += ('\n' if result else '') + "      " + f"{system1Name} {BBB} has combined verse information but there is none for {compareSystemName} {BBB}"
                             haveMinorDifferences, bookHasMinorDifferences = True, True
                         elif BBB not in CoVData1 and BBB in CoVData2:
-                            result += ('\n' if result else '') + "      " + _("{} {} has no combined verse information but {} {} does").format( system1Name, BBB, compareSystemName, BBB )
+                            result += ('\n' if result else '') + "      " + f"{system1Name} {BBB} has no combined verse information but {compareSystemName} {BBB} does"
                             haveMinorDifferences, bookHasMinorDifferences = True, True
                         else: raise Exception( "OV programming error" )
                     if RVData1 and RVData2: # Compare reordered verses
@@ -370,17 +369,17 @@ class BibleVersificationSystems:
                             thisRVData1 = RVData1[BBB]; thisRVData2 = RVData2[BBB]
                             for C,V in thisRVData1:
                                 if (C,V) not in thisRVData2:
-                                    result += ('\n' if result else '') + "        " + _("{}:{} is reordered in {} {} but not in {} {}").format( system1Name, BBB, C, V, compareSystemName, BBB )
+                                    result += ('\n' if result else '') + "        " + f"{system1Name}:{BBB} is reordered in {C} {V} but not in {compareSystemName} {BBB}"
                                     haveMinorDifferences, bookHasMinorDifferences = True, True
                             for C,V in thisRVData2:
                                 if (C,V) not in thisRVData1:
-                                    result += ('\n' if result else '') + "        " + _("{}:{} is not reordered in {} {} but is in {} {}").format( system1Name, BBB, C, V, compareSystemName, BBB )
+                                    result += ('\n' if result else '') + "        " + f"{system1Name}:{BBB} is not reordered in {C} {V} but is in {compareSystemName} {BBB}"
                                     haveMinorDifferences, bookHasMinorDifferences = True, True
                         elif BBB in RVData1 and not BBB in RVData2:
-                            result += ('\n' if result else '') + "      " + _("{} {} has reordered verse information but there is none for {} {}").format( system1Name, BBB, compareSystemName, BBB )
+                            result += ('\n' if result else '') + "      " + f"{system1Name} {BBB} has reordered verse information but there is none for {compareSystemName} {BBB}"
                             haveMinorDifferences, bookHasMinorDifferences = True, True
                         elif BBB not in RVData1 and BBB in RVData2:
-                            result += ('\n' if result else '') + "      " + _("{} {} has no reordered verse information but {} {} does").format( system1Name, BBB, compareSystemName, BBB )
+                            result += ('\n' if result else '') + "      " + f"{system1Name} {BBB} has no reordered verse information but {compareSystemName} {BBB} does"
                             haveMinorDifferences, bookHasMinorDifferences = True, True
                         else: raise Exception( "OV programming error" )
                     if bookHasMajorDifferences: booksWithMajorDifferences += 1
@@ -389,17 +388,16 @@ class BibleVersificationSystems:
                 else: # this book isn't in the other versification scheme
                     uncheckedBooks.append( BBB )
                     haveMajorDifferences = True
-            if uncheckedBooks: result += ('\n' if result else '') + "    " + _("The following books from {} were unable to be checked against {}: {}").format( system1Name, compareSystemName, uncheckedBooks )
+            if uncheckedBooks: result += ('\n' if result else '') + "    " + f"The following books from {system1Name} were unable to be checked against {compareSystemName}: {uncheckedBooks}"
             if not haveMajorDifferences:
                 numCloseMatches += 1
                 if not haveMinorDifferences: numExactMatches += 1
             numComparesDone += 1
         if BibleOrgSysGlobals.verbosityLevel>1 or numExactMatches!=numComparesDone:
-            if numComparesDone==1: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '\n' + _("Compared {} against {} (with {} exact system matches, {} close matches)").format( system1Name, system2Name, numExactMatches, numCloseMatches ) )
-            else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '\n' + _("Compared {} against {} other systems (with {} exact system matches, {} close matches)").format( system1Name, numComparesDone, numExactMatches, numCloseMatches ) )
+            if numComparesDone==1: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '\n' + f"Compared {system1Name} against {system2Name} (with {numExactMatches} exact system matches, {numCloseMatches} close matches)" )
+            else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '\n' + f"Compared {system1Name} against {numComparesDone} other systems (with {numExactMatches} exact system matches, {numCloseMatches} close matches)" )
             if BibleOrgSysGlobals.verbosityLevel > 1 and (booksMatchExactly or booksWithOnlyMinorDifferences):
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("There were {} books that matched exactly, and another {} with only minor differences. ({} books checked that had major differences.)") \
-                                .format( booksMatchExactly, booksWithOnlyMinorDifferences, booksWithMajorDifferences ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"There were {booksMatchExactly} books that matched exactly, and another {booksWithOnlyMinorDifferences} with only minor differences. ({booksWithMajorDifferences} books checked that had major differences.)" )
             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, result )
     # end of BibleVersificationSystems.compareVersificationSystems
 
@@ -419,7 +417,7 @@ class BibleVersificationSystems:
             if "combined" in extraVerseInfoToCheck: combinedVersesToCheck = extraVerseInfoToCheck["combined"]
             if "reordered" in extraVerseInfoToCheck: reorderedVersesToCheck = extraVerseInfoToCheck["reordered"]
             if not omittedVersesToCheck and not combinedVersesToCheck and not reorderedVersesToCheck: # Then what was there???
-                logging.error( _("No useful information found in extraVerseInfoToCheck parameter: {}").format(extraVerseInfoToCheck) )
+                logging.error( f"No useful information found in extraVerseInfoToCheck parameter: {extraVerseInfoToCheck}" )
 
         matchedVersificationSystemCodes, badOVList, badCVList, badRVList = [], [], [], []
         systemMatchCount, systemMismatchCount, allErrors, errorSummary = 0, 0, '', ''
@@ -439,15 +437,15 @@ class BibleVersificationSystems:
                         if not isinstance(numVersesToCheck,str): raise Exception( "Verse programming error" )
                         if chapterToCheck in CVData[BBB]: # That chapter number is in our scheme
                             if CVData[BBB][chapterToCheck] != numVersesToCheck:
-                                theseErrors += ("\n" if theseErrors else "") + "    " + _("Doesn't match {!r} system at {} {} verse {}").format( versificationSystemCode, BBB, chapterToCheck, numVersesToCheck )
+                                theseErrors += ("\n" if theseErrors else "") + "    " + f"Doesn't match {numVersesToCheck!r} system at {versificationSystemCode} {BBB} verse {chapterToCheck}"
                                 if bookMismatchCount==0 and chapterMismatchCount==0 and verseMismatchCount==0:
                                     rememberedBBB, rememberedChapter, rememberedVerses1, rememberedVerses2 = BBB, chapterToCheck, CVData[BBB][chapterToCheck], numVersesToCheck
                                 verseMismatchCount += 1
                         else: # Our scheme doesn't have that chapter number
-                            theseErrors += ("\n" if theseErrors else "") + "    " + _("Doesn't match {!r} system at {} chapter {} ({} verses)").format( versificationSystemCode, BBB, chapterToCheck, numVersesToCheck )
+                            theseErrors += ("\n" if theseErrors else "") + "    " + f"Doesn't match {numVersesToCheck!r} system at {versificationSystemCode} chapter {BBB} ({chapterToCheck} verses)"
                             chapterMismatchCount += 1
                 else:
-                    theseErrors += ("\n" if theseErrors else "") + "    " + _("Can't find {} bookcode in {}").format( BBB, versificationSystemCode )
+                    theseErrors += ("\n" if theseErrors else "") + "    " + f"Can't find {BBB} bookcode in {versificationSystemCode}"
                     bookMismatchCount += 1
 
             # Check omitted verses
@@ -459,18 +457,18 @@ class BibleVersificationSystems:
                         if OVData[BBB] == omittedVersesToCheck[BBB]: continue # Perfect match for this book
                         for cv in omittedVersesToCheck[BBB]:
                             if cv not in OVData[BBB]:
-                                theseErrors += ("\n" if theseErrors else "") + "   " + _("{}:{} not omitted in {} reference versification for {}").format( cv[0], cv[1], versificationSystemCode, BBB )
+                                theseErrors += ("\n" if theseErrors else "") + "   " + f"{cv[0]}:{cv[1]} not omitted in {versificationSystemCode} reference versification for {BBB}"
                                 if omittedVerseMismatchCount == 0: # only do this the first time
                                     rememberedOmission = BBB, cv[0], cv[1], thisSystemName, versificationSystemCode
                                 omittedVerseMismatchCount += 1
                         for cv in OVData[BBB]:
                             if cv not in omittedVersesToCheck[BBB]:
-                                theseErrors += ("\n" if theseErrors else "") + "   " + _("{}:{} is omitted in {} reference versification for {}").format( cv[0], cv[1], versificationSystemCode, BBB )
+                                theseErrors += ("\n" if theseErrors else "") + "   " + f"{cv[0]}:{cv[1]} is omitted in {versificationSystemCode} reference versification for {BBB}"
                                 if omittedVerseMismatchCount == 0: # only do this the first time
                                     rememberedOmission = BBB, cv[0], cv[1], versificationSystemCode, thisSystemName
                                 omittedVerseMismatchCount += 1
                     else: # We don't match
-                        theseErrors += ("\n" if theseErrors else "") + "    " + _("No omitted verses for {} in {}").format( BBB, versificationSystemCode )
+                        theseErrors += ("\n" if theseErrors else "") + "    " + f"No omitted verses for {BBB} in {versificationSystemCode}"
                         if omittedVerseMismatchCount == 0: # only do this the first time
                             rememberedOmission = BBB, '*', '*', versificationSystemCode, thisSystemName
                         omittedVerseMismatchCount += len( omittedVersesToCheck[BBB] )
@@ -484,18 +482,18 @@ class BibleVersificationSystems:
                         if CombVData[BBB] == combinedVersesToCheck[BBB]: continue # Perfect match for this book
                         for cv in combinedVersesToCheck[BBB]:
                             if cv not in CombVData[BBB]:
-                                theseErrors += ("\n" if theseErrors else "") + "   " + _("{}:{} not combined in {} reference versification for {}").format( cv[0], cv[1], versificationSystemCode, BBB )
+                                theseErrors += ("\n" if theseErrors else "") + "   " + f"{cv[0]}:{cv[1]} not combined in {versificationSystemCode} reference versification for {BBB}"
                                 if combinedVerseMismatchCount==0:
                                     rememberedCombination = BBB, cv[0], cv[1], thisSystemName, versificationSystemCode
                                 combinedVerseMismatchCount += 1
                         for cv in CombVData[BBB]:
                             if cv not in combinedVersesToCheck[BBB]:
-                                theseErrors += ("\n" if theseErrors else "") + "   " + _("{}:{} is combined in {} reference versification for {}").format( cv[0], cv[1], versificationSystemCode, BBB )
+                                theseErrors += ("\n" if theseErrors else "") + "   " + f"{cv[0]}:{cv[1]} is combined in {versificationSystemCode} reference versification for {BBB}"
                                 if combinedVerseMismatchCount==0:
                                     rememberedCombination = BBB, cv[0], cv[1], versificationSystemCode, thisSystemName
                                 combinedVerseMismatchCount += 1
                     else: # We don't match
-                        theseErrors += ("\n" if theseErrors else "") + "    " + _("No combined verses for {} in {}").format( BBB, versificationSystemCode )
+                        theseErrors += ("\n" if theseErrors else "") + "    " + f"No combined verses for {BBB} in {versificationSystemCode}"
                         combinedVerseMismatchCount += len( combinedVersesToCheck[BBB] )
 
             # Check reordered verses
@@ -507,86 +505,86 @@ class BibleVersificationSystems:
                         if ReordVData[BBB] == reorderedVersesToCheck[BBB]: continue # Perfect match for this book
                         for cv in reorderedVersesToCheck[BBB]:
                             if cv not in ReordVData[BBB]:
-                                theseErrors += ("\n" if theseErrors else "") + "   " + _("{}:{} not reordered in {} reference versification for {}").format( cv[0], cv[1], versificationSystemCode, BBB )
+                                theseErrors += ("\n" if theseErrors else "") + "   " + f"{cv[0]}:{cv[1]} not reordered in {versificationSystemCode} reference versification for {BBB}"
                                 if reorderedVerseMismatchCount == 0:
                                     rememberedReordering = BBB, cv[0], cv[1], thisSystemName, versificationSystemCode
                                 reorderedVerseMismatchCount += 1
                         for cv in ReordVData[BBB]:
                             if cv not in reorderedVersesToCheck[BBB]:
-                                theseErrors += ("\n" if theseErrors else "") + "   " + _("{}:{} is reordered in {} reference versification for {}").format( cv[0], cv[1], versificationSystemCode, BBB )
+                                theseErrors += ("\n" if theseErrors else "") + "   " + f"{cv[0]}:{cv[1]} is reordered in {versificationSystemCode} reference versification for {BBB}"
                                 if reorderedVerseMismatchCount == 0:
                                     rememberedReordering = BBB, cv[0], cv[1], versificationSystemCode, thisSystemName
                                 reorderedVerseMismatchCount += 1
                     else: # We don't match
-                        theseErrors += ("\n" if theseErrors else "") + "    " + _("No reordered verses for {} in {}").format( BBB, versificationSystemCode )
+                        theseErrors += ("\n" if theseErrors else "") + "    " + f"No reordered verses for {BBB} in {versificationSystemCode}"
                         reorderedVerseMismatchCount += len( reorderedVersesToCheck[BBB] )
 
             if bookMismatchCount or chapterMismatchCount or verseMismatchCount or omittedVerseMismatchCount or combinedVerseMismatchCount or reorderedVerseMismatchCount:
                 if omittedVersesToCheck:
-                    thisError = "    " + _("Doesn't match {!r} system ({} book mismatches, {} chapter mismatches, {} verse mismatches, {} omitted-verse mismatches)").format( versificationSystemCode, bookMismatchCount, chapterMismatchCount, verseMismatchCount,omittedVerseMismatchCount )
+                    thisError = "    " + f"Doesn't match {omittedVerseMismatchCount!r} system ({versificationSystemCode} book mismatches, {bookMismatchCount} chapter mismatches, {chapterMismatchCount} verse mismatches, {verseMismatchCount} omitted-verse mismatches)"
                     if omittedVerseMismatchCount == 1:
-                        thisError += "\n      " + _("Omitted verse mismatch was {} {}:{} omitted in {} but present in {}").format(rememberedOmission[0],rememberedOmission[1],rememberedOmission[2],rememberedOmission[3],rememberedOmission[4])
+                        thisError += "\n      " + f"Omitted verse mismatch was {rememberedOmission[0]} {rememberedOmission[1]}:{rememberedOmission[2]} omitted in {rememberedOmission[3]} but present in {rememberedOmission[4]}"
                     elif BibleOrgSysGlobals.verbosityLevel>2 and bookMismatchCount==0 and chapterMismatchCount==0 and omittedVerseMismatchCount>0:
-                        thisError += "\n      " + _("First omitted verse mismatch was {} {}:{} omitted in {} but present in {}").format(rememberedOmission[0],rememberedOmission[1],rememberedOmission[2],rememberedOmission[3],rememberedOmission[4])
+                        thisError += "\n      " + f"First omitted verse mismatch was {rememberedOmission[0]} {rememberedOmission[1]}:{rememberedOmission[2]} omitted in {rememberedOmission[3]} but present in {rememberedOmission[4]}"
                 elif combinedVersesToCheck: # only display one of these systems
-                    thisError = "    " + _("Doesn't match {!r} system ({} book mismatches, {} chapter mismatches, {} verse mismatches, {} combined-verse mismatches)").format( versificationSystemCode, bookMismatchCount, chapterMismatchCount, verseMismatchCount,omittedVerseMismatchCount )
+                    thisError = "    " + f"Doesn't match {omittedVerseMismatchCount!r} system ({versificationSystemCode} book mismatches, {bookMismatchCount} chapter mismatches, {chapterMismatchCount} verse mismatches, {verseMismatchCount} combined-verse mismatches)"
                     if combinedVerseMismatchCount == 1:
-                        thisError += "\n      " + _("Combined verse mismatch was {} {}:{} between {} and {}").format(rememberedCombination[0],rememberedCombination[1],rememberedCombination[2],rememberedCombination[3],rememberedCombination[4])
+                        thisError += "\n      " + f"Combined verse mismatch was {rememberedCombination[0]} {rememberedCombination[1]}:{rememberedCombination[2]} between {rememberedCombination[3]} and {rememberedCombination[4]}"
                     elif BibleOrgSysGlobals.verbosityLevel>2 and bookMismatchCount==0 and chapterMismatchCount==0 and combinedVerseMismatchCount>0:
-                        thisError += "\n      " + _("First combined verse mismatch was {} {}:{} omitted in {} but present in {}").format(rememberedCombination[0],rememberedCombination[1],rememberedCombination[2],rememberedCombination[3],rememberedCombination[4])
+                        thisError += "\n      " + f"First combined verse mismatch was {rememberedCombination[0]} {rememberedCombination[1]}:{rememberedCombination[2]} omitted in {rememberedCombination[3]} but present in {rememberedCombination[4]}"
                 elif reorderedVersesToCheck:
-                    thisError = "    " + _("Doesn't match {!r} system ({} book mismatches, {} chapter mismatches, {} verse mismatches, {} reordered-verse mismatches)").format( versificationSystemCode, bookMismatchCount, chapterMismatchCount, verseMismatchCount,omittedVerseMismatchCount )
+                    thisError = "    " + f"Doesn't match {omittedVerseMismatchCount!r} system ({versificationSystemCode} book mismatches, {bookMismatchCount} chapter mismatches, {chapterMismatchCount} verse mismatches, {verseMismatchCount} reordered-verse mismatches)"
                     if reorderedVerseMismatchCount == 1:
-                        thisError += "\n      " + _("Reordered verse mismatch was {} {}:{} between {} and {}").format(rememberedReordering[0],rememberedReordering[1],rememberedReordering[2],rememberedReordering[3],rememberedReordering[4])
-                    elif BibleOrgSysGlobals.verbosityLevel>2 and bookMismatchCount==0 and chapterMismatchCount==0 and reorderedVerseMismatchCount>0: thisError += "\n      " + _("First reordered verse mismatch was {} {}:{} omitted in {} but present in {}").format(rememberedReordering[0],rememberedReordering[1],rememberedReordering[2],rememberedReordering[3],rememberedReordering[4])
+                        thisError += "\n      " + f"Reordered verse mismatch was {rememberedReordering[0]} {rememberedReordering[1]}:{rememberedReordering[2]} between {rememberedReordering[3]} and {rememberedReordering[4]}"
+                    elif BibleOrgSysGlobals.verbosityLevel>2 and bookMismatchCount==0 and chapterMismatchCount==0 and reorderedVerseMismatchCount>0: thisError += "\n      " + f"First reordered verse mismatch was {rememberedReordering[0]} {rememberedReordering[1]}:{rememberedReordering[2]} omitted in {rememberedReordering[3]} but present in {rememberedReordering[4]}"
                 else:
-                    thisError = "    " + _("Doesn't match {!r} system ({} book mismatches, {} chapter mismatches, {} verse mismatches)").format( versificationSystemCode, bookMismatchCount, chapterMismatchCount, verseMismatchCount )
+                    thisError = "    " + f"Doesn't match {verseMismatchCount!r} system ({versificationSystemCode} book mismatches, {bookMismatchCount} chapter mismatches, {chapterMismatchCount} verse mismatches)"
                 if bookMismatchCount==0 and chapterMismatchCount==0 and verseMismatchCount==1:
-                    thisError += "\n      " + _("{} {} chapter {} had {} verses but {} had {}").format(thisSystemName, rememberedBBB, rememberedChapter, rememberedVerses2, versificationSystemCode, rememberedVerses1)
+                    thisError += "\n      " + f"{thisSystemName} {rememberedBBB} chapter {rememberedChapter} had {rememberedVerses2} verses but {versificationSystemCode} had {rememberedVerses1}"
                 theseErrors += ("\n" if theseErrors else "") + thisError
                 if bookMismatchCount==0 or BibleOrgSysGlobals.verbosityLevel>2:
                     errorSummary += ("\n" if errorSummary else "") + thisError
                 systemMismatchCount += 1
             else:
-                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Matches {!r} system".format( versificationSystemCode ) )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Matches {versificationSystemCode!r} system" )
                 systemMatchCount += 1
                 matchedVersificationSystemCodes.append( versificationSystemCode )
             if BibleOrgSysGlobals.debugFlag and chapterMismatchCount==0 and 0<verseMismatchCount<8 and omittedVerseMismatchCount<10: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, theseErrors )
             allErrors += ("\n" if allErrors else "") + theseErrors
 
         if badOVList:
-            logging.warning( _("No omitted verse list provided to check against {}").format( badOVList ) )
+            logging.warning( f"No omitted verse list provided to check against {badOVList}" )
         elif badCVList: # only display one of these warnings
-            logging.warning( _("No combined verse list provided to check against {}").format( badCVList ) )
+            logging.warning( f"No combined verse list provided to check against {badCVList}" )
         elif badRVList:
-            logging.warning( _("No reordered verse list provided to check against {}").format( badRVList ) )
+            logging.warning( f"No reordered verse list provided to check against {badRVList}" )
 
         if systemMatchCount == 1: # What we hope for
-            if badOVList: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  " + _("{} roughly matched {} versification (with these {} books)").format( thisSystemName, matchedVersificationSystemCodes[0], len(versificationSchemeToCheck) ) )
-            else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  " + _("{} matched {} versification (with these {} books)").format( thisSystemName, matchedVersificationSystemCodes[0], len(versificationSchemeToCheck) ) )
+            if badOVList: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  " + f"{thisSystemName} roughly matched {matchedVersificationSystemCodes[0]} versification (with these {len(versificationSchemeToCheck)} books)" )
+            else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  " + f"{thisSystemName} matched {matchedVersificationSystemCodes[0]} versification (with these {len(versificationSchemeToCheck)} books)" )
             dPrint( 'Quiet', DEBUGGING_THIS_MODULE, errorSummary )
         elif systemMatchCount == 0: # No matches
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  " + _("{} mismatched {} versification systems (with these {} books)").format( thisSystemName, systemMismatchCount, len(versificationSchemeToCheck) ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  " + f"{thisSystemName} mismatched {systemMismatchCount} versification systems (with these {len(versificationSchemeToCheck)} books)" )
             toPrint = allErrors if BibleOrgSysGlobals.debugFlag else errorSummary
             if toPrint: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, toPrint )
         else: # Multiple matches
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  " + _("{} matched {} versification system(s): {} (with these {} books)").format( thisSystemName, systemMatchCount, matchedVersificationSystemCodes, len(versificationSchemeToCheck) ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  " + f"{thisSystemName} matched {systemMatchCount} versification system(s): {matchedVersificationSystemCodes} (with these {len(versificationSchemeToCheck)} books)" )
             dPrint( 'Quiet', DEBUGGING_THIS_MODULE, errorSummary )
 
         if BibleOrgSysGlobals.commandLineArguments.export and not systemMatchCount: # Write a new file
             outputFilepath = BibleOrgSysGlobals.BOS_DATAFILES_FOLDERPATH.joinpath( 'ScrapedFiles/', "BibleVersificationSystem_"+thisSystemName + '.xml' )
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("Writing {} books to {}…").format( len(versificationSchemeToCheck), outputFilepath ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Writing {len(versificationSchemeToCheck)} books to {outputFilepath}…" )
             if omittedVersesToCheck:
                 totalOmittedVerses = 0
                 for BBB in omittedVersesToCheck.keys():
                     totalOmittedVerses += len( omittedVersesToCheck[BBB] )
-                vPrint( 'Info', DEBUGGING_THIS_MODULE, _("  Have {} omitted verses for {} books").format( totalOmittedVerses, len(omittedVersesToCheck) ) )
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Have {totalOmittedVerses} omitted verses for {len(omittedVersesToCheck)} books" )
             with open( outputFilepath, 'wt', encoding='utf-8' ) as myFile:
                 for BBB in versificationSchemeToCheck:
                     myFile.write( "  <BibleBookVersification>\n" )
-                    myFile.write( "    <nameEnglish>{}</nameEnglish>\n".format( BibleOrgSysGlobals.loadedBibleBooksCodes.getEnglishName_NR(BBB) ) ) # the English book name from the BibleBooksCodes.xml file
-                    myFile.write( "    <referenceAbbreviation>{}</referenceAbbreviation>\n".format( BBB ) )
-                    myFile.write( "    <numChapters>{}</numChapters>\n".format( len(versificationSchemeToCheck[BBB]) ) )
+                    myFile.write( f"    <nameEnglish>{BibleOrgSysGlobals.loadedBibleBooksCodes.getEnglishName_NR(BBB)}</nameEnglish>\n" ) # the English book name from the BibleBooksCodes.xml file
+                    myFile.write( f"    <referenceAbbreviation>{BBB}</referenceAbbreviation>\n" )
+                    myFile.write( f"    <numChapters>{len(versificationSchemeToCheck[BBB])}</numChapters>\n" )
                     for c,numV in versificationSchemeToCheck[BBB]:
                         omittedVerseString = ''
                         if BBB in omittedVersesToCheck:
@@ -595,9 +593,9 @@ class BibleVersificationSystems:
                                     omittedVerseString += (',' if omittedVerseString else '') + str(ov)
                         if omittedVerseString:
                             if BibleOrgSysGlobals.verbosityLevel > 3 or BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '   ', BBB, c+':'+omittedVerseString )
-                            myFile.write( '    <numVerses chapter="{}" omittedVerses="{}">{}</numVerses>\n'.format( c, omittedVerseString, numV ) )
+                            myFile.write( f'    <numVerses chapter="{c}" omittedVerses="{omittedVerseString}">{numV}</numVerses>\n' )
                         else:
-                            myFile.write( '    <numVerses chapter="{}">{}</numVerses>\n'.format( c, numV ) )
+                            myFile.write( f'    <numVerses chapter="{c}">{numV}</numVerses>\n' )
                     myFile.write( "  </BibleBookVersification>\n" )
                 myFile.write( "\n</BibleVersificationSystem>" )
 
@@ -641,27 +639,27 @@ class BibleVersificationSystem:
             for BBB,bookData in self.__chapterDataDict.items():
                 numChapters += int( bookData['numChapters'] )
             if BibleOrgSysGlobals.verbosityLevel > 3:
-                result += ('\n' if result else '') + "  " + _("{} Bible versification system (data for {} books):").format( self._systemName, len(self.__chapterDataDict) )
-                result += ('\n' if result else '') + "    " + _("Chapter/verse data for {} total chapters").format( numChapters )
+                result += ('\n' if result else '') + "  " + f"{self._systemName} Bible versification system (data for {len(self.__chapterDataDict)} books):"
+                result += ('\n' if result else '') + "    " + f"Chapter/verse data for {numChapters} total chapters"
                 numOV = 0
                 for BBB,bookData in self.__omittedVersesDict.items():
                     numOV += len(bookData)
-                if numOV: result += ('\n' if result else '') + "    " + _("{} omitted verse data segments").format( numOV )
-                else: result += ('\n' if result else '') + "    " + _("No omitted verse data segments")
+                if numOV: result += ('\n' if result else '') + "    " + f"{numOV} omitted verse data segments"
+                else: result += ('\n' if result else '') + "    " + "No omitted verse data segments"
                 numCmV = 0
                 for BBB,bookData in self.__combinedVersesDict.items():
                     numCmV += len(bookData)
-                if numCmV: result += ('\n' if result else '') + "    " + _("{} combined verse data segments").format( numCmV )
-                else: result += ('\n' if result else '') + "    " + _("No combined verse data segments")
+                if numCmV: result += ('\n' if result else '') + "    " + f"{numCmV} combined verse data segments"
+                else: result += ('\n' if result else '') + "    " + "No combined verse data segments"
                 numRV = 0
                 for BBB,bookData in self.__reorderedVersesDict.items():
                     numRV += len(bookData)
-                if numRV: result += ('\n' if result else '') + "    " + _("{} reordered verse data segments").format( numRV )
-                else: result += ('\n' if result else '') + "    " + _("No reordered verse data segments")
+                if numRV: result += ('\n' if result else '') + "    " + f"{numRV} reordered verse data segments"
+                else: result += ('\n' if result else '') + "    " + "No reordered verse data segments"
             else: # not that verbose
-                result += ('\n' if result else '') + "  " + _("{} Bible versification system (data for {} books)").format( self._systemName, len(self.__chapterDataDict) )
+                result += ('\n' if result else '') + "  " + f"{self._systemName} Bible versification system (data for {len(self.__chapterDataDict)} books)"
         else: #not very verbose
-            result += ('\n' if result else '') + " " + _("{} Bible versification system").format( self._systemName )
+            result += ('\n' if result else '') + " " + f"{self._systemName} Bible versification system"
         return result
     # end of BibleVersificationSystem.__str__
 
@@ -745,13 +743,13 @@ class BibleVersificationSystem:
 
         Returns the number of verses (int) in the given book and chapter.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, "BibleVersificationSystem.getNumVerses( {}, {!r} )".format( BBB, repr(C) ) )
+        fnPrint( DEBUGGING_THIS_MODULE, f"BibleVersificationSystem.getNumVerses( {BBB}, {repr(C)!r} )" )
         if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert len(BBB) == 3
 
         if not BibleOrgSysGlobals.loadedBibleBooksCodes.isValidBBB( BBB ): raise KeyError
         if isinstance( C, int ): # Just double-check the parameter
-            logging.debug( _("BibleVersificationSystem.getNumVerses was passed an integer chapter instead of a string with {} {}").format( BBB, C ) )
+            logging.debug( f"BibleVersificationSystem.getNumVerses was passed an integer chapter instead of a string with {BBB} {C}" )
             C = str( C )
         try: return int( self.__chapterDataDict[BBB][C] )
         except KeyError: return 0
@@ -800,10 +798,10 @@ class BibleVersificationSystem:
         """ Returns True/False indicating if the given reference is omitted in this system. """
         BBB, C, V, S = referenceTuple
         if isinstance(C, int): # Just double-check the parameter
-            logging.debug( _("BibleVersificationSystem.isOmittedVerse was passed an integer chapter instead of a string with {} {}").format(BBB,C) )
+            logging.debug( f"BibleVersificationSystem.isOmittedVerse was passed an integer chapter instead of a string with {BBB} {C}" )
             C = str( C )
         if isinstance(V, int): # Just double-check the parameter
-            logging.debug( _("BibleVersificationSystem.isOmittedVerse was passed an integer verse instead of a string with {} {}:{}").format(BBB,C,V) )
+            logging.debug( f"BibleVersificationSystem.isOmittedVerse was passed an integer verse instead of a string with {BBB} {C}:{V}" )
             V = str( V )
         if BBB not in self.__omittedVersesDict: return False
         return (C,V) in self.__omittedVersesDict[BBB]
@@ -827,15 +825,15 @@ class BibleVersificationSystem:
         Extended flag allows chapter and verse numbers of zero
             but it allows almost any number of verses in chapter zero (up to 199).
         """
-        fnPrint( DEBUGGING_THIS_MODULE, "BibleVersificationSystem.isValidBCVRef( {}, {}, {} )".format( referenceTuple, referenceString, extended ) )
+        fnPrint( DEBUGGING_THIS_MODULE, f"BibleVersificationSystem.isValidBCVRef( {referenceTuple}, {referenceString}, {extended} )" )
 
         BBB, C, V, S = referenceTuple
         assert len(BBB) == 3
         if C and not C.isdigit() and C!='-1': # Should be no suffix on C (although it can be blank if the reference is for a whole book)
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "BibleVersificationSystem.isValidBCVRef( {}, {}, {} ) expected C to be digits".format( referenceTuple, referenceString, extended ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"BibleVersificationSystem.isValidBCVRef( {referenceTuple}, {referenceString}, {extended} ) expected C to be digits" )
         assert not V or V.isdigit() # Should be no suffix on V (although it can be blank if the reference is for a whole chapter)
         assert not S or len(S)==1 and S.isalpha() # Suffix should be only one lower-case letter if anything
-        myReferenceString = " (from {!r})".format(referenceString) if referenceString is not None else ''
+        myReferenceString = f" (from {referenceString!r})" if referenceString is not None else ''
 
         if BBB in self.__chapterDataDict:
             if extended and C=='-1': return 0 <= int(V) <= 199 # Don't check the verse number range accurately
@@ -845,10 +843,10 @@ class BibleVersificationSystem:
                 if 0 < int(V) <= int(self.__chapterDataDict[BBB][C]):
                     if not self.isOmittedVerse( referenceTuple ):
                         return True
-                    logging.error( _("{} {}:{} is omitted in {} versification system {}").format(BBB,C,V,self.getVersificationSystemName(),myReferenceString) )
-                logging.error( _("{} {}:{} is invalid verse in {} versification system {}").format(BBB,C,V,self.getVersificationSystemName(),myReferenceString) )
-            logging.error( _("{} {}:{} is invalid chapter in {} versification system {}").format(BBB,C,V,self.getVersificationSystemName(),myReferenceString) )
-        logging.error( _("{} {}:{} is invalid book in {} versification system {}").format(BBB,C,V,self.getVersificationSystemName(),myReferenceString) )
+                    logging.error( f"{BBB} {C}:{V} is omitted in {self.getVersificationSystemName()} versification system {myReferenceString}" )
+                logging.error( f"{BBB} {C}:{V} is invalid verse in {self.getVersificationSystemName()} versification system {myReferenceString}" )
+            logging.error( f"{BBB} {C}:{V} is invalid chapter in {self.getVersificationSystemName()} versification system {myReferenceString}" )
+        logging.error( f"{BBB} {C}:{V} is invalid book in {self.getVersificationSystemName()} versification system {myReferenceString}" )
         return False
     # end of BibleVersificationSystem.isValidBCVRef
 
@@ -860,7 +858,7 @@ class BibleVersificationSystem:
         assert endRef and len(endRef)==4
 
         haveErrors, haveWarnings = False, False
-        myReferenceString = " (from {!r})".format(referenceString) if referenceString is not None else ''
+        myReferenceString = f" (from {referenceString!r})" if referenceString is not None else ''
         if not self.isValidBCVRef( startRef, referenceString ):
             haveErrors = True
         if not self.isValidBCVRef( endRef, referenceString ):
@@ -872,18 +870,18 @@ class BibleVersificationSystem:
         # Check book details
         if BBB1!=BBB2:
             if bookOrderSystem is None:
-                logging.error( _("Book order system not specified (range covers {} to {}){}").format( BBB1, BBB2, myReferenceString ) )
+                logging.error( f"Book order system not specified (range covers {BBB1} to {BBB2}){myReferenceString}" )
                 haveErrors = True
                 return None
             if not bookOrderSystem.correctlyOrdered( BBB1, BBB2 ):
-                logging.error( _("Book range out of order ({} before {}){}").format( BBB1, BBB2, myReferenceString ) )
+                logging.error( f"Book range out of order ({BBB1} before {BBB2}){myReferenceString}" )
                 haveErrors = True
             if haveErrors: return None
 
         # Check chapter details
         C1int, C2int = int(C1), int(C2)
         if BBB1==BBB2 and C1int > C2int:
-            logging.error( _("Chapter range out of order ({} before {}) in {}{}").format( C1, C2, BBB1, myReferenceString ) )
+            logging.error( f"Chapter range out of order ({C1} before {C2}) in {BBB1}{myReferenceString}" )
             haveErrors = True
         if haveErrors: return None
 
@@ -893,7 +891,7 @@ class BibleVersificationSystem:
         if V2: V2int = int(V2)
         else: V2int = self.getNumVerses( BBB2, C2 ) # End with the last verse if no verse specified (e.g., for a chapter range)
         if BBB1==BBB2 and C1int==C2int and V1int>=V2int:
-            logging.error( _("Verse range out of order ({} before {}) in {} {}{}").format( V1, V2, BBB1, C1, myReferenceString ) )
+            logging.error( f"Verse range out of order ({V1} before {V2}) in {BBB1} {C1}{myReferenceString}" )
             haveErrors = True
         if haveErrors: return None
 
@@ -923,7 +921,7 @@ class BibleVersificationSystem:
             while BBB != BBB2: # Go to the end of this book
                 Clast = self.getNumChapters( BBB )
                 if Clast is None: # This book didn't have any chapter info in the versification scheme  :(
-                    logging.critical( "Book {} didn't have chapter information for expanding range {} to {}".format( BBB, startRef, endRef ) )
+                    logging.critical( f"Book {BBB} didn't have chapter information for expanding range {startRef} to {endRef}" )
                     break
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "    here2 in expandCVRange:", BBB, Cfirst, Clast )
                 for Cint in range( Cfirst, Clast+1 ):
@@ -993,10 +991,10 @@ def briefDemo() -> None:
     # Demo the BibleVersificationSystems object
     bvss = BibleVersificationSystems().loadData() # Doesn't reload the XML unnecessarily :)
     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, bvss ) # Just print a summary
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Available system names are: {}").format( bvss.getAvailableVersificationSystemNames() ) )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Available system names are: {bvss.getAvailableVersificationSystemNames()}" )
     if 0:
         for systemName in ('RSV52','NLT96','KJV'): # Test the system against itself
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nTesting {} against the system…".format( systemName ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nTesting {systemName} against the system…" )
             testSystem = bvss.getVersificationSystem( systemName )
             bvss.checkVersificationSystem( "testSystem-"+systemName+'-a', testSystem['CV'] ) # Just compare the number of verses per chapter
             bvss.checkVersificationSystem( "testSystem-"+systemName+'-b', testSystem['CV'], testSystem ) # include omitted/combined/reordered verses checks this time
@@ -1013,22 +1011,22 @@ def briefDemo() -> None:
     bvs = BibleVersificationSystem( 'KJV' )
     if bvs is not None:
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, bvs ) # Just print a summary
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Number of available books for {} is {}".format(bvs.getVersificationSystemName(),bvs.numAvailableBooks()) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Number of available books for {bvs.getVersificationSystemName()} is {bvs.numAvailableBooks()}" )
         BBB = 'PRO'
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "{} has {} chapters in {}".format(BBB,bvs.getNumChapters(BBB),bvs.getVersificationSystemName()) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{BBB} has {bvs.getNumChapters(BBB)} chapters in {bvs.getVersificationSystemName()}" )
         BBB = 'MAT'; C='1'
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "{} {} has {} verses".format(BBB,C,bvs.getNumVerses(BBB,C)) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{BBB} {C} has {bvs.getNumVerses(BBB,C)} verses" )
         BBB = 'DAN'
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Verse list for the {} chapters in {} is: {}".format(bvs.getNumChapters(BBB),BBB,bvs.getNumVersesList(BBB)) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Verse list for the {bvs.getNumChapters(BBB)} chapters in {BBB} is: {bvs.getNumVersesList(BBB)}" )
         BBB = 'MAT'; C='17'; V='21'; S=''; refTuple = (BBB,C,V,S,)
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "{} {} {} {} is omitted: {}".format(BBB,C,V,S,bvs.isOmittedVerse(refTuple)) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{BBB} {C} {V} {S} is omitted: {bvs.isOmittedVerse(refTuple)}" )
         BBB = 'MAT'; C='17'; V='22'; S=''; refTuple = (BBB,C,V,S,)
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "{} {} {} {} is omitted: {}".format(BBB,C,V,S,bvs.isOmittedVerse(refTuple)) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{BBB} {C} {V} {S} is omitted: {bvs.isOmittedVerse(refTuple)}" )
         BBB = 'MRK'; C='7'; V='16'; S=''; refTuple = (BBB,C,V,S,)
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "{} {} {} {} is omitted: {}".format(BBB,C,V,S,bvs.isOmittedVerse(refTuple)) )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Omitted verses in {} are: {}".format(BBB,bvs.getOmittedVerseList(BBB)) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{BBB} {C} {V} {S} is omitted: {bvs.isOmittedVerse(refTuple)}" )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Omitted verses in {BBB} are: {bvs.getOmittedVerseList(BBB)}" )
         for myRange in ((('MAT','2','1',''),('MAT','2','5','')), (('MAT','3','2','b'),('MAT','3','6','a')), (('MAT','3','15',''),('MAT','4','2','')), (('MAT','3','16','b'),('MAT','4','3','a')), (('MAT','3','2',''),('MAT','2','6',''))):
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Expanding {} gives {}".format( myRange, bvs.expandCVRange( myRange[0],myRange[1]) ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Expanding {myRange} gives {bvs.expandCVRange( myRange[0],myRange[1])}" )
 # end of BibleVersificationSystem.briefDemo
 
 def fullDemo() -> None:
@@ -1040,10 +1038,10 @@ def fullDemo() -> None:
     # Demo the BibleVersificationSystems object
     bvss = BibleVersificationSystems().loadData() # Doesn't reload the XML unnecessarily :)
     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, bvss ) # Just print a summary
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Available system names are: {}").format( bvss.getAvailableVersificationSystemNames() ) )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Available system names are: {bvss.getAvailableVersificationSystemNames()}" )
     if 0:
         for systemName in ('RSV52','NLT96','KJV'): # Test the system against itself
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nTesting {} against the system…".format( systemName ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nTesting {systemName} against the system…" )
             testSystem = bvss.getVersificationSystem( systemName )
             bvss.checkVersificationSystem( "testSystem-"+systemName+'-a', testSystem['CV'] ) # Just compare the number of verses per chapter
             bvss.checkVersificationSystem( "testSystem-"+systemName+'-b', testSystem['CV'], testSystem ) # include omitted/combined/reordered verses checks this time
@@ -1060,22 +1058,22 @@ def fullDemo() -> None:
     bvs = BibleVersificationSystem( 'KJV' )
     if bvs is not None:
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, bvs ) # Just print a summary
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Number of available books for {} is {}".format(bvs.getVersificationSystemName(),bvs.numAvailableBooks()) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Number of available books for {bvs.getVersificationSystemName()} is {bvs.numAvailableBooks()}" )
         BBB = 'PRO'
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "{} has {} chapters in {}".format(BBB,bvs.getNumChapters(BBB),bvs.getVersificationSystemName()) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{BBB} has {bvs.getNumChapters(BBB)} chapters in {bvs.getVersificationSystemName()}" )
         BBB = 'MAT'; C='1'
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "{} {} has {} verses".format(BBB,C,bvs.getNumVerses(BBB,C)) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{BBB} {C} has {bvs.getNumVerses(BBB,C)} verses" )
         BBB = 'DAN'
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Verse list for the {} chapters in {} is: {}".format(bvs.getNumChapters(BBB),BBB,bvs.getNumVersesList(BBB)) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Verse list for the {bvs.getNumChapters(BBB)} chapters in {BBB} is: {bvs.getNumVersesList(BBB)}" )
         BBB = 'MAT'; C='17'; V='21'; S=''; refTuple = (BBB,C,V,S,)
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "{} {} {} {} is omitted: {}".format(BBB,C,V,S,bvs.isOmittedVerse(refTuple)) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{BBB} {C} {V} {S} is omitted: {bvs.isOmittedVerse(refTuple)}" )
         BBB = 'MAT'; C='17'; V='22'; S=''; refTuple = (BBB,C,V,S,)
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "{} {} {} {} is omitted: {}".format(BBB,C,V,S,bvs.isOmittedVerse(refTuple)) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{BBB} {C} {V} {S} is omitted: {bvs.isOmittedVerse(refTuple)}" )
         BBB = 'MRK'; C='7'; V='16'; S=''; refTuple = (BBB,C,V,S,)
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "{} {} {} {} is omitted: {}".format(BBB,C,V,S,bvs.isOmittedVerse(refTuple)) )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Omitted verses in {} are: {}".format(BBB,bvs.getOmittedVerseList(BBB)) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{BBB} {C} {V} {S} is omitted: {bvs.isOmittedVerse(refTuple)}" )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Omitted verses in {BBB} are: {bvs.getOmittedVerseList(BBB)}" )
         for myRange in ((('MAT','2','1',''),('MAT','2','5','')), (('MAT','3','2','b'),('MAT','3','6','a')), (('MAT','3','15',''),('MAT','4','2','')), (('MAT','3','16','b'),('MAT','4','3','a')), (('MAT','3','2',''),('MAT','2','6',''))):
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Expanding {} gives {}".format( myRange, bvs.expandCVRange( myRange[0],myRange[1]) ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Expanding {myRange} gives {bvs.expandCVRange( myRange[0],myRange[1])}" )
 # end of BibleVersificationSystem.fullDemo
 
 if __name__ == '__main__':

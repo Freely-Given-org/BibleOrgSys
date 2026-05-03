@@ -40,7 +40,6 @@ CHANGELOG:
     2022-06-04 commented out TokenisedBible test (uncompleted module has been removed)
     2022-04-22 added ScriptureBurritoBible test
 """
-from gettext import gettext as _
 import sys
 import os.path
 from datetime import datetime
@@ -56,7 +55,7 @@ SHORT_PROGRAM_NAME = "DemoTests"
 PROGRAM_NAME = "BOS+ Demo tests"
 PROGRAM_VERSION = '0.69'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
-PROGRAM_NAME_VERSION_DATE = f'{PROGRAM_NAME_VERSION} {_("last modified")} {LAST_MODIFIED_DATE}'
+PROGRAM_NAME_VERSION_DATE = f'{PROGRAM_NAME_VERSION} {"last modified"} {LAST_MODIFIED_DATE}'
 
 
 DEBUGGING_THIS_MODULE = False
@@ -153,7 +152,7 @@ def formatFailureDetails( exceptionObject:Exception ) -> tuple[str,Exception,str
     #dPrint( 'Info', DEBUGGING_THIS_MODULE, exc_type, exc_obj, traceback_obj )
     #tbs = traceback.extract_tb( traceback_obj )
     #for j,tbj in enumerate( tbs ):
-        #dPrint( 'Info', DEBUGGING_THIS_MODULE, "tb{} {}".format( j, tbj ) )
+        #dPrint( 'Info', DEBUGGING_THIS_MODULE, f"tb{j} {tbj}" )
     #dPrint( 'Info', DEBUGGING_THIS_MODULE, "tbs", tbs[1:] )
     #dPrint( 'Info', DEBUGGING_THIS_MODULE, "tb1", tbs[1] )
     #dPrint( 'Info', DEBUGGING_THIS_MODULE, "format", traceback.format_exc() )
@@ -1840,38 +1839,38 @@ def main():
 
     #if testStrict:
         #if failuresStrict:
-            #publishResultLine( "\n\nHad {} strict mode failures: {}".format( len(failuresStrict), sorted(failuresStrict) ) )
+            #publishResultLine( f"\n\nHad {len(failuresStrict)} strict mode failures: {sorted(failuresStrict)}" )
         #else:
             #publishResultLine( "\n\nAll strict mode tests succeeded." )
         #if BibleOrgSysGlobals.commandLineArguments.passes or BibleOrgSysGlobals.verbosityLevel > 2:
-            #publishResultLine( "Had {} strict mode successes: {}".format( len(successesStrict), sorted(successesStrict) ) )
+            #publishResultLine( f"Had {len(successesStrict)} strict mode successes: {sorted(successesStrict)}" )
         #formatAndPublish( timesStrict )
 
     #if testStrictExport:
         #if failuresExport:
-            #publishResultLine( "\n\nHad {} strict export mode failures: {}".format( len(failuresExport), sorted(failuresExport) ) )
+            #publishResultLine( f"\n\nHad {len(failuresExport)} strict export mode failures: {sorted(failuresExport)}" )
         #else:
             #publishResultLine( "\n\nAll strict export mode tests succeeded." )
         #if BibleOrgSysGlobals.commandLineArguments.passes or BibleOrgSysGlobals.verbosityLevel > 2:
-            #publishResultLine( "Had {} strict export mode successes: {}".format( len(successesExport), sorted(successesExport) ) )
+            #publishResultLine( f"Had {len(successesExport)} strict export mode successes: {sorted(successesExport)}" )
         #formatAndPublish( timesExport )
 
     #if testStrictExportLogging:
         #if failuresLogging:
-            #publishResultLine( "\n\nHad {} strict export logging mode failures: {}".format( len(failuresLogging), sorted(failuresLogging) ) )
+            #publishResultLine( f"\n\nHad {len(failuresLogging)} strict export logging mode failures: {sorted(failuresLogging)}" )
         #else:
             #publishResultLine( "\n\nAll strict export logging mode tests succeeded." )
         #if BibleOrgSysGlobals.commandLineArguments.passes or BibleOrgSysGlobals.verbosityLevel > 2:
-            #publishResultLine( "Had {} strict export logging mode successes: {}".format( len(successesLogging), sorted(successesLogging) ) )
+            #publishResultLine( f"Had {len(successesLogging)} strict export logging mode successes: {sorted(successesLogging)}" )
         #formatAndPublish( timesLogging )
 
     #if testStrictExportVerbose:
         #if failuresVerbose:
-            #publishResultLine( "\n\nHad {} strict export verbose mode failures: {}".format( len(failuresVerbose), sorted(failuresVerbose) ) )
+            #publishResultLine( f"\n\nHad {len(failuresVerbose)} strict export verbose mode failures: {sorted(failuresVerbose)}" )
         #else:
             #publishResultLine( "\n\nAll strict export verbose mode tests succeeded." )
         #if BibleOrgSysGlobals.commandLineArguments.passes or BibleOrgSysGlobals.verbosityLevel > 2:
-            #publishResultLine( "Had {} strict export verbose mode successes: {}".format( len(successesVerbose), sorted(successesVerbose) ) )
+            #publishResultLine( f"Had {len(successesVerbose)} strict export verbose mode successes: {sorted(successesVerbose)}" )
         #formatAndPublish( timesVerbose )
 
     if testStrictVerboseDebug:

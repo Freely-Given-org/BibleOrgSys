@@ -27,7 +27,6 @@
 Module handling ISO_639_3_Languages.xml and to export to JSON, C, and Python data tables.
 """
 
-from gettext import gettext as _
 import logging
 import os.path
 from datetime import datetime
@@ -94,7 +93,7 @@ class ISO_639_3_LanguagesConverter:
             if BibleOrgSysGlobals.strictCheckingFlag:
                 self._validate()
         else: # The data must have been already loaded
-            if XMLFileOrFilepath is not None and XMLFileOrFilepath!=self.__XMLFileOrFilepath: logging.error( _("ISO 639-3 language codes are already loaded -- your different filepath of {!r} was ignored").format( XMLFileOrFilepath ) )
+            if XMLFileOrFilepath is not None and XMLFileOrFilepath!=self.__XMLFileOrFilepath: logging.error( f"ISO 639-3 language codes are already loaded -- your different filepath of {XMLFileOrFilepath!r} was ignored" )
         return self
     # end of loadAndValidate
 
@@ -107,12 +106,12 @@ class ISO_639_3_LanguagesConverter:
         self.__XMLFileOrFilepath = XMLFileOrFilepath
         assert self._XMLTree is None or len(self._XMLTree)==0 # Make sure we're not doing this twice
 
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, _("Loading ISO 639-3 languages XML file from {!r}…").format( XMLFileOrFilepath ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Loading ISO 639-3 languages XML file from {XMLFileOrFilepath!r}…" )
         self._XMLTree = ElementTree().parse( XMLFileOrFilepath )
         assert len(self._XMLTree) # Fail here if we didn't load anything at all
 
         if self._XMLTree.tag  != self._treeTag:
-            logging.error( "Expected to load {!r} but got {!r}".format( self._treeTag, self._XMLTree.tag ) )
+            logging.error( f"Expected to load {self._treeTag!r} but got {self._XMLTree.tag!r}" )
     # end of _load
 
     def _validate( self ):
@@ -135,32 +134,32 @@ class ISO_639_3_LanguagesConverter:
                 for attributeName in self._compulsoryAttributes:
                     attributeValue = element.get( attributeName )
                     if attributeValue is None:
-                        logging.error( "Compulsory {!r} attribute is missing from {} element in record {}".format( attributeName, element.tag, j ) )
+                        logging.error( f"Compulsory {j!r} attribute is missing from {attributeName} element in record {element.tag}" )
                     if not attributeValue and attributeName!="type":
-                        logging.warning( "Compulsory {!r} attribute is blank on {} element in record {}".format( attributeName, element.tag, j ) )
+                        logging.warning( f"Compulsory {j!r} attribute is blank on {attributeName} element in record {element.tag}" )
 
                 # Check optional attributes on this main element
                 for attributeName in self._optionalAttributes:
                     attributeValue = element.get( attributeName )
                     if attributeValue is not None:
                         if not attributeValue:
-                            logging.warning( "Optional {!r} attribute is blank on {} element in record {}".format( attributeName, element.tag, j ) )
+                            logging.warning( f"Optional {j!r} attribute is blank on {attributeName} element in record {element.tag}" )
 
                 # Check for unexpected additional attributes on this main element
                 for attributeName in element.keys():
                     attributeValue = element.get( attributeName )
                     if attributeName not in self._compulsoryAttributes and attributeName not in self._optionalAttributes:
-                        logging.warning( "Additional {!r} attribute ({!r}) found on {} element in record {}".format( attributeName, attributeValue, element.tag, j ) )
+                        logging.warning( f"Additional {element.tag!r} attribute ({j!r}) found on {attributeName} element in record {attributeValue}" )
 
                 # Check the attributes that must contain unique information (in that particular field -- doesn't check across different attributes)
                 for attributeName in self._uniqueAttributes:
                     attributeValue = element.get( attributeName )
                     if attributeValue is not None and attributeName!="reference_name":
                         if attributeValue in uniqueDict["Attribute_"+attributeName]:
-                            logging.error( "Found {!r} data repeated in {!r} field on {} element in record {}".format( attributeValue, attributeName, element.tag, j ) )
+                            logging.error( f"Found {element.tag!r} data repeated in {j!r} field on {attributeValue} element in record {attributeName}" )
                         uniqueDict["Attribute_"+attributeName].append( attributeValue )
             else:
-                logging.warning( "Unexpected element: {} in record {}".format( element.tag, j ) )
+                logging.warning( f"Unexpected element: {element.tag} in record {j}" )
     # end of _validate
 
     def __str__( self ) -> str:
@@ -230,7 +229,7 @@ class ISO_639_3_LanguagesConverter:
             folder = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH
             if not os.path.exists( folder ): os.mkdir( folder )
             filepath = os.path.join( folder, self._filenameBase + "_Languages_Tables.pickle" )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Exporting to {}…").format( filepath ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Exporting to {filepath}…" )
         with open( filepath, 'wb' ) as myFile:
             pickle.dump( self.__DataDicts, myFile )
     # end of pickle
@@ -241,10 +240,10 @@ class ISO_639_3_LanguagesConverter:
         """
         def exportPythonDict( theFile, theDict, dictName, keyComment, fieldsComment ):
             """Exports theDict to theFile."""
-            theFile.write( "{} = {{\n  # Key is {}\n  # Fields are: {}\n".format( dictName, keyComment, fieldsComment ) )
+            theFile.write( f"{dictName} = {{\n  # Key is {keyComment}\n  # Fields are: {fieldsComment}\n" )
             for dictKey in sorted(theDict.keys()):
-                theFile.write( "  {}: {},\n".format( repr(dictKey), repr(theDict[dictKey]) ) )
-            theFile.write( "}}\n# end of {}\n\n".format( dictName ) )
+                theFile.write( f"  {repr(dictKey)}: {repr(theDict[dictKey])},\n" )
+            theFile.write( f"}}\n# end of {dictName}\n\n" )
         # end of exportPythonDict
 
 
@@ -256,17 +255,17 @@ class ISO_639_3_LanguagesConverter:
             folder = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH
             if not os.path.exists( folder ): os.mkdir( folder )
             filepath = os.path.join( folder, self._filenameBase + "_Languages_Tables.py" )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Exporting to {}…").format( filepath ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Exporting to {filepath}…" )
 
         IDDict, NameDict = self.__DataDicts
         with open( filepath, 'wt', encoding='utf-8' ) as myFile:
-            myFile.write( "# {}\n#\n".format( filepath ) )
-            myFile.write( "# This UTF-8 file was automatically generated by ISO_639_3_Languages_Converter.py V{} on {}\n#\n".format( PROGRAM_VERSION, datetime.now() ) )
-            if self.title: myFile.write( "# {}\n".format( self.title ) )
-            myFile.write( "#   {} {} loaded from the original XML file.\n#\n\n".format( len(self._XMLTree), self._treeTag ) )
+            myFile.write( f"# {filepath}\n#\n" )
+            myFile.write( f"# This UTF-8 file was automatically generated by ISO_639_3_Languages_Converter.py V{PROGRAM_VERSION} on {datetime.now()}\n#\n" )
+            if self.title: myFile.write( f"# {self.title}\n" )
+            myFile.write( f"#   {len(self._XMLTree)} {self._treeTag} loaded from the original XML file.\n#\n\n" )
             exportPythonDict( myFile, IDDict, "ISO639_3_Languages_IDDict", "id", "Name, Type, Scope, Part1Code, Part2Code" )
             exportPythonDict( myFile, NameDict, "ISO639_3_Languages_NameDict", "name", "ID" )
-            myFile.write( "# end of {}".format( os.path.basename(filepath) ) )
+            myFile.write( f"# end of {os.path.basename(filepath)}" )
     # end of exportDataToPython
 
     def exportDataToJSON( self, filepath=None ):
@@ -285,7 +284,7 @@ class ISO_639_3_LanguagesConverter:
             folder = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH
             if not os.path.exists( folder ): os.mkdir( folder )
             filepath = os.path.join( folder, self._filenameBase + "_Languages_Tables.json" )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Exporting to {}…").format( filepath ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Exporting to {filepath}…" )
         with open( filepath, 'wt', encoding='utf-8' ) as myFile:
             json.dump( self.__DataDicts, myFile, ensure_ascii=False, indent=2 )
     # end of exportDataToJSON
@@ -308,11 +307,11 @@ class ISO_639_3_LanguagesConverter:
                         elif isinstance( field, str):
                             if j>0 and len(field)==1: result += "'" + field + "'" # Catch the character fields
                             else: result += '"' + str(field).replace('"','\\"') + '"' # String fields
-                        else: logging.error( "Cannot convert unknown field type {!r} in entry {!r}".format( field, entry ) )
+                        else: logging.error( f"Cannot convert unknown field type {field!r} in entry {entry!r}" )
                 elif isinstance( entry, str):
                     result += '"' + str(entry).replace('"','\\"') + '"' # String fields
                 else:
-                    logging.error( "Can't handle this type of entry yet: {}".format( repr(entry) ) )
+                    logging.error( f"Can't handle this type of entry yet: {repr(entry)}" )
                 return result
             # end of convertEntry
 
@@ -320,22 +319,22 @@ class ISO_639_3_LanguagesConverter:
                 fieldsCount = len( theDict[dictKey] ) + 1 # Add one since we include the key in the count
                 break # We only check the first (random) entry we get
 
-            #hFile.write( "typedef struct {}EntryStruct { {} } {}Entry;\n\n".format( dictName, structure, dictName ) )
-            hFile.write( "typedef struct {}EntryStruct {{\n".format( dictName ) )
+            #hFile.write( f"typedef struct {dictName}EntryStruct { {structure} } {dictName}Entry;\n\n" )
+            hFile.write( f"typedef struct {dictName}EntryStruct {{\n" )
             for declaration in structure.split(';'):
                 adjDeclaration = declaration.strip()
-                if adjDeclaration: hFile.write( "    {};\n".format( adjDeclaration ) )
-            hFile.write( "}} {}Entry;\n\n".format( dictName ) )
+                if adjDeclaration: hFile.write( f"    {adjDeclaration};\n" )
+            hFile.write( f"}} {dictName}Entry;\n\n" )
 
-            cFile.write( "const static {}Entry\n {}[{}] = {{\n  // Fields ({}) are {}\n  // Sorted by {}\n".format( dictName, dictName, len(theDict), fieldsCount, structure, sortedBy ) )
+            cFile.write( f"const static {dictName}Entry\n {dictName}[{len(theDict)}] = {{\n  // Fields ({fieldsCount}) are {structure}\n  // Sorted by {sortedBy}\n" )
             for dictKey in sorted(theDict.keys()):
                 if isinstance( dictKey, str ):
-                    cFile.write( "  {{\"{}\", {}}},\n".format( dictKey, convertEntry(theDict[dictKey]) ) )
+                    cFile.write( f"  {{\"{dictKey}\", {convertEntry(theDict[dictKey])}}},\n" )
                 elif isinstance( dictKey, int ):
-                    cFile.write( "  {{{}, {}}},\n".format( dictKey, convertEntry(theDict[dictKey]) ) )
+                    cFile.write( f"  {{{dictKey}, {convertEntry(theDict[dictKey])}}},\n" )
                 else:
-                    logging.error( "Can't handle this type of key data yet: {}".format( dictKey ) )
-            cFile.write( "}}; // {} ({} entries)\n\n".format( dictName, len(theDict) ) )
+                    logging.error( f"Can't handle this type of key data yet: {dictKey}" )
+            cFile.write( f"}}; // {dictName} ({len(theDict)} entries)\n\n" )
         # end of exportPythonDict
 
 
@@ -349,27 +348,27 @@ class ISO_639_3_LanguagesConverter:
             filepath = os.path.join( folder, self._filenameBase + "_Languages_Tables" )
         hFilepath = filepath + '.h'
         cFilepath = filepath + '.c'
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Exporting to {}…").format( cFilepath ) ) # Don't bother telling them about the .h file
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Exporting to {cFilepath}…" ) # Don't bother telling them about the .h file
         ifdefName = self._filenameBase.upper() + "_Tables_h"
 
         IDDict, NameDict = self.__DataDicts
         with open( hFilepath, 'wt', encoding='utf-8' ) as myHFile, open( cFilepath, 'wt', encoding='utf-8' ) as myCFile:
-            myHFile.write( "// {}\n//\n".format( hFilepath ) )
-            myCFile.write( "// {}\n//\n".format( cFilepath ) )
-            lines = "// This UTF-8 file was automatically generated by ISO_639_3_Languages.py V{} on {}\n//\n".format( PROGRAM_VERSION, datetime.now() )
+            myHFile.write( f"// {hFilepath}\n//\n" )
+            myCFile.write( f"// {cFilepath}\n//\n" )
+            lines = f"// This UTF-8 file was automatically generated by ISO_639_3_Languages.py V{PROGRAM_VERSION} on {datetime.now()}\n//\n"
             myHFile.write( lines ); myCFile.write( lines )
-            myCFile.write( "//   {} {} loaded from the original XML file.\n//\n\n".format( len(self._XMLTree), self._treeTag ) )
-            myHFile.write( "\n#ifndef {}\n#define {}\n\n".format( ifdefName, ifdefName ) )
-            myCFile.write( '#include "{}"\n\n'.format( os.path.basename(hFilepath) ) )
+            myCFile.write( f"//   {len(self._XMLTree)} {self._treeTag} loaded from the original XML file.\n//\n\n" )
+            myHFile.write( f"\n#ifndef {ifdefName}\n#define {ifdefName}\n\n" )
+            myCFile.write( f'#include "{os.path.basename(hFilepath)}"\n\n' )
 
             CHAR = "const unsigned char"
             BYTE = "const int"
-            exportPythonDict( myHFile, myCFile, IDDict, "IDDict", "3-character lower-case ID field", "{}[3+1] ID; {}* Name; {} Type; {} Scope; {}[2+1] Part1Code; {}[3+1] Part2Code;".format(CHAR,CHAR,CHAR,CHAR,CHAR,CHAR) )
-            exportPythonDict( myHFile, myCFile, NameDict, "NameDict", "language name (alphabetical)", "{}* Name; {}[3+1] ID;".format(CHAR,CHAR)  )
+            exportPythonDict( myHFile, myCFile, IDDict, "IDDict", "3-character lower-case ID field", f"{CHAR}[3+1] ID; {CHAR}* Name; {CHAR} Type; {CHAR} Scope; {CHAR}[2+1] Part1Code; {CHAR}[3+1] Part2Code;" )
+            exportPythonDict( myHFile, myCFile, NameDict, "NameDict", "language name (alphabetical)", f"{CHAR}* Name; {CHAR}[3+1] ID;"  )
 
-            myHFile.write( "#endif // {}\n\n".format( ifdefName ) )
-            myHFile.write( "// end of {}".format( os.path.basename(hFilepath) ) )
-            myCFile.write( "// end of {}".format( os.path.basename(cFilepath) ) )
+            myHFile.write( f"#endif // {ifdefName}\n\n" )
+            myHFile.write( f"// end of {os.path.basename(hFilepath)}" )
+            myCFile.write( f"// end of {os.path.basename(cFilepath)}" )
     # end of exportDataToC
 # end of ISO_639_3_LanguagesConverter class
 

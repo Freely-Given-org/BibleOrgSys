@@ -30,7 +30,6 @@ Module handling the OpenScriptures Hebrew lexicon.
         access the Strongs and Brown,Driver,Briggs lexical entries
         via various keys and in various formats.
 """
-from gettext import gettext as _
 import os.path
 from pathlib import Path
 import re
@@ -60,7 +59,7 @@ class HebrewLexiconIndex:
         Constructor: expects the filepath of the source XML file.
         Loads (and crudely validates the XML file) into an element tree.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, "HebrewLexiconIndex.__init__( {} )".format( XMLFolder ) )
+        fnPrint( DEBUGGING_THIS_MODULE, f"HebrewLexiconIndex.__init__( {XMLFolder} )" )
         self.XMLFolder = XMLFolder
     # end of HebrewLexiconIndex.__init__
 
@@ -71,7 +70,7 @@ class HebrewLexiconIndex:
         """
         from BibleOrgSys.OriginalLanguages.Converters.HebrewLexiconConverter import AugmentedStrongsIndexFileConverter, LexicalIndexFileConverter
 
-        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, _("HebrewLexiconIndex.load()") )
+        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "HebrewLexiconIndex.load()" )
         if self.XMLFolder is None:
             self.XMLFolder = BibleOrgSysGlobals.BADBAD_PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( 'HebrewLexicon/' ) # Hebrew lexicon folder
 
@@ -98,11 +97,11 @@ class HebrewLexiconIndex:
         print( "Here in HebrewLexiconIndex.__str__" )
         result = "Hebrew Lexicon Index object"
         #if self.title: result += ('\n' if result else '') + self.title
-        #if self.version: result += ('\n' if result else '') + "Version: {} ".format( self.version )
-        #if self.date: result += ('\n' if result else '') + "Date: {}".format( self.date )
-        result += ('\n' if result else '') + "  " + _("Number of augmented Strong's index entries = {:,}").format( len(self.indexEntries1) )
-        result += ('\n' if result else '') + "  " + _("Number of Hebrew lexical index entries = {:,}").format( len(self.indexEntries['heb']) )
-        result += ('\n' if result else '') + "  " + _("Number of Aramaic lexical index entries = {:,}").format( len(self.indexEntries['arc']) )
+        #if self.version: result += ('\n' if result else '') + f"Version: {self.version} "
+        #if self.date: result += ('\n' if result else '') + f"Date: {self.date}"
+        result += ('\n' if result else '') + "  " + f"Number of augmented Strong's index entries = {len(self.indexEntries1):,}"
+        result += ('\n' if result else '') + "  " + f"Number of Hebrew lexical index entries = {len(self.indexEntries['heb']):,}"
+        result += ('\n' if result else '') + "  " + f"Number of Aramaic lexical index entries = {len(self.indexEntries['arc']):,}"
         return result
     # end of HebrewLexiconIndex.__str__
 
@@ -177,7 +176,7 @@ class HebrewLexiconIndex:
 
         Returns a lexicon internal code like 'acd'.
         """
-        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "HebrewLexiconIndex.getBrDrBrCodeFromStrongsNumber( {} )".format( key ) )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"HebrewLexiconIndex.getBrDrBrCodeFromStrongsNumber( {key} )" )
 
         if key and key[0]=='H': key = key[1:] # Remove any leading 'H'
         #keyDigits = key[1:]
@@ -212,7 +211,7 @@ class HebrewLexiconSimple:
         Constructor: expects the filepath of the source XML file.
         Loads (and crudely validates the XML file) into an element tree.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, "HebrewLexiconSimple.__init__( {} )".format( XMLFolder ) )
+        fnPrint( DEBUGGING_THIS_MODULE, f"HebrewLexiconSimple.__init__( {XMLFolder} )" )
         self.XMLFolder = XMLFolder
         self.StrongsEntries = self.BrownDriverBriggsEntries = None
         if preload: self.load()
@@ -247,13 +246,13 @@ class HebrewLexiconSimple:
         """
         result = "Hebrew Simple Lexicon object"
         #if self.title: result += ('\n' if result else '') + self.title
-        #if self.version: result += ('\n' if result else '') + "Version: {} ".format( self.version )
-        #if self.date: result += ('\n' if result else '') + "Date: {}".format( self.date )
+        #if self.version: result += ('\n' if result else '') + f"Version: {self.version} "
+        #if self.date: result += ('\n' if result else '') + f"Date: {self.date}"
         if self.StrongsEntries:
-            result += ('\n' if result else '') + "  " + _("Number of Strong's Hebrew entries = {:,}").format( len(self.StrongsEntries) )
+            result += ('\n' if result else '') + "  " + f"Number of Strong's Hebrew entries = {len(self.StrongsEntries):,}"
         if self.BrownDriverBriggsEntries:
-            result += ('\n' if result else '') + "  " + _("Number of BrDrBr Hebrew entries = {:,}").format( len(self.BrownDriverBriggsEntries['heb']) )
-            result += ('\n' if result else '') + "  " + _("Number of BrDrBr Aramaic entries = {:,}").format( len(self.BrownDriverBriggsEntries['arc']) )
+            result += ('\n' if result else '') + "  " + f"Number of BrDrBr Hebrew entries = {len(self.BrownDriverBriggsEntries['heb']):,}"
+            result += ('\n' if result else '') + "  " + f"Number of BrDrBr Aramaic entries = {len(self.BrownDriverBriggsEntries['arc']):,}"
         return result
     # end of HebrewLexiconSimple.__str__
 
@@ -267,7 +266,7 @@ class HebrewLexiconSimple:
 
         Returns None if the key is not found.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, "HebrewLexiconSimple.getStrongsEntryData( {!r} )".format( key ) )
+        fnPrint( DEBUGGING_THIS_MODULE, f"HebrewLexiconSimple.getStrongsEntryData( {key!r} )" )
         if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert key and key[0]=='H' and key[1:].isdigit()
         if self.StrongsEntries is None: self.load()
@@ -285,7 +284,7 @@ class HebrewLexiconSimple:
         Returns a string for the given key and fieldName names.
         Returns None if the key or fieldName is not found.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, "HebrewLexiconSimple.getStrongsEntryField( {!r}, {!r} )".format( key, fieldName ) )
+        fnPrint( DEBUGGING_THIS_MODULE, f"HebrewLexiconSimple.getStrongsEntryField( {key!r}, {fieldName!r} )" )
         if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert key and key[0]=='H' and key[1:].isdigit()
         if self.StrongsEntries is None: self.load()
@@ -330,7 +329,7 @@ class HebrewLexiconSimple:
             for j, (subentry,article) in enumerate( entry.items() ):
                 vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"    {j} {subentry}={article}" )
             wordEntry = entry['word']
-            wordHTML = '<span class="HebrewWord" xml:lang="hbo">{}</span> ({}) {} ({})'.format( wordEntry[0], wordEntry[3], wordEntry[1], wordEntry[2] )
+            wordHTML = f'<span class="HebrewWord" xml:lang="hbo">{wordEntry[0]}</span> ({wordEntry[3]}) {wordEntry[1]} ({wordEntry[2]})'
             sourceHTML = '<span class="Source"><b>Source:</b> {}</span>'.format( entry['source'].replace('<w>','<span class="Word">').replace('</w>','</span>') \
                         .replace('<def>','<span class="Def">').replace('</def>','</span>') ) \
                             if 'source' in entry else ''
@@ -347,7 +346,7 @@ class HebrewLexiconSimple:
                 src = match.group(1)
                 if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
                     assert src[0] == 'H'
-                sourceHTML = sourceHTML[:match.start()] + '<span class="Strongs" ref="{}">H'.format( src ) + sourceHTML[match.end():]
+                sourceHTML = sourceHTML[:match.start()] + f'<span class="Strongs" ref="{src}">H' + sourceHTML[match.end():]
             meaningHTML = '<span class="Meaning"><b>Meaning:</b> {}</span>'.format( entry['meaning'] \
                         .replace('<def>','<span class="Def">').replace('</def>','</span>') ) \
                             if 'meaning' in entry else ''
@@ -371,7 +370,7 @@ class HebrewLexiconSimple:
 
         Returns None if the key is not found.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, "HebrewLexiconSimple.getBrDrBrEntryData( {!r} )".format( key ) )
+        fnPrint( DEBUGGING_THIS_MODULE, f"HebrewLexiconSimple.getBrDrBrEntryData( {key!r} )" )
         if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert key and key.count('.')==2
         if self.BrownDriverBriggsEntries is None: self.load()
@@ -389,13 +388,13 @@ class HebrewLexiconSimple:
         Returns a string for the given key and fieldName names.
         Returns None if the key or fieldName is not found.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, "HebrewLexiconSimple.getBrDrBrEntryField( {!r}, {!r} )".format( key, fieldName ) )
+        fnPrint( DEBUGGING_THIS_MODULE, f"HebrewLexiconSimple.getBrDrBrEntryField( {key!r}, {fieldName!r} )" )
         if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert key and key.count('.')==2
         if self.BrownDriverBriggsEntries is None: self.load()
 
         entry =  self.getBrDrBrEntryData( key )
-        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "HebrewLexiconSimple.getBrDrBrEntryField entry: {}".format( entry ) )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"HebrewLexiconSimple.getBrDrBrEntryField entry: {entry}" )
         if entry:
             if fieldName == 'status': return entry[2]
             return entry[0] # What are these fields?
@@ -409,7 +408,7 @@ class HebrewLexiconSimple:
         Returns an HTML entry for the given key.
         Returns None if the key is not found.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, "HebrewLexiconSimple.getBrDrBrEntryHTML( {!r} )".format( key ) )
+        fnPrint( DEBUGGING_THIS_MODULE, f"HebrewLexiconSimple.getBrDrBrEntryHTML( {key!r} )" )
         if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert key and key.count('.')==2
         if self.BrownDriverBriggsEntries is None: self.load()
@@ -428,13 +427,13 @@ class HebrewLexiconSimple:
                 #logging.warning( "Removed {} status field {} from {}" \
                     #.format( entryID, repr(mainEntry[match.start():match.end()]), repr(mainEntry) ) )
                 hType, hId = match.group(1), match.group(2)
-                mainEntry = mainEntry[:match.start()] + '<b>Type:</b> {}<br>'.format( hType) + mainEntry[match.end():]
+                mainEntry = mainEntry[:match.start()] + f'<b>Type:</b> {hType}<br>' + mainEntry[match.end():]
             match = re.search( '<id="(.+?)" type="(.+?)">', mainEntry )
             if match:
                 #logging.warning( "Removed {} status field {} from {}" \
                     #.format( entryID, repr(mainEntry[match.start():match.end()]), repr(mainEntry) ) )
                 hId, hType = match.group(1), match.group(2)
-                mainEntry = mainEntry[:match.start()] + '<b>Type:</b> {}<br>'.format( hType) + mainEntry[match.end():]
+                mainEntry = mainEntry[:match.start()] + f'<b>Type:</b> {hType}<br>' + mainEntry[match.end():]
             html = f'{mainEntry} <span class="Status">{{{entry[1]}}}</span>'
             vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"  HebrewLexiconSimple.getBrDrBrEntryHTML about to return: {html}" )
             return html
@@ -459,7 +458,7 @@ class HebrewLexicon( HebrewLexiconSimple ):
         Constructor: expects the filepath of the source XML file.
         Loads (and crudely validates the XML file) into an element tree.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, "HebrewLexicon.__init__( {} )".format( XMLFolder ) )
+        fnPrint( DEBUGGING_THIS_MODULE, f"HebrewLexicon.__init__( {XMLFolder} )" )
         HebrewLexiconSimple.__init__( self, XMLFolder )
         self.XMLFolder = XMLFolder
         self.hlix = None
@@ -502,17 +501,17 @@ class HebrewLexicon( HebrewLexiconSimple ):
         """
         result = "Hebrew Lexicon object"
         #if self.title: result += ('\n' if result else '') + self.title
-        #if self.version: result += ('\n' if result else '') + "Version: {} ".format( self.version )
-        #if self.date: result += ('\n' if result else '') + "Date: {}".format( self.date )
+        #if self.version: result += ('\n' if result else '') + f"Version: {self.version} "
+        #if self.date: result += ('\n' if result else '') + f"Date: {self.date}"
         if self.hlix is not None:
-            result += ('\n' if result else '') + "  " + _("Number of augmented Strong's index entries = {:,}").format( len(self.hlix.indexEntries1) )
-            result += ('\n' if result else '') + "  " + _("Number of Hebrew lexical index entries = {:,}").format( len(self.hlix.indexEntries['heb']) )
-            result += ('\n' if result else '') + "  " + _("Number of Aramaic lexical index entries = {:,}").format( len(self.hlix.indexEntries['arc']) )
+            result += ('\n' if result else '') + "  " + f"Number of augmented Strong's index entries = {len(self.hlix.indexEntries1):,}"
+            result += ('\n' if result else '') + "  " + f"Number of Hebrew lexical index entries = {len(self.hlix.indexEntries['heb']):,}"
+            result += ('\n' if result else '') + "  " + f"Number of Aramaic lexical index entries = {len(self.hlix.indexEntries['arc']):,}"
         if self.StrongsEntries is not None:
-            result += ('\n' if result else '') + "  " + _("Number of Strong's Hebrew entries = {:,}").format( len(self.StrongsEntries) )
+            result += ('\n' if result else '') + "  " + f"Number of Strong's Hebrew entries = {len(self.StrongsEntries):,}"
         if self.BrownDriverBriggsEntries is not None:
-            result += ('\n' if result else '') + "  " + _("Number of BrDrBr Hebrew entries = {:,}").format( len(self.BrownDriverBriggsEntries['heb']) )
-            result += ('\n' if result else '') + "  " + _("Number of BrDrBr Aramaic entries = {:,}").format( len(self.BrownDriverBriggsEntries['arc']) )
+            result += ('\n' if result else '') + "  " + f"Number of BrDrBr Hebrew entries = {len(self.BrownDriverBriggsEntries['heb']):,}"
+            result += ('\n' if result else '') + "  " + f"Number of BrDrBr Aramaic entries = {len(self.BrownDriverBriggsEntries['arc']):,}"
         return result
     # end of HebrewLexicon.__str__
 
@@ -527,7 +526,7 @@ class HebrewLexicon( HebrewLexiconSimple ):
 
         Returns None if the key is not found.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, "HebrewLexicon.getBrDrBrEntryData( {!r} )".format( key ) )
+        fnPrint( DEBUGGING_THIS_MODULE, f"HebrewLexicon.getBrDrBrEntryData( {key!r} )" )
         if '.' not in key: # assume it's a Strongs code then
             if self.hlix is None: self.load()
             key = self.hlix.getBrDrBrCodeFromStrongsNumber( key )
@@ -546,12 +545,12 @@ class HebrewLexicon( HebrewLexiconSimple ):
 
         Returns None if the key or fieldName is not found.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, "HebrewLexicon.getBrDrBrEntryField( {!r}, {!r} )".format( key, fieldName ) )
+        fnPrint( DEBUGGING_THIS_MODULE, f"HebrewLexicon.getBrDrBrEntryField( {key!r}, {fieldName!r} )" )
 
         if '.' not in key: # assume it's a Strongs code then
             if self.hlix is None: self.load()
             key = self.hlix.getBrDrBrCodeFromStrongsNumber( key )
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "HebrewLexicon.getBrDrBrEntryField got key: {}".format( key ) )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"HebrewLexicon.getBrDrBrEntryField got key: {key}" )
         if key:
             return HebrewLexiconSimple.getBrDrBrEntryField( self, key, fieldName ) # Recursive call
     # end of HebrewLexicon.getBrDrBrEntryField

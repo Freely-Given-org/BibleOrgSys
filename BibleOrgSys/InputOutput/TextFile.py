@@ -27,7 +27,6 @@
 Module for reading and parsing simple text control files.
 """
 
-from gettext import gettext as _
 import os.path
 import logging
 
@@ -50,7 +49,7 @@ class TextFile:
     """
     def __init__( self, filepath=None, folderpath=None, filename=None, encoding=None, autoLoad=True ) -> None:
         if BibleOrgSysGlobals.debugFlag or DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.verbosityLevel>2:
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "TextFile.__init__( {!r}, {!r}, {!r}, {!r}, {} )".format( filepath, folderpath, filename, encoding, autoLoad ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"TextFile.__init__( {folderpath!r}, {filename!r}, {encoding!r}, {autoLoad!r}, {filepath} )" )
 
         self.encoding = encoding if encoding else 'utf-8'
         if folderpath and filename:
@@ -62,7 +61,7 @@ class TextFile:
             self.filepath = filepath
             self.folderpath, self.filename = os.path.split( self.filepath )
         else:
-            logging.critical( "TextFile.__init__ seems to have too little or too much information: {} {} {}".format( filepath, folderpath, filename ) )
+            logging.critical( f"TextFile.__init__ seems to have too little or too much information: {filepath} {folderpath} {filename}" )
 
         if autoLoad:
             with open( self.filepath, mode='rt', encoding=encoding ) as myFile: # Automatically closes the file when done
@@ -79,7 +78,7 @@ class TextFile:
 
     def replace( self, findString, replaceString, replaceCount=None ):
         if BibleOrgSysGlobals.debugFlag or DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.verbosityLevel>2:
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "TextFile.replace( {!r}, {!r}, {} )".format( findString, replaceString, replaceCount ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"TextFile.replace( {replaceString!r}, {replaceCount!r}, {findString} )" )
         assert self.fileText is not None
 
         self.originalText = self.fileText
@@ -103,7 +102,7 @@ class TextFile:
 
     def saveAs( self, filepath=None, folderpath=None, filename=None, encoding=None ):
         if BibleOrgSysGlobals.debugFlag or DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.verbosityLevel>1:
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "TextFile.saveAs( {!r}, {!r}, {!r}, {} )".format( filepath, folderpath, filename, encoding ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"TextFile.saveAs( {folderpath!r}, {filename!r}, {encoding!r}, {filepath} )" )
         assert self.fileText is not None
 
         encoding = encoding if encoding else 'utf-8'
@@ -114,7 +113,7 @@ class TextFile:
             assert folderpath is None and filename is None
             folderpath, filename = os.path.split( filepath )
         else:
-            logging.critical( "TextFile.saveAs seems to have too little or too much information: {} {} {}".format( filepath, folderpath, filename ) )
+            logging.critical( f"TextFile.saveAs seems to have too little or too much information: {filepath} {folderpath} {filename}" )
 
         with open( filepath, mode='wt', encoding=encoding ) as myFile: # Automatically closes the file when done
             myFile.write( self.fileText )
@@ -128,7 +127,7 @@ class TextFile:
 
     def __del__( self ):
         if self.changed:
-            logging.critical( "TextFile: {!r} wasn't saved!!!".format( self.filename ) )
+            logging.critical( f"TextFile: {self.filename!r} wasn't saved!!!" )
     # end of TextFile.__del__
 # end of class TextFile
 

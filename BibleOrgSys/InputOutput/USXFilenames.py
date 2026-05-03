@@ -27,7 +27,6 @@
 Module for creating and manipulating USX filenames.
 """
 
-from gettext import gettext as _
 import os
 import logging
 
@@ -96,7 +95,7 @@ class USXFilenames:
                 if os.path.isfile( filepath ): # It's a file not a folder
                     self.fileList.append( possibleFilename )
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "fL", self.fileList )
-        #if not self.fileList: logging.error( _("No files at all in given folder: {!r}").format( self.givenFolderName) ); return
+        #if not self.fileList: logging.error( f"No files at all in given folder: {self.givenFolderName!r}" ); return
 
         matched = False
         for foundFilename in self.fileList:
@@ -134,7 +133,7 @@ class USXFilenames:
                                 self.hyphenIndex = None
                                 self.USXBookCodeIndex = USXBookCodeIndex
                                 self.pattern = 'dddbbb'
-                            else: logging.error( _("Unrecognized USX filename template at ")+foundFileBit ); return
+                            else: logging.error( "Unrecognized USX filename template at "+foundFileBit ); return
                             if USXBookCode.isupper(): self.pattern = self.pattern.replace( 'bbb', 'BBB' )
                             matched = True
                             break
@@ -149,15 +148,15 @@ class USXFilenames:
                                 self.hyphenIndex = hyphenIndex
                                 self.USXBookCodeIndex = USXBookCodeIndex
                                 self.pattern = 'dd-bbb'
-                            else: logging.error( _("Unrecognized USX filename template at ")+foundFileBit ); return
+                            else: logging.error( "Unrecognized USX filename template at "+foundFileBit ); return
                             if USXBookCode.isupper(): self.pattern = self.pattern.replace( 'bbb', 'BBB' )
                             matched = True
                             break
                 if matched: break
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, matched )
         if BibleOrgSysGlobals.verbosityLevel>2 and not matched:
-            logging.info( _("Unable to recognize valid USX files in ") + str(self.givenFolderName) )
-        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "USXFilenames: pattern={!r} fileExtension={!r}".format( self.pattern, self.fileExtension ) )
+            logging.info( "Unable to recognize valid USX files in " + str(self.givenFolderName) )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"USXFilenames: pattern={self.pattern!r} fileExtension={self.fileExtension!r}" )
     # end of USXFilenames.__init__
 
 
@@ -170,9 +169,9 @@ class USXFilenames:
         """
         result = "USX Filenames object"
         indent = 2
-        if self.givenFolderName: result += ('\n' if result else '') + ' '*indent + _("Folder: {}").format( self.givenFolderName )
-        if self.pattern: result += ('\n' if result else '') + ' '*indent + _("Filename pattern: {}").format( self.pattern )
-        if self.fileExtension: result += ('\n' if result else '') + ' '*indent + _("File extension: {}").format( self.fileExtension )
+        if self.givenFolderName: result += ('\n' if result else '') + ' '*indent + f"Folder: {self.givenFolderName}"
+        if self.pattern: result += ('\n' if result else '') + ' '*indent + f"Filename pattern: {self.pattern}"
+        if self.fileExtension: result += ('\n' if result else '') + ' '*indent + f"File extension: {self.fileExtension}"
         return result
     # end of USXFilenames.__str__
 
@@ -199,10 +198,10 @@ class USXFilenames:
         removeBBB = removeFilename = None
         for existingBBB, existingFilename in givenList:
             if existingBBB == BBB:
-                logging.warning( "{} tried to add duplicate {} {} when already had {} (removed both)".format( caller, BBB, filename, existingFilename ) )
+                logging.warning( f"{caller} tried to add duplicate {BBB} {filename} when already had {existingFilename} (removed both)" )
                 removeBBB, removeFilename = existingBBB, existingFilename
             if existingFilename == filename:
-                logging.warning( "{} tried to add duplicate {} {} when already had {} (removed both)".format( caller, filename, BBB, existingBBB ) )
+                logging.warning( f"{caller} tried to add duplicate {filename} {BBB} when already had {existingBBB} (removed both)" )
                 removeBBB, removeFilename = existingBBB, existingFilename
         if removeFilename: givenList.remove( (removeBBB,removeFilename) )
         else: givenList.append( (BBB,filename) )
@@ -239,7 +238,7 @@ class USXFilenames:
                     filename = filename[:self.digitsIndex] + USXDigits[1:] + filename[self.digitsIndex+len(USXDigits)-1:]
                     filename = filename[:self.USXBookCodeIndex] + ( USFMBookCode.upper() if 'BBB' in self.pattern else USFMBookCode ) + filename[self.USXBookCodeIndex+len(USFMBookCode):]
                 filename += f'.{self.fileExtension}'
-                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "getDerivedFilenames: Filename is {!r}".format( filename ) )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"getDerivedFilenames: Filename is {filename!r}" )
                 resultList.append( (BBB,filename,) )
         return BibleOrgSysGlobals.loadedBibleBooksCodes.getSequenceList( resultList )
     # end of USXFilenames.getDerivedFilenameTuples
@@ -268,7 +267,7 @@ class USXFilenames:
                     if not firstLines or len(firstLines)<3: continue
                     if not ( firstLines[0].startswith( '<?xml version="1.0"' ) or firstLines[0].startswith( "<?xml version='1.0'" ) ) \
                     and not ( firstLines[0].startswith( '\ufeff<?xml version="1.0"' ) or firstLines[0].startswith( "\ufeff<?xml version='1.0'" ) ): # same but with BOM
-                        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "USXB (unexpected) first line was {!r} in {}".format( firstLines, thisFilename ) )
+                        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"USXB (unexpected) first line was {thisFilename!r} in {firstLines}" )
                     if '<usx' not in firstLines[0] and '<usx' not in firstLines[1]:
                         continue # so it doesn't get added
                 resultList.append( (BBB, possibleFilename,) )
@@ -306,7 +305,7 @@ class USXFilenames:
                                 continue
                             if not ( firstLines[0].startswith( '<?xml version="1.0"' ) or firstLines[0].startswith( "<?xml version='1.0'" ) ) \
                             and not ( firstLines[0].startswith( '\ufeff<?xml version="1.0"' ) or firstLines[0].startswith( "\ufeff<?xml version='1.0'" ) ): # same but with BOM
-                                vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "USXB (unexpected) first line was {!r} in {}".format( firstLines, thisFilename ) )
+                                vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"USXB (unexpected) first line was {thisFilename!r} in {firstLines}" )
                             if '<usx' not in firstLines[0] and '<usx' not in firstLines[1]:
                                 continue # so it doesn't get added
                         self.doListAppend( BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromUSFMAbbreviation( USFMBookCode ), possibleFilename, resultList, "getPossibleFilenameTuplesExt" )

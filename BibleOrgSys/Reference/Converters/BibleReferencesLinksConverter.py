@@ -26,7 +26,6 @@
 """
 Module handling BibleReferencesLinks.xml and to export to JSON, C, and Python data tables.
 """
-from gettext import gettext as _
 import logging
 import os.path
 from datetime import datetime
@@ -100,7 +99,7 @@ class BibleReferencesLinksConverter:
             if BibleOrgSysGlobals.strictCheckingFlag:
                 self.__validate()
         else: # The data must have been already loaded
-            if XMLFileOrFilepath is not None and XMLFileOrFilepath!=self.__XMLFileOrFilepath: logging.error( _("Bible references links are already loaded -- your different filepath of {!r} was ignored").format( XMLFileOrFilepath ) )
+            if XMLFileOrFilepath is not None and XMLFileOrFilepath!=self.__XMLFileOrFilepath: logging.error( f"Bible references links are already loaded -- your different filepath of {XMLFileOrFilepath!r} was ignored" )
         return self
     # end of BibleReferencesLinksConverter.loadAndValidate
 
@@ -114,7 +113,7 @@ class BibleReferencesLinksConverter:
         self.__XMLFileOrFilepath = XMLFileOrFilepath
         assert self._XMLTree is None or len(self._XMLTree)==0 # Make sure we're not doing this twice
 
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, _("Loading BibleReferencesLinks XML file from {!r}…").format( self.__XMLFileOrFilepath ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Loading BibleReferencesLinks XML file from {self.__XMLFileOrFilepath!r}…" )
         self._XMLTree = ElementTree().parse( self.__XMLFileOrFilepath )
         assert len(self._XMLTree) # Fail here if we didn't load anything at all
 
@@ -127,9 +126,9 @@ class BibleReferencesLinksConverter:
                 BibleOrgSysGlobals.checkXMLNoTail( header, 'header' )
                 BibleOrgSysGlobals.checkXMLNoAttributes( header, 'header' )
                 if len(header)>1:
-                    logging.info( _("Unexpected elements in header") )
+                    logging.info( "Unexpected elements in header" )
                 elif len(header)==0:
-                    logging.info( _("Missing work element in header") )
+                    logging.info( "Missing work element in header" )
                 else:
                     work = header[0]
                     BibleOrgSysGlobals.checkXMLNoText( work, "work in header" )
@@ -140,12 +139,12 @@ class BibleReferencesLinksConverter:
                         self.dateString = work.find('date').text
                         self.titleString = work.find('title').text
                     else:
-                        logging.warning( _("Missing work element in header") )
+                        logging.warning( "Missing work element in header" )
             else:
-                logging.warning( _("Missing header element (looking for {!r} tag)".format( self._headerTag ) ) )
-            if header.tail is not None and header.tail.strip(): logging.error( _("Unexpected {!r} tail data after header").format( header.tail ) )
+                logging.warning( _(f"Missing header element (looking for {self._headerTag!r} tag)" ) )
+            if header.tail is not None and header.tail.strip(): logging.error( f"Unexpected {header.tail!r} tail data after header" )
         else:
-            logging.error( _("Expected to load {!r} but got {!r}").format( self._treeTag, self._XMLTree.tag ) )
+            logging.error( f"Expected to load {self._treeTag!r} but got {self._XMLTree.tag!r}" )
     # end of BibleReferencesLinksConverter.__load
 
 
@@ -171,29 +170,29 @@ class BibleReferencesLinksConverter:
                 for attributeName in self._compulsoryAttributes:
                     attributeValue = element.get( attributeName )
                     if attributeValue is None:
-                        logging.error( _("Compulsory {!r} attribute is missing from {} element in record {}").format( attributeName, element.tag, j ) )
+                        logging.error( f"Compulsory {j!r} attribute is missing from {attributeName} element in record {element.tag}" )
                     if not attributeValue:
-                        logging.warning( _("Compulsory {!r} attribute is blank on {} element in record {}").format( attributeName, element.tag, j ) )
+                        logging.warning( f"Compulsory {j!r} attribute is blank on {attributeName} element in record {element.tag}" )
 
                 # Check optional attributes on this main element
                 for attributeName in self._optionalAttributes:
                     attributeValue = element.get( attributeName )
                     if attributeValue is not None:
                         if not attributeValue:
-                            logging.warning( _("Optional {!r} attribute is blank on {} element in record {}").format( attributeName, element.tag, j ) )
+                            logging.warning( f"Optional {j!r} attribute is blank on {attributeName} element in record {element.tag}" )
 
                 # Check for unexpected additional attributes on this main element
                 for attributeName in element.keys():
                     attributeValue = element.get( attributeName )
                     if attributeName not in self._compulsoryAttributes and attributeName not in self._optionalAttributes:
-                        logging.warning( _("Additional {!r} attribute ({!r}) found on {} element in record {}").format( attributeName, attributeValue, element.tag, j ) )
+                        logging.warning( f"Additional {element.tag!r} attribute ({j!r}) found on {attributeName} element in record {attributeValue}" )
 
                 # Check the attributes that must contain unique information (in that particular field -- doesn't check across different attributes)
                 for attributeName in self._uniqueAttributes:
                     attributeValue = element.get( attributeName )
                     if attributeValue is not None:
                         if attributeValue in uniqueDict["Attribute_"+attributeName]:
-                            logging.error( _("Found {!r} data repeated in {!r} field on {} element in record {}").format( attributeValue, attributeName, element.tag, j ) )
+                            logging.error( f"Found {element.tag!r} data repeated in {j!r} field on {attributeValue} element in record {attributeName}" )
                         uniqueDict["Attribute_"+attributeName].append( attributeValue )
 
                 # Get the sourceComponent to use as a record ID
@@ -203,13 +202,13 @@ class BibleReferencesLinksConverter:
                 for elementName in self._compulsoryElements:
                     foundElement = element.find( elementName )
                     if foundElement is None:
-                        logging.error( _("Compulsory {!r} element is missing in record with ID {!r} (record {})").format( elementName, ID, j ) )
+                        logging.error( f"Compulsory {ID!r} element is missing in record with ID {j!r} (record {elementName})" )
                     else:
                         BibleOrgSysGlobals.checkXMLNoTail( foundElement, foundElement.tag + " in " + element.tag )
                         BibleOrgSysGlobals.checkXMLNoAttributes( foundElement, foundElement.tag + " in " + element.tag )
                         #BibleOrgSysGlobals.checkXMLNoSubelements( foundElement, foundElement.tag + " in " + element.tag )
                         if not foundElement.text:
-                            logging.warning( _("Compulsory {!r} element is blank in record with ID {!r} (record {})").format( elementName, ID, j ) )
+                            logging.warning( f"Compulsory {ID!r} element is blank in record with ID {j!r} (record {elementName})" )
 
                 # Check optional elements
                 for elementName in self._optionalElements:
@@ -219,24 +218,24 @@ class BibleReferencesLinksConverter:
                         BibleOrgSysGlobals.checkXMLNoAttributes( foundElement, foundElement.tag + " in " + element.tag )
                         BibleOrgSysGlobals.checkXMLNoSubelements( foundElement, foundElement.tag + " in " + element.tag )
                         if not foundElement.text:
-                            logging.warning( _("Optional {!r} element is blank in record with ID {!r} (record {})").format( elementName, ID, j ) )
+                            logging.warning( f"Optional {ID!r} element is blank in record with ID {j!r} (record {elementName})" )
 
                 # Check for unexpected additional elements
                 for subelement in element:
                     if subelement.tag not in self._compulsoryElements and subelement.tag not in self._optionalElements:
-                        logging.warning( _("Additional {!r} element ({!r}) found in record with ID {!r} (record {})").format( subelement.tag, subelement.text, ID, j ) )
+                        logging.warning( f"Additional {subelement.text!r} element ({ID!r}) found in record with ID {j!r} (record {subelement.tag})" )
 
                 # Check the elements that must contain unique information (in that particular element -- doesn't check across different elements)
                 for elementName in self._uniqueElements:
                     if element.find( elementName ) is not None:
                         text = element.find( elementName ).text
                         if text in uniqueDict["Element_"+elementName]:
-                            logging.error( _("Found {!r} data repeated in {!r} element in record with ID {!r} (record {})").format( text, elementName, ID, j ) )
+                            logging.error( f"Found {elementName!r} data repeated in {ID!r} element in record with ID {j!r} (record {text})" )
                         uniqueDict["Element_"+elementName].append( text )
             else:
-                logging.warning( _("Unexpected element: {} in record {}").format( element.tag, j ) )
-            if element.tail is not None and element.tail.strip(): logging.error( _("Unexpected {!r} tail data after {} element in record {}").format( element.tail, element.tag, j ) )
-        if self._XMLTree.tail is not None and self._XMLTree.tail.strip(): logging.error( _("Unexpected {!r} tail data after {} element").format( self._XMLTree.tail, self._XMLTree.tag ) )
+                logging.warning( f"Unexpected element: {element.tag} in record {j}" )
+            if element.tail is not None and element.tail.strip(): logging.error( f"Unexpected {j!r} tail data after {element.tail} element in record {element.tag}" )
+        if self._XMLTree.tail is not None and self._XMLTree.tail.strip(): logging.error( f"Unexpected {self._XMLTree.tag!r} tail data after {self._XMLTree.tail} element" )
     # end of BibleReferencesLinksConverter.__validate
 
 
@@ -249,10 +248,10 @@ class BibleReferencesLinksConverter:
         """
         indent = 2
         result = "BibleReferencesLinksConverter object"
-        if self.titleString: result += ('\n' if result else '') + ' '*indent + _("Title: {}").format( self.titleString )
-        if self.PROGRAM_VERSION: result += ('\n' if result else '') + ' '*indent + _("Version: {}").format( self.PROGRAM_VERSION )
-        if self.dateString: result += ('\n' if result else '') + ' '*indent + _("Date: {}").format( self.dateString )
-        if self._XMLTree is not None: result += ('\n' if result else '') + ' '*indent + _("Number of entries = {:,}").format( len(self._XMLTree) )
+        if self.titleString: result += ('\n' if result else '') + ' '*indent + f"Title: {self.titleString}"
+        if self.PROGRAM_VERSION: result += ('\n' if result else '') + ' '*indent + f"Version: {self.PROGRAM_VERSION}"
+        if self.dateString: result += ('\n' if result else '') + ' '*indent + f"Date: {self.dateString}"
+        if self._XMLTree is not None: result += ('\n' if result else '') + ' '*indent + f"Number of entries = {len(self._XMLTree):,}"
         return result
     # end of BibleReferencesLinksConverter.__str__
 
@@ -344,7 +343,7 @@ class BibleReferencesLinksConverter:
                     flag = True
                 except TypeError: pass # This should happen coz it should fail the SVK
                 if flag:
-                    logging.error( "{} {!r} failed!".format( sourceComponent, sourceReference ) )
+                    logging.error( f"{sourceComponent} {sourceReference!r} failed!" )
                     raise TypeError
             # Now do the actual parsing
             parsedSourceReference = FlexibleVersesKey( sourceReference )
@@ -362,12 +361,12 @@ class BibleReferencesLinksConverter:
                         flag = True
                     except TypeError: pass # This should happen coz it should fail the SVK
                     if flag:
-                        logging.error( "{} {!r} failed!".format( targetComponent, targetReference ) )
+                        logging.error( f"{targetComponent} {targetReference!r} failed!" )
                         raise TypeError
                 # Now do the actual parsing
                 try: parsedTargetReference = FlexibleVersesKey( targetReference )
                 except TypeError:
-                    logging.error( "  Temporarily ignored {!r} (TypeError from FlexibleVersesKey)".format( targetReference ) )
+                    logging.error( f"  Temporarily ignored {targetReference!r} (TypeError from FlexibleVersesKey)" )
                     parsedTargetReference = None
                 vPrint( 'Verbose', DEBUGGING_THIS_MODULE, ' ', targetComponent, targetReference, parsedTargetReference )
                 # if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE:
@@ -378,7 +377,7 @@ class BibleReferencesLinksConverter:
 
             myRefLinkList.append( (sourceReference,sourceComponent,parsedSourceReference,actualLinksList,) )
 
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  {:,} links processed (with {:,} actual link entries)".format( len(rawRefLinkList), actualLinkCount ) )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  {len(rawRefLinkList):,} links processed (with {actualLinkCount:,} actual link entries)" )
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, myRefLinkList ); halt
         self.__DataList = myRefLinkList
 
@@ -397,7 +396,7 @@ class BibleReferencesLinksConverter:
                 myRefLinkDict[verseRef].append( (sourceReference,sourceComponent,parsedSourceReference,actualLinksList,) )
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, myRefLinkDict ); halt
         originalLinks = len( myRefLinkDict )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  {:,} verse links added to dictionary (includes filling out spans)".format( originalLinks ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  {originalLinks:,} verse links added to dictionary (includes filling out spans)" )
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, myRefLinkDict ); halt
 
         # Create a reversed link dictionary (by verse key)
@@ -419,7 +418,7 @@ class BibleReferencesLinksConverter:
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, myRefLinkDict ); halt
         totalLinks = len( myRefLinkDict )
         reverseLinks = totalLinks - originalLinks
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  {:,} reverse links added to dictionary to give {:,} total".format( reverseLinks, totalLinks ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  {reverseLinks:,} reverse links added to dictionary to give {totalLinks:,} total" )
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, myRefLinkDict ); halt
 
         self.__DataDict = myRefLinkDict
@@ -430,8 +429,8 @@ class BibleReferencesLinksConverter:
             numRefs = len( entryList )
             if numRefs > mostReferences: mostReferences, mostVerseRef = numRefs, verseRef
             totalReferences += numRefs
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  {:,} maximum links for any one reference ({})".format( mostReferences, mostVerseRef.getShortText() ) )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  {:,} total links for all references".format( totalReferences ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  {mostReferences:,} maximum links for any one reference ({mostVerseRef.getShortText()})" )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  {totalReferences:,} total links for all references" )
 
         return self.__DataList, self.__DataDict
     # end of BibleReferencesLinksConverter.importDataToPython
@@ -452,7 +451,7 @@ class BibleReferencesLinksConverter:
             folder = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH
             if not os.path.exists( folder ): os.mkdir( folder )
             filepath = os.path.join( folder, self._filenameBase + '_Tables.pickle' )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Exporting to {}…").format( filepath ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Exporting to {filepath}…" )
         with open( filepath, 'wb' ) as myFile:
             pickle.dump( self.__DataList, myFile )
             pickle.dump( self.__DataDict, myFile )
@@ -477,7 +476,7 @@ class BibleReferencesLinksConverter:
             if not os.path.exists( folder ): os.mkdir( folder )
             indexFilepath = os.path.join( folder, self._filenameBase + '_Tables.index.pickle' )
             dataFilepath = os.path.join( folder, self._filenameBase + '_Tables.data.pickle' )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Exporting to {}…").format( dataFilepath ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Exporting to {dataFilepath}…" )
         index = {}
         filePosition = 0
         with open( dataFilepath, 'wb' ) as myFile:
@@ -505,10 +504,10 @@ class BibleReferencesLinksConverter:
             for dictKey in theDict.keys(): # Have to iterate this :(
                 fieldsCount = len( theDict[dictKey] )
                 break # We only check the first (random) entry we get
-            theFile.write( "{} = {{\n  # Key is {}\n  # Fields ({}) are: {}\n".format( dictName, keyComment, fieldsCount, fieldsComment ) )
+            theFile.write( f"{dictName} = {{\n  # Key is {keyComment}\n  # Fields ({fieldsCount}) are: {fieldsComment}\n" )
             for dictKey in sorted(theDict.keys()):
-                theFile.write( '  {}: {},\n'.format( repr(dictKey), repr(theDict[dictKey]) ) )
-            theFile.write( "}}\n# end of {} ({} entries)\n\n".format( dictName, len(theDict) ) )
+                theFile.write( f'  {repr(dictKey)}: {repr(theDict[dictKey])},\n' )
+            theFile.write( f"}}\n# end of {dictName} ({len(theDict)} entries)\n\n" )
         # end of exportPythonDictOrList
 
 
@@ -524,14 +523,14 @@ class BibleReferencesLinksConverter:
             folder = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH
             if not os.path.exists( folder ): os.mkdir( folder )
             filepath = os.path.join( folder, self._filenameBase + '_Tables.py' )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Exporting to {}…").format( filepath ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Exporting to {filepath}…" )
         with open( filepath, 'wt', encoding='utf-8' ) as myFile:
-            myFile.write( "# {}\n#\n".format( filepath ) )
-            myFile.write( "# This UTF-8 file was automatically generated by BibleReferencesLinks.py V{} on {}\n#\n".format( PROGRAM_VERSION, datetime.now() ) )
-            if self.titleString: myFile.write( "# {} data\n".format( self.titleString ) )
-            if self.PROGRAM_VERSION: myFile.write( "#  Version: {}\n".format( self.PROGRAM_VERSION ) )
-            if self.dateString: myFile.write( "#  Date: {}\n#\n".format( self.dateString ) )
-            myFile.write( "#   {} {} loaded from the original XML file.\n#\n\n".format( len(self._XMLTree), self._treeTag ) )
+            myFile.write( f"# {filepath}\n#\n" )
+            myFile.write( f"# This UTF-8 file was automatically generated by BibleReferencesLinks.py V{PROGRAM_VERSION} on {datetime.now()}\n#\n" )
+            if self.titleString: myFile.write( f"# {self.titleString} data\n" )
+            if self.PROGRAM_VERSION: myFile.write( f"#  Version: {self.PROGRAM_VERSION}\n" )
+            if self.dateString: myFile.write( f"#  Date: {self.dateString}\n#\n" )
+            myFile.write( f"#   {len(self._XMLTree)} {self._treeTag} loaded from the original XML file.\n#\n\n" )
             mostEntries = "0=referenceNumber (integer 1..255), 1=sourceComponent/BBB (3-uppercase characters)"
             dictInfo = { "referenceNumberDict":("referenceNumber (integer 1..255)","specified"),
                     "sourceComponentDict":("sourceComponent","specified"),
@@ -539,7 +538,7 @@ class BibleReferencesLinksConverter:
                     "initialAllAbbreviationsDict":("allAbbreviations", mostEntries) }
             for dictName,dictData in self.__DataList.items():
                 exportPythonDictOrList( myFile, dictData, dictName, dictInfo[dictName][0], dictInfo[dictName][1] )
-            myFile.write( "# end of {}".format( os.path.basename(filepath) ) )
+            myFile.write( f"# end of {os.path.basename(filepath)}" )
     # end of BibleReferencesLinksConverter.exportDataToPython
 
 
@@ -560,7 +559,7 @@ class BibleReferencesLinksConverter:
             folder = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH
             if not os.path.exists( folder ): os.mkdir( folder )
             filepath = os.path.join( folder, self._filenameBase + '_Tables.json' )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Exporting to {}…").format( filepath ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Exporting to {filepath}…" )
         with open( filepath, 'wt', encoding='utf-8' ) as myFile:
             for something in self.__DataList: # temp for debugging … xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
                 vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Dumping something", something )
@@ -596,7 +595,7 @@ class BibleReferencesLinksConverter:
                         elif isinstance( field, str): result += '"' + str(field).replace('"','\\"') + '"'
                         elif isinstance( field, int): result += str(field)
                         elif isinstance( field, list): raise Exception( "Not written yet (list1)" )
-                        else: logging.error( _("Cannot convert unknown field type {!r} in tuple entry {!r}").format( field, entry ) )
+                        else: logging.error( f"Cannot convert unknown field type {field!r} in tuple entry {entry!r}" )
                 elif isinstance( entry, dict ):
                     for key in sorted(entry.keys()):
                         field = entry[key]
@@ -605,9 +604,9 @@ class BibleReferencesLinksConverter:
                         elif isinstance( field, str): result += '"' + str(field).replace('"','\\"') + '"'
                         elif isinstance( field, int): result += str(field)
                         elif isinstance( field, list): raise Exception( "Not written yet (list2)" )
-                        else: logging.error( _("Cannot convert unknown field type {!r} in dict entry {!r}").format( field, entry ) )
+                        else: logging.error( f"Cannot convert unknown field type {field!r} in dict entry {entry!r}" )
                 else:
-                    logging.error( _("Can't handle this type of entry yet: {}").format( repr(entry) ) )
+                    logging.error( f"Can't handle this type of entry yet: {repr(entry)}" )
                 return result
             # end of convertEntry
 
@@ -615,22 +614,22 @@ class BibleReferencesLinksConverter:
                 fieldsCount = len( theDict[dictKey] ) + 1 # Add one since we include the key in the count
                 break # We only check the first (random) entry we get
 
-            #hFile.write( "typedef struct {}EntryStruct { {} } {}Entry;\n\n".format( dictName, structure, dictName ) )
-            hFile.write( "typedef struct {}EntryStruct {{\n".format( dictName ) )
+            #hFile.write( f"typedef struct {dictName}EntryStruct { {structure} } {dictName}Entry;\n\n" )
+            hFile.write( f"typedef struct {dictName}EntryStruct {{\n" )
             for declaration in structure.split(';'):
                 adjDeclaration = declaration.strip()
-                if adjDeclaration: hFile.write( "    {};\n".format( adjDeclaration ) )
-            hFile.write( "}} {}Entry;\n\n".format( dictName ) )
+                if adjDeclaration: hFile.write( f"    {adjDeclaration};\n" )
+            hFile.write( f"}} {dictName}Entry;\n\n" )
 
-            cFile.write( "const static {}Entry\n {}[{}] = {{\n  // Fields ({}) are {}\n  // Sorted by {}\n".format( dictName, dictName, len(theDict), fieldsCount, structure, sortedBy ) )
+            cFile.write( f"const static {dictName}Entry\n {dictName}[{len(theDict)}] = {{\n  // Fields ({fieldsCount}) are {structure}\n  // Sorted by {sortedBy}\n" )
             for dictKey in sorted(theDict.keys()):
                 if isinstance( dictKey, str ):
-                    cFile.write( "  {{\"{}\", {}}},\n".format( dictKey, convertEntry(theDict[dictKey]) ) )
+                    cFile.write( f"  {{\"{dictKey}\", {convertEntry(theDict[dictKey])}}},\n" )
                 elif isinstance( dictKey, int ):
-                    cFile.write( "  {{{}, {}}},\n".format( dictKey, convertEntry(theDict[dictKey]) ) )
+                    cFile.write( f"  {{{dictKey}, {convertEntry(theDict[dictKey])}}},\n" )
                 else:
-                    logging.error( _("Can't handle this type of key data yet: {}").format( dictKey ) )
-            cFile.write( "]}}; // {} ({} entries)\n\n".format( dictName, len(theDict) ) )
+                    logging.error( f"Can't handle this type of key data yet: {dictKey}" )
+            cFile.write( f"]}}; // {dictName} ({len(theDict)} entries)\n\n" )
         # end of exportPythonDict
 
 
@@ -647,47 +646,45 @@ class BibleReferencesLinksConverter:
             filepath = os.path.join( folder, self._filenameBase + '_Tables' )
         hFilepath = filepath + '.h'
         cFilepath = filepath + '.c'
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Exporting to {}…").format( cFilepath ) ) # Don't bother telling them about the .h file
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Exporting to {cFilepath}…" ) # Don't bother telling them about the .h file
         ifdefName = self._filenameBase.upper() + "_Tables_h"
 
         with open( hFilepath, 'wt', encoding='utf-8' ) as myHFile, \
              open( cFilepath, 'wt', encoding='utf-8' ) as myCFile:
-            myHFile.write( "// {}\n//\n".format( hFilepath ) )
-            myCFile.write( "// {}\n//\n".format( cFilepath ) )
-            lines = "// This UTF-8 file was automatically generated by BibleReferencesLinks.py V{} on {}\n//\n".format( PROGRAM_VERSION, datetime.now() )
+            myHFile.write( f"// {hFilepath}\n//\n" )
+            myCFile.write( f"// {cFilepath}\n//\n" )
+            lines = f"// This UTF-8 file was automatically generated by BibleReferencesLinks.py V{PROGRAM_VERSION} on {datetime.now()}\n//\n"
             myHFile.write( lines ); myCFile.write( lines )
             if self.titleString:
-                lines = "// {} data\n".format( self.titleString )
+                lines = f"// {self.titleString} data\n"
                 myHFile.write( lines ); myCFile.write( lines )
             if self.PROGRAM_VERSION:
-                lines = "//  Version: {}\n".format( self.PROGRAM_VERSION )
+                lines = f"//  Version: {self.PROGRAM_VERSION}\n"
                 myHFile.write( lines ); myCFile.write( lines )
             if self.dateString:
-                lines = "//  Date: {}\n//\n".format( self.dateString )
+                lines = f"//  Date: {self.dateString}\n//\n"
                 myHFile.write( lines ); myCFile.write( lines )
-            myCFile.write( "//   {} {} loaded from the original XML file.\n//\n\n".format( len(self._XMLTree), self._treeTag ) )
-            myHFile.write( "\n#ifndef {}\n#define {}\n\n".format( ifdefName, ifdefName ) )
-            myCFile.write( '#include "{}"\n\n'.format( os.path.basename(hFilepath) ) )
+            myCFile.write( f"//   {len(self._XMLTree)} {self._treeTag} loaded from the original XML file.\n//\n\n" )
+            myHFile.write( f"\n#ifndef {ifdefName}\n#define {ifdefName}\n\n" )
+            myCFile.write( f'#include "{os.path.basename(hFilepath)}"\n\n' )
 
             CHAR = "const unsigned char"
             BYTE = "const int"
             dictInfo = {
                 "referenceNumberDict":("referenceNumber (integer 1..255)",
-                    "{} referenceNumber; {}* ByzantineAbbreviation; {}* CCELNumberString; {}* NETBibleAbbreviation; {}* OSISAbbreviation; {} USFMAbbreviation[3+1]; {} USFMNumberString[2+1]; {}* SBLAbbreviation; {}* SwordAbbreviation; {}* sourceReference; {}* numExpectedChapters; {}* possibleAlternativeBooks; {} sourceComponent[3+1];"
-                   .format(BYTE, CHAR, CHAR, CHAR, CHAR, CHAR, CHAR, CHAR, CHAR, CHAR, CHAR, CHAR, CHAR ) ),
+                    f"{BYTE} referenceNumber; {CHAR}* ByzantineAbbreviation; {CHAR}* CCELNumberString; {CHAR}* NETBibleAbbreviation; {CHAR}* OSISAbbreviation; {CHAR} USFMAbbreviation[3+1]; {CHAR} USFMNumberString[2+1]; {CHAR}* SBLAbbreviation; {CHAR}* SwordAbbreviation; {CHAR}* sourceReference; {CHAR}* numExpectedChapters; {CHAR}* possibleAlternativeBooks; {CHAR} sourceComponent[3+1];" ),
                 "sourceComponentDict":("sourceComponent",
-                    "{} sourceComponent[3+1]; {}* ByzantineAbbreviation; {}* CCELNumberString; {} referenceNumber; {}* NETBibleAbbreviation; {}* OSISAbbreviation; {} USFMAbbreviation[3+1]; {} USFMNumberString[2+1]; {}* SBLAbbreviation; {}* SwordAbbreviation; {}* sourceReference; {}* numExpectedChapters; {}* possibleAlternativeBooks;"
-                   .format(CHAR, CHAR, CHAR, BYTE, CHAR, CHAR, CHAR, CHAR, CHAR, CHAR, CHAR, CHAR, CHAR ) ),
+                    f"{CHAR} sourceComponent[3+1]; {CHAR}* ByzantineAbbreviation; {CHAR}* CCELNumberString; {BYTE} referenceNumber; {CHAR}* NETBibleAbbreviation; {CHAR}* OSISAbbreviation; {CHAR} USFMAbbreviation[3+1]; {CHAR} USFMNumberString[2+1]; {CHAR}* SBLAbbreviation; {CHAR}* SwordAbbreviation; {CHAR}* sourceReference; {CHAR}* numExpectedChapters; {CHAR}* possibleAlternativeBooks;" ),
                 "sequenceList":("sequenceList",),
-                "CCELDict":("CCELNumberString", "{}* CCELNumberString; {} referenceNumber; {} sourceComponent[3+1];".format(CHAR,BYTE,CHAR) ),
-                "initialAllAbbreviationsDict":("abbreviation", "{}* abbreviation; {} sourceComponent[3+1];".format(CHAR,CHAR) ) }
+                "CCELDict":("CCELNumberString", f"{CHAR}* CCELNumberString; {BYTE} referenceNumber; {CHAR} sourceComponent[3+1];" ),
+                "initialAllAbbreviationsDict":("abbreviation", f"{CHAR}* abbreviation; {CHAR} sourceComponent[3+1];" ) }
 
             for dictName,dictData in self.__DataList.items():
                 exportPythonDict( myHFile, myCFile, dictData, dictName, dictInfo[dictName][0], dictInfo[dictName][1] )
 
-            myHFile.write( "#endif // {}\n\n".format( ifdefName ) )
-            myHFile.write( "// end of {}".format( os.path.basename(hFilepath) ) )
-            myCFile.write( "// end of {}".format( os.path.basename(cFilepath) ) )
+            myHFile.write( f"#endif // {ifdefName}\n\n" )
+            myHFile.write( f"// end of {os.path.basename(hFilepath)}" )
+            myCFile.write( f"// end of {os.path.basename(cFilepath)}" )
     # end of BibleReferencesLinksConverter.exportDataToC
 # end of BibleReferencesLinksConverter class
 

@@ -57,7 +57,6 @@ Module reading and loading Haggai XML Bibles:
             <VERSE vnumber="2">Abraham zeugte Isaak, Isaak aber zeugte Jakob, Jakob aber zeugte Juda und seine Brüder,</VERSE>
             <VERSE vnumber="3">Juda aber zeugte Phares und Zarah von der Thamar, Phares aber zeugte Hezron, Hezron aber zeugte Aram,</VERSE>
 """
-from gettext import gettext as _
 from pathlib import Path
 import logging
 import os, sys
@@ -97,20 +96,20 @@ def HaggaiXMLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bo
     if autoLoad is true and exactly one Haggai Bible is found,
         returns the loaded HaggaiXMLBible object.
     """
-    fnPrint( DEBUGGING_THIS_MODULE, "HaggaiXMLBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
+    fnPrint( DEBUGGING_THIS_MODULE, f"HaggaiXMLBibleFileCheck( {givenFolderName}, {strictCheck}, {autoLoad}, {autoLoadBooks} )" )
     if BibleOrgSysGlobals.debugFlag: assert givenFolderName and isinstance( givenFolderName, (str,Path) )
     if BibleOrgSysGlobals.debugFlag: assert autoLoad in (True,False,)
 
     # Check that the given folder is readable
     if not os.access( givenFolderName, os.R_OK ):
-        logging.critical( _("HaggaiXMLBibleFileCheck: Given {!r} folder is unreadable").format( givenFolderName ) )
+        logging.critical( f"HaggaiXMLBibleFileCheck: Given {givenFolderName!r} folder is unreadable" )
         return False
     if not os.path.isdir( givenFolderName ):
-        logging.critical( _("HaggaiXMLBibleFileCheck: Given {!r} path is not a folder").format( givenFolderName ) )
+        logging.critical( f"HaggaiXMLBibleFileCheck: Given {givenFolderName!r} path is not a folder" )
         return False
 
     # Find all the files and folders in this folder
-    vPrint( 'Verbose', DEBUGGING_THIS_MODULE, " HaggaiXMLBibleFileCheck: Looking for files in given {}".format( givenFolderName ) )
+    vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f" HaggaiXMLBibleFileCheck: Looking for files in given {givenFolderName}" )
     foundFolders, foundFiles = [], []
     for something in os.listdir( givenFolderName ):
         somepath = os.path.join( givenFolderName, something )
@@ -139,7 +138,7 @@ def HaggaiXMLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bo
             if not firstLines or len(firstLines)<2: continue
             if not ( firstLines[0].startswith( '<?xml version="1.0"' ) or firstLines[0].startswith( "<?xml version='1.0'" ) ) \
             and not ( firstLines[0].startswith( '\ufeff<?xml version="1.0"' ) or firstLines[0].startswith( "\ufeff<?xml version='1.0'" ) ): # same but with BOM
-                vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "HB (unexpected) first line was {!r} in {}".format( firstLines, thisFilename ) )
+                vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"HB (unexpected) first line was {thisFilename!r} in {firstLines}" )
                 continue
             if 'haggai_' not in firstLines[1]: continue
         lastFilenameFound = thisFilename
@@ -158,7 +157,7 @@ def HaggaiXMLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bo
     foundProjects = []
     for thisFolderName in sorted( foundFolders ):
         tryFolderName = os.path.join( givenFolderName, thisFolderName+'/' )
-        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "    HaggaiXMLBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
+        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"    HaggaiXMLBibleFileCheck: Looking for files in {tryFolderName}" )
         foundSubfolders, foundSubfiles = [], []
         try:
             for something in os.listdir( tryFolderName ):
@@ -183,7 +182,7 @@ def HaggaiXMLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bo
                 if not firstLines or len(firstLines)<2: continue
                 if not ( firstLines[0].startswith( '<?xml version="1.0"' ) or firstLines[0].startswith( "<?xml version='1.0'" ) ) \
                 and not ( firstLines[0].startswith( '\ufeff<?xml version="1.0"' ) or firstLines[0].startswith( "\ufeff<?xml version='1.0'" ) ): # same but with BOM
-                    vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "HB (unexpected) first line was {!r} in {}".format( firstLines, thisFilename ) )
+                    vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"HB (unexpected) first line was {thisFilename!r} in {firstLines}" )
                     continue
                 if 'haggai_' not in firstLines[1]: continue
             foundProjects.append( (tryFolderName, thisFilename,) )
@@ -239,7 +238,7 @@ class HaggaiXMLBible( Bible ):
 
         # Do a preliminary check on the readability of our file
         if not os.access( self.sourceFilepath, os.R_OK ):
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "HaggaiXMLBible: File {!r} is unreadable".format( self.sourceFilepath ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"HaggaiXMLBible: File {self.sourceFilepath!r} is unreadable" )
 
         self.name = self.givenName
         #if self.name is None:
@@ -251,12 +250,12 @@ class HaggaiXMLBible( Bible ):
         """
         Load a single source XML file and load book elements.
         """
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, _("Loading {}…").format( self.sourceFilepath ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Loading {self.sourceFilepath}…" )
         try: self.XMLTree = ElementTree().parse( self.sourceFilepath )
         except ParseError as err:
-            logging.critical( "Loader parse error in xml file {}: {} {}".format( self.givenName, sys.exc_info()[0], err ) )
-            #loadErrors.append( "Loader parse error in xml file {}: {} {}".format( self.givenName, sys.exc_info()[0], err ) )
-            #self.addPriorityError( 100, C, V, _("Loader parse error in xml file {}: {}").format( self.givenName, err ) )
+            logging.critical( f"Loader parse error in xml file {self.givenName}: {sys.exc_info()[0]} {err}" )
+            #loadErrors.append( f"Loader parse error in xml file {self.givenName}: {sys.exc_info()[0]} {err}" )
+            #self.addPriorityError( 100, C, V, f"Loader parse error in xml file {self.givenName}: {err}" )
         if BibleOrgSysGlobals.debugFlag: assert self.XMLTree # Fail here if we didn't load anything at all
 
         # Find the main (bible) container
@@ -281,7 +280,7 @@ class HaggaiXMLBible( Bible ):
                     revision = value
                 elif attrib == 'version':
                     version = value
-                else: logging.warning( "Unprocessed {!r} attribute ({}) in main element".format( attrib, value ) )
+                else: logging.warning( f"Unprocessed {value!r} attribute ({attrib}) in main element" )
             if name: self.name = name
             if status: self.status = status
             if revision: self.revision = revision
@@ -305,8 +304,8 @@ class HaggaiXMLBible( Bible ):
                     BibleOrgSysGlobals.checkXMLNoText( element, sublocation, 'g3g5' )
                     BibleOrgSysGlobals.checkXMLNoTail( element, sublocation, 'd3f6' )
                     self.__validateAndExtractBook( element )
-                else: logging.error( "Expected to find {!r} but got {!r}".format( HaggaiXMLBible.bookTag, element.tag ) )
-        else: logging.error( "Expected to load {!r} but got {!r}".format( HaggaiXMLBible.treeTag, self.XMLTree.tag ) )
+                else: logging.error( f"Expected to find {HaggaiXMLBible.bookTag!r} but got {element.tag!r}" )
+        else: logging.error( f"Expected to load {HaggaiXMLBible.treeTag!r} but got {self.XMLTree.tag!r}" )
         self.doPostLoadProcessing()
     # end of HaggaiXMLBible.load
 
@@ -341,39 +340,39 @@ class HaggaiXMLBible( Bible ):
         for element in self.header:
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'header', element.tag )
             if element.tag == 'title':
-                sublocation = "title in {}".format( location )
+                sublocation = f"title in {location}"
                 BibleOrgSysGlobals.checkXMLNoTail( element, sublocation, 'al1d' )
                 BibleOrgSysGlobals.checkXMLNoAttributes( element, sublocation, 'j3jd' )
                 BibleOrgSysGlobals.checkXMLNoSubelements( element, sublocation, '5g78' )
                 if BibleOrgSysGlobals.debugFlag: assert element.text
                 self.title = element.text
             elif element.tag == 'creator':
-                sublocation = "creator in {}".format( location )
+                sublocation = f"creator in {location}"
                 BibleOrgSysGlobals.checkXMLNoTail( element, sublocation, 'al1d' )
                 BibleOrgSysGlobals.checkXMLNoAttributes( element, sublocation, 'j3jd' )
                 BibleOrgSysGlobals.checkXMLNoSubelements( element, sublocation, '5g78' )
                 if element.text: self.creator = element.text
             elif element.tag == 'subject':
-                sublocation = "subject in {}".format( location )
+                sublocation = f"subject in {location}"
                 BibleOrgSysGlobals.checkXMLNoTail( element, sublocation, 'al1d' )
                 BibleOrgSysGlobals.checkXMLNoAttributes( element, sublocation, 'j3jd' )
                 BibleOrgSysGlobals.checkXMLNoSubelements( element, sublocation, '5g78' )
                 if element.text: self.subject = element.text
             elif element.tag == 'description':
-                sublocation = "description in {}".format( location )
+                sublocation = f"description in {location}"
                 BibleOrgSysGlobals.checkXMLNoTail( element, sublocation, 'al1d' )
                 BibleOrgSysGlobals.checkXMLNoAttributes( element, sublocation, 'j3jd' )
                 BibleOrgSysGlobals.checkXMLNoSubelements( element, sublocation, '5g78' )
                 if BibleOrgSysGlobals.debugFlag: assert element.text
                 self.description = element.text
             elif element.tag == 'publisher':
-                sublocation = "publisher in {}".format( location )
+                sublocation = f"publisher in {location}"
                 BibleOrgSysGlobals.checkXMLNoTail( element, sublocation, 'al1d' )
                 BibleOrgSysGlobals.checkXMLNoAttributes( element, sublocation, 'j3jd' )
                 BibleOrgSysGlobals.checkXMLNoSubelements( element, sublocation, '5g78' )
                 if element.text: self.publisher = element.text
             elif element.tag == 'contributor':
-                sublocation = "contributor in {}".format( location )
+                sublocation = f"contributor in {location}"
                 BibleOrgSysGlobals.checkXMLNoTail( element, sublocation, 'alj1d' )
                 BibleOrgSysGlobals.checkXMLNoAttributes( element, sublocation, 'j3jjd' )
                 BibleOrgSysGlobals.checkXMLNoSubelements( element, sublocation, '5gk78' )
@@ -381,65 +380,65 @@ class HaggaiXMLBible( Bible ):
                     try: self.contributor = [ self.contributor, element.text ] # Put multiples into a list
                     except AttributeError: self.contributor = element.text # Must be the first (and possibly only) one
             elif element.tag == 'contributors':
-                sublocation = "contributors in {}".format( location )
+                sublocation = f"contributors in {location}"
                 BibleOrgSysGlobals.checkXMLNoTail( element, sublocation, 'al1d' )
                 BibleOrgSysGlobals.checkXMLNoAttributes( element, sublocation, 'j3jd' )
                 BibleOrgSysGlobals.checkXMLNoSubelements( element, sublocation, '5g78' )
                 if element.text: self.contributors = element.text
             elif element.tag == 'date':
-                sublocation = "date in {}".format( location )
+                sublocation = f"date in {location}"
                 BibleOrgSysGlobals.checkXMLNoTail( element, sublocation, 'al1d' )
                 BibleOrgSysGlobals.checkXMLNoAttributes( element, sublocation, 'j3jd' )
                 BibleOrgSysGlobals.checkXMLNoSubelements( element, sublocation, '5g78' )
                 if BibleOrgSysGlobals.debugFlag: assert element.text
                 self.date = element.text
             elif element.tag == 'type':
-                sublocation = "type in {}".format( location )
+                sublocation = f"type in {location}"
                 BibleOrgSysGlobals.checkXMLNoTail( element, sublocation, 'al1d' )
                 BibleOrgSysGlobals.checkXMLNoAttributes( element, sublocation, 'j3jd' )
                 BibleOrgSysGlobals.checkXMLNoSubelements( element, sublocation, '5g78' )
                 if element.text: self.documentType = element.text
             elif element.tag == 'format':
-                sublocation = "format in {}".format( location )
+                sublocation = f"format in {location}"
                 BibleOrgSysGlobals.checkXMLNoTail( element, sublocation, 'al1d' )
                 BibleOrgSysGlobals.checkXMLNoAttributes( element, sublocation, 'j3jd' )
                 BibleOrgSysGlobals.checkXMLNoSubelements( element, sublocation, '5g78' )
                 if BibleOrgSysGlobals.debugFlag: assert element.text
                 if BibleOrgSysGlobals.debugFlag: assert element.text == 'Haggai XML Bible Markup Language'
             elif element.tag == 'identifier':
-                sublocation = "identifier in {}".format( location )
+                sublocation = f"identifier in {location}"
                 BibleOrgSysGlobals.checkXMLNoTail( element, sublocation, 'al1d' )
                 BibleOrgSysGlobals.checkXMLNoAttributes( element, sublocation, 'j3jd' )
                 BibleOrgSysGlobals.checkXMLNoSubelements( element, sublocation, '5g78' )
                 if BibleOrgSysGlobals.debugFlag: assert element.text
                 self.identifier = element.text
             elif element.tag == 'source':
-                sublocation = "source in {}".format( location )
+                sublocation = f"source in {location}"
                 BibleOrgSysGlobals.checkXMLNoTail( element, sublocation, 'al1d' )
                 BibleOrgSysGlobals.checkXMLNoAttributes( element, sublocation, 'j3jd' )
                 BibleOrgSysGlobals.checkXMLNoSubelements( element, sublocation, '5g78' )
                 if BibleOrgSysGlobals.debugFlag: assert element.text
                 self.source = element.text
             elif element.tag == 'language':
-                sublocation = "language in {}".format( location )
+                sublocation = f"language in {location}"
                 BibleOrgSysGlobals.checkXMLNoTail( element, sublocation, 'al1d' )
                 BibleOrgSysGlobals.checkXMLNoAttributes( element, sublocation, 'j3jd' )
                 BibleOrgSysGlobals.checkXMLNoSubelements( element, sublocation, '5g78' )
                 if BibleOrgSysGlobals.debugFlag: assert element.text
                 self.language = element.text
             elif element.tag == 'coverage':
-                sublocation = "coverage in {}".format( location )
+                sublocation = f"coverage in {location}"
                 BibleOrgSysGlobals.checkXMLNoTail( element, sublocation, 'al1d' )
                 BibleOrgSysGlobals.checkXMLNoAttributes( element, sublocation, 'j3jd' )
                 BibleOrgSysGlobals.checkXMLNoSubelements( element, sublocation, '5g78' )
                 if element.text: self.coverage = element.text
             elif element.tag == 'rights':
-                sublocation = "rights in {}".format( location )
+                sublocation = f"rights in {location}"
                 BibleOrgSysGlobals.checkXMLNoTail( element, sublocation, 'al1d' )
                 BibleOrgSysGlobals.checkXMLNoAttributes( element, sublocation, 'j3jd' )
                 BibleOrgSysGlobals.checkXMLNoSubelements( element, sublocation, '5g78' )
                 if element.text: self.rights = element.text
-            else: logging.error( "Found unexpected {!r} tag in {}".format( element.tag, location ) )
+            else: logging.error( f"Found unexpected {location!r} tag in {element.tag}" )
     # end of HaggaiXMLBible.__validateAndExtractHeader
 
 
@@ -449,7 +448,7 @@ class HaggaiXMLBible( Bible ):
             finding chapter subelements.
         """
 
-        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, _("Validating XML book…") )
+        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "Validating XML book…" )
 
         # Process the div attributes first
         BBB = bookName = bookShortName = bookNumber = None
@@ -460,35 +459,34 @@ class HaggaiXMLBible( Bible ):
                 bookName = value
             elif attrib=="bsname":
                 bookShortName = value
-            else: logging.warning( "Unprocessed {!r} attribute ({}) in book element".format( attrib, value ) )
+            else: logging.warning( f"Unprocessed {value!r} attribute ({attrib}) in book element" )
         if bookNumber:
             try: BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromReferenceNumber( bookNumber )
             except KeyError:
-                logging.warning( "Unable to deduce which book is number={}, name={}, shortName={} -- ignoring it" \
-                                                                        .format( bookNumber, bookName, bookShortName ) )
+                logging.warning( f"Unable to deduce which book is number={bookNumber}, name={bookName}, shortName={bookShortName} -- ignoring it" )
         elif bookName:
             BBB = self.genericBOS.getBBBFromText( bookName )
 
         if BBB:
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, _("Validating {} {}…").format( BBB, bookName ) )
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Validating {BBB} {bookName}…" )
             thisBook = BibleBook( self, BBB )
             thisBook.objectNameString = 'Haggai XML Bible Book object'
             thisBook.objectTypeString = 'Haggai'
             #thisBook.sourceFilepath = self.sourceFilepath
             for element in book:
                 if element.tag == HaggaiXMLBible.captionTag:
-                    sublocation = "caption in {}".format( BBB )
+                    sublocation = f"caption in {BBB}"
                     BibleOrgSysGlobals.checkXMLNoAttributes( element, sublocation, 'jhl6' )
                     BibleOrgSysGlobals.checkXMLNoSubelements( element, sublocation, 'jk21' )
                     BibleOrgSysGlobals.checkXMLNoTail( element, sublocation, 'kjh6' )
                     thisBook.addLine( 'mt', element.text )
                 elif element.tag == HaggaiXMLBible.chapterTag:
-                    sublocation = "chapter in {}".format( BBB )
+                    sublocation = f"chapter in {BBB}"
                     BibleOrgSysGlobals.checkXMLNoText( element, sublocation, 'j3jd' )
                     BibleOrgSysGlobals.checkXMLNoTail( element, sublocation, 'al1d' )
                     self.__validateAndExtractChapter( BBB, thisBook, element )
-                else: logging.error( "Expected to find {!r} but got {!r}".format( HaggaiXMLBible.chapterTag, element.tag ) )
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Saving {} into results…".format( BBB ) )
+                else: logging.error( f"Expected to find {HaggaiXMLBible.chapterTag!r} but got {element.tag!r}" )
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Saving {BBB} into results…" )
             self.stashBook( thisBook )
     # end of HaggaiXMLBible.__validateAndExtractBook
 
@@ -500,28 +498,28 @@ class HaggaiXMLBible( Bible ):
             finding and saving verse elements.
         """
 
-        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, _("Validating XML chapter…") )
+        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "Validating XML chapter…" )
 
         # Process the chapter attributes first
         chapterNumber = numVerses = None
         for attrib,value in chapter.items():
             if attrib=="cnumber":
                 chapterNumber = value
-            else: logging.warning( "Unprocessed {!r} attribute ({}) in chapter element".format( attrib, value ) )
+            else: logging.warning( f"Unprocessed {value!r} attribute ({attrib}) in chapter element" )
         if chapterNumber:
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, 'c', chapterNumber )
             thisBook.addLine( 'c', chapterNumber )
-        else: logging.error( "Missing 'n' attribute in chapter element for {}".format( BBB ) )
+        else: logging.error( f"Missing 'n' attribute in chapter element for {BBB}" )
 
         for element in chapter:
             if element.tag == HaggaiXMLBible.paragraphTag:
-                location = "paragraph in {} {}".format( BBB, chapterNumber )
+                location = f"paragraph in {BBB} {chapterNumber}"
                 self.__validateAndExtractParagraph( BBB, chapterNumber, thisBook, element )
             elif element.tag == HaggaiXMLBible.verseTag+'disabled':
-                location = "verse in {} {}".format( BBB, chapterNumber )
+                location = f"verse in {BBB} {chapterNumber}"
                 self.__validateAndExtractVerse( BBB, chapterNumber, thisBook, element )
             elif element.tag == HaggaiXMLBible.captionTag+'disabled': # Used in Psalms
-                location = "caption in {} {}".format( BBB, chapterNumber )
+                location = f"caption in {BBB} {chapterNumber}"
                 BibleOrgSysGlobals.checkXMLNoTail( element, location, 'k5k8' )
                 BibleOrgSysGlobals.checkXMLNoSubelements( element, location, 'd3f5' )
                 # Handle caption attributes
@@ -530,15 +528,15 @@ class HaggaiXMLBible( Bible ):
                     if attrib=="vref":
                         vRef = value
                         if BibleOrgSysGlobals.debugFlag: assert vRef == '1'
-                    else: logging.warning( "Unprocessed {!r} attribute ({}) in caption element".format( attrib, value ) )
+                    else: logging.warning( f"Unprocessed {value!r} attribute ({attrib}) in caption element" )
                 if BibleOrgSysGlobals.debugFlag: assert vRef
                 vText = element.text
                 if not vText:
-                    logging.warning( "{} {}:{} has no text".format( BBB, chapterNumber, vRef ) )
+                    logging.warning( f"{BBB} {chapterNumber}:{vRef} has no text" )
                 if vText: # This is the main text of the caption
-                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "{} {}:{} {!r}".format( BBB, chapterNumber, verseNumber, vText ) )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{BBB} {chapterNumber}:{verseNumber} {vText!r}" )
                     thisBook.addLine( 'v', '0' + ' ' + vText ) # We save it as verse zero
-            else: logging.error( "Expected to find {!r} but got {!r}".format( HaggaiXMLBible.verseTag, element.tag ) )
+            else: logging.error( f"Expected to find {HaggaiXMLBible.verseTag!r} but got {element.tag!r}" )
     # end of HaggaiXMLBible.__validateAndExtractChapter
 
 
@@ -549,9 +547,9 @@ class HaggaiXMLBible( Bible ):
             finding and saving verse elements.
         """
 
-        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, _("Validating XML paragraph…") )
+        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "Validating XML paragraph…" )
 
-        location = "paragraph in {} {}".format( BBB, chapterNumber )
+        location = f"paragraph in {BBB} {chapterNumber}"
         BibleOrgSysGlobals.checkXMLNoAttributes( paragraph, location, 'brgw3' )
         BibleOrgSysGlobals.checkXMLNoText( paragraph, location, 'brgw3' )
         BibleOrgSysGlobals.checkXMLNoTail( paragraph, location, 'brgw3' )
@@ -560,10 +558,10 @@ class HaggaiXMLBible( Bible ):
         # Handle verse subelements (verses)
         for element in paragraph:
             if element.tag == HaggaiXMLBible.verseTag:
-                location = "verse in {} {}".format( BBB, chapterNumber )
+                location = f"verse in {BBB} {chapterNumber}"
                 self.__validateAndExtractVerse( BBB, chapterNumber, thisBook, element )
             elif element.tag == HaggaiXMLBible.captionTag+'disabled': # Used in Psalms
-                location = "caption in {} {}".format( BBB, chapterNumber )
+                location = f"caption in {BBB} {chapterNumber}"
                 BibleOrgSysGlobals.checkXMLNoTail( element, location, 'k5k8' )
                 BibleOrgSysGlobals.checkXMLNoSubelements( element, location, 'd3f5' )
                 # Handle caption attributes
@@ -572,15 +570,15 @@ class HaggaiXMLBible( Bible ):
                     if attrib=="vref":
                         vRef = value
                         if BibleOrgSysGlobals.debugFlag: assert vRef == '1'
-                    else: logging.warning( "Unprocessed {!r} attribute ({}) in caption element".format( attrib, value ) )
+                    else: logging.warning( f"Unprocessed {value!r} attribute ({attrib}) in caption element" )
                 if BibleOrgSysGlobals.debugFlag: assert vRef
                 vText = element.text
                 if not vText:
-                    logging.warning( "{} {}:{} has no text".format( BBB, chapterNumber, vRef ) )
+                    logging.warning( f"{BBB} {chapterNumber}:{vRef} has no text" )
                 if vText: # This is the main text of the caption
-                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "{} {}:{} {!r}".format( BBB, chapterNumber, verseNumber, vText ) )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{BBB} {chapterNumber}:{verseNumber} {vText!r}" )
                     thisBook.addLine( 'v', '0' + ' ' + vText ) # We save it as verse zero
-            else: logging.error( "Expected to find {!r} but got {!r}".format( HaggaiXMLBible.verseTag, element.tag ) )
+            else: logging.error( f"Expected to find {HaggaiXMLBible.verseTag!r} but got {element.tag!r}" )
     # end of HaggaiXMLBible.__validateAndExtractParagraph
 
 
@@ -590,9 +588,9 @@ class HaggaiXMLBible( Bible ):
             finding and saving verse elements.
         """
 
-        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, _("Validating XML verse…") )
+        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "Validating XML verse…" )
 
-        location = "verse in {} {}".format( BBB, chapterNumber )
+        location = f"verse in {BBB} {chapterNumber}"
         BibleOrgSysGlobals.checkXMLNoTail( verse, location, 'l5ks' )
 
         # Handle verse attributes
@@ -600,14 +598,14 @@ class HaggaiXMLBible( Bible ):
         for attrib,value in verse.items():
             if attrib=="vnumber":
                 verseNumber = value
-            else: logging.warning( "Unprocessed {!r} attribute ({}) in verse element".format( attrib, value ) )
+            else: logging.warning( f"Unprocessed {value!r} attribute ({attrib}) in verse element" )
         if BibleOrgSysGlobals.debugFlag: assert verseNumber
-        location = "{}:{}".format( location, verseNumber ) # Get a better location description
+        location = f"{location}:{verseNumber}" # Get a better location description
         #thisBook.addLine( 'v', verseNumber )
         vText = '' if verse.text is None else verse.text
         if vText: vText = vText.strip()
         #if not vText: # This happens if a verse starts immediately with a style or note
-            #logging.warning( "{} {}:{} has no text".format( BBB, chapterNumber, verseNumber ) )
+            #logging.warning( f"{BBB} {chapterNumber}:{verseNumber} has no text" )
 
         # Handle verse subelements (notes and styled portions)
         for subelement in verse:
@@ -616,15 +614,15 @@ class HaggaiXMLBible( Bible ):
                 noteType = None
                 for attrib,value in subelement.items():
                     if attrib=="type": noteType = value
-                    else: logging.warning( "Unprocessed {!r} attribute ({}) in style subelement".format( attrib, value ) )
+                    else: logging.warning( f"Unprocessed {value!r} attribute ({attrib}) in style subelement" )
                 if noteType and noteType not in ('variant',):
-                    logging.warning( "Unexpected {} note type in {}".format( noteType, BBB ) )
+                    logging.warning( f"Unexpected {noteType} note type in {BBB}" )
                 nText, nTail = subelement.text, subelement.tail
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "note", BBB, chapterNumber, verseNumber, noteType, repr(nText), repr(nTail) )
-                vText += "\\f + \\fk {} \\ft {}\\f*".format( noteType, nText ) if noteType else "\\f + \\ft {}\\f*".format( nText )
+                vText += f"\\f + \\fk {noteType} \\ft {nText}\\f*" if noteType else f"\\f + \\ft {nText}\\f*"
                 if nTail:
                     if '\n' in nTail:
-                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "HaggaiXMLBible.__validateAndExtractVerse: nTail {} {}:{} {!r}".format( BBB, chapterNumber, verseNumber, nTail ) )
+                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"HaggaiXMLBible.__validateAndExtractVerse: nTail {BBB} {chapterNumber}:{verseNumber} {nTail!r}" )
                         nTail = nTail.replace( '\n', ' ' )
                     vText += nTail
                 for sub2element in subelement:
@@ -636,7 +634,7 @@ class HaggaiXMLBible( Bible ):
                             if attrib=='fs': fs = value
                             #elif attrib=="css": css = value
                             #elif attrib=="id": idStyle = value
-                            else: logging.warning( "Unprocessed {!r} attribute ({}) in style sub2element".format( attrib, value ) )
+                            else: logging.warning( f"Unprocessed {value!r} attribute ({attrib}) in style sub2element" )
                         if BibleOrgSysGlobals.debugFlag: assert fs or css or idStyle
                         SFM = None
                         if fs == 'italic': SFM = '\\it'
@@ -654,7 +652,7 @@ class HaggaiXMLBible( Bible ):
                         if SFM: vText += SFM+' ' + sText + SFM+'*'
                         else: vText += '\\sc ' + '['+css+']' + sText + '\\sc* ' # Use sc for unknown styles
                         if sTail: vText += sTail.strip()
-                    else: logging.error( "Expected to find {} but got {!r} in {}".format( HaggaiXMLBible.styleTag, sub2element.tag, sublocation ) )
+                    else: logging.error( f"Expected to find {HaggaiXMLBible.styleTag} but got {sublocation!r} in {sub2element.tag}" )
 
             elif subelement.tag == HaggaiXMLBible.styleTag:
                 sublocation = "style in " + location
@@ -664,7 +662,7 @@ class HaggaiXMLBible( Bible ):
                     if attrib=="fs": fs = value
                     #elif attrib=="css": css = value
                     #elif attrib=="id": idStyle = value
-                    else: logging.warning( "Unprocessed {!r} attribute ({}) in style subelement".format( attrib, value ) )
+                    else: logging.warning( f"Unprocessed {value!r} attribute ({attrib}) in style subelement" )
                 if BibleOrgSysGlobals.debugFlag: assert fs
                 SFM = None
                 if fs == 'super': SFM = '\\bdit'
@@ -691,7 +689,7 @@ class HaggaiXMLBible( Bible ):
                 for attrib,value in subelement.items():
                     if attrib=="art":
                         art = value
-                    else: logging.warning( "Unprocessed {!r} attribute ({}) in style subelement".format( attrib, value ) )
+                    else: logging.warning( f"Unprocessed {value!r} attribute ({attrib}) in style subelement" )
                 if BibleOrgSysGlobals.debugFlag: assert art == 'x-nl'
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, chapterNumber, verseNumber )
                 #assert vText
@@ -701,11 +699,11 @@ class HaggaiXMLBible( Bible ):
                 thisBook.addLine( 'm', subelement.tail.strip() if subelement.tail else '' )
                 #bTail = subelement.tail
                 #if bTail: vText = bTail.strip()
-            else: logging.error( "Expected to find NOTE or STYLE but got {!r} in {}".format( subelement.tag, location ) )
+            else: logging.error( f"Expected to find NOTE or STYLE but got {location!r} in {subelement.tag}" )
 
         if vText: # This is the main text of the verse (follows the verse milestone)
             if '\n' in vText:
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "HaggaiXMLBible.__validateAndExtractVerse: vText {} {}:{} {!r}".format( BBB, chapterNumber, verseNumber, vText ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"HaggaiXMLBible.__validateAndExtractVerse: vText {BBB} {chapterNumber}:{verseNumber} {vText!r}" )
                 vText = vText.replace( '\n', ' ' )
             thisBook.addLine( 'v', verseNumber + ' ' + vText ); verseNumber = None
     # end of HaggaiXMLBible.__validateAndExtractVerse
@@ -733,7 +731,7 @@ def briefDemo() -> None:
                 somepath = os.path.join( testFolder, something )
                 if os.path.isfile( somepath ) and something.endswith( '.xml' ):
                     count += 1
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nH B{}/ {}".format( count, something ) )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nH B{count}/ {something}" )
                     hB = HaggaiXMLBible( testFolder, something )
                     hB.load()
                     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, hB )
@@ -745,7 +743,7 @@ def briefDemo() -> None:
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, UB.getAddedUnits() )
                     #for ref in ('GEN','Genesis','GeNeSiS','Gen','MrK','mt','Prv','Xyz',):
                         ##dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Looking for", ref )
-                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Tried finding {!r} in {!r}: got {!r}".format( ref, name, UB.getXRefBBB( ref ) ) )
+                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Tried finding {ref!r} in {name!r}: got {UB.getXRefBBB( ref )!r}" )
                     if 1: # Test verse lookup
                         from BibleOrgSys.Reference import VerseReferences
                         for reference in ( ('OT','GEN','1','1'), ('OT','GEN','1','3'), ('OT','PSA','3','0'), ('OT','PSA','3','1'), \
@@ -765,8 +763,8 @@ def briefDemo() -> None:
                     else:
                         hB.toHaggaiXML()
                     break
-                else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Sorry, skipping {}.".format( something ) )
-            if count: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n{} total Haggai Bibles processed.".format( count ) )
+                else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Sorry, skipping {something}." )
+            if count: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n{count} total Haggai Bibles processed." )
         else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Sorry, test folder '{testFolder}' is not readable on this computer." )
 # end of HaggaiXMLBible.briefDemo
 
@@ -791,7 +789,7 @@ def fullDemo() -> None:
                 somepath = os.path.join( testFolder, something )
                 if os.path.isfile( somepath ) and something.endswith( '.xml' ):
                     count += 1
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nH B{}/ {}".format( count, something ) )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nH B{count}/ {something}" )
                     hB = HaggaiXMLBible( testFolder, something )
                     hB.load()
                     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, hB )
@@ -803,7 +801,7 @@ def fullDemo() -> None:
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, UB.getAddedUnits() )
                     #for ref in ('GEN','Genesis','GeNeSiS','Gen','MrK','mt','Prv','Xyz',):
                         ##dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Looking for", ref )
-                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Tried finding {!r} in {!r}: got {!r}".format( ref, name, UB.getXRefBBB( ref ) ) )
+                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Tried finding {ref!r} in {name!r}: got {UB.getXRefBBB( ref )!r}" )
                     if 1: # Test verse lookup
                         from BibleOrgSys.Reference import VerseReferences
                         for reference in ( ('OT','GEN','1','1'), ('OT','GEN','1','3'), ('OT','PSA','3','0'), ('OT','PSA','3','1'), \
@@ -822,8 +820,8 @@ def fullDemo() -> None:
                         hB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
                     else:
                         hB.toHaggaiXML()
-                else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Sorry, skipping {}.".format( something ) )
-            if count: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n{} total Haggai Bibles processed.".format( count ) )
+                else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Sorry, skipping {something}." )
+            if count: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n{count} total Haggai Bibles processed." )
         else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Sorry, test folder '{testFolder}' is not readable on this computer." )
 # end of HaggaiXMLBible.fullDemo
 

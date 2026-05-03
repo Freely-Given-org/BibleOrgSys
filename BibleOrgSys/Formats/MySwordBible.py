@@ -59,7 +59,6 @@ PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 DEBUGGING_THIS_MODULE = False
 
 
-from gettext import gettext as _
 import logging
 import os
 from pathlib import Path
@@ -91,21 +90,21 @@ def MySwordBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool
     if autoLoad is true and exactly one MySword Bible is found,
         returns the loaded MySwordBible object.
     """
-    fnPrint( DEBUGGING_THIS_MODULE, "MySwordBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
+    fnPrint( DEBUGGING_THIS_MODULE, f"MySwordBibleFileCheck( {givenFolderName}, {strictCheck}, {autoLoad}, {autoLoadBooks} )" )
     if BibleOrgSysGlobals.debugFlag:
         assert givenFolderName and isinstance( givenFolderName, (str,Path) )
         assert autoLoad in (True,False,)
 
     # Check that the given folder is readable
     if not os.access( givenFolderName, os.R_OK ):
-        logging.critical( _("MySwordBibleFileCheck: Given {!r} folder is unreadable").format( givenFolderName ) )
+        logging.critical( f"MySwordBibleFileCheck: Given {givenFolderName!r} folder is unreadable" )
         return False
     if not os.path.isdir( givenFolderName ):
-        logging.critical( _("MySwordBibleFileCheck: Given {!r} path is not a folder").format( givenFolderName ) )
+        logging.critical( f"MySwordBibleFileCheck: Given {givenFolderName!r} path is not a folder" )
         return False
 
     # Find all the files and folders in this folder
-    vPrint( 'Verbose', DEBUGGING_THIS_MODULE, " MySwordBibleFileCheck: Looking for files in given {}".format( givenFolderName ) )
+    vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f" MySwordBibleFileCheck: Looking for files in given {givenFolderName}" )
     foundFolders, foundFiles = [], []
     for something in os.listdir( givenFolderName ):
         somepath = os.path.join( givenFolderName, something )
@@ -147,9 +146,9 @@ def MySwordBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool
     for thisFolderName in sorted( foundFolders ):
         tryFolderName = os.path.join( givenFolderName, thisFolderName+'/' )
         if not os.access( tryFolderName, os.R_OK ): # The subfolder is not readable
-            logging.warning( _("MySwordBibleFileCheck: {!r} subfolder is unreadable").format( tryFolderName ) )
+            logging.warning( f"MySwordBibleFileCheck: {tryFolderName!r} subfolder is unreadable" )
             continue
-        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "    MySwordBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
+        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"    MySwordBibleFileCheck: Looking for files in {tryFolderName}" )
         foundSubfolders, foundSubfiles = [], []
         try:
             for something in os.listdir( tryFolderName ):
@@ -204,14 +203,14 @@ class MySwordBible( Bible ):
 
         # Do a preliminary check on the readability of our file
         if not os.access( self.sourceFilepath, os.R_OK ):
-            logging.critical( _("MySwordBible: File {!r} is unreadable").format( self.sourceFilepath ) )
+            logging.critical( f"MySwordBible: File {self.sourceFilepath!r} is unreadable" )
 
         filenameBits = os.path.splitext( self.sourceFilename )
         self.name = filenameBits[0]
         self.fileExtension = filenameBits[1]
 
         #if self.fileExtension.upper().endswith('X'):
-            #logging.warning( _("MySwordBible: File {!r} is encrypted").format( self.sourceFilepath ) )
+            #logging.warning( f"MySwordBible: File {self.sourceFilepath!r} is encrypted" )
     # end of MySwordBible.__init__
 
 
@@ -221,13 +220,13 @@ class MySwordBible( Bible ):
         """
         fnPrint( DEBUGGING_THIS_MODULE, "preload()…" )
 
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, _("Preloading {}…").format( self.sourceFilepath ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Preloading {self.sourceFilepath}…" )
 
         fileExtensionUpper = self.fileExtension.upper()
         if fileExtensionUpper not in FILENAME_ENDINGS_TO_ACCEPT:
-            logging.critical( "{} doesn't appear to be a MySword file".format( self.sourceFilename ) )
+            logging.critical( f"{self.sourceFilename} doesn't appear to be a MySword file" )
         elif not self.sourceFilename.upper().endswith( BIBLE_FILENAME_ENDINGS_TO_ACCEPT[0] ):
-            logging.critical( "{} doesn't appear to be a MySword Bible file".format( self.sourceFilename ) )
+            logging.critical( f"{self.sourceFilename} doesn't appear to be a MySword Bible file" )
 
         connection = sqlite3.connect( self.sourceFilepath )
         connection.row_factory = sqlite3.Row # Enable row names
@@ -244,7 +243,7 @@ class MySwordBible( Bible ):
         #if 'Description' in self.settingsDict and len(self.settingsDict['Description'])<40: self.name = self.settingsDict['Description']
         #if 'Abbreviation' in self.settingsDict: self.abbreviation = self.settingsDict['Abbreviation']
         if 'encryption' in self.suppliedMetadata['MySword']:
-            logging.critical( "{} is encrypted: level {}".format( self.sourceFilename, self.suppliedMetadata['MySword']['encryption'] ) )
+            logging.critical( f"{self.sourceFilename} is encrypted: level {self.suppliedMetadata['MySword']['encryption']}" )
 
         self.BibleOrganisationalSystem = BibleOrganisationalSystem( 'GENERIC-KJV-66-ENG' )
 
@@ -259,7 +258,7 @@ class MySwordBible( Bible ):
         fnPrint( DEBUGGING_THIS_MODULE, "load()…" )
         assert self.preloadDone
 
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, _("Loading {}…").format( self.sourceFilepath ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Loading {self.sourceFilepath}…" )
 
 
         if self.suppliedMetadata['MySword']['OT'] and self.suppliedMetadata['MySword']['NT']:
@@ -297,15 +296,15 @@ class MySwordBible( Bible ):
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, row )
                 line = None
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, nBBB, BBB, C, V, 'MySw file line is "' + line + '"' )
-            if line is None: logging.warning( "MySwordBible.load: Have missing verse line at {} {}:{}".format( BBB, C, V ) )
+            if line is None: logging.warning( f"MySwordBible.load: Have missing verse line at {BBB} {C}:{V}" )
             else: # line is not None
                 if not isinstance( line, str ):
                     if 'encryption' in self.suppliedMetadata['MySword']:
-                        logging.critical( "MySwordBible.load: Unable to decrypt verse line at {} {}:{} {!r}".format( BBB, C, V, line ) )
+                        logging.critical( f"MySwordBible.load: Unable to decrypt verse line at {BBB} {C}:{V} {line!r}" )
                         break
                     else:
-                        logging.critical( "MySwordBible.load: Unable to decode verse line at {} {}:{} {!r} {}".format( BBB, C, V, line, self.suppliedMetadata['MySword'] ) )
-                elif not line: logging.warning( "MySwordBible.load: Found blank verse line at {} {}:{}".format( BBB, C, V ) )
+                        logging.critical( f"MySwordBible.load: Unable to decode verse line at {BBB} {C}:{V} {line!r} {self.suppliedMetadata['MySword']}" )
+                elif not line: logging.warning( f"MySwordBible.load: Found blank verse line at {BBB} {C}:{V}" )
                 else:
                     haveLines = True
 
@@ -313,7 +312,7 @@ class MySwordBible( Bible ):
                     #   (We just ignore these for now)
                     while line and line[-1] in '\r\n': line = line[:-1]
                     if '\r' in line or '\n' in line: # (in the middle)
-                        logging.warning( "MySwordBible.load: Found CR or LF characters in verse line at {} {}:{}".format( BBB, C, V ) )
+                        logging.warning( f"MySwordBible.load: Found CR or LF characters in verse line at {BBB} {C}:{V}" )
                     line = line.replace( '\r\n', ' ' ).replace( '\r', ' ' ).replace( '\n', ' ' )
 
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "MySword.load", BBB, C, V, repr(line) )
@@ -364,14 +363,14 @@ class MySwordBible( Bible ):
         assert self.preloadDone
 
         if BBB in self.books:
-            dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  {} is already loaded -- returning".format( BBB ) )
+            dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  {BBB} is already loaded -- returning" )
             return # Already loaded
         if BBB in self.triedLoadingBook:
-            logging.warning( "We had already tried loading MySwordBible {} for {}".format( BBB, self.name ) )
+            logging.warning( f"We had already tried loading MySwordBible {BBB} for {self.name}" )
             return # We've already attempted to load this book
         self.triedLoadingBook[BBB] = True
         self.bookNeedsReloading[BBB] = False
-        if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("MySwordBible: Loading {} from {}…").format( BBB, self.sourceFilepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"MySwordBible: Loading {BBB} from {self.sourceFilepath}…" )
 
         #if self.suppliedMetadata['MySword']['OT'] and self.suppliedMetadata['MySword']['NT']:
             #testament, BBB = 'BOTH', 'GEN'
@@ -409,15 +408,15 @@ class MySwordBible( Bible ):
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, row )
                 line = None
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, nBBB, BBB, C, V, 'MySw file line is "' + line + '"' )
-            if line is None: logging.warning( "MySwordBible.load: Have missing verse line at {} {}:{}".format( BBB, C, V ) )
+            if line is None: logging.warning( f"MySwordBible.load: Have missing verse line at {BBB} {C}:{V}" )
             else: # line is not None
                 if not isinstance( line, str ):
                     if 'encryption' in self.suppliedMetadata['MySword']:
-                        logging.critical( "MySwordBible.load: Unable to decrypt verse line at {} {}:{} {!r}".format( BBB, C, V, line ) )
+                        logging.critical( f"MySwordBible.load: Unable to decrypt verse line at {BBB} {C}:{V} {line!r}" )
                         break
                     else:
-                        logging.critical( "MySwordBible.load: Unable to decode verse line at {} {}:{} {!r} {}".format( BBB, C, V, line, self.suppliedMetadata['MySword'] ) )
-                elif not line: logging.warning( "MySwordBible.load: Found blank verse line at {} {}:{}".format( BBB, C, V ) )
+                        logging.critical( f"MySwordBible.load: Unable to decode verse line at {BBB} {C}:{V} {line!r} {self.suppliedMetadata['MySword']}" )
+                elif not line: logging.warning( f"MySwordBible.load: Found blank verse line at {BBB} {C}:{V}" )
                 else:
                     haveLines = True
 
@@ -425,7 +424,7 @@ class MySwordBible( Bible ):
                     #   (We just ignore these for now)
                     while line and line[-1] in '\r\n': line = line[:-1]
                     if '\r' in line or '\n' in line: # (in the middle)
-                        logging.warning( "MySwordBible.load: Found CR or LF characters in verse line at {} {}:{}".format( BBB, C, V ) )
+                        logging.warning( f"MySwordBible.load: Found CR or LF characters in verse line at {BBB} {C}:{V}" )
                     line = line.replace( '\r\n', ' ' ).replace( '\r', ' ' ).replace( '\n', ' ' )
 
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "MySword.load", BBB, C, V, repr(line) )
@@ -489,7 +488,7 @@ def createMySwordModule( self, outputFolder, controlDict ):
                         result = bkData.getContextVerseData( (BBB,str(C),str(V),) )
                         verseData, context = result
                     except KeyError: # Missing verses
-                        logging.warning( "BibleWriter.createMySwordModule: missing source verse at {} {}:{}".format( BBB, C, V ) )
+                        logging.warning( f"BibleWriter.createMySwordModule: missing source verse at {BBB} {C}:{V}" )
                     # Handle some common versification anomalies
                     if (BBB,C,V) == ('JN3',1,14): # Add text for v15 if it exists
                         try:
@@ -547,7 +546,7 @@ def createMySwordModule( self, outputFolder, controlDict ):
         booksExpected, textLineCountExpected, checkTotals = 66, 31102, theWordBookLines
     extension = '.bbl.mybible'
 
-    vPrint( 'Info', DEBUGGING_THIS_MODULE, _("  Exporting to MySword format…") )
+    vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Exporting to MySword format…" )
     mySettings = {}
     mySettings['unhandledMarkers'] = set()
     handledBooks = []
@@ -561,7 +560,7 @@ def createMySwordModule( self, outputFolder, controlDict ):
     if not filename.endswith( extension ): filename += extension # Make sure that we have the right file extension
     filepath = os.path.join( outputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
     if os.path.exists( filepath ): os.remove( filepath )
-    vPrint( 'Info', DEBUGGING_THIS_MODULE, '  createMySwordModule: ' + _("Writing {!r}…").format( filepath ) )
+    vPrint( 'Info', DEBUGGING_THIS_MODULE, '  createMySwordModule: ' + f"Writing {filepath!r}…" )
     conn = sqlite3.connect( filepath )
     cursor = conn.cursor()
 
@@ -614,7 +613,7 @@ def createMySwordModule( self, outputFolder, controlDict ):
     #else: # Not debugging
         #try: cursor.execute( exeStr, values )
         #except sqlite3.InterfaceError:
-            #logging.critical( "SQLite3 Interface error executing {} with {}".format( exeStr, values ) )
+            #logging.critical( f"SQLite3 Interface error executing {exeStr} with {values}" )
 
     # Now create and fill the Bible table
     cursor.execute( 'CREATE TABLE Bible(Book INT, Chapter INT, Verse INT, Scripture TEXT, Primary Key(Book,Chapter,Verse))' )
@@ -630,17 +629,17 @@ def createMySwordModule( self, outputFolder, controlDict ):
     cursor.close()
 
     if mySettings['unhandledMarkers']:
-        logging.warning( "BibleWriter.createMySwordModule: Unhandled markers were {}".format( mySettings['unhandledMarkers'] ) )
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  " + _("WARNING: Unhandled createMySwordModule markers were {}").format( mySettings['unhandledMarkers'] ) )
+        logging.warning( f"BibleWriter.createMySwordModule: Unhandled markers were {mySettings['unhandledMarkers']}" )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  " + f"WARNING: Unhandled createMySwordModule markers were {mySettings['unhandledMarkers']}" )
     unhandledBooks = []
     for BBB in self.getBookList():
         if BBB not in handledBooks: unhandledBooks.append( BBB )
     if unhandledBooks:
-        logging.warning( "createMySwordModule: Unhandled books were {}".format( unhandledBooks ) )
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  " + _("WARNING: Unhandled createMySwordModule books were {}").format( unhandledBooks ) )
+        logging.warning( f"createMySwordModule: Unhandled books were {unhandledBooks}" )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  " + f"WARNING: Unhandled createMySwordModule books were {unhandledBooks}" )
 
     # Now create the gzipped file
-    vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Compressing {} MySword file…".format( filename ) )
+    vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Compressing {filename} MySword file…" )
     tar = tarfile.open( filepath+'.gz', 'w:gz' )
     tar.add( filepath )
     tar.close()
@@ -661,8 +660,8 @@ def testMySwB( indexString, MySwBfolder, MySwBfilename ):
     #testFolder = Path( '/srv/Bibles/MySword modules/' ) # Must be the same as below
 
     #TUBfolder = os.path.join( MySwBfolder, MySwBfilename )
-    vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("Demonstrating the MySword Bible class {}…").format( indexString) )
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Test folder is {!r} {!r}".format( MySwBfolder, MySwBfilename ) )
+    vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Demonstrating the MySword Bible class {indexString}…" )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Test folder is {MySwBfolder!r} {MySwBfilename!r}" )
     MySwB = MySwordBible( MySwBfolder, MySwBfilename )
     MySwB.preload()
     #MySwB.load() # Load and process the file
@@ -722,7 +721,7 @@ def briefDemo() -> None:
             pathname = os.path.join( testFolder, fullname )
             if os.path.exists( pathname ):
                 indexString = 'B' + str( j+1 )
-                vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nMySw {}/ Trying {}".format( indexString, fullname ) )
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nMySw {indexString}/ Trying {fullname}" )
                 testMySwB( indexString, testFolder, fullname )
                 break
 
@@ -735,7 +734,7 @@ def briefDemo() -> None:
             pathname = os.path.join( testFolder, fullname )
             if os.path.exists( pathname ):
                 indexString = 'C' + str( j+1 )
-                vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nMySw {}/ Trying {}".format( indexString, fullname ) )
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nMySw {indexString}/ Trying {fullname}" )
                 testMySwB( indexString, testFolder, fullname )
                 break
 
@@ -752,7 +751,7 @@ def briefDemo() -> None:
                     break
 
         if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nTrying all {len(foundFolders)} discovered modules…" )
             parameters = [('D'+str(j+1),testFolder,filename) for j,filename in enumerate(sorted(foundFiles))]
             BibleOrgSysGlobals.alreadyMultiprocessing = True
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
@@ -762,7 +761,7 @@ def briefDemo() -> None:
         else: # Just single threaded
             for j, someFile in enumerate( sorted( foundFiles ) ):
                 indexString = 'D' + str( j+1 )
-                vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nMySw {}/ Trying {}".format( indexString, someFile ) )
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nMySw {indexString}/ Trying {someFile}" )
                 #myTestFolder = os.path.join( testFolder, someFolder+'/' )
                 testMySwB( indexString, testFolder, someFile )
                 #break # only do the first one…temp
@@ -778,7 +777,7 @@ def briefDemo() -> None:
                 break
 
         if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nTrying all {len(foundFolders)} discovered modules…" )
             parameters = [('E'+str(j+1),testFolder,filename) for j,filename in enumerate(sorted(foundFiles))]
             BibleOrgSysGlobals.alreadyMultiprocessing = True
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
@@ -788,7 +787,7 @@ def briefDemo() -> None:
         else: # Just single threaded
             for j, someFile in enumerate( sorted( foundFiles ) ):
                 indexString = 'E' + str( j+1 )
-                vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nMySw {}/ Trying {}".format( indexString, someFile ) )
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nMySw {indexString}/ Trying {someFile}" )
                 #myTestFolder = os.path.join( testFolder, someFolder+'/' )
                 testMySwB( indexString, testFolder, someFile )
                 #break # only do the first one…temp
@@ -818,7 +817,7 @@ def fullDemo() -> None:
             pathname = os.path.join( testFolder, fullname )
             if os.path.exists( pathname ):
                 indexString = 'B' + str( j+1 )
-                vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nMySw {}/ Trying {}".format( indexString, fullname ) )
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nMySw {indexString}/ Trying {fullname}" )
                 testMySwB( indexString, testFolder, fullname )
 
 
@@ -830,7 +829,7 @@ def fullDemo() -> None:
             pathname = os.path.join( testFolder, fullname )
             if os.path.exists( pathname ):
                 indexString = 'C' + str( j+1 )
-                vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nMySw {}/ Trying {}".format( indexString, fullname ) )
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nMySw {indexString}/ Trying {fullname}" )
                 testMySwB( indexString, testFolder, fullname )
 
 
@@ -845,7 +844,7 @@ def fullDemo() -> None:
                     foundFiles.append( something )
 
         if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nTrying all {len(foundFolders)} discovered modules…" )
             parameters = [('D'+str(j+1),testFolder,filename) for j,filename in enumerate(sorted(foundFiles))]
             BibleOrgSysGlobals.alreadyMultiprocessing = True
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
@@ -855,7 +854,7 @@ def fullDemo() -> None:
         else: # Just single threaded
             for j, someFile in enumerate( sorted( foundFiles ) ):
                 indexString = 'D' + str( j+1 )
-                vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nMySw {}/ Trying {}".format( indexString, someFile ) )
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nMySw {indexString}/ Trying {someFile}" )
                 #myTestFolder = os.path.join( testFolder, someFolder+'/' )
                 testMySwB( indexString, testFolder, someFile )
                 #break # only do the first one…temp
@@ -869,7 +868,7 @@ def fullDemo() -> None:
             elif os.path.isfile( somepath ) and somepath.endswith('.mybible'): foundFiles.append( something )
 
         if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nTrying all {len(foundFolders)} discovered modules…" )
             parameters = [('E'+str(j+1),testFolder,filename) for j,filename in enumerate(sorted(foundFiles))]
             BibleOrgSysGlobals.alreadyMultiprocessing = True
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
@@ -879,7 +878,7 @@ def fullDemo() -> None:
         else: # Just single threaded
             for j, someFile in enumerate( sorted( foundFiles ) ):
                 indexString = 'E' + str( j+1 )
-                vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nMySw {}/ Trying {}".format( indexString, someFile ) )
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nMySw {indexString}/ Trying {someFile}" )
                 #myTestFolder = os.path.join( testFolder, someFolder+'/' )
                 testMySwB( indexString, testFolder, someFile )
                 #break # only do the first one…temp

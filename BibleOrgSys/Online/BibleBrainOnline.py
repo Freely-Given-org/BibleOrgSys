@@ -62,7 +62,6 @@ We currently use version 4 of the BibleBrain (2.13.1 as at Dec 2019).
 
 More details are available from https://www.faithcomesbyhearing.com/bible-brain/api-reference.
 """
-from gettext import gettext as _
 import os
 import logging
 import requests
@@ -129,7 +128,7 @@ class BibleBrainBibles:
         fnPrint( DEBUGGING_THIS_MODULE, "BibleBrainBibles.__init__()" )
 
         self.key = getSecurityKey() # Our personal key
-        self.URLFixedData = "?v={}&key={}".format( BIBLE_BRAIN_VERSION, self.key )
+        self.URLFixedData = f"?v={BIBLE_BRAIN_VERSION}&key={self.key}"
 
         # See if the site is online by making a small call to get the API version
         self.URLTest = 'api/apiversion'
@@ -152,14 +151,14 @@ class BibleBrainBibles:
 
         Returns None if the data cannot be fetched.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, "BibleBrainBibles.getOnlineData( {!r} {!r} )".format( fieldREST, additionalParameters ) )
+        fnPrint( DEBUGGING_THIS_MODULE, f"BibleBrainBibles.getOnlineData( {fieldREST!r} {additionalParameters!r} )" )
 
-        requestString = '{}{}{}{}'.format( BIBLE_BRAIN_URL_BASE, fieldREST, self.URLFixedData, '&'+additionalParameters if additionalParameters else '' )
+        requestString = f"{BIBLE_BRAIN_URL_BASE}{fieldREST}{self.URLFixedData}{'&'+additionalParameters if additionalParameters else ''}"
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Request string is", repr(requestString) )
         responseObject = requests.get( requestString )
         if responseObject.status_code != 200:
             #errorClass, exceptionInstance, traceback = sys.exc_info()
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, '{!r}  {!r}  {!r}'.format( errorClass, exceptionInstance, traceback ) )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'{errorClass!r}  {exceptionInstance!r}  {traceback!r}' )
             logging.error( f"BibleBrain URLError {responseObject.status_code} from {requestString}" )
             return None
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "HTTPResponseObject", HTTPResponseObject )
@@ -219,7 +218,7 @@ class BibleBrainBibles:
         """
         fnPrint( DEBUGGING_THIS_MODULE, "BibleBrainBibles.fetchAllLanguages()" )
 
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, _("Downloading list of available languages from FCBH…") )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, "Downloading list of available languages from FCBH…" )
 
         if self.onlineVersion: # Get a list of available data sets
             self.languageList = self.getOnlineData( "library/language" ) # Get an alphabetically ordered list of dictionaries -- one for each language
@@ -251,7 +250,7 @@ class BibleBrainBibles:
         """
         fnPrint( DEBUGGING_THIS_MODULE, "BibleBrainBibles.fetchAllVersions()" )
 
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, _("Downloading list of available versions from FCBH…") )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, "Downloading list of available versions from FCBH…" )
 
         if self.onlineVersion: # Get a list of available data sets
             self.versionList = self.getOnlineData( 'library/version' ) # Get an alphabetically ordered list of dictionaries -- one for each version
@@ -315,7 +314,7 @@ class BibleBrainBibles:
         """
         fnPrint( DEBUGGING_THIS_MODULE, "BibleBrainBibles.fetchAllVolumes()" )
 
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, _("Downloading list of available volumes from FCBH…") )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, "Downloading list of available volumes from FCBH…" )
 
         if self.onlineVersion: # Get a list of available data sets
             self.volumeList = self.getOnlineData( 'library/volume' ) # Get an alphabetically ordered list of dictionaries -- one for each volume
@@ -348,7 +347,7 @@ class BibleBrainBibles:
         """
         fnPrint( DEBUGGING_THIS_MODULE, "BibleBrainBibles.fetchAllTextVolumes()" )
 
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, _("Creating list of available text volumes from FCBH…") )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, "Creating list of available text volumes from FCBH…" )
 
         if self.volumeList is None:
             self.fetchAllVolumes()
@@ -357,11 +356,11 @@ class BibleBrainBibles:
         if self.volumeList: # Create a list of resource types
             for j, volume in enumerate(self.volumeList):
                 assert volume['language_name'] and volume['volume_name']
-                ourName= '{} {}'.format( volume['language_name'], volume['volume_name'] )
+                ourName= f"{volume['language_name']} {volume['volume_name']}"
                 assert volume['media'] and volume['delivery'] and volume['collection_code']
                 if volume['media'] == 'text':
                     if 'web' in volume['delivery']:
-                        #ourName= '{} {}'.format( volume['language_name'], volume['volume_name'] )
+                        #ourName= f"{volume['language_name']} {volume['volume_name']}"
                         if ourName in self.volumeNameDict:
                             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nAlready have", ourName )
                             ##dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "New", j, volume )
@@ -407,7 +406,7 @@ class BibleBrainBibles:
         """
         fnPrint( DEBUGGING_THIS_MODULE, "BibleBrainBibles.fetchAllEnglishTextVolumes()" )
 
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, _("Creating list of available English text volumes from FCBH…") )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, "Creating list of available English text volumes from FCBH…" )
 
         if self.volumeList is None:
             self.fetchAllVolumes()
@@ -418,7 +417,7 @@ class BibleBrainBibles:
                 assert volume['language_family_code']
                 if volume['language_family_code'] == 'ENG':
                     assert volume['volume_name']
-                    ourName= '{}: {}'.format( volume['version_code'], volume['volume_name'] )
+                    ourName= f"{volume['version_code']}: {volume['volume_name']}"
                     #ourName = volume['volume_name']
                     assert volume['media'] and volume['delivery'] and volume['collection_code']
                     if volume['media'] == 'text':
@@ -439,11 +438,11 @@ class BibleBrainBibles:
         """
         indent = 2
         result = "BibleBrain online Bibles object"
-        if self.onlineVersion: result += ('\n' if result else '') + ' '*indent + _("Online version: {}").format( self.onlineVersion )
-        if self.languageList: result += ('\n' if result else '') + ' '*indent + _("Languages: {}").format( len(self.languageList) )
-        if self.versionList: result += ('\n' if result else '') + ' '*indent + _("Versions: {}").format( len(self.versionList) )
-        if self.volumeList: result += ('\n' if result else '') + ' '*indent + _("Volumes: {}").format( len(self.volumeList) )
-        if self.volumeNameDict: result += ('\n' if result else '') + ' '*indent + _("Displayable volumes: {}").format( len(self.volumeNameDict) )
+        if self.onlineVersion: result += ('\n' if result else '') + ' '*indent + f"Online version: {self.onlineVersion}"
+        if self.languageList: result += ('\n' if result else '') + ' '*indent + f"Languages: {len(self.languageList)}"
+        if self.versionList: result += ('\n' if result else '') + ' '*indent + f"Versions: {len(self.versionList)}"
+        if self.volumeList: result += ('\n' if result else '') + ' '*indent + f"Volumes: {len(self.volumeList)}"
+        if self.volumeNameDict: result += ('\n' if result else '') + ' '*indent + f"Displayable volumes: {len(self.volumeNameDict)}"
         return result
     # end of BibleBrainBibles.__str__
 
@@ -451,7 +450,7 @@ class BibleBrainBibles:
     def searchNames( self, searchText ):
         """
         """
-        fnPrint( DEBUGGING_THIS_MODULE, "BibleBrainBibles.searchNames( {!r} )".format( searchText ) )
+        fnPrint( DEBUGGING_THIS_MODULE, f"BibleBrainBibles.searchNames( {searchText!r} )" )
 
         searchTextUC = searchText.upper()
         resultsList = []
@@ -460,7 +459,7 @@ class BibleBrainBibles:
                 for refNumber in self.volumeNameDict[name]:
                     DAM = self.getDAM(refNumber)
                     if BibleOrgSysGlobals.debugFlag:
-                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("DAM: {}").format( DAM ) )
+                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"DAM: {DAM}" )
                         if BibleOrgSysGlobals.debugFlag:
                             assert DAM.endswith('2ET') or DAM.endswith('1ET') # O2 (OT) or N2 (NT), plus ET for text
                     resultsList.append( (refNumber,DAM,) )
@@ -484,7 +483,7 @@ class BibleBrainBible( GenericOnlineBible ):
                 1-3: Language code, e.g., ENG
                 4-6: Version code, e.g., ESV
         """
-        fnPrint( DEBUGGING_THIS_MODULE, "BibleBrainBible.__init__( {!r} )".format( damRoot ) )
+        fnPrint( DEBUGGING_THIS_MODULE, f"BibleBrainBible.__init__( {damRoot!r} )" )
         if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert damRoot and isinstance( damRoot, str ) and len(damRoot)==6
 
@@ -493,7 +492,7 @@ class BibleBrainBible( GenericOnlineBible ):
 
         self.damRoot = damRoot
         self.key = getSecurityKey() # Our personal key
-        self.URLFixedData = '?v={}&key={}'.format( BIBLE_BRAIN_VERSION, self.key )
+        self.URLFixedData = f'?v={BIBLE_BRAIN_VERSION}&key={self.key}'
 
         # See if the site is online by making a small call to get the API version
         self.URLTest = 'api/apiversion'
@@ -538,9 +537,9 @@ class BibleBrainBible( GenericOnlineBible ):
         """
         indent = 2
         result = "BibleBrain online Bible object"
-        if self.onlineVersion: result += ('\n' if result else '') + ' '*indent + _("Online version: {}").format( self.onlineVersion )
-        result += ('\n' if result else '') + ' '*indent + _("DAM root: {}").format( self.damRoot )
-        if self.books: result += ('\n' if result else '') + ' '*indent + _("Books: {}").format( len(self.books) )
+        if self.onlineVersion: result += ('\n' if result else '') + ' '*indent + f"Online version: {self.onlineVersion}"
+        result += ('\n' if result else '') + ' '*indent + f"DAM root: {self.damRoot}"
+        if self.books: result += ('\n' if result else '') + ' '*indent + f"Books: {len(self.books)}"
         return result
     # end of BibleBrainBible.__str__
 
@@ -555,10 +554,10 @@ class BibleBrainBible( GenericOnlineBible ):
             Returns the dictionary.
         Returns None if the data cannot be fetched.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, "BibleBrainBible.getOnlineData( {!r} {!r} )".format( fieldREST, additionalParameters ) )
+        fnPrint( DEBUGGING_THIS_MODULE, f"BibleBrainBible.getOnlineData( {fieldREST!r} {additionalParameters!r} )" )
 
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "Requesting data from {} for {}…".format( BIBLE_BRAIN_URL_BASE, self.damRoot ) )
-        requestString = "{}{}{}{}".format( BIBLE_BRAIN_URL_BASE, fieldREST, self.URLFixedData, '&'+additionalParameters if additionalParameters else '' )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Requesting data from {BIBLE_BRAIN_URL_BASE} for {self.damRoot}…" )
+        requestString = f"{BIBLE_BRAIN_URL_BASE}{fieldREST}{self.URLFixedData}{'&'+additionalParameters if additionalParameters else ''}"
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Request string is", repr(requestString) )
         responseObject = requests.get( requestString )
         if responseObject.status_code != 200:
@@ -572,7 +571,7 @@ class BibleBrainBible( GenericOnlineBible ):
         """
         Equivalent to the one in InternalBible, except we may have to fetch the data.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, "BibleBrainBible.getVerseDataList( {!r} ) for {!r}".format( key, self.damRoot ) )
+        fnPrint( DEBUGGING_THIS_MODULE, f"BibleBrainBible.getVerseDataList( {key!r} ) for {self.damRoot!r}" )
 
         cachedResult = GenericOnlineBible.getCachedVerseDataList( self, key )
         if isinstance( cachedResult, list): return cachedResult
@@ -580,7 +579,7 @@ class BibleBrainBible( GenericOnlineBible ):
         BBB = key.getBBB()
         if BBB in self.books:
             info = self.books[BBB]
-            rawData = self.getOnlineData( 'text/verse', 'dam_id={}&book_id={}&chapter_id={}&verse_start={}'.format( info['dam_id']+'2ET', info['book_id'], key.getChapterNumber(), key.getVerseNumber() ) )
+            rawData = self.getOnlineData( 'text/verse', f"dam_id={info['dam_id']+'2ET'}&book_id={info['book_id']}&chapter_id={key.getChapterNumber()}&verse_start={key.getVerseNumber()}" )
             resultList = []
             if isinstance( rawData, list ) and len(rawData)==1:
                 rawDataDict = rawData[0]
@@ -593,7 +592,7 @@ class BibleBrainBible( GenericOnlineBible ):
                 GenericOnlineBible.cacheVerse( self, key, resultList )
             return resultList
         else: # This version doesn't have this book
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, "  getVerseDataList: {} not in {} {}".format( BBB, self.damRoot, self.books.keys() ) )
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  getVerseDataList: {BBB} not in {self.damRoot} {self.books.keys()}" )
     # end of BibleBrainBible.getVerseDataList
 
 
@@ -604,7 +603,7 @@ class BibleBrainBible( GenericOnlineBible ):
         #(The Digital Bible Platform doesn't provide the context so an empty list is always returned.)
         #"""
         #if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE:
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("BibleBrainBible.getContextVerseData( {!r} ) for {!r}").format( key, self.damRoot ) )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"BibleBrainBible.getContextVerseData( {key!r} ) for {self.damRoot!r}" )
 
         #return self.getVerseDataList( key ), [] # No context
     ## end of BibleBrainBible.getContextVerseData
@@ -629,19 +628,19 @@ def briefDemo() -> None:
 
         if 0:
             myBibleBrainBibles.fetchAllLanguages()
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nLanguage list ({}):".format( len(myBibleBrainBibles.languageList) ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nLanguage list ({len(myBibleBrainBibles.languageList)}):" )
             for j, lgDict in enumerate( myBibleBrainBibles.languageList ):
                 vPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'Lg', j, repr(lgDict) )
 
         if 0:
             myBibleBrainBibles.fetchAllVersions()
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nVersion list ({}):".format( len(myBibleBrainBibles.versionList) ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nVersion list ({len(myBibleBrainBibles.versionList)}):" )
             for j, verDict in enumerate( myBibleBrainBibles.versionList ):
                 vPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'Ver', j, repr(verDict) )
 
         if 0:
             myBibleBrainBibles.fetchAllVolumes()
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nVolume list ({}):".format( len(myBibleBrainBibles.volumeList) ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nVolume list ({len(myBibleBrainBibles.volumeList)}):" )
             for j, volDict in enumerate( myBibleBrainBibles.volumeList ):
                 vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ' ', j, repr(volDict) )
             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "393", myBibleBrainBibles.volumeList[393] )
@@ -650,7 +649,7 @@ def briefDemo() -> None:
 
         if 0:
             myBibleBrainBibles.fetchAllTextVolumes()
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nVolume name dict ({}):".format( len(myBibleBrainBibles.volumeNameDict) ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nVolume name dict ({len(myBibleBrainBibles.volumeNameDict)}):" )
             for j, someName in enumerate( myBibleBrainBibles.volumeNameDict ):
                 #if 'English' in someName:
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "English:", repr(someName), repr(myBibleBrainBibles.volumeNameDict[someName]) )
@@ -662,11 +661,11 @@ def briefDemo() -> None:
 
         if 1:
             myBibleBrainBibles.fetchAllEnglishTextVolumes()
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nEnglish volume name dict ({}):".format( len(myBibleBrainBibles.EnglishVolumeNameDict) ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nEnglish volume name dict ({len(myBibleBrainBibles.EnglishVolumeNameDict)}):" )
             for j, someName in enumerate( myBibleBrainBibles.EnglishVolumeNameDict ):
                 #if 'English' in someName:
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "English:", repr(someName), repr(myBibleBrainBibles.EnglishVolumeNameDict[someName]) )
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  {}/ {!r} {!r}".format( j, someName, myBibleBrainBibles.EnglishVolumeNameDict[someName] ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  {j}/ {someName!r} {myBibleBrainBibles.EnglishVolumeNameDict[someName]!r}" )
                 #if 'English' in someName:
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  English:", repr(someName), repr(myBibleBrainBibles.EnglishVolumeNameDict[someName]) )
 
@@ -715,19 +714,19 @@ def fullDemo() -> None:
 
         if 0:
             myBibleBrainBibles.fetchAllLanguages()
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nLanguage list ({}):".format( len(myBibleBrainBibles.languageList) ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nLanguage list ({len(myBibleBrainBibles.languageList)}):" )
             for j, lgDict in enumerate( myBibleBrainBibles.languageList ):
                 vPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'Lg', j, repr(lgDict) )
 
         if 0:
             myBibleBrainBibles.fetchAllVersions()
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nVersion list ({}):".format( len(myBibleBrainBibles.versionList) ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nVersion list ({len(myBibleBrainBibles.versionList)}):" )
             for j, verDict in enumerate( myBibleBrainBibles.versionList ):
                 vPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'Ver', j, repr(verDict) )
 
         if 0:
             myBibleBrainBibles.fetchAllVolumes()
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nVolume list ({}):".format( len(myBibleBrainBibles.volumeList) ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nVolume list ({len(myBibleBrainBibles.volumeList)}):" )
             for j, volDict in enumerate( myBibleBrainBibles.volumeList ):
                 vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ' ', j, repr(volDict) )
             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "393", myBibleBrainBibles.volumeList[393] )
@@ -736,7 +735,7 @@ def fullDemo() -> None:
 
         if 0:
             myBibleBrainBibles.fetchAllTextVolumes()
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nVolume name dict ({}):".format( len(myBibleBrainBibles.volumeNameDict) ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nVolume name dict ({len(myBibleBrainBibles.volumeNameDict)}):" )
             for j, someName in enumerate( myBibleBrainBibles.volumeNameDict ):
                 #if 'English' in someName:
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "English:", repr(someName), repr(myBibleBrainBibles.volumeNameDict[someName]) )
@@ -748,11 +747,11 @@ def fullDemo() -> None:
 
         if 1:
             myBibleBrainBibles.fetchAllEnglishTextVolumes()
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nEnglish volume name dict ({}):".format( len(myBibleBrainBibles.EnglishVolumeNameDict) ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nEnglish volume name dict ({len(myBibleBrainBibles.EnglishVolumeNameDict)}):" )
             for j, someName in enumerate( myBibleBrainBibles.EnglishVolumeNameDict ):
                 #if 'English' in someName:
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "English:", repr(someName), repr(myBibleBrainBibles.EnglishVolumeNameDict[someName]) )
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  {}/ {!r} {!r}".format( j, someName, myBibleBrainBibles.EnglishVolumeNameDict[someName] ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  {j}/ {someName!r} {myBibleBrainBibles.EnglishVolumeNameDict[someName]!r}" )
                 #if 'English' in someName:
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  English:", repr(someName), repr(myBibleBrainBibles.EnglishVolumeNameDict[someName]) )
 
