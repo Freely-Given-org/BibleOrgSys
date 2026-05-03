@@ -2513,7 +2513,7 @@ class PTX8Bible( Bible ):
                                 if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
                     break; # Get out of decoding loop because we were successful
                 except UnicodeDecodeError:
-                    logging.error( f"loadPTX8Styles fails with encoding: {encoding} on {styleFilepath}{{} if encoding==encodings[-1] else ' -- trying again'}" )
+                    logging.error( f"loadPTX8Styles fails with encoding: {encoding} on {styleFilepath}{'' if encoding==encodings[-1] else ' -- trying again'}" )
 
             try: self.filepathsNotYetLoaded.remove( styleFilepath )
             except ValueError: logging.critical( f"PTX8 style file seemed unexpected: {styleFilepath}" )

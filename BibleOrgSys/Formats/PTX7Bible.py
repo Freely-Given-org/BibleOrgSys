@@ -1680,7 +1680,7 @@ class PTX7Bible( Bible ):
                             else: logging.error( f"What's this style line? {line!r}" )
                     break; # Get out of decoding loop because we were successful
                 except UnicodeDecodeError:
-                    logging.error( f"loadPTXStyles fails with encoding: {encoding} on {styleFilepath}{{} if encoding==encodings[-1] else ' -- trying again'}" )
+                    logging.error( f"loadPTXStyles fails with encoding: {encoding} on {styleFilepath}{'' if encoding==encodings[-1] else ' -- trying again'}" )
 
         vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Loaded {len(PTXStyles)} style files." )
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'PTXStyles', PTXStyles )

@@ -3021,7 +3021,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
         (('syngeressis',),'female_singers'), # Ecc 2:8
         ((' sleeresse',),' slayers'),((' sleere',' sleeri'),' slayer'), # Hos 9:13, Eze 21:14
         ((' socoure,',),' security,'), # Cvdl Psa 78:35
-        (('sowre dowy','sowrdowy'),'sourdough/leaven'), # Wycl Mrk 8:15
+        (('sour dowy','sowrdowy'),'sourdough/leaven'), # 'sowre' is already 'sour' Wycl Mrk 8:15
         ((' spakest',' spakist'),' spakest/spake'), # Psa 49:20
         (('spoused','spowside'),'spoused/engaged'), # Deu 20:7
         ((' spuyle ',),' spoil/strip '), # Hos 2:3
