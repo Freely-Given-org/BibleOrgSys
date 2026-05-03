@@ -26,7 +26,6 @@
 """
 Module handling BiblePunctuation_*.xml and to export to JSON, C, and Python data tables.
 """
-from gettext import gettext as _
 import os
 import logging
 from datetime import datetime
@@ -89,14 +88,14 @@ class BiblePunctuationSystemsConverter:
         if not self._XMLSystems: # Only ever do this once
             if XMLFolder is None: XMLFolder = BibleOrgSysGlobals.BOS_DATAFILES_FOLDERPATH.joinpath( 'PunctuationSystems/' ) # Relative to module, not cwd
             self.__XMLFolder = XMLFolder
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, _("Loading punctuations systems from {}…").format( self.__XMLFolder ) )
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Loading punctuations systems from {self.__XMLFolder}…" )
             filenamePrefix = "BIBLEPUNCTUATIONSYSTEM_"
             for filename in os.listdir( self.__XMLFolder ):
                 filepart, extension = os.path.splitext( filename )
 
                 if extension.upper() == '.XML' and filepart.upper().startswith(filenamePrefix):
                     punctuationSystemCode = filepart[len(filenamePrefix):]
-                    vPrint( 'Verbose', DEBUGGING_THIS_MODULE, _("Loading {} punctuation system from {}…").format( punctuationSystemCode, filename ) )
+                    vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"Loading {punctuationSystemCode} punctuation system from {filename}…" )
                     self._XMLSystems[punctuationSystemCode] = {}
                     self._XMLSystems[punctuationSystemCode]['tree'] = ElementTree().parse( os.path.join( self.__XMLFolder, filename ) )
                     assert self._XMLSystems[punctuationSystemCode]['tree'] # Fail here if we didn't load anything at all
@@ -111,9 +110,9 @@ class BiblePunctuationSystemsConverter:
                             BibleOrgSysGlobals.checkXMLNoTail( header, 'header' )
                             BibleOrgSysGlobals.checkXMLNoAttributes( header, 'header' )
                             if len(header)>1:
-                                logging.info( _("Unexpected elements in header") )
+                                logging.info( "Unexpected elements in header" )
                             elif len(header)==0:
-                                logging.info( _("Missing work element in header") )
+                                logging.info( "Missing work element in header" )
                             else:
                                 work = header[0]
                                 BibleOrgSysGlobals.checkXMLNoText( work, "work in header" )
@@ -124,16 +123,16 @@ class BiblePunctuationSystemsConverter:
                                     self._XMLSystems[punctuationSystemCode]['date'] = work.find('date').text
                                     self._XMLSystems[punctuationSystemCode]['title'] = work.find('title').text
                                 else:
-                                    logging.warning( _("Missing work element in header") )
+                                    logging.warning( "Missing work element in header" )
                         else:
-                            logging.warning( _("Missing header element (looking for {!r} tag)").format( self.headerTag ) )
+                            logging.warning( f"Missing header element (looking for {self.headerTag!r} tag)" )
                     else:
-                        logging.error( _("Expected to load {!r} but got {!r}").format( self.XMLTreeTag, self._XMLSystems[punctuationSystemCode]['tree'].tag ) )
+                        logging.error( f"Expected to load {self.XMLTreeTag!r} but got {self._XMLSystems[punctuationSystemCode]['tree'].tag!r}" )
                     bookCount = 0 # There must be an easier way to do this
                     for subelement in self._XMLSystems[punctuationSystemCode]['tree']:
                         bookCount += 1
-                    vPrint( 'Info', DEBUGGING_THIS_MODULE, _("    Loaded {} books for {}").format( bookCount, punctuationSystemCode ) )
-                    logging.info( _("    Loaded {} books for {}").format( bookCount, punctuationSystemCode ) )
+                    vPrint( 'Info', DEBUGGING_THIS_MODULE, f"    Loaded {bookCount} books for {punctuationSystemCode}" )
+                    logging.info( f"    Loaded {bookCount} books for {punctuationSystemCode}" )
 
                     if BibleOrgSysGlobals.strictCheckingFlag:
                         self._validateSystem( self._XMLSystems[punctuationSystemCode]['tree'], punctuationSystemCode )
@@ -159,58 +158,58 @@ class BiblePunctuationSystemsConverter:
                 for attributeName in self.compulsoryAttributes:
                     attributeValue = element.get( attributeName )
                     if attributeValue is None:
-                        logging.error( _("Compulsory {!r} attribute is missing from {} element in record {}").format( attributeName, element.tag, k ) )
+                        logging.error( f"Compulsory {k!r} attribute is missing from {attributeName} element in record {element.tag}" )
                     if not attributeValue:
-                        logging.warning( _("Compulsory {!r} attribute is blank on {} element in record {}").format( attributeName, element.tag, k ) )
+                        logging.warning( f"Compulsory {k!r} attribute is blank on {attributeName} element in record {element.tag}" )
 
                 # Check optional attributes on this main element
                 for attributeName in self.optionalAttributes:
                     attributeValue = element.get( attributeName )
                     if attributeValue is not None:
                         if not attributeValue:
-                            logging.warning( _("Optional {!r} attribute is blank on {} element in record {}").format( attributeName, element.tag, k ) )
+                            logging.warning( f"Optional {k!r} attribute is blank on {attributeName} element in record {element.tag}" )
 
                 # Check for unexpected additional attributes on this main element
                 for attributeName in element.keys():
                     attributeValue = element.get( attributeName )
                     if attributeName not in self.compulsoryAttributes and attributeName not in self.optionalAttributes:
-                        logging.warning( _("Additional {!r} attribute ({!r}) found on {} element in record {}").format( attributeName, attributeValue, element.tag, k ) )
+                        logging.warning( f"Additional {element.tag!r} attribute ({k!r}) found on {attributeName} element in record {attributeValue}" )
 
                 # Check the attributes that must contain unique information (in that particular field -- doesn't check across different attributes)
                 for attributeName in self.uniqueAttributes:
                     attributeValue = element.get( attributeName )
                     if attributeValue is not None:
                         if attributeValue in uniqueDict["Attribute_"+attributeName]:
-                            logging.error( _("Found {!r} data repeated in {!r} field on {} element in record {}").format( attributeValue, attributeName, element.tag, k ) )
+                            logging.error( f"Found {element.tag!r} data repeated in {k!r} field on {attributeValue} element in record {attributeName}" )
                         uniqueDict["Attribute_"+attributeName].append( attributeValue )
 
                 # Check compulsory elements
                 for elementName in self.compulsoryElements:
                     if element.find( elementName ) is None:
-                        logging.error( _("Compulsory {!r} element is missing in record with ID {!r} (record {})").format( elementName, ID, k ) )
+                        logging.error( f"Compulsory {ID!r} element is missing in record with ID {k!r} (record {elementName})" )
                     if not element.find( elementName ).text:
-                        logging.warning( _("Compulsory {!r} element is blank in record with ID {!r} (record {})").format( elementName, ID, k ) )
+                        logging.warning( f"Compulsory {ID!r} element is blank in record with ID {k!r} (record {elementName})" )
 
                 # Check optional elements
                 for elementName in self.optionalElements:
                     if element.find( elementName ) is not None:
                         if not element.find( elementName ).text:
-                            logging.warning( _("Optional {!r} element is blank in record with ID {!r} (record {})").format( elementName, ID, k ) )
+                            logging.warning( f"Optional {ID!r} element is blank in record with ID {k!r} (record {elementName})" )
 
                 # Check for unexpected additional elements
                 for subelement in element:
                     if subelement.tag not in self.compulsoryElements and subelement.tag not in self.optionalElements:
-                        logging.warning( _("Additional {!r} element ({!r}) found in record with ID {!r} (record {})").format( subelement.tag, subelement.text, ID, k ) )
+                        logging.warning( f"Additional {subelement.text!r} element ({ID!r}) found in record with ID {k!r} (record {subelement.tag})" )
 
                 # Check the elements that must contain unique information (in that particular element -- doesn't check across different elements)
                 for elementName in self.uniqueElements:
                     if element.find( elementName ) is not None:
                         text = element.find( elementName ).text
                         if text in uniqueDict["Element_"+elementName]:
-                            logging.error( _("Found {!r} data repeated in {!r} element in record with ID {!r} (record {})").format( text, elementName, ID, k ) )
+                            logging.error( f"Found {elementName!r} data repeated in {ID!r} element in record with ID {k!r} (record {text})" )
                         uniqueDict["Element_"+elementName].append( text )
             else:
-                logging.warning( _("Unexpected element: {} in record {}").format( element.tag, k ) )
+                logging.warning( f"Unexpected element: {element.tag} in record {k}" )
     # end of _validateSystem
 
     def __str__( self ) -> str:
@@ -221,17 +220,17 @@ class BiblePunctuationSystemsConverter:
         @rtype: string
         """
         result = "BiblePunctuationSystemsConverter object"
-        result += ('\n' if result else '') + "  Number of punctuation systems loaded = {}".format( len(self._XMLSystems) )
+        result += ('\n' if result else '') + f"  Number of punctuation systems loaded = {len(self._XMLSystems)}"
         if BibleOrgSysGlobals.verbosityLevel > 2: # Make it verbose
             for x in self._XMLSystems:
-                result += ('\n' if result else '') + "  {}".format( x )
+                result += ('\n' if result else '') + f"  {x}"
                 title = self._XMLSystems[x]['title']
-                if title: result += ('\n' if result else '') + "    {}".format( title )
+                if title: result += ('\n' if result else '') + f"    {title}"
                 version = self._XMLSystems[x]['version']
-                if version: result += ('\n    ' if result else '    ') + _("Version: {}").format( version )
+                if version: result += ('\n    ' if result else '    ') + f"Version: {version}"
                 date = self._XMLSystems[x]['date']
-                if date: result += ('\n    ' if result else '    ') + _("Last updated: {}").format( date )
-                result += ('\n    ' if result else '    ') + _("Number of values = {:,}").format( len(self._XMLSystems[x]['tree']) )
+                if date: result += ('\n    ' if result else '    ') + f"Last updated: {date}"
+                result += ('\n    ' if result else '    ') + f"Number of values = {len(self._XMLSystems[x]['tree']):,}"
         return result
     # end of __str__
 
@@ -256,13 +255,13 @@ class BiblePunctuationSystemsConverter:
                 tag = element.tag
                 text = element.text
                 if text is None: text = '' # If a tag was given, but contained an empty string, indicate that
-                if tag in punctuationDict: logging.error( _("Multiple {} entries in {} punctuation system").format( tag, punctuationSystemCode ) )
+                if tag in punctuationDict: logging.error( f"Multiple {tag} entries in {punctuationSystemCode} punctuation system" )
                 punctuationDict[tag] = text
 
             if BibleOrgSysGlobals.strictCheckingFlag: # check for duplicates
                 for checkSystemCode,checkSystemDataDict in self._DataDict.items():
                     if checkSystemDataDict == punctuationDict:
-                        logging.error( _("{} and {} punctuation systems are identical").format( punctuationSystemCode, checkSystemCode ) )
+                        logging.error( f"{punctuationSystemCode} and {checkSystemCode} punctuation systems are identical" )
                     elif BibleOrgSysGlobals.verbosityLevel>2: # check for very similar systems
                         differenceCount, firstTag, description = 0, '', ''
                         for tag in punctuationDict:
@@ -273,9 +272,9 @@ class BiblePunctuationSystemsConverter:
                                 differenceCount += 1
                                 if not firstTag:
                                     firstTag = tag
-                                    description = _(" (-->{}<-- versus -->{}<--)".format( punctuationDict[tag], checkSystemDataDict[tag] ) )
+                                    description = _(f" (-->{punctuationDict[tag]}<-- versus -->{checkSystemDataDict[tag]}<--)" )
                         if differenceCount==1:
-                            logging.warning( _("{} and {} punctuation systems differ only by {}{}").format( punctuationSystemCode, checkSystemCode, firstTag, description ) )
+                            logging.warning( f"{punctuationSystemCode} and {checkSystemCode} punctuation systems differ only by {firstTag}{description}" )
 
             # Now put it into my dictionaries for easy access
             self._DataDict[punctuationSystemCode] = punctuationDict
@@ -297,7 +296,7 @@ class BiblePunctuationSystemsConverter:
             folder = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH
             if not os.path.exists( folder ): os.mkdir( folder )
             filepath = os.path.join( folder, self.__filenameBase + '_Tables.pickle' )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Exporting to {}…").format( filepath ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Exporting to {filepath}…" )
         with open( filepath, 'wb' ) as myFile:
             pickle.dump( self._DataDict, myFile )
     # end of pickle
@@ -308,10 +307,10 @@ class BiblePunctuationSystemsConverter:
         """
         def exportPythonDict( theFile, theDict, dictName, keyComment, fieldsComment ):
             """Exports theDict to theFile."""
-            theFile.write( '  "{}": {{\n    # Key is {}\n    # Fields are: {}\n'.format( dictName, keyComment, fieldsComment ) )
+            theFile.write( f'  "{dictName}": {{\n    # Key is {keyComment}\n    # Fields are: {fieldsComment}\n' )
             for dictKey in theDict.keys():
-                theFile.write( '    {}: {},\n'.format( repr(dictKey), repr(theDict[dictKey]) ) )
-            theFile.write( "  }}, # end of {} ({} entries)\n\n".format( dictName, len(theDict) ) )
+                theFile.write( f'    {repr(dictKey)}: {repr(theDict[dictKey])},\n' )
+            theFile.write( f"  }}, # end of {dictName} ({len(theDict)} entries)\n\n" )
         # end of exportPythonDict
 
 
@@ -320,22 +319,22 @@ class BiblePunctuationSystemsConverter:
         assert self._DataDict
 
         if not filepath: filepath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH.joinpath( self.__filenameBase + '_Tables.py' )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Exporting to {}…").format( filepath ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Exporting to {filepath}…" )
 
         with open( filepath, 'wt', encoding='utf-8' ) as myFile:
-            myFile.write( "# {}\n#\n".format( filepath ) )
-            myFile.write( "# This UTF-8 file was automatically generated by BiblePunctuationSystems.py V{} on {}\n#\n".format( PROGRAM_VERSION, datetime.now() ) )
-            #if self.title: myFile.write( "# {}\n".format( self.title ) )
-            #if self.version: myFile.write( "#  Version: {}\n".format( self.version ) )
-            #if self.date: myFile.write( "#  Date: {}\n#\n".format( self.date ) )
-            #myFile.write( "#   {} {} entries loaded from the original XML file.\n".format( len(self.namesTree), self.XMLTreeTag ) )
-            myFile.write( "#   {} {} loaded from the original XML files.\n#\n\n".format( len(self._XMLSystems), self.XMLTreeTag ) )
+            myFile.write( f"# {filepath}\n#\n" )
+            myFile.write( f"# This UTF-8 file was automatically generated by BiblePunctuationSystems.py V{PROGRAM_VERSION} on {datetime.now()}\n#\n" )
+            #if self.title: myFile.write( f"# {self.title}\n" )
+            #if self.version: myFile.write( f"#  Version: {self.version}\n" )
+            #if self.date: myFile.write( f"#  Date: {self.date}\n#\n" )
+            #myFile.write( f"#   {len(self.namesTree)} {self.XMLTreeTag} entries loaded from the original XML file.\n" )
+            myFile.write( f"#   {len(self._XMLSystems)} {self.XMLTreeTag} loaded from the original XML files.\n#\n\n" )
             #myFile.write( "from collections import OrderedDict\n\n\n" )
             myFile.write( "bookDataDict = {\n  # Key is versificationSystemName\n  # Fields are omittedVersesSystem\n\n" )
             for systemName, systemDict in self._DataDict.items():
                 exportPythonDict( myFile, systemDict, systemName, "referenceAbbreviation", "id" )
-            myFile.write( "}} # end of bookDataDict ({} systems)\n\n\n\n".format( len(self._DataDict) ) )
-            myFile.write( "# end of {}".format(os.path.basename(filepath)) )
+            myFile.write( f"}} # end of bookDataDict ({len(self._DataDict)} systems)\n\n\n\n" )
+            myFile.write( f"# end of {os.path.basename(filepath)}" )
     # end of exportDataToPython
 
     def exportDataToJSON( self, filepath=None ):
@@ -351,7 +350,7 @@ class BiblePunctuationSystemsConverter:
         assert self._DataDict
 
         if not filepath: filepath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH.joinpath( self.__filenameBase + '_Tables.json' )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Exporting to {}…").format( filepath ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Exporting to {filepath}…" )
         with open( filepath, 'wt', encoding='utf-8' ) as myFile:
             json.dump( self._DataDict, myFile, ensure_ascii=False, indent=2 )
     # end of exportDataToJSON
@@ -362,11 +361,11 @@ class BiblePunctuationSystemsConverter:
         """
         def writeStructure( hFile, structName, structure ):
             """ Writes a typedef to the .h file. """
-            hFile.write( "typedef struct {}EntryStruct {{\n".format(structName) )
+            hFile.write( f"typedef struct {structName}EntryStruct {{\n" )
             for declaration in structure.split(';'):
                 adjDeclaration = declaration.strip()
-                if adjDeclaration: hFile.write( "    {};\n".format(adjDeclaration) )
-            hFile.write( "}} {}Entry;\n\n".format(structName) )
+                if adjDeclaration: hFile.write( f"    {adjDeclaration};\n" )
+            hFile.write( f"}} {structName}Entry;\n\n" )
         # end of writeStructure
 
         def exportPythonDict( cFile, theDict, dictName, structName, sortedBy, structure ):
@@ -382,7 +381,7 @@ class BiblePunctuationSystemsConverter:
                         if field is None: result += '""'
                         elif isinstance( field, str): result += '"' + str(field).replace('"','\\"') + '"'
                         elif isinstance( field, int): result += str(field)
-                        else: logging.error( _("Cannot convert unknown field type {!r} in entry {!r}").format( field, entry ) )
+                        else: logging.error( f"Cannot convert unknown field type {field!r} in entry {entry!r}" )
                 return result
             # end of convertEntry
 
@@ -391,15 +390,15 @@ class BiblePunctuationSystemsConverter:
             #    break # We only check the first (random) entry we get
             fieldsCount = 2
 
-            cFile.write( "const static {}\n {}[{}] = {{\n  // Fields ({}) are {}\n  // Sorted by {}\n".format( structName, dictName, len(theDict), fieldsCount, structure, sortedBy ) )
+            cFile.write( f"const static {structName}\n {dictName}[{len(theDict)}] = {{\n  // Fields ({fieldsCount}) are {structure}\n  // Sorted by {sortedBy}\n" )
             for dictKey in sorted(theDict.keys()):
                 if isinstance( dictKey, str ):
-                    cFile.write( "  {{\"{}\", {}}},\n".format( dictKey, convertEntry(theDict[dictKey]) ) )
+                    cFile.write( f"  {{\"{dictKey}\", {convertEntry(theDict[dictKey])}}},\n" )
                 elif isinstance( dictKey, int ):
-                    cFile.write( "  {{{}, {}}},\n".format( dictKey, convertEntry(theDict[dictKey]) ) )
+                    cFile.write( f"  {{{dictKey}, {convertEntry(theDict[dictKey])}}},\n" )
                 else:
-                    logging.error( _("Can't handle this type of data yet: {}").format( dictKey ) )
-            cFile.write( "}}; // {} ({} entries)\n\n".format( dictName, len(theDict) ) )
+                    logging.error( f"Can't handle this type of data yet: {dictKey}" )
+            cFile.write( f"}}; // {dictName} ({len(theDict)} entries)\n\n" )
         # end of exportPythonDict
 
 
@@ -410,42 +409,42 @@ class BiblePunctuationSystemsConverter:
         if not filepath: filepath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH.joinpath( self.__filenameBase + '_Tables' )
         hFilepath = filepath + '.h'
         cFilepath = filepath + '.c'
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Exporting to {}…").format( cFilepath ) ) # Don't bother telling them about the .h file
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Exporting to {cFilepath}…" ) # Don't bother telling them about the .h file
         ifdefName = self.__filenameBase.upper() + "_Tables_h"
 
         with open( hFilepath, 'wt', encoding='utf-8' ) as myHFile, \
              open( cFilepath, 'wt', encoding='utf-8' ) as myCFile:
-            myHFile.write( "// {}\n//\n".format( hFilepath ) )
-            myCFile.write( "// {}\n//\n".format( cFilepath ) )
-            lines = "// This UTF-8 file was automatically generated by BiblePunctuationSystems.py V{} on {}\n//\n".format( PROGRAM_VERSION, datetime.now() )
+            myHFile.write( f"// {hFilepath}\n//\n" )
+            myCFile.write( f"// {cFilepath}\n//\n" )
+            lines = f"// This UTF-8 file was automatically generated by BiblePunctuationSystems.py V{PROGRAM_VERSION} on {datetime.now()}\n//\n"
             myHFile.write( lines ); myCFile.write( lines )
-            myCFile.write( "//   {} {} loaded from the original XML file.\n//\n\n".format( len(self._XMLSystems), self.XMLTreeTag ) )
-            myHFile.write( "\n#ifndef {}\n#define {}\n\n".format( ifdefName, ifdefName ) )
-            myCFile.write( '#include "{}"\n\n'.format(os.path.basename(hFilepath)) )
+            myCFile.write( f"//   {len(self._XMLSystems)} {self.XMLTreeTag} loaded from the original XML file.\n//\n\n" )
+            myHFile.write( f"\n#ifndef {ifdefName}\n#define {ifdefName}\n\n" )
+            myCFile.write( f'#include "{os.path.basename(hFilepath)}"\n\n' )
 
             CHAR = "const unsigned char"
             BYTE = "const int"
             N1 = "punctuationByRef"
             N2 = "punctuationByIndex"
-            S1 = "{} referenceAbbreviation[3+1]; {} indexNumber;".format(CHAR,BYTE)
-            S2 = "{} indexNumber; {} referenceAbbreviation[3+1];".format(BYTE,CHAR)
+            S1 = f"{CHAR} referenceAbbreviation[3+1]; {BYTE} indexNumber;"
+            S2 = f"{BYTE} indexNumber; {CHAR} referenceAbbreviation[3+1];"
             writeStructure( myHFile, N1, S1 )
             writeStructure( myHFile, N2, S2 )
-            writeStructure( myHFile, "table", "{}* systemName; {}Entry* byReference; {}Entry* byBook;".format(CHAR,N1,N2) ) # I'm not sure if I need one or two asterisks on those last two
+            writeStructure( myHFile, "table", f"{CHAR}* systemName; {N1}Entry* byReference; {N2}Entry* byBook;" ) # I'm not sure if I need one or two asterisks on those last two
                                                                                                         # They're supposed to be pointers to an array of structures
-            myHFile.write( "#endif // {}\n\n".format( ifdefName ) )
-            myHFile.write( "// end of {}".format(os.path.basename(hFilepath)) )
+            myHFile.write( f"#endif // {ifdefName}\n\n" )
+            myHFile.write( f"// end of {os.path.basename(hFilepath)}" )
 
             for systemName, systemDict in self._DataDict.items(): # Now write out the actual data into the .c file
-                myCFile.write( "\n// {}\n".format( systemName ) )
+                myCFile.write( f"\n// {systemName}\n" )
                 exportPythonDict( myCFile, systemDict, systemName+"BookDataDict", N1+"Entry", "referenceAbbreviation", S1 )
 
             # Write out the final table of pointers to the above information
-            myCFile.write( "\n// Pointers to above data\nconst static tableEntry punctuationSystemTable[{}] = {{\n".format(len(self._DataDict)) )
+            myCFile.write( f"\n// Pointers to above data\nconst static tableEntry punctuationSystemTable[{len(self._DataDict)}] = {{\n" )
             for systemName in self._DataDict: # Now write out the actual pointer data into the .c file
-                myCFile.write( '  {{ "{}", {}, {} }},\n'.format( systemName, systemName+"BookDataDict", systemName+"IndexNumberDataDict" ) )
-            myCFile.write( "}}; // {} entries\n\n".format(len(self._DataDict)) )
-            myCFile.write( "// end of {}".format(os.path.basename(cFilepath)) )
+                myCFile.write( f'  {{ "{systemName}", {systemName+"BookDataDict"}, {systemName+"IndexNumberDataDict"} }},\n' )
+            myCFile.write( f"}}; // {len(self._DataDict)} entries\n\n" )
+            myCFile.write( f"// end of {os.path.basename(cFilepath)}" )
     # end of exportDataToC
 
     def obsoleteCheckPunctuationSystem( self, systemName, punctuationSchemeToCheck, exportFlag=False, debugFlag=False ):
@@ -463,38 +462,38 @@ class BiblePunctuationSystemsConverter:
         for punctuationSystemCode in self.Lists: # Step through the various reference schemes
             theseErrors = ''
             if self.Lists[punctuationSystemCode] == punctuationSchemeToCheck:
-                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Matches {!r} punctuation system".format( punctuationSystemCode ) )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Matches {punctuationSystemCode!r} punctuation system" )
                 systemMatchCount += 1
                 matchedPunctuationSystemCodes.append( punctuationSystemCode )
             else:
                 if len(self.Lists[punctuationSystemCode]) == len(punctuationSchemeToCheck):
                     for BBB1,BBB2 in zip(self.Lists[punctuationSystemCode],punctuationSchemeToCheck):
                         if BBB1 != BBB2: break
-                    thisError = "    Doesn't match {!r} system (Both have {} books, but {} instead of {})".format( punctuationSystemCode, len(punctuationSchemeToCheck), BBB1, BBB2 )
+                    thisError = f"    Doesn't match {punctuationSystemCode!r} system (Both have {len(punctuationSchemeToCheck)} books, but {BBB1} instead of {BBB2})"
                 else:
-                    thisError = "    Doesn't match {!r} system ({} books instead of {})".format( punctuationSystemCode, len(punctuationSchemeToCheck), len(self.Lists[punctuationSystemCode]) )
+                    thisError = f"    Doesn't match {punctuationSystemCode!r} system ({len(punctuationSchemeToCheck)} books instead of {len(self.Lists[punctuationSystemCode])})"
                 theseErrors += ("\n" if theseErrors else "") + thisError
                 errorSummary += ("\n" if errorSummary else "") + thisError
                 systemMismatchCount += 1
 
         if systemMatchCount:
             if systemMatchCount == 1: # What we hope for
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Matched {} punctuation (with these {} books)".format( matchedPunctuationSystemCodes[0], len(punctuationSchemeToCheck) ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Matched {matchedPunctuationSystemCodes[0]} punctuation (with these {len(punctuationSchemeToCheck)} books)" )
                 if debugFlag: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, errorSummary )
             else:
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Matched {} punctuation system(s): {} (with these {} books)".format( systemMatchCount, matchedPunctuationSystemCodes, len(punctuationSchemeToCheck) ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Matched {systemMatchCount} punctuation system(s): {matchedPunctuationSystemCodes} (with these {len(punctuationSchemeToCheck)} books)" )
                 if debugFlag: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, errorSummary )
         else:
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Mismatched {} punctuation systems (with these {} books)".format( systemMismatchCount, len(punctuationSchemeToCheck) ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Mismatched {systemMismatchCount} punctuation systems (with these {len(punctuationSchemeToCheck)} books)" )
             if debugFlag: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, allErrors )
             else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, errorSummary)
 
         if exportFlag and not systemMatchCount: # Write a new file
             outputFilepath = BibleOrgSysGlobals.BOS_DATAFILES_FOLDERPATH.joinpath( 'ScrapedFiles/', "BiblePunctuation_"+systemName + '.xml' )
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("Writing {} books to {}…").format( len(punctuationSchemeToCheck), outputFilepath ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Writing {len(punctuationSchemeToCheck)} books to {outputFilepath}…" )
             with open( outputFilepath, 'wt', encoding='utf-8' ) as myFile:
                 for n,BBB in enumerate(punctuationSchemeToCheck):
-                    myFile.write( '  <book id="{}">{}</book>\n'.format( n+1,BBB ) )
+                    myFile.write( f'  <book id="{n+1}">{BBB}</book>\n' )
                 myFile.write( "</BiblePunctuationSystem>" )
     # end of obsoleteCheckPunctuationSystem
 # end of BiblePunctuationSystemsConverter class

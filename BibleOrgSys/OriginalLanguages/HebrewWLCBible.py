@@ -26,7 +26,6 @@
 """
 Module handling the Hebrew WLC OSIS files from Open Scriptures.
 """
-from gettext import gettext as _
 from pathlib import Path
 import os.path
 import logging
@@ -62,25 +61,25 @@ DEFAULT_GENERIC_GLOSSING_REVERSE_EXPORT_FILEPATH = BibleOrgSysGlobals.DEFAULT_WR
 ORIGINAL_MORPHEME_BREAK_CHAR = '/'
 OUR_MORPHEME_BREAK_CHAR = '='
 
-PART_OF_SPEECH_ABBREVIATION_DICT = { 'A':_("Aj"), 'C':_("Cn"), 'D':_("Av"),
-             'N':_("N"), 'P':_("Pn"), 'R':_("Pr"),
-             'S':_("S"), 'T':_("Pa"), 'V':_("V") }
-PART_OF_SPEECH_NAME_DICT = { 'A':_("adjective"), 'C':_("conjunction"), 'D':_("adverb"),
-             'N':_("noun"), 'P':_("pronoun"), 'R':_("preposition"),
-             'S':_("suffix"), 'T':_("particle"), 'V':_("verb") }
+PART_OF_SPEECH_ABBREVIATION_DICT = { 'A':"Aj", 'C':"Cn", 'D':"Av",
+             'N':"N", 'P':"Pn", 'R':"Pr",
+             'S':"S", 'T':"Pa", 'V':"V" }
+PART_OF_SPEECH_NAME_DICT = { 'A':"adjective", 'C':"conjunction", 'D':"adverb",
+             'N':"noun", 'P':"pronoun", 'R':"preposition",
+             'S':"suffix", 'T':"particle", 'V':"verb" }
 # Next one doesn't include verbs
-PART_OF_SPEECH_TYPE_DICT = { 'Aa':_("adjective"), 'Ac':_("cardinal number"), 'Ag':_("gentillic"), 'Ao':_("ordinal number"),
-                  'C':_("conjunction"), 'D':_("adverb"),
-                  'Nc':_("common noun"), 'Ng':_("gentillic noun"), 'Np':_("proper name"),
-                  'Pd':_("demonstrative pronoun"), 'Pf':_("indefinite pronoun"), 'Pi':_("interrogative pronoun"),
-                            'Pp':_("personal pronoun"), 'Pr':_("relative pronoun"),
-                  'R':_("preposition"), 'Rd':_("definite article"), # (Preposition type is optional)
-                  'Sd':_("directional he suffix"), 'Sh':_("paragogic he suffix"),
-                            'Sn':_("paragogic nun suffix"), 'Sp':_("pronominal suffix"),
-                  'Ta':_("affirmation particle"), 'Td':_("definite article"), 'Te':_("exhortation particle"),
-                            'Ti':_("interrogative particle"), 'Tj':_("interjection particle"),
-                            'Tm':_("demonstrative particle"), 'Tn':_("negative particle"),
-                            'To':_("direct object marker"), 'Tr':_("relative particle") }
+PART_OF_SPEECH_TYPE_DICT = { 'Aa':"adjective", 'Ac':"cardinal number", 'Ag':"gentillic", 'Ao':"ordinal number",
+                  'C':"conjunction", 'D':"adverb",
+                  'Nc':"common noun", 'Ng':"gentillic noun", 'Np':"proper name",
+                  'Pd':"demonstrative pronoun", 'Pf':"indefinite pronoun", 'Pi':"interrogative pronoun",
+                            'Pp':"personal pronoun", 'Pr':"relative pronoun",
+                  'R':"preposition", 'Rd':"definite article", # (Preposition type is optional)
+                  'Sd':"directional he suffix", 'Sh':"paragogic he suffix",
+                            'Sn':"paragogic nun suffix", 'Sp':"pronominal suffix",
+                  'Ta':"affirmation particle", 'Td':"definite article", 'Te':"exhortation particle",
+                            'Ti':"interrogative particle", 'Tj':"interjection particle",
+                            'Tm':"demonstrative particle", 'Tn':"negative particle",
+                            'To':"direct object marker", 'Tr':"relative particle" }
 HEBREW_VERB_STEMS = { 'q':'qal', 'N':'niphal', 'p':'piel', 'P':'pual', 'h':'hiphil', 'H':'hophal', 't':'hithpael',
                       'o':'polel', 'O':'polal', 'r':'hithpolel', 'm':'poel', 'M':'poal', 'k':'palel', 'K':'pulal',
                       'Q':'qal passive', 'l':'pilpel', 'L':'polpal', 'f':'hithpalpel', 'D':'nithpael', 'j':'pealal',
@@ -93,12 +92,12 @@ ARAMAIC_VERB_STEMS = { 'q':'peal', 'Q':'peil', 'u':'hithpeel', 'p':'pael', 'P':'
                        'l':'palpel', 'L':'ithpalpel', 'O':'ithpolel', 'G':'ittaphal' }
 VERB_CONJUGATION_TYPES = { 'p':'perfect (qatal)', 'q':'sequential perfect (weqatal)',
                            'i':'imperfect (yiqtol)', 'w':'sequential imperfect (wayyiqtol)',
-                           'h':_("cohortative"), 'j':_("jussive"), 'v':_("imperative"), 'r':'participle active',
-                           's':_("participle passive"), 'a':_("infinitive absolute"), 'c':_("infinitive construct") }
-PERSON_NAMES = { '1':_("1st-person"), '2':_("2nd-person"), '3':_("3rd-person") }
-GENDER_NAMES = { 'b':_("both(mf)"), 'c':_("common(mf)"), 'f':_("feminine"), 'm':_("masculine") } # b is for nouns, c is for verbs
-NUMBER_NAMES = { 'd':_("dual"), 'p':_("plural"), 's':_("singular") }
-STATE_NAMES = { 'a':_("absolute"), 'c':_("construct"), 'd':_("determined") }
+                           'h':"cohortative", 'j':"jussive", 'v':"imperative", 'r':'participle active',
+                           's':"participle passive", 'a':"infinitive absolute", 'c':"infinitive construct" }
+PERSON_NAMES = { '1':"1st-person", '2':"2nd-person", '3':"3rd-person" }
+GENDER_NAMES = { 'b':"both(mf)", 'c':"common(mf)", 'f':"feminine", 'm':"masculine" } # b is for nouns, c is for verbs
+NUMBER_NAMES = { 'd':"dual", 'p':"plural", 's':"singular" }
+STATE_NAMES = { 'a':"absolute", 'c':"construct", 'd':"determined" }
 
 
 class HebrewWLCBibleAddon():
@@ -126,7 +125,7 @@ class HebrewWLCBibleAddon():
 
         e.g., {'word': 'הַ/מַּיִם', 'strong': 'd/4325', 'morph': 'HTd/Ncmpa', 'cantillationLevel': '0.1.1.0'}
         """
-        fnPrint( DEBUGGING_THIS_MODULE, "getVerseDictList( {}, {} )".format( verseDataEntry, ref ) )
+        fnPrint( DEBUGGING_THIS_MODULE, f"getVerseDictList( {verseDataEntry}, {ref} )" )
         assert isinstance( verseDataEntry, InternalBibleEntry )
 
         def handleExtra( thisExtra ):
@@ -148,7 +147,7 @@ class HebrewWLCBibleAddon():
                 vPrint( 'Never', DEBUGGING_THIS_MODULE, "wwDict", wwDict )
                 return wwDict
             else:
-                logging.warning( "WLC ignoring {} extra {} at {} for {}".format( thisExtra.getType(), thisExtra.getText(), ref, token ) )
+                logging.warning( f"WLC ignoring {thisExtra.getType()} extra {thisExtra.getText()} at {ref} for {token}" )
         # end of getVerseDictList handleExtra
 
         # Start of getVerseDictList main code
@@ -157,9 +156,9 @@ class HebrewWLCBibleAddon():
         lineExtras = verseDataEntry.getExtras()
         if DEBUGGING_THIS_MODULE:
             for extra in lineExtras:
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " {}".format( extra ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f" {extra}" )
                 ix = extra.getIndex()
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "   {}".format( adjText[0 if ix<6 else ix-6:ix+1] ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"   {adjText[0 if ix<6 else ix-6:ix+1]}" )
 
         BBB,C,V = ref.getBCV()
 
@@ -194,11 +193,11 @@ class HebrewWLCBibleAddon():
                             #wwDict['morph'] = wwDict['morph'][5:]
                         #dPrint( 'Never', DEBUGGING_THIS_MODULE, "wwDict", wwDict )
                     #else:
-                        #logging.error( "Ignoring {} extra {} at {} for {}".format( something.getType(), something.getText(), ref, token ) )
+                        #logging.error( f"Ignoring {something.getType()} extra {something.getText()} at {ref} for {token}" )
                 elif isinstance( something, list ):
                     #logging.critical( "Doesn't handle list of extras yet" )
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "something", something )
-                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "getVerseDictList( {}, {} )".format( verseDataEntry, ref ) )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"getVerseDictList( {verseDataEntry}, {ref} )" )
                     for something2 in something:
                         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "something2", something2 )
                         if isinstance( something2, InternalBibleExtra ):
@@ -215,11 +214,11 @@ class HebrewWLCBibleAddon():
                     vPrint( 'Never', DEBUGGING_THIS_MODULE, "have punctuation", repr(punctuation), something )
                     resultList.append( {'word':punctuation} )
                     punctuation = ''
-            #dPrint( 'Never', DEBUGGING_THIS_MODULE, "{}/{} ix={} token={!r} lemma={!r}".format( j+1, count, ix, token, lemma ) )
+            #dPrint( 'Never', DEBUGGING_THIS_MODULE, f"{j+1}/{count} ix={ix} token={token!r} lemma={lemma!r}" )
             ix += ixAdd + 1 # for space between words
             ixAdd = 0
 
-        vPrint( 'Never', DEBUGGING_THIS_MODULE, "getVerseDictList returning: {}".format( resultList ) )
+        vPrint( 'Never', DEBUGGING_THIS_MODULE, f"getVerseDictList returning: {resultList}" )
         return resultList
     # end of HebrewWLCBibleAddon.getVerseDictList
 
@@ -228,7 +227,7 @@ class HebrewWLCBibleAddon():
         """
         Return a longer string with the morphology abbreviation(s) converted to something more readable.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, "HebrewWLCBibleAddon.expandMorphologyAbbreviations( {} )".format( morphAbbrev ) )
+        fnPrint( DEBUGGING_THIS_MODULE, f"HebrewWLCBibleAddon.expandMorphologyAbbreviations( {morphAbbrev} )" )
         if not morphAbbrev: return ''
 
         if morphAbbrev.startswith( 'OSHM:' ): morphAbbrev = morphAbbrev[5:] # Open Scriptures Hebrew Morphology
@@ -274,7 +273,7 @@ class HebrewWLCBibleAddon():
             assert bit[0] in 'ACDNPRSTV'
             if bit[0] == 'V': # most complex
                 resultString += HEBREW_VERB_STEMS[bit[1]] if lgCode=='H' else ARAMAIC_VERB_STEMS[bit[1]]
-                resultString += ' ' + _("verb")
+                resultString += ' ' + "verb"
                 resultString += ' ' + VERB_CONJUGATION_TYPES[bit[2]].replace( ' ', '_' )
                 resultString += handleRemainder( bit[3:] )
             elif len(bit) > 2: # More complex
@@ -304,7 +303,7 @@ class HebrewWLCBibleAddon():
         """
         Return the text with cantillation marks removed.
         """
-        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "removeCantillationMarks( {!r}, {} )".format( text, removeMetegOrSiluq ) )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"removeCantillationMarks( {removeMetegOrSiluq!r}, {text} )" )
 
         if text is None:
             # Recursive call
@@ -348,12 +347,12 @@ class HebrewWLCBibleAddon():
             assert isinstance( genericGloss, str ) and genericGloss
             assert isinstance( genericReferencesList, list )
             if ' ' in word or ORIGINAL_MORPHEME_BREAK_CHAR in word:
-                logging.critical( _("Removing invalid Hebrew (normalized) word: {!r}").format( word ) )
+                logging.critical( f"Removing invalid Hebrew (normalized) word: {word!r}" )
                 del self.glossingDict[word]
                 self.haveGlossingDictChanges = True
                 continue
             if ' ' in genericGloss:
-                logging.critical( _("Removing {!r} word with invalid generic gloss: {!r}").format( word, genericGloss ) )
+                logging.critical( f"Removing {word!r} word with invalid generic gloss: {genericGloss!r}" )
                 del self.glossingDict[word]
                 self.haveGlossingDictChanges = True
                 continue
@@ -365,7 +364,7 @@ class HebrewWLCBibleAddon():
                         assert isinstance( part, str ) # We don't use INTs for references
                     assert genericReferencesList.count( reference ) == 1 # Don't allow multiples
             else: # the genericReferencesList is empty!
-                logging.critical( _("Removing {!r} = {!r} entry with no references").format( word, genericGloss ) )
+                logging.critical( f"Removing {word!r} = {genericGloss!r} entry with no references" )
                 del self.glossingDict[word]
                 self.haveGlossingDictChanges = True
                 continue
@@ -383,7 +382,7 @@ class HebrewWLCBibleAddon():
                 #assert ORIGINAL_MORPHEME_BREAK_CHAR not in specificGloss
                 #assert OUR_MORPHEME_BREAK_CHAR not in specificGloss
                 assert specificGloss != genericGloss # Just leave it blank if they're the same
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  "+_("Finished checking Hebrew glosses") )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  "+"Finished checking Hebrew glosses" )
     # end of HebrewWLCBibleAddon._checkLoadedDict
 
 
@@ -396,7 +395,7 @@ class HebrewWLCBibleAddon():
             self.glossingDictFilepath = DEFAULT_GLOSSING_DICT_FILEPATH
 
         # Read our glossing data from the pickle file
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Loading Hebrew glossing dictionary from '{}'…").format( self.glossingDictFilepath ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Loading Hebrew glossing dictionary from '{self.glossingDictFilepath}'…" )
         with open( self.glossingDictFilepath, 'rb' ) as pickleFile:
             self.glossingDict = pickle.load( pickleFile )
             # It's a dictionary with (pointed and parsed) Hebrew keys and 2-tuple entries
@@ -408,7 +407,7 @@ class HebrewWLCBibleAddon():
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"glossingDict: {self.glossingDict}" )
         self.loadedGlossEntryCount = len( self.glossingDict )
         self.haveGlossingDictChanges = False
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  "+_("{:,} Hebrew gloss entries read.").format( self.loadedGlossEntryCount ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  "+f"{self.loadedGlossEntryCount:,} Hebrew gloss entries read." )
 
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag or DEBUGGING_THIS_MODULE:
             self._checkLoadedDict()
@@ -425,9 +424,9 @@ class HebrewWLCBibleAddon():
         if self.haveGlossingDictChanges:
             BibleOrgSysGlobals.backupAnyExistingFile( self.glossingDictFilepath, numBackups=9 )
             if BibleOrgSysGlobals.verbosityLevel > 2 or DEBUGGING_THIS_MODULE:
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Saving Hebrew glossing dictionary ({}->{} entries) to '{}'…".format( self.loadedGlossEntryCount, len(self.glossingDict), self.glossingDictFilepath ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Saving Hebrew glossing dictionary ({self.loadedGlossEntryCount}->{len(self.glossingDict)} entries) to '{self.glossingDictFilepath}'…" )
             elif BibleOrgSysGlobals.verbosityLevel > 1:
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Saving Hebrew glossing dictionary ({}->{} entries)…".format( self.loadedGlossEntryCount, len(self.glossingDict) ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Saving Hebrew glossing dictionary ({self.loadedGlossEntryCount}->{len(self.glossingDict)} entries)…" )
             with open( self.glossingDictFilepath, 'wb' ) as pickleFile:
                 pickle.dump( self.glossingDict, pickleFile )
 
@@ -456,18 +455,18 @@ class HebrewWLCBibleAddon():
         if glossingDictImportFilepath is None: glossingDictImportFilepath = DEFAULT_GLOSSING_EXPORT_FILEPATH
 
         if self.haveGlossingDictChanges:
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Import disallowed because you already have glossing changes!") )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Import disallowed because you already have glossing changes!" )
         elif self.glossingDict and not overrideFlag:
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Import disallowed because you have already loaded the glossing dictionary") )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Import disallowed because you have already loaded the glossing dictionary" )
         else:
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Importing glossing dictionary from '{}'…".format( glossingDictImportFilepath ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Importing glossing dictionary from '{glossingDictImportFilepath}'…" )
             lineCount = 0
             newDict = {}
             with open( glossingDictImportFilepath, 'rt', encoding='utf=8' ) as importFile:
                 for line in importFile:
                     lineCount += 1
                     if lineCount==1 and line[0]==BibleOrgSysGlobals.BOM:
-                        logging.info( "importGlossingDictionary: Detected UTF-16 Byte Order Marker in {}".format( glossingDictImportFilepath ) )
+                        logging.info( f"importGlossingDictionary: Detected UTF-16 Byte Order Marker in {glossingDictImportFilepath}" )
                         line = line[1:] # Remove the UTF-8 Byte Order Marker
                     if line[-1]=='\n': line=line[:-1] # Removing trailing newline character
                     if not line: continue # Just discard blank lines
@@ -479,7 +478,7 @@ class HebrewWLCBibleAddon():
                             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Empty field error" )
                         elif ' ' in genericGloss \
                         or genericGloss.count(OUR_MORPHEME_BREAK_CHAR)!=word.count(OUR_MORPHEME_BREAK_CHAR):
-                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Bad generic gloss field error: {!r} for {!r}".format( genericGloss, word ) )
+                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Bad generic gloss field error: {genericGloss!r} for {word!r}" )
                         genericReferencesList = ast.literal_eval( referencesText )
                         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "references", repr(referencesText), repr(genericReferencesList) )
                         assert isinstance( genericReferencesList, list )
@@ -488,10 +487,10 @@ class HebrewWLCBibleAddon():
                         assert isinstance( specificReferencesDict, dict )
                         newDict[word] = (genericGloss,genericReferencesList,specificReferencesDict)
                     else:
-                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Ignored '{}' line at {} ({} bits)".format( line, lineCount, len(bits) ) )
+                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Ignored '{line}' line at {lineCount} ({len(bits)} bits)" )
             vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  Loaded {len(newDict):,} entries." )
             if len(newDict) > self.loadedGlossEntryCount-10: # Seems to have been successful
-                if len(newDict) != self.loadedGlossEntryCount: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Went from {} to {} entries!".format( self.loadedGlossEntryCount, len(newDict) ) )
+                if len(newDict) != self.loadedGlossEntryCount: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Went from {self.loadedGlossEntryCount} to {len(newDict)} entries!" )
                 self.glossingDict = newDict # Replace the dictionary with the upgraded one
                 if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag or DEBUGGING_THIS_MODULE:
                     self._checkLoadedDict()
@@ -509,7 +508,7 @@ class HebrewWLCBibleAddon():
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "exportGlossingDictionary()" )
         if glossingDictExportFilepath is None:
             glossingDictExportFilepath = DEFAULT_GLOSSING_EXPORT_FILEPATH
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("Exporting glossing dictionary ({:,} entries) to '{}'…").format( len(self.glossingDict), glossingDictExportFilepath ) )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Exporting glossing dictionary ({len(self.glossingDict):,} entries) to '{glossingDictExportFilepath}'…" )
 
         if not os.path.isdir( BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH ):
             vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Creating folder {BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH}…")
@@ -519,24 +518,24 @@ class HebrewWLCBibleAddon():
         with open( glossingDictExportFilepath, 'wt', encoding='utf-8' ) as exportFile:
             for word,(genericGloss,genericReferencesList,specificReferencesDict) in self.glossingDict.items():
                 if ' ' in word or '/' in word:
-                    logging.error( _("Word {!r} has illegal characters").format( word ) )
+                    logging.error( f"Word {word!r} has illegal characters" )
                 if ' ' in genericGloss:
-                    logging.error( _("Generic gloss {!r} for {!r} has illegal characters").format( genericGloss, word ) )
+                    logging.error( f"Generic gloss {genericGloss!r} for {word!r} has illegal characters" )
                 if word.count('=') != genericGloss.count('='):
-                    logging.error( _("Generic gloss {!r} and word {!r} has different numbers of morphemes").format( genericGloss, word ) )
+                    logging.error( f"Generic gloss {genericGloss!r} and word {word!r} has different numbers of morphemes" )
                 if not genericReferencesList:
-                    logging.error( _("Generic gloss {!r} for {!r} has no references").format( genericGloss, word ) )
-                exportFile.write( '{}  {}  {}  {}\n'.format( genericReferencesList, specificReferencesDict, genericGloss, word ) ) # Works best in editors with English on the left, Hebrew on the right
+                    logging.error( f"Generic gloss {genericGloss!r} for {word!r} has no references" )
+                exportFile.write( f'{genericReferencesList}  {specificReferencesDict}  {genericGloss}  {word}\n' ) # Works best in editors with English on the left, Hebrew on the right
 
         if self.glossingDict:
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("Exporting reverse glossing dictionary ({:,} entries) to '{}'…").format( len(self.glossingDict), DEFAULT_GENERIC_GLOSSING_REVERSE_EXPORT_FILEPATH ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Exporting reverse glossing dictionary ({len(self.glossingDict):,} entries) to '{DEFAULT_GENERIC_GLOSSING_REVERSE_EXPORT_FILEPATH}'…" )
             BibleOrgSysGlobals.backupAnyExistingFile( DEFAULT_GENERIC_GLOSSING_REVERSE_EXPORT_FILEPATH, 5 )
             doneGlosses = []
             with open( DEFAULT_GENERIC_GLOSSING_REVERSE_EXPORT_FILEPATH, 'wt', encoding='utf-8' ) as exportFile:
                 for word,(genericGloss,genericReferencesList,specificReferencesDict) in sorted( self.glossingDict.items(), key=lambda theTuple: theTuple[1][0].lower() ):
                     if genericGloss in doneGlosses:
-                        logging.warning( _("Generic gloss {!r} has already appeared: currently for word {!r}").format( genericGloss, word ) )
-                    exportFile.write( '{}  {}\n'.format( genericGloss, word ) ) # Works best in editors with English on the left, Hebrew on the right
+                        logging.warning( f"Generic gloss {genericGloss!r} has already appeared: currently for word {word!r}" )
+                    exportFile.write( f'{genericGloss}  {word}\n' ) # Works best in editors with English on the left, Hebrew on the right
                     doneGlosses.append( genericGloss )
     # end of HebrewWLCBibleAddon.exportGlossingDictionary
 
@@ -545,7 +544,7 @@ class HebrewWLCBibleAddon():
         """
         Check a new gloss and add it to the glossing dictionary.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, "setNewGenericGloss( {!r}, {!r}, {} )".format( normalizedHebrewWord, genericGloss, ref ) )
+        fnPrint( DEBUGGING_THIS_MODULE, f"setNewGenericGloss( {genericGloss!r}, {ref!r}, {normalizedHebrewWord} )" )
         assert isinstance( normalizedHebrewWord, str ) and normalizedHebrewWord
         assert ' ' not in normalizedHebrewWord
         assert ORIGINAL_MORPHEME_BREAK_CHAR not in normalizedHebrewWord # Should already be converted to OUR_MORPHEME_BREAK_CHAR
@@ -558,11 +557,11 @@ class HebrewWLCBibleAddon():
             (prevGenericGloss,prevRefList,prevSpecificGlossDict) = self.glossingDict[normalizedHebrewWord]
             if genericGloss!=prevGenericGloss:
                 if BibleOrgSysGlobals.verbosityLevel > 1:
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Updating generic gloss for {!r} from {!r} to {!r}").format( normalizedHebrewWord, prevGenericGloss, genericGloss ) )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Updating generic gloss for {normalizedHebrewWord!r} from {prevGenericGloss!r} to {genericGloss!r}" )
                 prevGenericGloss = genericGloss
             if ref not in prevRefList:
                 if BibleOrgSysGlobals.verbosityLevel > 1:
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Adding {} for generic gloss {!r} for {!r}").format( ref, prevGenericGloss, normalizedHebrewWord ) )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Adding {ref} for generic gloss {prevGenericGloss!r} for {normalizedHebrewWord!r}" )
                 prevRefList.append( ref )
             self.glossingDict[normalizedHebrewWord] = (prevGenericGloss,prevRefList,prevSpecificGlossDict)
         else: # it's a new entry
@@ -577,7 +576,7 @@ class HebrewWLCBibleAddon():
 
         There must already be an entry for this Hebrew word (with a generic gloss).
         """
-        fnPrint( DEBUGGING_THIS_MODULE, "setNewSpecificGloss( {!r}, {!r}, {} )".format( normalizedHebrewWord, specificGloss, ref ) )
+        fnPrint( DEBUGGING_THIS_MODULE, f"setNewSpecificGloss( {specificGloss!r}, {ref!r}, {normalizedHebrewWord} )" )
         assert isinstance( normalizedHebrewWord, str ) and normalizedHebrewWord
         assert ' ' not in normalizedHebrewWord
         assert ORIGINAL_MORPHEME_BREAK_CHAR not in normalizedHebrewWord # Should already be converted to OUR_MORPHEME_BREAK_CHAR
@@ -590,7 +589,7 @@ class HebrewWLCBibleAddon():
         assert ' ' not in specificGloss
 
         if ref in specificReferencesDict: # it must be an update
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("Updating specific gloss for {!r} at {} from {!r} to {!r}").format( normalizedHebrewWord, ref, specificReferencesDict[ref], specificGloss ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Updating specific gloss for {normalizedHebrewWord!r} at {ref} from {specificReferencesDict[ref]!r} to {specificGloss!r}" )
             specificReferencesDict[ref] = specificGloss
         else: # it's a new entry
             specificReferencesDict[ref] = specificGloss
@@ -603,7 +602,7 @@ class HebrewWLCBibleAddon():
         """
         Add a new ref to the glossing dictionary if it's not already there.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, "addNewGenericGlossingReference( {!r}, {} )".format( normalizedHebrewWord, ref ) )
+        fnPrint( DEBUGGING_THIS_MODULE, f"addNewGenericGlossingReference( {ref!r}, {normalizedHebrewWord} )" )
         assert isinstance( normalizedHebrewWord, str )
         assert ' ' not in normalizedHebrewWord
         assert '/' not in normalizedHebrewWord # Should already be converted to =
@@ -625,7 +624,7 @@ class HebrewWLCBibleAddon():
             and update the reference fields.
         """
         from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("Updating references for WLC generic glosses…") )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Updating references for WLC generic glosses…" )
 
         self.loadBooks()
         numRefsAdded = 0
@@ -663,11 +662,11 @@ class HebrewWLCBibleAddon():
                                                     if normalizedHebrewWord in self.glossingDict else ('',[],{})
                             #if genericGloss: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, fullRefTuple, repr(genericGloss) )
                             if genericGloss and genericGloss not in '־׃ספ-' and fullRefTuple not in genericReferencesList:
-                                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Adding {}".format( fullRefTuple ) )
+                                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Adding {fullRefTuple}" )
                                 self.addNewGenericGlossingReference( normalizedHebrewWord, fullRefTuple )
                                 numRefsAdded += 1
                 V = V + 1
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  {:,} new references added ({:,} words in dict)".format( numRefsAdded, len(self.glossingDict) ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  {numRefsAdded:,} new references added ({len(self.glossingDict):,} words in dict)" )
     # end of HebrewWLCBibleAddon.updateGenericGlossingReferences
 # end of HebrewWLCBibleAddon class
 
@@ -681,7 +680,7 @@ class OSISHebrewWLCBible( OSISXMLBible, HebrewWLCBibleAddon ):
         """
         Create an empty object.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, "OSISHebrewWLCBible.__init__( {} )".format( OSISXMLFileOrFilepath ) )
+        fnPrint( DEBUGGING_THIS_MODULE, f"OSISHebrewWLCBible.__init__( {OSISXMLFileOrFilepath} )" )
 
         if not OSISXMLFileOrFilepath: OSISXMLFileOrFilepath = DEFAULT_OSIS_WLC_FILEPATH
         OSISXMLBible.__init__( self, OSISXMLFileOrFilepath, givenName='Westminster Leningrad Codex', givenAbbreviation='WLC' )
@@ -701,11 +700,11 @@ class PickledHebrewWLCBible( PickledBible, HebrewWLCBibleAddon ):
         """
         Create an empty object.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, "PickledHebrewWLCBible.__init__( {} )".format( zippedPickleFilepath ) )
+        fnPrint( DEBUGGING_THIS_MODULE, f"PickledHebrewWLCBible.__init__( {zippedPickleFilepath} )" )
 
         if not zippedPickleFilepath: zippedPickleFilepath = DEFAULT_ZIPPED_PICKLED_WLC_FILEPATH
         if not os.path.exists( zippedPickleFilepath ):
-            logging.critical( "PickledHebrewWLCBible: filepath doesn't exist: {}".format( zippedPickleFilepath ) )
+            logging.critical( f"PickledHebrewWLCBible: filepath doesn't exist: {zippedPickleFilepath}" )
             return
         PickledBible.__init__( self, zippedPickleFilepath )
         HebrewWLCBibleAddon.__init__( self )
@@ -797,7 +796,7 @@ def briefDemo() -> None:
                             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "verseDict", verseDict ) # for one word
                             #word = verseDict['word']
                             if 'morph' in verseDict:
-                                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  {}".format( wlc.expandMorphologyAbbreviations( verseDict['morph'] ) ) )
+                                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  {wlc.expandMorphologyAbbreviations( verseDict['morph'] )}" )
             break
 
     if 1: # Load books as we test
@@ -847,7 +846,7 @@ def briefDemo() -> None:
     if 1: # Test some of the glossing functions
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nF/ Demonstrating the Hebrew WLC glossing functions…" )
         if not os.path.exists( DEFAULT_ZIPPED_PICKLED_WLC_FILEPATH ):
-            logging.critical( "HebrewWLCBible.demoF: filepath doesn't exist: {}".format( DEFAULT_ZIPPED_PICKLED_WLC_FILEPATH ) )
+            logging.critical( f"HebrewWLCBible.demoF: filepath doesn't exist: {DEFAULT_ZIPPED_PICKLED_WLC_FILEPATH}" )
         else:
             wlc = PickledHebrewWLCBible( DEFAULT_ZIPPED_PICKLED_WLC_FILEPATH )
             wlc.loadGlossingDict()
@@ -859,7 +858,7 @@ def briefDemo() -> None:
     if 1: # Test some of the glossing functions
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nG/ Adding new references to glossing dict…" )
         if not os.path.exists( DEFAULT_ZIPPED_PICKLED_WLC_FILEPATH ):
-            logging.critical( "HebrewWLCBible.demoG: filepath doesn't exist: {}".format( DEFAULT_ZIPPED_PICKLED_WLC_FILEPATH ) )
+            logging.critical( f"HebrewWLCBible.demoG: filepath doesn't exist: {DEFAULT_ZIPPED_PICKLED_WLC_FILEPATH}" )
         else:
             wlc = PickledHebrewWLCBible()
             wlc.loadGlossingDict()
@@ -949,7 +948,7 @@ def fullDemo() -> None:
                             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "verseDict", verseDict ) # for one word
                             #word = verseDict['word']
                             if 'morph' in verseDict:
-                                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  {}".format( wlc.expandMorphologyAbbreviations( verseDict['morph'] ) ) )
+                                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  {wlc.expandMorphologyAbbreviations( verseDict['morph'] )}" )
 
     if 1: # Load books as we test
         testFolder = DEFAULT_OSIS_WLC_FILEPATH # Hebrew
@@ -997,7 +996,7 @@ def fullDemo() -> None:
     if 1: # Test some of the glossing functions
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nF/ Demonstrating the Hebrew WLC glossing functions…" )
         if not os.path.exists( DEFAULT_ZIPPED_PICKLED_WLC_FILEPATH ):
-            logging.critical( "HebrewWLCBible.demoF: filepath doesn't exist: {}".format( DEFAULT_ZIPPED_PICKLED_WLC_FILEPATH ) )
+            logging.critical( f"HebrewWLCBible.demoF: filepath doesn't exist: {DEFAULT_ZIPPED_PICKLED_WLC_FILEPATH}" )
         else:
             wlc = PickledHebrewWLCBible( DEFAULT_ZIPPED_PICKLED_WLC_FILEPATH )
             wlc.loadGlossingDict()
@@ -1009,7 +1008,7 @@ def fullDemo() -> None:
     if 1: # Test some of the glossing functions
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nG/ Adding new references to glossing dict…" )
         if not os.path.exists( DEFAULT_ZIPPED_PICKLED_WLC_FILEPATH ):
-            logging.critical( "HebrewWLCBible.demoG: filepath doesn't exist: {}".format( DEFAULT_ZIPPED_PICKLED_WLC_FILEPATH ) )
+            logging.critical( f"HebrewWLCBible.demoG: filepath doesn't exist: {DEFAULT_ZIPPED_PICKLED_WLC_FILEPATH}" )
         else:
             wlc = PickledHebrewWLCBible()
             wlc.loadGlossingDict()

@@ -28,7 +28,6 @@ Module handling the OpenScriptures Hebrew lexicon.
 
     The classes are the ones that read and parse the XML source files.
 """
-from gettext import gettext as _
 import logging
 from pathlib import Path
 import os.path
@@ -96,12 +95,12 @@ class AugmentedStrongsIndexFileConverter:
         """
         result = "Augmented Strongs Hebrew Index File Converter object"
         if self.title: result += ('\n' if result else '') + "  " + self.title
-        if self.version: result += ('\n' if result else '') + "  " + _("Version: {} ").format( self.version )
-        if self.date: result += ('\n' if result else '') + "  " + _("Date: {}").format( self.date )
+        if self.version: result += ('\n' if result else '') + "  " + f"Version: {self.version} "
+        if self.date: result += ('\n' if result else '') + "  " + f"Date: {self.date}"
         if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert len(self.entries1) == len(self.entries2)
-        result += ('\n' if result else '') + "  " + _("Number of entries = {:,}").format( len(self.entries1) )
-        #result += ('\n' if result else '') + "  " + _("Number of entries = {:,}").format( len(self.entries2) )
+        result += ('\n' if result else '') + "  " + f"Number of entries = {len(self.entries1):,}"
+        #result += ('\n' if result else '') + "  " + f"Number of entries = {len(self.entries2):,}"
         return result
     # end of AugmentedStrongsIndexFileConverter.__str__
 
@@ -116,13 +115,13 @@ class AugmentedStrongsIndexFileConverter:
             XMLFolder = DEFAULT_LEXICON_FOLDERPATH # Hebrew lexicon folder
         self.XMLFolder = XMLFolder
         XMLFileOrFilepath = os.path.join( XMLFolder, AugmentedStrongsIndexFileConverter.indexFilename )
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, _("Loading from {}…").format( XMLFileOrFilepath ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Loading from {XMLFileOrFilepath}…" )
         try: self.XMLTree = ElementTree().parse( XMLFileOrFilepath )
         except FileNotFoundError:
-            logging.critical( _("AugmentedStrongsIndexFileConverter could not find database at {}").format( XMLFileOrFilepath ) )
+            logging.critical( f"AugmentedStrongsIndexFileConverter could not find database at {XMLFileOrFilepath}" )
             raise FileNotFoundError
         except ParseError as err:
-            logging.critical( _("Loader parse error in xml file {}: {} {}").format( AugmentedStrongsIndexFileConverter.indexFilename, sys.exc_info()[0], err ) )
+            logging.critical( f"Loader parse error in xml file {AugmentedStrongsIndexFileConverter.indexFilename}: {sys.exc_info()[0]} {err}" )
             raise ParseError
         if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert self.XMLTree # Fail here if we didn't load anything at all
@@ -131,8 +130,8 @@ class AugmentedStrongsIndexFileConverter:
         if self.XMLTree.tag == AugmentedStrongsIndexFileConverter.treeTag:
             for entry in self.XMLTree:
                 self.validateEntry( entry )
-        else: logging.error( "Expected to load {!r} but got {!r}".format( AugmentedStrongsIndexFileConverter.treeTag, self.XMLTree.tag ) )
-        if self.XMLTree.tail is not None and self.XMLTree.tail.strip(): logging.error( "Unexpected {!r} tail data after {} element".format( self.XMLTree.tail, self.XMLTree.tag ) )
+        else: logging.error( f"Expected to load {AugmentedStrongsIndexFileConverter.treeTag!r} but got {self.XMLTree.tag!r}" )
+        if self.XMLTree.tail is not None and self.XMLTree.tail.strip(): logging.error( f"Unexpected {self.XMLTree.tag!r} tail data after {self.XMLTree.tail} element" )
     # end of AugmentedStrongsIndexFileConverter.loadAndValidate
 
 
@@ -151,7 +150,7 @@ class AugmentedStrongsIndexFileConverter:
         for attrib,value in entry.items():
             if attrib=="aug":
                 aug = value
-            else: logging.warning( "Unprocessed {!r} attribute ({}) in index entry element".format( attrib, value ) )
+            else: logging.warning( f"Unprocessed {value!r} attribute ({attrib}) in index entry element" )
         if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert aug is not None
 
@@ -187,7 +186,7 @@ class AugmentedStrongsIndexFileConverter:
             folderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH
             if not folderpath.exists(): os.mkdir( folderpath )
             filepath = os.path.join( folderpath, 'HebrewLexicon_AugStrongsIndex_Tables.pickle' )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Exporting to {}…").format( filepath ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Exporting to {filepath}…" )
         with open( filepath, 'wb' ) as myFile:
             pickle.dump( self.entries1, myFile )
             pickle.dump( self.entries2, myFile )
@@ -246,12 +245,12 @@ class LexicalIndexFileConverter:
         """
         result = "Hebrew Lexical Index File Converter object"
         if self.title: result += ('\n' if result else '') + "  " + self.title
-        if self.version: result += ('\n' if result else '') + "  " + _("Version: {} ").format( self.version )
-        if self.date: result += ('\n' if result else '') + "  " + _("Date: {}").format( self.date )
+        if self.version: result += ('\n' if result else '') + "  " + f"Version: {self.version} "
+        if self.date: result += ('\n' if result else '') + "  " + f"Date: {self.date}"
         if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert len(self.entries) ==  2
-        result += ('\n' if result else '') + "  " + _("Number of Hebrew entries = {:,}").format( len(self.entries['heb']) )
-        result += ('\n' if result else '') + "  " + _("Number of Aramaic entries = {:,}").format( len(self.entries['arc']) )
+        result += ('\n' if result else '') + "  " + f"Number of Hebrew entries = {len(self.entries['heb']):,}"
+        result += ('\n' if result else '') + "  " + f"Number of Aramaic entries = {len(self.entries['arc']):,}"
         return result
     # end of LexicalIndexFileConverter.__str__
 
@@ -266,7 +265,7 @@ class LexicalIndexFileConverter:
             XMLFolder = DEFAULT_LEXICON_FOLDERPATH # Hebrew lexicon folder
         self.XMLFolder = XMLFolder
         XMLFileOrFilepath = os.path.join( XMLFolder, LexicalIndexFileConverter.indexFilename )
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, _("Loading from {}…").format( XMLFileOrFilepath ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Loading from {XMLFileOrFilepath}…" )
         self.XMLTree = ElementTree().parse( XMLFileOrFilepath )
         if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert self.XMLTree # Fail here if we didn't load anything at all
@@ -275,8 +274,8 @@ class LexicalIndexFileConverter:
         if self.XMLTree.tag == LexicalIndexFileConverter.treeTag:
             for part in self.XMLTree:
                 self.validatePart( part )
-        else: logging.error( "Expected to load {!r} but got {!r}".format( LexicalIndexFileConverter.treeTag, self.XMLTree.tag ) )
-        if self.XMLTree.tail is not None and self.XMLTree.tail.strip(): logging.error( "Unexpected {!r} tail data after {} element".format( self.XMLTree.tail, self.XMLTree.tag ) )
+        else: logging.error( f"Expected to load {LexicalIndexFileConverter.treeTag!r} but got {self.XMLTree.tag!r}" )
+        if self.XMLTree.tail is not None and self.XMLTree.tail.strip(): logging.error( f"Unexpected {self.XMLTree.tag!r} tail data after {self.XMLTree.tail} element" )
     # end of LexicalIndexFileConverter.loadAndValidate
 
 
@@ -294,7 +293,7 @@ class LexicalIndexFileConverter:
         for attrib,value in part.items():
             if attrib==LexicalIndexFileConverter.XMLNameSpace+'lang':
                 lang = value
-            else: logging.warning( "Unprocessed {!r} attribute ({}) in index part element".format( attrib, value ) )
+            else: logging.warning( f"Unprocessed {value!r} attribute ({attrib}) in index part element" )
         if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert lang in ('heb','arc',)
         self.entries[lang] = {}
@@ -321,7 +320,7 @@ class LexicalIndexFileConverter:
         for attrib,value in entry.items():
             if attrib=='id':
                 ID = value
-            else: logging.warning( "Unprocessed {!r} attribute ({}) in index entry element".format( attrib, value ) )
+            else: logging.warning( f"Unprocessed {value!r} attribute ({attrib}) in index entry element" )
         if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert ID is not None
 
@@ -340,7 +339,7 @@ class LexicalIndexFileConverter:
                 xlit = None
                 for attrib,value in element.items():
                     if attrib=="xlit": xlit = value
-                    else: logging.warning( "svd6 Unprocessed {!r} attribute ({}) in {}".format( attrib, value, location ) )
+                    else: logging.warning( f"svd6 Unprocessed {location!r} attribute ({attrib}) in {value}" )
             elif element.tag == LexicalIndexFileConverter.HebLexNameSpace+"pos":
                 if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
                     assert element.text
@@ -366,7 +365,7 @@ class LexicalIndexFileConverter:
                     elif attrib=='strong': strongsXref = value
                     elif attrib=='aug': strongsAugXref = value
                     elif attrib=='twot': twotXref = value
-                    else: logging.warning( "scs4 Unprocessed {!r} attribute ({}) in {}".format( attrib, value, location ) )
+                    else: logging.warning( f"scs4 Unprocessed {location!r} attribute ({attrib}) in {value}" )
             elif element.tag == LexicalIndexFileConverter.HebLexNameSpace+"etym":
                 location = "etym of " + ID
                 #assert element.text
@@ -377,9 +376,9 @@ class LexicalIndexFileConverter:
                 for attrib,value in element.items():
                     if attrib=='type': etymType = value
                     elif attrib=="root": etymRoot = value
-                    else: logging.warning( "dsv2 Unprocessed {!r} attribute ({}) in {}".format( attrib, value, location ) )
-            else: logging.warning( "sdv1 Unprocessed {!r} sub-element ({}) in entry".format( element.tag, element.text ) )
-            if element.tail is not None and element.tail.strip(): logging.error( "Unexpected {!r} tail data after {} element in entry".format( element.tail, element.tag ) )
+                    else: logging.warning( f"dsv2 Unprocessed {location!r} attribute ({attrib}) in {value}" )
+            else: logging.warning( f"sdv1 Unprocessed {element.text!r} sub-element ({element.tag}) in entry" )
+            if element.tail is not None and element.tail.strip(): logging.error( f"Unexpected {element.tag!r} tail data after {element.tail} element in entry" )
 
         self.entries[lang][ID] = (xlit, pos, definition, BrDrBrXref,strongsXref,strongsAugXref,twotXref, etym,etymRoot,etymType)
     # end of LexicalIndexFileConverter.validateEntry
@@ -411,7 +410,7 @@ class LexicalIndexFileConverter:
             folderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH
             if not folderpath.exists(): os.mkdir( folderpath )
             filepath = os.path.join( folderpath, 'HebrewLexicon_Index_Table.pickle' )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Exporting to {}…").format( filepath ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Exporting to {filepath}…" )
         with open( filepath, 'wb' ) as myFile:
             pickle.dump( self.entries, myFile )
     # end of GreekStrongsFileConverter.pickle
@@ -475,9 +474,9 @@ class HebrewStrongsFileConverter:
         """
         result = "Hebrew Strongs Lexicon File Converter object"
         if self.title: result += ('\n' if result else '') + "  " + self.title
-        if self.version: result += ('\n' if result else '') + "  " + _("Version: {} ").format( self.version )
-        if self.date: result += ('\n' if result else '') + "  " + _("Date: {}").format( self.date )
-        result += ('\n' if result else '') + "  " + _("Number of entries = {:,}").format( len(self.entries) )
+        if self.version: result += ('\n' if result else '') + "  " + f"Version: {self.version} "
+        if self.date: result += ('\n' if result else '') + "  " + f"Date: {self.date}"
+        result += ('\n' if result else '') + "  " + f"Number of entries = {len(self.entries):,}"
         return result
     # end of HebrewStrongsFileConverter.__str__
 
@@ -492,7 +491,7 @@ class HebrewStrongsFileConverter:
             XMLFolder = DEFAULT_LEXICON_FOLDERPATH # Hebrew lexicon folder
         self.XMLFolder = XMLFolder
         XMLFileOrFilepath = os.path.join( XMLFolder, HebrewStrongsFileConverter.databaseFilename )
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, _("Loading from {}…").format( XMLFileOrFilepath ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Loading from {XMLFileOrFilepath}…" )
         self.XMLTree = ElementTree().parse( XMLFileOrFilepath )
         if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert self.XMLTree # Fail here if we didn't load anything at all
@@ -501,8 +500,8 @@ class HebrewStrongsFileConverter:
         if self.XMLTree.tag == HebrewStrongsFileConverter.treeTag:
             for entry in self.XMLTree:
                 self.validateEntry( entry )
-        else: logging.error( "Expected to load {!r} but got {!r}".format( HebrewStrongsFileConverter.treeTag, self.XMLTree.tag ) )
-        if self.XMLTree.tail is not None and self.XMLTree.tail.strip(): logging.error( "Unexpected {!r} tail data after {} element".format( self.XMLTree.tail, self.XMLTree.tag ) )
+        else: logging.error( f"Expected to load {HebrewStrongsFileConverter.treeTag!r} but got {self.XMLTree.tag!r}" )
+        if self.XMLTree.tail is not None and self.XMLTree.tail.strip(): logging.error( f"Unexpected {self.XMLTree.tag!r} tail data after {self.XMLTree.tail} element" )
     # end of HebrewStrongsFileConverter.loadAndValidate
 
 
@@ -520,8 +519,8 @@ class HebrewStrongsFileConverter:
         for attrib,value in entry.items():
             if attrib=='id':
                 entryID = value
-                #dPrint( 'Info', DEBUGGING_THIS_MODULE, "Validating {} entry…".format( entryID ) )
-            else: logging.warning( "Unprocessed {!r} attribute ({}) in main entry element".format( attrib, value ) )
+                #dPrint( 'Info', DEBUGGING_THIS_MODULE, f"Validating {entryID} entry…" )
+            else: logging.warning( f"Unprocessed {value!r} attribute ({attrib}) in main entry element" )
 
         entryResults = {}
         for element in entry:
@@ -539,7 +538,7 @@ class HebrewStrongsFileConverter:
                     elif attrib=="src": src = value
                     elif attrib==HebrewStrongsFileConverter.XMLNameSpace+'lang':
                         lang = value
-                    else: logging.warning( "Unprocessed {!r} attribute ({}) in {}".format( attrib, value, element.tag ) )
+                    else: logging.warning( f"Unprocessed {element.tag!r} attribute ({attrib}) in {value}" )
                 if word: entryResults['word'] = (word,pos,pron,xlit,src,)
                 # Now process the subelements
                 for subelement in element:
@@ -553,8 +552,8 @@ class HebrewStrongsFileConverter:
                             if attrib=="src": src = value
                             #elif attrib=="pron": pron = value
                             #elif attrib=="xlit": xlit = value
-                            else: logging.warning( "Unprocessed {!r} attribute ({}) in {}".format( attrib, value, location ) )
-                    else: logging.warning( "Unprocessed {!r} sub-element ({}) in {}".format( subelement.tag, subelement.text, element.tag ) )
+                            else: logging.warning( f"Unprocessed {location!r} attribute ({attrib}) in {value}" )
+                    else: logging.warning( f"Unprocessed {element.tag!r} sub-element ({subelement.tag}) in {subelement.text}" )
             elif element.tag == HebrewStrongsFileConverter.HebLexNameSpace+'source':
                 source = BibleOrgSysGlobals.getFlattenedXML( element, entryID ) \
                             .replace( HebrewStrongsFileConverter.HebLexNameSpace, '' )
@@ -585,9 +584,9 @@ class HebrewStrongsFileConverter:
                 BibleOrgSysGlobals.checkXMLNoAttributes( element, element.tag, "md3d" )
                 entryResults['note'] = note
             else:
-                logging.error( "2d4f Unprocessed {!r} element ({}) in entry".format( element.tag, element.text ) )
+                logging.error( f"2d4f Unprocessed {element.text!r} element ({element.tag}) in entry" )
                 if BibleOrgSysGlobals.debugFlag: halt
-            if element.tail is not None and element.tail.strip(): logging.error( "Unexpected {!r} tail data after {} element in entry".format( element.tail, element.tag ) )
+            if element.tail is not None and element.tail.strip(): logging.error( f"Unexpected {element.tag!r} tail data after {element.tail} element in entry" )
 
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, entryID, entryResults )
         assert entryID and entryID[0]=='H' and entryID[1:].isdigit()
@@ -621,7 +620,7 @@ class HebrewStrongsFileConverter:
             folderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH
             if not folderpath.exists(): os.mkdir( folderpath )
             filepath = os.path.join( folderpath, 'HebrewLexicon_Strongs_Table.pickle' )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Exporting to {}…").format( filepath ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Exporting to {filepath}…" )
         with open( filepath, 'wb' ) as myFile:
             pickle.dump( self.entries, myFile )
     # end of GreekStrongsFileConverter.pickle
@@ -682,12 +681,12 @@ class BrownDriverBriggsFileConverter:
         """
         result = "Brown, Driver, Briggs Hebrew Lexicon File Converter object"
         if self.title: result += ('\n' if result else '') + "  " + self.title
-        if self.version: result += ('\n' if result else '') + "  " + _("Version: {} ").format( self.version )
-        if self.date: result += ('\n' if result else '') + "  " + _("Date: {}").format( self.date )
+        if self.version: result += ('\n' if result else '') + "  " + f"Version: {self.version} "
+        if self.date: result += ('\n' if result else '') + "  " + f"Date: {self.date}"
         if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert len(self.entries) ==  2
-        result += ('\n' if result else '') + "  " + _("Number of Hebrew entries = {:,}").format( len(self.entries['heb']) )
-        result += ('\n' if result else '') + "  " + _("Number of Aramaic entries = {:,}").format( len(self.entries['arc']) )
+        result += ('\n' if result else '') + "  " + f"Number of Hebrew entries = {len(self.entries['heb']):,}"
+        result += ('\n' if result else '') + "  " + f"Number of Aramaic entries = {len(self.entries['arc']):,}"
         return result
     # end of BrownDriverBriggsFileConverter.__str__
 
@@ -702,7 +701,7 @@ class BrownDriverBriggsFileConverter:
             XMLFolder = DEFAULT_LEXICON_FOLDERPATH # Hebrew lexicon folder
         self.XMLFolder = XMLFolder
         XMLFileOrFilepath = os.path.join( XMLFolder, BrownDriverBriggsFileConverter.databaseFilename )
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, _("Loading from {}…").format( XMLFileOrFilepath ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Loading from {XMLFileOrFilepath}…" )
         self.XMLTree = ElementTree().parse( XMLFileOrFilepath )
         if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert self.XMLTree # Fail here if we didn't load anything at all
@@ -711,8 +710,8 @@ class BrownDriverBriggsFileConverter:
         if self.XMLTree.tag == BrownDriverBriggsFileConverter.treeTag:
             for entry in self.XMLTree:
                 self.validatePart( entry )
-        else: logging.error( "Expected to load {!r} but got {!r}".format( BrownDriverBriggsFileConverter.treeTag, self.XMLTree.tag ) )
-        if self.XMLTree.tail is not None and self.XMLTree.tail.strip(): logging.error( "Unexpected {!r} tail data after {} element".format( self.XMLTree.tail, self.XMLTree.tag ) )
+        else: logging.error( f"Expected to load {BrownDriverBriggsFileConverter.treeTag!r} but got {self.XMLTree.tag!r}" )
+        if self.XMLTree.tail is not None and self.XMLTree.tail.strip(): logging.error( f"Unexpected {self.XMLTree.tag!r} tail data after {self.XMLTree.tail} element" )
     # end of BrownDriverBriggsFileConverter.loadAndValidate
 
 
@@ -730,12 +729,12 @@ class BrownDriverBriggsFileConverter:
         for attrib,value in part.items():
             if attrib == 'id':
                 partID = value
-                #dPrint( 'Info', DEBUGGING_THIS_MODULE, "Validating {!r} part…".format( partID ) )
+                #dPrint( 'Info', DEBUGGING_THIS_MODULE, f"Validating {partID!r} part…" )
             elif attrib == 'title':
                 title = value
             elif attrib == LexicalIndexFileConverter.XMLNameSpace+'lang':
                 lang = value
-            else: logging.warning( "scd2 Unprocessed {!r} attribute ({}) in index part element".format( attrib, value ) )
+            else: logging.warning( f"scd2 Unprocessed {value!r} attribute ({attrib}) in index part element" )
         if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert lang in ('heb','arc',)
         if lang not in self.entries: self.entries[lang] = {}
@@ -759,8 +758,8 @@ class BrownDriverBriggsFileConverter:
         for attrib,value in section.items():
             if attrib == 'id':
                 sectionID = value
-                #dPrint( 'Info', DEBUGGING_THIS_MODULE, "Validating {!r} section…".format( sectionID ) )
-            else: logging.warning( "js19 Unprocessed {!r} attribute ({}) in index section element".format( attrib, value ) )
+                #dPrint( 'Info', DEBUGGING_THIS_MODULE, f"Validating {sectionID!r} section…" )
+            else: logging.warning( f"js19 Unprocessed {value!r} attribute ({attrib}) in index section element" )
         for entry in section:
             if entry.tag == BrownDriverBriggsFileConverter.HebLexNameSpace+'page':
                 # We don't care about the book pages (page elements only have a 'p' attribute)
@@ -785,12 +784,12 @@ class BrownDriverBriggsFileConverter:
         for attrib,value in entry.items():
             if attrib == 'id':
                 entryID = value
-                #dPrint( 'Info', DEBUGGING_THIS_MODULE, "Validating {!r} entry…".format( entryID ) )
+                #dPrint( 'Info', DEBUGGING_THIS_MODULE, f"Validating {entryID!r} entry…" )
             elif attrib == 'type': entryType = value
             elif attrib == 'mod': entryMod = value
             elif attrib == 'cite': entryCite = value
             elif attrib == 'form': entryForm = value
-            else: logging.warning( "ngs9 Unprocessed {!r} attribute ({}) in main entry element".format( attrib, value ) )
+            else: logging.warning( f"ngs9 Unprocessed {value!r} attribute ({attrib}) in main entry element" )
 
         flattenedXML = BibleOrgSysGlobals.getFlattenedXML( entry, entryID ) \
                             .replace( BrownDriverBriggsFileConverter.HebLexNameSpace, '' ) \
@@ -807,7 +806,7 @@ class BrownDriverBriggsFileConverter:
             if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
                 assert status in ('new','made','base','ref','added','done',)
         else:
-            logging.warning( "Missing status in {} BrDrBr entry: {!r}".format( entryID, flattenedXML ) )
+            logging.warning( f"Missing status in {entryID} BrDrBr entry: {flattenedXML!r}" )
             resultXML = flattenedXML
 
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, repr(partID), repr(sectionID), repr(title), repr(lang) )
@@ -842,7 +841,7 @@ class BrownDriverBriggsFileConverter:
             folderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH
             if not folderpath.exists(): os.mkdir( folderpath )
             filepath = os.path.join( folderpath, 'HebrewLexicon_BDB_Table.pickle' )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Exporting to {}…").format( filepath ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Exporting to {filepath}…" )
         with open( filepath, 'wb' ) as myFile:
             pickle.dump( self.entries, myFile )
     # end of GreekStrongsFileConverter.pickle
@@ -927,7 +926,7 @@ def fullDemo() -> None:
             folderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH
             if not folderpath.exists(): os.mkdir( folderpath )
             filepath = os.path.join( folderpath, 'HebrewLexicon_Tables.1.pickle' )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Exporting to {}…").format( filepath ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Exporting to {filepath}…" )
             with open( filepath, 'wb' ) as myFile:
                 pickle.dump( asixfc.entries1, myFile )
                 pickle.dump( asixfc.entries2, myFile )

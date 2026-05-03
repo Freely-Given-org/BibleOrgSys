@@ -35,7 +35,6 @@ TODO: Add buffering
 TODO: Add writeAutoDTD
 
 """
-from gettext import gettext as _
 import os
 import logging
 from pathlib import Path
@@ -121,8 +120,8 @@ class MLWriter:
         @rtype: string
         """
         result = "MLWriter object"
-        result += ('\n' if result else '') + "  " + _("Type: {}").format(self._outputType)
-        result += ('\n' if result else '') + "  " + _("Status: {}").format(self._status)
+        result += ('\n' if result else '') + "  " + f"Type: {self._outputType}"
+        result += ('\n' if result else '') + "  " + f"Status: {self._status}"
         return result
     # end of MLWriter.__str__
 
@@ -174,12 +173,12 @@ class MLWriter:
         """ Writes the buffer to the file. """
         assert self.__outputFile is not None
         if self._buffer:
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Writing buffer of {} characters".format( len(self._buffer) ) )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Writing buffer of {len(self._buffer)} characters" )
             if writeAll: # Write it all
                 self._writeToFile( self._buffer )
                 self._buffer = ''
             elif len(self._buffer) > self._bufferSaveSize: # Write most of it (in case we need to retrack)
-                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "From {!r} writing {!r} leaving {!r}".format( self._buffer, self._buffer[:-self._bufferSaveSize], self._buffer[-self._bufferSaveSize:] ) )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"From {self._buffer!r} writing {self._buffer[:-self._bufferSaveSize]!r} leaving {self._buffer[-self._bufferSaveSize:]!r}" )
                 self._writeToFile( self._buffer[:-self._bufferSaveSize] )
                 self._buffer = self._buffer[-self._bufferSaveSize:]
             #else: pass # Write none
@@ -269,7 +268,7 @@ class MLWriter:
                 self._buffer = self._buffer[:-2]
                 removed = True
         if not removed:
-            errorMsg = "MLWriter: " + _("No newline to remove")
+            errorMsg = "MLWriter: " + "No newline to remove"
             logging.error( errorMsg )
             if self.haltOnErrors: raise Exception( errorMsg )
         self._suppressFollowingIndent = suppressFollowingIndent
@@ -346,10 +345,10 @@ class MLWriter:
         if lineEndings == 'l': self._nl = '\n'
         elif lineEndings == 'w': self._nl = '\r\n'
         else:
-            errorMsg = "MLWriter: " + _("Unknown {!r} lineEndings flag").format( lineEndings )
+            errorMsg = "MLWriter: " + f"Unknown {lineEndings!r} lineEndings flag"
             logging.error( errorMsg )
             if self.haltOnErrors: raise Exception( errorMsg )
-        if BibleOrgSysGlobals.verbosityLevel>2: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "MLWriter: "+_("Writing {}…").format(self._outputFilePath) )
+        if BibleOrgSysGlobals.verbosityLevel>2: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "MLWriter: "+f"Writing {self._outputFilePath}…" )
         self.__outputFile = open( self._outputFilePath, 'wt', encoding='utf-8' ) # Just create the empty file
         self.__outputFile.close()
         if writeBOM:
@@ -385,26 +384,26 @@ class MLWriter:
         """
         assert textString # It can't be blank
         if '<' in textString or '>' in textString or '"' in textString:
-            errorMsg = "MLWriter:checkText: " + _("unexpected characters found in {} {!r}").format( self._outputType, textString )
+            errorMsg = "MLWriter:checkText: " + f"unexpected characters found in {self._outputType} {textString!r}"
             logging.error( errorMsg )
             if self.haltOnErrors: raise Exception( errorMsg )
         ix = textString.find( '&' )
         while ix != -1:
             ix2 = textString.find( ';', ix+1 )
             if ix2 == -1:
-                errorMsg = "MLWriter:checkText: " + _("unescaped ampersand (&) found in {} {!r}").format( self._outputType, textString )
+                errorMsg = "MLWriter:checkText: " + f"unescaped ampersand (&) found in {self._outputType} {textString!r}"
                 logging.error( errorMsg )
                 if self.haltOnErrors: raise Exception( errorMsg )
                 break # Only give one error
             elif self._outputType == 'XML':
                 if textString[ix+1:ix2] not in XML_PREDEFINED_ENTITIES:
-                    errorMsg = "MLWriter:checkText: " + _("unknown entity starting with ampersand (&) found in XML {!r}").format( textString )
+                    errorMsg = "MLWriter:checkText: " + f"unknown entity starting with ampersand (&) found in XML {textString!r}"
                     logging.error( errorMsg )
                     if self.haltOnErrors: raise Exception( errorMsg )
                     break # Only give one error
             elif self._outputType == 'HTML':
                 if textString[ix+1:ix2] not in HTML_PREDEFINED_CHARACTER_ENTITIES:
-                    errorMsg = "MLWriter:checkText: " + _("unknown character entity starting with ampersand (&) found in XML {!r}").format( textString )
+                    errorMsg = "MLWriter:checkText: " + f"unknown character entity starting with ampersand (&) found in XML {textString!r}"
                     logging.error( errorMsg )
                     if self.haltOnErrors: raise Exception( errorMsg )
                     break # Only give one error
@@ -445,17 +444,17 @@ class MLWriter:
             assert isinstance( attribInfo[0], str )
             assert isinstance( attribInfo[1], str )
             if result: result += ' '
-            result += '{}="{}"'.format( self.checkAttribName(attribInfo[0]), self.checkAttribValue(attribInfo[1]) )
+            result += f'{self.checkAttribName(attribInfo[0])}="{self.checkAttribValue(attribInfo[1])}"'
         elif isinstance( attribInfo, list ):
             for attrib,value in attribInfo:
                 assert isinstance( attrib, str )
                 assert isinstance( value, str ) or isinstance( value, int )
                 if result: result += ' '
-                result += '{}="{}"'.format( self.checkAttribName(attrib), self.checkAttribValue(value) )
+                result += f'{self.checkAttribName(attrib)}="{self.checkAttribValue(value)}"'
         else: # It's not a tuple or a list so we assume it's a dictionary or ordered dictionary
             for attrib,value in attribInfo.items():
                 if result: result += ' '
-                result += '{}="{}"'.format( self.checkAttribName(attrib), self.checkAttribValue(value) )
+                result += f'{self.checkAttribName(attrib)}="{self.checkAttribValue(value)}"'
         return result
     # end of MLWriter.getAttributes
 
@@ -473,7 +472,7 @@ class MLWriter:
         """
         Writes an XML comment field.
         """
-        return self._autoWrite( '<!-- {} -->'.format(text if noTextCheck else self.checkText(text)) )
+        return self._autoWrite( f'<!-- {text if noTextCheck else self.checkText(text)} -->' )
     # end of MLWriter.writeLineComment
 
 
@@ -496,9 +495,9 @@ class MLWriter:
         """
         if noNL is None: noNL = self._outputType=='HTML' and openTag in HTMLCombinedTags
         if attribInfo is None:
-            self._autoWrite( '<{}>'.format(self.checkTag(openTag)), noNL=noNL )
+            self._autoWrite( f'<{self.checkTag(openTag)}>', noNL=noNL )
         else: # have one or more attributes
-            self._autoWrite( '<{} {}>'.format( self.checkTag(openTag), self.getAttributes(attribInfo) ), noNL=noNL )
+            self._autoWrite( f'<{self.checkTag(openTag)} {self.getAttributes(attribInfo)}>', noNL=noNL )
         self._openStack.append( openTag )
     # end of MLWriter.writeLineOpen
 
@@ -508,12 +507,12 @@ class MLWriter:
         Writes an opening tag on a line.
         Note: We don't want to check the text if we know it already contains valid XML (e.g., character formatting).
         """
-        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "text: {!r}".format(text )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"text: {text!r}"
         if noTextCheck == False: text = self.checkText( text )
         if attribInfo is None:
-            self._autoWrite( '<{}>{}'.format( self.checkTag(openTag), text ) )
+            self._autoWrite( f'<{self.checkTag(openTag)}>{text}' )
         else: # have one or more attributes
-            self._autoWrite( '<{} {}>{}'.format( self.checkTag(openTag), self.getAttributes(attribInfo), text ) )
+            self._autoWrite( f'<{self.checkTag(openTag)} {self.getAttributes(attribInfo)}>{text}' )
         self._openStack.append( openTag )
     # end of MLWriter.writeLineOpenText
 
@@ -524,17 +523,17 @@ class MLWriter:
         """
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'writeLineClose', self._openStack )
         if not self._openStack:
-            errorMsg = "MLWriter:writeLineClose: " + _("closed {!r} tag even though no tags open").format( closeTag )
+            errorMsg = "MLWriter:writeLineClose: " + f"closed {closeTag!r} tag even though no tags open"
             logging.error( errorMsg )
             if self.haltOnErrors: raise Exception( errorMsg )
         else:
             expectedTag = self._openStack.pop()
             if expectedTag != closeTag:
-                errorMsg = "MLWriter.writeLineClose:" + _("closed {!r} tag but should have closed {!r}").format( closeTag, expectedTag )
+                errorMsg = "MLWriter.writeLineClose:" + f"closed {closeTag!r} tag but should have closed {expectedTag!r}"
                 logging.error( errorMsg )
                 if self.haltOnErrors: raise Exception( errorMsg )
         noNL = self._outputType=='HTML' and closeTag in HTMLInsideTags
-        self._autoWrite( '</{}>'.format(self.checkTag(closeTag)), noNL=noNL )
+        self._autoWrite( f'</{self.checkTag(closeTag)}>', noNL=noNL )
     # end of MLWriter.writeLineOpen
 
 
@@ -546,9 +545,9 @@ class MLWriter:
         checkedText = text if noTextCheck else self.checkText(text)
         noNL = self._outputType=='HTML' and tag in HTMLInsideTags
         if attribInfo is None:
-            return self._autoWrite( '<{}>{}</{}>'.format( checkedTag, checkedText, checkedTag ), noNL=noNL )
+            return self._autoWrite( f'<{checkedTag}>{checkedText}</{checkedTag}>', noNL=noNL )
         #else: # have one or more attributes
-        return self._autoWrite( '<{} {}>{}</{}>'.format( checkedTag, self.getAttributes(attribInfo), checkedText, checkedTag ), noNL=noNL )
+        return self._autoWrite( f'<{checkedTag} {self.getAttributes(attribInfo)}>{checkedText}</{checkedTag}>', noNL=noNL )
     # end of MLWriter.writeLineOpenClose
 
 
@@ -558,9 +557,9 @@ class MLWriter:
         """
         checkedTag = self.checkTag(tag)
         if attribInfo is None:
-            return self._autoWrite( '<{}{}/>'.format( checkedTag, ' ' if self.spaceBeforeSelfcloseTag else '' ) )
+            return self._autoWrite( f"<{checkedTag}{' ' if self.spaceBeforeSelfcloseTag else ''}/>" )
         #else: # have one or more attributes
-        return self._autoWrite( '<{} {}{}/>'.format( checkedTag, self.getAttributes(attribInfo), ' ' if self.spaceBeforeSelfcloseTag else '' ) )
+        return self._autoWrite( f"<{checkedTag} {self.getAttributes(attribInfo)}{' ' if self.spaceBeforeSelfcloseTag else ''}/>" )
     # end of MLWriter.writeLineOpenSelfclose
 
 
@@ -570,7 +569,7 @@ class MLWriter:
         """
         assert self.__outputFile is not None
         if self._openStack:
-            errorMsg = "MLWriter.close: " + _("have unclosed tags: {}").format(self._openStack)
+            errorMsg = "MLWriter.close: " + f"have unclosed tags: {self._openStack}"
             logging.error( errorMsg )
             if self.haltOnErrors: raise Exception( errorMsg )
         if writeFinalNL: self.writeNewLine()
@@ -603,7 +602,7 @@ class MLWriter:
             a result code (0=success)
             and two strings containing the program output and error output.
         """
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "Running MLWriter.validate( {} ) on {} file {}…".format( schemaFilepath, self._outputType, self._outputFilePath ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Running MLWriter.validate( {schemaFilepath} ) on {self._outputType} file {self._outputFilePath}…" )
 
         assert self._status == 'Closed'
 
@@ -617,24 +616,24 @@ class MLWriter:
                 checkProgramOutputBytes, checkProgramErrorOutputBytes = checkProcess.communicate()
                 returnCode = checkProcess.returncode
             except FileNotFoundError:
-                errorMsg = "MLWriter.validate is unable to open {!r}".format( parameters[0] )
+                errorMsg = f"MLWriter.validate is unable to open {parameters[0]!r}"
                 logging.error( errorMsg )
                 if self.haltOnErrors: raise Exception( errorMsg )
                 return None
             checkProgramOutputString = checkProgramErrorOutputString = ''
-            if checkProgramOutputBytes: checkProgramOutputString = '{}:\n{}'.format( self._filename, checkProgramOutputBytes.decode( encoding='utf-8', errors='replace' ) )
+            if checkProgramOutputBytes: checkProgramOutputString = f"{self._filename}:\n{checkProgramOutputBytes.decode( encoding='utf-8', errors='replace' )}"
             if checkProgramErrorOutputBytes:
                 tempString = checkProgramErrorOutputBytes.decode( encoding='utf-8', errors='replace' )
                 if tempString.count('\n')>1 or not tempString.endswith('validates\n'):
-                    checkProgramErrorOutputString = '{}:\n{}'.format( self._filename, tempString )
+                    checkProgramErrorOutputString = f'{self._filename}:\n{tempString}'
             xmllintError = ("No error", "Unclassified", "Error in DTD", "Validation error", "Validation error", "Error in schema compilation", "Error writing output", "Error in pattern", "Error in reader registration", "Out of memory")
             if returnCode != 0:
-                vPrint( 'Info', DEBUGGING_THIS_MODULE, "  WARNING: xmllint gave an error on the created {} file: {} = {}".format( self._filename, returnCode, xmllintError[returnCode] ) )
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  WARNING: xmllint gave an error on the created {self._filename} file: {returnCode} = {xmllintError[returnCode]}" )
                 if returnCode == 5: # schema error
-                    errorMsg = "MLWriter.validate couldn't read/parse the schema at {}".format( schemaFilepath )
+                    errorMsg = f"MLWriter.validate couldn't read/parse the schema at {schemaFilepath}"
                     logging.critical( errorMsg )
                     if self.haltOnErrors: raise Exception( errorMsg )
-            else: vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "  xmllint validated the xml file {}.".format( self._filename ) )
+            else: vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"  xmllint validated the xml file {self._filename}." )
             return returnCode, checkProgramOutputString, checkProgramErrorOutputString,
     # end of MLWriter.validate
 # end of MLWriter class
@@ -657,7 +656,7 @@ def briefDemo() -> None:
         mlWr.setHumanReadable( 'All' )
         mlWr.start()
         mlWr.setSectionName( 'Header' )
-        mlWr.writeLineOpen( "vwxyz", [("xmlns","http://someURL.net/namespace"),("xmlns:xsi","http://someURL.net/XMLSchema-instance"),("xsi:schemaLocation","http://someURL.net/namespace {}".format(schema))] )
+        mlWr.writeLineOpen( "vwxyz", [("xmlns","http://someURL.net/namespace"),("xmlns:xsi","http://someURL.net/XMLSchema-instance"),("xsi:schemaLocation",f"http://someURL.net/namespace {schema}")] )
         mlWr.writeLineOpen( 'header' )
         mlWr.writeLineOpenClose( 'title', "myTitle" )
         mlWr.writeLineClose( 'header' )
@@ -713,7 +712,7 @@ def briefDemo() -> None:
         mlWr.writeLineOpen( 'a', ('href','http://www.w3.org/html/logo/') )
         mlWr.writeLineText( '<img src="http://www.w3.org/html/logo/badge/html5-badge-h-css3-semantics.png" width="165" height="64" alt="HTML5 Powered with CSS3 / Styling, and Semantics" title="HTML5 Powered with CSS3 / Styling, and Semantics">', noTextCheck=True )
         mlWr.writeLineClose( 'a' )
-        mlWr.writeLineText( "This page automatically created by: {} v{} {}".format( PROGRAM_NAME, PROGRAM_VERSION, datetime.date.today().strftime("%d-%b-%Y") ) )
+        mlWr.writeLineText( f'This page automatically created by: {PROGRAM_NAME} v{PROGRAM_VERSION} {datetime.date.today().strftime("%d-%b-%Y")}' )
         mlWr.writeLineClose( 'p' )
         mlWr.writeLineClose( 'footer' )
         mlWr.writeLineClose( 'body' )
@@ -738,7 +737,7 @@ def fullDemo() -> None:
         mlWr.setHumanReadable( 'All' )
         mlWr.start()
         mlWr.setSectionName( 'Header' )
-        mlWr.writeLineOpen( "vwxyz", [("xmlns","http://someURL.net/namespace"),("xmlns:xsi","http://someURL.net/XMLSchema-instance"),("xsi:schemaLocation","http://someURL.net/namespace {}".format(schema))] )
+        mlWr.writeLineOpen( "vwxyz", [("xmlns","http://someURL.net/namespace"),("xmlns:xsi","http://someURL.net/XMLSchema-instance"),("xsi:schemaLocation",f"http://someURL.net/namespace {schema}")] )
         mlWr.writeLineOpen( 'header' )
         mlWr.writeLineOpenClose( 'title', "myTitle" )
         mlWr.writeLineClose( 'header' )
@@ -794,7 +793,7 @@ def fullDemo() -> None:
         mlWr.writeLineOpen( 'a', ('href','http://www.w3.org/html/logo/') )
         mlWr.writeLineText( '<img src="http://www.w3.org/html/logo/badge/html5-badge-h-css3-semantics.png" width="165" height="64" alt="HTML5 Powered with CSS3 / Styling, and Semantics" title="HTML5 Powered with CSS3 / Styling, and Semantics">', noTextCheck=True )
         mlWr.writeLineClose( 'a' )
-        mlWr.writeLineText( "This page automatically created by: {} v{} {}".format( PROGRAM_NAME, PROGRAM_VERSION, datetime.date.today().strftime("%d-%b-%Y") ) )
+        mlWr.writeLineText( f'This page automatically created by: {PROGRAM_NAME} v{PROGRAM_VERSION} {datetime.date.today().strftime("%d-%b-%Y")}' )
         mlWr.writeLineClose( 'p' )
         mlWr.writeLineClose( 'footer' )
         mlWr.writeLineClose( 'body' )

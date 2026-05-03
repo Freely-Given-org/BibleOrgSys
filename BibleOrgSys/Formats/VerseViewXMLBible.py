@@ -57,7 +57,6 @@ Module reading and loading VerseView XML Bibles:
         <v n="3">E disse Deus: haja luz. E houve luz.</v>
     …
 """
-from gettext import gettext as _
 from pathlib import Path
 import logging
 import os
@@ -97,20 +96,20 @@ def VerseViewXMLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad
     if autoLoad is true and exactly one VerseView Bible is found,
         returns the loaded VerseViewXMLBible object.
     """
-    fnPrint( DEBUGGING_THIS_MODULE, "VerseViewXMLBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
+    fnPrint( DEBUGGING_THIS_MODULE, f"VerseViewXMLBibleFileCheck( {givenFolderName}, {strictCheck}, {autoLoad}, {autoLoadBooks} )" )
     if BibleOrgSysGlobals.debugFlag: assert givenFolderName and isinstance( givenFolderName, (str,Path) )
     if BibleOrgSysGlobals.debugFlag: assert autoLoad in (True,False,)
 
     # Check that the given folder is readable
     if not os.access( givenFolderName, os.R_OK ):
-        logging.critical( _("VerseViewXMLBibleFileCheck: Given {!r} folder is unreadable").format( givenFolderName ) )
+        logging.critical( f"VerseViewXMLBibleFileCheck: Given {givenFolderName!r} folder is unreadable" )
         return False
     if not os.path.isdir( givenFolderName ):
-        logging.critical( _("VerseViewXMLBibleFileCheck: Given {!r} path is not a folder").format( givenFolderName ) )
+        logging.critical( f"VerseViewXMLBibleFileCheck: Given {givenFolderName!r} path is not a folder" )
         return False
 
     # Find all the files and folders in this folder
-    vPrint( 'Verbose', DEBUGGING_THIS_MODULE, " VerseViewXMLBibleFileCheck: Looking for files in given {}".format( givenFolderName ) )
+    vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f" VerseViewXMLBibleFileCheck: Looking for files in given {givenFolderName}" )
     foundFolders, foundFiles = [], []
     for something in os.listdir( givenFolderName ):
         somepath = os.path.join( givenFolderName, something )
@@ -139,7 +138,7 @@ def VerseViewXMLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad
             if not firstLines or len(firstLines)<3: continue
             if not ( firstLines[0].startswith( '<?xml version="1.0"' ) or firstLines[0].startswith( "<?xml version='1.0'" ) ) \
             and not ( firstLines[0].startswith( '\ufeff<?xml version="1.0"' ) or firstLines[0].startswith( "\ufeff<?xml version='1.0'" ) ): # same but with BOM
-                vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "VVB (unexpected) first line was {!r} in {}".format( firstLines, thisFilename ) )
+                vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"VVB (unexpected) first line was {thisFilename!r} in {firstLines}" )
                 continue
             if '<bible>' not in firstLines[1]: continue
             if '<fname>' not in firstLines[2]: continue
@@ -159,7 +158,7 @@ def VerseViewXMLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad
     foundProjects = []
     for thisFolderName in sorted( foundFolders ):
         tryFolderName = os.path.join( givenFolderName, thisFolderName+'/' )
-        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "    VerseViewXMLBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
+        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"    VerseViewXMLBibleFileCheck: Looking for files in {tryFolderName}" )
         foundSubfolders, foundSubfiles = [], []
         try:
             for something in os.listdir( tryFolderName ):
@@ -184,7 +183,7 @@ def VerseViewXMLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad
                 if not firstLines or len(firstLines)<3: continue
                 if not ( firstLines[0].startswith( '<?xml version="1.0"' ) or firstLines[0].startswith( "<?xml version='1.0'" ) ) \
                 and not ( firstLines[0].startswith( '\ufeff<?xml version="1.0"' ) or firstLines[0].startswith( "\ufeff<?xml version='1.0'" ) ): # same but with BOM
-                    vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "VVB (unexpected) first line was {!r} in {}".format( firstLines, thisFilename ) )
+                    vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"VVB (unexpected) first line was {thisFilename!r} in {firstLines}" )
                     continue
                 if '<bible>' not in firstLines[1]: continue
                 if '<fname>' not in firstLines[2]: continue
@@ -241,7 +240,7 @@ class VerseViewXMLBible( Bible ):
 
         # Do a preliminary check on the readability of our file
         if not os.access( self.sourceFilepath, os.R_OK ):
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "VerseViewXMLBible: File {!r} is unreadable".format( self.sourceFilepath ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"VerseViewXMLBible: File {self.sourceFilepath!r} is unreadable" )
 
         self.name = self.givenName
         #if self.name is None:
@@ -253,7 +252,7 @@ class VerseViewXMLBible( Bible ):
         """
         Load a single source XML file and load book elements.
         """
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, _("Loading {}…").format( self.sourceFilepath ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Loading {self.sourceFilepath}…" )
         self.XMLTree = ElementTree().parse( self.sourceFilepath )
         if BibleOrgSysGlobals.debugFlag: assert self.XMLTree # Fail here if we didn't load anything at all
 
@@ -312,17 +311,17 @@ class VerseViewXMLBible( Bible ):
                     BibleOrgSysGlobals.checkXMLNoTail( element, sublocation, 'd3f6' )
                     bookNumber += 1
                     self.__validateAndExtractBook( element, bookNumber )
-                else: logging.error( "xk15 Expected to find {!r} but got {!r}".format( VerseViewXMLBible.bookTag, element.tag ) )
-        else: logging.error( "Expected to load {!r} but got {!r}".format( VerseViewXMLBible.treeTag, self.XMLTree.tag ) )
+                else: logging.error( f"xk15 Expected to find {VerseViewXMLBible.bookTag!r} but got {element.tag!r}" )
+        else: logging.error( f"Expected to load {VerseViewXMLBible.treeTag!r} but got {self.XMLTree.tag!r}" )
 
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
             # These are all compulsory so they should all exist
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Filename is {!r}".format( self.filename ) )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Revision is {!r}".format( self.suppliedMetadata['VerseView']['Revision'] ) )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Title is {!r}".format( self.suppliedMetadata['VerseView']['Title'] ) )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Font is {!r}".format( self.suppliedMetadata['VerseView']['Font'] ) )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Copyright is {!r}".format( self.suppliedMetadata['VerseView']['Copyright'] ) )
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "SizeFactor is {!r}".format( self.sizeFactor ) )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Filename is {self.filename!r}" )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Revision is {self.suppliedMetadata['VerseView']['Revision']!r}" )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Title is {self.suppliedMetadata['VerseView']['Title']!r}" )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Font is {self.suppliedMetadata['VerseView']['Font']!r}" )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Copyright is {self.suppliedMetadata['VerseView']['Copyright']!r}" )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"SizeFactor is {self.sizeFactor!r}" )
 
         self.applySuppliedMetadata( 'VerseView' ) # Copy some to self.settingsDict
         self.doPostLoadProcessing()
@@ -336,14 +335,14 @@ class VerseViewXMLBible( Bible ):
             finding chapter subelements.
         """
 
-        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, _("Validating XML book…") )
+        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "Validating XML book…" )
 
         # Process the div attributes first
         BBB = bookName = None
         for attrib,value in book.items():
             if attrib=="n":
                 bookName = value
-            else: logging.warning( "Unprocessed {!r} attribute ({}) in book element".format( attrib, value ) )
+            else: logging.warning( f"Unprocessed {value!r} attribute ({attrib}) in book element" )
 
         if bookName:
             BBB = self.genericBOS.getBBBFromText( bookName )
@@ -354,24 +353,24 @@ class VerseViewXMLBible( Bible ):
         BBB2 = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromReferenceNumber( bookNumber )
         if BBB2 != BBB: # Just double check using the book number
             if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Assuming that book {} {!r} is {} (not {})".format( bookNumber, bookName, BBB2, BBB ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Assuming that book {bookNumber} {BBB!r} is {bookName} (not {BBB2})" )
             BBB = BBB2
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB ); halt
 
         if BBB:
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, _("Validating {} {}…").format( BBB, bookName ) )
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Validating {BBB} {bookName}…" )
             thisBook = BibleBook( self, BBB )
             thisBook.objectNameString = 'VerseView XML Bible Book object'
             thisBook.objectTypeString = 'VerseView'
             #thisBook.sourceFilepath = self.sourceFilepath
             for element in book:
                 if element.tag == VerseViewXMLBible.chapterTag:
-                    sublocation = "chapter in {}".format( BBB )
+                    sublocation = f"chapter in {BBB}"
                     BibleOrgSysGlobals.checkXMLNoText( element, sublocation, 'j3jd' )
                     BibleOrgSysGlobals.checkXMLNoTail( element, sublocation, 'al1d' )
                     self.__validateAndExtractChapter( BBB, thisBook, element )
-                else: logging.error( "vb26 Expected to find {!r} but got {!r}".format( VerseViewXMLBible.chapterTag, element.tag ) )
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Saving {} into results…".format( BBB ) )
+                else: logging.error( f"vb26 Expected to find {VerseViewXMLBible.chapterTag!r} but got {element.tag!r}" )
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Saving {BBB} into results…" )
             self.stashBook( thisBook )
     # end of VerseViewXMLBible.__validateAndExtractBook
 
@@ -384,24 +383,24 @@ class VerseViewXMLBible( Bible ):
         """
 
         if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE and BibleOrgSysGlobals.verbosityLevel > 3:
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Validating XML chapter…") )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Validating XML chapter…" )
 
         # Process the chapter attributes first
         chapterNumber = numVerses = None
         for attrib,value in chapter.items():
             if attrib=="n":
                 chapterNumber = value
-            else: logging.warning( "Unprocessed {!r} attribute ({}) in chapter element".format( attrib, value ) )
+            else: logging.warning( f"Unprocessed {value!r} attribute ({attrib}) in chapter element" )
         if chapterNumber:
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, 'c', chapterNumber )
             thisBook.addLine( 'c', chapterNumber )
-        else: logging.error( "Missing 'n' attribute in chapter element for {}".format( BBB ) )
+        else: logging.error( f"Missing 'n' attribute in chapter element for {BBB}" )
 
         for element in chapter:
             if element.tag == VerseViewXMLBible.verseTag:
-                location = "verse in {} {}".format( BBB, chapterNumber )
+                location = f"verse in {BBB} {chapterNumber}"
                 self.__validateAndExtractVerse( BBB, chapterNumber, thisBook, element )
-            else: logging.error( "sv34 Expected to find {!r} but got {!r}".format( VerseViewXMLBible.verseTag, element.tag ) )
+            else: logging.error( f"sv34 Expected to find {VerseViewXMLBible.verseTag!r} but got {element.tag!r}" )
     # end of VerseViewXMLBible.__validateAndExtractChapter
 
 
@@ -412,9 +411,9 @@ class VerseViewXMLBible( Bible ):
         """
 
         if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE and BibleOrgSysGlobals.verbosityLevel > 3:
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Validating XML verse…") )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Validating XML verse…" )
 
-        location = "verse in {} {}".format( BBB, chapterNumber )
+        location = f"verse in {BBB} {chapterNumber}"
         BibleOrgSysGlobals.checkXMLNoSubelements( verse, location, 'sg20' )
         BibleOrgSysGlobals.checkXMLNoTail( verse, location, 'l5ks' )
 
@@ -423,14 +422,14 @@ class VerseViewXMLBible( Bible ):
         for attrib,value in verse.items():
             if attrib=="n":
                 verseNumber = value
-            else: logging.warning( "Unprocessed {!r} attribute ({}) in verse element".format( attrib, value ) )
+            else: logging.warning( f"Unprocessed {value!r} attribute ({attrib}) in verse element" )
         if BibleOrgSysGlobals.debugFlag: assert verseNumber
-        location = "{}:{}".format( location, verseNumber ) # Get a better location description
+        location = f"{location}:{verseNumber}" # Get a better location description
         #thisBook.addLine( 'v', verseNumber )
         vText = '' if verse.text is None else verse.text
         if vText: vText = vText.strip()
         #if not vText: # This happens if a verse starts immediately with a style or note
-            #logging.warning( "{} {}:{} has no text".format( BBB, chapterNumber, verseNumber ) )
+            #logging.warning( f"{BBB} {chapterNumber}:{verseNumber} has no text" )
 
         ## Handle verse subelements (notes and styled portions)
         #for subelement in verse:
@@ -439,15 +438,15 @@ class VerseViewXMLBible( Bible ):
                 #noteType = None
                 #for attrib,value in subelement.items():
                     #if attrib=="type": noteType = value
-                    #else: logging.warning( "Unprocessed {!r} attribute ({}) in style subelement".format( attrib, value ) )
+                    #else: logging.warning( f"Unprocessed {value!r} attribute ({attrib}) in style subelement" )
                 #if noteType and noteType not in ('variant',):
-                    #logging.warning( "Unexpected {} note type in {}".format( noteType, BBB ) )
+                    #logging.warning( f"Unexpected {noteType} note type in {BBB}" )
                 #nText, nTail = subelement.text, subelement.tail
                 ##dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "note", BBB, chapterNumber, verseNumber, noteType, repr(nText), repr(nTail) )
-                #vText += "\\f + \\fk {} \\ft {}\\f*".format( noteType, nText ) if noteType else "\\f + \\ft {}\\f*".format( nText )
+                #vText += f"\\f + \\fk {noteType} \\ft {nText}\\f*" if noteType else f"\\f + \\ft {nText}\\f*"
                 #if nTail:
                     #if '\n' in nTail:
-                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "VerseViewXMLBible.__validateAndExtractVerse: nTail {} {}:{} {!r}".format( BBB, chapterNumber, verseNumber, nTail ) )
+                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"VerseViewXMLBible.__validateAndExtractVerse: nTail {BBB} {chapterNumber}:{verseNumber} {nTail!r}" )
                         #nTail = nTail.replace( '\n', ' ' )
                     #vText += nTail
                 #for sub2element in subelement:
@@ -459,7 +458,7 @@ class VerseViewXMLBible( Bible ):
                             #if attrib=='fs': fs = value
                             ##elif attrib=="css": css = value
                             ##elif attrib=="id": idStyle = value
-                            #else: logging.warning( "Unprocessed {!r} attribute ({}) in style sub2element".format( attrib, value ) )
+                            #else: logging.warning( f"Unprocessed {value!r} attribute ({attrib}) in style sub2element" )
                         #if BibleOrgSysGlobals.debugFlag: assert fs or css or idStyle
                         #SFM = None
                         #if fs == 'italic': SFM = '\\it'
@@ -477,7 +476,7 @@ class VerseViewXMLBible( Bible ):
                         #if SFM: vText += SFM+' ' + sText + SFM+'*'
                         #else: vText += '\\sc ' + '['+css+']' + sText + '\\sc* ' # Use sc for unknown styles
                         #if sTail: vText += sTail.strip()
-                    #else: logging.error( "df20 Expected to find {} but got {!r} in {}".format( VerseViewXMLBible.styleTag, sub2element.tag, sublocation ) )
+                    #else: logging.error( f"df20 Expected to find {VerseViewXMLBible.styleTag} but got {sublocation!r} in {sub2element.tag}" )
 
             #elif subelement.tag == VerseViewXMLBible.styleTag:
                 #sublocation = "style in " + location
@@ -487,7 +486,7 @@ class VerseViewXMLBible( Bible ):
                     #if attrib=="fs": fs = value
                     ##elif attrib=="css": css = value
                     ##elif attrib=="id": idStyle = value
-                    #else: logging.warning( "Unprocessed {!r} attribute ({}) in style subelement".format( attrib, value ) )
+                    #else: logging.warning( f"Unprocessed {value!r} attribute ({attrib}) in style subelement" )
                 #if BibleOrgSysGlobals.debugFlag: assert fs
                 #SFM = None
                 #if fs == 'super': SFM = '\\bdit'
@@ -514,7 +513,7 @@ class VerseViewXMLBible( Bible ):
                 #for attrib,value in subelement.items():
                     #if attrib=="art":
                         #art = value
-                    #else: logging.warning( "Unprocessed {!r} attribute ({}) in style subelement".format( attrib, value ) )
+                    #else: logging.warning( f"Unprocessed {value!r} attribute ({attrib}) in style subelement" )
                 #if BibleOrgSysGlobals.debugFlag: assert art == 'x-nl'
                 ##dPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, chapterNumber, verseNumber )
                 ##assert vText
@@ -524,11 +523,11 @@ class VerseViewXMLBible( Bible ):
                 #thisBook.addLine( 'm', subelement.tail.strip() if subelement.tail else '' )
                 ##bTail = subelement.tail
                 ##if bTail: vText = bTail.strip()
-            #else: logging.error( "bd47 Expected to find NOTE or STYLE but got {!r} in {}".format( subelement.tag, location ) )
+            #else: logging.error( f"bd47 Expected to find NOTE or STYLE but got {location!r} in {subelement.tag}" )
 
         if vText: # This is the main text of the verse (follows the verse milestone)
             if '\n' in vText:
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "VerseViewXMLBible.__validateAndExtractVerse: vText {} {}:{} {!r}".format( BBB, chapterNumber, verseNumber, vText ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"VerseViewXMLBible.__validateAndExtractVerse: vText {BBB} {chapterNumber}:{verseNumber} {vText!r}" )
                 vText = vText.replace( '\n', ' ' )
             thisBook.addLine( 'v', verseNumber + ' ' + vText ); verseNumber = None
     # end of VerseViewXMLBible.__validateAndExtractVerse
@@ -557,7 +556,7 @@ def briefDemo() -> None:
                 somepath = os.path.join( testFolder, something )
                 if os.path.isfile( somepath ) and something.endswith( '.xml' ):
                     count += 1
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nH B{}/ {}".format( count, something ) )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nH B{count}/ {something}" )
                     vvB = VerseViewXMLBible( testFolder, something )
                     vvB.load()
                     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, vvB )
@@ -569,7 +568,7 @@ def briefDemo() -> None:
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, UB.getAddedUnits() )
                     #for ref in ('GEN','Genesis','GeNeSiS','Gen','MrK','mt','Prv','Xyz',):
                         ##dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Looking for", ref )
-                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Tried finding {!r} in {!r}: got {!r}".format( ref, name, UB.getXRefBBB( ref ) ) )
+                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Tried finding {ref!r} in {name!r}: got {UB.getXRefBBB( ref )!r}" )
                     if 1: # Test verse lookup
                         from BibleOrgSys.Reference import VerseReferences
                         for reference in ( ('OT','GEN','1','1'), ('OT','GEN','1','3'), ('OT','PSA','3','0'), ('OT','PSA','3','1'), \
@@ -589,8 +588,8 @@ def briefDemo() -> None:
                     #else:
                         #vvB.toHaggaiXML()
                     break
-                else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Sorry, skipping {}.".format( something ) )
-            if count: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n{} total VerseView Bibles processed.".format( count ) )
+                else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Sorry, skipping {something}." )
+            if count: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n{count} total VerseView Bibles processed." )
         else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Sorry, test folder '{testFolder}' is not readable on this computer." )
 # end of VerseViewXMLBible.briefDemo
 
@@ -616,7 +615,7 @@ def fullDemo() -> None:
                 somepath = os.path.join( testFolder, something )
                 if os.path.isfile( somepath ) and something.endswith( '.xml' ):
                     count += 1
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nH B{}/ {}".format( count, something ) )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nH B{count}/ {something}" )
                     vvB = VerseViewXMLBible( testFolder, something )
                     vvB.load()
                     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, vvB )
@@ -628,7 +627,7 @@ def fullDemo() -> None:
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, UB.getAddedUnits() )
                     #for ref in ('GEN','Genesis','GeNeSiS','Gen','MrK','mt','Prv','Xyz',):
                         ##dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Looking for", ref )
-                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Tried finding {!r} in {!r}: got {!r}".format( ref, name, UB.getXRefBBB( ref ) ) )
+                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Tried finding {ref!r} in {name!r}: got {UB.getXRefBBB( ref )!r}" )
                     if 1: # Test verse lookup
                         from BibleOrgSys.Reference import VerseReferences
                         for reference in ( ('OT','GEN','1','1'), ('OT','GEN','1','3'), ('OT','PSA','3','0'), ('OT','PSA','3','1'), \
@@ -647,8 +646,8 @@ def fullDemo() -> None:
                         vvB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
                     #else:
                         #vvB.toHaggaiXML()
-                else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Sorry, skipping {}.".format( something ) )
-            if count: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n{} total VerseView Bibles processed.".format( count ) )
+                else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Sorry, skipping {something}." )
+            if count: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n{count} total VerseView Bibles processed." )
         else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Sorry, test folder '{testFolder}' is not readable on this computer." )
 # end of VerseViewXMLBible.fullDemo
 

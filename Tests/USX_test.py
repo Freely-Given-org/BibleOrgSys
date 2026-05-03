@@ -34,7 +34,6 @@ Made to be run from the BibleOrgSys folder, i.e.,
 
 CHANGELOG:
 """
-from gettext import gettext as _
 import os
 from pathlib import Path
 import multiprocessing
@@ -58,7 +57,7 @@ SHORT_PROGRAM_NAME = "USX_test"
 PROGRAM_NAME = "Test USX exports vs Paratext"
 PROGRAM_VERSION = '0.50'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
-PROGRAM_NAME_VERSION_DATE = f'{PROGRAM_NAME_VERSION} {_("last modified")} {LAST_MODIFIED_DATE}'
+PROGRAM_NAME_VERSION_DATE = f'{PROGRAM_NAME_VERSION} {"last modified"} {LAST_MODIFIED_DATE}'
 
 DEBUGGING_THIS_MODULE = False
 
@@ -86,19 +85,19 @@ def validateXML( usx_filepath: Path | str ) -> tuple:
         checkProgramOutputBytes, checkProgramErrorOutputBytes = checkProcess.communicate()
         returnCode = checkProcess.returncode
     except FileNotFoundError:
-        logging.error( "MLWriter.validateXML is unable to open {!r}".format( parameters[0] ) )
+        logging.error( f"MLWriter.validateXML is unable to open {parameters[0]!r}" )
         return None
     checkProgramOutputString = checkProgramErrorOutputString = ''
-    if checkProgramOutputBytes: checkProgramOutputString = '{}:\n{}'.format( usx_filepath, checkProgramOutputBytes.decode( encoding='utf-8', errors='replace' ) )
+    if checkProgramOutputBytes: checkProgramOutputString = f"{usx_filepath}:\n{checkProgramOutputBytes.decode( encoding='utf-8', errors='replace' )}"
     if checkProgramErrorOutputBytes:
         tempString = checkProgramErrorOutputBytes.decode( encoding='utf-8', errors='replace' )
         if tempString.count('\n')>1 or not tempString.endswith('validates\n'):
-            checkProgramErrorOutputString = '{}:\n{}'.format( usx_filepath, tempString )
+            checkProgramErrorOutputString = f'{usx_filepath}:\n{tempString}'
     xmllintError = ("No error", "Unclassified", "Error in DTD", "Validation error", "Validation error", "Error in schema compilation", "Error writing output", "Error in pattern", "Error in reader registration", "Out of memory")
     if returnCode != 0:
         vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  WARNING: xmllint gave an error on the created {usx_filepath} file: {returnCode} = {xmllintError[returnCode]}" )
         if returnCode == 5: # schema error
-            logging.critical( "MLWriter.validateXML couldn't read/parse the schema at {}".format( schemaFilepath ) )
+            logging.critical( f"MLWriter.validateXML couldn't read/parse the schema at {schemaFilepath}" )
             if BibleOrgSysGlobals.debugFlag and (DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.strictCheckingFlag): schema_fault
     else: vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"  xmllint validated the xml file {usx_filepath}." )
     return returnCode, checkProgramOutputString, checkProgramErrorOutputString,

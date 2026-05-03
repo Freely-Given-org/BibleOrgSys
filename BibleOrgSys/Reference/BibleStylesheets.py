@@ -25,7 +25,6 @@
 
 """
 """
-from gettext import gettext as _
 import os
 import logging
 from pathlib import Path
@@ -86,152 +85,152 @@ SUPERSCRIPT_OFFSET = '4'
 DEFAULT_STYLE_DICT = { # earliest entries have the highest priority
 # The following fields from InternalBible all contain their own (self-contained) text (in _processedLines)
 # File beginning
-    'id': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'background':'firebrick1', },
-    'ide': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'background':'tan1', },
-    'h': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'foreground':'green4', },
-    'rem': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'foreground':'lightBlue', },
-    'toc1': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'background':'ivory2', },
-    'toc2': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'background':'ivory3', },
-    'toc3': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'background':'ivory4', },
+    'id': { 'font':f'{DEFAULT_FONTNAME} {DEFAULT_FONTSIZE} bold', 'background':'firebrick1', },
+    'ide': { 'font':f'{DEFAULT_FONTNAME} {DEFAULT_FONTSIZE} bold', 'background':'tan1', },
+    'h': { 'font':f'{DEFAULT_FONTNAME} {DEFAULT_FONTSIZE} bold', 'foreground':'green4', },
+    'rem': { 'font':f'{DEFAULT_FONTNAME} {DEFAULT_FONTSIZE} bold', 'foreground':'lightBlue', },
+    'toc1': { 'font':f'{DEFAULT_FONTNAME} {DEFAULT_FONTSIZE} bold', 'background':'ivory2', },
+    'toc2': { 'font':f'{DEFAULT_FONTNAME} {DEFAULT_FONTSIZE} bold', 'background':'ivory3', },
+    'toc3': { 'font':f'{DEFAULT_FONTNAME} {DEFAULT_FONTSIZE} bold', 'background':'ivory4', },
 # Our added fields
-    'headers': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'background':'lightYellow', },
-    'intro': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'background':'lightYellow', },
-    'chapters': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'background':'lightYellow', },
+    'headers': { 'font':f'{DEFAULT_FONTNAME} {DEFAULT_FONTSIZE} bold', 'background':'lightYellow', },
+    'intro': { 'font':f'{DEFAULT_FONTNAME} {DEFAULT_FONTSIZE} bold', 'background':'lightYellow', },
+    'chapters': { 'font':f'{DEFAULT_FONTNAME} {DEFAULT_FONTSIZE} bold', 'background':'lightYellow', },
 # Headings
-    'mt1': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, TITLE_FONTSIZE ), 'foreground':'gold', 'justify':'center', },
-    'mt2': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, TITLE_FONTSIZE ), 'foreground':'gold2', 'justify':'center', },
-    'mt3': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, TITLE_FONTSIZE ), 'foreground':'gold3', 'justify':'center', },
-    'mt4': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, TITLE_FONTSIZE ), 'foreground':'gold4', 'justify':'center', },
-    's1': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, HEADING_FONTSIZE ), 'foreground':HEADING_COLOUR, 'justify':'center', },
-    's2': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, HEADING_FONTSIZE ), 'foreground':HEADING_COLOUR, 'justify':'center', },
-    's3': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, HEADING_FONTSIZE ), 'foreground':HEADING_COLOUR, 'justify':'center', },
-    's4': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, HEADING_FONTSIZE ), 'foreground':HEADING_COLOUR, 'justify':'center', },
-    'ms1': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, HEADING_FONTSIZE ), 'foreground':HEADING_COLOUR, 'justify':'center', },
-    'ms2': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, HEADING_FONTSIZE ), 'foreground':HEADING_COLOUR, 'justify':'center', },
-    'ms3': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, HEADING_FONTSIZE ), 'foreground':HEADING_COLOUR, 'justify':'center', },
-    'ms4': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, HEADING_FONTSIZE ), 'foreground':HEADING_COLOUR, 'justify':'center', },
-    'cl': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, HEADING_FONTSIZE ), 'foreground':HEADING_COLOUR, 'justify':'center', },
+    'mt1': { 'font':f'{DEFAULT_FONTNAME} {TITLE_FONTSIZE} bold', 'foreground':'gold', 'justify':'center', },
+    'mt2': { 'font':f'{DEFAULT_FONTNAME} {TITLE_FONTSIZE} bold', 'foreground':'gold2', 'justify':'center', },
+    'mt3': { 'font':f'{DEFAULT_FONTNAME} {TITLE_FONTSIZE} bold', 'foreground':'gold3', 'justify':'center', },
+    'mt4': { 'font':f'{DEFAULT_FONTNAME} {TITLE_FONTSIZE} bold', 'foreground':'gold4', 'justify':'center', },
+    's1': { 'font':f'{DEFAULT_FONTNAME} {HEADING_FONTSIZE} bold', 'foreground':HEADING_COLOUR, 'justify':'center', },
+    's2': { 'font':f'{DEFAULT_FONTNAME} {HEADING_FONTSIZE} bold', 'foreground':HEADING_COLOUR, 'justify':'center', },
+    's3': { 'font':f'{DEFAULT_FONTNAME} {HEADING_FONTSIZE} bold', 'foreground':HEADING_COLOUR, 'justify':'center', },
+    's4': { 'font':f'{DEFAULT_FONTNAME} {HEADING_FONTSIZE} bold', 'foreground':HEADING_COLOUR, 'justify':'center', },
+    'ms1': { 'font':f'{DEFAULT_FONTNAME} {HEADING_FONTSIZE} bold', 'foreground':HEADING_COLOUR, 'justify':'center', },
+    'ms2': { 'font':f'{DEFAULT_FONTNAME} {HEADING_FONTSIZE} bold', 'foreground':HEADING_COLOUR, 'justify':'center', },
+    'ms3': { 'font':f'{DEFAULT_FONTNAME} {HEADING_FONTSIZE} bold', 'foreground':HEADING_COLOUR, 'justify':'center', },
+    'ms4': { 'font':f'{DEFAULT_FONTNAME} {HEADING_FONTSIZE} bold', 'foreground':HEADING_COLOUR, 'justify':'center', },
+    'cl': { 'font':f'{DEFAULT_FONTNAME} {HEADING_FONTSIZE} bold', 'foreground':HEADING_COLOUR, 'justify':'center', },
 # Other
-    'd': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, SUBHEADING_FONTSIZE ), 'foreground':SUBHEADING_COLOUR, },
-    'sp': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, SUBHEADING_FONTSIZE ), 'foreground':EXTRA_COLOUR, },
-    'c': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, CHAPTERNUMBER_FONTSIZE ), 'foreground':CHAPTERNUMBER_COLOUR, },
-    'r': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, HEADING_FONTSIZE ), 'foreground':SECTION_REFERENCE_COLOUR, 'justify':'center', },
-    'mr': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, HEADING_FONTSIZE ), 'foreground':SECTION_REFERENCE_COLOUR, 'justify':'center', },
-    'sr': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, HEADING_FONTSIZE ), 'foreground':SECTION_REFERENCE_COLOUR, 'justify':'center', },
-    'c#': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, CHAPTERNUMBER_FONTSIZE ), 'foreground':CHAPTERNUMBER_COLOUR, },
-    'c~': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, CHAPTERNUMBER_FONTSIZE ), 'foreground':CHAPTERNUMBER_COLOUR, },
-    'v': { 'font':'{} {}'.format( DEFAULT_FONTNAME, VERSENUMBER_FONTSIZE ), 'foreground':VERSENUMBER_COLOUR, 'offset':SUPERSCRIPT_OFFSET, },
+    'd': { 'font':f'{DEFAULT_FONTNAME} {SUBHEADING_FONTSIZE} bold', 'foreground':SUBHEADING_COLOUR, },
+    'sp': { 'font':f'{DEFAULT_FONTNAME} {SUBHEADING_FONTSIZE} bold', 'foreground':EXTRA_COLOUR, },
+    'c': { 'font':f'{DEFAULT_FONTNAME} {CHAPTERNUMBER_FONTSIZE} bold', 'foreground':CHAPTERNUMBER_COLOUR, },
+    'r': { 'font':f'{DEFAULT_FONTNAME} {HEADING_FONTSIZE} bold', 'foreground':SECTION_REFERENCE_COLOUR, 'justify':'center', },
+    'mr': { 'font':f'{DEFAULT_FONTNAME} {HEADING_FONTSIZE} bold', 'foreground':SECTION_REFERENCE_COLOUR, 'justify':'center', },
+    'sr': { 'font':f'{DEFAULT_FONTNAME} {HEADING_FONTSIZE} bold', 'foreground':SECTION_REFERENCE_COLOUR, 'justify':'center', },
+    'c#': { 'font':f'{DEFAULT_FONTNAME} {CHAPTERNUMBER_FONTSIZE} bold', 'foreground':CHAPTERNUMBER_COLOUR, },
+    'c~': { 'font':f'{DEFAULT_FONTNAME} {CHAPTERNUMBER_FONTSIZE} bold', 'foreground':CHAPTERNUMBER_COLOUR, },
+    'v': { 'font':f'{DEFAULT_FONTNAME} {VERSENUMBER_FONTSIZE}', 'foreground':VERSENUMBER_COLOUR, 'offset':SUPERSCRIPT_OFFSET, },
 
 # Introduction
-    'iq1': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'lmargin1':1*INDENT_SIZE, 'lmargin2':1*INDENT_SIZE, },
-    'iq2': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'lmargin1':2*INDENT_SIZE, 'lmargin2':2*INDENT_SIZE, },
-    'iq3': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'lmargin1':3*INDENT_SIZE, 'lmargin2':3*INDENT_SIZE, },
-    'iq4': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'lmargin1':4*INDENT_SIZE, 'lmargin2':4*INDENT_SIZE, },
-    '*iq1': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), 'lmargin1':1*INDENT_SIZE, 'lmargin2':1*INDENT_SIZE, },
-    '*iq2': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), 'lmargin1':2*INDENT_SIZE, 'lmargin2':2*INDENT_SIZE, },
-    '*iq3': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), 'lmargin1':3*INDENT_SIZE, 'lmargin2':3*INDENT_SIZE, },
-    '*iq4': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), 'lmargin1':4*INDENT_SIZE, 'lmargin2':4*INDENT_SIZE, },
+    'iq1': { 'font':f'{DEFAULT_FONTNAME} {DEFAULT_FONTSIZE}', 'lmargin1':1*INDENT_SIZE, 'lmargin2':1*INDENT_SIZE, },
+    'iq2': { 'font':f'{DEFAULT_FONTNAME} {DEFAULT_FONTSIZE}', 'lmargin1':2*INDENT_SIZE, 'lmargin2':2*INDENT_SIZE, },
+    'iq3': { 'font':f'{DEFAULT_FONTNAME} {DEFAULT_FONTSIZE}', 'lmargin1':3*INDENT_SIZE, 'lmargin2':3*INDENT_SIZE, },
+    'iq4': { 'font':f'{DEFAULT_FONTNAME} {DEFAULT_FONTSIZE}', 'lmargin1':4*INDENT_SIZE, 'lmargin2':4*INDENT_SIZE, },
+    '*iq1': { 'font':f'{DEFAULT_FONTNAME} {CURRENT_VERSE_FONTSIZE}', 'lmargin1':1*INDENT_SIZE, 'lmargin2':1*INDENT_SIZE, },
+    '*iq2': { 'font':f'{DEFAULT_FONTNAME} {CURRENT_VERSE_FONTSIZE}', 'lmargin1':2*INDENT_SIZE, 'lmargin2':2*INDENT_SIZE, },
+    '*iq3': { 'font':f'{DEFAULT_FONTNAME} {CURRENT_VERSE_FONTSIZE}', 'lmargin1':3*INDENT_SIZE, 'lmargin2':3*INDENT_SIZE, },
+    '*iq4': { 'font':f'{DEFAULT_FONTNAME} {CURRENT_VERSE_FONTSIZE}', 'lmargin1':4*INDENT_SIZE, 'lmargin2':4*INDENT_SIZE, },
 
 # The next two should theoretically never be used in formatted Bibles
 #  (because v~ fields should take on the previous paragraph tag)
-    'v~': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), },
-    '*v~': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), 'background':'lightYellow', },
+    'v~': { 'font':f'{DEFAULT_FONTNAME} {DEFAULT_FONTSIZE}', },
+    '*v~': { 'font':f'{DEFAULT_FONTNAME} {CURRENT_VERSE_FONTSIZE}', 'background':'lightYellow', },
 
 # The following paragraph level fields can contain text, or can influence the next v~/p~ text
 # These are for formatted view
-    'p': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'lmargin1':1*INDENT_SIZE, 'lmargin2':0*INDENT_SIZE, },
-    '*p': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), 'lmargin1':1*INDENT_SIZE, 'lmargin2':0*INDENT_SIZE, },
-    'q1': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'lmargin1':1*INDENT_SIZE, 'lmargin2':1*INDENT_SIZE, },
-    'q2': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'lmargin1':2*INDENT_SIZE, 'lmargin2':2*INDENT_SIZE, },
-    'q3': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'lmargin1':3*INDENT_SIZE, 'lmargin2':3*INDENT_SIZE, },
-    'q4': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'lmargin1':4*INDENT_SIZE, 'lmargin2':4*INDENT_SIZE, },
-    '*q1': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), 'lmargin1':1*INDENT_SIZE, 'lmargin2':1*INDENT_SIZE, 'background':'yellow', },
-    '*q2': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), 'lmargin1':2*INDENT_SIZE, 'lmargin2':2*INDENT_SIZE, },
-    '*q3': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), 'lmargin1':3*INDENT_SIZE, 'lmargin2':3*INDENT_SIZE, },
-    '*q4': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), 'lmargin1':4*INDENT_SIZE, 'lmargin2':4*INDENT_SIZE, },
-    'm': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'lmargin1':0*INDENT_SIZE, 'lmargin2':0*INDENT_SIZE, },
-    '*m': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), 'lmargin1':0*INDENT_SIZE, 'lmargin2':0*INDENT_SIZE, },
-    'mi': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ),  'background':'pink', 'lmargin1':1*INDENT_SIZE, 'lmargin2':1*INDENT_SIZE, },
-    '*mi': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ),  'background':'pink', 'lmargin1':1*INDENT_SIZE, 'lmargin2':1*INDENT_SIZE, },
-    'pi1': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'background':'pink', 'lmargin1':2*INDENT_SIZE, 'lmargin2':1*INDENT_SIZE, },
-    'pi2': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'background':'purple', 'lmargin1':3*INDENT_SIZE, 'lmargin2':3*INDENT_SIZE, },
-    'pi3': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'background':'green', 'lmargin1':4*INDENT_SIZE, 'lmargin2':3*INDENT_SIZE, },
-    'pi4': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'background':'brown', 'lmargin1':5*INDENT_SIZE, 'lmargin2':4*INDENT_SIZE, },
-    '*pi1': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), 'background':'pink', 'lmargin1':2*INDENT_SIZE, 'lmargin2':1*INDENT_SIZE, },
-    '*pi2': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), 'background':'purple', 'lmargin1':3*INDENT_SIZE, 'lmargin2':2*INDENT_SIZE, },
-    '*pi3': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), 'background':'green', 'lmargin1':4*INDENT_SIZE, 'lmargin2':3*INDENT_SIZE, },
-    '*pi4': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), 'background':'brown', 'lmargin1':5*INDENT_SIZE, 'lmargin2':4*INDENT_SIZE, },
+    'p': { 'font':f'{DEFAULT_FONTNAME} {DEFAULT_FONTSIZE}', 'lmargin1':1*INDENT_SIZE, 'lmargin2':0*INDENT_SIZE, },
+    '*p': { 'font':f'{DEFAULT_FONTNAME} {CURRENT_VERSE_FONTSIZE}', 'lmargin1':1*INDENT_SIZE, 'lmargin2':0*INDENT_SIZE, },
+    'q1': { 'font':f'{DEFAULT_FONTNAME} {DEFAULT_FONTSIZE}', 'lmargin1':1*INDENT_SIZE, 'lmargin2':1*INDENT_SIZE, },
+    'q2': { 'font':f'{DEFAULT_FONTNAME} {DEFAULT_FONTSIZE}', 'lmargin1':2*INDENT_SIZE, 'lmargin2':2*INDENT_SIZE, },
+    'q3': { 'font':f'{DEFAULT_FONTNAME} {DEFAULT_FONTSIZE}', 'lmargin1':3*INDENT_SIZE, 'lmargin2':3*INDENT_SIZE, },
+    'q4': { 'font':f'{DEFAULT_FONTNAME} {DEFAULT_FONTSIZE}', 'lmargin1':4*INDENT_SIZE, 'lmargin2':4*INDENT_SIZE, },
+    '*q1': { 'font':f'{DEFAULT_FONTNAME} {CURRENT_VERSE_FONTSIZE}', 'lmargin1':1*INDENT_SIZE, 'lmargin2':1*INDENT_SIZE, 'background':'yellow', },
+    '*q2': { 'font':f'{DEFAULT_FONTNAME} {CURRENT_VERSE_FONTSIZE}', 'lmargin1':2*INDENT_SIZE, 'lmargin2':2*INDENT_SIZE, },
+    '*q3': { 'font':f'{DEFAULT_FONTNAME} {CURRENT_VERSE_FONTSIZE}', 'lmargin1':3*INDENT_SIZE, 'lmargin2':3*INDENT_SIZE, },
+    '*q4': { 'font':f'{DEFAULT_FONTNAME} {CURRENT_VERSE_FONTSIZE}', 'lmargin1':4*INDENT_SIZE, 'lmargin2':4*INDENT_SIZE, },
+    'm': { 'font':f'{DEFAULT_FONTNAME} {DEFAULT_FONTSIZE}', 'lmargin1':0*INDENT_SIZE, 'lmargin2':0*INDENT_SIZE, },
+    '*m': { 'font':f'{DEFAULT_FONTNAME} {CURRENT_VERSE_FONTSIZE}', 'lmargin1':0*INDENT_SIZE, 'lmargin2':0*INDENT_SIZE, },
+    'mi': { 'font':f'{DEFAULT_FONTNAME} {DEFAULT_FONTSIZE}',  'background':'pink', 'lmargin1':1*INDENT_SIZE, 'lmargin2':1*INDENT_SIZE, },
+    '*mi': { 'font':f'{DEFAULT_FONTNAME} {CURRENT_VERSE_FONTSIZE}',  'background':'pink', 'lmargin1':1*INDENT_SIZE, 'lmargin2':1*INDENT_SIZE, },
+    'pi1': { 'font':f'{DEFAULT_FONTNAME} {DEFAULT_FONTSIZE}', 'background':'pink', 'lmargin1':2*INDENT_SIZE, 'lmargin2':1*INDENT_SIZE, },
+    'pi2': { 'font':f'{DEFAULT_FONTNAME} {DEFAULT_FONTSIZE}', 'background':'purple', 'lmargin1':3*INDENT_SIZE, 'lmargin2':3*INDENT_SIZE, },
+    'pi3': { 'font':f'{DEFAULT_FONTNAME} {DEFAULT_FONTSIZE}', 'background':'green', 'lmargin1':4*INDENT_SIZE, 'lmargin2':3*INDENT_SIZE, },
+    'pi4': { 'font':f'{DEFAULT_FONTNAME} {DEFAULT_FONTSIZE}', 'background':'brown', 'lmargin1':5*INDENT_SIZE, 'lmargin2':4*INDENT_SIZE, },
+    '*pi1': { 'font':f'{DEFAULT_FONTNAME} {CURRENT_VERSE_FONTSIZE}', 'background':'pink', 'lmargin1':2*INDENT_SIZE, 'lmargin2':1*INDENT_SIZE, },
+    '*pi2': { 'font':f'{DEFAULT_FONTNAME} {CURRENT_VERSE_FONTSIZE}', 'background':'purple', 'lmargin1':3*INDENT_SIZE, 'lmargin2':2*INDENT_SIZE, },
+    '*pi3': { 'font':f'{DEFAULT_FONTNAME} {CURRENT_VERSE_FONTSIZE}', 'background':'green', 'lmargin1':4*INDENT_SIZE, 'lmargin2':3*INDENT_SIZE, },
+    '*pi4': { 'font':f'{DEFAULT_FONTNAME} {CURRENT_VERSE_FONTSIZE}', 'background':'brown', 'lmargin1':5*INDENT_SIZE, 'lmargin2':4*INDENT_SIZE, },
 
 # Lists (for formatted view)
-    'li1': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'lmargin1':1*INDENT_SIZE, 'lmargin2':2*INDENT_SIZE, },
-    '*li1': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), 'lmargin1':1*INDENT_SIZE, 'lmargin2':2*INDENT_SIZE, },
-    'li2': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'lmargin1':2*INDENT_SIZE, 'lmargin2':3*INDENT_SIZE, },
-    '*li2': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), 'lmargin1':2*INDENT_SIZE, 'lmargin2':3*INDENT_SIZE, },
-    'li3': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'lmargin1':3*INDENT_SIZE, 'lmargin2':4*INDENT_SIZE, },
-    '*li3': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), 'lmargin1':3*INDENT_SIZE, 'lmargin2':4*INDENT_SIZE, },
-    'li4': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'lmargin1':4*INDENT_SIZE, 'lmargin2':5*INDENT_SIZE, },
-    '*li4': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), 'lmargin1':4*INDENT_SIZE, 'lmargin2':5*INDENT_SIZE, },
+    'li1': { 'font':f'{DEFAULT_FONTNAME} {DEFAULT_FONTSIZE}', 'lmargin1':1*INDENT_SIZE, 'lmargin2':2*INDENT_SIZE, },
+    '*li1': { 'font':f'{DEFAULT_FONTNAME} {CURRENT_VERSE_FONTSIZE}', 'lmargin1':1*INDENT_SIZE, 'lmargin2':2*INDENT_SIZE, },
+    'li2': { 'font':f'{DEFAULT_FONTNAME} {DEFAULT_FONTSIZE}', 'lmargin1':2*INDENT_SIZE, 'lmargin2':3*INDENT_SIZE, },
+    '*li2': { 'font':f'{DEFAULT_FONTNAME} {CURRENT_VERSE_FONTSIZE}', 'lmargin1':2*INDENT_SIZE, 'lmargin2':3*INDENT_SIZE, },
+    'li3': { 'font':f'{DEFAULT_FONTNAME} {DEFAULT_FONTSIZE}', 'lmargin1':3*INDENT_SIZE, 'lmargin2':4*INDENT_SIZE, },
+    '*li3': { 'font':f'{DEFAULT_FONTNAME} {CURRENT_VERSE_FONTSIZE}', 'lmargin1':3*INDENT_SIZE, 'lmargin2':4*INDENT_SIZE, },
+    'li4': { 'font':f'{DEFAULT_FONTNAME} {DEFAULT_FONTSIZE}', 'lmargin1':4*INDENT_SIZE, 'lmargin2':5*INDENT_SIZE, },
+    '*li4': { 'font':f'{DEFAULT_FONTNAME} {CURRENT_VERSE_FONTSIZE}', 'lmargin1':4*INDENT_SIZE, 'lmargin2':5*INDENT_SIZE, },
 
 
 # These are the styles for unformatted mode that are different from above
 # Headings (for unformatted view)
-    'mt1#': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, TITLE_FONTSIZE ), 'foreground':'gold', },
-    'mt2#': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, TITLE_FONTSIZE ), 'foreground':'gold2', },
-    'mt3#': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, TITLE_FONTSIZE ), 'foreground':'gold3', },
-    'mt4#': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, TITLE_FONTSIZE ), 'foreground':'gold4', },
-    's1#': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, HEADING_FONTSIZE ), 'foreground':HEADING_COLOUR, },
-    's2#': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, HEADING_FONTSIZE ), 'foreground':HEADING_COLOUR, },
-    's3#': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, HEADING_FONTSIZE ), 'foreground':HEADING_COLOUR, },
-    's4#': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, HEADING_FONTSIZE ), 'foreground':HEADING_COLOUR, },
-    'ms1#': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, HEADING_FONTSIZE ), 'foreground':HEADING_COLOUR, },
-    'ms2#': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, HEADING_FONTSIZE ), 'foreground':HEADING_COLOUR, },
-    'ms3#': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, HEADING_FONTSIZE ), 'foreground':HEADING_COLOUR, },
-    'ms4#': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, HEADING_FONTSIZE ), 'foreground':HEADING_COLOUR, },
-    'cl#': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, HEADING_FONTSIZE ), 'foreground':HEADING_COLOUR, },
+    'mt1#': { 'font':f'{DEFAULT_FONTNAME} {TITLE_FONTSIZE} bold', 'foreground':'gold', },
+    'mt2#': { 'font':f'{DEFAULT_FONTNAME} {TITLE_FONTSIZE} bold', 'foreground':'gold2', },
+    'mt3#': { 'font':f'{DEFAULT_FONTNAME} {TITLE_FONTSIZE} bold', 'foreground':'gold3', },
+    'mt4#': { 'font':f'{DEFAULT_FONTNAME} {TITLE_FONTSIZE} bold', 'foreground':'gold4', },
+    's1#': { 'font':f'{DEFAULT_FONTNAME} {HEADING_FONTSIZE} bold', 'foreground':HEADING_COLOUR, },
+    's2#': { 'font':f'{DEFAULT_FONTNAME} {HEADING_FONTSIZE} bold', 'foreground':HEADING_COLOUR, },
+    's3#': { 'font':f'{DEFAULT_FONTNAME} {HEADING_FONTSIZE} bold', 'foreground':HEADING_COLOUR, },
+    's4#': { 'font':f'{DEFAULT_FONTNAME} {HEADING_FONTSIZE} bold', 'foreground':HEADING_COLOUR, },
+    'ms1#': { 'font':f'{DEFAULT_FONTNAME} {HEADING_FONTSIZE} bold', 'foreground':HEADING_COLOUR, },
+    'ms2#': { 'font':f'{DEFAULT_FONTNAME} {HEADING_FONTSIZE} bold', 'foreground':HEADING_COLOUR, },
+    'ms3#': { 'font':f'{DEFAULT_FONTNAME} {HEADING_FONTSIZE} bold', 'foreground':HEADING_COLOUR, },
+    'ms4#': { 'font':f'{DEFAULT_FONTNAME} {HEADING_FONTSIZE} bold', 'foreground':HEADING_COLOUR, },
+    'cl#': { 'font':f'{DEFAULT_FONTNAME} {HEADING_FONTSIZE} bold', 'foreground':HEADING_COLOUR, },
 
 # Other (for unformatted view)
-    'r#': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, HEADING_FONTSIZE ), 'foreground':SECTION_REFERENCE_COLOUR, },
-    'mr#': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, HEADING_FONTSIZE ), 'foreground':SECTION_REFERENCE_COLOUR, },
-    'sr#': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, HEADING_FONTSIZE ), 'foreground':SECTION_REFERENCE_COLOUR, },
+    'r#': { 'font':f'{DEFAULT_FONTNAME} {HEADING_FONTSIZE} bold', 'foreground':SECTION_REFERENCE_COLOUR, },
+    'mr#': { 'font':f'{DEFAULT_FONTNAME} {HEADING_FONTSIZE} bold', 'foreground':SECTION_REFERENCE_COLOUR, },
+    'sr#': { 'font':f'{DEFAULT_FONTNAME} {HEADING_FONTSIZE} bold', 'foreground':SECTION_REFERENCE_COLOUR, },
 
 # Paragraph level fields can contain text, or can influence the next v~ text (for unformatted view)
-    'p#': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), },
-    '*p#': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), },
-    'q1#': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), },
-    'q2#': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), },
-    'q3#': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), },
-    'q4#': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), },
-    '*q1#': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), },
-    '*q2#': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), },
-    '*q3#': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), },
-    '*q4#': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), },
-    'mi#': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ),  'background':'pink', },
-    '*mi#': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ),  'background':'pink', },
-    'pi1#': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'background':'pink', },
-    'pi2#': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'background':'purple', },
-    'pi3#': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'background':'green', },
-    'pi4#': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'background':'brown', },
-    '*pi1#': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), 'background':'pink', },
-    '*pi2#': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), 'background':'purple', },
-    '*pi3#': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), 'background':'green', },
-    '*pi4#': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), 'background':'brown', },
+    'p#': { 'font':f'{DEFAULT_FONTNAME} {DEFAULT_FONTSIZE}', },
+    '*p#': { 'font':f'{DEFAULT_FONTNAME} {CURRENT_VERSE_FONTSIZE}', },
+    'q1#': { 'font':f'{DEFAULT_FONTNAME} {DEFAULT_FONTSIZE}', },
+    'q2#': { 'font':f'{DEFAULT_FONTNAME} {DEFAULT_FONTSIZE}', },
+    'q3#': { 'font':f'{DEFAULT_FONTNAME} {DEFAULT_FONTSIZE}', },
+    'q4#': { 'font':f'{DEFAULT_FONTNAME} {DEFAULT_FONTSIZE}', },
+    '*q1#': { 'font':f'{DEFAULT_FONTNAME} {CURRENT_VERSE_FONTSIZE}', },
+    '*q2#': { 'font':f'{DEFAULT_FONTNAME} {CURRENT_VERSE_FONTSIZE}', },
+    '*q3#': { 'font':f'{DEFAULT_FONTNAME} {CURRENT_VERSE_FONTSIZE}', },
+    '*q4#': { 'font':f'{DEFAULT_FONTNAME} {CURRENT_VERSE_FONTSIZE}', },
+    'mi#': { 'font':f'{DEFAULT_FONTNAME} {DEFAULT_FONTSIZE}',  'background':'pink', },
+    '*mi#': { 'font':f'{DEFAULT_FONTNAME} {CURRENT_VERSE_FONTSIZE}',  'background':'pink', },
+    'pi1#': { 'font':f'{DEFAULT_FONTNAME} {DEFAULT_FONTSIZE}', 'background':'pink', },
+    'pi2#': { 'font':f'{DEFAULT_FONTNAME} {DEFAULT_FONTSIZE}', 'background':'purple', },
+    'pi3#': { 'font':f'{DEFAULT_FONTNAME} {DEFAULT_FONTSIZE}', 'background':'green', },
+    'pi4#': { 'font':f'{DEFAULT_FONTNAME} {DEFAULT_FONTSIZE}', 'background':'brown', },
+    '*pi1#': { 'font':f'{DEFAULT_FONTNAME} {CURRENT_VERSE_FONTSIZE}', 'background':'pink', },
+    '*pi2#': { 'font':f'{DEFAULT_FONTNAME} {CURRENT_VERSE_FONTSIZE}', 'background':'purple', },
+    '*pi3#': { 'font':f'{DEFAULT_FONTNAME} {CURRENT_VERSE_FONTSIZE}', 'background':'green', },
+    '*pi4#': { 'font':f'{DEFAULT_FONTNAME} {CURRENT_VERSE_FONTSIZE}', 'background':'brown', },
 
 # Lines without markers (continuation lines)
-    '###': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'foreground':'blue', },
+    '###': { 'font':f'{DEFAULT_FONTNAME} {DEFAULT_FONTSIZE}', 'foreground':'blue', },
 
 # Hebrew interlinear fields
-    'WordRef': { 'font':'{} {}'.format( DEFAULT_HEBREW_FONTNAME, DEFAULT_FONTSIZE ) },
-    'HebWord': { 'font':'{} {}'.format( DEFAULT_HEBREW_FONTNAME, DEFAULT_FONTSIZE + 4 ), 'foreground':'brown', },
-    'HebStrong': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), },
-    'HebMorph': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), },
-    'HebGenericGloss': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE + 2 ), 'foreground':'green', },
-    'HebSpecificGloss': { 'font':'{} {}'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE + 2 ), 'foreground':'orange', },
-    'WordRefSelected': { 'font':'{} {}'.format( DEFAULT_HEBREW_FONTNAME, DEFAULT_FONTSIZE + 1 ) },
-    'HebWordSelected': { 'font':'{} {}'.format( DEFAULT_HEBREW_FONTNAME, CURRENT_VERSE_FONTSIZE + 4 ), 'background':'yellow', },
-    'HebStrongSelected': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), 'background':'yellow', },
-    'HebMorphSelected': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE ), 'background':'yellow', },
-    'HebGenericGlossSelected': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE + 2 ), 'background':'yellow', },
-    'HebSpecificGlossSelected': { 'font':'{} {}'.format( DEFAULT_FONTNAME, CURRENT_VERSE_FONTSIZE + 2 ), 'background':'yellow', },
+    'WordRef': { 'font':f'{DEFAULT_HEBREW_FONTNAME} {DEFAULT_FONTSIZE}' },
+    'HebWord': { 'font':f'{DEFAULT_HEBREW_FONTNAME} {DEFAULT_FONTSIZE + 4}', 'foreground':'brown', },
+    'HebStrong': { 'font':f'{DEFAULT_FONTNAME} {DEFAULT_FONTSIZE}', },
+    'HebMorph': { 'font':f'{DEFAULT_FONTNAME} {DEFAULT_FONTSIZE}', },
+    'HebGenericGloss': { 'font':f'{DEFAULT_FONTNAME} {DEFAULT_FONTSIZE + 2}', 'foreground':'green', },
+    'HebSpecificGloss': { 'font':f'{DEFAULT_FONTNAME} {DEFAULT_FONTSIZE + 2}', 'foreground':'orange', },
+    'WordRefSelected': { 'font':f'{DEFAULT_HEBREW_FONTNAME} {DEFAULT_FONTSIZE + 1}' },
+    'HebWordSelected': { 'font':f'{DEFAULT_HEBREW_FONTNAME} {CURRENT_VERSE_FONTSIZE + 4}', 'background':'yellow', },
+    'HebStrongSelected': { 'font':f'{DEFAULT_FONTNAME} {CURRENT_VERSE_FONTSIZE}', 'background':'yellow', },
+    'HebMorphSelected': { 'font':f'{DEFAULT_FONTNAME} {CURRENT_VERSE_FONTSIZE}', 'background':'yellow', },
+    'HebGenericGlossSelected': { 'font':f'{DEFAULT_FONTNAME} {CURRENT_VERSE_FONTSIZE + 2}', 'background':'yellow', },
+    'HebSpecificGlossSelected': { 'font':f'{DEFAULT_FONTNAME} {CURRENT_VERSE_FONTSIZE + 2}', 'background':'yellow', },
     }
 
 
@@ -310,7 +309,7 @@ class BibleStylesheet():
     def importParatextStylesheet( self, folder, filename:str, encoding:str='utf-8' ) -> None:
         """
         """
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Importing {} Paratext stylesheet…".format( filename ) )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Importing {filename} Paratext stylesheet…" )
         PTSS = ParatextStylesheet().load( folder, filename, encoding )
         self.name = PTSS.name
         self.filepath = PTSS.filepath
@@ -325,7 +324,7 @@ class BibleStylesheet():
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, marker, field, repr(value) )
                     formatSpecification[field] = value
                 self.dataDict[marker] = formatSpecification
-            elif BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "USFM {} marker not included in {} Paratext stylesheet".format( marker, filename ) )
+            elif BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"USFM {marker} marker not included in {filename} Paratext stylesheet" )
             #export the marker
     # end of BibleStylesheet.importParatextStylesheet
 
@@ -354,12 +353,12 @@ class BibleStylesheet():
             result += ('\n' if result else '') + "  Number of records = " + str( len(self.dataDict) )
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2:
             if self.smallestSize:
-                result += ('\n' if result else '') + "  Smallest record size: {} markers".format( self.smallestSize )
+                result += ('\n' if result else '') + f"  Smallest record size: {self.smallestSize} markers"
             if self.largestSize:
-                result += ('\n' if result else '') + "  Largest record size: {} markers".format( self.largestSize )
-            if self.markerList: result += ('\n' if result else '') + "  Marker list: {}".format( self.markerList )
+                result += ('\n' if result else '') + f"  Largest record size: {self.largestSize} markers"
+            if self.markerList: result += ('\n' if result else '') + f"  Marker list: {self.markerList}"
             if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>3:
-                if self.markerSets: result += ('\n' if result else '') + "  Marker sets: {}".format( self.markerSets )
+                if self.markerSets: result += ('\n' if result else '') + f"  Marker sets: {self.markerSets}"
         return result
     # end of BibleStylesheet.__str__
 
@@ -431,7 +430,7 @@ class ParatextStylesheet():
         for USFMMarker in self.dataDict:
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, USFMMarker )
             if USFMMarker not in BibleOrgSysGlobals.loadedUSFMMarkers:
-                logging.warning( "ParatextStylesheet validate: found unexpected {!r} marker".format( USFMMarker ) )
+                logging.warning( f"ParatextStylesheet validate: found unexpected {USFMMarker!r} marker" )
     # end of ParatextStylesheet.load
 
 
@@ -460,12 +459,12 @@ class ParatextStylesheet():
             result += ('\n' if result else '') + "  Number of records = " + str( len(self.dataDict) )
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2:
             if self.smallestSize:
-                result += ('\n' if result else '') + "  Smallest record size: {} markers".format( self.smallestSize )
+                result += ('\n' if result else '') + f"  Smallest record size: {self.smallestSize} markers"
             if self.largestSize:
-                result += ('\n' if result else '') + "  Largest record size: {} markers".format( self.largestSize )
-            if self.markerList: result += ('\n' if result else '') + "  Marker list: {}".format( self.markerList )
+                result += ('\n' if result else '') + f"  Largest record size: {self.largestSize} markers"
+            if self.markerList: result += ('\n' if result else '') + f"  Marker list: {self.markerList}"
             if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>3:
-                if self.markerSets: result += ('\n' if result else '') + "  Marker sets: {}".format( self.markerSets )
+                if self.markerSets: result += ('\n' if result else '') + f"  Marker sets: {self.markerSets}"
         return result
     # end of ParatextStylesheet.__str__
 

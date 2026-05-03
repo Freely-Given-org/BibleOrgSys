@@ -30,7 +30,6 @@ CHANGELOG:
     2024-02-11 Improve assert test for left-over accents
 """
 
-from gettext import gettext as _
 import unicodedata
 
 from BibleOrgSys import BibleOrgSysGlobals
@@ -223,9 +222,9 @@ class Greek():
         @rtype: string
         """
         result = "Greek object"
-        result += ('\n' if result else '') + "  " + _("Original = {!r}").format( self.originalText )
+        result += ('\n' if result else '') + "  " + f"Original = {self.originalText!r}"
         if self.currentText != self.originalText:
-            result += ('\n' if result else '') + "  " + _("Current  = {!r}").format( self.currentText )
+            result += ('\n' if result else '') + "  " + f"Current  = {self.currentText!r}"
         return result
     # end of __str__
 
@@ -233,7 +232,7 @@ class Greek():
         if text is None: text = self.currentText
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "unicodedata", unicodedata.unidata_version )
         #def printUnicodeInfo( text, description ):
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "{}:".format( description ) )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{description}:" )
             #for j,char in enumerate(text):
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "{:2} {:04x} {} {!r}   (cat={} bid={} comb={} mirr={})" \
                     #.format(j, ord(char), unicodedata.name(char), char, unicodedata.category(char), unicodedata.bidirectional(char), unicodedata.combining(char), unicodedata.mirrored(char) ) )

@@ -68,7 +68,6 @@ CHANGELOG:
     2024-06-13 Work on making the class able to be pickled
     2026-04-08 Reduce some verbosity
 """
-from gettext import gettext as _
 import logging
 import os
 from pathlib import Path
@@ -108,20 +107,20 @@ def ZefaniaXMLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:b
     if autoLoad is true and exactly one Zefania Bible is found,
         returns the loaded ZefaniaXMLBible object.
     """
-    fnPrint( DEBUGGING_THIS_MODULE, "ZefaniaXMLBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
+    fnPrint( DEBUGGING_THIS_MODULE, f"ZefaniaXMLBibleFileCheck( {givenFolderName}, {strictCheck}, {autoLoad}, {autoLoadBooks} )" )
     if BibleOrgSysGlobals.debugFlag: assert givenFolderName and isinstance( givenFolderName, (str,Path) )
     if BibleOrgSysGlobals.debugFlag: assert autoLoad in (True,False,)
 
     # Check that the given folder is readable
     if not os.access( givenFolderName, os.R_OK ):
-        logging.critical( _("ZefaniaXMLBibleFileCheck: Given {!r} folder is unreadable").format( givenFolderName ) )
+        logging.critical( f"ZefaniaXMLBibleFileCheck: Given {givenFolderName!r} folder is unreadable" )
         return False
     if not os.path.isdir( givenFolderName ):
-        logging.critical( _("ZefaniaXMLBibleFileCheck: Given {!r} path is not a folder").format( givenFolderName ) )
+        logging.critical( f"ZefaniaXMLBibleFileCheck: Given {givenFolderName!r} path is not a folder" )
         return False
 
     # Find all the files and folders in this folder
-    vPrint( 'Verbose', DEBUGGING_THIS_MODULE, " ZefaniaXMLBibleFileCheck: Looking for files in given {}".format( givenFolderName ) )
+    vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f" ZefaniaXMLBibleFileCheck: Looking for files in given {givenFolderName}" )
     foundFolders, foundFiles = [], []
     for something in os.listdir( givenFolderName ):
         somepath = os.path.join( givenFolderName, something )
@@ -150,7 +149,7 @@ def ZefaniaXMLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:b
             if not firstLines or len(firstLines)<2: continue
             if not ( firstLines[0].startswith( '<?xml version="1.0"' ) or firstLines[0].startswith( "<?xml version='1.0'" ) ) \
             and not ( firstLines[0].startswith( '\ufeff<?xml version="1.0"' ) or firstLines[0].startswith( "\ufeff<?xml version='1.0'" ) ): # same but with BOM
-                vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "ZB (unexpected) first line was {!r} in {}".format( firstLines, thisFilename ) )
+                vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"ZB (unexpected) first line was {thisFilename!r} in {firstLines}" )
                 continue
             if not firstLines[1].startswith( '<XMLBIBLE' ) \
             and not firstLines[2].startswith( '<XMLBIBLE' ) \
@@ -163,7 +162,7 @@ def ZefaniaXMLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:b
             and not firstLines[1].startswith( '<!--For Programmers' ) \
             and not firstLines[1].startswith( '<!--Visit the' ) \
             and not firstLines[1].startswith( '<!--http://zefania' ):
-                dPrint( 'Verbose', DEBUGGING_THIS_MODULE, "ZefaniaXMLBibleFileCheck rejecting1 second line: {}".format( firstLines[1] ) )
+                dPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"ZefaniaXMLBibleFileCheck rejecting1 second line: {firstLines[1]}" )
                 continue
         lastFilenameFound = thisFilename
         numFound += 1
@@ -181,7 +180,7 @@ def ZefaniaXMLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:b
     foundProjects = []
     for thisFolderName in sorted( foundFolders ):
         tryFolderName = os.path.join( givenFolderName, thisFolderName+'/' )
-        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "    ZefaniaXMLBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
+        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"    ZefaniaXMLBibleFileCheck: Looking for files in {tryFolderName}" )
         foundSubfolders, foundSubfiles = [], []
         try:
             for something in os.listdir( tryFolderName ):
@@ -206,7 +205,7 @@ def ZefaniaXMLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:b
                 if not firstLines or len(firstLines)<2: continue
                 if not ( firstLines[0].startswith( '<?xml version="1.0"' ) or firstLines[0].startswith( "<?xml version='1.0'" ) ) \
                 and not ( firstLines[0].startswith( '\ufeff<?xml version="1.0"' ) or firstLines[0].startswith( "\ufeff<?xml version='1.0'" ) ): # same but with BOM
-                    vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "ZB (unexpected) first line was {!r} in {}".format( firstLines, thisFilename ) )
+                    vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"ZB (unexpected) first line was {thisFilename!r} in {firstLines}" )
                     continue
                 if not firstLines[1].startswith( '<XMLBIBLE' ) \
                 and not firstLines[2].startswith( '<XMLBIBLE' ) \
@@ -219,7 +218,7 @@ def ZefaniaXMLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:b
                 and not firstLines[1].startswith( '<!--For Programmers' ) \
                 and not firstLines[1].startswith( '<!--Visit the' ) \
                 and not firstLines[1].startswith( '<!--http://zefania' ):
-                    dPrint( 'Verbose', DEBUGGING_THIS_MODULE, "ZefaniaXMLBibleFileCheck rejecting2 second line: {}".format( firstLines[1] ) )
+                    dPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"ZefaniaXMLBibleFileCheck rejecting2 second line: {firstLines[1]}" )
                     continue
             foundProjects.append( (tryFolderName, thisFilename,) )
             lastFilenameFound = thisFilename
@@ -279,7 +278,7 @@ class ZefaniaXMLBible( Bible ):
 
         # Do a preliminary check on the readability of our file
         if not os.access( self.sourceFilepath, os.R_OK ):
-            logging.warning( "ZefaniaXMLBible: File {!r} is unreadable".format( self.sourceFilepath ) )
+            logging.warning( f"ZefaniaXMLBible: File {self.sourceFilepath!r} is unreadable" )
 
         self.name, self.abbreviation = self.givenName, self.givenAbbreviation
     # end of ZefaniaXMLBible.__init__
@@ -291,7 +290,7 @@ class ZefaniaXMLBible( Bible ):
         """
         Load a single source XML file and load book elements.
         """
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, _("Loading {}…").format( self.sourceFilepath ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Loading {self.sourceFilepath}…" )
         self.XMLTree = ElementTree().parse( self.sourceFilepath )
         if BibleOrgSysGlobals.debugFlag: assert self.XMLTree # Fail here if we didn't load anything at all
 
@@ -317,7 +316,7 @@ class ZefaniaXMLBible( Bible ):
                     revision = value
                 elif attrib == 'version':
                     version = value
-                else: logging.warning( "Unprocessed {!r} attribute ({}) in main element".format( attrib, value ) )
+                else: logging.warning( f"Unprocessed {value!r} attribute ({attrib}) in main element" )
             if name: self.name = name
             if status: self.status = status
             if revision: self.revision = revision
@@ -341,8 +340,8 @@ class ZefaniaXMLBible( Bible ):
                     BibleOrgSysGlobals.checkXMLNoText( element, sublocation, 'g3g5' )
                     BibleOrgSysGlobals.checkXMLNoTail( element, sublocation, 'd3f6' )
                     self.__validateAndExtractBook( element )
-                else: logging.error( "Expected to find {!r} but got {!r}".format( BOOK_TAG, element.tag ) )
-        else: logging.error( "Expected to load {!r} but got {!r}".format( TREE_TAG, self.XMLTree.tag ) )
+                else: logging.error( f"Expected to find {BOOK_TAG!r} but got {element.tag!r}" )
+        else: logging.error( f"Expected to load {TREE_TAG!r} but got {self.XMLTree.tag!r}" )
         self.doPostLoadProcessing()
         del self.XMLTree # There's no need to save this source file since we've fully processed it
     # end of ZefaniaXMLBible.load
@@ -378,97 +377,97 @@ class ZefaniaXMLBible( Bible ):
         for element in self.header:
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'header', element.tag )
             if element.tag == 'title':
-                sublocation = "title in {}".format( location )
+                sublocation = f"title in {location}"
                 BibleOrgSysGlobals.checkXMLNoTail( element, sublocation, 'al1d' )
                 BibleOrgSysGlobals.checkXMLNoAttributes( element, sublocation, 'j3jd' )
                 BibleOrgSysGlobals.checkXMLNoSubelements( element, sublocation, '5g78' )
                 if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: assert element.text
                 self.title = element.text
             elif element.tag == 'creator':
-                sublocation = "creator in {}".format( location )
+                sublocation = f"creator in {location}"
                 BibleOrgSysGlobals.checkXMLNoTail( element, sublocation, 'al1d' )
                 BibleOrgSysGlobals.checkXMLNoAttributes( element, sublocation, 'j3jd' )
                 BibleOrgSysGlobals.checkXMLNoSubelements( element, sublocation, '5g78' )
                 if element.text: self.creator = element.text
             elif element.tag == 'subject':
-                sublocation = "subject in {}".format( location )
+                sublocation = f"subject in {location}"
                 BibleOrgSysGlobals.checkXMLNoTail( element, sublocation, 'al1d' )
                 BibleOrgSysGlobals.checkXMLNoAttributes( element, sublocation, 'j3jd' )
                 BibleOrgSysGlobals.checkXMLNoSubelements( element, sublocation, '5g78' )
                 if element.text: self.subject = element.text
             elif element.tag == 'description':
-                sublocation = "description in {}".format( location )
+                sublocation = f"description in {location}"
                 BibleOrgSysGlobals.checkXMLNoTail( element, sublocation, 'al1d' )
                 BibleOrgSysGlobals.checkXMLNoAttributes( element, sublocation, 'j3jd' )
                 BibleOrgSysGlobals.checkXMLNoSubelements( element, sublocation, '5g78' )
                 if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: assert element.text
                 self.description = element.text
             elif element.tag == 'publisher':
-                sublocation = "publisher in {}".format( location )
+                sublocation = f"publisher in {location}"
                 BibleOrgSysGlobals.checkXMLNoTail( element, sublocation, 'al1d' )
                 BibleOrgSysGlobals.checkXMLNoAttributes( element, sublocation, 'j3jd' )
                 BibleOrgSysGlobals.checkXMLNoSubelements( element, sublocation, '5g78' )
                 if element.text: self.publisher = element.text
             elif element.tag == 'contributors':
-                sublocation = "contributors in {}".format( location )
+                sublocation = f"contributors in {location}"
                 BibleOrgSysGlobals.checkXMLNoTail( element, sublocation, 'al1d' )
                 BibleOrgSysGlobals.checkXMLNoAttributes( element, sublocation, 'j3jd' )
                 BibleOrgSysGlobals.checkXMLNoSubelements( element, sublocation, '5g78' )
                 if element.text: self.contributors = element.text
             elif element.tag == 'date':
-                sublocation = "date in {}".format( location )
+                sublocation = f"date in {location}"
                 BibleOrgSysGlobals.checkXMLNoTail( element, sublocation, 'al1d' )
                 BibleOrgSysGlobals.checkXMLNoAttributes( element, sublocation, 'j3jd' )
                 BibleOrgSysGlobals.checkXMLNoSubelements( element, sublocation, '5g78' )
                 if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: assert element.text
                 self.date = element.text
             elif element.tag == 'type':
-                sublocation = "type in {}".format( location )
+                sublocation = f"type in {location}"
                 BibleOrgSysGlobals.checkXMLNoTail( element, sublocation, 'al1d' )
                 BibleOrgSysGlobals.checkXMLNoAttributes( element, sublocation, 'j3jd' )
                 BibleOrgSysGlobals.checkXMLNoSubelements( element, sublocation, '5g78' )
                 if element.text: self.documentType = element.text
             elif element.tag == 'format':
-                sublocation = "format in {}".format( location )
+                sublocation = f"format in {location}"
                 BibleOrgSysGlobals.checkXMLNoTail( element, sublocation, 'al1d' )
                 BibleOrgSysGlobals.checkXMLNoAttributes( element, sublocation, 'j3jd' )
                 BibleOrgSysGlobals.checkXMLNoSubelements( element, sublocation, '5g78' )
                 if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: assert element.text
                 if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: assert element.text == 'Zefania XML Bible Markup Language'
             elif element.tag == 'identifier':
-                sublocation = "identifier in {}".format( location )
+                sublocation = f"identifier in {location}"
                 BibleOrgSysGlobals.checkXMLNoTail( element, sublocation, 'al1d' )
                 BibleOrgSysGlobals.checkXMLNoAttributes( element, sublocation, 'j3jd' )
                 BibleOrgSysGlobals.checkXMLNoSubelements( element, sublocation, '5g78' )
                 if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: assert element.text
                 self.identifier = element.text
             elif element.tag == 'source':
-                sublocation = "source in {}".format( location )
+                sublocation = f"source in {location}"
                 BibleOrgSysGlobals.checkXMLNoTail( element, sublocation, 'al1d' )
                 BibleOrgSysGlobals.checkXMLNoAttributes( element, sublocation, 'j3jd' )
                 BibleOrgSysGlobals.checkXMLNoSubelements( element, sublocation, '5g78' )
                 if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: assert element.text
                 self.source = element.text
             elif element.tag == 'language':
-                sublocation = "language in {}".format( location )
+                sublocation = f"language in {location}"
                 BibleOrgSysGlobals.checkXMLNoTail( element, sublocation, 'al1d' )
                 BibleOrgSysGlobals.checkXMLNoAttributes( element, sublocation, 'j3jd' )
                 BibleOrgSysGlobals.checkXMLNoSubelements( element, sublocation, '5g78' )
                 if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: assert element.text
                 self.language = element.text
             elif element.tag == 'coverage':
-                sublocation = "coverage in {}".format( location )
+                sublocation = f"coverage in {location}"
                 BibleOrgSysGlobals.checkXMLNoTail( element, sublocation, 'al1d' )
                 BibleOrgSysGlobals.checkXMLNoAttributes( element, sublocation, 'j3jd' )
                 BibleOrgSysGlobals.checkXMLNoSubelements( element, sublocation, '5g78' )
                 if element.text: self.coverage = element.text
             elif element.tag == 'rights':
-                sublocation = "rights in {}".format( location )
+                sublocation = f"rights in {location}"
                 BibleOrgSysGlobals.checkXMLNoTail( element, sublocation, 'al1d' )
                 BibleOrgSysGlobals.checkXMLNoAttributes( element, sublocation, 'j3jd' )
                 BibleOrgSysGlobals.checkXMLNoSubelements( element, sublocation, '5g78' )
                 if element.text: self.rights = element.text
-            else: logging.error( "Found unexpected {!r} tag in {}".format( element.tag, location ) )
+            else: logging.error( f"Found unexpected {location!r} tag in {element.tag}" )
     # end of ZefaniaXMLBible.__validateAndExtractHeader
 
 
@@ -488,7 +487,7 @@ class ZefaniaXMLBible( Bible ):
                 bookName = value
             elif attrib=="bsname":
                 bookShortName = value
-            else: logging.error( "Unprocessed {!r} attribute ({}) in book element".format( attrib, value ) )
+            else: logging.error( f"Unprocessed {value!r} attribute ({attrib}) in book element" )
         if 1 <= int(bookNumber) <= 66:
             BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromReferenceNumber( bookNumber )
             dPrint( 'Never', DEBUGGING_THIS_MODULE, f"Zefania got '{BBB}' from {bookNumber}" )
@@ -514,12 +513,12 @@ class ZefaniaXMLBible( Bible ):
             #thisBook.sourceFilepath = self.sourceFilepath
             for element in book:
                 if element.tag == CHAPTER_TAG:
-                    sublocation = "chapter in {}".format( BBB )
+                    sublocation = f"chapter in {BBB}"
                     BibleOrgSysGlobals.checkXMLNoText( element, sublocation, 'j3jd' )
                     BibleOrgSysGlobals.checkXMLNoTail( element, sublocation, 'al1d' )
                     self.__validateAndExtractChapter( BBB, thisBook, element )
-                else: logging.error( "Expected to find {!r} but got {!r}".format( CHAPTER_TAG, element.tag ) )
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Saving {} into results…".format( BBB ) )
+                else: logging.error( f"Expected to find {CHAPTER_TAG!r} but got {element.tag!r}" )
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Saving {BBB} into results…" )
             self.stashBook( thisBook )
     # end of ZefaniaXMLBible.__validateAndExtractBook
 
@@ -537,18 +536,18 @@ class ZefaniaXMLBible( Bible ):
         for attrib,value in chapter.items():
             if attrib=="cnumber":
                 chapterNumber = value
-            else: logging.warning( "Unprocessed {!r} attribute ({}) in chapter element".format( attrib, value ) )
+            else: logging.warning( f"Unprocessed {value!r} attribute ({attrib}) in chapter element" )
         if chapterNumber:
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, 'c', chapterNumber )
             thisBook.addLine( 'c', chapterNumber )
-        else: logging.error( "Missing 'n' attribute in chapter element for {}".format( BBB ) )
+        else: logging.error( f"Missing 'n' attribute in chapter element for {BBB}" )
 
         for element in chapter:
             if element.tag == VERSE_TAG:
-                location = "verse in {} {}".format( BBB, chapterNumber )
+                location = f"verse in {BBB} {chapterNumber}"
                 self.__validateAndExtractVerse( BBB, chapterNumber, thisBook, element )
             elif element.tag == CAPTION_TAG: # Used in Psalms
-                location = "caption in {} {}".format( BBB, chapterNumber )
+                location = f"caption in {BBB} {chapterNumber}"
                 BibleOrgSysGlobals.checkXMLNoTail( element, location, 'k5k8' )
                 # TODO: Seems we can have xref subelements here !!!
                 BibleOrgSysGlobals.checkXMLNoSubelements( element, location, 'd3f5' )
@@ -558,20 +557,20 @@ class ZefaniaXMLBible( Bible ):
                     if attrib == 'vref':
                         vRef = value
                         if vRef != '1':
-                            logging.error( "Expected to find vRef of '1' but got {!r}".format( vRef ) )
+                            logging.error( f"Expected to find vRef of '1' but got {vRef!r}" )
                             if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: halt
-                    else: logging.warning( "Unprocessed {!r} attribute ({}) in caption element".format( attrib, value ) )
+                    else: logging.warning( f"Unprocessed {value!r} attribute ({attrib}) in caption element" )
                 if BibleOrgSysGlobals.debugFlag: assert vRef
                 vText = element.text
                 if not vText:
-                    logging.warning( "{} {}:{} has no text".format( BBB, chapterNumber, vRef ) )
+                    logging.warning( f"{BBB} {chapterNumber}:{vRef} has no text" )
                 if vText: # This is the main text of the caption
-                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "{} {}:{} {!r}".format( BBB, chapterNumber, verseNumber, vText ) )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{BBB} {chapterNumber}:{verseNumber} {vText!r}" )
                     if '\n' in vText:
-                        logging.warning( "ZefaniaXMLBible.__validateAndExtractChapter: newline in vText {} {} {!r}".format( BBB, chapterNumber, vText ) )
+                        logging.warning( f"ZefaniaXMLBible.__validateAndExtractChapter: newline in vText {BBB} {chapterNumber} {vText!r}" )
                         vText = vText.replace( '\n', ' ' )
                     thisBook.addLine( 'v', '0' + ' ' + vText ) # We save it as verse zero
-            else: logging.error( "Expected to find {!r} but got {!r}".format( VERSE_TAG, element.tag ) )
+            else: logging.error( f"Expected to find {VERSE_TAG!r} but got {element.tag!r}" )
     # end of ZefaniaXMLBible.__validateAndExtractChapter
 
 
@@ -583,7 +582,7 @@ class ZefaniaXMLBible( Bible ):
         """
         vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"Validating {BBB} C{chapterNumber} XML verse…" )
 
-        location = "verse in {} {}".format( BBB, chapterNumber )
+        location = f"verse in {BBB} {chapterNumber}"
         BibleOrgSysGlobals.checkXMLNoTail( verse, location, 'l5ks' )
 
         # Handle verse attributes
@@ -591,14 +590,14 @@ class ZefaniaXMLBible( Bible ):
         for attrib,value in verse.items():
             if attrib == 'vnumber':
                 verseNumber = value
-            else: logging.warning( "Unprocessed {!r} attribute ({}) in verse element".format( attrib, value ) )
+            else: logging.warning( f"Unprocessed {value!r} attribute ({attrib}) in verse element" )
         if BibleOrgSysGlobals.debugFlag: assert verseNumber
-        location = "{}:{}".format( location, verseNumber ) # Get a better location description
+        location = f"{location}:{verseNumber}" # Get a better location description
         #thisBook.addLine( 'v', verseNumber )
         vText = verse.text
         if vText: vText = vText.strip('\n')
         #if not vText: # This happens if a verse starts immediately with a style or note
-            #logging.warning( "{} {}:{} has no text".format( BBB, chapterNumber, verseNumber ) )
+            #logging.warning( f"{BBB} {chapterNumber}:{verseNumber} has no text" )
 
         # Handle verse subelements (notes and styled portions)
         for subelement in verse:
@@ -608,9 +607,9 @@ class ZefaniaXMLBible( Bible ):
                 for attrib,value in subelement.items():
                     if attrib == 'type':
                         noteType = value
-                    else: logging.warning( "Unprocessed {!r} attribute ({}) in style subelement".format( attrib, value ) )
+                    else: logging.warning( f"Unprocessed {value!r} attribute ({attrib}) in style subelement" )
                 if noteType not in ('n-studynote','x-studynote',):
-                    logging.warning( "Unexpected {} note type in {}".format( noteType, BBB ) )
+                    logging.warning( f"Unexpected {noteType} note type in {BBB}" )
                 if BibleOrgSysGlobals.debugFlag: assert noteType
                 nText, nTail = subelement.text, subelement.tail
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "note", BBB, chapterNumber, verseNumber, noteType, repr(nText), repr(nTail) )
@@ -619,7 +618,7 @@ class ZefaniaXMLBible( Bible ):
                 if nTail:
                     if '\n' in nTail:
                         if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag:
-                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "ZefaniaXMLBible.__validateAndExtractVerse: nTail {} {}:{} {!r}".format( BBB, chapterNumber, verseNumber, nTail ) )
+                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"ZefaniaXMLBible.__validateAndExtractVerse: nTail {BBB} {chapterNumber}:{verseNumber} {nTail!r}" )
                         nTail = nTail.replace( '\n', ' ' )
                     thisBook.addLine( 'v~', nTail )
                 for sub2element in subelement:
@@ -632,7 +631,7 @@ class ZefaniaXMLBible( Bible ):
                                 css = value
                             elif attrib == 'id':
                                 idStyle = value
-                            else: logging.warning( "Unprocessed {!r} attribute ({}) in style sub2element".format( attrib, value ) )
+                            else: logging.warning( f"Unprocessed {value!r} attribute ({attrib}) in style sub2element" )
                         if BibleOrgSysGlobals.debugFlag: assert css or idStyle
                         SFM = None
                         if css=='font-style:italic' or css=='font-style:italic;': SFM = '\\it'
@@ -641,14 +640,14 @@ class ZefaniaXMLBible( Bible ):
                         elif css == "font-size: x-small; color:#8B8378": SFM = '\\add'
                         elif css is None and idStyle=='cl:divineName': SFM = '\\nd'
                         else:
-                            logging.error( "Ignored1 css is {!r} idStyle is {!r}".format( css, idStyle ) )
+                            logging.error( f"Ignored1 css is {css!r} idStyle is {idStyle!r}" )
                             if BibleOrgSysGlobals.debugFlag: halt
                         sText, sTail = sub2element.text.strip('\n'), sub2element.tail
                         if BibleOrgSysGlobals.debugFlag: assert sText
                         if SFM: vText += SFM+' ' + sText + SFM+'*'
                         else: vText += '\\sc ' + '['+css+']' + sText + '\\sc* ' # Use sc for unknown styles
                         if sTail: vText += sTail.strip('\n')
-                    else: logging.error( "Expected to find {} but got {!r} in {}".format( STYLE_TAG, sub2element.tag, sublocation ) )
+                    else: logging.error( f"Expected to find {STYLE_TAG} but got {sublocation!r} in {sub2element.tag}" )
 
             elif subelement.tag == STYLE_TAG:
                 sublocation = "style in " + location
@@ -658,7 +657,7 @@ class ZefaniaXMLBible( Bible ):
                         css = value
                     elif attrib == 'id':
                         idStyle = value
-                    else: logging.warning( "Unprocessed {!r} attribute ({}) in style subelement".format( attrib, value ) )
+                    else: logging.warning( f"Unprocessed {value!r} attribute ({attrib}) in style subelement" )
                 if BibleOrgSysGlobals.debugFlag: assert css or idStyle
                 SFM = None
                 if css=='font-style:italic' or css=='font-style:italic;': SFM = '\\it'
@@ -667,7 +666,7 @@ class ZefaniaXMLBible( Bible ):
                 elif css == "font-size: x-small; color:#8B8378": SFM = '\\add'
                 elif css is None and idStyle=='cl:divineName': SFM = '\\nd'
                 else:
-                    logging.error( "Ignored2 css is {!r} idStyle is {!r}".format( css, idStyle ) )
+                    logging.error( f"Ignored2 css is {css!r} idStyle is {idStyle!r}" )
                     if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: halt
 
                 for sub2element in subelement:
@@ -677,8 +676,8 @@ class ZefaniaXMLBible( Bible ):
                         BibleOrgSysGlobals.checkXMLNoSubelements( sub2element, sub2location, 'dl36' )
                         BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub2location, 'js24' )
                         grText = sub2element.text.strip('\n') if sub2element.text else ''
-                        logging.error( "Unfinished to process 'gr' {!r} sub2element ({}) in style subelement".format( grText, sublocation ) )
-                    else: logging.error( "Expected to find 'gr' but got {!r} in {}".format( sub2element.tag, sublocation ) )
+                        logging.error( f"Unfinished to process 'gr' {sublocation!r} sub2element ({grText}) in style subelement" )
+                    else: logging.error( f"Expected to find 'gr' but got {sublocation!r} in {sub2element.tag}" )
 
                 #sText, sTail = subelement.text.strip('\n'), subelement.tail
                 sText = subelement.text.strip('\n') if subelement.text else ''
@@ -696,19 +695,19 @@ class ZefaniaXMLBible( Bible ):
                 for attrib,value in subelement.items():
                     if attrib == 'art':
                         art = value
-                    else: logging.warning( "Unprocessed {!r} attribute ({}) in style subelement".format( attrib, value ) )
+                    else: logging.warning( f"Unprocessed {value!r} attribute ({attrib}) in style subelement" )
                 if BibleOrgSysGlobals.debugFlag: assert art == 'x-nl'
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, chapterNumber, verseNumber )
                 #assert vText
                 if vText:
                     if '\n' in vText:
-                        logging.warning( "ZefaniaXMLBible.__validateAndExtractVerse_a: newline in vText {} {}:{} {!r}".format( BBB, chapterNumber, verseNumber, vText ) )
+                        logging.warning( f"ZefaniaXMLBible.__validateAndExtractVerse_a: newline in vText {BBB} {chapterNumber}:{verseNumber} {vText!r}" )
                         vText = vText.replace( '\n', ' ' )
                     thisBook.addLine( 'v', verseNumber + ' ' + vText )
                     vText = ''
                 breakText = subelement.tail.strip('\n') if subelement.tail else ''
                 if '\n' in breakText:
-                    logging.warning( "ZefaniaXMLBible.__validateAndExtractVerse: newline in breakText {} {}:{} {!r}".format( BBB, chapterNumber, verseNumber, breakText ) )
+                    logging.warning( f"ZefaniaXMLBible.__validateAndExtractVerse: newline in breakText {BBB} {chapterNumber}:{verseNumber} {breakText!r}" )
                     breakText = breakText.replace( '\n', ' ' )
                 thisBook.addLine( 'm', breakText )
 
@@ -725,7 +724,7 @@ class ZefaniaXMLBible( Bible ):
                         BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub2location, 'ksd1' )
                         noteText = sub2element.text.strip('\n') if sub2element.text else ''
                         vText = f'{vText}\\f {noteText}\\f*'
-                    else: logging.error( "Expected to find 'NOTE' but got {!r} in {}".format( sub2element.tag, sublocation ) )
+                    else: logging.error( f"Expected to find 'NOTE' but got {sublocation!r} in {sub2element.tag}" )
 
             elif subelement.tag == GR_TAG:
                 sublocation = "gr in " + location
@@ -736,16 +735,16 @@ class ZefaniaXMLBible( Bible ):
                 for attrib,value in subelement.items():
                     if attrib == 'str':
                         grStrongsNumberStr = value
-                    else: logging.warning( "Unprocessed {!r} attribute ({}) in gr subelement".format( attrib, value ) )
+                    else: logging.warning( f"Unprocessed {value!r} attribute ({attrib}) in gr subelement" )
                 if grStrongsNumberStr: assert grStrongsNumberStr.isdigit()
                 vText = f'{vText}\\w {grText}|strong="G{grStrongsNumberStr}"\\w*{grTail}'
-                # logging.error( "Unfinished to process 'gr' {!r} subelement ({}) in style subelement".format( grText, location ) )
+                # logging.error( f"Unfinished to process 'gr' {location!r} subelement ({grText}) in style subelement" )
 
-            else: logging.error( "Expected to find NOTE or STYLE or BREAK or DIV but got {!r} in {}".format( subelement.tag, location ) )
+            else: logging.error( f"Expected to find NOTE or STYLE or BREAK or DIV but got {location!r} in {subelement.tag}" )
 
         if vText: # This is the main text of the verse (follows the verse milestone)
             if '\n' in vText:
-                logging.warning( "ZefaniaXMLBible.__validateAndExtractVerse_b: newline in vText {} {}:{} {!r}".format( BBB, chapterNumber, verseNumber, vText ) )
+                logging.warning( f"ZefaniaXMLBible.__validateAndExtractVerse_b: newline in vText {BBB} {chapterNumber}:{verseNumber} {vText!r}" )
                 vText = vText.replace( '\n', ' ' )
             thisBook.addLine( 'v', verseNumber + ' ' + vText )
     # end of ZefaniaXMLBible.__validateAndExtractVerse
@@ -787,8 +786,8 @@ def briefDemo() -> None:
             testFilepath = os.path.join( testFolder, testFilename )
 
             # Demonstrate the XML Bible class
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nZ C{}/ Demonstrating the Zefania Bible class…".format( j+1 ) )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Test filepath is {!r}".format( testFilepath ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nZ C{j+1}/ Demonstrating the Zefania Bible class…" )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Test filepath is {testFilepath!r}" )
             zb = ZefaniaXMLBible( testFolder, testFilename )
             zb.load() # Load and process the XML
             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, zb ) # Just print a summary
@@ -823,8 +822,8 @@ def briefDemo() -> None:
             testFilepath = os.path.join( testFolder, testFilename )
 
             # Demonstrate the XML Bible class
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nZ D{}/ Demonstrating the Zefania Bible class…".format( j+1 ) )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Test filepath is {!r}".format( testFilepath ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nZ D{j+1}/ Demonstrating the Zefania Bible class…" )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Test filepath is {testFilepath!r}" )
             zb = ZefaniaXMLBible( testFolder, testFilename )
             zb.load() # Load and process the XML
             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, zb ) # Just print a summary
@@ -882,8 +881,8 @@ def fullDemo() -> None:
             testFilepath = os.path.join( testFolder, testFilename )
 
             # Demonstrate the XML Bible class
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nZ C{}/ Demonstrating the Zefania Bible class…".format( j+1 ) )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Test filepath is {!r}".format( testFilepath ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nZ C{j+1}/ Demonstrating the Zefania Bible class…" )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Test filepath is {testFilepath!r}" )
             zb = ZefaniaXMLBible( testFolder, testFilename )
             zb.load() # Load and process the XML
             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, zb ) # Just print a summary
@@ -917,8 +916,8 @@ def fullDemo() -> None:
             testFilepath = os.path.join( testFolder, testFilename )
 
             # Demonstrate the XML Bible class
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nZ D{}/ Demonstrating the Zefania Bible class…".format( j+1 ) )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Test filepath is {!r}".format( testFilepath ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nZ D{j+1}/ Demonstrating the Zefania Bible class…" )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Test filepath is {testFilepath!r}" )
             zb = ZefaniaXMLBible( testFolder, testFilename )
             zb.load() # Load and process the XML
             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, zb ) # Just print a summary

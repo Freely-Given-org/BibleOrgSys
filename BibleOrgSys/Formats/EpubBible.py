@@ -31,7 +31,6 @@ OEBPS = Open eBook Publication Structure
 
 Filenames usually end with .epub and are zip files.
 """
-from gettext import gettext as _
 import logging
 import os.path
 from pathlib import Path
@@ -71,20 +70,20 @@ def EpubBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=Fa
     if autoLoad is true and exactly one EPub Bible is found,
         returns the loaded EpubBible object.
     """
-    fnPrint( DEBUGGING_THIS_MODULE, "EpubBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
+    fnPrint( DEBUGGING_THIS_MODULE, f"EpubBibleFileCheck( {givenFolderName}, {strictCheck}, {autoLoad}, {autoLoadBooks} )" )
     if BibleOrgSysGlobals.debugFlag: assert givenFolderName and isinstance( givenFolderName, (str,Path) )
     if BibleOrgSysGlobals.debugFlag: assert autoLoad in (True,False,)
 
     # Check that the given folder is readable
     if not os.access( givenFolderName, os.R_OK ):
-        logging.critical( _("EpubBibleFileCheck: Given {!r} folder is unreadable").format( givenFolderName ) )
+        logging.critical( f"EpubBibleFileCheck: Given {givenFolderName!r} folder is unreadable" )
         return False
     if not os.path.isdir( givenFolderName ):
-        logging.critical( _("EpubBibleFileCheck: Given {!r} path is not a folder").format( givenFolderName ) )
+        logging.critical( f"EpubBibleFileCheck: Given {givenFolderName!r} path is not a folder" )
         return False
 
     # Find all the files and folders in this folder
-    vPrint( 'Verbose', DEBUGGING_THIS_MODULE, " EpubBibleFileCheck: Looking for files in given {}".format( givenFolderName ) )
+    vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f" EpubBibleFileCheck: Looking for files in given {givenFolderName}" )
     foundFolders, foundFiles = [], []
     numFound = foundFileCount = 0
     for something in os.listdir( givenFolderName ):
@@ -116,9 +115,9 @@ def EpubBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=Fa
     for thisFolderName in sorted( foundFolders ):
         tryFolderName = os.path.join( givenFolderName, thisFolderName+'/' )
         if not os.access( tryFolderName, os.R_OK ): # The subfolder is not readable
-            logging.warning( _("EpubBibleFileCheck: {!r} subfolder is unreadable").format( tryFolderName ) )
+            logging.warning( f"EpubBibleFileCheck: {tryFolderName!r} subfolder is unreadable" )
             continue
-        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "    EpubBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
+        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"    EpubBibleFileCheck: Looking for files in {tryFolderName}" )
         foundSubfolders, foundSubfiles = [], []
         try:
             for something in os.listdir( tryFolderName ):
@@ -192,20 +191,19 @@ def createEpubBible( BibleObject, outputFolder=None ):
                 try:
                     if int(V) <= int(lastVWritten):
                         # TODO: Not sure what level the following should be? info/warning/error/critical ????
-                        logging.warning( 'createEpubBible: Maybe duplicating {} {}:{} after {} with {}'.format( BBB, C, V, lastVWritten, text ) )
+                        logging.warning( f'createEpubBible: Maybe duplicating {BBB} {C}:{V} after {lastVWritten} with {text}' )
                         #continue
                 except ValueError: pass # had a verse bridge
                 if vBridgeStartInt and vBridgeEndInt: # We had a verse bridge
                     if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2:
-                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "createEpubBible: handling verse bridge in {} at {} {}:{}-{}" \
-                                    .format( BibleObject.abbreviation, BBB, C, vBridgeStartInt, vBridgeEndInt ) )
+                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"createEpubBible: handling verse bridge in {BibleObject.abbreviation} at {BBB} {C}:{vBridgeStartInt}-{vBridgeEndInt}" )
                     if 1: # new code -- copies the bridged text to all verses
                         for vNum in range( vBridgeStartInt, vBridgeEndInt+1 ): # Fill in missing verse numbers
-                            textBuffer += ('\r\n\r\n' if textBuffer else '') + '{}:{} ({}) {}'.format( C, vNum, VBridgedText, text )
+                            textBuffer += ('\r\n\r\n' if textBuffer else '') + f'{C}:{vNum} ({VBridgedText}) {text}'
                     else: # old code
-                        textBuffer += ('\r\n\r\n' if textBuffer else '') + '{}:{} ({}) {}'.format( C, vBridgeStartInt, vBridgeEndInt, text )
+                        textBuffer += ('\r\n\r\n' if textBuffer else '') + f'{C}:{vBridgeStartInt} ({vBridgeEndInt}) {text}'
                         for vNum in range( vBridgeStartInt+1, vBridgeEndInt+1 ): # Fill in missing verse numbers
-                            textBuffer += '\r\n\r\n{}:{} (-)'.format( C, vNum )
+                            textBuffer += f'\r\n\r\n{C}:{vNum} (-)'
                     lastVWritten = str( vBridgeEndInt )
                     vBridgeStartInt = vBridgeEndInt = None
                 else:
@@ -214,7 +212,7 @@ def createEpubBible( BibleObject, outputFolder=None ):
                 if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
                     assert textBuffer # This is a continued part of the verse -- failed with this bad source USFM:
                                         #     \c 1 \v 1 \p These events happened…
-                textBuffer += ' {}'.format( text ) # continuation of the same verse
+                textBuffer += f' {text}' # continuation of the same verse
             else:
                 ignoredMarkers.add( marker )
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, textBuffer )
@@ -225,12 +223,12 @@ def createEpubBible( BibleObject, outputFolder=None ):
         bookBytes = zlib.compress( textBuffer.encode( 'utf8' ), ZLIB_COMPRESSION_LEVEL )
 
     if ignoredMarkers:
-        logging.info( "createEpubBible: Ignored markers were {}".format( ignoredMarkers ) )
-    vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + _("WARNING: Ignored createEpubBible markers were {}").format( ignoredMarkers ) )
+        logging.info( f"createEpubBible: Ignored markers were {ignoredMarkers}" )
+    vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + f"WARNING: Ignored createEpubBible markers were {ignoredMarkers}" )
 
     # Now create a zipped version
     filepath = os.path.join( outputFolder, filename )
-    vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Zipping {} EWB file…".format( filename ) )
+    vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Zipping {filename} EWB file…" )
     zf = zipfile.ZipFile( filepath+'.zip', 'w', compression=zipfile.ZIP_DEFLATED )
     zf.write( filepath, filename )
     zf.close()
@@ -268,7 +266,7 @@ class EpubBible( Bible ):
 
         # Do a preliminary check on the readability of our file
         if not os.access( self.sourceFilepath, os.R_OK ):
-            logging.critical( _("EpubBible: File {!r} is unreadable").format( self.sourceFilepath ) )
+            logging.critical( f"EpubBible: File {self.sourceFilepath!r} is unreadable" )
 
         global BOS
         if BOS is None: BOS = BibleOrganisationalSystem( 'GENERIC-KJV-66-ENG' )
@@ -286,7 +284,7 @@ class EpubBible( Bible ):
         Load the compressed data file and import book objects.
         """
         fnPrint( DEBUGGING_THIS_MODULE, "EpubBible.preload()" )
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("\nLoading {}…").format( self.sourceFilepath ) )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nLoading {self.sourceFilepath}…" )
 
         self.inputZipfile = ZipFile( self.sourceFilepath )
         zipFileNameList = self.inputZipfile.namelist()
@@ -620,7 +618,7 @@ class EpubBible( Bible ):
         fnPrint( DEBUGGING_THIS_MODULE, "EpubBible.load()" )
         if not self.preloaded: self.preload()
 
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("Loading ePub books from {}…").format( self.sourceFilepath ) )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Loading ePub books from {self.sourceFilepath}…" )
         loadErrors:list[str] = []
 
         for idref,_bookPath in self.ePubBookDict.items():
@@ -643,8 +641,8 @@ def testEPub( TEWBfilename ):
 
     #TEWBfolder = os.path.join( testFolder, TEWBfilename+'/' )
     TEWBfolder = testFolder
-    vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("Demonstrating the EPub Bible class…") )
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Test folder is {!r} {!r}".format( TEWBfolder, TEWBfilename ) )
+    vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Demonstrating the EPub Bible class…" )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Test folder is {TEWBfolder!r} {TEWBfilename!r}" )
     ePub = EpubBible( TEWBfolder, TEWBfilename )
     keep = ePub.load() # Load and process the file
     vPrint( 'Normal', DEBUGGING_THIS_MODULE, ePub ) # Just print a summary
@@ -675,7 +673,7 @@ def testEPub( TEWBfilename ):
             verseText = fullVerseText = "Verse not available!"
         if BibleOrgSysGlobals.verbosityLevel > 1:
             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, reference, shortText, verseText )
-            dPrint( 'Quiet', DEBUGGING_THIS_MODULE, '  {}'.format( fullVerseText ) )
+            dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'  {fullVerseText}' )
     return keep
 # end of testEPub
 
@@ -739,12 +737,12 @@ def fullDemo() -> None:
         bad = ( 'aa.ewb','gkm.ewb','gnt.ewb','hcsb.ewb','msg.ewb','rsv.ewb' )
         allModules = good + bad
         for j, testFilename in enumerate( good ): # Choose one of the above: good, nonEnglish, bad, allModules
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nEPub D{}/ Trying {}".format( j+1, testFilename ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nEPub D{j+1}/ Trying {testFilename}" )
             #myTestFolder = os.path.join( testFolder, testFilename+'/' )
             #testFilepath = os.path.join( testFolder, testFilename+'/', testFilename+'_utf8.txt' )
             allModulesKeepDict[testFilename] = testEPub( testFilename )
         if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE and len(allModulesKeepDict)>1:
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n\nCollected data blocks from all {} processed versions:".format( len(allModulesKeepDict) ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n\nCollected data blocks from all {len(allModulesKeepDict)} processed versions:" )
             # Print the various binary blocks together by block number
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, allModulesKeepDict['alb.ewb'].keys() )
             #for blockName in ('introBlock','moduleNameBlock','byte84','workNameBlock','workName','bookDataStartIndex','block0080','endBytes'):
@@ -802,7 +800,7 @@ def fullDemo() -> None:
             elif os.path.isfile( somepath ): foundFiles.append( something )
 
         if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nTrying all {len(foundFolders)} discovered modules…" )
             parameters = [folderName for folderName in sorted(foundFolders)]
             BibleOrgSysGlobals.alreadyMultiprocessing = True
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
@@ -811,7 +809,7 @@ def fullDemo() -> None:
             BibleOrgSysGlobals.alreadyMultiprocessing = False
         else: # Just single threaded
             for j, someFolder in enumerate( sorted( foundFolders ) ):
-                vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nEPub E{}/ Trying {}".format( j+1, someFolder ) )
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nEPub E{j+1}/ Trying {someFolder}" )
                 #myTestFolder = os.path.join( testFolder, someFolder+'/' )
                 testEPub( someFolder )
 # end of EpubBible.fullDemo

@@ -25,7 +25,6 @@
 
 """
 """
-from gettext import gettext as _
 import logging
 import os, sys, subprocess
 from pathlib import Path
@@ -74,13 +73,13 @@ class XMLFile():
 
         # Do a preliminary check on the readability of our schema file
         if not os.access( self.sourceFilepath, os.R_OK ):
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "XMLFile: File {!r} is unreadable".format( self.sourceFilepath ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"XMLFile: File {self.sourceFilepath!r} is unreadable" )
         if self.schemaFilepath and not os.access( self.schemaFilepath, os.R_OK ):
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "XMLFile: Schema file {!r} is unreadable".format( self.schemaFilepath ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"XMLFile: Schema file {self.schemaFilepath!r} is unreadable" )
         if self.schemaURL:
             responseObject = requests.get( self.schemaURL )
             if responseObject.status_code != 200:
-                logging.error( "XMLFile: Schema file {!r} is not downloadable".format( self.schemaURL ) )
+                logging.error( f"XMLFile: Schema file {self.schemaURL!r} is not downloadable" )
     # end of XMLFile.__init__
 
 
@@ -97,10 +96,10 @@ class XMLFile():
         if self.sourceFolder:
             result += ('\n' if result else '') + f"  Source folder: {self.sourceFolder}"
         if self.sourceFilepath: result += ('\n' if result else '') + "  Source filepath: " + self.sourceFilepath
-        if self.validatedByLoading is not None: result += ('\n' if result else '') + "  Validated by loading = {}".format( self.validatedByLoading )
+        if self.validatedByLoading is not None: result += ('\n' if result else '') + f"  Validated by loading = {self.validatedByLoading}"
         if self.validatedWithLint is not None:
-            result += ('\n' if result else '') + "  Validated with lint = {}".format( self.validatedWithLint )
-            if self.schema: result += ('\n' if result else '') + "    with schema = {}".format( self.schema )
+            result += ('\n' if result else '') + f"  Validated with lint = {self.validatedWithLint}"
+            if self.schema: result += ('\n' if result else '') + f"    with schema = {self.schema}"
         return result
     # end of XMLFile.__str__
 
@@ -111,19 +110,19 @@ class XMLFile():
         """
         errorString = None
 
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, _("Loading {}…").format( self.sourceFilepath ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Loading {self.sourceFilepath}…" )
         try:
             self.XMLTree = ElementTree().parse( self.sourceFilepath )
             assert self.XMLTree # Fail here if we didn't load anything at all
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, "  ElementTree loaded the xml file {}.".format( self.sourceFilepath ) )
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  ElementTree loaded the xml file {self.sourceFilepath}." )
             self.validatedByLoading = True
         except FileNotFoundError:
             errorString = sys.exc_info()[1]
-            logging.error( "validateByLoading: Unable to open {}".format( self.sourceFilepath ) )
+            logging.error( f"validateByLoading: Unable to open {self.sourceFilepath}" )
             self.validatedByLoading = False
         except ParseError:
             errorString = sys.exc_info()[1]
-            logging.error( "  ElementTree failed loading the xml file {}: {!r}.".format( self.sourceFilepath, errorString ) )
+            logging.error( f"  ElementTree failed loading the xml file {self.sourceFilepath}: {errorString!r}." )
             self.validatedByLoading = False
 
         return self.validatedByLoading, errorString
@@ -148,15 +147,14 @@ class XMLFile():
             checkProgramErrorOutputString = checkProgramErrorOutputBytes.decode( encoding='utf-8', errors='replace' )
 
         if checkProcess.returncode != 0:
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  WARNING: xmllint gave an error on the {} XML file: {} = {}" \
-                            .format( self.sourceFilepath, checkProcess.returncode, xmllintError[checkProcess.returncode] ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  WARNING: xmllint gave an error on the {self.sourceFilepath} XML file: {checkProcess.returncode} = {xmllintError[checkProcess.returncode]}" )
             self.validatedWithLint = False
         else:
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, "  xmllint validated the xml file {}.".format( self.sourceFilepath ) )
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  xmllint validated the xml file {self.sourceFilepath}." )
             self.validatedWithLint = True
 
-        dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "cPOS  = {!r}".format( checkProgramOutputString ) )
-        dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "cPEOS = {!r}".format( checkProgramErrorOutputString ) )
+        dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"cPOS  = {checkProgramOutputString!r}" )
+        dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"cPEOS = {checkProgramErrorOutputString!r}" )
         return self.validatedWithLint, checkProgramOutputString, checkProgramErrorOutputString
     # end of XMLFile.validateWithLint
 
@@ -181,7 +179,7 @@ def briefDemo() -> None:
     def doTest( folder, filenameList, schema=None ):
         for testFilename in filenameList:
             #testFilepath = os.path.join( folder, testFilename )
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n  Test filepath is {!r}".format( testFilepath ) )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n  Test filepath is {testFilepath!r}" )
 
             # Demonstrate the XML file class
             #xf = XMLFile( testFilepath, schema=schema )
@@ -231,7 +229,7 @@ def fullDemo() -> None:
     def doTest( folder, filenameList, schema=None ):
         for testFilename in filenameList:
             #testFilepath = os.path.join( folder, testFilename )
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n  Test filepath is {!r}".format( testFilepath ) )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n  Test filepath is {testFilepath!r}" )
 
             # Demonstrate the XML file class
             #xf = XMLFile( testFilepath, schema=schema )

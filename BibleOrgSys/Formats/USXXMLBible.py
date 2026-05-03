@@ -30,7 +30,6 @@ CHANGELOG:
     2023-09-28 Add test for USFMAllExpandedCharacterMarkers in main()
     2025-06-01 Handle missing book file
 """
-from gettext import gettext as _
 import os
 from pathlib import Path
 import logging
@@ -73,14 +72,14 @@ def USXXMLBibleFileCheck( givenFolderName:Path|str, strictCheck:bool=True, autoL
 
     # Check that the given folder is readable
     if not os.access( givenFolderName, os.R_OK ):
-        logging.critical( _("USXXMLBibleFileCheck: Given {!r} folder is unreadable").format( givenFolderName ) )
+        logging.critical( f"USXXMLBibleFileCheck: Given {givenFolderName!r} folder is unreadable" )
         return False
     if not os.path.isdir( givenFolderName ):
-        logging.critical( _("USXXMLBibleFileCheck: Given {!r} path is not a folder").format( givenFolderName ) )
+        logging.critical( f"USXXMLBibleFileCheck: Given {givenFolderName!r} path is not a folder" )
         return False
 
     # Find all the files and folders in this folder
-    vPrint( 'Verbose', DEBUGGING_THIS_MODULE, " USXXMLBibleFileCheck: Looking for files in given {}".format( givenFolderName ) )
+    vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f" USXXMLBibleFileCheck: Looking for files in given {givenFolderName}" )
     foundFolders, foundFiles = [], []
     for something in os.listdir( givenFolderName ):
         somepath = os.path.join( givenFolderName, something )
@@ -99,7 +98,7 @@ def USXXMLBibleFileCheck( givenFolderName:Path|str, strictCheck:bool=True, autoL
     filenameTuples = UFns.getConfirmedFilenameTuples( strictCheck=True )
     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'C', len(filenameTuples) )
     vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "Confirmed:", len(filenameTuples), filenameTuples )
-    if BibleOrgSysGlobals.verbosityLevel > 2 and filenameTuples: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Found {} USX file{}.".format( len(filenameTuples), '' if len(filenameTuples)==1 else 's' ) )
+    if BibleOrgSysGlobals.verbosityLevel > 2 and filenameTuples: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Found {len(filenameTuples)} USX file{'' if len(filenameTuples)==1 else 's'}." )
     if filenameTuples:
         numFound += 1
     if numFound:
@@ -117,9 +116,9 @@ def USXXMLBibleFileCheck( givenFolderName:Path|str, strictCheck:bool=True, autoL
     for thisFolderName in sorted( foundFolders ):
         tryFolderName = os.path.join( givenFolderName, f'{thisFolderName}/' )
         if not os.access( tryFolderName, os.R_OK ): # The subfolder is not readable
-            logging.warning( _("USXXMLBibleFileCheck: {!r} subfolder is unreadable").format( tryFolderName ) )
+            logging.warning( f"USXXMLBibleFileCheck: {tryFolderName!r} subfolder is unreadable" )
             continue
-        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "    USXXMLBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
+        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"    USXXMLBibleFileCheck: Looking for files in {tryFolderName}" )
         foundSubfolders, foundSubfiles = [], []
         try:
             for something in os.listdir( tryFolderName ):
@@ -134,9 +133,9 @@ def USXXMLBibleFileCheck( givenFolderName:Path|str, strictCheck:bool=True, autoL
         #filenameTuples = UFns.getPossibleFilenameTuples()
         filenameTuples = UFns.getConfirmedFilenameTuples( strictCheck=True )
         vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "Confirmed:", len(filenameTuples), filenameTuples )
-        if BibleOrgSysGlobals.verbosityLevel > 2 and filenameTuples: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Found {} USX files: {}".format( len(filenameTuples), filenameTuples ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2 and filenameTuples: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Found {len(filenameTuples)} USX files: {filenameTuples}" )
         elif BibleOrgSysGlobals.verbosityLevel > 1 and filenameTuples and DEBUGGING_THIS_MODULE:
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Found {} USX file{}".format( len(filenameTuples), '' if len(filenameTuples)==1 else 's' ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Found {len(filenameTuples)} USX file{'' if len(filenameTuples)==1 else 's'}" )
         if filenameTuples:
             foundProjects.append( tryFolderName )
             numFound += 1
@@ -188,7 +187,7 @@ class USXXMLBible( Bible ):
 
         # Do a preliminary check on the readability of our folder
         if not os.access( self.givenFolderName, os.R_OK ):
-            logging.error( "USXXMLBible: File {!r} is unreadable".format( self.givenFolderName ) )
+            logging.error( f"USXXMLBible: File {self.givenFolderName!r} is unreadable" )
 
         # Find the filenames of all our books
         self.USXFilenamesObject = USXFilenames( self.givenFolderName )
@@ -208,20 +207,20 @@ class USXXMLBible( Bible ):
         """
         NOTE: You should ensure that preload() has been called first.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, "USXXMLBible.loadBook( {}, {} )".format( BBB, filename ) )
+        fnPrint( DEBUGGING_THIS_MODULE, f"USXXMLBible.loadBook( {BBB}, {filename} )" )
         if self.doExtraChecking:
             assert self.preloadDone
 
         if BBB not in self.bookNeedsReloading or not self.bookNeedsReloading[BBB]:
             if BBB in self.books:
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  {} is already loaded -- returning".format( BBB ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  {BBB} is already loaded -- returning" )
                 return # Already loaded
             if BBB in self.triedLoadingBook:
-                logging.warning( "We had already tried loading USX {} for {}".format( BBB, self.name ) )
+                logging.warning( f"We had already tried loading USX {BBB} for {self.name}" )
                 return # We've already attempted to load this book
         self.triedLoadingBook[BBB] = True
 
-        if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("  USXXMLBible: Loading {} from {} from {}…").format( BBB, self.name, self.sourceFolder ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  USXXMLBible: Loading {BBB} from {self.name} from {self.sourceFolder}…" )
         if filename is None:
             try: filename = self.possibleFilenameDict[BBB]
             except KeyError:
@@ -249,17 +248,17 @@ class USXXMLBible( Bible ):
 
         NOTE: You should ensure that preload() has been called first.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, "USXXMLBible._loadBookMP( {}, {} )".format( BBB, filename ) )
+        fnPrint( DEBUGGING_THIS_MODULE, f"USXXMLBible._loadBookMP( {BBB}, {filename} )" )
         if self.doExtraChecking:
             assert self.preloadDone
 
         if BBB in self.books: return # Already loaded
         if BBB in self.triedLoadingBook:
-            logging.warning( "We had already tried loading USX {} for {}".format( BBB, self.name ) )
+            logging.warning( f"We had already tried loading USX {BBB} for {self.name}" )
             return # We've already attempted to load this book
         self.triedLoadingBook[BBB] = True
 
-        if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("  USXXMLBible: Loading {} from {} from {}…").format( BBB, self.name, self.sourceFolder ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  USXXMLBible: Loading {BBB} from {self.name} from {self.sourceFolder}…" )
         if filename is None: filename = self.possibleFilenameDict[BBB]
         UBB = USXXMLBibleBook( self, BBB )
         UBB.load( filename, self.givenFolderName, self.encoding )
@@ -278,7 +277,7 @@ class USXXMLBible( Bible ):
         """
         Load the books.
         """
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("USXXMLBible: Loading {} books from {}…").format( self.name, self.givenFolderName ) )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"USXXMLBible: Loading {self.name} books from {self.givenFolderName}…" )
 
         if not self.preloadDone: self.preload()
 
@@ -288,10 +287,10 @@ class USXXMLBible( Bible ):
             somepath = os.path.join( self.givenFolderName, something )
             if os.path.isdir( somepath ): foundFolders.append( something )
             elif os.path.isfile( somepath ): foundFiles.append( something )
-            else: logging.error( "Not sure what {!r} is in {}!".format( somepath, self.givenFolderName ) )
-        if foundFolders: logging.info( "USXXMLBible.loadBooks: Surprised to see subfolders in {!r}: {}".format( self.givenFolderName, foundFolders ) )
+            else: logging.error( f"Not sure what {self.givenFolderName!r} is in {somepath}!" )
+        if foundFolders: logging.info( f"USXXMLBible.loadBooks: Surprised to see subfolders in {foundFolders!r}: {self.givenFolderName}" )
         if not foundFiles:
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "USXXMLBible.loadBooks: Couldn't find any files in {!r}".format( self.givenFolderName ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"USXXMLBible.loadBooks: Couldn't find any files in {self.givenFolderName!r}" )
             return # No use continuing
 
         # Load the books one by one -- assuming that they have regular Paratext style filenames
@@ -302,8 +301,8 @@ class USXXMLBible( Bible ):
             for BBB,filename in self.USXFilenamesObject.getConfirmedFilenameTuples():
                 parameters.append( BBB )
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "parameters", parameters )
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("Loading {} {} books using {} processes…").format( len(parameters), 'USX', BibleOrgSysGlobals.maxProcesses ) )
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("  NOTE: Outputs (including error and warning messages) from loading various books may be interspersed.") )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Loading {len(parameters)} {'USX'} books using {BibleOrgSysGlobals.maxProcesses} processes…" )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  NOTE: Outputs (including error and warning messages) from loading various books may be interspersed." )
             BibleOrgSysGlobals.alreadyMultiprocessing = True
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                 results = pool.map( self._loadBookMP, parameters ) # have the pool do our loads
@@ -328,7 +327,7 @@ class USXXMLBible( Bible ):
                 self.loadBook( BBB, filename ) # also saves it
 
         if not self.books: # Didn't successfully load any regularly named books -- maybe the files have weird names??? -- try to be intelligent here
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, "USXXMLBible.loadBooks: Didn't find any regularly named USX files in {!r}".format( self.givenFolderName ) )
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"USXXMLBible.loadBooks: Didn't find any regularly named USX files in {self.givenFolderName!r}" )
             #for thisFilename in foundFiles:
                 ## Look for BBB in the ID line (which should be the first line in a USX file)
                 #isUSX = False
@@ -338,9 +337,9 @@ class USXXMLBible( Bible ):
                         #for line in possibleUSXFile:
                             #if line.startswith( '\\id ' ):
                                 #USXId = line[4:].strip()[:3] # Take the first three non-blank characters after the space after id
-                                #dPrint( 'Info', DEBUGGING_THIS_MODULE, "Have possible USX ID {!r}".format( USXId ) )
+                                #dPrint( 'Info', DEBUGGING_THIS_MODULE, f"Have possible USX ID {USXId!r}" )
                                 #BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromUSFMAbbreviation( USXId )
-                                #dPrint( 'Info', DEBUGGING_THIS_MODULE, "BBB is {!r}".format( BBB ) )
+                                #dPrint( 'Info', DEBUGGING_THIS_MODULE, f"BBB is {BBB!r}" )
                                 #isUSX = True
                             #break # We only look at the first line
                 #except UnicodeDecodeError: isUSX = False
@@ -358,7 +357,7 @@ class USXXMLBible( Bible ):
                         #self.bookNameDict[assumedBookNameLower] = BBB # Store the deduced book name (just lower case)
                         #self.combinedBookNameDict[assumedBookNameLower] = BBB # Store the deduced book name (just lower case)
                         #if ' ' in assumedBookNameLower: self.combinedBookNameDict[assumedBookNameLower.replace(' ','')] = BBB # Store the deduced book name (lower case without spaces)
-            #if self.books: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "USXXMLBible.loadBooks: Found {} irregularly named USX files".format( len(self.books) ) )
+            #if self.books: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"USXXMLBible.loadBooks: Found {len(self.books)} irregularly named USX files" )
 
         self.doPostLoadProcessing()
     # end of USXXMLBible.loadBooks
@@ -534,14 +533,14 @@ def createUSXXMLBible( self, outputFolderpath:Path|str, controlDict, validationS
                 if fullCharMarker in adjText:
                     # if haveOpenChar:
                     #     adjText = adjText.replace( 'CLOSED_BIT', ' closed="false"' ) # Fix up closed bit since it wasn't closed
-                    #     logger.info( "toUSXXML: USX export had to close automatically in {} {}:{} {}:{!r} now {!r}".format( BBB, C,V, marker, originalText, adjText ) ) # The last marker presumably only had optional closing (or else we just messed up nesting markers)
+                    #     logger.info( f"toUSXXML: USX export had to close automatically in {BBB} {C}:{V} {marker}:{originalText!r} now {adjText!r}" ) # The last marker presumably only had optional closing (or else we just messed up nesting markers)
                     # adjText = adjText.replace( fullCharMarker, f'{"</char>" if haveOpenChar else ""}<char style="{charMarker}"CLOSED_BIT>' )
                     adjText = adjText.replace( fullCharMarker, f'<char style="{charMarker}">' )
                     # haveOpenChar = True
                 endCharMarker = f'\\{charMarker}*'
                 if endCharMarker in adjText:
                     # if not haveOpenChar: # Then we must have a missing open marker (or extra closing marker)
-                    #     logger.error( "toUSXXML: Ignored extra {!r} closing marker in {} {}:{} {}:{!r} now {!r}".format( charMarker, BBB, C,V, marker, originalText, adjText ) )
+                    #     logger.error( f"toUSXXML: Ignored extra {marker!r} closing marker in {charMarker} {BBB}:{C} {V}:{originalText!r} now {adjText!r}" )
                     #     adjText = adjText.replace( endCharMarker, '' ) # Remove the unused marker
                     # else: # looks good
                         # adjText = adjText.replace( 'CLOSED_BIT', '' ) # Fix up closed bit since it was specifically closed
@@ -566,7 +565,7 @@ def createUSXXMLBible( self, outputFolderpath:Path|str, controlDict, validationS
                     adjText = f'{adjText[:matchOpen.start(0)]}<char style="z{matchOpen.group(1)}">{adjText[matchOpen.end(0):]}'
                     # haveOpenChar = True
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "adjText", adjText )
-                    matchClose = re.search( r'\\z{}\*'.format( matchOpen.group(1) ), adjText )
+                    matchClose = re.search( rf'\\z{matchOpen.group(1)}\*', adjText )
                     if matchClose:
                         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Matched custom marker close '{matchClose.group(0)}'" )
                         adjText = f'{adjText[:matchClose.start(0)]}</char>{adjText[matchClose.end(0):]}'
@@ -576,13 +575,13 @@ def createUSXXMLBible( self, outputFolderpath:Path|str, controlDict, validationS
                         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "adjText", adjText )
             # if haveOpenChar:
             #     adjText = adjText.replace( 'CLOSED_BIT', ' closed="false"' ) # Fix up closed bit since it wasn't closed
-            #     adjText += '{}</char>'.format( '' if adjText[-1]==' ' else ' ')
-            #     logger.info( "toUSXXML: Had to close automatically in {} {}:{} {}:{!r} now {!r}".format( BBB, C,V, marker, originalText, adjText ) )
+            #     adjText += f"{'' if adjText[-1]==' ' else ' '}</char>"
+            #     logger.info( f"toUSXXML: Had to close automatically in {BBB} {C}:{V} {marker}:{originalText!r} now {adjText!r}" )
             if '\\' in adjText: # still
-                logger.critical( "toUSXXML: Didn't handle a backslash in {} {}:{} {}:{!r} now {!r}".format( BBB, C,V, marker, originalText, adjText ) )
+                logger.critical( f"toUSXXML: Didn't handle a backslash in {BBB} {C}:{V} {marker}:{originalText!r} now {adjText!r}" )
                 if self.doExtraChecking: need_to_fix_this_critical_error
             if 'CLOSED_BIT' in adjText:
-                logger.critical( "toUSXXML: Didn't handle a character style correctly in {} {}:{} {}:{!r} now {!r}".format( BBB, C,V, marker, originalText, adjText ) )
+                logger.critical( f"toUSXXML: Didn't handle a character style correctly in {BBB} {C}:{V} {marker}:{originalText!r} now {adjText!r}" )
             if '"ior"' in adjText: # Usually in \\iot lines
                 # Make these into live references
                 match = IOR_RE.search( adjText, 0 )
@@ -656,7 +655,7 @@ def createUSXXMLBible( self, outputFolderpath:Path|str, controlDict, validationS
                     #elif lcToken in ('xo*','xt*','x*',):
                     #    pass # We're being lazy here and not checking closing markers properly
                     else:
-                        logger.critical( _("toUSXXML: Unprocessed {!r} token in {} {}:{} xref {!r}").format( token, BBB, C,V, USXxref ) )
+                        logger.critical( f"toUSXXML: Unprocessed {V!r} token in {token} {BBB}:{C} xref {USXxref!r}" )
                 if xoOpen:
                     if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag: assert not xtOpen
                     USXxrefXML += f' closed="false">{adjToken}</char>'
@@ -687,7 +686,7 @@ def createUSXXMLBible( self, outputFolderpath:Path|str, controlDict, validationS
                     elif lcToken.startswith('fr '): # footnote reference follows
                         if frOpen:
                             if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag: assert not fTextOpen
-                            logger.error( _("toUSXXML: Two consecutive fr fields in {} {}:{} footnote {!r}").format( token, BBB, C,V, USXfootnote ) )
+                            logger.error( f"toUSXXML: Two consecutive fr fields in {token} {BBB}:{C} footnote {V!r}" )
                             USXfootnoteXML += f' closed="false">{adjToken}</char>'
                             frOpen = False
                         if fTextOpen:
@@ -717,14 +716,14 @@ def createUSXXMLBible( self, outputFolderpath:Path|str, controlDict, validationS
                         fMarker = lcToken.split()[0] # Get the bit before the space
                         USXfootnoteXML += f'<char style="{fMarker}"'
                         adjToken = token[len(fMarker)+1:] # Get the bit after the space
-                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "{!r} {!r}".format( fMarker, adjToken ) )
+                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{fMarker!r} {adjToken!r}" )
                         fTextOpen = True
                     elif lcToken.startswith('ft*') or lcToken.startswith('fq*') or lcToken.startswith('fqa*') or lcToken.startswith('fv*') or lcToken.startswith('fk*'):
                         #if BibleOrgSysGlobals.debugFlag:
-                            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "toUSXXML._processFootnote: Problem with {} {} {} in {} {}:{} footnote {!r} part {!r}".format( fTextOpen, frOpen, fCharOpen, BBB, C,V, USXfootnote, lcToken ) )
+                            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"toUSXXML._processFootnote: Problem with {fTextOpen} {frOpen} {fCharOpen} in {BBB} {C}:{V} footnote {USXfootnote!r} part {lcToken!r}" )
                             #assert fTextOpen and not frOpen and not fCharOpen
                         if frOpen or fCharOpen or not fTextOpen:
-                            logger.error( "toUSXXML._processFootnote: Closing problem at {} {}:{} in footnote {!r}".format( BBB, C,V, USXfootnote ) )
+                            logger.error( f"toUSXXML._processFootnote: Closing problem at {BBB} {C}:{V} in footnote {USXfootnote!r}" )
                         USXfootnoteXML += f'>{adjToken}</char>'
                         fTextOpen = False
                     elif lcToken.startswith('xt '): # xref text follows
@@ -762,11 +761,11 @@ def createUSXXMLBible( self, outputFolderpath:Path|str, controlDict, validationS
                             fCharOpen = marker
                         elif ixAsterisk < ixSpace: # Must be an closing marker
                             if not fCharOpen:
-                                logger.error( "toUSXXML._processFootnote: Closing problem at {} {}:{} in custom footnote {!r}".format( BBB, C,V, USXfootnote ) )
+                                logger.error( f"toUSXXML._processFootnote: Closing problem at {BBB} {C}:{V} in custom footnote {USXfootnote!r}" )
                             USXfootnoteXML += f'>{adjToken}</char>'
                             fCharOpen = False
                         else:
-                            logger.error( "toUSXXML._processFootnote: Marker roblem at {} {}:{} in custom footnote {!r}".format( BBB, C,V, USXfootnote ) )
+                            logger.error( f"toUSXXML._processFootnote: Marker roblem at {BBB} {C}:{V} in custom footnote {USXfootnote!r}" )
                     else: # Could be character formatting (or closing of character formatting)
                         subTokens = lcToken.split()
                         firstToken = subTokens[0]
@@ -788,10 +787,10 @@ def createUSXXMLBible( self, outputFolderpath:Path|str, controlDict, validationS
                                 if fCharOpen:
                                     if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag: assert not frOpen
                                     if not firstToken.startswith( f'{fCharOpen}*' ): # It's not a matching tag
-                                        logger.warning( _("toUSXXML: {!r} closing tag doesn't match {!r} in {} {}:{} footnote {!r}").format( firstToken, fCharOpen, BBB, C,V, USXfootnote ) )
+                                        logger.warning( f"toUSXXML: {C!r} closing tag doesn't match {V!r} in {firstToken} {fCharOpen}:{BBB} footnote {USXfootnote!r}" )
                                     USXfootnoteXML += f'>{adjToken}</char>'
                                     fCharOpen = False
-                                logger.warning( _("toUSXXML: {!r} closing tag doesn't match in {} {}:{} footnote {!r}").format( firstToken, BBB, C,V, USXfootnote ) )
+                                logger.warning( f"toUSXXML: {V!r} closing tag doesn't match in {firstToken} {BBB}:{C} footnote {USXfootnote!r}" )
                             else:
                                 ixAS = firstToken.find( '*' )
                                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, firstToken, ixAS, firstToken[:ixAS] if ixAS!=-1 else '' )
@@ -800,21 +799,21 @@ def createUSXXMLBible( self, outputFolderpath:Path|str, controlDict, validationS
                                         if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag:
                                             assert not frOpen
                                         if not firstToken.startswith( f'{fCharOpen}*' ): # It's not a matching tag
-                                            logger.warning( _("toUSXXML: {!r} closing tag doesn't match {!r} in {} {}:{} footnote {!r}").format( firstToken, fCharOpen, BBB, C,V, USXfootnote ) )
+                                            logger.warning( f"toUSXXML: {C!r} closing tag doesn't match {V!r} in {firstToken} {fCharOpen}:{BBB} footnote {USXfootnote!r}" )
                                         USXfootnoteXML += f'>{adjToken}</char>'
                                         fCharOpen = False
-                                    logger.warning( _("toUSXXML: {!r} closing tag doesn't match in {} {}:{} footnote {!r}").format( firstToken, BBB, C,V, USXfootnote ) )
+                                    logger.warning( f"toUSXXML: {V!r} closing tag doesn't match in {firstToken} {BBB}:{C} footnote {USXfootnote!r}" )
                                 else:
-                                    logger.critical( _("toUSXXML: Unprocessed {!r} token in {} {}:{} footnote {!r}").format( firstToken, BBB, C,V, USXfootnote ) )
+                                    logger.critical( f"toUSXXML: Unprocessed {V!r} token in {firstToken} {BBB}:{C} footnote {USXfootnote!r}" )
                                     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "toUSXXML USFMAllExpandedCharacterMarkers", USFMAllExpandedCharacterMarkers )
                                     if self.doExtraChecking: _processFootnote_failed
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  ", frOpen, fCharOpen, fTextOpen )
                 if frOpen:
-                    logger.warning( _("toUSXXML: Unclosed 'fr' token in {} {}:{} footnote {!r}").format( BBB, C,V, USXfootnote) )
+                    logger.warning( f"toUSXXML: Unclosed 'fr' token in {BBB} {C}:{V} footnote {USXfootnote!r}" )
                     if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag: assert not fCharOpen and not fTextOpen
                     USXfootnoteXML += f' closed="false">{adjToken}</char>'
                 if fCharOpen:
-                    logger.info( _("toUSXXML: Unclosed {!r} token in {} {}:{} footnote {!r}").format( fCharOpen, BBB, C,V, USXfootnote) )
+                    logger.info( f"toUSXXML: Unclosed {V!r} token in {fCharOpen} {BBB}:{C} footnote {USXfootnote!r}" )
                 if fTextOpen or fCharOpen:
                     USXfootnoteXML += f' closed="false">{adjToken}</char>'
                 if xtOpen:
@@ -835,15 +834,15 @@ def createUSXXMLBible( self, outputFolderpath:Path|str, controlDict, validationS
                     # dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n{BBB} {C}:{V} {text=}\n  {adjText=}\n  {extraType=} {extraIndex=} {adjIndex=} {extraText=}" )
                     lenT = len( adjText )
                     if adjIndex > lenT: # This can happen if we have verse/space/notes at end (and the space was deleted after the note was separated off)
-                        logger.warning( _("toUSXXML: Space before note at end of verse in {} {}:{} has been lost").format( BBB, C, V ) )
+                        logger.warning( f"toUSXXML: Space before note at end of verse in {BBB} {C}:{V} has been lost" )
                         # No need to adjust adjIndex because the code below still works
                     elif adjIndex<0 or adjIndex>lenT: # The extras don't appear to fit correctly inside the text
-                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "toUSXXML: Extras don't fit inside verse at {} {}:{}: eI={} o={} len={} aI={}".format( BBB, C,V, extraIndex, offset, len(text), adjIndex ) )
-                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Verse={!r}".format( text ) )
-                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Extras={!r}".format( extras ) )
+                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"toUSXXML: Extras don't fit inside verse at {BBB} {C}:{V}: eI={extraIndex} o={offset} len={len(text)} aI={adjIndex}" )
+                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Verse={text!r}" )
+                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Extras={extras!r}" )
                     #assert 0 <= adjIndex <= len(verse)
                     #adjText = checkText( extraText, checkLeftovers=False ) # do any general character formatting
-                    #if adjText!=extraText: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "_processXRefsAndFootnotes: {}@{}-{}={} {!r} now {!r}".format( extraType, extraIndex, offset, adjIndex, extraText, adjText ) )
+                    #if adjText!=extraText: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"_processXRefsAndFootnotes: {extraType}@{extraIndex}-{offset}={adjIndex} {extraText!r} now {adjText!r}" )
                     if extraType == 'fn':
                         extra = _processFootnote( extraText )
                         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "fn got", extra )
@@ -896,11 +895,11 @@ def createUSXXMLBible( self, outputFolderpath:Path|str, controlDict, validationS
         USXAbbrev = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMAbbreviation( BBB ).upper()
         USXNumber = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSXNumStr( BBB )
         if not USXAbbrev:
-            logger.error( "toUSXXML: Can't write {} USX book because no USFM code available".format( BBB ) )
+            logger.error( f"toUSXXML: Can't write {BBB} USX book because no USFM code available" )
             unhandledBooks.append( BBB )
             return
         if not USXNumber:
-            logger.error( "toUSXXML: Can't write {} USX book because no USX number available".format( BBB ) )
+            logger.error( f"toUSXXML: Can't write {BBB} USX book because no USX number available" )
             unhandledBooks.append( BBB )
             return
 
@@ -950,19 +949,19 @@ def createUSXXMLBible( self, outputFolderpath:Path|str, controlDict, validationS
             adjText = _handleNotesAndExtras( escapedText, adjustedExtras )
             if marker == 'id':
                 if haveOpenPara: # This should never happen coz the ID line should have been the first line in the file
-                    logger.critical( "toUSXXML: Book {}{} has a id line inside an open paragraph: {!r}".format( BBB, " ({})".format(USXAbbrev) if USXAbbrev!=BBB else '', adjText ) )
+                    logger.critical( "toUSXXML: Book {}{} has a id line inside an open paragraph: {!r}".format( BBB, f" ({USXAbbrev})" if USXAbbrev!=BBB else '', adjText ) )
                     xw.removeFinalNewline( suppressFollowingIndent=True )
                     xw.writeLineClose( 'para' )
                     haveOpenPara = False
                 adjTxLen = len( adjText )
                 if adjTxLen<3 or (adjTxLen>3 and adjText[3]!=' '): # Doesn't seem to have a standard BBB at the beginning of the ID line
-                    logger.warning( "toUSXXML: Book {}{} has a non-standard id line: {!r}".format( BBB, " ({})".format(USXAbbrev) if USXAbbrev!=BBB else '', adjText ) )
+                    logger.warning( "toUSXXML: Book {}{} has a non-standard id line: {!r}".format( BBB, f" ({USXAbbrev})" if USXAbbrev!=BBB else '', adjText ) )
                 if adjText[0:3] != USXAbbrev:
-                    logger.error( "toUSXXML: Book {}{} might have incorrect code on id line — we got: {!r}".format( BBB, " ({})".format(USXAbbrev) if USXAbbrev!=BBB else '', adjText[0:3] ) )
+                    logger.error( "toUSXXML: Book {}{} might have incorrect code on id line — we got: {!r}".format( BBB, f" ({USXAbbrev})" if USXAbbrev!=BBB else '', adjText[0:3] ) )
                 adjText = adjText[4:] # Remove the book code from the ID line because it's put in as an attribute
                 if adjText: xw.writeLineOpenClose( 'book', _handleInternalTextMarkersForUSX(adjText), [('code',USXAbbrev),('style',marker)] )
                 else: xw.writeLineOpenSelfclose( 'book', [('code',USXAbbrev),('style',marker)] )
-                #elif not text: logger.error( "toUSXXML: {} {}:{} has a blank id line that was ignored".format( BBB, C, V ) )
+                #elif not text: logger.error( f"toUSXXML: {BBB} {C}:{V} has a blank id line that was ignored" )
 
             elif marker == 'c':
                 assert not haveOpenVerse
@@ -979,7 +978,7 @@ def createUSXXMLBible( self, outputFolderpath:Path|str, controlDict, validationS
                 C, V = text, '0' # not adjText!
                 xw.writeLineOpenSelfclose( 'chapter', [('number',C),('style','c'),('sid',f'{USXAbbrev} {C}')] )
                 if adjText != text:
-                    logger.warning( "toUSXXML: Lost additional note text on c for {} {!r}".format( BBB, C ) )
+                    logger.warning( f"toUSXXML: Lost additional note text on c for {BBB} {C!r}" )
             elif marker == 'c~': # Don't really know what this stuff is!!!
                 if not adjText: logger.warning( "toUSXXML: Missing text for c~" ); continue
                 # TODO: We haven't stripped out character fields from within the text — not sure how USX handles them yet
@@ -1005,7 +1004,7 @@ def createUSXXMLBible( self, outputFolderpath:Path|str, controlDict, validationS
                     xw.removeFinalNewline( suppressFollowingIndent=True )
                 paraJustOpened = False
             elif marker in ('v~','p~',):
-                if not adjText: logger.critical( "toUSXXML: Missing text for {}".format( marker ) ); continue
+                if not adjText: logger.critical( f"toUSXXML: Missing text for {marker}" ); continue
                 # if not paraJustOpened: # copying Paratext style
                 #     xw.removeFinalNewline( suppressFollowingIndent=True )
                 xw.writeLineText( _handleInternalTextMarkersForUSX(adjText), noTextCheck=True ) # no checks coz might already have embedded XML
@@ -1035,7 +1034,7 @@ def createUSXXMLBible( self, outputFolderpath:Path|str, controlDict, validationS
                     xw.writeLineClose( 'para' )
                     haveOpenPara = False
                 if adjText:
-                    logger.error( "toUSXXML: {} {}:{} has a {} line containing text ({!r}) that was ignored".format( BBB, C,V, originalMarker, adjText ) )
+                    logger.error( f"toUSXXML: {BBB} {C}:{V} has a {originalMarker} line containing text ({adjText!r}) that was ignored" )
                 styles = [('style',originalMarker),('vid',f'{USXAbbrev} {C}:{V}')] \
                                 if haveOpenVerse else ('style',originalMarker)
                 xw.writeLineOpenSelfclose( 'para', styles )
@@ -1043,7 +1042,7 @@ def createUSXXMLBible( self, outputFolderpath:Path|str, controlDict, validationS
             else:
                 #assert getMarkerContentType == 'A' # A = always, e.g.,  ide, mt, h, s, ip, etc.
                 if markerContentType != 'A':
-                    logger.critical( "BibleWriter.toUSXXML: ToProgrammer — markerContentType should be 'A': {!r} is {!r} Why?".format( marker, markerContentType ) )
+                    logger.critical( f"BibleWriter.toUSXXML: ToProgrammer — markerContentType should be 'A': {marker!r} is {markerContentType!r} Why?" )
                 if haveOpenPara:
                     xw.removeFinalNewline( suppressFollowingIndent=True )
                     xw.writeLineClose( 'para' )
@@ -1065,7 +1064,7 @@ def createUSXXMLBible( self, outputFolderpath:Path|str, controlDict, validationS
         BOS = BibleOrganisationalSystem( controlDict['PublicationCode'] )
         BRL = BibleReferenceList( BOS, BibleObject=None )
 
-    vPrint( 'Info', DEBUGGING_THIS_MODULE, _("  Exporting to USX format…") )
+    vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Exporting to USX format…" )
     #USXOutputFolder = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( "USX output/' )
     #if not os.access( USXOutputFolder, os.F_OK ): os.mkdir( USXOutputFolder ) # Make the empty folder if there wasn't already one there
 
@@ -1083,14 +1082,14 @@ def createUSXXMLBible( self, outputFolderpath:Path|str, controlDict, validationS
                 if validationResults[2]: veFile.write( validationResults[2] )
 
     if ignoredMarkers:
-        logger.info( "toUSXXML: Ignored markers were {}".format( ignoredMarkers ) )
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + _("ERROR: Ignored toUSXXML markers were {}").format( ignoredMarkers ) )
+        logger.info( f"toUSXXML: Ignored markers were {ignoredMarkers}" )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + f"ERROR: Ignored toUSXXML markers were {ignoredMarkers}" )
     if unhandledMarkers:
-        logger.error( "toUSXXML: Unhandled markers were {}".format( unhandledMarkers ) )
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  " + _("ERROR: Unhandled toUSXXML markers were {}").format( unhandledMarkers ) )
+        logger.error( f"toUSXXML: Unhandled markers were {unhandledMarkers}" )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  " + f"ERROR: Unhandled toUSXXML markers were {unhandledMarkers}" )
     if unhandledBooks:
-        logger.warning( "toUSXXML: Unhandled books were {}".format( unhandledBooks ) )
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  " + _("WARNING: Unhandled toUSXXML books were {}").format( unhandledBooks ) )
+        logger.warning( f"toUSXXML: Unhandled books were {unhandledBooks}" )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  " + f"WARNING: Unhandled toUSXXML books were {unhandledBooks}" )
 
     # Now create a zipped collection
     vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Zipping USX3 files…" )
@@ -1189,7 +1188,7 @@ def briefDemo() -> None:
 
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder
         name, testFolder = random.choice( testData )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nA: Testfolder is: {}".format( testFolder ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nA: Testfolder is: {testFolder}" )
         result1 = USXXMLBibleFileCheck( testFolder )
         vPrint( 'Normal', DEBUGGING_THIS_MODULE, "USX TestAa", result1 )
         result2 = USXXMLBibleFileCheck( testFolder, autoLoad=True )
@@ -1199,7 +1198,7 @@ def briefDemo() -> None:
 
     if 1:
         name, testFolder = random.choice( testData )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nB: Testfolder is: {} ({})".format( testFolder, name ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nB: Testfolder is: {testFolder} ({name})" )
         if os.access( testFolder, os.R_OK ):
             UB = USXXMLBible( testFolder, name )
             UB.load()
@@ -1212,11 +1211,11 @@ def briefDemo() -> None:
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, UB.getAddedUnits() )
             #for ref in ('GEN','Genesis','GeNeSiS','Gen','MrK','mt','Prv','Xyz',):
                 ##dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Looking for", ref )
-                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Tried finding {!r} in {!r}: got {!r}".format( ref, name, UB.getXRefBBB( ref ) ) )
-        else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "B: Sorry, test folder {!r} is not readable on this computer.".format( testFolder ) )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Tried finding {ref!r} in {name!r}: got {UB.getXRefBBB( ref )!r}" )
+        else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"B: Sorry, test folder {testFolder!r} is not readable on this computer." )
 
         #if BibleOrgSysGlobals.commandLineArguments.export:
-        #    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "NOTE: This is {} V{} -- i.e., not even alpha quality software!".format( PROGRAM_NAME, PROGRAM_VERSION ) )
+        #    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"NOTE: This is {PROGRAM_NAME} V{PROGRAM_VERSION} -- i.e., not even alpha quality software!" )
         #       pass
 
     if 1:
@@ -1228,10 +1227,10 @@ def briefDemo() -> None:
             somepath = os.path.join( USXSourceFolder, something )
             if os.path.isfile( somepath ):
                 if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag:
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "C{}/ Unexpected {} file in {}".format( j, something, USXSourceFolder ) )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"C{j}/ Unexpected {something} file in {USXSourceFolder}" )
             elif os.path.isdir( somepath ):
                 abbreviation = something
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nC{}/ Loading USX {}…".format( j, abbreviation ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nC{j}/ Loading USX {abbreviation}…" )
                 loadedBible = USXXMLBible( somepath, givenName=f'{abbreviation} Bible' )
                 loadedBible.loadBooks() # Load and process the USX XML books
                 vPrint( 'Quiet', DEBUGGING_THIS_MODULE, loadedBible ) # Just print a summary
@@ -1258,17 +1257,17 @@ def fullDemo() -> None:
 
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder
         for j, (name, testFolder) in enumerate( testData ):
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nA{}: Testfolder is: {}".format( j+1, testFolder ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nA{j+1}: Testfolder is: {testFolder}" )
             result1 = USXXMLBibleFileCheck( testFolder )
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "USX TestA{}a".format( j+1 ), result1 )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"USX TestA{j+1}a", result1 )
             result2 = USXXMLBibleFileCheck( testFolder, autoLoad=True )
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "USX TestA{}b (autoLoad)".format( j+1 ), result2 )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"USX TestA{j+1}b (autoLoad)", result2 )
             result3 = USXXMLBibleFileCheck( testFolder, autoLoadBooks=True )
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "USX TestA{}c (autoLoadBooks)".format( j+1 ), result3 )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"USX TestA{j+1}c (autoLoadBooks)", result3 )
 
     if 1:
         for j, (name, testFolder) in enumerate( testData ):
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nB{}: Testfolder is: {} ({})".format( j+1, testFolder, name ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nB{j+1}: Testfolder is: {testFolder} ({name})" )
             if os.access( testFolder, os.R_OK ):
                 UB = USXXMLBible( testFolder, name )
                 UB.load()
@@ -1281,11 +1280,11 @@ def fullDemo() -> None:
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, UB.getAddedUnits() )
                 #for ref in ('GEN','Genesis','GeNeSiS','Gen','MrK','mt','Prv','Xyz',):
                     ##dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Looking for", ref )
-                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Tried finding {!r} in {!r}: got {!r}".format( ref, name, UB.getXRefBBB( ref ) ) )
-            else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "B{}: Sorry, test folder {!r} is not readable on this computer.".format( j+1, testFolder ) )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Tried finding {ref!r} in {name!r}: got {UB.getXRefBBB( ref )!r}" )
+            else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"B{j+1}: Sorry, test folder {testFolder!r} is not readable on this computer." )
 
         #if BibleOrgSysGlobals.commandLineArguments.export:
-        #    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "NOTE: This is {} V{} -- i.e., not even alpha quality software!".format( PROGRAM_NAME, PROGRAM_VERSION ) )
+        #    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"NOTE: This is {PROGRAM_NAME} V{PROGRAM_VERSION} -- i.e., not even alpha quality software!" )
         #       pass
 
     if 1:
@@ -1297,10 +1296,10 @@ def fullDemo() -> None:
             somepath = os.path.join( USXSourceFolder, something )
             if os.path.isfile( somepath ):
                 if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag:
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "C{}/ Unexpected {} file in {}".format( j, something, USXSourceFolder ) )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"C{j}/ Unexpected {something} file in {USXSourceFolder}" )
             elif os.path.isdir( somepath ):
                 abbreviation = something
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nC{}/ Loading USX {}…".format( j, abbreviation ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nC{j}/ Loading USX {abbreviation}…" )
                 loadedBible = USXXMLBible( somepath, givenName=f'{abbreviation} Bible' )
                 loadedBible.loadBooks() # Load and process the USX XML books
                 vPrint( 'Quiet', DEBUGGING_THIS_MODULE, loadedBible ) # Just print a summary

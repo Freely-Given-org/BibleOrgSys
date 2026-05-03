@@ -36,7 +36,6 @@ Some verses might have no notes.
 
 CHANGELOG:
 """
-from gettext import gettext as _
 import os
 from pathlib import Path
 import logging
@@ -74,20 +73,20 @@ DEBUGGING_THIS_MODULE = False
 #     if autoLoad is true and exactly one Tyndale Notes Bible is found,
 #         returns the loaded TyndaleNotesBible object.
 #     """
-#     fnPrint( DEBUGGING_THIS_MODULE, "TyndaleNotesBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
+#     fnPrint( DEBUGGING_THIS_MODULE, f"TyndaleNotesBibleFileCheck( {givenFolderName}, {strictCheck}, {autoLoad}, {autoLoadBooks} )" )
 #     if BibleOrgSysGlobals.debugFlag: assert givenFolderName
 #     if BibleOrgSysGlobals.debugFlag: assert autoLoad in (True,False,) and autoLoadBooks in (True,False,)
 
 #     # Check that the given folder is readable
 #     if not os.access( givenFolderName, os.R_OK ):
-#         logging.critical( "TyndaleNotesBibleFileCheck: Given {!r} folder is unreadable".format( givenFolderName ) )
+#         logging.critical( f"TyndaleNotesBibleFileCheck: Given {givenFolderName!r} folder is unreadable" )
 #         return False
 #     if not os.path.isdir( givenFolderName ):
-#         logging.critical( "TyndaleNotesBibleFileCheck: Given {!r} path is not a folder".format( givenFolderName ) )
+#         logging.critical( f"TyndaleNotesBibleFileCheck: Given {givenFolderName!r} path is not a folder" )
 #         return False
 
 #     # Find all the files and folders in this folder
-#     vPrint( 'Verbose', DEBUGGING_THIS_MODULE, " TyndaleNotesBibleFileCheck: Looking for files in given {}".format( givenFolderName ) )
+#     vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f" TyndaleNotesBibleFileCheck: Looking for files in given {givenFolderName}" )
 #     foundFolders, foundFiles = [], []
 #     for something in os.listdir( givenFolderName ):
 #         somepath = os.path.join( givenFolderName, something )
@@ -112,7 +111,7 @@ DEBUGGING_THIS_MODULE = False
 #     #         for folderName in foundFolders:
 #     #             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "TyndaleNotesBibleFileCheck: Surprised to find folder:", folderName )
 #     if numFound:
-#         vPrint( 'Info', DEBUGGING_THIS_MODULE, "TyndaleNotesBibleFileCheck got {} in {}".format( numFound, givenFolderName ) )
+#         vPrint( 'Info', DEBUGGING_THIS_MODULE, f"TyndaleNotesBibleFileCheck got {numFound} in {givenFolderName}" )
 #         if numFound == 1 and (autoLoad or autoLoadBooks):
 #             tnB = TyndaleNotesBible( givenFolderName )
 #             if autoLoad: tnB.preload()
@@ -126,9 +125,9 @@ DEBUGGING_THIS_MODULE = False
 #     for thisFolderName in sorted( foundFolders ):
 #         tryFolderName = os.path.join( givenFolderName, thisFolderName+'/' )
 #         if not os.access( tryFolderName, os.R_OK ): # The subfolder is not readable
-#             logging.warning( _("TyndaleNotesBibleFileCheck: {!r} subfolder is unreadable").format( tryFolderName ) )
+#             logging.warning( f"TyndaleNotesBibleFileCheck: {tryFolderName!r} subfolder is unreadable" )
 #             continue
-#         vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "    TyndaleNotesBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
+#         vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"    TyndaleNotesBibleFileCheck: Looking for files in {tryFolderName}" )
 #         foundSubfolders, foundSubfiles = [], []
 #         try:
 #             for something in os.listdir( tryFolderName ):
@@ -154,7 +153,7 @@ DEBUGGING_THIS_MODULE = False
 #         #         for folderName in foundSubfolders:
 #         #             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "TyndaleNotesBibleFileCheckSurprised to find folder:", folderName )
 #     if numFound:
-#         vPrint( 'Info', DEBUGGING_THIS_MODULE, "TyndaleNotesBibleFileCheck foundProjects {} {}".format( numFound, foundProjects ) )
+#         vPrint( 'Info', DEBUGGING_THIS_MODULE, f"TyndaleNotesBibleFileCheck foundProjects {numFound} {foundProjects}" )
 #         if numFound == 1 and (autoLoad or autoLoadBooks):
 #             tnB = TyndaleNotesBible( foundProjects[0] )
 #             if autoLoad: tnB.preload()
@@ -190,7 +189,7 @@ class TyndaleNotesBible( Bible ):
             self.sourceFolder = self.sourceFilepath.parent
             self.sourceFilename = self.sourceFilepath.name
         else:
-            logging.critical( _("TyndaleNotesBible: Unable to discover a single filename in {}".format( sourceFilepath )) )
+            logging.critical( _(f"TyndaleNotesBible: Unable to discover a single filename in {sourceFilepath}") )
             self.sourceFilename = self.sourceFilepath = None
     # end of TyndaleNotesBible.__init_
 
@@ -228,8 +227,8 @@ class TyndaleNotesBible( Bible ):
                 if attrib == 'release':
                     self.releaseVersion = value
                 else:
-                    logging.warning( "fv6g Unprocessed {} attribute ({}) in {}".format( attrib, value, topLocation ) )
-                    loadErrors.append( "Unprocessed {} attribute ({}) in {} (fv6g)".format( attrib, value, topLocation ) )
+                    logging.warning( f"fv6g Unprocessed {attrib} attribute ({value}) in {topLocation}" )
+                    loadErrors.append( f"Unprocessed {attrib} attribute ({value}) in {topLocation} (fv6g)" )
                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
             assert self.releaseVersion == '1.25'
 
@@ -249,8 +248,8 @@ class TyndaleNotesBible( Bible ):
                     elif attrib == 'product':
                         assert value == 'TyndaleOpenStudyNotes'
                     else:
-                        logging.warning( "fv6g Unprocessed {} attribute ({}) in {}".format( attrib, value, topLocation ) )
-                        loadErrors.append( "Unprocessed {} attribute ({}) in {} (fv6g)".format( attrib, value, topLocation ) )
+                        logging.warning( f"fv6g Unprocessed {attrib} attribute ({value}) in {topLocation}" )
+                        loadErrors.append( f"Unprocessed {attrib} attribute ({value}) in {topLocation} (fv6g)" )
                         if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
                 assert name
                 if self.abbreviation in ('TSN','TOSN'):
@@ -341,8 +340,8 @@ class TyndaleNotesBible( Bible ):
                                     ts = value # Things like 'sn-text -1v -5'
                                     # TODO: We're losing this whatever it is
                                 else:
-                                    logging.warning( "fv6g Unprocessed {} attribute ({}) in {}".format( attrib, value, bodyLocation ) )
-                                    loadErrors.append( "Unprocessed {} attribute ({}) in {} (fv6g)".format( attrib, value, bodyLocation ) )
+                                    logging.warning( f"fv6g Unprocessed {attrib} attribute ({value}) in {bodyLocation}" )
+                                    loadErrors.append( f"Unprocessed {attrib} attribute ({value}) in {bodyLocation} (fv6g)" )
                                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
                             # So we want to extract this as an HTML paragraph
                             htmlSegment = BibleOrgSysGlobals.getFlattenedXML( bodyelement, bodyLocation )
@@ -454,7 +453,7 @@ def briefDemo() -> None:
             elif os.path.isfile( somepath ): foundFiles.append( something )
 
         if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nTrying all {len(foundFolders)} discovered modules…" )
             parameters = [folderName for folderName in sorted(foundFolders)]
             BibleOrgSysGlobals.alreadyMultiprocessing = True
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
@@ -463,7 +462,7 @@ def briefDemo() -> None:
             BibleOrgSysGlobals.alreadyMultiprocessing = False
         else: # Just single threaded
             for j, someFolder in enumerate( sorted( foundFolders ) ):
-                vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nTyndale Notes D{}/ Trying {}".format( j+1, someFolder ) )
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nTyndale Notes D{j+1}/ Trying {someFolder}" )
                 #myTestFolder = os.path.join( testFolderpath, someFolder+'/' )
                 testBCV( someFolder )
 
@@ -477,7 +476,7 @@ def briefDemo() -> None:
                                         ):
             count += 1
             if os.access( testFolder, os.R_OK ):
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nTyndale Notes A{}/".format( count ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nTyndale Notes A{count}/" )
                 tnB = TyndaleNotesBible( testFolder, name, encoding=encoding )
                 tnB.load()
                 if BibleOrgSysGlobals.verbosityLevel > 1:
@@ -558,7 +557,7 @@ def fullDemo() -> None:
             elif os.path.isfile( somepath ): foundFiles.append( something )
 
         if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nTrying all {len(foundFolders)} discovered modules…" )
             parameters = [folderName for folderName in sorted(foundFolders)]
             BibleOrgSysGlobals.alreadyMultiprocessing = True
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
@@ -567,7 +566,7 @@ def fullDemo() -> None:
             BibleOrgSysGlobals.alreadyMultiprocessing = False
         else: # Just single threaded
             for j, someFolder in enumerate( sorted( foundFolders ) ):
-                vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nTyndale Notes D{}/ Trying {}".format( j+1, someFolder ) )
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nTyndale Notes D{j+1}/ Trying {someFolder}" )
                 #myTestFolder = os.path.join( testFolderpath, someFolder+'/' )
                 testBCV( someFolder )
 
@@ -581,7 +580,7 @@ def fullDemo() -> None:
                                         ):
             count += 1
             if os.access( testFolder, os.R_OK ):
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nTyndale Notes A{}/".format( count ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nTyndale Notes A{count}/" )
                 tnB = TyndaleNotesBible( testFolder, name, encoding=encoding )
                 tnB.load()
                 if BibleOrgSysGlobals.verbosityLevel > 1:

@@ -27,7 +27,6 @@
 Module for reading and parsing simple text control files.
 """
 
-from gettext import gettext as _
 import os
 import logging
 

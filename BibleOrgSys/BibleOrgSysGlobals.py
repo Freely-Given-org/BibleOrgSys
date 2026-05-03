@@ -1,5 +1,5 @@
 #!/usr/bin/env -S uv run
-# -\*- coding: utf-8 -\*-
+# -*- coding: utf-8 -*-
 # SPDX-License-Identifier: GPL-3.0-or-later
 #
 # BibleOrgSysGlobals.py
@@ -437,7 +437,7 @@ def addConsoleLogging( consoleLoggingLevel:int|None=None ) -> None:
         else: # Quiet or normal
             consoleLoggingLevel = logging.ERROR
     if DEBUGGING_THIS_MODULE: # otherwise the list of strings isn't declared above
-        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "  addConsoleLogging setting it to {}={}".format( consoleLoggingLevel, LOGGING_NAME_DICT[consoleLoggingLevel] ) )
+        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"  addConsoleLogging setting it to {consoleLoggingLevel}={LOGGING_NAME_DICT[consoleLoggingLevel]}" )
     stderrHandler.setLevel( consoleLoggingLevel )
     root = logging.getLogger()  # No param means get the root logger
     root.addHandler(stderrHandler)
@@ -448,7 +448,7 @@ def addLogfile( projectName:str, folderName:Path|None=None ) -> tuple[Path,loggi
     """
     Adds an extra project specific log file to the logger.
     """
-    fnPrint( DEBUGGING_THIS_MODULE, "BibleOrgSysGlobals.addLogfile( {}, {} )".format( projectName, folderName ) )
+    fnPrint( DEBUGGING_THIS_MODULE, f"BibleOrgSysGlobals.addLogfile( {projectName}, {folderName} )" )
 
     filename = projectName + '_log.txt'
     if folderName is None: folderName = DEFAULT_WRITEABLE_LOG_FOLDERPATH
@@ -480,7 +480,7 @@ def removeLogfile( projectHandler ) -> None:
     """
     Removes the project specific logger.
     """
-    fnPrint( DEBUGGING_THIS_MODULE, "BibleOrgSysGlobals.removeLogfile( {} )".format( projectHandler ) )
+    fnPrint( DEBUGGING_THIS_MODULE, f"BibleOrgSysGlobals.removeLogfile( {projectHandler} )" )
 
     root = logging.getLogger()  # No param means get the root logger
     root.removeHandler( projectHandler )
@@ -526,7 +526,7 @@ def getLatestPythonModificationDate() -> str:
                             if '#' in lineBit: lineBit = lineBit.split('#',1)[0]
                             if lineBit[-1]=='\n': lineBit = lineBit[:-1] # Removing trailing newline character
                             lineBit = lineBit.replace("'",'').replace('"','').strip()
-                            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, '  {!r}'.format( lineBit ) )
+                            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'  {lineBit!r}' )
                             lineBits = lineBit.split( '-' )
                             assert len(lineBits) == 3 # YYYY MM DD
                             YYYY, MM, DD = int(lineBits[0]), int(lineBits[1]), int(lineBits[2])
@@ -672,7 +672,7 @@ def backupAnyExistingFile( filenameOrFilepath:Path|str, numBackups:int=1, extens
     """
     Make a backup copy/copies of a file if it exists.
     """
-    fnPrint( DEBUGGING_THIS_MODULE, "backupAnyExistingFile( {!r}, {}, {!r} )".format( filenameOrFilepath, numBackups, extension ) )
+    fnPrint( DEBUGGING_THIS_MODULE, f"backupAnyExistingFile( {filenameOrFilepath!r}, {numBackups}, {extension!r} )" )
     if debugFlag and DEBUGGING_THIS_MODULE:
         assert not str(filenameOrFilepath).lower().endswith( '.bak' )
 
@@ -682,7 +682,7 @@ def backupAnyExistingFile( filenameOrFilepath:Path|str, numBackups:int=1, extens
         destination = str(filenameOrFilepath) + extension + ('' if n==1 else str(n))
         if os.access( source, os.F_OK ):
             if n==1 and debugFlag:
-                logging.info( "backupAnyExistingFile: {!r} already exists -- renaming it first!".format( source ) )
+                logging.info( f"backupAnyExistingFile: {source!r} already exists -- renaming it first!" )
             if os.access( destination, os.F_OK ): os.remove( destination )
             os.rename( source, destination )
 # end of BibleOrgSysGlobals.backupAnyExistingFile
@@ -783,8 +783,8 @@ def fileCompare( filename1, filename2, folder1=None, folder2=None, printFlag=Tru
     filepath2 = Path( folder2, filename2 ) if folder2 else filename2
     if verbosityLevel > 1:
         if filename1==filename2:
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Comparing {!r} files in folders {!r} and {!r}…".format( filename1, folder1, folder2 ) )
-        else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Comparing files {!r} and {!r}…".format( filename1, filename2 ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Comparing {filename1!r} files in folders {folder1!r} and {folder2!r}…" )
+        else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Comparing files {filename1!r} and {filename2!r}…" )
 
     # Do a preliminary check on the readability of our files
     if not os.access( filepath1, os.R_OK ):
@@ -823,7 +823,7 @@ def fileCompare( filename1, filename2, folder1=None, folder2=None, printFlag=Tru
     len1, len2 = len(lines1), len(lines2 )
     equalFlag = True
     if len1 != len2:
-        if printFlag: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Count of lines differ: file1={}, file2={}".format( len1, len2 ) )
+        if printFlag: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Count of lines differ: file1={len1}, file2={len2}" )
         equalFlag = False
 
     # Now compare the actual lines
@@ -831,13 +831,12 @@ def fileCompare( filename1, filename2, folder1=None, folder2=None, printFlag=Tru
     for k in range( min( len1, len2 ) ):
         if lines1[k] != lines2[k]:
             if printFlag:
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  {}a:{!r} ({} chars)\n  {}b:{!r} ({} chars)" \
-                    .format( k+1, lines1[k], len(lines1[k]), k+1, lines2[k], len(lines2[k]) ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  {k+1}a:{lines1[k]!r} ({len(lines1[k])} chars)\n  {k+1}b:{lines2[k]!r} ({len(lines2[k])} chars)" )
             equalFlag = False
             diffCount += 1
             if diffCount > exitCount:
                 if printFlag and verbosityLevel > 1:
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "fileCompare: stopped comparing after {} mismatches".format( exitCount ) )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"fileCompare: stopped comparing after {exitCount} mismatches" )
                 break
 
     return equalFlag
@@ -853,8 +852,8 @@ def fileCompareUSFM( filename1, filename2, folder1=None, folder2=None, printFlag
     filepath2 = Path( folder2, filename2 ) if folder2 else filename2
     if verbosityLevel > 1:
         if filename1==filename2:
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Comparing USFM {!r} files in folders {!r} and {!r}…".format( filename1, folder1, folder2 ) )
-        else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Comparing USFM files {!r} and {!r}…".format( filename1, filename2 ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Comparing USFM {filename1!r} files in folders {folder1!r} and {folder2!r}…" )
+        else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Comparing USFM files {filename1!r} and {filename2!r}…" )
 
     # Do a preliminary check on the readability of our files
     if not os.access( filepath1, os.R_OK ):
@@ -892,7 +891,7 @@ def fileCompareUSFM( filename1, filename2, folder1=None, folder2=None, printFlag
     len1, len2 = len(lines1), len(lines2 )
     equalFlag = True
     if len1 != len2:
-        if printFlag: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Count of lines differ: file1={}, file2={}".format( len1, len2 ) )
+        if printFlag: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Count of lines differ: file1={len1}, file2={len2}" )
         equalFlag = False
 
     # Now compare the actual lines
@@ -914,13 +913,12 @@ def fileCompareUSFM( filename1, filename2, folder1=None, folder2=None, printFlag
             else: adjustedLine2 = adjustedLine2.replace( '\\'+unnumbered+' ', '\\'+numbered+' ' )
         if adjustedLine1 != adjustedLine2:
             if printFlag:
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  {}:{} {}a:{!r} ({} chars)\n  {}:{} {}b:{!r} ({} chars)" \
-                    .format( C, V, k+1, originalLine1, len(originalLine1), C, V, k+1, originalLine2, len(originalLine1) ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  {C}:{V} {k+1}a:{originalLine1!r} ({len(originalLine1)} chars)\n  {C}:{V} {k+1}b:{originalLine2!r} ({len(originalLine1)} chars)" )
             equalFlag = False
             diffCount += 1
             if diffCount > exitCount:
                 if printFlag and verbosityLevel > 1:
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "fileCompare: stopped comparing after {} mismatches".format( exitCount ) )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"fileCompare: stopped comparing after {exitCount} mismatches" )
                 break
 
     return equalFlag
@@ -936,8 +934,8 @@ def fileCompareXML( filename1:str, filename2:str, folder1:str=None, folder2:str=
     filepath2 = Path( folder2, filename2 ) if folder2 else filename2
     if verbosityLevel > 1:
         if filename1==filename2:
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Comparing XML '{}' files in folders '{}' and '{}'…".format( filename1, folder1, folder2 ) )
-        else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Comparing XML files '{}' and '{}'…".format( filename1, filename2 ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Comparing XML '{filename1}' files in folders '{folder1}' and '{folder2}'…" )
+        else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Comparing XML files '{filename1}' and '{filename2}'…" )
 
     # Do a preliminary check on the readability of our files
     if not os.access( filepath1, os.R_OK ):
@@ -964,30 +962,30 @@ def fileCompareXML( filename1:str, filename2:str, folder1:str=None, folder2:str=
         nonlocal diffCount, location
         if element1.tag != element2.tag:
             if printFlag:
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Element tags differ ({!r} and {!r})".format( element1.tag, element2.tag ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Element tags differ ({element1.tag!r} and {element2.tag!r})" )
                 vPrint( 'Info', DEBUGGING_THIS_MODULE, "  at", location )
             diffCount += 1
             if diffCount > exitCount: return
-            location.append( "{}/{}".format( element1.tag, element2.tag ) )
+            location.append( f"{element1.tag}/{element2.tag}" )
         else: location.append( element1.tag )
         attribs1, attribs2 = element1.items(), element2.items()
         if len(attribs1) != len(attribs2):
             if printFlag:
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Number of {} attributes differ ({} and {})".format( element1.tag, len(attribs1), len(attribs2) ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Number of {element1.tag} attributes differ ({len(attribs1)} and {len(attribs2)})" )
                 vPrint( 'Info', DEBUGGING_THIS_MODULE, "  at", location )
             diffCount += 1
             if diffCount > exitCount: return
         for avPair in attribs1:
             if avPair not in attribs2:
                 if printFlag:
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "File1 has {} but not in file2 {}".format( avPair, attribs2 ) )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"File1 has {avPair} but not in file2 {attribs2}" )
                     vPrint( 'Info', DEBUGGING_THIS_MODULE, "  at", location )
                 diffCount += 1
                 if diffCount > exitCount: return
         for avPair in attribs2:
             if avPair not in attribs1:
                 if printFlag:
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "File2 has {} but not in file1 {}".format( avPair, attribs1 ) )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"File2 has {avPair} but not in file1 {attribs1}" )
                     vPrint( 'Info', DEBUGGING_THIS_MODULE, "  at", location )
                 diffCount += 1
                 if diffCount > exitCount: return
@@ -998,13 +996,13 @@ def fileCompareXML( filename1:str, filename2:str, folder1:str=None, folder2:str=
                 elif element1.text and element2.text and element1.text.strip()==element2.text.strip(): pass
                 else:
                     if printFlag:
-                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Element text differs:\n {!r}\n {!r}".format( element1.text, element2.text ) )
+                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Element text differs:\n {element1.text!r}\n {element2.text!r}" )
                         vPrint( 'Info', DEBUGGING_THIS_MODULE, "  at", location )
                     diffCount += 1
                     if diffCount > exitCount: return
             else:
                 if printFlag:
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Element text differs:\n {!r}\n {!r}".format( element1.text, element2.text ) )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Element text differs:\n {element1.text!r}\n {element2.text!r}" )
                     vPrint( 'Info', DEBUGGING_THIS_MODULE, "  at", location )
                 diffCount += 1
                 if diffCount > exitCount: return
@@ -1015,19 +1013,19 @@ def fileCompareXML( filename1:str, filename2:str, folder1:str=None, folder2:str=
                 elif element1.tail and element2.tail and element1.tail.strip()==element2.tail.strip(): pass
                 else:
                     if printFlag:
-                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Element tail differs:\n {!r}\n {!r}".format( element1.tail, element2.tail ) )
+                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Element tail differs:\n {element1.tail!r}\n {element2.tail!r}" )
                         vPrint( 'Info', DEBUGGING_THIS_MODULE, "  at", location )
                     diffCount += 1
                     if diffCount > exitCount: return
             else:
                 if printFlag:
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Element tail differs:\n {!r}\n {!r}".format( element1.tail, element2.tail ) )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Element tail differs:\n {element1.tail!r}\n {element2.tail!r}" )
                     vPrint( 'Info', DEBUGGING_THIS_MODULE, "  at", location )
                 diffCount += 1
                 if diffCount > exitCount: return
         if len(element1) != len(element2):
             if printFlag:
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Number of subelements differ ({} and {})".format( len(element1), len(element2) ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Number of subelements differ ({len(element1)} and {len(element2)})" )
                 vPrint( 'Info', DEBUGGING_THIS_MODULE, "  at", location )
             diffCount += 1
             if diffCount > exitCount: return
@@ -1041,7 +1039,7 @@ def fileCompareXML( filename1:str, filename2:str, folder1:str=None, folder2:str=
     location:list[str] = []
     compareElements( tree1, tree2 )
     if diffCount:
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "{} differences discovered.".format( diffCount if diffCount<=exitCount else 'Many' ) )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"{diffCount if diffCount<=exitCount else 'Many'} differences discovered." )
     return diffCount==0
 # end of BibleOrgSysGlobals.fileCompareXML
 
@@ -1060,18 +1058,18 @@ def elementStr( element, level:int=0 ) -> str:
 
     This is suitable for debugging
     """
-    resultStr = '{}Element {!r}: '.format( 'Sub'*level, element.tag )
+    resultStr = f"{'Sub'*level}Element {element.tag!r}: "
 
     # Do attributes first
     printed = False
     for attrib,value in element.items():
         if printed: resultStr += ','
         else: resultStr += 'Attribs: '; printed = True
-        resultStr += '{}={!r}'.format( attrib, value )
+        resultStr += f"{attrib}={value!r}"
 
     if element.text is not None:
         if resultStr[-1] != ' ': resultStr += ' '
-        resultStr += 'Text={!r}'.format( element.text )
+        resultStr += f"Text={element.text!r}"
 
     # Now do subelements
     printed = False
@@ -1084,7 +1082,7 @@ def elementStr( element, level:int=0 ) -> str:
 
     if element.tail is not None:
         if resultStr[-1] != ' ': resultStr += ' '
-        resultStr += 'Tail={!r}'.format( element.tail )
+        resultStr += f"Tail={element.tail!r}"
     return resultStr
 # end of BibleOrgSysGlobals.elementStr
 
@@ -1094,8 +1092,7 @@ def checkXMLNoAttributes( element, locationString, idString=None, loadErrorsDict
     Give a warning if the element contains any attributes.
     """
     for attrib,value in element.items():
-        warningString = "{}Unexpected {!r} XML attribute ({}) in {}" \
-                        .format( (idString+' ') if idString else '', attrib, value, locationString )
+        warningString = f"{(idString+' ') if idString else ''}Unexpected {attrib!r} XML attribute ({value}) in {locationString}"
         logging.warning( warningString )
         if loadErrorsDict is not None: loadErrorsDict.append( warningString )
         if strictCheckingFlag or debugFlag and errorOnXMLWarning:
@@ -1108,8 +1105,7 @@ def checkXMLNoText( element, locationString, idString=None, loadErrorsDict=None 
     Give an error if the element text contains anything other than whitespace.
     """
     if element.text and element.text.strip():
-        errorString = "{}Unexpected {!r} XML element text in {}" \
-                        .format( (idString+' ') if idString else '', element.text, locationString )
+        errorString = f"{(idString+' ') if idString else ''}Unexpected {element.text!r} XML element text in {locationString}"
         logging.error( errorString )
         if loadErrorsDict is not None: loadErrorsDict.append( errorString )
         if strictCheckingFlag or debugFlag and errorOnXMLWarning:
@@ -1121,8 +1117,7 @@ def checkXMLNoTail( element, locationString, idString=None, loadErrorsDict=None 
     Give a warning if the element tail contains anything other than whitespace.
     """
     if element.tail and element.tail.strip():
-        warningString = "{}Unexpected {!r} XML element tail in {}" \
-                        .format( (idString+' ') if idString else '', element.tail, locationString )
+        warningString = f"{(idString+' ') if idString else ''}Unexpected {element.tail!r} XML element tail in {locationString}"
         logging.warning( warningString )
         if loadErrorsDict is not None: loadErrorsDict.append( warningString )
         if strictCheckingFlag or debugFlag and errorOnXMLWarning:
@@ -1135,8 +1130,7 @@ def checkXMLNoSubelements( element, locationString, idString=None, loadErrorsDic
     Give an error if the element contains any sub-elements.
     """
     for subelement in element:
-        errorString = "{}Unexpected {!r} XML sub-element ({}) in {}" \
-                        .format( (idString+' ') if idString else '', subelement.tag, subelement.text, locationString )
+        errorString = f"{(idString+' ') if idString else ''}Unexpected {subelement.tag!r} XML sub-element ({subelement.text}) in {locationString}"
         (logging.critical if subelement.text else logging.error)( errorString )
         if loadErrorsDict is not None: loadErrorsDict.append( errorString )
         if strictCheckingFlag or debugFlag and errorOnXMLWarning:
@@ -1150,10 +1144,7 @@ def checkXMLNoSubelementsWithText( element, locationString, idString=None, loadE
     if ( element.text and element.text.strip() ) \
     or ( element.tail and element.tail.strip() ):
         for subelement in element:
-            warningString = "{}Unexpected {!r} XML sub-element ({}) in {} with text/tail {}/{}" \
-                            .format( (idString+' ') if idString else '', subelement.tag, subelement.text, locationString,
-                                element.text.strip() if element.text else element.text,
-                                element.tail.strip() if element.tail else element.tail )
+            warningString = f"{(idString+' ') if idString else ''}Unexpected {subelement.tag!r} XML sub-element ({subelement.text}) in {locationString} with text/tail {element.text.strip() if element.text else element.text}/{element.tail.strip() if element.tail else element.tail}"
             logging.warning( warningString )
             if loadErrorsDict is not None: loadErrorsDict.append( warningString )
             if strictCheckingFlag or debugFlag and errorOnXMLWarning:
@@ -1201,7 +1192,7 @@ def isBlank( elementText ):
 
     If the text is None, returns None
     """
-    # fnPrint( DEBUGGING_THIS_MODULE, "isBlank( {!r} )".format( elementText ) )
+    # fnPrint( DEBUGGING_THIS_MODULE, f"isBlank( {elementText!r} )" )
     if elementText is None: return True
     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "isspace()", elementText.isspace() )
     return elementText.isspace()
@@ -1236,7 +1227,7 @@ def applyStringAdjustments( originalText, adjustmentList ):
         lenFS, lenRS = len(findStr), len(replaceStr)
         if debugFlag: assert text[ix+offset:ix+offset+lenFS] == findStr # Our find string must be there
         elif text[ix+offset:ix+offset+lenFS] != findStr:
-            logging.error( "applyStringAdjustments programming error -- given bad data for {!r}: {}".format( originalText, adjustmentList ) )
+            logging.error( f"applyStringAdjustments programming error -- given bad data for {originalText!r}: {adjustmentList}" )
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "before", repr(text) )
         text = text[:ix+offset] + replaceStr + text[ix+offset+lenFS:]
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, " after", repr(text) )
@@ -1474,7 +1465,7 @@ def setVerbosity( verbosityLevelParameter: str | int ) -> None:
         elif verbosityLevelParameter == 4:
             verbosityLevel = verbosityLevelParameter
             verbosityString = 'Verbose'
-        else: logging.error( "Invalid '" + verbosityLevelParameter + "' verbosity parameter" )
+        else: logging.error( f"Invalid '{verbosityLevelParameter}' verbosity parameter" )
 
     set_rust_verbosity( verbosityLevel ) # Set it for the Rust internals as well
 
@@ -1583,7 +1574,7 @@ def addStandardOptionsAndProcess( parserObject, exportAvailable=False ) -> None:
     Then preloads common data structures.
     """
     global commandLineArguments
-    fnPrint( DEBUGGING_THIS_MODULE, "BibleOrgSysGlobals.addStandardOptionsAndProcess( …, {} )".format( exportAvailable ) )
+    fnPrint( DEBUGGING_THIS_MODULE, f"BibleOrgSysGlobals.addStandardOptionsAndProcess( …, {exportAvailable} )" )
 
     verbosityGroup = parserObject.add_argument_group( 'Verbosity Group', 'Console verbosity controls' )
     mainVerbosityGroup = verbosityGroup.add_mutually_exclusive_group()
@@ -1630,7 +1621,7 @@ def addStandardOptionsAndProcess( parserObject, exportAvailable=False ) -> None:
         if maxProcesses > 1:
             dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"DEBUG/SINGLE MODE: Reducing maxProcesses from {maxProcesses} down to 1" )
         maxProcesses = 1 # Limit to one process
-        dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "commandLineArguments: {}".format( commandLineArguments ) )
+        dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"commandLineArguments: {commandLineArguments}" )
 
     preloadCommonData()
 # end of BibleOrgSysGlobals.addStandardOptionsAndProcess
@@ -1641,12 +1632,12 @@ def printAllGlobals( indent=None ):
     Print all global variables (for debugging usually).
     """
     if indent is None: indent = 2
-    dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "{}commandLineArguments: {}".format( ' '*indent, commandLineArguments ) )
-    dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "{}debugFlag: {}".format( ' '*indent, debugFlag ) )
-    dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "{}maxProcesses: {}".format( ' '*indent, maxProcesses ) )
-    dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "{}verbosityString: {}".format( ' '*indent, verbosityString ) )
-    dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "{}verbosityLevel: {}".format( ' '*indent, verbosityLevel ) )
-    dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "{}strictCheckingFlag: {}".format( ' '*indent, strictCheckingFlag ) )
+    dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{' '*indent}commandLineArguments: {commandLineArguments}" )
+    dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{' '*indent}debugFlag: {debugFlag}" )
+    dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{' '*indent}maxProcesses: {maxProcesses}" )
+    dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{' '*indent}verbosityString: {verbosityString}" )
+    dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{' '*indent}verbosityLevel: {verbosityLevel}" )
+    dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{' '*indent}strictCheckingFlag: {strictCheckingFlag}" )
 # end of BibleOrgSysGlobals.printAllGlobals
 
 
@@ -1661,9 +1652,9 @@ def elapsedTime( startTime ):
     minutes = seconds / 60.0
     hours = minutes / 60.0
     if minutes > 90:
-        return '{0:.2g} hours'.format( hours ).lstrip()
+        return f'{hours:.2g} hours'.lstrip()
     if seconds > 90:
-        return '{0:.2g} minutes'.format( minutes ).lstrip()
+        return f'{minutes:.2g} minutes'.lstrip()
     secondsString = str(seconds)
     return secondsString + (' second' if secondsString=='1' else ' seconds')
 # end of elapsedTime
@@ -1711,37 +1702,37 @@ def briefDemo() -> None:
 
     # Demonstrate peekAtFirstLine function
     line1a = peekIntoFile( BOS_SOURCE_BASE_FOLDERPATH.joinpath( 'Bible.py' ), numLines=2 ) # Simple filename
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nBible.py starts with {!r}".format( line1a ) )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nBible.py starts with {line1a!r}" )
     line1b = peekIntoFile( 'README.rst', BOS_LIBRARY_BASE_FOLDERPATH, 3 ) # Filename and folderName
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "README.rst starts with {!r}".format( line1b ) )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"README.rst starts with {line1b!r}" )
     line1c = peekIntoFile( BOS_DATAFILES_FOLDERPATH.joinpath( 'BibleBooksCodes.xml' ) ) # Filepath
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "BibleBooksCodes.xml starts with {!r}".format( line1c ) )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"BibleBooksCodes.xml starts with {line1c!r}" )
 
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nFirst one made string safe: {!r}".format( makeSafeString( line1a[0] ) ) )
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "First one made filename safe: {!r}".format( makeSafeFilename( line1a[0] ) ) )
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Last one made string safe: {!r}".format( makeSafeString( line1c ) ) )
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Last one made filename safe: {!r}".format( makeSafeFilename( line1c ) ) )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nFirst one made string safe: {makeSafeString( line1a[0] )!r}" )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"First one made filename safe: {makeSafeFilename( line1a[0] )!r}" )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Last one made string safe: {makeSafeString( line1c )!r}" )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Last one made filename safe: {makeSafeFilename( line1c )!r}" )
 
     accentedString1 = 'naïve café'
     dan11 = "בִּשְׁנַ֣ת שָׁל֔וֹשׁ לְמַלְכ֖וּת יְהוֹיָקִ֣ים מֶֽלֶךְ־יְהוּדָ֑ה בָּ֣א נְבוּכַדְנֶאצַּ֧ר מֶֽלֶךְ־בָּבֶ֛ל יְרוּשָׁלִַ֖ם וַיָּ֥צַר עָלֶֽיהָ ׃"
     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nRemoving accents…" )
     for accentedString in ( accentedString1, dan11, ):
         for thisAccentedString in ( accentedString, accentedString.lower(), accentedString.upper(), ):
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Given: {}".format( thisAccentedString ) )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "    removeAccents gave: {}".format( removeAccents( thisAccentedString ) ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Given: {thisAccentedString}" )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"    removeAccents gave: {removeAccents( thisAccentedString )}" )
     for accentedChar in ACCENT_DICT:
         got = removeAccents(accentedChar)
         wanted = ACCENT_DICT[accentedChar]
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Given: {!r} got {!r}{}".format( accentedChar, got, '' if got==wanted else ' (hoped for {!r})'.format( wanted ) ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Given: {accentedChar!r} got {got!r}{'' if got==wanted else f' (hoped for {wanted!r})'}" )
 
     longText = "The quick brown fox jumped over the lazy brown dog."
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nGiven: {}".format( longText ) )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nGiven: {longText}" )
     adjustments = [(36,'lazy','fat'),(0,'The','A'),(20,'jumped','tripped'),(4,'','very '),(10,'brown','orange')]
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  {!r}->adj->{!r}".format( longText, applyStringAdjustments( longText, adjustments ) ) )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  {longText!r}->adj->{applyStringAdjustments( longText, adjustments )!r}" )
 
     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '\nstripWordPunctuation() tests…' )
     for someText in ( '(hello', 'again', '(hello)', '"Hello"', 'there)', 'you(sg)', 'you(pl),', '(we(incl))!', '(in)front', '(in)front.', '(wow).', '(wow.)', 'it_work(s)', 'it_work(s)_now!', 'Is_','he','still','_alive?', ):
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '  {!r} -> {!r}'.format( someText, stripWordEndsPunctuation(someText) ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  {someText!r} -> {stripWordEndsPunctuation(someText)!r}" )
 
     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\ncpu_count", os.cpu_count() )
 # end of BibleOrgSysGlobals.briefDemo
@@ -1755,37 +1746,37 @@ def fullDemo() -> None:
 
     # Demonstrate peekAtFirstLine function
     line1a = peekIntoFile( BOS_SOURCE_BASE_FOLDERPATH.joinpath( 'Bible.py' ), numLines=2 ) # Simple filename
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nBible.py starts with {!r}".format( line1a ) )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nBible.py starts with {line1a!r}" )
     line1b = peekIntoFile( 'README.rst', BOS_LIBRARY_BASE_FOLDERPATH, 3 ) # Filename and folderName
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "README.rst starts with {!r}".format( line1b ) )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"README.rst starts with {line1b!r}" )
     line1c = peekIntoFile( BOS_DATAFILES_FOLDERPATH.joinpath( 'BibleBooksCodes.xml' ) ) # Filepath
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "BibleBooksCodes.xml starts with {!r}".format( line1c ) )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"BibleBooksCodes.xml starts with {line1c!r}" )
 
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nFirst one made string safe: {!r}".format( makeSafeString( line1a[0] ) ) )
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "First one made filename safe: {!r}".format( makeSafeFilename( line1a[0] ) ) )
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Last one made string safe: {!r}".format( makeSafeString( line1c ) ) )
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Last one made filename safe: {!r}".format( makeSafeFilename( line1c ) ) )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nFirst one made string safe: {makeSafeString( line1a[0] )!r}" )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"First one made filename safe: {makeSafeFilename( line1a[0] )!r}" )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Last one made string safe: {makeSafeString( line1c )!r}" )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Last one made filename safe: {makeSafeFilename( line1c )!r}" )
 
     accentedString1 = 'naïve café'
     dan11 = "בִּשְׁנַ֣ת שָׁל֔וֹשׁ לְמַלְכ֖וּת יְהוֹיָקִ֣ים מֶֽלֶךְ־יְהוּדָ֑ה בָּ֣א נְבוּכַדְנֶאצַּ֧ר מֶֽלֶךְ־בָּבֶ֛ל יְרוּשָׁלִַ֖ם וַיָּ֥צַר עָלֶֽיהָ ׃"
     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nRemoving accents…" )
     for accentedString in ( accentedString1, dan11, ):
         for thisAccentedString in ( accentedString, accentedString.lower(), accentedString.upper(), ):
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Given: {}".format( thisAccentedString ) )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "    removeAccents gave: {}".format( removeAccents( thisAccentedString ) ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Given: {thisAccentedString}" )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"    removeAccents gave: {removeAccents( thisAccentedString )}" )
     for accentedChar in ACCENT_DICT:
         got = removeAccents(accentedChar)
         wanted = ACCENT_DICT[accentedChar]
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Given: {!r} got {!r}{}".format( accentedChar, got, '' if got==wanted else ' (hoped for {!r})'.format( wanted ) ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Given: {accentedChar!r} got {got!r}{'' if got==wanted else f' (hoped for {wanted!r})'}" )
 
     longText = "The quick brown fox jumped over the lazy brown dog."
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nGiven: {}".format( longText ) )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nGiven: {longText}" )
     adjustments = [(36,'lazy','fat'),(0,'The','A'),(20,'jumped','tripped'),(4,'','very '),(10,'brown','orange')]
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  {!r}->adj->{!r}".format( longText, applyStringAdjustments( longText, adjustments ) ) )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  {longText!r}->adj->{applyStringAdjustments( longText, adjustments )!r}" )
 
     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '\nstripWordPunctuation() tests…' )
     for someText in ( '(hello', 'again', '(hello)', '"Hello"', 'there)', 'you(sg)', 'you(pl),', '(we(incl))!', '(in)front', '(in)front.', '(wow).', '(wow.)', 'it_work(s)', 'it_work(s)_now!', 'Is_','he','still','_alive?', ):
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '  {!r} -> {!r}'.format( someText, stripWordEndsPunctuation(someText) ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  {someText!r} -> {stripWordEndsPunctuation(someText)!r}" )
 
     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\ncpu_count", os.cpu_count() )
 # end of BibleOrgSysGlobals.fullDemo

@@ -28,7 +28,6 @@ Module handling the morphgnt Greek lexicon.
 
     The class is the one that reads and parses the XML source file.
 """
-from gettext import gettext as _
 import logging
 import os.path
 from pathlib import Path
@@ -105,9 +104,9 @@ class GreekStrongsFileConverter:
         """
         result = "Greek Strongs Lexicon File Converter object"
         if self.title: result += ('\n' if result else '') + "  " + self.title
-        if self.version: result += ('\n' if result else '') + "  " + _("Version: {} ").format( self.version )
-        if self.date: result += ('\n' if result else '') + "  " + _("Date: {}").format( self.date )
-        result += ('\n' if result else '') + "  " + _("Number of entries = {:,}").format( len(self.StrongsEntries) )
+        if self.version: result += ('\n' if result else '') + "  " + f"Version: {self.version} "
+        if self.date: result += ('\n' if result else '') + "  " + f"Date: {self.date}"
+        result += ('\n' if result else '') + "  " + f"Number of entries = {len(self.StrongsEntries):,}"
         return result
     # end of GreekStrongsFileConverter.__str__
 
@@ -122,13 +121,13 @@ class GreekStrongsFileConverter:
             XMLFolder = DEFAULT_LEXICON_FOLDERPATH # Greek lexicon folder
         self.XMLFolder = XMLFolder
         XMLFileOrFilepath = os.path.join( XMLFolder, GreekStrongsFileConverter.databaseFilename )
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, _("Loading Greek lexicon from {}…").format( XMLFileOrFilepath ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Loading Greek lexicon from {XMLFileOrFilepath}…" )
         try: self.XMLTree = ElementTree().parse( XMLFileOrFilepath )
         except FileNotFoundError:
-            logging.critical( _("GreekStrongsFileConverter could not find database at {}").format( XMLFileOrFilepath ) )
+            logging.critical( f"GreekStrongsFileConverter could not find database at {XMLFileOrFilepath}" )
             raise FileNotFoundError
         except ParseError as err:
-            logging.critical( _("Loader parse error in xml file {}: {} {}").format( GreekStrongsFileConverter.databaseFilename, sys.exc_info()[0], err ) )
+            logging.critical( f"Loader parse error in xml file {GreekStrongsFileConverter.databaseFilename}: {sys.exc_info()[0]} {err}" )
             raise ParseError
         if BibleOrgSysGlobals.debugFlag: assert self.XMLTree # Fail here if we didn't load anything at all
 
@@ -139,9 +138,9 @@ class GreekStrongsFileConverter:
                     pass
                 elif segment.tag == "entries":
                     self.validateEntries( segment )
-                else: logging.error( "ks24 Unprocessed {!r} element ({}) in entry".format( segment.tag, segment.text ) )
-        else: logging.error( "Expected to load {!r} but got {!r}".format( GreekStrongsFileConverter.treeTag, self.XMLTree.tag ) )
-        if self.XMLTree.tail is not None and self.XMLTree.tail.strip(): logging.error( "vs42 Unexpected {!r} tail data after {} element".format( self.XMLTree.tail, self.XMLTree.tag ) )
+                else: logging.error( f"ks24 Unprocessed {segment.text!r} element ({segment.tag}) in entry" )
+        else: logging.error( f"Expected to load {GreekStrongsFileConverter.treeTag!r} but got {self.XMLTree.tag!r}" )
+        if self.XMLTree.tail is not None and self.XMLTree.tail.strip(): logging.error( f"vs42 Unexpected {self.XMLTree.tag!r} tail data after {self.XMLTree.tail} element" )
     # end of GreekStrongsFileConverter.loadAndValidate
 
 
@@ -177,7 +176,7 @@ class GreekStrongsFileConverter:
             if attrib ==  'strongs':
                 strongs5 = value
                 #dPrint( 'Never', DEBUGGING_THIS_MODULE, f"Validating {strongs5} entry…" )
-            else: logging.warning( "Unprocessed {!r} attribute ({}) in main entry element".format( attrib, value ) )
+            else: logging.warning( f"Unprocessed {value!r} attribute ({attrib}) in main entry element" )
         if BibleOrgSysGlobals.debugFlag: assert len(strongs5)==5 and strongs5.isdigit()
 
         entryResults = {}
@@ -205,7 +204,7 @@ class GreekStrongsFileConverter:
                     if attrib=="translit": translit = value
                     elif attrib=="unicode": greek = value
                     elif attrib=="BETA": beta = value
-                    else: logging.warning( "scs4 Unprocessed {!r} attribute ({}) in {}".format( attrib, value, location ) )
+                    else: logging.warning( f"scs4 Unprocessed {location!r} attribute ({attrib}) in {value}" )
                 if BibleOrgSysGlobals.debugFlag: assert greek and translit and beta
                 if 'word' not in entryResults: # This is the first/main entry
                     if BibleOrgSysGlobals.debugFlag: assert gettingEssentials and j==1
@@ -224,7 +223,7 @@ class GreekStrongsFileConverter:
                 pronunciation = None
                 for attrib,value in element.items():
                     if attrib=="strongs": pronunciation = value
-                    else: logging.warning( "scs4 Unprocessed {!r} attribute ({}) in {}".format( attrib, value, location ) )
+                    else: logging.warning( f"scs4 Unprocessed {location!r} attribute ({attrib}) in {value}" )
                 if gettingEssentials:
                     #BibleOrgSysGlobals.checkXMLNoTail( element, location, "kd02" )
                     if BibleOrgSysGlobals.debugFlag:
@@ -285,13 +284,13 @@ class GreekStrongsFileConverter:
                 for attrib,value in element.items():
                     if attrib == "language": seeLanguage = value
                     elif attrib == "strongs": seeStrongsNumber = value # Note: No leading zeroes here
-                    else: logging.warning( "scs4 Unprocessed {!r} attribute ({}) in {}".format( attrib, value, location ) )
+                    else: logging.warning( f"scs4 Unprocessed {location!r} attribute ({attrib}) in {value}" )
                 if BibleOrgSysGlobals.debugFlag:
                     assert seeLanguage and seeStrongsNumber and seeStrongsNumber.isdigit()
                     assert seeLanguage in ('GREEK','HEBREW',)
                 if 'see' not in entryResults: entryResults['see'] = []
                 entryResults['see'].append( ('G' if seeLanguage=='GREEK' else 'H') + seeStrongsNumber )
-            else: logging.error( "2d4f Unprocessed {!r} element ({}) in entry".format( element.tag, element.text ) )
+            else: logging.error( f"2d4f Unprocessed {element.text!r} element ({element.tag}) in entry" )
 
         if entryString:
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, strongs5, "entryString", repr(entryString) )
@@ -339,7 +338,7 @@ class GreekStrongsFileConverter:
             folderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH
             if not folderpath.exists(): os.mkdir( folderpath )
             filepath = os.path.join( folderpath, 'GreekLexicon_Strongs_Table.1.pickle' )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Exporting to {}…").format( filepath ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Exporting to {filepath}…" )
         with open( filepath, 'wb' ) as myFile:
             pickle.dump( self.StrongsEntries, myFile )
     # end of GreekStrongsFileConverter.pickle

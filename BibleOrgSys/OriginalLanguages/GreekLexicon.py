@@ -30,7 +30,6 @@ Module handling the Greek lexicon.
         access the Strongs lexical entries
         via various keys and in various formats.
 """
-from gettext import gettext as _
 from pathlib import Path
 import os.path
 import sys
@@ -61,7 +60,7 @@ class GreekLexicon:
         Constructor: expects the filepath of the source XML file.
         Loads (and crudely validates the XML file) into an element tree.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, "GreekLexicon.__init__( {} )".format( XMLFolder ) )
+        fnPrint( DEBUGGING_THIS_MODULE, f"GreekLexicon.__init__( {XMLFolder} )" )
         self.XMLFolder = XMLFolder
         self.StrongsEntries = None
         if preload: self.load()
@@ -99,10 +98,10 @@ class GreekLexicon:
         """
         result = "Greek Strongs Lexicon object"
         #if self.title: result += ('\n' if result else '') + self.title
-        #if self.version: result += ('\n' if result else '') + "Version: {} ".format( self.version )
-        #if self.date: result += ('\n' if result else '') + "Date: {}".format( self.date )
+        #if self.version: result += ('\n' if result else '') + f"Version: {self.version} "
+        #if self.date: result += ('\n' if result else '') + f"Date: {self.date}"
         if self.StrongsEntries is not None:
-            result += ('\n' if result else '') + "  " + _("Number of Strong's Greek entries = {:,}").format( len(self.StrongsEntries) )
+            result += ('\n' if result else '') + "  " + f"Number of Strong's Greek entries = {len(self.StrongsEntries):,}"
         return result
     # end of GreekLexicon.__str__
 

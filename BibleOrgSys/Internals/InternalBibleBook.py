@@ -61,7 +61,6 @@ CHANGELOG:
     2025-11-19 Give better error info for an invalid chapter number
     2026-04-22 Fixed addVerse
 """
-from gettext import gettext as _
 import os
 from pathlib import Path
 import logging
@@ -378,7 +377,7 @@ class InternalBibleBook:
         fnPrint( DEBUGGING_THIS_MODULE, f"InternalBibleBook.__init__( {BBB} )" )
         self.doExtraChecking = DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag
         if isinstance( parameter1, str ):
-            (logging.warning if parameter1.startswith('NoneYet') else logging.critical)( "InternalBibleBook.constructor( {!r}, {} ): Not passed a containing Bible object".format( parameter1, BBB ) )
+            (logging.warning if parameter1.startswith('NoneYet') else logging.critical)( f"InternalBibleBook.constructor( {BBB!r}, {parameter1} ): Not passed a containing Bible object" )
             self.containerBibleObject = None
             self.workName = parameter1
         else:
@@ -428,12 +427,12 @@ class InternalBibleBook:
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2: result += ' v' + PROGRAM_VERSION
         if self.BBB: result += ('\n' if result else '') + "  " + self.BBB
         try:
-            if self.sourceFilepath: result += ('\n' if result else '') + "  " + _("From: ") + self.sourceFilepath
+            if self.sourceFilepath: result += ('\n' if result else '') + "  " + "From: " + self.sourceFilepath
         except AttributeError: pass # Not all Bibles have a separate filepath per book
-        if self._processedFlag: result += ('\n' if result else '') + "  " + _("Number of processed lines = ") + str(len(self._processedLines))
-        else: result += ('\n' if result else '') + "  " + _("Number of raw lines = ") + str(len(self._rawLines))
+        if self._processedFlag: result += ('\n' if result else '') + "  " + "Number of processed lines = " + str(len(self._processedLines))
+        else: result += ('\n' if result else '') + "  " + "Number of raw lines = " + str(len(self._rawLines))
         if self.BBB and (self._processedFlag or self._rawLines) and BibleOrgSysGlobals.verbosityLevel > 1:
-            result += ('\n' if result else '') + "  " + _("Deduced short book name(s) are {}").format( self.getAssumedBookNames() )
+            result += ('\n' if result else '') + "  " + f"Deduced short book name(s) are {self.getAssumedBookNames()}"
 
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2:
             if self._processedFlag: result += '\n' + str( self._processedLines )
@@ -531,9 +530,9 @@ class InternalBibleBook:
         Returns a string.
         """
         if BibleOrgSysGlobals.verbosityLevel > 1: # includes the work name
-            return '{!r} {} {}:{}'.format( self.workName, self.BBB, C, V )
+            return f'{V!r} {self.workName} {self.BBB}:{C}'
         # else verbosityLevel is 0 or 1
-        return '{} {}:{}'.format( self.BBB, C, V )
+        return f'{self.BBB} {C}:{V}'
     # end of InternalBibleBook.__makeErrorRef
 
 
@@ -560,8 +559,7 @@ class InternalBibleBook:
                 assert '\n' not in text and '\r' not in text
 
         if not ( marker in BibleOrgSysGlobals.loadedUSFMMarkers or marker in BOS_CUSTOM_CONTENT_MARKERS ):
-            logging.critical( "InternalBibleBook.addLine marker for {} not in USFM/BOS lists: {}={!r}" \
-                                                        .format( self.objectTypeString, marker, text ) )
+            logging.critical( f"InternalBibleBook.addLine marker for {self.objectTypeString} not in USFM/BOS lists: {marker}={text!r}" )
             if marker in self.badMarkers:
                 ix = self.badMarkers.index( marker )
                 assert 0 <= ix < len(self.badMarkers)
@@ -572,13 +570,13 @@ class InternalBibleBook:
         if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag: assert marker in BibleOrgSysGlobals.loadedUSFMMarkers or marker in BOS_CUSTOM_CONTENT_MARKERS
 
         if marker not in BOS_CUSTOM_CONTENT_MARKERS and not BibleOrgSysGlobals.loadedUSFMMarkers.isNewlineMarker( marker ):
-            logging.warning( "IBB.addLine: Not a NL marker: {}={!r}".format( marker, text ) )
+            logging.warning( f"IBB.addLine: Not a NL marker: {marker}={text!r}" )
             if 1 or marker != 'w': # This can happen with unfoldingWord aligned Bibles
                 dPrint( 'Quiet', DEBUGGING_THIS_MODULE, self, repr(marker), repr(text) )
                 if DEBUGGING_THIS_MODULE: halt # How did this happen?
 
         if text is None:
-            (logging.warning if marker in ('b',) else logging.critical)( "InternalBibleBook.addLine: Received {} {} {}={!r}".format( self.objectTypeString, self.BBB, marker, text ) )
+            (logging.warning if marker in ('b',) else logging.critical)( f"InternalBibleBook.addLine: Received {self.objectTypeString} {self.BBB} {marker}={text!r}" )
             if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag: halt # Programming error in the calling routine, sorry
             text = '' # Try to recover
 
@@ -589,9 +587,9 @@ class InternalBibleBook:
                     self.pntsCount += 1
                     stripLogger = logging.warning if DEBUGGING_THIS_MODULE else logging.info
                     if self.pntsCount <= self.maxNoncriticalErrorsPerBook:
-                        stripLogger( "InternalBibleBook.addLine: Possibly needed to strip whitespace {} {} {}={!r}".format( self.objectTypeString, self.BBB, marker, text ) )
+                        stripLogger( f"InternalBibleBook.addLine: Possibly needed to strip whitespace {self.objectTypeString} {self.BBB} {marker}={text!r}" )
                     else: # we've reached our limit
-                        stripLogger( _('Additional "Possibly needed to strip whitespace" messages suppressed for {} {}').format( self.workName, self.BBB ) )
+                        stripLogger( f'Additional "Possibly needed to strip whitespace" messages suppressed for {self.workName} {self.BBB}' )
                         self.pntsCount = -1 # So we don't do this again (for this book)
 
         rawLineTuple = ( marker, text )
@@ -609,7 +607,7 @@ class InternalBibleBook:
         """
         forceDebugHere = False
         if forceDebugHere or ( BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE ):
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " InternalBibleBook.appendToLastLine( {!r}, {!r} )".format( additionalText, expectedLastMarker ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f" InternalBibleBook.appendToLastLine( {additionalText!r}, {expectedLastMarker!r} )" )
             assert not self._processedFlag
             assert self._rawLines # Must be an existing line to append to
         if additionalText and ( '\n' in additionalText or '\r' in additionalText ):
@@ -632,13 +630,13 @@ class InternalBibleBook:
                 insertSpace = True
             else:
                 logging.critical( f"InternalBibleBook.appendToLastLine() appears to be joining words {self.BBB} {marker} {text=} plus {additionalText=}" )
-        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "additionalText for {} {!r} is {!r}".format( marker, text, additionalText ) )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"additionalText for {marker} {text!r} is {additionalText!r}" )
         if expectedLastMarker and marker!=expectedLastMarker: # Not what we were expecting
-            logging.critical( _("InternalBibleBook.appendToLastLine: expected \\{} but got \\{}").format( expectedLastMarker, marker ) )
+            logging.critical( f"InternalBibleBook.appendToLastLine: expected \\{expectedLastMarker} but got \\{marker}" )
         if expectedLastMarker and BibleOrgSysGlobals.debugFlag: assert marker == expectedLastMarker
         #if marker in ('v','c') and ' ' not in text: text += ' ' # Put a space after the verse or chapter number
         text = f"{text}{' ' if insertSpace else ''}{additionalText}"
-        if forceDebugHere: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  newText for {!r} is {!r}".format( marker, text ) )
+        if forceDebugHere: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  newText for {marker!r} is {text!r}" )
         self._rawLines[-1] = (marker, text)
     # end of InternalBibleBook.appendToLastLine
 
@@ -678,18 +676,18 @@ class InternalBibleBook:
             if ourText.endswith( '\\NL**' ): ourText = ourText[:-5] # Don't need nl at end of ourText
 
             for marker in BibleOrgSysGlobals.loadedUSFMMarkers.getCharacterMarkersList( expandNumberableMarkers=True ):
-                if '\\{}'.format(marker) in ourText:
-                    ourText = ourText.replace( '\\{} \\{} '.format(marker,marker),'\\{} '.format(marker) ) # Remove double start markers
-                    ourText = ourText.replace( '\\{} \\NL**'.format(marker), '\\NL**\\{} '.format(marker) ) # Put character start markers after NL
-                    ourText = ourText.replace( '\\{}*\\{}*'.format(marker,marker),'\\{}*'.format(marker) ) # Remove double end markers
-                    ourText = ourText.replace( '\\NL**\\{}*'.format(marker), '\\{}*\\NL**'.format(marker) ) # Put character end markers before NL
-                    ourText = ourText.replace( '\\p\\{}*'.format(marker), '\\{}*\\p'.format(marker) ) # Put character end markers before NL
+                if f'\\{marker}' in ourText:
+                    ourText = ourText.replace( f'\\{marker} \\{marker} ',f'\\{marker} ' ) # Remove double start markers
+                    ourText = ourText.replace( f'\\{marker} \\NL**', f'\\NL**\\{marker} ' ) # Put character start markers after NL
+                    ourText = ourText.replace( f'\\{marker}*\\{marker}*',f'\\{marker}*' ) # Remove double end markers
+                    ourText = ourText.replace( f'\\NL**\\{marker}*', f'\\{marker}*\\NL**' ) # Put character end markers before NL
+                    ourText = ourText.replace( f'\\p\\{marker}*', f'\\{marker}*\\p' ) # Put character end markers before NL
 
             for marker in BibleOrgSysGlobals.loadedUSFMMarkers.getNewlineMarkersList( 'Combined' ):
-                if '\\{}'.format(marker) in ourText:
-                    #ourText = ourText.replace( ' \\{}'.format(marker), '\\{}'.format(marker) ) # Delete useless spaces at ends of lines
-                    ourText = ourText.replace( '\\{} \\p'.format(marker), '\\p' ) # Delete useless markers
-                    ourText = ourText.replace( '\\{}\\p'.format(marker), '\\p' ) # Delete useless markers
+                if f'\\{marker}' in ourText:
+                    #ourText = ourText.replace( f' \\{marker}', f'\\{marker}' ) # Delete useless spaces at ends of lines
+                    ourText = ourText.replace( f'\\{marker} \\p', '\\p' ) # Delete useless markers
+                    ourText = ourText.replace( f'\\{marker}\\p', '\\p' ) # Delete useless markers
 
             #ourText = ourText.replace( '\\s1 \\p', '\\p' ) # Delete useless s1 heading marker
             ourText = ourText.replace( '\\wj\\NL**\\p\\NL**', '\\NL**\\p\\NL**\\wj ' ) # Start wj AFTER paragraph marker
@@ -705,7 +703,7 @@ class InternalBibleBook:
         writtenV = False
         if '\\NL**' in ourText: # We need to break the original line into different USFM markers
             if forceDebugHere or ( BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE ):
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nMessing with segments: {!r}\n  from {!r}{}".format( ourText, text, ('\n  from '+location) if location else '' ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nMessing with segments: {ourText!r}\n  from {text!r}{('\n  from '+location) if location else ''}" )
             segments = ourText.split( '\\NL**' )
             if forceDebugHere or ( BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE ):
                 assert len(segments) >= 2
@@ -723,12 +721,12 @@ class InternalBibleBook:
                             #if C==1 and V==1 and not appendedCFlag: self.addLine( 'c', str(C) ); appendedCFlag = True
                             self.addLine( marker, '' )
                         else:
-                            logging.error( "It seems that we had a blank {!r} field \nin {!r}".format( bits[0], ourText ) )
+                            logging.error( f"It seems that we had a blank {bits[0]!r} field \nin {ourText!r}" )
                             if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag: halt
                     else:
                         assert len(bits) == 2
                         if forceDebugHere or ( BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE ):
-                            if location: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nHere @ {}".format( location ) )
+                            if location: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nHere @ {location}" )
                             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "ourText", repr(ourText) )
                             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "seg", repr(segment) )
                             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "segments:", segments )
@@ -742,13 +740,13 @@ class InternalBibleBook:
                         if BibleOrgSysGlobals.loadedUSFMMarkers.isNewlineMarker( marker ):
                             self.addLine( marker, bits[1] )
                         elif not writtenV:
-                            self.addLine( 'v', '{} {}'.format( V, segment ) )
+                            self.addLine( 'v', f'{V} {segment}' )
                             writtenV = True
                         else: leftovers += segment
                 else: # What is segment is blank (\\NL** at end of ourText)???
                     #if C==1 and V==1 and not appendedCFlag: self.addLine( 'c', str(C) ); appendedCFlag = True
                     if not writtenV:
-                        self.addLine( 'v', '{} {}'.format( V, leftovers+segment ) )
+                        self.addLine( 'v', f'{V} {leftovers+segment}' )
                         writtenV = True
                     else:
                         self.addLine( 'v~', leftovers+segment )
@@ -758,7 +756,7 @@ class InternalBibleBook:
                 if forceDebugHere or ( BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE ):
                     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nOriginalText", repr(text) )
                     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nourText", repr(ourText) )
-                #logging.critical( "Had leftovers {}".format( repr(leftovers) ) )
+                #logging.critical( f"Had leftovers {repr(leftovers)}" )
                 self.appendToLastLine( leftovers )
 
         elif ourText: # No newlines in result -- just add the simple line
@@ -800,7 +798,7 @@ class InternalBibleBook:
 
             if lastMarker in USFM_BIBLE_PARAGRAPH_MARKERS and not lastText and marker in USFM_BIBLE_PARAGRAPH_MARKERS:
                 #if self.BBB=='JHN':
-                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "zap: {} {}:{} lines: {}={} {}={}".format( self.BBB, C, V, lastMarker, lastText, marker, text ) )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"zap: {self.BBB} {C}:{V} lines: {lastMarker}={lastText} {marker}={text}" )
                 lastMarker = None
 
             # Always save one line behind
@@ -839,7 +837,7 @@ class InternalBibleBook:
             #nextMarker, nextText = self._rawLines[j+1] if j<lastJ else (None,None)
 
             if lastMarker=='v' and marker in USFM_BIBLE_PARAGRAPH_MARKERS and text:
-                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "increase: {} {}:{} lines: {}={} {}={}".format( self.BBB, C, V, lastMarker, lastText, marker, text ) )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"increase: {self.BBB} {C}:{V} lines: {lastMarker}={lastText} {marker}={text}" )
                 newLines.append( (marker,'') ) # Put the new blank paragraph marker before the v
                 marker = 'v~' # Change the p marker to v~
 
@@ -886,10 +884,10 @@ class InternalBibleBook:
 
             if lastMarker in USFM_BIBLE_PARAGRAPH_MARKERS and not lastText:
                 if marker in USFM_BIBLE_PARAGRAPH_MARKERS and not text:
-                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "reduce: {} {}:{} lines: {}={} {}={}".format( self.BBB, C, V, lastMarker, lastText, marker, text ) )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"reduce: {self.BBB} {C}:{V} lines: {lastMarker}={lastText} {marker}={text}" )
                     lastMarker = None
                 if marker=='c':
-                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "remove: {} {}:{} lines: {}={} {}={}".format( self.BBB, C, V, lastMarker, lastText, marker, text ) )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"remove: {self.BBB} {C}:{V} lines: {lastMarker}={lastText} {marker}={text}" )
                     lastMarker = None
 
             # Always save one line behind
@@ -927,7 +925,7 @@ class InternalBibleBook:
 
         Also creates the CV index (but NOT the section index)
         """
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + _("Processing {} {} {!r} {} {:,} lines…").format( self.objectNameString, self.objectTypeString, self.workName, self.BBB, len(self._rawLines) ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + f"Processing {self.objectNameString} {self.objectTypeString} {self.workName!r} {self.BBB} {len(self._rawLines):,} lines…" )
         if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag or DEBUGGING_THIS_MODULE:
             assert self._rawLines # or else the book was totally blank
             assert not self._processedFlag # Can only do it once
@@ -985,7 +983,7 @@ class InternalBibleBook:
             assert not self._indexedCVFlag
         if self._indexedCVFlag: return # Can only do it once
 
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + _("Indexing {} {!r} {} text…").format( self.objectNameString, self.workName, self.BBB ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + f"Indexing {self.objectNameString} {self.BBB!r} {self.workName} text…" )
         self._CVIndex = InternalBibleBookCVIndex( self.workName, self.BBB )
         self._CVIndex.makeBookCVIndex( self._processedLines )
 
@@ -1005,7 +1003,7 @@ class InternalBibleBook:
             #for CV,ALX in sorted(self._CVIndex.items(), key=getKey): #lambda s: int(s[0][0])*1000+int(s[0][1])): # Sort by C*1000+V
                 #C, V = CV
                 ##A, L, X = ALX
-                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "{}:{}={},{},{}".format( C, V, ALX.getEntryIndex(), ALX.getEntryCount(), ALX.getContextList() ), end='  ' )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{C}:{V}={ALX.getEntryIndex()},{ALX.getEntryCount()},{ALX.getContextList()}", end='  ' )
 
         self._indexedCVFlag = True
     # end of InternalBibleBook.makeBookCVIndex
@@ -1030,7 +1028,7 @@ class InternalBibleBook:
             #dPrint( 'Info', DEBUGGING_THIS_MODULE, "Already done InternalBibleBook._makeBookSectionIndex!" )
             return # Can only do it once
 
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + _("Indexing {} {!r} {} text…").format( self.objectNameString, self.workName, self.BBB ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + f"Indexing {self.objectNameString} {self.BBB!r} {self.workName} text…" )
         assert isinstance( self.containerBibleObject, Bible )
         assert len(self.containerBibleObject.books)
         self._SectionIndex = InternalBibleBookSectionIndex( self.workName, self.BBB )
@@ -1044,13 +1042,13 @@ class InternalBibleBook:
     def debugPrint( self ) -> None:
         """
         """
-        fnPrint( DEBUGGING_THIS_MODULE, "InternalBibleBook.debugPrint: {}".format( self.BBB ) )
+        fnPrint( DEBUGGING_THIS_MODULE, f"InternalBibleBook.debugPrint: {self.BBB}" )
         numLines = 50
         if '_rawLines' in self.__dict__:
             for j in range( min( numLines, len(self._rawLines) ) ):
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " Raw {}: {} = {!r}".format( j, self._rawLines[j][0], self._rawLines[j][1] ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f" Raw {j}: {self._rawLines[j][0]} = {self._rawLines[j][1]!r}" )
         for j in range( min( numLines, len(self._processedLines) ) ):
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " Proc {}: {}{} = {!r}".format( j, self._processedLines[j][0], '({})'.format(self._processedLines[j][1]) if self._processedLines[j][1]!=self._processedLines[j][0] else '', self._processedLines[j][2] ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f" Proc {j}: {self._processedLines[j][0]}{f'({self._processedLines[j][1]})' if self._processedLines[j][1]!=self._processedLines[j][0] else ''} = {self._processedLines[j][2]!r}" )
     # end of InternalBibleBook.debugPrint
 
 
@@ -1201,12 +1199,12 @@ class InternalBibleBook:
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Got assumedBookName of", repr(self.assumedBookName) )
 
         #if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 3: # Print our level of confidence
-        #    if header is not None and header==mt1: assert bookName == header; vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "getBookName: header and main title are both {!r}".format( bookName ) )
-        #    elif header is not None and mt1 is not None: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "getBookName: header {!r} and main title {!r} are both different so selected {!r}".format( header, mt1, bookName ) )
-        #    elif header is not None or mt1 is not None: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "getBookName: only have one of header {!r} or main title {!r}".format( header, mt1 ) )
-        #    else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "getBookName: no header or main title so used English book name {!r}".format( bookName ) )
+        #    if header is not None and header==mt1: assert bookName == header; vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"getBookName: header and main title are both {bookName!r}" )
+        #    elif header is not None and mt1 is not None: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"getBookName: header {header!r} and main title {mt1!r} are both different so selected {bookName!r}" )
+        #    elif header is not None or mt1 is not None: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"getBookName: only have one of header {header!r} or main title {mt1!r}" )
+        #    else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"getBookName: no header or main title so used English book name {bookName!r}" )
         if (BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel > 3: # Print our level of confidence
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Assumed bookname(s) of {} for {}".format( results, self.BBB ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Assumed bookname(s) of {results} for {self.BBB}" )
 
         return results
     # end of InternalBibleBook.getAssumedBookNames
@@ -1328,35 +1326,35 @@ class InternalBibleBook:
                 if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag: assert typical in ('A','S','M','F')
                 if reference in paragraphReferences:
                     if typical == 'F':
-                        addedUnitNotices.append( _("{} {} Paragraph break is less common after v{}").format( self.BBB, C, V ) )
-                        logging.info( _("Paragraph break is less common after v{} in chapter {} of {}").format( V, C,self.BBB ) )
-                        self.addPriorityError( 17, C, V, _("Less common to have a paragraph break after field") )
+                        addedUnitNotices.append( f"{self.BBB} {C} Paragraph break is less common after v{V}" )
+                        logging.info( f"Paragraph break is less common after v{V} in chapter {C} of {self.BBB}" )
+                        self.addPriorityError( 17, C, V, "Less common to have a paragraph break after field" )
                         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Surprise", self.BBB, reference, typical, present )
                     elif typical == 'S' and severe:
-                        self.addPriorityError( 3, C, V, _("Less common to have a paragraph break after field") )
+                        self.addPriorityError( 3, C, V, "Less common to have a paragraph break after field" )
                         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Yeah", self.BBB, reference, typical, present )
                 else: # we didn't have it
                     if typical == 'A':
-                        addedUnitNotices.append( _("{} {} Paragraph break normally inserted after v{}").format( self.BBB, C, V ) )
-                        logging.info( _("Paragraph break normally inserted after v{} in chapter {} of {}").format( V, C,self.BBB ) )
-                        self.addPriorityError( 27, C, V, _("Paragraph break normally inserted after field") )
+                        addedUnitNotices.append( f"{self.BBB} {C} Paragraph break normally inserted after v{V}" )
+                        logging.info( f"Paragraph break normally inserted after v{V} in chapter {C} of {self.BBB}" )
+                        self.addPriorityError( 27, C, V, "Paragraph break normally inserted after field" )
                         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "All", self.BBB, reference, typical, present )
                     elif typical == 'M' and severe:
-                        self.addPriorityError( 15, C, V, _("Paragraph break often inserted after field") )
+                        self.addPriorityError( 15, C, V, "Paragraph break often inserted after field" )
                         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Most", self.BBB, reference, typical, present )
             for reference in paragraphReferences: # now check for ones in this book but not typically there
                 if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag: assert 2 <= len(reference) <= 3
                 if reference not in typicalParagraphs[self.BBB]:
                     C, V = reference[0], reference[1]
                     if len(reference)==3: V += reference[2] # append the suffix
-                    addedUnitNotices.append( _("{} {} Paragraph break is unusual after v{}").format( self.BBB, C, V ) )
-                    logging.info( _("Paragraph break is unusual after v{} in chapter {} of {}").format( V, C,self.BBB ) )
-                    self.addPriorityError( 37, C, V, _("Unusual to have a paragraph break after field") )
+                    addedUnitNotices.append( f"{self.BBB} {C} Paragraph break is unusual after v{V}" )
+                    logging.info( f"Paragraph break is unusual after v{V} in chapter {C} of {self.BBB}" )
+                    self.addPriorityError( 37, C, V, "Unusual to have a paragraph break after field" )
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Weird paragraph after", self.BBB, reference )
         else: # We don't have any info for this book
-            addedUnitNotices.append( _("{} has no paragraph info available").format( self.BBB ) )
-            logging.info( _("{} No paragraph info available").format( self.BBB ) )
-            self.addPriorityError( 3, '-', '-', _("No paragraph info for {!r} book").format( self.BBB ) )
+            addedUnitNotices.append( f"{self.BBB} has no paragraph info available" )
+            logging.info( f"{self.BBB} No paragraph info available" )
+            self.addPriorityError( 3, '-', '-', f"No paragraph info for {self.BBB!r} book" )
         if addedUnitNotices:
             if 'Added Formatting' not in self.checkResultsDictionary: self.checkResultsDictionary['Added Formatting'] = {} # So we hopefully get the most important errors first
             self.checkResultsDictionary['Added Formatting']['Possible Paragraphing Errors'] = addedUnitNotices
@@ -1373,35 +1371,35 @@ class InternalBibleBook:
                 if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag: assert typical in ('A','S','M','F')
                 if reference in qReferences:
                     if typical == 'F':
-                        addedUnitNotices.append( _("{} {} Quote Paragraph is less common after v{}").format( self.BBB, C, V ) )
-                        logging.info( _("Quote Paragraph is less common after v{} in chapter {} of {}").format( V, C,self.BBB ) )
-                        self.addPriorityError( 17, C, V, _("Less common to have a Quote Paragraph after field") )
+                        addedUnitNotices.append( f"{self.BBB} {C} Quote Paragraph is less common after v{V}" )
+                        logging.info( f"Quote Paragraph is less common after v{V} in chapter {C} of {self.BBB}" )
+                        self.addPriorityError( 17, C, V, "Less common to have a Quote Paragraph after field" )
                         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Surprise", self.BBB, reference, typical, present )
                     elif typical == 'S' and severe:
-                        self.addPriorityError( 3, C, V, _("Less common to have a Quote Paragraph after field") )
+                        self.addPriorityError( 3, C, V, "Less common to have a Quote Paragraph after field" )
                         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Yeah", self.BBB, reference, typical, present )
                 else: # we didn't have it
                     if typical == 'A':
-                        addedUnitNotices.append( _("{} {} Quote Paragraph normally inserted after v{}").format( self.BBB, C, V ) )
-                        logging.info( _("Quote Paragraph normally inserted after v{} in chapter {} of {}").format( V, C,self.BBB ) )
-                        self.addPriorityError( 27, C, V, _("Quote Paragraph normally inserted after field") )
+                        addedUnitNotices.append( f"{self.BBB} {C} Quote Paragraph normally inserted after v{V}" )
+                        logging.info( f"Quote Paragraph normally inserted after v{V} in chapter {C} of {self.BBB}" )
+                        self.addPriorityError( 27, C, V, "Quote Paragraph normally inserted after field" )
                         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "All", self.BBB, reference, typical, present )
                     elif typical == 'M' and severe:
-                        self.addPriorityError( 15, C, V, _("Quote Paragraph often inserted after field") )
+                        self.addPriorityError( 15, C, V, "Quote Paragraph often inserted after field" )
                         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Most", self.BBB, reference, typical, present )
             for reference in qReferences: # now check for ones in this book but not typically there
                 if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag: assert 2 <= len(reference) <= 3
                 if reference not in typicalQParagraphs[self.BBB]:
                     C, V = reference[0], reference[1]
                     if len(reference)==3: V += reference[2] # append the suffix
-                    addedUnitNotices.append( _("{} {} Quote Paragraph is unusual after v{}").format( self.BBB, C, V ) )
-                    logging.info( _("Quote Paragraph is unusual after v{} in chapter {} of {}").format( V, C,self.BBB ) )
-                    self.addPriorityError( 37, C, V, _("Unusual to have a Quote Paragraph after field") )
+                    addedUnitNotices.append( f"{self.BBB} {C} Quote Paragraph is unusual after v{V}" )
+                    logging.info( f"Quote Paragraph is unusual after v{V} in chapter {C} of {self.BBB}" )
+                    self.addPriorityError( 37, C, V, "Unusual to have a Quote Paragraph after field" )
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Weird qParagraph after", self.BBB, reference )
         else: # We don't have any info for this book
-            addedUnitNotices.append( _("{} has no quote paragraph info available").format( self.BBB ) )
-            logging.info( _("{} No quote paragraph info available").format( self.BBB ) )
-            self.addPriorityError( 3, '-', '-', _("No quote paragraph info for {!r} book").format( self.BBB ) )
+            addedUnitNotices.append( f"{self.BBB} has no quote paragraph info available" )
+            logging.info( f"{self.BBB} No quote paragraph info available" )
+            self.addPriorityError( 3, '-', '-', f"No quote paragraph info for {self.BBB!r} book" )
         if addedUnitNotices:
             if 'Added Formatting' not in self.checkResultsDictionary: self.checkResultsDictionary['Added Formatting'] = {} # So we hopefully get the most important errors first
             self.checkResultsDictionary['Added Formatting']['Possible Indenting Errors'] = addedUnitNotices
@@ -1418,21 +1416,21 @@ class InternalBibleBook:
                 if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag: assert typical in ('A','S','M','F')
                 if reference in sectionHeadings:
                     if typical == 'F':
-                        addedUnitNotices.append( _("{} {} Section Heading is less common after v{}").format( self.BBB, C, V ) )
-                        logging.info( _("Section Heading is less common after v{} in chapter {} of {}").format( V, C,self.BBB ) )
-                        self.addPriorityError( 17, C, V, _("Less common to have a Section Heading after field") )
+                        addedUnitNotices.append( f"{self.BBB} {C} Section Heading is less common after v{V}" )
+                        logging.info( f"Section Heading is less common after v{V} in chapter {C} of {self.BBB}" )
+                        self.addPriorityError( 17, C, V, "Less common to have a Section Heading after field" )
                         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Surprise", self.BBB, reference, typical, present )
                     elif typical == 'S' and severe:
-                        self.addPriorityError( 3, C, V, _("Less common to have a Section Heading after field") )
+                        self.addPriorityError( 3, C, V, "Less common to have a Section Heading after field" )
                         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Yeah", self.BBB, reference, typical, present )
                 else: # we didn't have it
                     if typical == 'A':
-                        addedUnitNotices.append( _("{} {} Section Heading normally inserted after v{}").format( self.BBB, C, V ) )
-                        logging.info( _("Section Heading normally inserted after v{} in chapter {} of {}").format( V, C,self.BBB ) )
-                        self.addPriorityError( 27, C, V, _("Section Heading normally inserted after field") )
+                        addedUnitNotices.append( f"{self.BBB} {C} Section Heading normally inserted after v{V}" )
+                        logging.info( f"Section Heading normally inserted after v{V} in chapter {C} of {self.BBB}" )
+                        self.addPriorityError( 27, C, V, "Section Heading normally inserted after field" )
                         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "All", self.BBB, reference, typical, present )
                     elif typical == 'M' and severe:
-                        self.addPriorityError( 15, C, V, _("Section Heading often inserted after field") )
+                        self.addPriorityError( 15, C, V, "Section Heading often inserted after field" )
                         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Most", self.BBB, reference, typical, present )
             for entry in sectionHeadings: # now check for ones in this book but not typically there
                 reference, level, text = entry
@@ -1440,14 +1438,14 @@ class InternalBibleBook:
                 if (reference,level) not in typicalSectionHeadings[self.BBB]:
                     C, V = reference[0], reference[1]
                     if len(reference)==3: V += reference[2] # append the suffix
-                    addedUnitNotices.append( _("{} {} Section Heading is unusual after v{}").format( self.BBB, C, V ) )
-                    logging.info( _("Section Heading is unusual after v{} in chapter {} of {}").format( V, C,self.BBB ) )
-                    self.addPriorityError( 37, C, V, _("Unusual to have a Section Heading after field") )
+                    addedUnitNotices.append( f"{self.BBB} {C} Section Heading is unusual after v{V}" )
+                    logging.info( f"Section Heading is unusual after v{V} in chapter {C} of {self.BBB}" )
+                    self.addPriorityError( 37, C, V, "Unusual to have a Section Heading after field" )
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Weird section heading after", self.BBB, reference )
         else: # We don't have any info for this book
-            addedUnitNotices.append( _("{} has no section heading info available").format( self.BBB ) )
-            logging.info( _("{} No section heading info available").format( self.BBB ) )
-            self.addPriorityError( 3, '-', '-', _("No section heading info for {!r} book").format( self.BBB ) )
+            addedUnitNotices.append( f"{self.BBB} has no section heading info available" )
+            logging.info( f"{self.BBB} No section heading info available" )
+            self.addPriorityError( 3, '-', '-', f"No section heading info for {self.BBB!r} book" )
         if addedUnitNotices:
             if 'Added Formatting' not in self.checkResultsDictionary: self.checkResultsDictionary['Added Formatting'] = {} # So we hopefully get the most important errors first
             self.checkResultsDictionary['Added Formatting']['Possible Section Heading Errors'] = addedUnitNotices
@@ -1463,21 +1461,21 @@ class InternalBibleBook:
                 if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag: assert typical in ('A','S','M','F')
                 if reference in sectionReferences:
                     if typical == 'F':
-                        addedUnitNotices.append( _("{} {} Section Reference is less common after v{}").format( self.BBB, C, V ) )
-                        logging.info( _("Section Reference is less common after v{} in chapter {} of {}").format( V, C,self.BBB ) )
-                        self.addPriorityError( 17, C, V, _("Less common to have a Section Reference after field") )
+                        addedUnitNotices.append( f"{self.BBB} {C} Section Reference is less common after v{V}" )
+                        logging.info( f"Section Reference is less common after v{V} in chapter {C} of {self.BBB}" )
+                        self.addPriorityError( 17, C, V, "Less common to have a Section Reference after field" )
                         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Surprise", self.BBB, reference, typical, present )
                     elif typical == 'S' and severe:
-                        self.addPriorityError( 3, C, V, _("Less common to have a Section Reference after field") )
+                        self.addPriorityError( 3, C, V, "Less common to have a Section Reference after field" )
                         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Yeah", self.BBB, reference, typical, present )
                 else: # we didn't have it
                     if typical == 'A':
-                        addedUnitNotices.append( _("{} {} Section Reference normally inserted after v{}").format( self.BBB, C, V ) )
-                        logging.info( _("Section Reference normally inserted after v{} in chapter {} of {}").format( V, C,self.BBB ) )
-                        self.addPriorityError( 27, C, V, _("Section Reference normally inserted after field") )
+                        addedUnitNotices.append( f"{self.BBB} {C} Section Reference normally inserted after v{V}" )
+                        logging.info( f"Section Reference normally inserted after v{V} in chapter {C} of {self.BBB}" )
+                        self.addPriorityError( 27, C, V, "Section Reference normally inserted after field" )
                         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "All", self.BBB, reference, typical, present )
                     elif typical == 'M' and severe:
-                        self.addPriorityError( 15, C, V, _("Section Reference often inserted after field") )
+                        self.addPriorityError( 15, C, V, "Section Reference often inserted after field" )
                         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Most", self.BBB, reference, typical, present )
             for entry in sectionReferences: # now check for ones in this book but not typically there
                 reference, text = entry
@@ -1485,14 +1483,14 @@ class InternalBibleBook:
                 if reference not in typicalSectionReferences[self.BBB]:
                     C, V = reference[0], reference[1]
                     if len(reference)==3: V += reference[2] # append the suffix
-                    addedUnitNotices.append( _("{} {} Section Reference is unusual after v{}").format( self.BBB, C, V ) )
-                    logging.info( _("Section Reference is unusual after v{} in chapter {} of {}").format( V, C,self.BBB ) )
-                    self.addPriorityError( 37, C, V, _("Unusual to have a Section Reference after field") )
+                    addedUnitNotices.append( f"{self.BBB} {C} Section Reference is unusual after v{V}" )
+                    logging.info( f"Section Reference is unusual after v{V} in chapter {C} of {self.BBB}" )
+                    self.addPriorityError( 37, C, V, "Unusual to have a Section Reference after field" )
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Weird Section Reference after", self.BBB, reference )
         else: # We don't have any info for this book
-            addedUnitNotices.append( _("{} has no section reference info available").format( self.BBB ) )
-            logging.info( _("{} No section reference info available").format( self.BBB ) )
-            self.addPriorityError( 3, '-', '-', _("No section reference info for {!r} book").format( self.BBB ) )
+            addedUnitNotices.append( f"{self.BBB} has no section reference info available" )
+            logging.info( f"{self.BBB} No section reference info available" )
+            self.addPriorityError( 3, '-', '-', f"No section reference info for {self.BBB!r} book" )
         if addedUnitNotices:
             if 'Added Formatting' not in self.checkResultsDictionary: self.checkResultsDictionary['Added Formatting'] = {} # So we hopefully get the most important errors first
             self.checkResultsDictionary['Added Formatting']['Possible Section Reference Errors'] = addedUnitNotices
@@ -1618,7 +1616,7 @@ class InternalBibleBook:
                 folder = os.path.join( os.path.dirname(__file__), 'DataFiles/', 'ScrapedFiles/' ) # Relative to module, not cwd
                 filepath = os.path.join( folder, "AddedUnitData.pickle" )
                 if BibleOrgSysGlobals.verbosityLevel > 1:
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Importing from {}…").format( filepath ) )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Importing from {filepath}…" )
                 with open( filepath, 'rb' ) as pickleFile:
                     typicalAddedUnitData = pickle.load( pickleFile )
             self.doCheckAddedUnits( typicalAddedUnitData )
@@ -1660,7 +1658,7 @@ class InternalBibleBook:
         fnPrint( DEBUGGING_THIS_MODULE, f"InternalBibleBook.getNumVerses( {C=} )" )
 
         if isinstance( C, int ): # Just double-check the parameter
-            logging.debug( "InternalBibleBook.getNumVerses() was passed an integer chapter instead of a string with {} {}".format( self.BBB, C ) )
+            logging.debug( f"InternalBibleBook.getNumVerses() was passed an integer chapter instead of a string with {self.BBB} {C}" )
             C = str( C )
         self.getVersificationIfNecessary()
         if self.versificationDict is None:
@@ -1692,7 +1690,7 @@ class InternalBibleBook:
 
         If complete flag is set, try to find every reference with that verse.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, "InternalBibleBook.getContextVerseData( {} ) for {} {}".format( BCVReference, self.workName, self.BBB ) )
+        fnPrint( DEBUGGING_THIS_MODULE, f"InternalBibleBook.getContextVerseData( {BCVReference} ) for {self.workName} {self.BBB}" )
         assert self.BBB == BCVReference[0] if isinstance( BCVReference, tuple ) else BCVReference.getBBB()
 
         if not self._processedFlag:
@@ -1829,14 +1827,14 @@ class InternalBibleBook:
         """
         Write the internal pseudoUSFM out directly with one file per verse in one folder for the book.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, '  writeBOSBCVFiles: ' + _("Writing {!r} as BCV…").format( self.BBB ) )
+        fnPrint( DEBUGGING_THIS_MODULE, '  writeBOSBCVFiles: ' + f"Writing {self.BBB!r} as BCV…" )
 
         # Write the data out with the introduction in one file, and then each verse in a separate file
         introLines = verseLines = ''
         CVList = []
         for CVKey in self._CVIndex:
             C, V = CVKey
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'writeBOSBCVFiles: {} {}:{}'.format( self.BBB, C, V ) )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'writeBOSBCVFiles: {self.BBB} {C}:{V}' )
 
             # Put all of the pseudoUSFM lines for the entry at CVKey into
             for entry in self._CVIndex.getVerseEntries( CVKey ):
@@ -1879,10 +1877,10 @@ class InternalBibleBook:
         if verseLines: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"verseLines = {verseLines}" )
         assert not verseLines
 
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + _("Writing BCV book metadata…") )
-        metadataLines = 'BCVVersion = {}\n'.format( BCV_VERSION )
-        if self.workName: metadataLines += 'WorkName = {}\n'.format( self.workName )
-        metadataLines += 'CVList = {}\n'.format( CVList )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + "Writing BCV book metadata…" )
+        metadataLines = f'BCVVersion = {BCV_VERSION}\n'
+        if self.workName: metadataLines += f'WorkName = {self.workName}\n'
+        metadataLines += f'CVList = {CVList}\n'
          # Double underline in filename for better dir sorting/display
         with open( os.path.join( bookFolderpath, self.BBB+'__BookMetadata.txt' ), 'wt', encoding='utf-8' ) as metadataFile:
             if BibleOrgSysGlobals.prependBOMFlag:
@@ -1928,12 +1926,12 @@ def fullDemo() -> None:
 
     from BibleOrgSys.Formats.USFMBibleBook import USFMBibleBook
     def demoFile( name, filename, folder, BBB ):
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("Loading {} from {}{}…").format( BBB, filename, f" from {folder}" if BibleOrgSysGlobals.verbosityLevel > 2 else '' ) )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Loading {} from {}{}…".format( BBB, filename, f" from {folder}" if BibleOrgSysGlobals.verbosityLevel > 2 else '' ) )
         UBB = USFMBibleBook( name, BBB )
         UBB.load( filename, folder, encoding )
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  ID is {!r}".format( UBB.getField( 'id' ) ) )
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  Header is {!r}".format( UBB.getField( 'h' ) ) )
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  Main titles are {!r} and {!r}".format( UBB.getField( 'mt1' ), UBB.getField( 'mt2' ) ) )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  ID is {UBB.getField( 'id' )!r}" )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  Header is {UBB.getField( 'h' )!r}" )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  Main titles are {UBB.getField( 'mt1' )!r} and {UBB.getField( 'mt2' )!r}" )
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, UBB )
         UBB.validateMarkers()
         UBBVersification = UBB.getVersification()
@@ -1953,12 +1951,12 @@ def fullDemo() -> None:
         name, encoding, testFolder = "Matigsalug", 'utf-8', Path( '/mnt/HDs/Matigsalug/Bible/MBTV/' ) # You can put your test folder here
         #name, encoding, testFolder = "WEB", 'utf-8', Path( '/srv/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/' ) # You can put your test folder here
         if os.access( testFolder, os.R_OK ):
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("Scanning {} from {}…").format( name, testFolder ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Scanning {name} from {testFolder}…" )
             fileList = USFMFilenames.USFMFilenames( testFolder ).getMaximumPossibleFilenameTuples()
             for BBB,filename in fileList:
                 demoFile( name, filename, testFolder, BBB )
                 if BBB == 'GEN': break
-        else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Sorry, test folder '{}' doesn't exist on this computer.").format( testFolder ) )
+        else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Sorry, test folder '{testFolder}' doesn't exist on this computer." )
 # end of InternalBibleBook.fullDemo
 
 if __name__ == '__main__':

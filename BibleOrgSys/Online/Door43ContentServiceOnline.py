@@ -35,7 +35,6 @@ This module is up-to-date for version 1.9.5 of the DCS/Gitea.
 More details are available from https://api-info.readthedocs.io/en/latest/dcs.html
                             and https://git.door43.org/api/swagger.
 """
-from gettext import gettext as _
 import os
 import logging
 import requests
@@ -108,7 +107,7 @@ class DCSBibles:
         responseObject = requests.get( requestString )
         if responseObject.status_code != 200:
             #errorClass, exceptionInstance, traceback = sys.exc_info()
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, '{!r}  {!r}  {!r}'.format( errorClass, exceptionInstance, traceback ) )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'{errorClass!r}  {exceptionInstance!r}  {traceback!r}' )
             logging.error( f"DCS {responseObject.status_code} URLError from {requestString}" )
             return None
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  HTTPResponseObject", HTTPResponseObject )
@@ -188,10 +187,10 @@ class DCSBibles:
             #{'version_name': 'Ze Zoo Zersion', 'version_code': 'ZZQ', 'english_name': 'Ze Zoo Zersion'}
         #"""
         #if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE:
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("DCSBibles.fetchAllVersions()…") )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "DCSBibles.fetchAllVersions()…" )
 
         #if BibleOrgSysGlobals.verbosityLevel > 2:
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Downloading list of available versions from unfoldingWord…") )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Downloading list of available versions from unfoldingWord…" )
 
         #if self.onlineVersion: # Get a list of available data sets
             #self.versionList = self.getOnlineData( 'library/version' ) # Get an alphabetically ordered list of dictionaries -- one for each version
@@ -206,11 +205,11 @@ class DCSBibles:
         """
         indent = 2
         result = "DCS online Bibles object"
-        if self.onlineVersion: result += ('\n' if result else '') + ' '*indent + _("Online version: {}").format( self.onlineVersion )
-        if self.languageList: result += ('\n' if result else '') + ' '*indent + _("Languages: {}").format( len(self.languageList) )
-        if self.versionList: result += ('\n' if result else '') + ' '*indent + _("Versions: {}").format( len(self.versionList) )
-        if self.volumeList: result += ('\n' if result else '') + ' '*indent + _("Volumes: {}").format( len(self.volumeList) )
-        if self.volumeNameDict: result += ('\n' if result else '') + ' '*indent + _("Displayable volumes: {}").format( len(self.volumeNameDict) )
+        if self.onlineVersion: result += ('\n' if result else '') + ' '*indent + f"Online version: {self.onlineVersion}"
+        if self.languageList: result += ('\n' if result else '') + ' '*indent + f"Languages: {len(self.languageList)}"
+        if self.versionList: result += ('\n' if result else '') + ' '*indent + f"Versions: {len(self.versionList)}"
+        if self.volumeList: result += ('\n' if result else '') + ' '*indent + f"Volumes: {len(self.volumeList)}"
+        if self.volumeNameDict: result += ('\n' if result else '') + ' '*indent + f"Displayable volumes: {len(self.volumeNameDict)}"
         return result
     # end of DCSBibles.__str__
 
@@ -219,7 +218,7 @@ class DCSBibles:
         #"""
         #"""
         #if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE:
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("DCSBibles.searchNames( {!r} )").format( searchText ) )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"DCSBibles.searchNames( {searchText!r} )" )
 
         #searchTextUC = searchText.upper()
         #resultsList = []
@@ -228,7 +227,7 @@ class DCSBibles:
                 #for refNumber in self.volumeNameDict[name]:
                     #DAM = self.getDAM(refNumber)
                     #if BibleOrgSysGlobals.debugFlag:
-                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("DAM: {}").format( DAM ) )
+                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"DAM: {DAM}" )
                         #if BibleOrgSysGlobals.debugFlag:
                             #assert DAM.endswith('2ET') or DAM.endswith('1ET') # O2 (OT) or N2 (NT), plus ET for text
                     #resultsList.append( (refNumber,DAM,) )
@@ -336,16 +335,16 @@ class DCSBible( USFMBible ):
 
             if alreadyDownloadedFlag:
                 if BibleOrgSysGlobals.verbosityLevel > 1:
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Skipping download because folder '{}' already exists.".format( unzippedFolderpath ) )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Skipping download because folder '{unzippedFolderpath}' already exists." )
             else: # Download the zip file (containing all the USFM files, README.md, LICENSE.md, manifest.yaml, etc.)
                 # TODO: Change to .tar.gz instead of zip
                 zipURL = self.baseURL + '/archive/master.zip' # '/archive/master.tar.gz'
                 if BibleOrgSysGlobals.verbosityLevel > 1:
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Downloading entire repo from '{}'…".format( zipURL ) )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Downloading entire repo from '{zipURL}'…" )
                 responseObject = requests.get( zipURL )
                 if responseObject.status_code != 200:
                     #errorClass, exceptionInstance, traceback = sys.exc_info()
-                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, '{!r}  {!r}  {!r}'.format( errorClass, exceptionInstance, traceback ) )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'{errorClass!r}  {exceptionInstance!r}  {traceback!r}' )
                     logging.critical( f"DCS {responseObject.status_code} URLError from {zipURL}" )
                     return
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  HTTPResponseObject", HTTPResponseObject )
@@ -410,11 +409,11 @@ class DCSBible( USFMBible ):
                 USFMfilename = f'{nn:02}-{uBBB}.usfm'
                 zipURL = f'{self.baseURL}/raw/branch/master/{USFMfilename}'
                 if BibleOrgSysGlobals.verbosityLevel > 1:
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Downloading {} file from '{}'…".format( BBB, zipURL ) )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Downloading {BBB} file from '{zipURL}'…" )
                 responseObject = requests.get( zipURL )
                 if responseObject.status_code != 200:
                     #errorClass, exceptionInstance, traceback = sys.exc_info()
-                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, '{!r}  {!r}  {!r}'.format( errorClass, exceptionInstance, traceback ) )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'{errorClass!r}  {exceptionInstance!r}  {traceback!r}' )
                     logging.critical( f"DCS {responseObject.status_code} HTTPError from {zipURL}" )
                     return
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  HTTPResponseObject", HTTPResponseObject )
@@ -461,7 +460,7 @@ def briefDemo() -> None:
     dcsBibles.fetchAllBibles()
 
     if 0: # print the list
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Bible list ({}):".format( len(dcsBibles.BibleList) ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Bible list ({len(dcsBibles.BibleList)}):" )
         for j, BibleDict in enumerate( dcsBibles.BibleList, start=1 ):
             ownerName = BibleDict['owner']['full_name']
             if not ownerName: ownerName = BibleDict['owner']['username']
@@ -541,7 +540,7 @@ def fullDemo() -> None:
     dcsBibles.fetchAllBibles()
 
     if 0: # print the list
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Bible list ({}):".format( len(dcsBibles.BibleList) ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Bible list ({len(dcsBibles.BibleList)}):" )
         for j, BibleDict in enumerate( dcsBibles.BibleList, start=1 ):
             ownerName = BibleDict['owner']['full_name']
             if not ownerName: ownerName = BibleDict['owner']['username']

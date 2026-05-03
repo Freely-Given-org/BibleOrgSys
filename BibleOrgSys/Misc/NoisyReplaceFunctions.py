@@ -36,7 +36,6 @@ Functions for replace and regex replace which explain what they did.
     noisyRegExDeleteAll( text, this )
 """
 
-from gettext import gettext as _
 import logging
 import re
 
@@ -62,9 +61,9 @@ def noisyFind( text:str, this:str, reporterFunction=None ):
     if BibleOrgSysGlobals.verbosityLevel > 0 or reporterFunction is not print:
         count = text.count( this )
         if count:
-            reporterFunction( "Found {:,} occurrence{} of {!r}".format( count, '' if count==1 else 's', this ) )
+            reporterFunction( f"Found {count:,} occurrence{'' if count==1 else 's'} of {this!r}" )
         elif DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "No occurrences of {!r} found".format( this ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"No occurrences of {this!r} found" )
 # end of noisyFind
 
 
@@ -75,9 +74,9 @@ def noisyRegExFind( text:str, this:str, reporterFunction=None ):
     if BibleOrgSysGlobals.verbosityLevel > 0 or reporterFunction is not print:
         count = len( re.findall( this, text ) )
         if count:
-            reporterFunction( _("Found {:,} occurrence{} of regex {!r}").format( count, '' if count==1 else 's', this ) )
+            reporterFunction( f"Found {count:,} occurrence{'' if count==1 else 's'} of regex {this!r}" )
         elif DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("No occurrences of {!r} regex found").format( this ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"No occurrences of {this!r} regex found" )
 # end of noisyRegExFind
 
 
@@ -87,10 +86,10 @@ def noisyReplaceAll( text:str, this:str, that:str, loop:bool=False ) -> str:
     """
     count = text.count( this )
     if count == 0:
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, _("No occurrences of {!r} found to replace").format( this ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"No occurrences of {this!r} found to replace" )
         return text
 
-    vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("Replacing {:,} occurrence{} of {!r} with {!r}").format( count, '' if count==1 else 's', this, that ) )
+    vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Replacing {count:,} occurrence{'' if count==1 else 's'} of {this!r} with {that!r}" )
     if loop:
         newText = text
         while this in newText:
@@ -99,7 +98,7 @@ def noisyReplaceAll( text:str, this:str, that:str, loop:bool=False ) -> str:
 
     count2 = newText.count( this )
     if count2 and BibleOrgSysGlobals.verbosityLevel > 0:
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  " + _("NOTE: {:,} occurrence{} of {!r} still remaining!").format( count2, '' if count2==1 else 's', this ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  " + f"NOTE: {count2:,} occurrence{'' if count2==1 else 's'} of {this!r} still remaining!" )
     return newText
 # end of noisyReplaceAll
 
@@ -111,17 +110,17 @@ def noisyRegExReplaceAll( text:str, this:str, that:str ) -> str:
 
     count1 = len( re.findall( regex, text ) )
     if count1 == 0:
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, _("No occurrences of regex {!r} found to replace").format( this ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"No occurrences of regex {this!r} found to replace" )
         return text
-    vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("Replacing {:,} occurrence{} of regex {!r} with {!r}").format( count1, '' if count1==1 else 's', this, that ) )
+    vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Replacing {count1:,} occurrence{'' if count1==1 else 's'} of regex {this!r} with {that!r}" )
 
     newText, count2 = re.subn( regex, that, text )
     if count2!=count1 and BibleOrgSysGlobals.verbosityLevel > 0:
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  " + _("Replaced {:,} occurrence{} of regex {!r} with {!r}").format( count2, '' if count2==2 else 's', this, that ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  " + f"Replaced {count2:,} occurrence{'' if count2==2 else 's'} of regex {this!r} with {that!r}" )
 
     count3 = len( re.findall( regex, newText ) )
     if count3: # and BibleOrgSysGlobals.verbosityLevel > 0:
-        logging.critical( "  " + _("NOTE: {:,} occurrence{} of regex {!r} still remaining!").format( count3, '' if count3==1 else 's', this ) )
+        logging.critical( "  " + f"NOTE: {count3:,} occurrence{'' if count3==1 else 's'} of regex {this!r} still remaining!" )
     return newText
 # end of noisyRegExReplaceAll
 
@@ -132,14 +131,14 @@ def noisyDeleteAll( text:str, this:str ) -> str:
     """
     count = text.count( this )
     if count == 0:
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, _("No occurrences of {!r} found to delete").format( this ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"No occurrences of {this!r} found to delete" )
         return text
-    vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("Deleting {:,} occurrence{} of {!r}").format( count, '' if count==1 else 's', this ) )
+    vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Deleting {count:,} occurrence{'' if count==1 else 's'} of {this!r}" )
     newText = text.replace( this, '' )
 
     count2 = newText.count( this )
     if count2: # and BibleOrgSysGlobals.verbosityLevel > 0:
-        logging.critical( "  " + _("NOTE: {:,} occurrence{} of {!r} still remaining!").format( count2, '' if count2==1 else 's', this ) )
+        logging.critical( "  " + f"NOTE: {count2:,} occurrence{'' if count2==1 else 's'} of {this!r} still remaining!" )
     return newText
 # end of noisyDeleteAll
 
@@ -151,17 +150,17 @@ def noisyRegExDeleteAll( text:str, this:str ) -> str:
 
     count1 = len( re.findall( regex, text ) )
     if count1 == 0:
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, _("No occurrences of regex {!r} found to delete").format( this ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"No occurrences of regex {this!r} found to delete" )
         return text
-    vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("Deleting {:,} occurrence{} of regex {!r}").format( count1, '' if count1==1 else 's', this ) )
+    vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Deleting {count1:,} occurrence{'' if count1==1 else 's'} of regex {this!r}" )
 
     newText, count2 = re.subn( regex, '', text )
     if count2!=count1 and BibleOrgSysGlobals.verbosityLevel > 2:
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  " + _("Deleted {:,} occurrence{} of regex {!r}").format( count2, '' if count2==2 else 's', this ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  " + f"Deleted {count2:,} occurrence{'' if count2==2 else 's'} of regex {this!r}" )
 
     count3 = len( re.findall( regex, newText ) )
     if count3: # and BibleOrgSysGlobals.verbosityLevel > 0:
-        logging.critical( "  " + _("NOTE: {:,} occurrence{} of regex {!r} still remaining!").format( count3, '' if count3==1 else 's', this ) )
+        logging.critical( "  " + f"NOTE: {count3:,} occurrence{'' if count3==1 else 's'} of regex {this!r} still remaining!" )
     return newText
 # end of noisyRegExDeleteAll
 

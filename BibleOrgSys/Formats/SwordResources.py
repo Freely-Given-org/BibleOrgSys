@@ -32,7 +32,6 @@ This is the interface module used to give a unified interface to either:
         repositories, and our (still primitive) module that reads Sword
         files directly called SwordModules.py
 """
-from gettext import gettext as _
 import logging
 import re
 
@@ -79,7 +78,7 @@ except (ImportError, ModuleNotFoundError): # Sword library (dll and python bindi
         from BibleOrgSys.Formats import SwordModules # Not as good/reliable/efficient/well-tested/up-to-date as the real Sword library, but better than nothing
         SwordType = 'OurCode'
     except ImportError:
-        logger.critical( _("You don't appear to have any way installed to read Sword modules.") )
+        logger.critical( "You don't appear to have any way installed to read Sword modules." )
 
 
 def setSwordType( newType:str ) -> None:
@@ -115,17 +114,17 @@ def replaceFixedPairs( replacementList, verseLine ):
     for openCode,newOpenCode,closeCode,newCloseCode in replacementList:
         ix = verseLine.find( openCode )
         while ix != -1:
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, '{} {!r}->{!r} {!r}->{!r} in {!r}'.format( ix, openCode,newOpenCode,closeCode,newCloseCode, verseLine ) )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'{ix} {openCode!r}->{newOpenCode!r} {closeCode!r}->{newCloseCode!r} in {verseLine!r}' )
             verseLine = verseLine.replace( openCode, newOpenCode, 1 )
             ixEnd = verseLine.find( closeCode, ix )
             if ixEnd == -1:
-                logger.error( 'Missing {!r} close code to match {!r}'.format( closeCode, openCode ) )
+                logger.error( f'Missing {closeCode!r} close code to match {openCode!r}' )
                 verseLine = verseLine + newCloseCode # Try to fix it by adding a closing code at the end
             else:
                 verseLine = verseLine.replace( closeCode, newCloseCode, 1 )
             ix = verseLine.find( openCode, ix )
         if verseLine.find( closeCode ) != -1:
-            logger.error( 'Unexpected {!r} close code without any previous {!r}'.format( closeCode, openCode )  )
+            logger.error( f'Unexpected {closeCode!r} close code without any previous {openCode!r}'  )
             verseLine = verseLine.replace( closeCode, newCloseCode, 1 )
             # Try to fix it by adding an opening code at or near the beginning of the line
             #   but we have to skip past any paragraph markers
@@ -135,9 +134,9 @@ def replaceFixedPairs( replacementList, verseLine ):
                 while insertIndex < len(verseLine)-1:
                     if verseLine[insertIndex] == ' ': break
                     insertIndex += 1
-            if insertIndex != 0 and DEBUGGING_THIS_MODULE: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "insertIndex={} vL={!r}".format( insertIndex, verseLine ) )
+            if insertIndex != 0 and DEBUGGING_THIS_MODULE: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"insertIndex={insertIndex} vL={verseLine!r}" )
             verseLine = verseLine[:insertIndex] + ' '+newOpenCode + verseLine[insertIndex:]
-            if insertIndex != 0 and DEBUGGING_THIS_MODULE: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "new vL={!r}".format( verseLine ) )
+            if insertIndex != 0 and DEBUGGING_THIS_MODULE: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"new vL={verseLine!r}" )
 
     return verseLine
 # end of replaceFixedPairs
@@ -161,7 +160,7 @@ def filterOSISVerseLine( osisVerseString, moduleName, BBB:str, C:str, V ):
     Returns the filtered line(s).
     """
     if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE:
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nfilterOSISVerseLine( {} {} {}:{} … {!r} )".format( moduleName, BBB, C, V, osisVerseString ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nfilterOSISVerseLine( {moduleName} {BBB} {C}:{V} … {osisVerseString!r} )" )
 
     verseLine = osisVerseString
     haveFootnoteFlag = False
@@ -177,7 +176,7 @@ def filterOSISVerseLine( osisVerseString, moduleName, BBB:str, C:str, V ):
 
         attributeReplacementResult = ''
         attributeCount = attributeString.count( '="' )
-        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'Attributes={} {!r}'.format( attributeCount, attributeString ) )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'Attributes={attributeCount} {attributeString!r}' )
         for j in range( attributeCount ):
             match2 = re.search( 'savlm="(.+?)"', attributeString )
             if match2:
@@ -187,7 +186,7 @@ def filterOSISVerseLine( osisVerseString, moduleName, BBB:str, C:str, V ):
                     match3 = re.search( 'strong:([GH]\\d{1,5})', savlm )
                     if not match3: break
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'string', repr(match3.group(1) ) )
-                    attributeReplacementResult += '\\str {}\\str*'.format( match3.group(1) )
+                    attributeReplacementResult += f'\\str {match3.group(1)}\\str*'
                     savlm = savlm[:match3.start()] + savlm[match3.end():] # Remove this Strongs' number
                 attributeString = attributeString[:match2.start()] + attributeString[match2.end():] # Remove this attribute entry
 
@@ -199,7 +198,7 @@ def filterOSISVerseLine( osisVerseString, moduleName, BBB:str, C:str, V ):
                     match3 = re.search( 'strong:([GH]\\d{1,5})', lemma )
                     if not match3: break
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'string', repr(match3.group(1) ) )
-                    attributeReplacementResult += '\\str {}\\str*'.format( match3.group(1) )
+                    attributeReplacementResult += f'\\str {match3.group(1)}\\str*'
                     lemma = lemma[:match3.start()] + lemma[match3.end():] # Remove this Strongs' number
                 attributeString = attributeString[:match2.start()] + attributeString[match2.end():] # Remove this attribute entry
 
@@ -211,7 +210,7 @@ def filterOSISVerseLine( osisVerseString, moduleName, BBB:str, C:str, V ):
                     match3 = re.search( 'strongMorph:(TH\\d{1,4})', morph )
                     if not match3: break
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'string', repr(match3.group(1) ) )
-                    attributeReplacementResult += '\\morph {}\\morph*'.format( match3.group(1) )
+                    attributeReplacementResult += f'\\morph {match3.group(1)}\\morph*'
                     morph = morph[:match3.start()] + morph[match3.end():] # Remove this Strongs' number
                 attributeString = attributeString[:match2.start()] + attributeString[match2.end():] # Remove this attribute entry
 
@@ -219,8 +218,7 @@ def filterOSISVerseLine( osisVerseString, moduleName, BBB:str, C:str, V ):
             if match2:
                 typeValue = match2.group(1)
                 if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE:
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'handleOSISWordAttributes CH424 {} {} {}:{} typeValue {!r} \n  from {!r}' \
-                        .format( moduleName, BBB, C, V, typeValue, originalAttributeString ) ) # Seems to have an incrementing value on the end for some reason
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'handleOSISWordAttributes CH424 {moduleName} {BBB} {C}:{V} typeValue {typeValue!r} \n  from {originalAttributeString!r}' ) # Seems to have an incrementing value on the end for some reason
                 # In wlc module it's x-ketiv or x-qere
                 assert typeValue in ('x-ketiv','x-qere','x-invertednun',) \
                 or typeValue.startswith( 'x-split' ) # e.g., x-split or x-split-1 -- what do these mean?
@@ -250,7 +248,7 @@ def filterOSISVerseLine( osisVerseString, moduleName, BBB:str, C:str, V ):
                 attributeString = attributeString[:match2.start()] + attributeString[match2.end():] # Remove this attribute entry
 
         if attributeString.strip():
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'Unhandled {} word attributes: {!r} from {!r}'.format( moduleName, attributeString, originalAttributeString ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'Unhandled {moduleName} word attributes: {attributeString!r} from {originalAttributeString!r}' )
             if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: halt
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'attributeReplacementResult', repr(attributeReplacementResult) )
         return attributeReplacementResult
@@ -301,7 +299,7 @@ def filterOSISVerseLine( osisVerseString, moduleName, BBB:str, C:str, V ):
         match = re.search( '<div ([^/>]*?)type="section"([^/>]*?)>', verseLine )
         if not match: break
         attributes = match.group(1) + match.group(2)
-        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "filterOSISVerseLine QP472 {} {} {}:{} Div section attributes={!r} from {!r}".format( moduleName, BBB, C, V, attributes, verseLine ) )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"filterOSISVerseLine QP472 {moduleName} {BBB} {C}:{V} Div section attributes={attributes!r} from {verseLine!r}" )
         if moduleName not in ('mxt_BL_1983','zpq_BL_1987',): # has both!
             if moduleName in ('farflb','ury_WBTI_2005','vietlccmn','vietnvb',):
                 assert len(attributes) == 0 # seems to have no other attributes
@@ -330,29 +328,29 @@ def filterOSISVerseLine( osisVerseString, moduleName, BBB:str, C:str, V ):
     match = re.search( '<chapter ([^/>]*?)sID="([^/>]+?)"([^/>]*?)/>', verseLine ) # milestone (self-closing)
     if match:
         attributes, sID = match.group(1) + match.group(3), match.group(2)
-        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'filterOSISVerseLine CD734 {} {} {}:{} Chapter sID {!r} attributes={!r}'.format( moduleName, BBB, C, V, sID, attributes ) )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'filterOSISVerseLine CD734 {moduleName} {BBB} {C}:{V} Chapter sID {sID!r} attributes={attributes!r}' )
         assert C and C != '0'
         if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE:
             if moduleName not in ('adg','agl','bela','bur','chv','cslelizabeth','ctt','frekhan','kaz','khk',
                               'mapm','oshb','oss','porcap','ruscars','russynodal',) \
             and BBB not in ('EZR','NEH','EST','JOB','PSA','PRO','ECC',): # not sure what this is about---------needs attention
                 assert V == '0'
-        #dPrint( 'Never', DEBUGGING_THIS_MODULE, "CCCC {!r}(:{!r})".format( C, V ) )
+        #dPrint( 'Never', DEBUGGING_THIS_MODULE, f"CCCC {C!r}(:{V!r})" )
         verseLine = verseLine[:match.start()] + verseLine[match.end():]
     match = re.search( '<chapter ([^/>]*?)osisID="([^/>]+?)"([^/>]*?)>', verseLine ) # open chapter container
     if match:
         attributes, osisID = match.group(1) + match.group(3), match.group(2)
-        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'Chapter osisID {!r} attributes={!r} @ {} {}:{}'.format( osisID, attributes, BBB, C, V ) )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'Chapter osisID {C!r} attributes={V!r} @ {osisID} {attributes}:{BBB}' )
         #assert C and C != '0'
         assert V == '0'
-        #dPrint( 'Never', DEBUGGING_THIS_MODULE, "CCCC {!r}(:{!r})".format( C, V ) )
+        #dPrint( 'Never', DEBUGGING_THIS_MODULE, f"CCCC {C!r}(:{V!r})" )
         verseLine = verseLine[:match.start()] + verseLine[match.end():]
     verseLine = verseLine.replace( '</chapter>', '' )
     while True:
         match = re.search( '<div ([^/>]*?)type="([^/>]+?)"([^/>]*?)/?> ?<title>(.+?)</title>', verseLine )
         if not match: break
         attributes, sectionType, words = match.group(1) + match.group(3), match.group(2), match.group(4)
-        vPrint( 'Never', DEBUGGING_THIS_MODULE, 'Div title {!r} attributes={!r} Words={!r}'.format( sectionType, attributes, words ) )
+        vPrint( 'Never', DEBUGGING_THIS_MODULE, f'Div title {sectionType!r} attributes={attributes!r} Words={words!r}' )
         if sectionType == 'section': titleMarker = 's1'
         elif sectionType == 'subSection': titleMarker = 's2'
         elif sectionType == 'majorSection': titleMarker = 'ms'
@@ -366,35 +364,35 @@ def filterOSISVerseLine( osisVerseString, moduleName, BBB:str, C:str, V ):
         else:
             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'filterOSISVerseLine HF253 matched:', repr(match.group(0)) ); halt
             if BibleOrgSysGlobals.debugFlag or DEBUGGING_THIS_MODULE: halt
-        replacement = '\\NL**\\{} {}\\NL**'.format( titleMarker, words )
+        replacement = f'\\NL**\\{titleMarker} {words}\\NL**'
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'replacement', repr(replacement) )
         verseLine = verseLine[:match.start()] + replacement + verseLine[match.end():]
     match = re.search( '<div ([^/>]*?)type="([^/>]+?)"([^/>]*?)/><title>', verseLine )
     if match: # handle left over div/title start fields
         attributes, sectionType = match.group(1) + match.group(3), match.group(2)
-        vPrint( 'Never', DEBUGGING_THIS_MODULE, 'Section title start {!r} attributes={!r}'.format( sectionType, attributes ) )
+        vPrint( 'Never', DEBUGGING_THIS_MODULE, f'Section title start {sectionType!r} attributes={attributes!r}' )
         if sectionType == 'section': titleMarker = 's1'
         elif sectionType == 'subSection': titleMarker = 's2'
         elif sectionType == 'x-subSubSection': titleMarker = 's3'
         else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'filterOSISVerseLine CV745 matched:', repr(match.group(0)) ); halt
-        replacement = '\\NL**\\{} '.format( titleMarker )
+        replacement = f'\\NL**\\{titleMarker} '
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'replacement', repr(replacement) )
         verseLine = verseLine[:match.start()] + replacement + verseLine[match.end():]
     while True:
         match = re.search( '<div ([^/>]*?)type="([^/>]+?)"([^/>]*?)/>.NL..<head>(.+?)</head>', verseLine )
         if not match: break
         attributes, sectionType, words = match.group(1) + match.group(3), match.group(2), match.group(4)
-        vPrint( 'Never', DEBUGGING_THIS_MODULE, 'Section title {!r} attributes={!r} Words={!r}'.format( sectionType, attributes, words ) )
+        vPrint( 'Never', DEBUGGING_THIS_MODULE, f'Section title {sectionType!r} attributes={attributes!r} Words={words!r}' )
         if sectionType == 'outline': titleMarker = 'iot'
         else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'filterOSISVerseLine KG535 matched:', repr(match.group(0)) ); halt
-        replacement = '\\NL**\\{} {}\\NL**'.format( titleMarker, words )
+        replacement = f'\\NL**\\{titleMarker} {words}\\NL**'
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'replacement', repr(replacement) )
         verseLine = verseLine[:match.start()] + replacement + verseLine[match.end():]
     while True:
         match = re.search( '<div ([^/>]*?)type="([^/>]+?)"([^/>]*?)/?>', verseLine )
         if not match: break
         attributes, divType = match.group(1) + match.group(3), match.group(2)
-        vPrint( 'Never', DEBUGGING_THIS_MODULE, 'Div type={!r} attributes={!r}'.format( divType, attributes ) )
+        vPrint( 'Never', DEBUGGING_THIS_MODULE, f'Div type={divType!r} attributes={attributes!r}' )
         if divType == 'x-p': replacement = '\\NL**\\p\\NL**'
         elif divType == 'glossary': replacement = '\\NL**\\id GLO\\NL**' #### WEIRD -- appended to 3 John
         elif divType == 'book': replacement = '' # We don't need this
@@ -408,11 +406,11 @@ def filterOSISVerseLine( osisVerseString, moduleName, BBB:str, C:str, V ):
         elif divType == 'x-Synodal-empty': replacement = '\\NL**\\rem DIV Synodal-empty'
         elif divType in ( 'preface', 'titlePage', 'introduction', ): replacement = '\\NL**\\ip '
         elif divType in ( 'x-license', 'x-trademark', ): replacement = '\\NL**\\rem '
-        elif divType.startswith( 'x-' ): replacement = '\\NL**\\rem DIV {} '.format( divType[2:] )
+        elif divType.startswith( 'x-' ): replacement = f'\\NL**\\rem DIV {divType[2:]} '
         else:
             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'filterOSISVerseLine CS456 matched:', repr(match.group(0)) )
             if BibleOrgSysGlobals.debugFlag or DEBUGGING_THIS_MODULE: halt
-            replacement = '\\NL**\\rem DIV {} '.format( divType[2:] )
+            replacement = f'\\NL**\\rem DIV {divType[2:]} '
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'replacement', repr(replacement) )
         verseLine = verseLine[:match.start()] + replacement + verseLine[match.end():]
     verseLine = verseLine.replace( '</div>', '' )
@@ -420,25 +418,25 @@ def filterOSISVerseLine( osisVerseString, moduleName, BBB:str, C:str, V ):
         match = re.search( '<title type="parallel"><reference type="parallel">(.+?)</reference></title>', verseLine )
         if not match: break
         reference = match.group(1)
-        vPrint( 'Never', DEBUGGING_THIS_MODULE, 'Parallel reference={!r}'.format( reference ) )
-        replacement = '\\NL**\\r {}\\NL**'.format( reference )
+        vPrint( 'Never', DEBUGGING_THIS_MODULE, f'Parallel reference={reference!r}' )
+        replacement = f'\\NL**\\r {reference}\\NL**'
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'replacement', repr(replacement) )
         verseLine = verseLine[:match.start()] + replacement + verseLine[match.end():]
     while True:
         match = re.search( '<title type="scope"><reference>(.+?)</reference></title>', verseLine )
         if not match: break
         reference = match.group(1)
-        vPrint( 'Never', DEBUGGING_THIS_MODULE, 'Section Parallel reference={!r}'.format( reference ) )
-        replacement = '\\NL**\\sr {}\\NL**'.format( reference )
+        vPrint( 'Never', DEBUGGING_THIS_MODULE, f'Section Parallel reference={reference!r}' )
+        replacement = f'\\NL**\\sr {reference}\\NL**'
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'replacement', repr(replacement) )
         verseLine = verseLine[:match.start()] + replacement + verseLine[match.end():]
     while True:
         match = re.search( '<title ([^/>]+?)>(.+?)</title>', verseLine )
         if not match: break
         attributes, words = match.group(1), match.group(2)
-        vPrint( 'Never', DEBUGGING_THIS_MODULE, 'Title attributes={!r} Words={!r}'.format( attributes, words ) )
+        vPrint( 'Never', DEBUGGING_THIS_MODULE, f'Title attributes={attributes!r} Words={words!r}' )
         titleMarker = 's1'
-        replacement = '\\NL**\\{} {}\\NL**'.format( titleMarker, words )
+        replacement = f'\\NL**\\{titleMarker} {words}\\NL**'
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'replacement', repr(replacement) )
         verseLine = verseLine[:match.start()] + replacement + verseLine[match.end():]
     verseLine = verseLine.replace( '</title>', '\\NL**' )
@@ -453,7 +451,7 @@ def filterOSISVerseLine( osisVerseString, moduleName, BBB:str, C:str, V ):
         match = re.search( '<w ([^/>]+?)>(.*?)</w>', verseLine ) # Can have no words inside
         if not match: break
         attributes, words = match.group(1), match.group(2)
-        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'AttributesC={!r} Words={!r}'.format( attributes, words ) )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'AttributesC={attributes!r} Words={words!r}' )
         replacement = words
         replacement += handleOSISWordAttributes( attributes )
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'replacement', repr(replacement) )
@@ -465,11 +463,11 @@ def filterOSISVerseLine( osisVerseString, moduleName, BBB:str, C:str, V ):
         attributes, words = match.group(1), match.group(2)
         if 'who="Jesus"' in attributes:
             if 'marker="' in attributes and 'marker=""' not in attributes:
-                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'AttributesQM={!r} Words={!r}'.format( attributes, words ) )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'AttributesQM={attributes!r} Words={words!r}' )
                 if BibleOrgSysGlobals.debugFlag: halt
-            replacement = '\\wj {}\\wj*'.format( words )
+            replacement = f'\\wj {words}\\wj*'
         else:
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'AttributesQ={!r} Words={!r}'.format( attributes, words ) )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'AttributesQ={attributes!r} Words={words!r}' )
             if BibleOrgSysGlobals.debugFlag: halt
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'replacement', repr(replacement) )
         verseLine = verseLine[:match.start()] + replacement + verseLine[match.end():]
@@ -481,12 +479,12 @@ def filterOSISVerseLine( osisVerseString, moduleName, BBB:str, C:str, V ):
         attributes = match.group(1)
         if 'who="Jesus"' in attributes:
             if 'marker="' in attributes and 'marker=""' not in attributes:
-                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'AttributesQM={!r} Words={!r}'.format( attributes, words ) )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'AttributesQM={attributes!r} Words={words!r}' )
                 if BibleOrgSysGlobals.debugFlag: halt
             replacement = '\\wj '
         else:
             replacement = ''
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'AttributesQ={!r} Words={!r}'.format( attributes, words ) )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'AttributesQ={attributes!r} Words={words!r}' )
             if BibleOrgSysGlobals.debugFlag: halt
         vPrint( 'Verbose', DEBUGGING_THIS_MODULE, 'replacement', repr(replacement) )
         verseLine = verseLine[:match.start()] + replacement + verseLine[match.end():]
@@ -495,22 +493,22 @@ def filterOSISVerseLine( osisVerseString, moduleName, BBB:str, C:str, V ):
         match = re.search( '<q ([^/>]*?)sID="(.+?)"(.*?)/>', verseLine )
         if not match: break
         attributes, sID = match.group(1) + match.group(3), match.group(2)
-        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'Q attributesC={!r} sID={!r}'.format( attributes, sID ) )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'Q attributesC={attributes!r} sID={sID!r}' )
         match2 = re.search( 'level="(.+?)"', attributes )
         level = match2.group(1) if match2 else '1'
         match2 = re.search( 'marker="(.+?)"', attributes )
         quoteSign = match2.group(1) if match2 else ''
-        replacement = '\\NL**\\q{} {}'.format( level, quoteSign )
+        replacement = f'\\NL**\\q{level} {quoteSign}'
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'replacement', repr(replacement) )
         verseLine = verseLine[:match.start()] + replacement + verseLine[match.end():]
     while True:
         match = re.search( '<q ([^/>]*?)eID="(.+?)"(.*?)/>', verseLine )
         if not match: break
         attributes, eID = match.group(1) + match.group(3), match.group(2)
-        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'Q attributesC={!r} eID={!r}'.format( attributes, eID ) )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'Q attributesC={attributes!r} eID={eID!r}' )
         match2 = re.search( 'marker="(.+?)"', attributes )
         quoteSign = match2.group(1) if match2 else ''
-        replacement = '{}\\NL**'.format( quoteSign )
+        replacement = f'{quoteSign}\\NL**'
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'replacement', repr(replacement) )
         verseLine = verseLine[:match.start()] + replacement + verseLine[match.end():]
     while True:
@@ -524,21 +522,21 @@ def filterOSISVerseLine( osisVerseString, moduleName, BBB:str, C:str, V ):
         match = re.search( '<q(.*?)>(.+?)</q>', verseLine )
         if not match: break
         attributes, words = match.group(1), match.group(2)
-        replacement = '\\NL**\\pc {}\\NL**'.format( words )
+        replacement = f'\\NL**\\pc {words}\\NL**'
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'replacement', repr(replacement) )
         verseLine = verseLine[:match.start()] + replacement + verseLine[match.end():]
     while True:
         match = re.search( '<l ([^/>]*?)level="([^/>]+?)"([^/>]*?)/>', verseLine ) # self-closing l
         if not match: break
         attributes, level = match.group(1)+match.group(3), match.group(2)
-        vPrint( 'Never', DEBUGGING_THIS_MODULE, 'filterOSISVerseLine AD354 {} {} {}:{} AttributesL={!r} Level={!r} \n  from {!r}'.format( moduleName, BBB, C, V, attributes, level, verseLine ) )
+        vPrint( 'Never', DEBUGGING_THIS_MODULE, f'filterOSISVerseLine AD354 {moduleName} {BBB} {C}:{V} AttributesL={attributes!r} Level={level!r} \n  from {verseLine!r}' )
         assert level in '1234'
         if 'sID="' in attributes:
-            replacement = '\\NL**\\q{} '.format( level )
+            replacement = f'\\NL**\\q{level} '
         elif 'eID="' in attributes:
             replacement = '' # Remove eIDs completely
         else:
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'filterOSISVerseLine MR562 Level attributesLl2={!r} Level={!r}'.format( attributes, level ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'filterOSISVerseLine MR562 Level attributesLl2={attributes!r} Level={level!r}' )
             halt
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'replacement', repr(replacement) )
         verseLine = verseLine[:match.start()] + replacement + verseLine[match.end():]
@@ -546,13 +544,13 @@ def filterOSISVerseLine( osisVerseString, moduleName, BBB:str, C:str, V ):
         match = re.search( '<l ([^/>]+?)/>', verseLine )
         if not match: break
         attributes = match.group(1)
-        vPrint( 'Never', DEBUGGING_THIS_MODULE, 'filterOSISVerseLine SJ430 Level Attributes={!r}'.format( attributes ) )
+        vPrint( 'Never', DEBUGGING_THIS_MODULE, f'filterOSISVerseLine SJ430 Level Attributes={attributes!r}' )
         if 'sID="' in attributes:
             replacement = '\\NL**\\q1 '
         elif 'eID="' in attributes:
             replacement = '\\NL**' # Remove eIDs completely
         else:
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'filterOSISVerseLine BD534 AttributesL2={!r} Level={!r}'.format( attributes, level ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'filterOSISVerseLine BD534 AttributesL2={attributes!r} Level={level!r}' )
             halt
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'replacement', repr(replacement) )
         verseLine = verseLine[:match.start()] + replacement + verseLine[match.end():]
@@ -560,19 +558,19 @@ def filterOSISVerseLine( osisVerseString, moduleName, BBB:str, C:str, V ):
         match = re.search( '<item ([^/>]*?)type="(.+?)"([^/>]*?)>(.+?)</item>', verseLine )
         if not match: break
         attributes, itemType, item = match.group(1)+match.group(3), match.group(2), match.group(4)
-        vPrint( 'Never', DEBUGGING_THIS_MODULE, 'filterOSISVerseLine ND463 {} Item={!r} Type={!r} attributes={!r}'.format( moduleName, item, itemType, attributes ) )
+        vPrint( 'Never', DEBUGGING_THIS_MODULE, f'filterOSISVerseLine ND463 {moduleName} Item={item!r} Type={itemType!r} attributes={attributes!r}' )
         assert itemType in ( 'x-indent-1', 'x-indent-2', 'x-listitem', )
         marker = 'io' if 'x-introduction' in attributes else 'li'
-        replacement = '\\NL**\\{} {}\\NL**'.format( marker+itemType[-1], item )
+        replacement = f'\\NL**\\{marker+itemType[-1]} {item}\\NL**'
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'replacement', repr(replacement) )
         verseLine = verseLine[:match.start()] + replacement + verseLine[match.end():]
     match = re.search( '<item ([^/>]*?)type="(.+?)"([^/>]*?)>', verseLine )
     if match: # Handle left-over list items
         attributes, itemType = match.group(1)+match.group(3), match.group(2)
-        vPrint( 'Never', DEBUGGING_THIS_MODULE, 'Item Type={!r} attributes={!r}'.format( itemType, attributes ) )
+        vPrint( 'Never', DEBUGGING_THIS_MODULE, f'Item Type={itemType!r} attributes={attributes!r}' )
         assert itemType in ( 'x-indent-1', 'x-indent-2', )
         marker = 'io' if 'x-introduction' in attributes else 'li'
-        replacement = '\\NL**\\{}\\NL**'.format( marker+itemType[-1] )
+        replacement = f'\\NL**\\{marker+itemType[-1]}\\NL**'
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'replacement', repr(replacement) )
         verseLine = verseLine[:match.start()] + replacement + verseLine[match.end():]
     verseLine = verseLine.replace( '</item>', '\\NL**' )
@@ -580,26 +578,26 @@ def filterOSISVerseLine( osisVerseString, moduleName, BBB:str, C:str, V ):
         match = re.search( '<name ([^/>]*?)type="(.+?)"([^/>]*?)>(.+?)</name>', verseLine )
         if not match: break
         attributes, nameType, name = match.group(1)+match.group(3), match.group(2), match.group(4)
-        vPrint( 'Never', DEBUGGING_THIS_MODULE, 'Name={!r} Type={!r} attributes={!r}'.format( name, nameType, attributes ) )
+        vPrint( 'Never', DEBUGGING_THIS_MODULE, f'Name={name!r} Type={nameType!r} attributes={attributes!r}' )
         if nameType == 'x-workTitle': marker = 'bk'
         else: halt
-        replacement = '\\{} {}\\{}*'.format( marker, name, marker )
+        replacement = f'\\{marker} {name}\\{marker}*'
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'replacement', repr(replacement) )
         verseLine = verseLine[:match.start()] + replacement + verseLine[match.end():]
     while True:
         match = re.search( '<seg ([^/>]+?)>([^<]+?)</seg>', verseLine )
         if not match: break
         attributes, words = match.group(1), match.group(2)
-        vPrint( 'Never', DEBUGGING_THIS_MODULE, 'Seg attributes={!r} Words={!r}'.format( attributes, words ) )
-        if 'type="keyword"' in attributes: replacement = '\\k {}\\k*'.format( words)
-        elif 'type="verseNumber"' in attributes: replacement = '\\vp {}\\NL**'.format( words)
-        elif 'type="x-us-time"' in attributes: replacement = '{}'.format( words)
-        elif 'type="x-transChange"' in attributes and 'subType="x-added"' in attributes: replacement = '\\add {}\\add*'.format( words)
-        elif 'type="x-big"' in attributes: replacement = '\\em {}\\em*'.format( words) # not sure what this should be
+        vPrint( 'Never', DEBUGGING_THIS_MODULE, f'Seg attributes={attributes!r} Words={words!r}' )
+        if 'type="keyword"' in attributes: replacement = f'\\k {words}\\k*'
+        elif 'type="verseNumber"' in attributes: replacement = f'\\vp {words}\\NL**'
+        elif 'type="x-us-time"' in attributes: replacement = f'{words}'
+        elif 'type="x-transChange"' in attributes and 'subType="x-added"' in attributes: replacement = f'\\add {words}\\add*'
+        elif 'type="x-big"' in attributes: replacement = f'\\em {words}\\em*' # not sure what this should be
         else:
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'filterOSISVerseLine FG353 {} {} {}:{} Matched: {!r}'.format( moduleName, BBB, C, V, match.group(0) ) )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'filterOSISVerseLine FG353 {moduleName} {BBB} {C}:{V} Matched: {match.group(0)!r}' )
             if BibleOrgSysGlobals.debugFlag or DEBUGGING_THIS_MODULE: halt
-            replacement = '\\it {}\\it*'.format( words) # default to italic
+            replacement = f'\\it {words}\\it*' # default to italic
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'replacement', repr(replacement) )
         verseLine = verseLine[:match.start()] + replacement + verseLine[match.end():]
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "verseLineC", repr(verseLine) )
@@ -607,8 +605,8 @@ def filterOSISVerseLine( osisVerseString, moduleName, BBB:str, C:str, V ):
         match = re.search( '<foreign ([^/>]+?)>(.+?)</foreign>', verseLine )
         if not match: break
         attributes, words = match.group(1), match.group(2)
-        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'Attributes={!r} Words={!r}'.format( attributes, words ) )
-        replacement = '\\tl {}\\tl*'.format( words )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'Attributes={attributes!r} Words={words!r}' )
+        replacement = f'\\tl {words}\\tl*'
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'replacement', repr(replacement) )
         verseLine = verseLine[:match.start()] + replacement + verseLine[match.end():]
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "verseLineC", repr(verseLine) )
@@ -616,9 +614,9 @@ def filterOSISVerseLine( osisVerseString, moduleName, BBB:str, C:str, V ):
         match = re.search( '<reference([^/>]*?)>(.+?)</reference>', verseLine )
         if not match: break
         attributes, referenceField = match.group(1), match.group(2)
-        #if attributes: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'Attributes={!r} referenceField={!r}'.format( attributes, referenceField ) )
+        #if attributes: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'Attributes={attributes!r} referenceField={referenceField!r}' )
         marker = 'ior' if V=='0' else 'x'
-        replacement = '\\{} {}\\{}*'.format( marker, referenceField, marker )
+        replacement = f'\\{marker} {referenceField}\\{marker}*'
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'replacement', repr(replacement) )
         verseLine = verseLine[:match.start()] + replacement + verseLine[match.end():]
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "verseLineC", repr(verseLine) )
@@ -626,11 +624,11 @@ def filterOSISVerseLine( osisVerseString, moduleName, BBB:str, C:str, V ):
         match = re.search( '<reference([^/>]*?)/>', verseLine )
         if not match: break
         attributes = match.group(1)
-        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'Attributes={!r}'.format( attributes ) )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'Attributes={attributes!r}' )
         matcha = re.search( 'osisRef="(.+?)"', attributes )
         osisRef = matcha.group(1) if matcha else ''
-        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'osisRef={!r}'.format( osisRef ) )
-        replacement = '\\x {}\\x*'.format( osisRef )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'osisRef={osisRef!r}' )
+        replacement = f'\\x {osisRef}\\x*'
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'replacement', repr(replacement) )
         verseLine = verseLine[:match.start()] + replacement + verseLine[match.end():]
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "verseLineC", repr(verseLine) )
@@ -638,7 +636,7 @@ def filterOSISVerseLine( osisVerseString, moduleName, BBB:str, C:str, V ):
         match = re.search( '<hi ([^/>]+?)>(.+?)</hi>', verseLine )
         if not match: break
         attributes, words = match.group(1), match.group(2)
-        vPrint( 'Never', DEBUGGING_THIS_MODULE, 'Highlight attributes={!r} Words={!r}'.format( attributes, words ) )
+        vPrint( 'Never', DEBUGGING_THIS_MODULE, f'Highlight attributes={attributes!r} Words={words!r}' )
         if '"italic"' in attributes: marker = 'it'
         elif '"small-caps"' in attributes: marker = 'sc'
         elif '"super"' in attributes: marker = 'ord' # We don't have anything exact for this XXXXXXXXXXXXXXXX
@@ -650,7 +648,7 @@ def filterOSISVerseLine( osisVerseString, moduleName, BBB:str, C:str, V ):
             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'FX353 Matched:', repr(match.group(0)) )
             if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag or DEBUGGING_THIS_MODULE: halt
             marker = attributes
-        replacement = '\\{} {}\\{}*'.format( marker, words, marker )
+        replacement = f'\\{marker} {words}\\{marker}*'
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'replacement', repr(replacement) )
         verseLine = verseLine[:match.start()] + replacement + verseLine[match.end():]
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "verseLineC", repr(verseLine) )
@@ -658,10 +656,10 @@ def filterOSISVerseLine( osisVerseString, moduleName, BBB:str, C:str, V ):
         match = re.search( '<hi>(.+?)</hi>', verseLine )
         if not match: break
         words = match.group(1)
-        vPrint( 'Never', DEBUGGING_THIS_MODULE, 'Highlight Words={!r}'.format( words ) )
+        vPrint( 'Never', DEBUGGING_THIS_MODULE, f'Highlight Words={words!r}' )
         #if moduleName in ( 'LITV', 'MKJV', 'TS1998', ):
         marker = 'add'
-        replacement = '\\{} {}\\{}*'.format( marker, words, marker )
+        replacement = f'\\{marker} {words}\\{marker}*'
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'replacement', repr(replacement) )
         verseLine = verseLine[:match.start()] + replacement + verseLine[match.end():]
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "verseLineC", repr(verseLine) )
@@ -675,7 +673,7 @@ def filterOSISVerseLine( osisVerseString, moduleName, BBB:str, C:str, V ):
         match2 = re.search( 'n="(.*?)"', attributes ) # Can be empty string in JPS!!!
         if match2:
             if match.group(1):
-                replacement = '\\NL**\\{} {}\\NL**'.format( marker, match2.group(1) )
+                replacement = f'\\NL**\\{marker} {match2.group(1)}\\NL**'
             else:
                 logging.warning( f"filterOSISVerseLine at {BBB} {C}:{V} empty n attribute in '{verseLine}'")
                 replacement = ''
@@ -689,17 +687,17 @@ def filterOSISVerseLine( osisVerseString, moduleName, BBB:str, C:str, V ):
         match = re.search( '<milestone ([^/>]*?)type="x-strongsMarkup"([^/>]*?)/>', verseLine )
         if not match: break
         attributes = match.group(1)+match.group(2)
-        vPrint( 'Never', DEBUGGING_THIS_MODULE, 'Strongs milestone attributes={!r}'.format( attributes ) )
+        vPrint( 'Never', DEBUGGING_THIS_MODULE, f'Strongs milestone attributes={attributes!r}' )
         verseLine = verseLine[:match.start()] + verseLine[match.end():]
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "verseLineC", repr(verseLine) )
     while True:
         match = re.search( '<milestone ([^/>]*?)type="x-p"([^/>]*?)/>', verseLine )
         if not match: break
         attributes = match.group(1)+match.group(2)
-        vPrint( 'Never', DEBUGGING_THIS_MODULE, 'x-p milestone attributes={!r}'.format( attributes ) )
+        vPrint( 'Never', DEBUGGING_THIS_MODULE, f'x-p milestone attributes={attributes!r}' )
         match2 = re.search( 'marker="(.+?)"', attributes )
         if match2:
-            replacement = '\\p {}\\NL**'.format( match2.group(1) )
+            replacement = f'\\p {match2.group(1)}\\NL**'
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'replacement', repr(replacement) )
         else: replacement = ''; halt
         verseLine = verseLine[:match.start()] + replacement + verseLine[match.end():]
@@ -717,18 +715,18 @@ def filterOSISVerseLine( osisVerseString, moduleName, BBB:str, C:str, V ):
         match = re.search( '<closer ([^/>]*?)sID="([^/>]+?)"([^/>]*?)/>(.*?)<closer ([^/>]*?)eID="([^/>]+?)"([^/>]*?)/>', verseLine )
         if not match: break
         attributes1, sID, words, attributes2, eID = match.group(1) + match.group(3), match.group(2), match.group(4), match.group(5) + match.group(7), match.group(6)
-        vPrint( 'Never', DEBUGGING_THIS_MODULE, 'Closer attributes1={!r} words={!r}'.format( attributes1, words ) )
-        replacement = '\\sig {}\\sig*'.format( words )
+        vPrint( 'Never', DEBUGGING_THIS_MODULE, f'Closer attributes1={attributes1!r} words={words!r}' )
+        replacement = f'\\sig {words}\\sig*'
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'replacement', repr(replacement) )
         verseLine = verseLine[:match.start()] + replacement + verseLine[match.end():]
     while True:
         match = re.search( '<note ([^/>]*?)swordFootnote="([^/>]+?)"([^/>]*?)>(.*?)</note>', verseLine )
         if not match: break
         attributes, number, noteContents = match.group(1)+match.group(3), match.group(2), match.group(4)
-        vPrint( 'Never', DEBUGGING_THIS_MODULE, 'Note attributes={!r} Number={!r}'.format( attributes, number ) )
+        vPrint( 'Never', DEBUGGING_THIS_MODULE, f'Note attributes={attributes!r} Number={number!r}' )
         if 'crossReference' in attributes:
             assert noteContents == ''
-            replacement = '\\x {}\\x*'.format( number )
+            replacement = f'\\x {number}\\x*'
         else: halt
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'replacement', repr(replacement) )
         verseLine = verseLine[:match.start()] + replacement + verseLine[match.end():]
@@ -736,8 +734,8 @@ def filterOSISVerseLine( osisVerseString, moduleName, BBB:str, C:str, V ):
         match = re.search( '<note([^/>]*?)>(.*?)</note>', verseLine )
         if not match: break
         attributes, noteContents = match.group(1), match.group(2).rstrip().replace( '\\NL**\\q1\\NL**', '//' ) # was <l />
-        vPrint( 'Never', DEBUGGING_THIS_MODULE, 'Note attributes={!r} contents={!r}'.format( attributes, noteContents ) )
-        replacement = '\\f + \\ft {}\\f*'.format( noteContents )
+        vPrint( 'Never', DEBUGGING_THIS_MODULE, f'Note attributes={attributes!r} contents={noteContents!r}' )
+        replacement = f'\\f + \\ft {noteContents}\\f*'
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'replacement', repr(replacement) )
         verseLine = verseLine[:match.start()] + replacement + verseLine[match.end():]
         haveFootnoteFlag = True
@@ -745,15 +743,15 @@ def filterOSISVerseLine( osisVerseString, moduleName, BBB:str, C:str, V ):
         match = re.search( '<abbr([^/>]*?)>(.*?)</abbr>', verseLine )
         if not match: break
         attributes, abbr = match.group(1), match.group(2)
-        vPrint( 'Never', DEBUGGING_THIS_MODULE, 'Abbr attributes={!r} abbr={!r}'.format( attributes, abbr ) )
-        replacement = '{}'.format( abbr )
+        vPrint( 'Never', DEBUGGING_THIS_MODULE, f'Abbr attributes={attributes!r} abbr={abbr!r}' )
+        replacement = f'{abbr}'
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'replacement', repr(replacement) )
         verseLine = verseLine[:match.start()] + replacement + verseLine[match.end():]
     while True:
         match = re.search( '<a ([^/>]*?)href="([^>]+?)"([^/>]*?)>(.+?)</a>', verseLine )
         if not match: break
         attributes, linkHREF, linkContents = match.group(1)+match.group(3), match.group(2), match.group(4)
-        vPrint( 'Never', DEBUGGING_THIS_MODULE, 'Link attributes={!r} HREF={!r} contents={!r}'.format( attributes, linkHREF, linkContents ) )
+        vPrint( 'Never', DEBUGGING_THIS_MODULE, f'Link attributes={attributes!r} HREF={linkHREF!r} contents={linkContents!r}' )
         replacement = linkContents
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'replacement', repr(replacement) )
         verseLine = verseLine[:match.start()] + replacement + verseLine[match.end():]
@@ -788,7 +786,7 @@ def filterOSISVerseLine( osisVerseString, moduleName, BBB:str, C:str, V ):
 
     # Check for anything left that we should have caught above
     if '<' in verseLine or '>' in verseLine:
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "filterOSISVerseLine XX123 left-over {} {} {}:{} verseLine={!r}".format( moduleName, BBB, C, V, verseLine ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"filterOSISVerseLine XX123 left-over {moduleName} {BBB} {C}:{V} verseLine={verseLine!r}" )
         if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE:
             if BBB!='PSA' or V not in ('1','5',): vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Stopped at", moduleName, BBB, C, V ); halt
     #if V == '3': halt
@@ -814,12 +812,12 @@ def importOSISVerseLine( osisVerseString, thisBook, moduleName, BBB:str, C:str, 
 
     Adds the line(s) to thisBook. No return value.
     """
-    fnPrint( DEBUGGING_THIS_MODULE, "\nimportOSISVerseLine( {} {} {}:{} … {!r} )".format( moduleName, BBB, C, V, osisVerseString ) )
+    fnPrint( DEBUGGING_THIS_MODULE, f"\nimportOSISVerseLine( {moduleName} {BBB} {C}:{V} … {osisVerseString!r} )" )
 
     verseLine = filterOSISVerseLine( osisVerseString, moduleName, BBB, C, V )
 
     # Now divide up lines and enter them
-    location = '{} {} {}:{} {!r}'.format( moduleName, BBB, C, V, osisVerseString ) if DEBUGGING_THIS_MODULE else '{} {} {}:{}'.format( moduleName, BBB, C, V )
+    location = f'{moduleName} {BBB} {C}:{V} {osisVerseString!r}' if DEBUGGING_THIS_MODULE else f'{moduleName} {BBB} {C}:{V}'
     if verseLine or V != '0':
         thisBook.addVerseSegments( V, verseLine, location )
 # end of importOSISVerseLine
@@ -839,7 +837,7 @@ def filterGBFVerseLine( gbfVerseString, moduleName, BBB:str, C:str, V ):
     Return the verse line(s).
     """
     if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE:
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nfilterGBFVerseLine( {} {} {}:{} … {!r} )".format( moduleName, BBB, C, V, gbfVerseString ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nfilterGBFVerseLine( {moduleName} {BBB} {C}:{V} … {gbfVerseString!r} )" )
 
     verseLine = gbfVerseString
 
@@ -860,16 +858,16 @@ def filterGBFVerseLine( gbfVerseString, moduleName, BBB:str, C:str, V ):
         #if not match1: break
         #caller = int(match1.group(1))
         if caller in contentsDict: # We have a repeat of a previous caller
-            replacement1 = '\\f + \\ft {}\\f*'.format( contentsDict[caller] )
+            replacement1 = f'\\f + \\ft {contentsDict[caller]}\\f*'
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'replacement1 (repeat)', caller, repr(replacement1), contentsDict )
             verseLine = verseLine[:match1.start()] + replacement1 + verseLine[match1.end():]
         elif match2: # normal case -- let's separate out all of the numbered callees
             callee, contents = match2.group(1), match2.group(2).rstrip()
-            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, 'FN caller={!r} callee={!r} contents={!r} {}'.format( caller, callee, contents, contentsDict ) )
-            replacement2 = '{}) {}'.format( callee, contents )
+            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f'FN caller={callee!r} callee={contents!r} contents={contentsDict!r} {caller}' )
+            replacement2 = f'{callee}) {contents}'
             j = 0
             while replacement2:
-                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'Loop {} start: now {} with replacement2={!r}'.format( j, contentsDict, replacement2 ) )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'Loop {j} start: now {contentsDict} with replacement2={replacement2!r}' )
                 match8 = re.search( '(\\d{1,2})\\) (.*?)(\\d{1,2})\\) ', replacement2 )
                 match9 = re.search( '(\\d{1,2})\\) ', replacement2 )
                 if match8: assert match9 and match9.group(1)==match8.group(1)
@@ -880,18 +878,18 @@ def filterGBFVerseLine( gbfVerseString, moduleName, BBB:str, C:str, V ):
                     assert callee8a == callee9
                     contentsDict[callee9] = contents8
                     replacement2 = replacement2[match8.end()-2-len(callee8b):]
-                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'Loop {} with match8: now {} with replacement={!r}'.format( j, contentsDict, replacement2 ) )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'Loop {j} with match8: now {contentsDict} with replacement={replacement2!r}' )
                 else: # We only have one part
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, repr(callee9), repr(callee) )
                     #assert callee9 == callee
                     contentsDict[callee9] = replacement2[len(callee9)+2:]
                     replacement2 = ''
-                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'Loop {} with no match8: now {} with replacement={!r}'.format( j, contentsDict, replacement2 ) )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'Loop {j} with no match8: now {contentsDict} with replacement={replacement2!r}' )
                 j += 1
             if j==0: # We found nothing above
                 contentsDict[callee] = contents
                 replacement2 = ''
-            replacement1 = '\\f + \\ft {}\\f*'.format( contentsDict[caller] )
+            replacement1 = f'\\f + \\ft {contentsDict[caller]}\\f*'
             assert match2.start()>match1.start() and match2.end()>match1.end() and match2.start()>match1.end()
             verseLine = verseLine[:match1.start()] + replacement1 + \
                         verseLine[match1.end():match2.start()] + replacement2 + verseLine[match2.end():]
@@ -899,20 +897,20 @@ def filterGBFVerseLine( gbfVerseString, moduleName, BBB:str, C:str, V ):
             assert caller == '1' # Would only work for a single footnote I think
             callee, contents = caller, match3.group(1).rstrip()
             contentsDict[caller] = contents
-            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, 'FN caller={!r} unnumbered contents={!r}'.format( caller, contents ) )
-            nextOne = ' {}) '.format( int(caller)+1 )
+            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f'FN caller={caller!r} unnumbered contents={contents!r}' )
+            nextOne = f' {int(caller)+1}) '
             if nextOne in contents: # It contains the next footnote(s) as well
                 halt # Not expected
             else:
                 replacement3 = ''
-            replacement1 = '\\f + \\ft {}\\f*'.format( contentsDict[caller] )
+            replacement1 = f'\\f + \\ft {contentsDict[caller]}\\f*'
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'replacement1', repr(replacement1) )
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'replacement3', repr(replacement3) )
             assert match3.start()>match1.start() and match3.end()>match1.end() and match3.start()>match1.end()
             verseLine = verseLine[:match1.start()] + replacement1 + \
                         verseLine[match1.end():match3.start()] + replacement3 + verseLine[match3.end():]
         else:
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, 'WHY FN caller={!r} callee={!r} contents={!r} {}'.format( caller, callee, contents, contentsDict ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f'WHY FN caller={callee!r} callee={contents!r} contents={contentsDict!r} {caller}' )
             halt
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, repr(verseLine ) )
         lastCalled = callee, contents
@@ -922,7 +920,7 @@ def filterGBFVerseLine( gbfVerseString, moduleName, BBB:str, C:str, V ):
         contents = match4.group(1)
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'match4', repr(contents), repr(verseLine), contentsDict )
         #assert len(contents) > 2 and not contents[0].isdigit()
-        replacement4 = '\\f + \\ft {}\\f*'.format( contents )
+        replacement4 = f'\\f + \\ft {contents}\\f*'
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'replacement4', repr(replacement4) )
         verseLine = verseLine[:match4.start()] + replacement4 + verseLine[match4.end():]
 
@@ -935,13 +933,13 @@ def filterGBFVerseLine( gbfVerseString, moduleName, BBB:str, C:str, V ):
     while True:
         match = re.search( '<WH0(\\d{1,4})>', verseLine ) # Found in rwebster
         if not match: break
-        replacement = '\\str H{} \\str*'.format( match.group( 1 ) )
+        replacement = f'\\str H{match.group( 1 )} \\str*'
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'replacement1', repr(replacement1) )
         verseLine = verseLine[:match.start()] + replacement + verseLine[match.end():]
     while True:
         match = re.search( '<WG(\\d{1,4})>', verseLine ) # Found in rwebster
         if not match: break
-        replacement = '\\str G{} \\str*'.format( match.group( 1 ) )
+        replacement = f'\\str G{match.group( 1 )} \\str*'
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'replacement1', repr(replacement1) )
         verseLine = verseLine[:match.start()] + replacement + verseLine[match.end():]
 
@@ -961,7 +959,7 @@ def filterGBFVerseLine( gbfVerseString, moduleName, BBB:str, C:str, V ):
 
     # Check for anything left that we should have caught above
     if '<' in verseLine or '>' in verseLine:
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "filterGBFVerseLine XX246 left-over {} {} {}:{} verseLine={!r}".format( moduleName, BBB, C, V, verseLine ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"filterGBFVerseLine XX246 left-over {moduleName} {BBB} {C}:{V} verseLine={verseLine!r}" )
         if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE:
             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Stopped at", moduleName, BBB, C, V ); halt
 
@@ -982,12 +980,12 @@ def importGBFVerseLine( gbfVerseString, thisBook, moduleName, BBB:str, C:str, V 
     Adds the line(s) to thisBook. No return value.
     """
     if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE:
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nimportGBFVerseLine( {} {} {}:{} … {!r} )".format( moduleName, BBB, C, V, gbfVerseString ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nimportGBFVerseLine( {moduleName} {BBB} {C}:{V} … {gbfVerseString!r} )" )
 
     verseLine = filterGBFVerseLine( gbfVerseString, moduleName, BBB, C, V )
 
     # Now divide up lines and enter them
-    location = '{} {} {}:{} {!r}'.format( moduleName, BBB, C, V, gbfVerseString ) if DEBUGGING_THIS_MODULE else '{} {} {}:{}'.format( moduleName, BBB, C, V )
+    location = f'{moduleName} {BBB} {C}:{V} {gbfVerseString!r}' if DEBUGGING_THIS_MODULE else f'{moduleName} {BBB} {C}:{V}'
     thisBook.addVerseSegments( V, verseLine, location )
 # end of importGBFVerseLine
 
@@ -1006,46 +1004,46 @@ def filterTHMLVerseLine( thmlVerseString, moduleName, BBB:str, C:str, V ):
     Returns the verse line(s).
     """
     if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE:
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nfilterTHMLVerseLine( {} {} {}:{} … {!r} )".format( moduleName, BBB, C, V, thmlVerseString ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nfilterTHMLVerseLine( {moduleName} {BBB} {C}:{V} … {thmlVerseString!r} )" )
     verseLine = thmlVerseString
 
     # Regular expression substitutions
     while True:
         match = re.search( '<div class="title">(.+?)</div>', verseLine )
         if not match: break
-        replacement = '\\mt {}'.format( match.group(1) )
+        replacement = f'\\mt {match.group(1)}'
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'replacement', repr(replacement) )
         verseLine = verseLine[:match.start()] + replacement + verseLine[match.end():]
     while True:
         match = re.search( '<div class="sechead">(.+?)</div>', verseLine )
         if not match: break
-        replacement = '\\s {}'.format( match.group(1) )
+        replacement = f'\\s {match.group(1)}'
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'replacement', repr(replacement) )
         verseLine = verseLine[:match.start()] + replacement + verseLine[match.end():]
     while True:
         match = re.search( '<p>(.+?)</p>', verseLine )
         if not match: break
-        replacement = '\\p {}'.format( match.group(1) )
+        replacement = f'\\p {match.group(1)}'
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'replacement', repr(replacement) )
         verseLine = verseLine[:match.start()] + replacement + verseLine[match.end():]
     while True:
         match = re.search( '<scripRef([^/>]+?)>(.+?)</scripRef>', verseLine )
         if not match: break
         attributes, contents = match.group(1), match.group(2)
-        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'match   attrs={!r}   contents={!r}'.format( attributes, contents ) )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'match   attrs={attributes!r}   contents={contents!r}' )
         matcha = re.search( 'passage="(.+?)"', attributes )
         passage = matcha.group(1) if matcha else ''
         matchb = re.search( 'version="(.+?)"', attributes )
         version = matchb.group(1) if matchb else ''
-        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'match1   passage={!r}   version={!r}'.format( passage, version ) )
-        replacement = '\\x - \\xo {} \\xt {} {} \\x*'.format( contents, version, passage )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'match1   passage={passage!r}   version={version!r}' )
+        replacement = f'\\x - \\xo {contents} \\xt {version} {passage} \\x*'
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'replacement', repr(replacement) )
         verseLine = verseLine[:match.start()] + replacement + verseLine[match.end():]
     while True:
         match = re.search( '<a ([^/>]*?)href="([^>]+?)"([^/>]*?)>(.+?)</a>', verseLine )
         if not match: break
         attributes, linkHREF, linkContents = match.group(1)+match.group(3), match.group(2), match.group(4)
-        vPrint( 'Never', DEBUGGING_THIS_MODULE, 'Link attributes={!r} HREF={!r} contents={!r}'.format( attributes, linkHREF, linkContents ) )
+        vPrint( 'Never', DEBUGGING_THIS_MODULE, f'Link attributes={attributes!r} HREF={linkHREF!r} contents={linkContents!r}' )
         replacement = linkContents
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'replacement', repr(replacement) )
         verseLine = verseLine[:match.start()] + replacement + verseLine[match.end():]
@@ -1075,7 +1073,7 @@ def filterTHMLVerseLine( thmlVerseString, moduleName, BBB:str, C:str, V ):
 
     # Check for anything left that we should have caught above
     if '<' in verseLine or '>' in verseLine:
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "filterTHMLVerseLine XX369 left-over {} {} {}:{} verseLine={!r}".format( moduleName, BBB, C, V, verseLine ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"filterTHMLVerseLine XX369 left-over {moduleName} {BBB} {C}:{V} verseLine={verseLine!r}" )
         if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE:
             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Stopped at", moduleName, BBB, C, V ); halt
 
@@ -1096,12 +1094,12 @@ def importTHMLVerseLine( thmlVerseString, thisBookObject, moduleName, BBB:str, C
     Adds the line(s) to thisBookObject. No return value.
     """
     if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE:
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nimportTHMLVerseLine( {} {} {}:{} … {!r} )".format( moduleName, BBB, C, V, thmlVerseString ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nimportTHMLVerseLine( {moduleName} {BBB} {C}:{V} … {thmlVerseString!r} )" )
 
     verseLine = filterTHMLVerseLine( thmlVerseString, moduleName, BBB, C, V )
 
     # Now divide up lines and enter them
-    location = '{} {} {}:{} {!r}'.format( moduleName, BBB, C, V, thmlVerseString ) if DEBUGGING_THIS_MODULE else '{} {} {}:{}'.format( moduleName, BBB, C, V )
+    location = f'{moduleName} {BBB} {C}:{V} {thmlVerseString!r}' if DEBUGGING_THIS_MODULE else f'{moduleName} {BBB} {C}:{V}'
     thisBookObject.addVerseSegments( V, verseLine, location )
 # end of importTHMLVerseLine
 
@@ -1163,7 +1161,7 @@ class SwordInterface():
 
         Returns a list of available Sword module codes.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, "SwordInterface.getAvailableModuleCodes( {} )".format( onlyModuleTypes ) )
+        fnPrint( DEBUGGING_THIS_MODULE, f"SwordInterface.getAvailableModuleCodes( {onlyModuleTypes} )" )
 
         if SwordType == 'CrosswireLibrary':
             availableModuleCodes = []
@@ -1171,8 +1169,8 @@ class SwordInterface():
                 moduleID = moduleBuffer.getRawData()
                 #module = self.library.getModule( moduleID )
                 #if 0:
-                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "{} {} ({}) {} {!r}".format( j, module.getName(), module.getType(), module.getLanguage(), module.getEncoding() ) )
-                    #try: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "    {} {!r} {} {}".format( module.getDescription(), module.getMarkup(), module.getDirection(), "" ) )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{j} {module.getName()} ({module.getType()}) {module.getLanguage()} {module.getEncoding()!r}" )
+                    #try: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'    {module.getDescription()} {module.getMarkup()!r} {module.getDirection()} {""}' )
                     #except UnicodeDecodeError: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "   Description is not Unicode!" )
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "moduleID", repr(moduleID) )
                 availableModuleCodes.append( moduleID )
@@ -1188,7 +1186,7 @@ class SwordInterface():
 
         Returns a list of 2-tuples (duples) containing module abbreviation and type
         """
-        fnPrint( DEBUGGING_THIS_MODULE, "SwordInterface.getAvailableModuleCodeDuples( {} )".format( onlyModuleTypes ) )
+        fnPrint( DEBUGGING_THIS_MODULE, f"SwordInterface.getAvailableModuleCodeDuples( {onlyModuleTypes} )" )
 
         if SwordType == 'CrosswireLibrary':
             availableModuleCodes = []
@@ -1197,8 +1195,8 @@ class SwordInterface():
                 module = self.library.getModule( moduleID )
                 moduleType = module.getType()
                 #if 1:
-                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "{} {} ({}) {} {!r}".format( j, module.getName(), module.getType(), module.getLanguage(), module.getEncoding() ) )
-                    #try: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "    {} {!r} {} {}".format( module.getDescription(), module.getMarkup(), module.getDirection(), "" ) )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{j} {module.getName()} ({module.getType()}) {module.getLanguage()} {module.getEncoding()!r}" )
+                    #try: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'    {module.getDescription()} {module.getMarkup()!r} {module.getDirection()} {""}' )
                     #except UnicodeDecodeError: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "   Description is not Unicode!" )
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "moduleID", repr(moduleID), repr(moduleType) )
                 assert moduleType in ( 'Biblical Texts', 'Commentaries', 'Lexicons / Dictionaries', 'Generic Books' )
@@ -1221,7 +1219,7 @@ class SwordInterface():
 
         (Doesn't load books)
         """
-        fnPrint( DEBUGGING_THIS_MODULE, "SwordInterface.getModule( {} )".format( moduleAbbreviation ) )
+        fnPrint( DEBUGGING_THIS_MODULE, f"SwordInterface.getModule( {moduleAbbreviation} )" )
 
         if SwordType == 'CrosswireLibrary':
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "gM", module.getName() )
@@ -1246,20 +1244,20 @@ class SwordInterface():
         """
         Load the given book from a Sword Module into the given BibleObject.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, "SwordInterface.loadBook( {}, …, {} )".format( BBB, moduleAbbreviation ) )
+        fnPrint( DEBUGGING_THIS_MODULE, f"SwordInterface.loadBook( {BBB}, …, {moduleAbbreviation} )" )
         if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert BBB not in BibleObject
 
         module = self.getModule( moduleAbbreviation )
         if module is None:
-            logger.critical( _("Unable to load {!r} module -- not known by Sword").format( moduleAbbreviation ) )
+            logger.critical( f"Unable to load {moduleAbbreviation!r} module -- not known by Sword" )
             return
 
         self.triedLoadingBook[BBB] = True
         self.bookNeedsReloading[BBB] = False
 
         # Create the new book
-        if BibleOrgSysGlobals.verbosityLevel > 2:  vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '  Loading {} {}…'.format( moduleAbbreviation, BBB ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2:  vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'  Loading {moduleAbbreviation} {BBB}…' )
         thisBook = BibleBook( BibleObject, BBB )
         thisBook.objectNameString = 'Sword Bible Book object'
         thisBook.objectTypeString = 'Sword Bible'
@@ -1274,17 +1272,17 @@ class SwordInterface():
             elif BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: halt
 
             if BibleOrgSysGlobals.verbosityLevel > 2:
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'Description: {!r}'.format( module.getDescription() ) )
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'Direction: {!r}={}'.format( ord(module.getDirection()), SWORD_TEXT_DIRECTIONS[ord(module.getDirection())] ) )
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'Encoding: {!r}={}'.format( encoding, SWORD_ENCODINGS[encoding] ) )
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'Language: {!r}'.format( module.getLanguage() ) )
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'Markup: {!r}={}'.format( markupCode, SWORD_MARKUPS[markupCode] ) )
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'Name: {!r}'.format( module.getName() ) )
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'RenderHeader: {!r}'.format( module.getRenderHeader() ) )
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'Type: {!r}'.format( module.getType() ) )
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'IsSkipConsecutiveLinks: {!r}'.format( module.isSkipConsecutiveLinks() ) )
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'IsUnicode: {!r}'.format( module.isUnicode() ) )
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'IsWritable: {!r}'.format( module.isWritable() ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'Description: {module.getDescription()!r}' )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'Direction: {ord(module.getDirection())!r}={SWORD_TEXT_DIRECTIONS[ord(module.getDirection())]}' )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'Encoding: {encoding!r}={SWORD_ENCODINGS[encoding]}' )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'Language: {module.getLanguage()!r}' )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'Markup: {markupCode!r}={SWORD_MARKUPS[markupCode]}' )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'Name: {module.getName()!r}' )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'RenderHeader: {module.getRenderHeader()!r}' )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'Type: {module.getType()!r}' )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'IsSkipConsecutiveLinks: {module.isSkipConsecutiveLinks()!r}' )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'IsUnicode: {module.isUnicode()!r}' )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'IsWritable: {module.isWritable()!r}' )
                 #return
 
 # UNFINISHED
@@ -1297,21 +1295,21 @@ class SwordInterface():
                 verseKeyText = verseKey.getShortText()
                 #if '2' in verseKeyText: halt # for debugging first verses
                 #if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE:
-                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, '\nvkst={!r} vkix={}'.format( verseKeyText, verseKey.getIndex() ) )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'\nvkst={verseKeyText!r} vkix={verseKey.getIndex()}' )
 
                 #nativeVerseText = module.renderText().decode( self.encoding, 'replace' )
                 #nativeVerseText = str( module.renderText() ) if self.encoding=='utf-8' else str( module.renderText(), encoding=self.encoding )
-                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'getRenderHeader: {} {!r}'.format( len(module.getRenderHeader()), module.getRenderHeader() ) )
-                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'stripText: {} {!r}'.format( len(module.stripText()), module.stripText() ) )
-                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'renderText: {} {!r}'.format( len(str(module.renderText())), str(module.renderText()) ) )
-                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'getRawEntry: {} {!r}'.format( len(module.getRawEntry()), module.getRawEntry() ) )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'getRenderHeader: {len(module.getRenderHeader())} {module.getRenderHeader()!r}' )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'stripText: {len(module.stripText())} {module.stripText()!r}' )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'renderText: {len(str(module.renderText()))} {str(module.renderText())!r}' )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'getRawEntry: {len(module.getRawEntry())} {module.getRawEntry()!r}' )
                 try: nativeVerseText = module.getRawEntry()
                 #try: nativeVerseText = str( module.renderText() )
                 except UnicodeDecodeError: nativeVerseText = ''
 
                 if ':' not in verseKeyText:
                     if BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.verbosityLevel > 2:
-                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Unusual Sword verse key: {} (gave {!r})".format( verseKeyText, nativeVerseText ) )
+                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Unusual Sword verse key: {verseKeyText} (gave {nativeVerseText!r})" )
                     if BibleOrgSysGlobals.debugFlag:
                         assert verseKeyText in ( '[ Module Heading ]', '[ Testament 1 Heading ]', '[ Testament 2 Heading ]', )
                     if BibleOrgSysGlobals.verbosityLevel > 3:
@@ -1325,7 +1323,7 @@ class SwordInterface():
                                 match2 = re.search( 'n="(.+?)"', attributes )
                                 n = match2.group(1) if match2 else None
                                 if n: n = n.replace( '$', '' ).strip()
-                                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Module created by {} {}".format( subType, n ) )
+                                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Module created by {subType} {n}" )
                     continue
                 vkBits = verseKeyText.split()
                 assert len(vkBits) == 2
@@ -1335,7 +1333,7 @@ class SwordInterface():
                 vkBits = vkBits[1].split( ':' )
                 assert len(vkBits) == 2
                 C, V = vkBits
-                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'At {} {}:{}'.format( BBB, C, V ) )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'At {BBB} {C}:{V}' )
 
                 if C != currentC:
                     thisBook.addLine( 'c', C )
@@ -1368,11 +1366,11 @@ class SwordInterface():
         """
         Load all the books from a Sword Module into the given BibleObject.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, "SwordInterface.loadBooks( …, {} )".format( moduleAbbreviation ) )
+        fnPrint( DEBUGGING_THIS_MODULE, f"SwordInterface.loadBooks( …, {moduleAbbreviation} )" )
 
         module = self.getModule( moduleAbbreviation )
         if module is None:
-            logger.critical( _("Unable to load {!r} module -- not known by Sword").format( moduleAbbreviation ) )
+            logger.critical( f"Unable to load {moduleAbbreviation!r} module -- not known by Sword" )
             return
 
         if SwordType=='CrosswireLibrary': # need to load the module
@@ -1384,17 +1382,17 @@ class SwordInterface():
             elif BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: halt
 
             if BibleOrgSysGlobals.verbosityLevel > 2:
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'Description: {!r}'.format( module.getDescription() ) )
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'Direction: {!r}={}'.format( ord(module.getDirection()), SWORD_TEXT_DIRECTIONS[ord(module.getDirection())] ) )
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'Encoding: {!r}={}'.format( encoding, SWORD_ENCODINGS[encoding] ) )
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'Language: {!r}'.format( module.getLanguage() ) )
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'Markup: {!r}={}'.format( markupCode, SWORD_MARKUPS[markupCode] ) )
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'Name: {!r}'.format( module.getName() ) )
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'RenderHeader: {!r}'.format( module.getRenderHeader() ) )
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'Type: {!r}'.format( module.getType() ) )
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'IsSkipConsecutiveLinks: {!r}'.format( module.isSkipConsecutiveLinks() ) )
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'IsUnicode: {!r}'.format( module.isUnicode() ) )
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'IsWritable: {!r}'.format( module.isWritable() ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'Description: {module.getDescription()!r}' )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'Direction: {ord(module.getDirection())!r}={SWORD_TEXT_DIRECTIONS[ord(module.getDirection())]}' )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'Encoding: {encoding!r}={SWORD_ENCODINGS[encoding]}' )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'Language: {module.getLanguage()!r}' )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'Markup: {markupCode!r}={SWORD_MARKUPS[markupCode]}' )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'Name: {module.getName()!r}' )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'RenderHeader: {module.getRenderHeader()!r}' )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'Type: {module.getType()!r}' )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'IsSkipConsecutiveLinks: {module.isSkipConsecutiveLinks()!r}' )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'IsUnicode: {module.isUnicode()!r}' )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'IsWritable: {module.isWritable()!r}' )
                 #return
 
             bookCount = 0
@@ -1408,14 +1406,14 @@ class SwordInterface():
                 verseKeyText = verseKey.getShortText()
                 #if '2' in verseKeyText: halt # for debugging first verses
                 #if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE:
-                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, '\nvkst={!r} vkix={}'.format( verseKeyText, verseKey.getIndex() ) )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'\nvkst={verseKeyText!r} vkix={verseKey.getIndex()}' )
 
                 #nativeVerseText = module.renderText().decode( self.encoding, 'replace' )
                 #nativeVerseText = str( module.renderText() ) if self.encoding=='utf-8' else str( module.renderText(), encoding=self.encoding )
-                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'getRenderHeader: {} {!r}'.format( len(module.getRenderHeader()), module.getRenderHeader() ) )
-                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'stripText: {} {!r}'.format( len(module.stripText()), module.stripText() ) )
-                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'renderText: {} {!r}'.format( len(str(module.renderText())), str(module.renderText()) ) )
-                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'getRawEntry: {} {!r}'.format( len(module.getRawEntry()), module.getRawEntry() ) )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'getRenderHeader: {len(module.getRenderHeader())} {module.getRenderHeader()!r}' )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'stripText: {len(module.stripText())} {module.stripText()!r}' )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'renderText: {len(str(module.renderText()))} {str(module.renderText())!r}' )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'getRawEntry: {len(module.getRawEntry())} {module.getRawEntry()!r}' )
                 try: nativeVerseText = module.getRawEntry().encode( BibleObject.encoding, 'namereplace' ).decode( 'utf-8', 'namereplace' )
                 #try: nativeVerseText = str( module.renderText() )
                 except UnicodeDecodeError: nativeVerseText = ''
@@ -1423,7 +1421,7 @@ class SwordInterface():
 
                 if ':' not in verseKeyText:
                     if BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.verbosityLevel > 2:
-                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Unusual Sword verse key: {} (gave {!r})".format( verseKeyText, nativeVerseText ) )
+                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Unusual Sword verse key: {verseKeyText} (gave {nativeVerseText!r})" )
                     if BibleOrgSysGlobals.debugFlag:
                         assert verseKeyText in ( '[ Module Heading ]', '[ Testament 1 Heading ]', '[ Testament 2 Heading ]', )
                     if BibleOrgSysGlobals.verbosityLevel > 3:
@@ -1437,7 +1435,7 @@ class SwordInterface():
                                 match2 = re.search( 'n="(.+?)"', attributes )
                                 n = match2.group(1) if match2 else None
                                 if n: n = n.replace( '$', '' ).strip()
-                                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Module created by {} {}".format( subType, n ) )
+                                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Module created by {subType} {n}" )
                     continue
                 vkBits = verseKeyText.split()
                 assert len(vkBits) == 2
@@ -1447,7 +1445,7 @@ class SwordInterface():
                 vkBits = vkBits[1].split( ':' )
                 assert len(vkBits) == 2
                 C, V = vkBits
-                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'At {} {}:{}'.format( BBB, C, V ) )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'At {BBB} {C}:{V}' )
 
                 # Start a new book if necessary
                 if BBB != currentBBB:
@@ -1455,7 +1453,7 @@ class SwordInterface():
                         vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "Saving", currentBBB, bookCount )
                         BibleObject.stashBook( thisBook )
                     # Create the new book
-                    if BibleOrgSysGlobals.verbosityLevel > 2:  vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '  Loading {} {}…'.format( moduleAbbreviation, BBB ) )
+                    if BibleOrgSysGlobals.verbosityLevel > 2:  vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'  Loading {moduleAbbreviation} {BBB}…' )
                     thisBook = BibleBook( BibleObject, BBB )
                     thisBook.objectNameString = 'Sword Bible Book object'
                     thisBook.objectTypeString = 'Sword Bible'
@@ -1492,14 +1490,14 @@ class SwordInterface():
 
     def makeKey( self, BBB:str, C:str, V ):
         #if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE:
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "SwordInterface.makeKey( {} {}:{} )".format( BBB, C, V ) )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"SwordInterface.makeKey( {BBB} {C}:{V} )" )
 
         #if BCV  in self.keyCache:
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Cached", BCV )
             #return self.keyCache[BCV]
         if SwordType == 'CrosswireLibrary':
             B = BibleOrgSysGlobals.loadedBibleBooksCodes.getOSISAbbreviation( BBB )
-            refString = "{} {}:{}".format( B, C, V )
+            refString = f"{B} {C}:{V}"
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'refString', refString )
             verseKey = Sword.VerseKey( refString )
             #self.keyCache[BCV] = verseKey
@@ -1520,7 +1518,7 @@ class SwordInterface():
                                     'In the beginning God created the heavens and the earth.', [])
             ]
         """
-        fnPrint( DEBUGGING_THIS_MODULE, "SwordInterface.getContextVerseData( {}, {} )".format( module.getName(), key.getShortText() ) )
+        fnPrint( DEBUGGING_THIS_MODULE, f"SwordInterface.getContextVerseData( {module.getName()}, {key.getShortText()} )" )
 
         if SwordType == 'CrosswireLibrary':
             if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE:
@@ -1528,13 +1526,12 @@ class SwordInterface():
                 dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  module markup", repr(mm), SWORD_MARKUPS[ord(mm)] )
             try: SWBuf = module.stripText( key )
             except UnicodeDecodeError:
-                dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Can't decode utf-8 text of {} {}".format( module.getName(), key.getShortText() ) )
+                dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Can't decode utf-8 text of {module.getName()} {key.getShortText()}" )
                 return
             verseText = SWBuf.getRawData() # TODO: Is this the correct way to get the verse text out of a SWBuf???
             if '\n' in verseText or '\r' in verseText: # Why!!!
                 if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE:
-                    dPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("getContextVerseData: Why does it have CR or LF in {} {} {}") \
-                            .format( module.getName(), key.getShortText(), repr(verseText) ) )
+                    dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"getContextVerseData: Why does it have CR or LF in {module.getName()} {key.getShortText()} {repr(verseText)}" )
                 verseText = verseText.replace( '\n', '' ).replace( '\r', '' )
             verseText = verseText.rstrip()
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'verseText', repr(verseText) )
@@ -1549,7 +1546,7 @@ class SwordInterface():
             verseData.append( InternalBibleEntry( 'v~','v~', verseText, verseText, None, verseText ) )
             contextVerseData = verseData, [] # No context
         elif SwordType == 'OurCode':
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("module"), module )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "module", module )
             try: contextVerseData = module.getContextVerseData( key ) # a call to InternalBible.py
             except KeyError: # Just create a blank verse entry
                 verseData = InternalBibleEntryList()
@@ -1557,10 +1554,10 @@ class SwordInterface():
                 if v=='1': verseData.append( InternalBibleEntry( 'c#','c', c, c, None, c ) )
                 verseData.append( InternalBibleEntry( 'v','v', v, v, None, v ) )
                 contextVerseData = verseData, [] # No context
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("gVD={} key={}, st={}").format( module.getName(), key, contextVerseData ) )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"gVD={module.getName()} key={key}, st={contextVerseData}" )
             if contextVerseData is None:
                 if key.getChapter()!=0 or key.getVerse()!=0: # We're not surprised if there's no chapter or verse zero
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("SwordInterface.getContextVerseData no VerseData"), module.getName(), key, contextVerseData )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "SwordInterface.getContextVerseData no VerseData", module.getName(), key, contextVerseData )
                 contextVerseData = [], None
             else:
                 verseData, context = contextVerseData
@@ -1588,16 +1585,16 @@ class SwordInterface():
                                     'In the beginning God created the heavens and the earth.', [])
             ]
         """
-        fnPrint( DEBUGGING_THIS_MODULE, "SwordResources: getVerseDataList( {}, {} )".format( module, key ) )
+        fnPrint( DEBUGGING_THIS_MODULE, f"SwordResources: getVerseDataList( {module}, {key} )" )
 
         if SwordType == 'CrosswireLibrary':
             try: verseText = module.stripText( key )
             except UnicodeDecodeError:
-                logger.critical( "getVerseDataList: can't decode utf-8 text of {} {}".format( module.getName(), key.getShortText() ) )
+                logger.critical( f"getVerseDataList: can't decode utf-8 text of {module.getName()} {key.getShortText()}" )
                 return
             if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE:
                 if '\n' in verseText or '\r' in verseText:
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("getVerseDataList: Why does it have CR or LF in {} {}").format( module.getName(), repr(verseText) ) )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"getVerseDataList: Why does it have CR or LF in {module.getName()} {repr(verseText)}" )
             verseData = []
             c, v = str(key.getChapter()), str(key.getVerse())
             # Prepend the verse number since Sword modules don't contain that info in the data
@@ -1605,11 +1602,11 @@ class SwordInterface():
             verseData.append( ('v','v', v, v, [],) )
             verseData.append( ('v~','v~', verseText, verseText, [],) )
         elif SwordType == 'OurCode':
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("module"), module )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "module", module )
             stuff = module.getContextVerseData( key )
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("gVD={} key={}, st={}").format( module.getName(), key, stuff ) )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"gVD={module.getName()} key={key}, st={stuff}" )
             if stuff is None:
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("SwordInterface.getVerseDataList no VerseData"), module.getName(), key, stuff )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "SwordInterface.getVerseDataList no VerseData", module.getName(), key, stuff )
                 assert key.getChapter()==0 or key.getVerse()==0
             else:
                 verseData, context = stuff
@@ -1637,12 +1634,12 @@ class SwordInterface():
         #if cacheKey in self.verseCache:
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Cached", cacheKey )
             #return self.verseCache[cacheKey]
-        vPrint( 'Never', DEBUGGING_THIS_MODULE, "SwordInterface.getVerseText({},{})".format( module.getName(), key.getText() ) )
+        vPrint( 'Never', DEBUGGING_THIS_MODULE, f"SwordInterface.getVerseText({module.getName()},{key.getText()})" )
 
         if SwordType == 'CrosswireLibrary':
             try: verseText = module.stripText( key ) #.encode( 'utf-8', 'namereplace' )
             except UnicodeDecodeError:
-                logger.critical( "getVerseText: can't decode utf-8 text of {} {}".format( module.getName(), key.getShortText() ) )
+                logger.critical( f"getVerseText: can't decode utf-8 text of {module.getName()} {key.getShortText()}" )
                 return ''
         elif SwordType == 'OurCode':
             context, verseData = module.getContextVerseData( key )
@@ -1651,7 +1648,7 @@ class SwordInterface():
             assert 2 <= len(verseData) <= 5
             verseText = ''
             for entry in verseData:
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Entry = {!r}".format( entry ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Entry = {entry!r}" )
                 assert isinstance( entry, InternalBibleEntry ) # Seems to be FAILING !!!!!!!!!!!!!!!!!!!!!!!!!!
                 marker, cleanText = entry.getMarker(), entry.getCleanText()
                 if marker == 'c': pass # Ignore
@@ -1671,11 +1668,11 @@ def getBCV( BCV, moduleAbbreviation='KJV' ): # Very slow -- for testing only
     """
     """
     if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE:
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "SwordResources.getBCV( {}, {} )".format( BCV, moduleAbbreviation ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"SwordResources.getBCV( {BCV}, {moduleAbbreviation} )" )
 
     library = Sword.SWMgr()
     module = library.getModule( moduleAbbreviation )
-    refString = "{} {}:{}".format( BCV[0][:3], BCV[1], BCV[2] )
+    refString = f"{BCV[0][:3]} {BCV[1]}:{BCV[2]}"
     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'refString', refString )
     return module.stripText( Sword.VerseKey( refString ) )
 # end of getBCV
@@ -1698,38 +1695,38 @@ def briefDemo() -> None:
         Search for methods and attributes
         """
         if DEBUGGING_THIS_MODULE or  BibleOrgSysGlobals.verbosityLevel > 0:
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nSearching for attribute {!r}…".format( attribute ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nSearching for attribute {attribute!r}…" )
         found = False
         AA = attribute.upper()
         for thing in dir(Sword):
             BB = thing.upper()
-            if BB.startswith(AA): vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Have {} in Sword".format( thing ) ); found = True
+            if BB.startswith(AA): vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Have {thing} in Sword" ); found = True
         for thing in dir(Sword.SWVersion()):
             BB = thing.upper()
-            if BB.startswith(AA): vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Have {} in SWVersion".format( thing ) ); found = True
+            if BB.startswith(AA): vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Have {thing} in SWVersion" ); found = True
         for thing in dir(Sword.SWMgr()):
             BB = thing.upper()
-            if BB.startswith(AA): vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Have {} in SWMgr".format( thing ) ); found = True
+            if BB.startswith(AA): vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Have {thing} in SWMgr" ); found = True
         module = library.getModule( 'KJV' )
         for thing in dir(module):
             BB = thing.upper()
-            if BB.startswith(AA): vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Have {} in SWModule".format( thing ) ); found = True
+            if BB.startswith(AA): vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Have {thing} in SWModule" ); found = True
         for thing in dir(Sword.SWKey()):
             BB = thing.upper()
-            if BB.startswith(AA): vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Have {} in SWKey".format( thing ) ); found = True
+            if BB.startswith(AA): vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Have {thing} in SWKey" ); found = True
         for thing in dir(Sword.VerseKey()):
             BB = thing.upper()
-            if BB.startswith(AA): vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Have {} in VerseKey".format( thing ) ); found = True
+            if BB.startswith(AA): vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Have {thing} in VerseKey" ); found = True
         #for thing in dir(Sword.InstallMgr()):
             #BB = thing.upper()
-            #if BB.startswith(AA): vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Have {} in InstallMgr".format( thing ) ); found = True
+            #if BB.startswith(AA): vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Have {thing} in InstallMgr" ); found = True
         for thing in dir(Sword.LocaleMgr()):
             BB = thing.upper()
-            if BB.startswith(AA): vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Have {} in LocaleMgr".format( thing ) ); found = True
+            if BB.startswith(AA): vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Have {thing} in LocaleMgr" ); found = True
         for thing in dir(Sword.SWFilterMgr()):
             BB = thing.upper()
-            if BB.startswith(AA): vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Have {} in SWFilterMgr".format( thing ) ); found = True
-        if not found: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " Sorry, {!r} not found.".format( attribute ) )
+            if BB.startswith(AA): vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Have {thing} in SWFilterMgr" ); found = True
+        if not found: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f" Sorry, {attribute!r} not found." )
     # end of Find
 
     if 0: # Install manager
@@ -1742,9 +1739,9 @@ def briefDemo() -> None:
         lm = Sword.LocaleMgr()
         if BibleOrgSysGlobals.verbosityLevel > 0:
             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "dir lm", lm, dir(lm) )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "default {}".format( lm.getDefaultLocaleName() ) )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "available {}".format( lm.getAvailableLocales() ) ) # Gives weird result: "available ()"
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "locale {}".format( lm.getLocale( "en" ) ) ) # Needs a string parameter but why does it return None?
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"default {lm.getDefaultLocaleName()}" )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"available {lm.getAvailableLocales()}" ) # Gives weird result: "available ()"
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'locale {lm.getLocale( "en" )}' ) # Needs a string parameter but why does it return None?
 
     if 0: # try filters
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nFILTER MANAGER" )
@@ -1753,13 +1750,13 @@ def briefDemo() -> None:
 
     if SwordType == 'CrosswireLibrary':
         # Get a list of available module names and types
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n{} modules are installed.".format( len(library.getModules()) ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n{len(library.getModules())} modules are installed." )
         for j,moduleBuffer in enumerate(library.getModules()):
             moduleID = moduleBuffer.getRawData()
             module = library.getModule( moduleID )
             if 0:
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "{} {} ({}) {} {!r}".format( j, module.getName(), module.getType(), module.getLanguage(), module.getEncoding() ) )
-                try: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "    {} {!r} {} {}".format( module.getDescription(), module.getMarkup(), module.getDirection(), "" ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{j} {module.getName()} ({module.getType()}) {module.getLanguage()} {module.getEncoding()!r}" )
+                try: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'    {module.getDescription()} {module.getMarkup()!r} {module.getDirection()} {""}' )
                 except UnicodeDecodeError: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "   Description is not Unicode!" )
             break
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n", j, "dir module", dir(module) )
@@ -1767,23 +1764,23 @@ def briefDemo() -> None:
         # Try some modules
         mod1 = library.getModule( 'KJV' )
         assert mod1 is not None
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nmod1 {} ({}) {!r}".format( mod1.getName(), mod1.getType(), mod1.getDescription() ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nmod1 {mod1.getName()} ({mod1.getType()}) {mod1.getDescription()!r}" )
         mod2 = library.getModule( 'ASV' )
         assert mod2 is not None
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nmod2 {} ({}) {!r}".format( mod2.getName(), mod2.getType(), mod2.getDescription() ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nmod2 {mod2.getName()} ({mod2.getType()}) {mod2.getDescription()!r}" )
         mod3 = library.getModule( 'WEB' )
         assert mod3 is not None
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nmod3 {} ({}) {!r}".format( mod3.getName(), mod3.getType(), mod3.getDescription() ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nmod3 {mod3.getName()} ({mod3.getType()}) {mod3.getDescription()!r}" )
         # abbott = library.getModule( 'Abbott' )
         # assert abbott is not None
         # if BibleOrgSysGlobals.verbosityLevel > 0:
-        #     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nabbott {} ({}) {!r}".format( abbott.getName(), abbott.getType(), abbott.getDescription() ) )
+        #     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nabbott {abbott.getName()} ({abbott.getType()}) {abbott.getDescription()!r}" )
         strongsGreek = library.getModule( 'StrongsGreek' )
         assert strongsGreek is not None
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nSG {} ({}) {!r}\n".format( strongsGreek.getName(), strongsGreek.getType(), strongsGreek.getDescription() ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nSG {strongsGreek.getName()} ({strongsGreek.getType()}) {strongsGreek.getDescription()!r}\n" )
         strongsHebrew = library.getModule( 'StrongsHebrew' )
         assert strongsHebrew is not None
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nSH {} ({}) {!r}\n\n".format( strongsHebrew.getName(), strongsHebrew.getType(), strongsHebrew.getDescription() ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nSH {strongsHebrew.getName()} ({strongsHebrew.getType()}) {strongsHebrew.getDescription()!r}\n\n" )
 
         # Try a sword key
         sk = Sword.SWKey( "H0430" )
@@ -1795,37 +1792,37 @@ def briefDemo() -> None:
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "val", vk.validateCurrentLocale() ) # gives None
         if BibleOrgSysGlobals.verbosityLevel > 0:
             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "getInfo", vk.getLocale(), vk.getBookCount(), vk.getBookMax(), vk.getIndex(), vk.getVersificationSystem() )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "getBCV {}({}/{}) {}/{}:{} in {!r}({})/{}".format( vk.getBookName(), vk.getBookAbbrev(), vk.getOSISBookName(), vk.getChapter(), vk.getChapterMax(), vk.getVerse(), repr(vk.getTestament()), vk.getTestamentIndex(), vk.getTestamentMax() ) )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "getText {} {} {} {} {!r}".format( vk.getOSISRef(), vk.getText(), vk.getRangeText(), vk.getShortText(), vk.getSuffix() ) )
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "bounds {} {}".format( vk.getLowerBound(), vk.getUpperBound() ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"getBCV {vk.getBookName()}({vk.getBookAbbrev()}/{vk.getOSISBookName()}) {vk.getChapter()}/{vk.getChapterMax()}:{vk.getVerse()} in {repr(vk.getTestament())!r}({vk.getTestamentIndex()})/{vk.getTestamentMax()}" )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"getText {vk.getOSISRef()} {vk.getText()} {vk.getRangeText()} {vk.getShortText()} {vk.getSuffix()!r}" )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"bounds {vk.getLowerBound()} {vk.getUpperBound()}" )
 
         if 0: # Set a filter HOW DO WE DO THIS???
             rFs = mod1.getRenderFilters()
             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, mod1.getRenderFilters() )
             mod1.setRenderFilter()
 
-        try: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n{} {}: {}".format( mod1.getName(), "Jonny 1:1", mod1.renderText( Sword.VerseKey("Jn 1:1") ) ) )
+        try: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'\n{mod1.getName()} {"Jonny 1:1"}: {mod1.renderText( Sword.VerseKey("Jn 1:1") )}' )
         except UnicodeDecodeError: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Unicode decode error in", mod1.getName() )
         except UnicodeEncodeError: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Unicode encode error in", mod1.getName() )
 
         mod1.increment()
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n{} {}: {}".format( mod1.getName(), mod1.getKey().getText(), mod1.stripText(  ) ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n{mod1.getName()} {mod1.getKey().getText()}: {mod1.stripText(  )}" )
         mod1.increment()
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n{} {}: {}".format( mod1.getName(), mod1.getKey().getText(), mod1.renderText(  ) ) )
-        try: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n{} {}: {}".format( mod2.getName(), vk.getText(), mod2.renderText( vk ) ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n{mod1.getName()} {mod1.getKey().getText()}: {mod1.renderText(  )}" )
+        try: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n{mod2.getName()} {vk.getText()}: {mod2.renderText( vk )}" )
         except UnicodeDecodeError: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Unicode decode error in", mod2.getName() )
         except UnicodeEncodeError: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Unicode encode error in", mod2.getName() )
-        try: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n{} {}: {}".format( mod3.getName(), vk.getText(), mod3.renderText( vk ) ) )
+        try: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n{mod3.getName()} {vk.getText()}: {mod3.renderText( vk )}" )
         except UnicodeDecodeError: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Unicode decode error in", mod3.getName() )
         except UnicodeEncodeError: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Unicode encode error in", mod3.getName() )
-        try: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n{} {}: {}".format( mod3.getName(), vk.getText(), mod3.renderText( vk ) ) )
+        try: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n{mod3.getName()} {vk.getText()}: {mod3.renderText( vk )}" )
         except UnicodeDecodeError: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Unicode decode error in", mod3.getName() )
         except UnicodeEncodeError: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Unicode encode error in", mod3.getName() )
 
-        try: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n{} {}: {}".format( strongsGreek.getName(), sk.getText(), strongsGreek.renderText( Sword.SWKey("G746") ) ) )
+        try: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'\n{strongsGreek.getName()} {sk.getText()}: {strongsGreek.renderText( Sword.SWKey("G746") )}' )
         except UnicodeDecodeError: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Unicode decode error in", strongsGreek.getName() )
         except UnicodeEncodeError: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Unicode encode error in", strongsGreek.getName() )
-        try: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n{} {}: {}".format( strongsHebrew.getName(), sk.getText(), strongsHebrew.renderText( sk ) ) )
+        try: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n{strongsHebrew.getName()} {sk.getText()}: {strongsHebrew.renderText( sk )}" )
         except UnicodeDecodeError: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Unicode decode error in", strongsHebrew.getName() )
         except UnicodeEncodeError: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Unicode encode error in", strongsHebrew.getName() )
 
@@ -1848,7 +1845,7 @@ def briefDemo() -> None:
 
         # Try a tree key on a GenBook
         module = library.getModule( 'Westminster' )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nmodule {} ({}) {!r}".format( module.getName(), module.getType(), module.getDescription() ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nmodule {module.getName()} ({module.getType()}) {module.getDescription()!r}" )
         def getGenBookTOC( tk, parent ):
             if tk is None: # obtain one from the module
                 tk = Sword.TreeKey_castTo( module.getKey() ) # Only works for gen books
@@ -2001,38 +1998,38 @@ def fullDemo() -> None:
         Search for methods and attributes
         """
         if DEBUGGING_THIS_MODULE or  BibleOrgSysGlobals.verbosityLevel > 0:
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nSearching for attribute {!r}…".format( attribute ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nSearching for attribute {attribute!r}…" )
         found = False
         AA = attribute.upper()
         for thing in dir(Sword):
             BB = thing.upper()
-            if BB.startswith(AA): vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Have {} in Sword".format( thing ) ); found = True
+            if BB.startswith(AA): vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Have {thing} in Sword" ); found = True
         for thing in dir(Sword.SWVersion()):
             BB = thing.upper()
-            if BB.startswith(AA): vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Have {} in SWVersion".format( thing ) ); found = True
+            if BB.startswith(AA): vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Have {thing} in SWVersion" ); found = True
         for thing in dir(Sword.SWMgr()):
             BB = thing.upper()
-            if BB.startswith(AA): vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Have {} in SWMgr".format( thing ) ); found = True
+            if BB.startswith(AA): vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Have {thing} in SWMgr" ); found = True
         module = library.getModule( 'KJV' )
         for thing in dir(module):
             BB = thing.upper()
-            if BB.startswith(AA): vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Have {} in SWModule".format( thing ) ); found = True
+            if BB.startswith(AA): vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Have {thing} in SWModule" ); found = True
         for thing in dir(Sword.SWKey()):
             BB = thing.upper()
-            if BB.startswith(AA): vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Have {} in SWKey".format( thing ) ); found = True
+            if BB.startswith(AA): vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Have {thing} in SWKey" ); found = True
         for thing in dir(Sword.VerseKey()):
             BB = thing.upper()
-            if BB.startswith(AA): vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Have {} in VerseKey".format( thing ) ); found = True
+            if BB.startswith(AA): vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Have {thing} in VerseKey" ); found = True
         #for thing in dir(Sword.InstallMgr()):
             #BB = thing.upper()
-            #if BB.startswith(AA): vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Have {} in InstallMgr".format( thing ) ); found = True
+            #if BB.startswith(AA): vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Have {thing} in InstallMgr" ); found = True
         for thing in dir(Sword.LocaleMgr()):
             BB = thing.upper()
-            if BB.startswith(AA): vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Have {} in LocaleMgr".format( thing ) ); found = True
+            if BB.startswith(AA): vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Have {thing} in LocaleMgr" ); found = True
         for thing in dir(Sword.SWFilterMgr()):
             BB = thing.upper()
-            if BB.startswith(AA): vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Have {} in SWFilterMgr".format( thing ) ); found = True
-        if not found: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " Sorry, {!r} not found.".format( attribute ) )
+            if BB.startswith(AA): vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Have {thing} in SWFilterMgr" ); found = True
+        if not found: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f" Sorry, {attribute!r} not found." )
     # end of Find
 
     if 0: # Install manager
@@ -2045,9 +2042,9 @@ def fullDemo() -> None:
         lm = Sword.LocaleMgr()
         if BibleOrgSysGlobals.verbosityLevel > 0:
             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "dir lm", lm, dir(lm) )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "default {}".format( lm.getDefaultLocaleName() ) )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "available {}".format( lm.getAvailableLocales() ) ) # Gives weird result: "available ()"
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "locale {}".format( lm.getLocale( "en" ) ) ) # Needs a string parameter but why does it return None?
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"default {lm.getDefaultLocaleName()}" )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"available {lm.getAvailableLocales()}" ) # Gives weird result: "available ()"
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'locale {lm.getLocale( "en" )}' ) # Needs a string parameter but why does it return None?
 
     if 0: # try filters
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nFILTER MANAGER" )
@@ -2056,36 +2053,36 @@ def fullDemo() -> None:
 
     if SwordType == 'CrosswireLibrary':
         # Get a list of available module names and types
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n{} modules are installed.".format( len(library.getModules()) ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n{len(library.getModules())} modules are installed." )
         for j,moduleBuffer in enumerate(library.getModules()):
             moduleID = moduleBuffer.getRawData()
             module = library.getModule( moduleID )
             if 0:
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "{} {} ({}) {} {!r}".format( j, module.getName(), module.getType(), module.getLanguage(), module.getEncoding() ) )
-                try: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "    {} {!r} {} {}".format( module.getDescription(), module.getMarkup(), module.getDirection(), "" ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{j} {module.getName()} ({module.getType()}) {module.getLanguage()} {module.getEncoding()!r}" )
+                try: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'    {module.getDescription()} {module.getMarkup()!r} {module.getDirection()} {""}' )
                 except UnicodeDecodeError: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "   Description is not Unicode!" )
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n", j, "dir module", dir(module) )
 
         # Try some modules
         mod1 = library.getModule( 'KJV' )
         assert mod1 is not None
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nmod1 {} ({}) {!r}".format( mod1.getName(), mod1.getType(), mod1.getDescription() ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nmod1 {mod1.getName()} ({mod1.getType()}) {mod1.getDescription()!r}" )
         mod2 = library.getModule( 'ASV' )
         assert mod2 is not None
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nmod2 {} ({}) {!r}".format( mod2.getName(), mod2.getType(), mod2.getDescription() ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nmod2 {mod2.getName()} ({mod2.getType()}) {mod2.getDescription()!r}" )
         mod3 = library.getModule( 'WEB' )
         assert mod3 is not None
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nmod3 {} ({}) {!r}".format( mod3.getName(), mod3.getType(), mod3.getDescription() ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nmod3 {mod3.getName()} ({mod3.getType()}) {mod3.getDescription()!r}" )
         # abbott = library.getModule( 'Abbott' )
         # assert abbott is not None
         # if BibleOrgSysGlobals.verbosityLevel > 0:
-        #     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nabbott {} ({}) {!r}".format( abbott.getName(), abbott.getType(), abbott.getDescription() ) )
+        #     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nabbott {abbott.getName()} ({abbott.getType()}) {abbott.getDescription()!r}" )
         strongsGreek = library.getModule( 'StrongsGreek' )
         assert strongsGreek is not None
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nSG {} ({}) {!r}\n".format( strongsGreek.getName(), strongsGreek.getType(), strongsGreek.getDescription() ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nSG {strongsGreek.getName()} ({strongsGreek.getType()}) {strongsGreek.getDescription()!r}\n" )
         strongsHebrew = library.getModule( 'StrongsHebrew' )
         assert strongsHebrew is not None
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nSH {} ({}) {!r}\n\n".format( strongsHebrew.getName(), strongsHebrew.getType(), strongsHebrew.getDescription() ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nSH {strongsHebrew.getName()} ({strongsHebrew.getType()}) {strongsHebrew.getDescription()!r}\n\n" )
 
         # Try a sword key
         sk = Sword.SWKey( "H0430" )
@@ -2097,41 +2094,41 @@ def fullDemo() -> None:
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "val", vk.validateCurrentLocale() ) # gives None
         if BibleOrgSysGlobals.verbosityLevel > 0:
             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "getInfo", vk.getLocale(), vk.getBookCount(), vk.getBookMax(), vk.getIndex(), vk.getVersificationSystem() )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "getBCV {}({}/{}) {}/{}:{} in {!r}({})/{}".format( vk.getBookName(), vk.getBookAbbrev(), vk.getOSISBookName(), vk.getChapter(), vk.getChapterMax(), vk.getVerse(), repr(vk.getTestament()), vk.getTestamentIndex(), vk.getTestamentMax() ) )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "getText {} {} {} {} {!r}".format( vk.getOSISRef(), vk.getText(), vk.getRangeText(), vk.getShortText(), vk.getSuffix() ) )
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "bounds {} {}".format( vk.getLowerBound(), vk.getUpperBound() ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"getBCV {vk.getBookName()}({vk.getBookAbbrev()}/{vk.getOSISBookName()}) {vk.getChapter()}/{vk.getChapterMax()}:{vk.getVerse()} in {repr(vk.getTestament())!r}({vk.getTestamentIndex()})/{vk.getTestamentMax()}" )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"getText {vk.getOSISRef()} {vk.getText()} {vk.getRangeText()} {vk.getShortText()} {vk.getSuffix()!r}" )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"bounds {vk.getLowerBound()} {vk.getUpperBound()}" )
 
         if 0: # Set a filter HOW DO WE DO THIS???
             rFs = mod1.getRenderFilters()
             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, mod1.getRenderFilters() )
             mod1.setRenderFilter()
 
-        try: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n{} {}: {}".format( mod1.getName(), "Jonny 1:1", mod1.renderText( Sword.VerseKey("Jn 1:1") ) ) )
+        try: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'\n{mod1.getName()} {"Jonny 1:1"}: {mod1.renderText( Sword.VerseKey("Jn 1:1") )}' )
         except UnicodeDecodeError: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Unicode decode error in", mod1.getName() )
         except UnicodeEncodeError: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Unicode encode error in", mod1.getName() )
 
         mod1.increment()
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n{} {}: {}".format( mod1.getName(), mod1.getKey().getText(), mod1.stripText(  ) ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n{mod1.getName()} {mod1.getKey().getText()}: {mod1.stripText(  )}" )
         mod1.increment()
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n{} {}: {}".format( mod1.getName(), mod1.getKey().getText(), mod1.renderText(  ) ) )
-        try: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n{} {}: {}".format( mod2.getName(), vk.getText(), mod2.renderText( vk ) ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n{mod1.getName()} {mod1.getKey().getText()}: {mod1.renderText(  )}" )
+        try: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n{mod2.getName()} {vk.getText()}: {mod2.renderText( vk )}" )
         except UnicodeDecodeError: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Unicode decode error in", mod2.getName() )
         except UnicodeEncodeError: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Unicode encode error in", mod2.getName() )
-        try: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n{} {}: {}".format( mod3.getName(), vk.getText(), mod3.renderText( vk ) ) )
+        try: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n{mod3.getName()} {vk.getText()}: {mod3.renderText( vk )}" )
         except UnicodeDecodeError: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Unicode decode error in", mod3.getName() )
         except UnicodeEncodeError: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Unicode encode error in", mod3.getName() )
-        try: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n{} {}: {}".format( mod3.getName(), vk.getText(), mod3.renderText( vk ) ) )
+        try: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n{mod3.getName()} {vk.getText()}: {mod3.renderText( vk )}" )
         except UnicodeDecodeError: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Unicode decode error in", mod3.getName() )
         except UnicodeEncodeError: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Unicode encode error in", mod3.getName() )
 
-        # try: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n{} {}: {}".format( abbott.getName(), vk.getText(), abbott.renderText( vk ) ) )
+        # try: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n{abbott.getName()} {vk.getText()}: {abbott.renderText( vk )}" )
         # except UnicodeDecodeError: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Unicode decode error in", abbott.getName() )
         # except UnicodeEncodeError: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Unicode encode error in", abbott.getName() )
 
-        try: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n{} {}: {}".format( strongsGreek.getName(), sk.getText(), strongsGreek.renderText( Sword.SWKey("G746") ) ) )
+        try: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'\n{strongsGreek.getName()} {sk.getText()}: {strongsGreek.renderText( Sword.SWKey("G746") )}' )
         except UnicodeDecodeError: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Unicode decode error in", strongsGreek.getName() )
         except UnicodeEncodeError: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Unicode encode error in", strongsGreek.getName() )
-        try: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n{} {}: {}".format( strongsHebrew.getName(), sk.getText(), strongsHebrew.renderText( sk ) ) )
+        try: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n{strongsHebrew.getName()} {sk.getText()}: {strongsHebrew.renderText( sk )}" )
         except UnicodeDecodeError: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Unicode decode error in", strongsHebrew.getName() )
         except UnicodeEncodeError: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Unicode encode error in", strongsHebrew.getName() )
 
@@ -2154,7 +2151,7 @@ def fullDemo() -> None:
 
         # Try a tree key on a GenBook
         module = library.getModule( 'Westminster' )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nmodule {} ({}) {!r}".format( module.getName(), module.getType(), module.getDescription() ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nmodule {module.getName()} ({module.getType()}) {module.getDescription()!r}" )
         def getGenBookTOC( tk, parent ):
             if tk is None: # obtain one from the module
                 tk = Sword.TreeKey_castTo( module.getKey() ) # Only works for gen books

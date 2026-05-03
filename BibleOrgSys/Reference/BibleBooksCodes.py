@@ -42,7 +42,6 @@ CHANGELOG:
     2025-03-07 Add hasPsalmTitle function
     2025-09-18 Allow insertChar in tidyBBB function
 """
-from gettext import gettext as _
 import os
 import logging
 
@@ -145,7 +144,7 @@ class BibleBooksCodes:
             # else: # We have to load the XML (much slower)
             from BibleOrgSys.Reference.Converters.BibleBooksCodesConverter import BibleBooksCodesConverter
             if XMLFileOrFilepath is not None:
-                logging.warning( _("Bible books codes are already loaded -- your given filepath of {!r} was ignored").format(XMLFileOrFilepath) )
+                logging.warning( f"Bible books codes are already loaded -- your given filepath of {XMLFileOrFilepath!r} was ignored" )
             bbcc = BibleBooksCodesConverter()
             bbcc.loadAndValidate( XMLFileOrFilepath ) # Load the XML (if not done already)
             self.__DataDicts = bbcc.importDataToPython() # Get the various dictionaries organised for quick lookup
@@ -162,7 +161,7 @@ class BibleBooksCodes:
         """
         indent = 2
         result = "BibleBooksCodes object"
-        result += ('\n' if result else '') + ' '*indent + _("Number of entries = {:,}").format( len(self.__DataDicts['referenceAbbreviationDict']) )
+        result += ('\n' if result else '') + ' '*indent + f"Number of entries = {len(self.__DataDicts['referenceAbbreviationDict']):,}"
         return result
     # end of BibleBooksCodes.__str__
 
@@ -261,7 +260,7 @@ class BibleBooksCodes:
                     break
         assert len(resultList) == len(myList)
         #if resultList == myList: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "getSequenceList made no change to the order" )
-        #else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "getSequenceList: {} produced {}".format( myList, resultList ) )
+        #else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"getSequenceList: {myList} produced {resultList}" )
         return resultList
     # end of BibleBooksCodes.getSequenceList
 
@@ -429,7 +428,7 @@ class BibleBooksCodes:
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, USFMAbbreviation, self.__DataDicts['USFMAbbreviationDict'][USFMAbbreviation.upper()] )
         result = self.__DataDicts['USFMAbbreviationDict'][USFMAbbreviation.upper()][1] # Can be a string or a list
         if isinstance( result, str ): return result
-        if strict: logging.warning( "getBBBFromUSFMAbbreviation is assuming that the best fit for USFM ID {!r} is the first entry in {}".format( USFMAbbreviation, result ) )
+        if strict: logging.warning( f"getBBBFromUSFMAbbreviation is assuming that the best fit for USFM ID {result!r} is the first entry in {USFMAbbreviation}" )
         return result[0] # Assume that the first entry is the best pick
 
 
@@ -459,7 +458,7 @@ class BibleBooksCodes:
 
         Returns BBB or None.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, "BibleBooksCodes.getBBBFromEnglishText( {} )".format( someText ) )
+        fnPrint( DEBUGGING_THIS_MODULE, f"BibleBooksCodes.getBBBFromEnglishText( {someText} )" )
         if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert someText and isinstance( someText, str )
 
@@ -838,8 +837,8 @@ class BibleBooksCodes:
                 txtFile.write( "NUM BBB English name\n" )
                 htmlFile.write( '<html><body><table border="1">\n<tr><th>NUM</th><th>BBB</th><th>English name</th></tr>\n' )
                 for BBB in self.__DataDicts['referenceAbbreviationDict']:
-                    txtFile.write( "{:3} {} {}\n".format( self.getReferenceNumber(BBB), BBB, self.getEnglishName_NR(BBB) ) )
-                    htmlFile.write( '<tr><td>{}</td><td>{}</td><td>{}</td></tr>\n'.format( self.getReferenceNumber(BBB), BBB, self.getEnglishName_NR(BBB) ) )
+                    txtFile.write( f"{self.getReferenceNumber(BBB):3} {BBB} {self.getEnglishName_NR(BBB)}\n" )
+                    htmlFile.write( f'<tr><td>{self.getReferenceNumber(BBB)}</td><td>{BBB}</td><td>{self.getEnglishName_NR(BBB)}</td></tr>\n' )
                 htmlFile.write( "</table></body></html>\n" )
     # end of BibleBooksCodes.createLists
 
@@ -977,9 +976,9 @@ def briefDemo() -> None:
     # Demo the BibleBooksCodes object
     bbc = BibleBooksCodes().loadData() # Doesn't reload the XML unnecessarily :)
     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, bbc ) # Just print a summary
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Esther has {} expected chapters".format(bbc.getExpectedChaptersList("EST")) )
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Apocalypse of Ezra has {} expected chapters".format(bbc.getExpectedChaptersList("EZA")) )
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Psalms has {} expected chapters".format(bbc.getMaxChapters("PSA")) )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'Esther has {bbc.getExpectedChaptersList("EST")} expected chapters' )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'Apocalypse of Ezra has {bbc.getExpectedChaptersList("EZA")} expected chapters' )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'Psalms has {bbc.getMaxChapters("PSA")} expected chapters' )
     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Names for Genesis are:", bbc.getEnglishNameList_NR("GEN") )
     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Names for Sirach are:", bbc.getEnglishNameList_NR('SIR') )
     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "All BBBs:", len(bbc.getAllReferenceAbbreviations()), bbc.getAllReferenceAbbreviations() )
@@ -987,26 +986,26 @@ def briefDemo() -> None:
     myBBBs = ['GEN','EXO','PSA','ISA','MAL','MAT','REV','GLS']
     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "My BBBs in sequence", len(myBBBs), myBBBs, "now", len(bbc.getSequenceList(myBBBs)), bbc.getSequenceList(myBBBs) )
     for BBB in myBBBs:
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "{} is typically in {} section".format( BBB, bbc.getTypicalSection( BBB ) ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{BBB} is typically in {bbc.getTypicalSection( BBB )} section" )
     myBBBs = ['REV','CO2','GEN','PSA','CO1','ISA','SA2','MAT','GLS','JOB']
     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "My BBBs in sequence", len(myBBBs), myBBBs, "now", len(bbc.getSequenceList(myBBBs)), bbc.getSequenceList(myBBBs) )
     for BBB in myBBBs:
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "{} is typically in {} section".format( BBB, bbc.getTypicalSection( BBB ) ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{BBB} is typically in {bbc.getTypicalSection( BBB )} section" )
     assert bbc.getUSFMNumStr( 'MAT' ) == '41'
     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "USFM triples:", len(bbc.getAllUSFMBooksCodeNumberTriples()), bbc.getAllUSFMBooksCodeNumberTriples() )
     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "USX triples:", len(bbc.getAllUSXBooksCodeNumberTriples()), bbc.getAllUSXBooksCodeNumberTriples() )
     assert bbc.getBibleditNumStr( 'MAT' ) == '40'
     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Bibledit triples:", len(bbc.getAllBibleditBooksCodeNumberTriples()), bbc.getAllBibleditBooksCodeNumberTriples() )
     assert bbc.getLogosNumStr( 'MAT' ) == '61'
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Single chapter books (and OSIS):\n  {}\n  {}".format( bbc.getSingleChapterBooksList(), bbc.getOSISSingleChapterBooksList() ) )
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Possible alternative  books to Esther: {}".format( bbc.getPossibleAlternativeBooksCodes('EST') ) )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Single chapter books (and OSIS):\n  {bbc.getSingleChapterBooksList()}\n  {bbc.getOSISSingleChapterBooksList()}" )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Possible alternative  books to Esther: {bbc.getPossibleAlternativeBooksCodes('EST')}" )
     for someString,expectedBBB in EXPECTED_BBB_NAMES_LIST:
         BBB = bbc.getBBBFromEnglishText( someString )
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{someString=} -> {BBB=} ({expectedBBB=})" )
         assert BBB==expectedBBB, f"{someString=} -> {BBB=} ({expectedBBB=})"
     myOSIS = ( 'Gen', '1Kgs', 'Ps', 'Mal', 'Matt', '2John', 'Rev', 'EpLao', '3Meq', )
     for osisCode in myOSIS:
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Osis {!r} -> {}".format( osisCode, bbc.getBBBFromOSISAbbreviation( osisCode ) ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Osis {osisCode!r} -> {bbc.getBBBFromOSISAbbreviation( osisCode )}" )
     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{BibleBooksCodes().tidyBBBs(['GEN','SA1','CO2','JN3','XXA'])=}" )
 
     for BBB in BOOKLIST_81:
@@ -1017,8 +1016,8 @@ def briefDemo() -> None:
         section = bbc.getTypicalSection( BBB )
         if section not in sections: sections[section] = []
         sections[section].append( BBB )
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n{} book codes in {} sections".format( len(bbc), len(sections) ) )
-    for section in sections: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  {} section: {} {}".format( section, len(sections[section]), sections[section] ) )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n{len(bbc)} book codes in {len(sections)} sections" )
+    for section in sections: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  {section} section: {len(sections[section])} {sections[section]}" )
 # end of BibleBooksCodes.briefDemo
 
 def fullDemo() -> None:
@@ -1031,9 +1030,9 @@ def fullDemo() -> None:
     bbc = BibleBooksCodes().loadData() # Doesn't reload the XML unnecessarily :)
     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, bbc ) # Just print a summary
 
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Esther has {} expected chapters".format(bbc.getExpectedChaptersList("EST")) )
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Apocalypse of Ezra has {} expected chapters".format(bbc.getExpectedChaptersList("EZA")) )
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Psalms has {} expected chapters".format(bbc.getMaxChapters("PSA")) )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'Esther has {bbc.getExpectedChaptersList("EST")} expected chapters' )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'Apocalypse of Ezra has {bbc.getExpectedChaptersList("EZA")} expected chapters' )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'Psalms has {bbc.getMaxChapters("PSA")} expected chapters' )
     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Names for Genesis are:", bbc.getEnglishNameList_NR("GEN") )
     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Names for Sirach are:", bbc.getEnglishNameList_NR('SIR') )
     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "All BBBs:", len(bbc.getAllReferenceAbbreviations()), bbc.getAllReferenceAbbreviations() )
@@ -1042,26 +1041,26 @@ def fullDemo() -> None:
     myBBBs = ['GEN','EXO','PSA','ISA','MAL','MAT','REV','GLS']
     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "My BBBs in sequence", len(myBBBs), myBBBs, "now", len(bbc.getSequenceList(myBBBs)), bbc.getSequenceList(myBBBs) )
     for BBB in myBBBs:
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "{} is typically in {} section".format( BBB, bbc.getTypicalSection( BBB ) ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{BBB} is typically in {bbc.getTypicalSection( BBB )} section" )
     myBBBs = ['REV','CO2','GEN','PSA','CO1','ISA','SA2','MAT','GLS','JOB']
     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "My BBBs in sequence", len(myBBBs), myBBBs, "now", len(bbc.getSequenceList(myBBBs)), bbc.getSequenceList(myBBBs) )
     for BBB in myBBBs:
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "{} is typically in {} section".format( BBB, bbc.getTypicalSection( BBB ) ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{BBB} is typically in {bbc.getTypicalSection( BBB )} section" )
     assert bbc.getUSFMNumStr( 'MAT' ) == '41'
     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "USFM triples:", len(bbc.getAllUSFMBooksCodeNumberTriples()), bbc.getAllUSFMBooksCodeNumberTriples() )
     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "USX triples:", len(bbc.getAllUSXBooksCodeNumberTriples()), bbc.getAllUSXBooksCodeNumberTriples() )
     assert bbc.getBibleditNumStr( 'MAT' ) == '40'
     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Bibledit triples:", len(bbc.getAllBibleditBooksCodeNumberTriples()), bbc.getAllBibleditBooksCodeNumberTriples() )
     assert bbc.getLogosNumStr( 'MAT' ) == '61'
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Single chapter books (and OSIS):\n  {}\n  {}".format( bbc.getSingleChapterBooksList(), bbc.getOSISSingleChapterBooksList() ) )
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Possible alternative  books to Esther: {}".format( bbc.getPossibleAlternativeBooksCodes('EST') ) )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Single chapter books (and OSIS):\n  {bbc.getSingleChapterBooksList()}\n  {bbc.getOSISSingleChapterBooksList()}" )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Possible alternative  books to Esther: {bbc.getPossibleAlternativeBooksCodes('EST')}" )
     for someString,expectedBBB in EXPECTED_BBB_NAMES_LIST:
         BBB = bbc.getBBBFromEnglishText( someString )
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{someString=} -> {BBB=} ({expectedBBB=})" )
         assert BBB==expectedBBB, f"{someString=} -> {BBB=} ({expectedBBB=})"
     myOSIS = ( 'Gen', '1Kgs', 'Ps', 'Mal', 'Matt', '2John', 'Rev', 'EpLao', '3Meq', )
     for osisCode in myOSIS:
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Osis {!r} -> {}".format( osisCode, bbc.getBBBFromOSISAbbreviation( osisCode ) ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Osis {osisCode!r} -> {bbc.getBBBFromOSISAbbreviation( osisCode )}" )
     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{BibleBooksCodes().tidyBBBs(['GEN','SA1','CO2','JN3','XXA'])=}" )
 
     for BBB in BOOKLIST_81:
@@ -1072,8 +1071,8 @@ def fullDemo() -> None:
         section = bbc.getTypicalSection( BBB )
         if section not in sections: sections[section] = []
         sections[section].append( BBB )
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n{} book codes in {} sections".format( len(bbc), len(sections) ) )
-    for section in sections: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  {} section: {} {}".format( section, len(sections[section]), sections[section] ) )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n{len(bbc)} book codes in {len(sections)} sections" )
+    for section in sections: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  {section} section: {len(sections[section])} {sections[section]}" )
 # end of BibleBooksCodes.fullDemo
 
 if __name__ == '__main__':

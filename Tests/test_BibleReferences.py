@@ -65,7 +65,7 @@ class BibleReferencesTests( unittest.TestCase ):
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nSingle Reference (good)" )
         for goodRef in ("Mat 7:3","Mat.7:3","Mat. 7:3","Mt. 7:3","Mt.7:3","Jde 7","Jde. 7","Jde 1:7","Jde. 1:7","Job 8:4","Job. 8:4","Job8:4","Job  8:4","Lev. 8:4b", \
                         "Mat.7:0","Mt. 7:3","1Cor 1:1","1 Cor 1:2", "II Cor 1:3", "IICor 1:4","ISA 1:5",):
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Processing {!r} reference string…".format( goodRef ) )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Processing {goodRef!r} reference string…" )
             result = BSR.parseReferenceString( goodRef )
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, goodRef, " ", result )
             self.assertTrue( isinstance( result, tuple ) )
@@ -82,7 +82,7 @@ class BibleReferencesTests( unittest.TestCase ):
             self.assertTrue( 0 <= len(result[5]) <= 1 )
         for badRef in ("Mut 7:3","Mat.7777:3","Mat. 7:3333","Mta 7:3","Mt-7:3","Jde 77","Jde. 77","Jde 11:7","Jde. 2:7","Jab 8:4","Jobs. 8:4","Job88:4","Job  8:444","Lev. 8:4bc", \
                         "Mat 0:3","Mat. 77:3","Mt. 7:93","M 7:3","Mit 7:3","Mit. 7:3","Mat. 7:3ab","Mat, 7:3","Mat. 7:3xyz5"):
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Processing {!r} reference string…".format( badRef ) )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Processing {badRef!r} reference string…" )
             result = BSR.parseReferenceString( badRef )
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, badRef, " ", result )
             self.assertTrue( isinstance( result, tuple ) )
@@ -97,7 +97,7 @@ class BibleReferencesTests( unittest.TestCase ):
             self.assertTrue( isinstance( result[5], str ) ) # Verse suffix
             #self.assertTrue( 0 <= len(result[5]) <= 1 )
         for goodRefs in ("Mat. 7:3,7","Mat. 7:3; 4:7","Mat. 7:3,7; 4:7","Mat. 7:3,7; 4:7,9,11","Mat. 7:3; Heb. 2:2; Rev. 1:1","Mat. 7:3,7; Heb 2:2,9; Rev. 1:1","Mat. 7:3,7; 8:17; Heb 2:2,9; 4:4,7; Rev. 1:1; 1:1","Mrk. 7:3a,7b,8"):
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Processing {!r} reference string…".format( goodRefs ) )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Processing {goodRefs!r} reference string…" )
             result = BSR.parseReferenceString( goodRefs )
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, goodRefs, " ", result )
             self.assertTrue( isinstance( result, tuple ) )
@@ -122,7 +122,7 @@ class BibleReferencesTests( unittest.TestCase ):
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nSingle References (good)" )
         for goodRef in ("Mat 7:3","Mat.7:3","Mat. 7:3","Mt. 7:3","Mt.7:3","Jde 7","Jde. 7","Jde 1:7","Jde. 1:7","Job 8:4","Job. 8:4","Job8:4","Job  8:4","Lev. 8:4b", \
                         "Mat.7:0","Mt. 7:3","1Cor 1:1","1 Cor 1:2", "II Cor 1:3", "IICor 1:4","ISA 1:5",):
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Processing {!r} reference string…".format( goodRef ) )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Processing {goodRef!r} reference string…" )
             result = BSRs.parseReferenceString( goodRef )
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, goodRef, " ", result )
             self.assertTrue( isinstance( result, tuple ) )
@@ -142,7 +142,7 @@ class BibleReferencesTests( unittest.TestCase ):
             self.assertTrue( 0 <= len(result[2][0][3]) <= 1 )
         for badRef in ("Mut 7:3","Mat.7777:3","Mat. 7:3333","Mta 7:3","Mt-7:3","Jde 77","Jde. 77","Jde 11:7","Jde. 2:7","Jab 8:4","Jobs. 8:4","Job88:4","Job  8:444","Lev. 8:4bc", \
                         "Mat 0:3","Mat. 77:3","Mt. 7:93","M 7:3","Mit 7:3","Mit. 7:3","Mat. 7:3ab","Mat, 7:3","Mat. 7:3xyz5"):
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Processing {!r} reference string…".format( badRef ) )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Processing {badRef!r} reference string…" )
             result = BSRs.parseReferenceString( badRef )
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, badRef, " ", result )
             self.assertTrue( isinstance( result, tuple ) )
@@ -152,7 +152,7 @@ class BibleReferencesTests( unittest.TestCase ):
             self.assertTrue( isinstance( result[2], list ) ) # List of tuples
             self.assertTrue( 0 <= len(result[2]) <= 1 ) # Some of them do parse
         for goodRefs in ("Mat. 7:3,7","Mat. 7:3; 4:7","Mat. 7:3,7; 4:7","Mat. 7:3,7; 4:7,9,11","Mat. 7:3; Heb. 2:2; Rev. 1:1","Mat. 7:3,7; Heb 2:2,9; Rev. 1:1","Mat. 7:3,7; 8:17; Heb 2:2,9; 4:4,7; Rev. 1:1; 1:1","Mrk. 7:3a,7b,8"):
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Processing {!r} reference string…".format( goodRefs ) )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Processing {goodRefs!r} reference string…" )
             result = BSRs.parseReferenceString( goodRefs )
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, goodRefs, " ", result )
             self.assertTrue( isinstance( result, tuple ) )
@@ -171,7 +171,7 @@ class BibleReferencesTests( unittest.TestCase ):
                 self.assertTrue( isinstance( r4, str ) ) # Verse suffix
                 self.assertTrue( 0 <= len(r4) <= 1 )
         for badRefs in ("Meat. 7:3,7","Mat. 7:3-14:7","Mat. 7:3,7; 4+7","Mat. 7:3,7; 4:7*9,11","Mat. 7:3; Hub. 2:2; Rev. 1:1","Mat. 7:3,7; Heb 2:2-9; Rev. 1:1","Mat. 7:3,7; 8:17; Heb 2:2,9; 4=4,7; Rev. 1:1; 1:1","Mrk. 7:3a-7b,8"):
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Processing {!r} reference string…".format( badRefs ) )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Processing {badRefs!r} reference string…" )
             result = BSRs.parseReferenceString( badRefs )
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, badRefs, " ", result )
             self.assertTrue( isinstance( result, tuple ) )
@@ -200,7 +200,7 @@ class BibleReferencesTests( unittest.TestCase ):
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nSingle References (good)" )
         for goodRef in ("Mat 7:3","Mat.7:3","Mat. 7:3","Mt. 7:3","Mt.7:3","Jde 7","Jde. 7","Jde 1:7","Jde. 1:7","Job 8:4","Job. 8:4","Job8:4","Job  8:4","Lev. 8:4b", \
                         "Mat.7:0","Mt. 7:3","1Cor 1:1","1 Cor 1:2", "II Cor 1:3", "IICor 1:4","ISA 1:5",):
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Processing {!r} reference string…".format( goodRef ) )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Processing {goodRef!r} reference string…" )
             result = BRL.parseReferenceString( goodRef )
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, goodRef, " ", result )
             self.assertTrue( isinstance( result, tuple ) )
@@ -220,7 +220,7 @@ class BibleReferencesTests( unittest.TestCase ):
             self.assertTrue( 0 <= len(result[2][0][3]) <= 1 )
         for badRef in ("Mut 7:3","Mat.7777:3","Mat. 7:3333","Mta 7:3","Mt-7:3","Jde 77","Jde. 77","Jde 11:7","Jde. 2:7","Jab 8:4","Jobs. 8:4","Job88:4","Job  8:444","Lev. 8:4bc", \
                         "Mat 0:3","Mat. 77:3","Mt. 7:93","M 7:3","Mit 7:3","Mit. 7:3","Mat. 7:3ab","Mat, 7:3","Mat. 7:3xyz5"):
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Processing {!r} reference string…".format( badRef ) )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Processing {badRef!r} reference string…" )
             result = BRL.parseReferenceString( badRef )
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, badRef, " ", result )
             self.assertTrue( isinstance( result, tuple ) )
@@ -230,7 +230,7 @@ class BibleReferencesTests( unittest.TestCase ):
             self.assertTrue( isinstance( result[2], list ) ) # List of tuples
             self.assertTrue( 0 <= len(result[2]) <= 1 ) # Some of them do parse
         for goodRefs in ("Mat. 7:3,7","Mat. 7:3; 4:7","Mat. 7:3,7; 4:7","Mat. 7:3,7; 4:7,9,11","Mat. 7:3; Heb. 2:2; Rev. 1:1","Mat. 7:3,7; Heb 2:2,9; Rev. 1:1","Mat. 7:3,7; 8:17; Heb 2:2,9; 4:4,7; Rev. 1:1; 1:1","Mrk. 7:3a,7b,8"):
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Processing {!r} reference string…".format( goodRefs ) )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Processing {goodRefs!r} reference string…" )
             result = BRL.parseReferenceString( goodRefs )
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, goodRefs, " ", result )
             self.assertTrue( isinstance( result, tuple ) )
@@ -249,7 +249,7 @@ class BibleReferencesTests( unittest.TestCase ):
                 self.assertTrue( isinstance( r4, str ) ) # Verse suffix
                 self.assertTrue( 0 <= len(r4) <= 1 )
         for badRefs in ("Meat. 7:3,7","Mat. 7:3 to 14:7","Mat. 7:3,7; 4+7","Mat. 7:3,7; 4:7*9,11","Mat. 7:3; Hub. 2:2; Rev. 1:1","Mat. 7:3,7; Heb 2:2=9; Rev. 1:1","Mat. 7:3,7; 8:17; Heb 2:2,9; 4=4,7; Rev. 1:1; 1:1","Mrk. 7:3a:7b,8"):
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Processing {!r} reference string…".format( badRefs ) )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Processing {badRefs!r} reference string…" )
             result = BRL.parseReferenceString( badRefs )
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, badRefs, " ", result )
             self.assertTrue( isinstance( result, tuple ) )

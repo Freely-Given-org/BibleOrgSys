@@ -26,7 +26,6 @@
 """
 Module handling BibleReferencesLinks functions.
 """
-from gettext import gettext as _
 import os
 import pickle
 
@@ -71,7 +70,7 @@ class BibleReferencesLinks:
             # See if we can load from the pickle file (faster than loading from the XML)
             standardIndexPickleFilepath = BibleOrgSysGlobals.BOS_DERIVED_DATAFILES_FOLDERPATH.joinpath( 'BibleReferencesLinks_Tables.index.pickle' )
             self.dataPickleFilepath = BibleOrgSysGlobals.BOS_DERIVED_DATAFILES_FOLDERPATH.joinpath( 'BibleReferencesLinks_Tables.data.pickle' )
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, _("Loading pickle index file {}…").format( standardIndexPickleFilepath ) )
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Loading pickle index file {standardIndexPickleFilepath}…" )
             with open( standardIndexPickleFilepath, 'rb') as pickleFile:
                 self.__Index = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
         return self # So this command can be chained after the object creation
@@ -87,7 +86,7 @@ class BibleReferencesLinks:
         """
         indent = 2
         result = "BibleReferencesLinks object"
-        result += ('\n' if result else '') + ' '*indent + _("Number of index entries = {:,}").format( len(self.__Index) )
+        result += ('\n' if result else '') + ' '*indent + f"Number of index entries = {len(self.__Index):,}"
         return result
     # end of BibleReferencesLinks.__str__
 
@@ -199,13 +198,13 @@ class BibleReferencesLinks:
             #and os.stat(standardPickleFilepath).st_mtime > os.stat(standardXMLFileOrFilepath).st_mtime \
             #and os.stat(standardPickleFilepath).st_ctime > os.stat(standardXMLFileOrFilepath).st_ctime: # There's a newer pickle file
                 #import pickle
-                #dPrint( 'Info', DEBUGGING_THIS_MODULE, _("Loading pickle file {}…").format( standardPickleFilepath ) )
+                #dPrint( 'Info', DEBUGGING_THIS_MODULE, f"Loading pickle file {standardPickleFilepath}…" )
                 #with open( standardPickleFilepath, 'rb') as pickleFile:
                     #self.__DataList = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
                     #self.__DataDict = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
             #else: # We have to load the XML (much slower)
                 #from BibleOrgSys.Reference.BibleReferencesLinksConverter import BibleReferencesLinksConverter
-                #if XMLFileOrFilepath is not None: logging.warning( _("Bible books codes are already loaded -- your given filepath of {!r} was ignored").format(XMLFileOrFilepath) )
+                #if XMLFileOrFilepath is not None: logging.warning( f"Bible books codes are already loaded -- your given filepath of {XMLFileOrFilepath!r} was ignored" )
                 #bbcc = BibleReferencesLinksConverter()
                 #bbcc.loadAndValidate( XMLFileOrFilepath ) # Load the XML (if not done already)
                 #self.__DataList, self.__DataDict = bbcc.importDataToPython() # Get the various dictionaries organised for quick lookup
@@ -223,8 +222,8 @@ class BibleReferencesLinks:
         #"""
         #indent = 2
         #result = "BibleReferencesLinks object"
-        #result += ('\n' if result else '') + ' '*indent + _("Number of list entries = {:,}").format( len(self.__DataList) )
-        #result += ('\n' if result else '') + ' '*indent + _("Number of dict entries = {:,}").format( len(self.__DataDict) )
+        #result += ('\n' if result else '') + ' '*indent + f"Number of list entries = {len(self.__DataList):,}"
+        #result += ('\n' if result else '') + ' '*indent + f"Number of dict entries = {len(self.__DataDict):,}"
         #return result
     ## end of BibleReferencesLinks.__str__
 

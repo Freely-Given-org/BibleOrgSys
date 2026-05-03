@@ -69,7 +69,6 @@ Seems that a YES Bible file is a binary version of a YET text Bible file.
 CHANGELOG
     2022-04-24 Disable asserts in non-debug mode
 """
-from gettext import gettext as _
 import logging
 import os
 from pathlib import Path
@@ -106,20 +105,20 @@ def YETBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=Fal
     if autoLoad is true and exactly one YET Bible is found,
         returns the loaded YETBible object.
     """
-    fnPrint( DEBUGGING_THIS_MODULE, "YETBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
+    fnPrint( DEBUGGING_THIS_MODULE, f"YETBibleFileCheck( {givenFolderName}, {strictCheck}, {autoLoad}, {autoLoadBooks} )" )
     if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag: assert givenFolderName and isinstance( givenFolderName, (str,Path) )
     if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag: assert autoLoad in (True,False,)
 
     # Check that the given folder is readable
     if not os.access( givenFolderName, os.R_OK ):
-        logging.critical( _("YETBibleFileCheck: Given {!r} folder is unreadable").format( givenFolderName ) )
+        logging.critical( f"YETBibleFileCheck: Given {givenFolderName!r} folder is unreadable" )
         return False
     if not os.path.isdir( givenFolderName ):
-        logging.critical( _("YETBibleFileCheck: Given {!r} path is not a folder").format( givenFolderName ) )
+        logging.critical( f"YETBibleFileCheck: Given {givenFolderName!r} path is not a folder" )
         return False
 
     # Find all the files and folders in this folder
-    vPrint( 'Verbose', DEBUGGING_THIS_MODULE, " YETBibleFileCheck: Looking for files in given {}".format( givenFolderName ) )
+    vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f" YETBibleFileCheck: Looking for files in given {givenFolderName}" )
     foundFolders, foundFiles = [], []
     for something in os.listdir( givenFolderName ):
         somepath = os.path.join( givenFolderName, something )
@@ -141,7 +140,7 @@ def YETBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=Fal
             if strictCheck or BibleOrgSysGlobals.strictCheckingFlag:
                 firstLine = BibleOrgSysGlobals.peekIntoFile( thisFilename, givenFolderName )
                 if not firstLine.startswith( "info\t"):
-                    vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "YETBible (unexpected) first line was {!r} in {}".format( firstLine, thisFilename ) )
+                    vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"YETBible (unexpected) first line was {thisFilename!r} in {firstLine}" )
                     continue
             lastFilenameFound = thisFilename
             numFound += 1
@@ -159,9 +158,9 @@ def YETBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=Fal
     for thisFolderName in sorted( foundFolders ):
         tryFolderName = os.path.join( givenFolderName, thisFolderName+'/' )
         if not os.access( tryFolderName, os.R_OK ): # The subfolder is not readable
-            logging.warning( _("YETBibleFileCheck: {!r} subfolder is unreadable").format( tryFolderName ) )
+            logging.warning( f"YETBibleFileCheck: {tryFolderName!r} subfolder is unreadable" )
             continue
-        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "    YETBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
+        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"    YETBibleFileCheck: Looking for files in {tryFolderName}" )
         foundSubfolders, foundSubfiles = [], []
         try:
             for something in os.listdir( tryFolderName ):
@@ -180,7 +179,7 @@ def YETBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=Fal
                 if strictCheck or BibleOrgSysGlobals.strictCheckingFlag:
                     firstLine = BibleOrgSysGlobals.peekIntoFile( thisFilename, tryFolderName )
                     if not firstLine.startswith( "info\t"):
-                        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "YETBible (unexpected) first line was {!r} in {}".format( firstLine, thisFilename ) ); halt
+                        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"YETBible (unexpected) first line was {thisFilename!r} in {firstLine}" ); halt
                         continue
                 foundProjects.append( (tryFolderName, thisFilename,) )
                 lastFilenameFound = thisFilename
@@ -216,7 +215,7 @@ class YETBible( Bible ):
 
         # Do a preliminary check on the readability of our file
         if not os.access( self.sourceFilepath, os.R_OK ):
-            logging.critical( _("YETBible: File {!r} is unreadable").format( self.sourceFilepath ) )
+            logging.critical( f"YETBible: File {self.sourceFilepath!r} is unreadable" )
 
         self.name = self.givenName
         #if self.name is None:
@@ -228,7 +227,7 @@ class YETBible( Bible ):
         """
         Load a single source file and load book elements.
         """
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, _("Loading {}…").format( self.sourceFilepath ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Loading {self.sourceFilepath}…" )
 
         loadErrors:list[str] = []
         def decodeVerse( encodedVerseString ):
@@ -254,8 +253,7 @@ class YETBible( Bible ):
             verseString = re.sub( r'@<x([0-9])@>@/', r'\\xx\1', verseString )
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, repr( verseString ) )
             if '@' in verseString: # still -- did we miss something or was there an error????
-                loadErrors.append( _("{} {}:{} Found unrecognised @ format fields in '{}'") \
-                            .format( BBB, chapterNumberString, verseNumberString, verseString ) )
+                loadErrors.append( f"{BBB} {chapterNumberString}:{verseNumberString} Found unrecognised @ format fields in '{verseString}'" )
                 logging.error( f"Found unrecognised @ format fields in {BBB} {chapterNumberString}:{verseNumberString} '{verseString}'" )
             if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag: assert '@' not in verseString
             return verseString
@@ -293,7 +291,7 @@ class YETBible( Bible ):
                         if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag: assert 2 <= len(locale) <= 3
                         if locale == 'in': locale = 'id' # Fix a quirk in the locale encoding
                     else:
-                        logging.warning( _("YETBible: unknown {} info field in {} {} {}:{}") \
+                        logging.warning( "YETBible: unknown {} info field in {} {} {}:{}" \
                             .format( repr(bits[1]), BBB, chapterNumberString, verseNumberString ) )
                     continue
                 elif bits[0] == 'book_name':
@@ -312,7 +310,7 @@ class YETBible( Bible ):
                         assert chapterNumberString.isdigit()
                         assert verseNumberString.isdigit()
                     BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromReferenceNumber( bookNumberString )
-                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "{} {}:{} = {}".format( BBB, chapterNumberString, verseNumberString, repr(encodedVerseString) ) )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{BBB} {chapterNumberString}:{verseNumberString} = {repr(encodedVerseString)}" )
                     if BBB != lastBBB: # We have a new book
                         if lastBBB is not None: # We have a completed book to save
                             bookDict[lastBBB] = bookLines
@@ -452,8 +450,8 @@ def testYB( TUBfilename ):
     from BibleOrgSys.Reference import VerseReferences
     TUBfolder = Path( '/srv/Bibles/YET modules/' ) # Must be the same as below
 
-    vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("Demonstrating the YET Bible class…") )
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Test folder is {!r} {!r}".format( TUBfolder, TUBfilename ) )
+    vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Demonstrating the YET Bible class…" )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Test folder is {TUBfolder!r} {TUBfilename!r}" )
     yb = YETBible( TUBfolder, TUBfilename )
     yb.load() # Load and process the file
     vPrint( 'Normal', DEBUGGING_THIS_MODULE, yb ) # Just print a summary
@@ -508,7 +506,7 @@ def briefDemo() -> None:
         nonEnglish = (  )
         bad = ( )
         for j, testFilename in enumerate( good ): # Choose one of the above: single, good, nonEnglish, bad
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nYET C{}/ Trying {}".format( j+1, testFilename ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nYET C{j+1}/ Trying {testFilename}" )
             #myTestFolder = os.path.join( testFolder, testFilename+'/' )
             #testFilepath = os.path.join( testFolder, testFilename+'/', testFilename+'_utf8.txt' )
             testYB( testFilename )
@@ -523,7 +521,7 @@ def briefDemo() -> None:
             elif os.path.isfile( somepath ): foundFiles.append( something )
 
         if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nTrying all {len(foundFolders)} discovered modules…" )
             parameters = [folderName for folderName in sorted(foundFolders)]
             BibleOrgSysGlobals.alreadyMultiprocessing = True
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
@@ -533,7 +531,7 @@ def briefDemo() -> None:
             BibleOrgSysGlobals.alreadyMultiprocessing = False
         else: # Just single threaded
             for j, someFolder in enumerate( sorted( foundFolders ) ):
-                vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nYET D{}/ Trying {}".format( j+1, someFolder ) )
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nYET D{j+1}/ Trying {someFolder}" )
                 #myTestFolder = os.path.join( testFolder, someFolder+'/' )
                 testYB( someFolder )
 # end of YETBible.briefDemo
@@ -568,7 +566,7 @@ def fullDemo() -> None:
         nonEnglish = (  )
         bad = ( )
         for j, testFilename in enumerate( good ): # Choose one of the above: single, good, nonEnglish, bad
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nYET C{}/ Trying {}".format( j+1, testFilename ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nYET C{j+1}/ Trying {testFilename}" )
             #myTestFolder = os.path.join( testFolder, testFilename+'/' )
             #testFilepath = os.path.join( testFolder, testFilename+'/', testFilename+'_utf8.txt' )
             testYB( testFilename )
@@ -582,7 +580,7 @@ def fullDemo() -> None:
             elif os.path.isfile( somepath ): foundFiles.append( something )
 
         if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nTrying all {len(foundFolders)} discovered modules…" )
             parameters = [folderName for folderName in sorted(foundFolders)]
             BibleOrgSysGlobals.alreadyMultiprocessing = True
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
@@ -592,7 +590,7 @@ def fullDemo() -> None:
             BibleOrgSysGlobals.alreadyMultiprocessing = False
         else: # Just single threaded
             for j, someFolder in enumerate( sorted( foundFolders ) ):
-                vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nYET D{}/ Trying {}".format( j+1, someFolder ) )
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nYET D{j+1}/ Trying {someFolder}" )
                 #myTestFolder = os.path.join( testFolder, someFolder+'/' )
                 testYB( someFolder )
 # end of YETBible.fullDemo
