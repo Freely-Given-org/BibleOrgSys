@@ -43,7 +43,7 @@ import BibleOrgSys.BibleOrgSysGlobals as BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2026-05-03' # by RJH
+LAST_MODIFIED_DATE = '2026-05-04' # by RJH
 SHORT_PROGRAM_NAME = "OldBiblicalEnglish"
 PROGRAM_NAME = "OpenBibleData English Language Handling functions"
 PROGRAM_VERSION = '0.97'
@@ -81,12 +81,13 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
     ((' ben greete;',' ben grete;'),' been great;'), # Psa 110:2
     ((' be herd',),' be heard'), # Tob 4:1
     (('brede doutes',),'breed doubts'), # Cvdl/TNT 1Tim 1:4
+    (('brokun meete',),'broken meat/food'), # Wycl Mrk 8:19
     (('carest for',),'care for/about'),
     (('comen hondes',),'common hands'), # TNT Mrk 7:2
     ((' daie yt ',),' day that '), # Cvdl 1 Sam 8:8
     (('dayly breede',),'daily bread'), # TNT Mat 6:11
     ((' deed men',),' dead men'), # Wycl Tob 1:20
-    ((' eate breede',' eate bred',),' eat bread'), # Mrk 7:5
+    ((' eate breede',' eate bredcare for/about',),' eat bread'), # Mrk 7:5
     ((' euer sens ',),' ever since '), # Psa 71:5
     (('floure of Lebanon',),'flower of Lebanon'),
     (('foule clothes','foule clothis'),'foul clothes'),
@@ -2580,7 +2581,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
             ((' trieth',' tryeth'),' trieth/tries'), (('Trye ',),'Try '),((' trye ',' trie '),' try '),
         ((' toordis',),' turds'), ((' turnedest',' turneden',' turnede',' tourned'),' turned'),(('Turne ','Tvrne '),'Turn '),((' tourne ',' turne '),' turn '),((' turne,',),' turn,'),((' turne.',),' turn.'),((' turne:',),' turn:'),
         (('Twei ',),'Twain/Two_or_both '), ((' twei ',' tweyne ',' tweyn ',' twey ', ' twaine '),' twain/two_or_both '),(('twain,','twaine,','twayne,'),'twain/two_or_both,'),
-            ((' tweluethe',' twelfthe',' twolueth'),' twelfth'),((' twelft ',),' twelfth '), (('twolue','twelue'),'twelve'), (('twentithe','twentith'),'twentieth'), (('Twentie ','Twetye '),'Twenty '),(('twentie ','twenti ','twentye '),'twenty '),(('twentie.','twentye.'),'twenty.'),(('twentie:',),'twenty:'),(('twenti;',),'twenty;'),
+            ((' tweluethe',' twelfthe',' twolueth'),' twelfth'),((' twelft ',),' twelfth '), (('Twelue',),'Twelve'),(('twolue','twelue'),'twelve'), (('twentithe','twentith'),'twentieth'), (('Twentie ','Twetye '),'Twenty '),(('twentie ','twenti ','twentye '),'twenty '),(('twentie.','twentye.'),'twenty.'),(('twentie:',),'twenty:'),(('twenti;',),'twenty;'),
             ((' twyse',' twise',' twies'),' twice'),
                 (('twincklinge',),'twinkling'), (('twynnes','twinnes','twyns'),'twins'),
 
@@ -2881,7 +2882,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
         (('the cheer ',),'the face '), # Lam 3:35
         ((' charger',),' platter'), # Mrk 6:28
         (('childiden','childide'),'gave_birth_to'), # Wycl Isa 66:8, Hosea 1:3
-        ((' cofyns',),' baskets'), # Wycl Mrk 6:43
+        ((' cofynes',' cofyns',),' baskets'), # Wycl Mrk 6:43, 8:19
         # (('cornflooris',),'storage-barns'), # Joel 2:24 Now up at top
         (('comelyngi','comlyngi','comelyng','comeling'),'stranger'), # Wycl Tob 1:7, Isa 54:15
         (('comparisound',),'compared'), # Psa 48:13
