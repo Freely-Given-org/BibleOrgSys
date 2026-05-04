@@ -952,7 +952,9 @@ class InternalBibleBook:
         self._processedLines = processLines(self._rawLines, self.BBB, self.workName, options)
 
         # # Create files for tests for new Rust implementation
-        # if 'OET' in self.workName and self.BBB=='HAG':
+        # if 'OET' in self.workName:
+        #     with open( f'{self.workName}_summary.text', 'at', encoding='utf-8') as debugOutputFile:
+        #         debugOutputFile.write( f"{self.BBB} {len(self._rawLines)=} {len(self._processedLines)=}\n" )
         #     with open( f'{self.workName}_{self.BBB}_rawLines.txt', 'wt', encoding='utf-8' ) as debugOutputFile:
         #         debugOutputFile.write( f"{self.workName} {self.BBB} {len(self._rawLines)}\n" )
         #         for n, (marker,text) in enumerate( self._rawLines ):

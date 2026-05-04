@@ -849,8 +849,11 @@ mod tests {
 
         // 38 1:15 ctxt=['chapters', 'c', 'p']
         let (cv38, entry38) = index.index_data.get_index(38).unwrap();
+        println!("cv38: {}, entry38: {} then {:#?}", cv38, entry38, index.get_verse_entries(&ChapterVerse::new("1", "15"), true));
         assert_eq!(cv38.to_string(), "1:15");
         assert_eq!(entry38.entry_index(), 84);
+        println!("processed line at index 87: {}", index.entries().get(87).unwrap());
+        println!("processed line at index 88: {}", index.entries().get(88).unwrap());
         assert_eq!(entry38.entry_count(), 5);
         assert_eq!(entry38.context(), ["chapters", "c", "p"]);
 

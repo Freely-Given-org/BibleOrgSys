@@ -1,7 +1,7 @@
 //! Bible Org Sys Internals - Validation and checking logic.
 
 use crate::entry_extras::InternalBibleEntryList;
-use crate::markers::{self, MarkerSection, MarkerContentType, MarkerClosureType};
+use crate::markers::{self};
 
 /// A single validation issue (error or warning).
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]

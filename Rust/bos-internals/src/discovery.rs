@@ -286,7 +286,7 @@ pub fn discover_book(entries: &InternalBibleEntryList, _bbb: &str) -> BookDiscov
             }
         } else if marker == "tr" {
             results.have_tables = true;
-        } else if marker == "li" || marker == "li1" {
+        } else if marker == "li1" {
             results.have_lists = true;
         }
 
