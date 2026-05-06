@@ -817,7 +817,7 @@ def briefDemo() -> None:
                     if line.startswith('<option value="'):
                         adjLine = line.replace('<option value="','').replace('</option>','')
                         USFM_BBB, name = adjLine[:3], adjLine[11:]
-                        BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromUSFMAbbreviation( USFM_BBB )
+                        BBB = bos_books_codes_py.usfm_abbrev_to_reference_abbrev_py( USFM_BBB )
                         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, USFM_BBB, BBB, name )
                         nameDict[BBB] = name
             return title, nameDict
@@ -987,7 +987,7 @@ def fullDemo() -> None:
                     if line.startswith('<option value="'):
                         adjLine = line.replace('<option value="','').replace('</option>','')
                         USFM_BBB, name = adjLine[:3], adjLine[11:]
-                        BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromUSFMAbbreviation( USFM_BBB )
+                        BBB = bos_books_codes_py.usfm_abbrev_to_reference_abbrev_py( USFM_BBB )
                         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, USFM_BBB, BBB, name )
                         nameDict[BBB] = name
             return title, nameDict

@@ -213,7 +213,7 @@ for bBBB,bStuff in BOOK_TABLE.items():
     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, bBBB, bStuff )
     assert len(bStuff) == 6
     for someField in bStuff: assert someField # shouldn't be blank
-    if DEBUGGING_THIS_MODULE: assert BibleOrgSysGlobals.loadedBibleBooksCodes.getReferenceNumber(bBBB)
+    if DEBUGGING_THIS_MODULE: assert bos_books_codes_py.get_reference_number_py(bBBB)
     bkColor, bkNumber, rusAbbrev, rusName, engAbbrev, engName = bStuff
     assert bkNumber not in BOOKNUMBER_TABLE
     BOOKNUMBER_TABLE[bkNumber] = (bBBB,bkColor,rusAbbrev,rusName,engAbbrev,engName)
@@ -438,7 +438,7 @@ class MyBibleBible( Bible ):
                 else:
                     raise ValueError( f"Unexpected number of columns in MyBible BOOKS_ALL table row: {len(row)}" )
                 if BibleOrgSysGlobals.debugFlag: assert bookNumber in BOOKNUMBER_TABLE
-                if len(rows) == 66: BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromReferenceNumber( j+1 )
+                if len(rows) == 66: BBB = bos_books_codes_py.get_bbb_from_reference_number_py( j+1 )
                 else:
                     BBB = self.BibleOrganisationalSystem.getBBBFromText( longName ) # Might not work for other languages
                     if BBB is None: BBB = self.BibleOrganisationalSystem.getBBBFromText( shortName ) # Might not work for other languages
@@ -464,7 +464,7 @@ class MyBibleBible( Bible ):
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, bookColor, bookNumber, shortName, longName, isPresent )
                     if BibleOrgSysGlobals.debugFlag: assert bookNumber in BOOKNUMBER_TABLE
                     longName = longName.strip() # Why do some have a \n at the end???
-                    if len(rows) == 66: BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromReferenceNumber( j+1 )
+                    if len(rows) == 66: BBB = bos_books_codes_py.get_bbb_from_reference_number_py( j+1 )
                     else:
                         BBB = self.BibleOrganisationalSystem.getBBBFromText( longName ) # Might not work for other languages
                         if BBB is None: BBB = self.BibleOrganisationalSystem.getBBBFromText( shortName ) # Might not work for other languages
@@ -1097,7 +1097,7 @@ def createMyBibleModule( self, outputFolder, controlDict ) -> bool:
 
         try: verseList = BOS.getNumVersesList( BBB )
         except KeyError: return False
-        #nBBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getReferenceNumber( BBB )
+        #nBBB = bos_books_codes_py.get_reference_number_py( BBB )
         numC, numV = len(verseList), verseList[0]
 
         ourGlobals['line'], ourGlobals['lastLine'] = '', None

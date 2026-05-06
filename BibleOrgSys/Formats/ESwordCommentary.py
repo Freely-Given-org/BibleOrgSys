@@ -230,7 +230,7 @@ class ESwordCommentary( Bible ):
             #BBBn, C, V, text = row # First three are integers, the last is a string
             ##dPrint( 'Quiet', DEBUGGING_THIS_MODULE, repr(BBBn), repr(C), repr(V), repr(text) )
             #if BBBn<1 or BBBn>66: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Found book number {BBBn}" )
-            #BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromReferenceNumber( BBBn )
+            #BBB = bos_books_codes_py.get_bbb_from_reference_number_py( BBBn )
             #if not BOS.isValidBCVRef( (BBB,str(C),str(V),''), 'checkForExtraMaterial' ):
                 #logging.error( f"checkForExtraMaterial: {self.name} contains {BBB} {C}:{V} {text!r}" )
                 #if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE:
@@ -281,7 +281,7 @@ class ESwordCommentary( Bible ):
         #if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'First book number is {BBBn1}' )
         #del rows
         #BBB1 = None
-        #if BBBn1 <= 66: BBB1 = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromReferenceNumber( BBBn1 )
+        #if BBBn1 <= 66: BBB1 = bos_books_codes_py.get_bbb_from_reference_number_py( BBBn1 )
 
 
         #testament = BBB = None
@@ -381,11 +381,11 @@ class ESwordCommentary( Bible ):
             BBBn1 = bookRows[0][0]
             if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2:
                 vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'  First book number is {BBBn1}' )
-            if BBBn1 <= 66: BBB1 = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromReferenceNumber( BBBn1 )
+            if BBBn1 <= 66: BBB1 = bos_books_codes_py.get_bbb_from_reference_number_py( BBBn1 )
 
             bookCommentary = {}
             for bkNum,line in bookRows:
-                BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromReferenceNumber( bkNum )
+                BBB = bos_books_codes_py.get_bbb_from_reference_number_py( bkNum )
                 BBBList.append( BBB )
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Bk={bkNum} BBB={BBB} Line: {line[:120]!r}…" )
                 bookCommentary[BBB] = line
@@ -399,7 +399,7 @@ class ESwordCommentary( Bible ):
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2:
             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'{len(chapterRows)} chapter rows found' )
         for bkNum,chNum,line in chapterRows:
-            BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromReferenceNumber( bkNum )
+            BBB = bos_books_codes_py.get_bbb_from_reference_number_py( bkNum )
             if BBBn1 is None:
                 BBBn1, BBB1 = bkNum, BBB
             if BBB not in BBBList:
@@ -418,7 +418,7 @@ class ESwordCommentary( Bible ):
             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'{len(verseRows)} verse rows found' )
         for bkNum,chBegin,chEnd,vBegin,vEnd,line in verseRows:
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, bkNum,chBegin,chEnd,vBegin,vEnd )
-            BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromReferenceNumber( bkNum )
+            BBB = bos_books_codes_py.get_bbb_from_reference_number_py( bkNum )
             if BBBn1 is None:
                 BBBn1, BBB1 = bkNum, BBB
             if BBB not in BBBList:
@@ -498,7 +498,7 @@ class ESwordCommentary( Bible ):
         thisBook.objectTypeString = 'e-Sword-Commentary'
 
         verseList = self.BibleOrganisationalSystem.getNumVersesList( BBB )
-        nBBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getReferenceNumber( BBB )
+        nBBB = bos_books_codes_py.get_reference_number_py( BBB )
 
         ourGlobals = {}
         #continued = ourGlobals['haveParagraph'] = False
@@ -916,7 +916,7 @@ def createESwordCommentaryModule( self, outputFolder, controlDict ):
         bkData = self.books[BBB] if BBB in self.books else None
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, bkData._processedLines )
         verseList = BOS.getNumVersesList( BBB )
-        nBBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getReferenceNumber( BBB )
+        nBBB = bos_books_codes_py.get_reference_number_py( BBB )
         numC, numV = len(verseList), verseList[0]
 
         ourGlobals['line'], ourGlobals['lastLine'] = '', None

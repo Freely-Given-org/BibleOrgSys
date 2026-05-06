@@ -32,9 +32,10 @@ import logging
 from BibleOrgSys.Misc.singleton import singleton
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
+import bos_books_codes_py
 
 
-LAST_MODIFIED_DATE = '2020-05-02' # by RJH
+LAST_MODIFIED_DATE = '2026-05-06' # by RJH
 SHORT_PROGRAM_NAME = "BibleBooksNames"
 PROGRAM_NAME = "Bible Books Names Systems handler"
 PROGRAM_VERSION = '0.41'
@@ -394,7 +395,7 @@ class BibleBooksNamesSystems:
         """
         if bookList is not None:
             for BBB in bookList: # Just check this list is valid
-                if not BibleOrgSysGlobals.loadedBibleBooksCodes.isValidBBB( BBB ):
+                if not bos_books_codes_py.is_valid_reference_abbreviation_py( BBB ):
                     logging.error( f"Invalid {systemName!r} in booklist requested for {BBB} books names system" )
 
         if systemName in self.__DataDicts:
@@ -550,7 +551,7 @@ class BibleBooksNamesSystem:
                 if key.startswith( upperCaseBookNameOrAbbreviation[0] ) and len(key)==thisLen: myList.append( key )
             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Possibility list is", myList )
 
-        return BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromEnglishText( bookNameOrAbbreviation )
+        return bos_books_codes_py.english_name_to_reference_abbrev_py( bookNameOrAbbreviation )
     # end of BibleBooksNamesSystem.getBBBFromText
 
 

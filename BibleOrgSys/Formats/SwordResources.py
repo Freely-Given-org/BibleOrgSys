@@ -1496,7 +1496,7 @@ class SwordInterface():
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Cached", BCV )
             #return self.keyCache[BCV]
         if SwordType == 'CrosswireLibrary':
-            B = BibleOrgSysGlobals.loadedBibleBooksCodes.getOSISAbbreviation( BBB )
+            B = bos_books_codes_py.get_osis_abbreviation_py( BBB )
             refString = f"{B} {C}:{V}"
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'refString', refString )
             verseKey = Sword.VerseKey( refString )

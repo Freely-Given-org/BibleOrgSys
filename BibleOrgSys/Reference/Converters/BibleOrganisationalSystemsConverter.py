@@ -245,7 +245,7 @@ class BibleOrganisationalSystemsConverter:
                 if element.find('includesBooks') is not None:
                     bookList = element.find('includesBooks').text.split()
                     for BBB in bookList:
-                        if not BibleOrgSysGlobals.loadedBibleBooksCodes.isValidBBB( BBB ):
+                        if not bos_books_codes_py.is_valid_reference_abbreviation_py( BBB ):
                             logging.critical( f"Unrecognized {ID!r} Bible book code found in 'includesBooks' in record with ID {j!r} (record {BBB})" )
                         if bookList.count( BBB ) > 1:
                             logging.error( f"Multiple {ID!r} Bible book codes found in 'includesBooks' in record with ID {j!r} (record {BBB})" )
@@ -293,7 +293,7 @@ class BibleOrganisationalSystemsConverter:
                         if name=='includesBooks': # special handling
                             bits['includesBooks'] = nameData.text.split()
                             for BBB in bits['includesBooks']:
-                                if not BibleOrgSysGlobals.loadedBibleBooksCodes.isValidBBB( BBB ):
+                                if not bos_books_codes_py.is_valid_reference_abbreviation_py( BBB ):
                                     logging.error( f"Unrecognized {myType!r} Bible book code found in 'includesBooks' in {BBB} {referenceAbbreviation}" )
                         else: bits[name] = nameData.text # normal handling
 

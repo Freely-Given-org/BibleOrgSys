@@ -103,7 +103,7 @@ def BCVBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=Fal
         numFound += 1
         if strictCheck:
             for folderName in foundFolders:
-                if folderName not in BibleOrgSysGlobals.loadedBibleBooksCodes:
+                if folderName not in bos_books_codes_py.get_all_reference_abbreviations_py():
                     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "BCVBibleFileCheck: Surprised to find folder:", folderName )
     if numFound:
         vPrint( 'Info', DEBUGGING_THIS_MODULE, f"BCVBibleFileCheck got {numFound} in {givenFolderName}" )
@@ -144,7 +144,7 @@ def BCVBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=Fal
             numFound += 1
             if strictCheck:
                 for folderName in foundSubfolders:
-                    if folderName not in BibleOrgSysGlobals.loadedBibleBooksCodes:
+                    if folderName not in bos_books_codes_py.get_all_reference_abbreviations_py():
                         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "BCVBibleFileCheckSurprised to find folder:", folderName )
     if numFound:
         vPrint( 'Info', DEBUGGING_THIS_MODULE, f"BCVBibleFileCheck foundProjects {numFound} {foundProjects}" )
@@ -287,7 +287,7 @@ class BCVBible( Bible ):
                 #for something in bl[1:-1].split( ',' ):
                     #if something[0]==' ': something = something[1:]
                     #if something[0]=="'" and something[-1]=="'": something = something[1:-1]
-                    #if something in BibleOrgSysGlobals.loadedBibleBooksCodes:
+                    #if something in bos_books_codes_py.get_all_reference_abbreviations_py():
                         #self.givenBookList.append( something )
                     #else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"ERROR: Unexpected {something!r} booklist entry in metadata file" )
                 #del self.suppliedMetadata['BCV']['BookList']

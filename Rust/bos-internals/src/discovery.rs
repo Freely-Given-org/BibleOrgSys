@@ -18,9 +18,9 @@ pub const BOOKLIST_DC: &[&str] = &[
     "TOB", "JDT", "ESG", "WIS", "SIR", "BAR", "LJE", "S3Y", "SUS", "BEL", "1MA", "2MA", "3MA", "4MA", "1ES", "2ES", "MAN", "PS2", "ODA", "PSS", "EZA", "5EZ", "6EZ", "DAG", "PS3", "2BA", "LBA", "JUB", "ENO", "1MQ", "2MQ", "3MQ", "REP", "4BA", "LAO",
 ];
 
-pub fn is_ot(bbb: &str) -> bool { BOOKLIST_OT39.contains(&bbb) }
-pub fn is_nt(bbb: &str) -> bool { BOOKLIST_NT27.contains(&bbb) }
-pub fn is_dc(bbb: &str) -> bool { BOOKLIST_DC.contains(&bbb) }
+pub fn is_ot_nr(bbb: &str) -> bool { BOOKLIST_OT39.contains(&bbb) }
+pub fn is_nt_nr(bbb: &str) -> bool { BOOKLIST_NT27.contains(&bbb) }
+pub fn is_dc_nr(bbb: &str) -> bool { BOOKLIST_DC.contains(&bbb) }
 
 /// Discovery results for a single Bible book.
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
@@ -453,9 +453,9 @@ fn aggregate_results(results: &mut BibleDiscoveryResults) {
     let mut dc_progress_by_book: f32 = 0.0;
 
     for (bbb, bk) in &results.books {
-        let is_ot_book = is_ot(bbb);
-        let is_nt_book = is_nt(bbb);
-        let is_dc_book = is_dc(bbb);
+        let is_ot_book = is_ot_nr(bbb);
+        let is_nt_book = is_nt_nr(bbb);
+        let is_dc_book = is_dc_nr(bbb);
 
         if is_ot_book {
             agg.ot_book_count += 1;

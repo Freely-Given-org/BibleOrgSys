@@ -200,7 +200,7 @@ def main() -> None:
             # Now validate and compare them
             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Now validating and comparing the reference and our exported {abbrev} USX (XML) files…" )
             for BBB in thisUsfmBible.books:
-                Uuu = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMAbbreviation( BBB )
+                Uuu = bos_books_codes_py.reference_abbrev_to_usfm_abbrev_py( BBB )
                 UUU = Uuu.upper()
                 nnn = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSXNumStr( BBB )
                 if not nnn:

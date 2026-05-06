@@ -355,7 +355,7 @@ class USFXXMLBible( Bible ):
                         #if line.startswith( '\\id ' ):
                             #USXId = line[4:].strip()[:3] # Take the first three non-blank characters after the space after id
                             #dPrint( 'Info', DEBUGGING_THIS_MODULE, f"Have possible USFX ID {USXId!r}" )
-                            #BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromUSFMAbbreviation( USXId )
+                            #BBB = bos_books_codes_py.usfm_abbrev_to_reference_abbrev_py( USXId )
                             #dPrint( 'Info', DEBUGGING_THIS_MODULE, f"BBB is {BBB!r}" )
                             #isUSFX = True
                         #break # We only look at the first line
@@ -395,7 +395,7 @@ class USFXXMLBible( Bible ):
             else:
                 logging.warning( f"bce3 Unprocessed {attrib} attribute ({value}) in {mainLocation}" )
                 if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
-        BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromUSFMAbbreviation( bookCode )
+        BBB = bos_books_codes_py.usfm_abbrev_to_reference_abbrev_py( bookCode )
         mainLocation = f"{self.name} USFX {BBB} book"
         vPrint( 'Info', DEBUGGING_THIS_MODULE, f"USFXXMLBible.loadBook: Loading {BBB} from {self.name}…" )
         BibleOrgSysGlobals.checkXMLNoText( self.XMLTree, mainLocation, '4f6h' )

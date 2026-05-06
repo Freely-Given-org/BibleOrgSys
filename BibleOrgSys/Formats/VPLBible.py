@@ -536,7 +536,7 @@ class VPLBible( Bible ):
                             BBB = BOS66.getBBBFromText( bookCodeText )  # Try to guess
                             if not BBB: BBB = BOS81.getBBBFromText( bookCodeText )  # Try to guess
                             if not BBB: BBB = BOSx.getBBBFromText( bookCodeText )  # Try to guess
-                            if not BBB: BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromEnglishText( bookCodeText )  # Try to guess
+                            if not BBB: BBB = bos_books_codes_py.english_name_to_reference_abbrev_py( bookCodeText )  # Try to guess
                         if not BBB:
                             logging.critical( f"VPL Bible: Unable to determine book code from text {lastBookCodeText!r} after {lastBBB!r}={bookCodeText}" )
                             halt
@@ -587,7 +587,7 @@ class VPLBible( Bible ):
                         bnDict = { 67:'TOB', 68:'JDT', 69:'ESG', 70:'WIS', 71:'SIR', 72:'BAR', 73:'LJE', 74:'PAZ', 75:'SUS',
                                 76:'BEL', 77:'MA1', 78:'MA2', 79:'MA3', 80:'MA4', 81:'ES1', 82:'ES2', 83:'MAN', 84:'PS2',
                                 85:'PSS', 86:'ODE', }
-                        if 1 <= bookCodeText <= 66: BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromReferenceNumber( bookCodeText )
+                        if 1 <= bookCodeText <= 66: BBB = bos_books_codes_py.get_bbb_from_reference_number_py( bookCodeText )
                         else: BBB = bnDict[bookCodeText]
 
                 #elif vplType == 4:
@@ -697,7 +697,7 @@ class VPLBible( Bible ):
                         BBB = BOS66.getBBBFromText( bookCodeText )  # Try to guess
                         if not BBB: BBB = BOS81.getBBBFromText( bookCodeText )  # Try to guess
                         if not BBB: BBB = BOSx.getBBBFromText( bookCodeText )  # Try to guess
-                        if not BBB: BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromEnglishText( bookCodeText )  # Try to guess
+                        if not BBB: BBB = bos_books_codes_py.english_name_to_reference_abbrev_py( bookCodeText )  # Try to guess
                         if lastBBB and not BBB:
                             logging.critical( f"VPL5 Bible: Unable to determine book code from text '{bookCodeText}' after '{lastBookCodeText}' -> '{lastBBB}'" )
                         # if BBB:
@@ -754,7 +754,7 @@ class VPLBible( Bible ):
                         newBBB = BOS66.getBBBFromText( refB )  # Try to guess
                         if not newBBB: newBBB = BOS81.getBBBFromText( refB )  # Try to guess
                         if not newBBB: newBBB = BOSx.getBBBFromText( refB )  # Try to guess
-                        if not newBBB: newBBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromEnglishText( refB )  # Try to guess
+                        if not newBBB: newBBB = bos_books_codes_py.english_name_to_reference_abbrev_py( refB )  # Try to guess
                         if not newBBB:
                             logging.critical( f"VPL6 Bible: Unable to determine book code from text '{refB}' after '{lastBBB}'" )
                             halt
@@ -904,7 +904,7 @@ class VPLBible( Bible ):
             # print( f"  {filename=}" )
             if filename.endswith('.txt') or filename.endswith('.TXT') or filename.endswith('.vpl') or filename.endswith('.VPL'):
                 filenameStart = filename[:-4]
-                BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromEnglishText( filenameStart )
+                BBB = bos_books_codes_py.english_name_to_reference_abbrev_py( filenameStart )
                 # print( f"  Got {BBB=} from {filenameStart=}")
                 self._loadFile( os.path.join( self.sourceFolder, filename ), settingsDict )
 

@@ -1908,7 +1908,7 @@ class SwordBibleModule( SwordModule, Bible ):
                     thisBook.objectTypeString = self.objectTypeString
                     thisBook.sourceFilepath = self.dataFilepath
                     #thisBook.BBB = BBB
-                    thisBook.isSingleChapterBook = BibleOrgSysGlobals.loadedBibleBooksCodes.isSingleChapterBook( BBB )
+                    thisBook.isSingleChapterBook = bos_books_codes_py.is_single_chapter_book( BBB )
                     #thisBook.replaceAngleBracketsFlag = self.SwordModuleConfiguration.modCategory == 'Bible'
                     thisBook.replaceAngleBracketsFlag = False
                     bookVerseList = self.BibleOrgSystem.getNumVersesList( BBB, allowAlternatives=True )
@@ -1969,7 +1969,7 @@ class SwordBibleModule( SwordModule, Bible ):
                     thisBook.objectTypeString = self.objectTypeString
                     thisBook.sourceFilepath = self.dataFilepath
                     #thisBook.BBB = BBB
-                    thisBook.isSingleChapterBook = BibleOrgSysGlobals.loadedBibleBooksCodes.isSingleChapterBook( BBB )
+                    thisBook.isSingleChapterBook = bos_books_codes_py.is_single_chapter_book( BBB )
                     #thisBook.replaceAngleBracketsFlag = self.SwordModuleConfiguration.modCategory == 'Bible'
                     thisBook.replaceAngleBracketsFlag = False
                     bookVerseList = self.BibleOrgSystem.getNumVersesList( BBB, allowAlternatives=True )

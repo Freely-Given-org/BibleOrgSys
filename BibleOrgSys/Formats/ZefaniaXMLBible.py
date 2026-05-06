@@ -489,11 +489,11 @@ class ZefaniaXMLBible( Bible ):
                 bookShortName = value
             else: logging.error( f"Unprocessed {value!r} attribute ({attrib}) in book element" )
         if 1 <= int(bookNumber) <= 66:
-            BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromReferenceNumber( bookNumber )
+            BBB = bos_books_codes_py.get_bbb_from_reference_number_py( bookNumber )
             dPrint( 'Never', DEBUGGING_THIS_MODULE, f"Zefania got '{BBB}' from {bookNumber}" )
         else:
-            BBB1 = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromEnglishText( bookName )
-            BBB2 = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromEnglishText( bookShortName )
+            BBB1 = bos_books_codes_py.english_name_to_reference_abbrev_py( bookName )
+            BBB2 = bos_books_codes_py.english_name_to_reference_abbrev_py( bookShortName )
             if BBB1 == BBB2: BBB = BBB1
             else:
                 dPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Zefania got '{BBB1}' from '{bookName}' and '{BBB2}' from '{bookShortName}'" )

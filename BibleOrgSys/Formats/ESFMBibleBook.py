@@ -445,7 +445,7 @@ class ESFMBibleBook( BibleBook ):
         # Main code for ESFMBibleBook.load
         vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + f"Loading {filename}…" )
         #self.BBB = BBB
-        #self.isSingleChapterBook = BibleOrgSysGlobals.loadedBibleBooksCodes.isSingleChapterBook( BBB )
+        #self.isSingleChapterBook = bos_books_codes_py.is_single_chapter_book( BBB )
         self.sourceFilename = filename
         self.sourceFolder = folder
         self.sourceFilepath = os.path.join( folder, filename ) if folder else filename

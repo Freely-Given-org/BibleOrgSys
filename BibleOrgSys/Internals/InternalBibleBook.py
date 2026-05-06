@@ -66,6 +66,7 @@ from pathlib import Path
 import logging
 import re
 import unicodedata
+import bos_books_codes_py
 
 # BibleOrgSys imports
 from BibleOrgSys import BibleOrgSysGlobals
@@ -388,9 +389,9 @@ class InternalBibleBook:
             self.workName = self.containerBibleObject.getAName( abbrevFirst=True )
         assert isinstance( BBB, str ), f"InternalBibleBook.__init__ {type(BBB)=} {BBB=}"
         self.BBB = BBB
-        if self.doExtraChecking: assert self.BBB in BibleOrgSysGlobals.loadedBibleBooksCodes
+        if self.doExtraChecking: assert bos_books_codes_py.is_valid_reference_abbreviation_py( self.BBB )
+        self.isSingleChapterBook = bos_books_codes_py.is_single_chapter_book_py( self.BBB )
 
-        self.isSingleChapterBook = BibleOrgSysGlobals.loadedBibleBooksCodes.isSingleChapterBook( self.BBB )
 
         self._rawLines = [] # Contains 2-tuples (marker,text) which contain the actual Bible text -- see addLine below
         self._processedFlag = self._indexedCVFlag = self._indexedSectionsFlag = False
@@ -1196,7 +1197,7 @@ class InternalBibleBook:
             self.chapterLabel = clField
 
         if not results: # no helpful fields in file -- just use an English name
-            results.append( BibleOrgSysGlobals.loadedBibleBooksCodes.getEnglishName_NR( self.BBB ) )
+            results.append( bos_books_codes_py.get_english_name_nr_py( self.BBB ) )
         self.assumedBookName = results[0]
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Got assumedBookName of", repr(self.assumedBookName) )
 

@@ -271,8 +271,7 @@ static ENGLISH_NAME_MAP: phf::Map<&'static str, usize> = phf_map! {{ {', '.join(
 //   This file was created by build_static_tables.py {VERSION_STR} invoked by build.rs (both in the folder above this one)
 //      which added in the static data structures.
 //   To change the functions in this library,
-//      edit lib.rs.src (also in the folder above this one)
-''' )
+//      edit lib.src.rs (also in the folder above this one)''' )
                  .replace( '//STATIC_STRUCTS_GO_HERE', f'''
 // THESE VARIOUS STATIC ARRAYS AND HASHMAPS WERE CREATED AUTOMATICALLY BY build_static_tables.py
 //   from the data in BibleBooksCodes_Tables.tsv (both files in the folder above this one)
