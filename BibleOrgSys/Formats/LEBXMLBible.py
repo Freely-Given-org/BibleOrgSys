@@ -43,6 +43,7 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Reference.ISO_639_3_Languages import ISO_639_3_Languages
 from BibleOrgSys.Bible import Bible, BibleBook
+import bos_books_codes_py
 
 
 LAST_MODIFIED_DATE = '2026-04-26' # by RJH
@@ -312,10 +313,10 @@ class LEBXMLBible( Bible ):
         #                         if 'JONAH' in upperFilename and osisBkCode=='NAH': continue # Handle bad choice
         #                         if 'ZEPH' in upperFilename and osisBkCode=='EPH': continue # Handle bad choice
         #                         assert not foundBBB # Don't expect duplicates
-        #                         foundBBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromOSISAbbreviation( osisBkCode, strict=True )
+        #                         foundBBB = bos_books_codes_py.getBBBFromOSISAbbreviation( osisBkCode, strict=True )
         #                         # dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  FoundBBB1 = {foundBBB!r}" )
         #                 if not foundBBB: # Could try a USFM/Paratext book code -- what writer creates these???
-        #                     for bkCode in BibleOrgSysGlobals.loadedBibleBooksCodes.getAllUSFMBooksCodes( toUpper=True ):
+        #                     for bkCode in bos_books_codes_py.getAllUSFMBooksCodes( toUpper=True ):
         #                         # returned bkCodes are all UPPERCASE
         #                         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'bc', bkCode, upperFilename )
         #                         if bkCode in upperFilename:
@@ -524,7 +525,17 @@ class LEBXMLBible( Bible ):
                 loadErrors.append( f"Unprocessed {attrib} attribute ({value}) in {location} (mf82)" )
                 if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
         # The book IDs seem to be OSIS (or SBL)
-        BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromShortAbbreviation( bookID )
+        try: BBB = bos_books_codes_py.osis_abbrev_to_reference_abbrev_py( bookID )
+        except:
+            try: BBB = bos_books_codes_py.sbl_abbrev_to_reference_abbrev_py( bookID )
+            except:
+                try: BBB = bos_books_codes_py.net_bible_abbrev_to_reference_abbrev_py( bookID )
+                except:
+                    try: BBB = bos_books_codes_py.short_abbrev_to_reference_abbrev_py( bookID )
+                    except:
+                        logging.critical( f"LEBXMLBible: Unable to determine book code for {bookID!r}" )
+                        BBB = None
+        # TODO: The above logic is a fallback similar to the original getBBBFromShortAbbreviation
         USFMAbbreviation = bos_books_codes_py.reference_abbrev_to_usfm_abbrev_py( BBB )
         USFMNumber = bos_books_codes_py.get_usfm_num_str_py( BBB )
         vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  It seems we have {BBB}" )

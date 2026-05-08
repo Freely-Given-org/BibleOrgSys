@@ -1,5 +1,13 @@
 //WARNINGS_GO_HERE
 
+//! BibleOrgSys uses a three-character book code to identify books.
+//! These reference abbreviations are nearly always represented as BBB in the program code,
+//! and in a sense, this is the center of the BibleOrgSys.
+//! The reference abbreviation (BBB) always starts with a letter, and letters are always UPPERCASE
+//! (e.g., 2 Corinthians is 'CO2', not '2Co').
+//! This was because early versions of HTML ID fields needed to start with a letter (not a digit),
+//! and most identifiers in computer languages still require that.
+
 #![allow(non_snake_case)]
 // #![allow(unused)]
 
@@ -7,6 +15,8 @@ use std::error::Error;
 use std::fmt;
 
 use phf::phf_map;
+use compact_str::{CompactString, format_compact};
+use std::collections::HashSet;
 
 //STATIC_STRUCTS_GO_HERE
 
@@ -42,11 +52,21 @@ fn get_array_index(reference_abbreviation: &str) -> Result<usize, LookupError<'_
         .ok_or_else(|| LookupError::AbbrevNotFound("Reference", reference_abbreviation))
 }
 
+/// Returns the referenceNumber 1..999 for the given book code (referenceAbbreviation).
 pub fn get_reference_number(reference_abbreviation: &str) -> Result<u16, LookupError<'_>> {
     let array_index = get_array_index(reference_abbreviation)?;
     Ok(BIBLE_BOOKS_CODES_ARRAY[array_index].BOS_reference_number)
 }
 
+/// Returns the sequence number for a given reference abbreviation.
+pub fn get_sequence_number(reference_abbreviation: &str) -> Result<u16, LookupError<'_>> {
+    let array_index = get_array_index(reference_abbreviation)?;
+    Ok(BIBLE_BOOKS_CODES_ARRAY[array_index].BOS_sequence_number)
+}
+
+/// Return the reference abbreviation for the given book number (reference number).
+/// This is probably only useful in the range 1..66 (GEN..REV).
+/// (After that, it specifies our arbitrary order.)
 pub fn get_bbb_from_reference_number(reference_number: u16) -> Option<&'static str> {
     BIBLE_BOOKS_CODES_ARRAY.iter()
         .find(|e| e.BOS_reference_number == reference_number)
@@ -65,12 +85,91 @@ pub fn get_all_osis_abbreviations() -> Vec<&'static str> {
         .collect()
 }
 
-pub fn get_sequence_list() -> Vec<&'static str> {
+pub fn get_all_usfm_abbreviations(to_upper: bool) -> Vec<CompactString> {
+    let mut result = Vec::new();
+    let mut seen = HashSet::new();
+    for e in BIBLE_BOOKS_CODES_ARRAY.iter() {
+        if let Some(pa) = e.USFM_abbreviation {
+            let val = if to_upper { 
+                CompactString::from(pa).to_uppercase() 
+            } else { 
+                CompactString::from(pa)
+            };
+            if seen.insert(val.clone()) {
+                result.push(val);
+            }
+        }
+    }
+    result
+}
+
+pub fn get_all_usfm_books_code_number_triples() -> Vec<(&'static str, &'static str, &'static str)> {
+    let mut result = Vec::new();
+    let mut found = Vec::new();
+    for e in BIBLE_BOOKS_CODES_ARRAY.iter() {
+        if let (Some(pa), Some(pn)) = (e.USFM_abbreviation, e.USFM_number_str) {
+            if !found.contains(&pa) {
+                result.push((pa, pn, e.BOS_reference_abbreviation));
+                found.push(pa);
+            }
+        }
+    }
+    result
+}
+
+pub fn get_all_usx_books_code_number_triples() -> Vec<(&'static str, &'static str, &'static str)> {
+    let mut result = Vec::new();
+    let mut found = Vec::new();
+    for e in BIBLE_BOOKS_CODES_ARRAY.iter() {
+        if let (Some(pa), Some(pn)) = (e.USFM_abbreviation, e.USX_number_str) {
+            if !found.contains(&pa) {
+                result.push((pa, pn, e.BOS_reference_abbreviation));
+                found.push(pa);
+            }
+        }
+    }
+    result
+}
+
+pub fn get_all_bibledit_books_code_number_triples() -> Vec<(&'static str, &'static str, &'static str)> {
+    let mut result = Vec::new();
+    let mut found = Vec::new();
+    for e in BIBLE_BOOKS_CODES_ARRAY.iter() {
+        if let (Some(pa), Some(pn)) = (e.USFM_abbreviation, e.Bibledit_number_str) {
+            if !found.contains(&pa) {
+                result.push((pa, pn, e.BOS_reference_abbreviation));
+                found.push(pa);
+            }
+        }
+    }
+    result
+}
+
+/// Return a list of BBB codes in a sequence that could be used for the print order
+/// if no further information is available.
+/// If you supply a list of books, it puts your actual book codes into the default order.
+pub fn get_sequence_list(my_list: Option<Vec<&str>>) -> Vec<&'static str> {
     let mut entries: Vec<_> = BIBLE_BOOKS_CODES_ARRAY.iter().collect();
     entries.sort_by_key(|e| e.BOS_sequence_number);
-    entries.into_iter()
+    let full_sequence: Vec<&'static str> = entries.into_iter()
         .map(|e| e.BOS_reference_abbreviation)
-        .collect()
+        .collect();
+
+    match my_list {
+        None => full_sequence,
+        Some(list) => {
+            let mut result = Vec::new();
+            for bbb1 in full_sequence {
+                for bbb2 in &list {
+                    if *bbb2 == bbb1 {
+                        result.push(bbb1);
+                        break;
+                    }
+                }
+            }
+            result
+        }
+    }
 }
 
 // nr stands for "Not Recommended" (because ideally the proper versification functions should be used instead)
@@ -94,9 +193,9 @@ pub fn is_dc_nr(reference_abbreviation: &str) -> bool {
     matches!(reference_abbreviation, "TOB"|"JDT"|"ESG"|"WIS"|"SIR"|"BAR"|"LJE"|"PAZ"|"SUS"|"BEL"|"MA1"|"MA2"|"GES"|"LES"|"MAN")
 }
 
-pub fn get_ccel_number(reference_abbreviation: &str) -> Option<u16> {
+pub fn get_ccel_number_str(reference_abbreviation: &str) -> Option<&'static str> {
     get_array_index(reference_abbreviation).ok()
-        .and_then(|idx| BIBLE_BOOKS_CODES_ARRAY[idx].CCEL_number)
+        .and_then(|idx| BIBLE_BOOKS_CODES_ARRAY[idx].CCEL_number_str)
 }
 
 pub fn get_short_abbreviation(reference_abbreviation: &str) -> Option<&'static str> {
@@ -134,9 +233,9 @@ pub fn get_unbound_bible_code(reference_abbreviation: &str) -> Option<&'static s
         .and_then(|idx| BIBLE_BOOKS_CODES_ARRAY[idx].Unbound_Code)
 }
 
-pub fn get_bibledit_num_str(reference_abbreviation: &str) -> Option<u16> {
+pub fn get_bibledit_num_str(reference_abbreviation: &str) -> Option<&'static str> {
     get_array_index(reference_abbreviation).ok()
-        .and_then(|idx| BIBLE_BOOKS_CODES_ARRAY[idx].Bibledit_number)
+        .and_then(|idx| BIBLE_BOOKS_CODES_ARRAY[idx].Bibledit_number_str)
 }
 
 pub fn get_possible_alternative_books(reference_abbreviation: &str) -> Vec<&'static str> {
@@ -145,9 +244,9 @@ pub fn get_possible_alternative_books(reference_abbreviation: &str) -> Vec<&'sta
         .unwrap_or_default()
 }
 
-pub fn get_logos_num_str(reference_abbreviation: &str) -> Option<u16> {
+pub fn get_logos_num_str(reference_abbreviation: &str) -> Option<&'static str> {
     get_array_index(reference_abbreviation).ok()
-        .and_then(|idx| BIBLE_BOOKS_CODES_ARRAY[idx].Logos_number)
+        .and_then(|idx| BIBLE_BOOKS_CODES_ARRAY[idx].Logos_number_str)
 }
 
 pub fn get_net_bible_abbreviation(reference_abbreviation: &str) -> Option<&'static str> {
@@ -165,6 +264,9 @@ pub fn get_byzantine_abbreviation(reference_abbreviation: &str) -> Option<&'stat
         .and_then(|idx| BIBLE_BOOKS_CODES_ARRAY[idx].Byzantine_abbreviation)
 }
 
+/// Gets a list with the number of expected chapters for the given book code (reference abbreviation).
+/// Why is it a list? Because some books have alternate possible numbers of chapters
+/// depending on the Biblical tradition.
 pub fn get_expected_chapters_list(reference_abbreviation: &str) -> Vec<u16> {
     if let Ok(idx) = get_array_index(reference_abbreviation) {
         match BIBLE_BOOKS_CODES_ARRAY[idx].expected_num_chapters {
@@ -219,6 +321,40 @@ pub fn get_typical_section(reference_abbreviation: &str) -> Option<&'static str>
         .and_then(|idx| BIBLE_BOOKS_CODES_ARRAY[idx].typical_section)
 }
 
+/// Returns true for 116 Psalms that traditionally have a header field in the Hebrew (USFM /d field).
+/// Otherwise returns false (for the other 34, plus for other books).
+pub fn has_psalm_title(bbb: &str, c: &str) -> bool {
+    if bbb != "PSA" || c.is_empty() || !c.chars().all(|ch| ch.is_ascii_digit()) { return false; }
+    !matches!(c, "0"| "1"|"2"| "10"| "33"| "43"| "71"| "91"| "93"|"94"|"95"|"96"|"97"|"99"|
+                 "104"|"105"|"106"|"107"| "111"|"112"|"113"|"114"|"115"|"116"|"117"|"118"|"119"| "135"|"136"|"137"| "146"|"147"|"148"|"149"|"150")
+}
+
+/// Convert a BCV or BCVS reference to an integer especially so that references can be sorted.
+/// If a verse is a verse span with a hyphen (e.g., '3-4'), it uses the value before the hyphen.
+pub fn bcv_reference_to_int(bbb: &str, c: &str, v: &str, s: Option<&str>) -> i32 {
+    let ref_num = get_reference_number(bbb).unwrap_or(999) as i32;
+    let int_c = c.parse::<i32>().unwrap_or(0);
+    let int_v = v.split('-').next().unwrap_or("0").parse::<i32>().unwrap_or(0);
+    let int_s = match s.map(|val| val.to_lowercase()) {
+        Some(ref val) if val == "a" => 0,
+        Some(ref val) if val == "b" => 1,
+        _ => 0,
+    };
+
+    ((ref_num * 100 + int_c) * 150 + int_v) * 10 + int_s
+}
+
+pub fn sort_bcv_references<T>(references: &mut [T], get_parts: impl Fn(&T) -> (&str, &str, &str, Option<&str>)) {
+    references.sort_by_key(|r| {
+        let (bbb, c, v, s) = get_parts(r);
+        bcv_reference_to_int(bbb, c, v, s)
+    });
+}
+
+
+/// Returns true if the storyline of the book continues through chapters,
+/// i.e., the chapter divisions are artificial.
+/// Returns false for books like Psalms where chapters are actual units.
 pub fn continues_through_chapters(reference_abbreviation: &str) -> bool {
     !matches!(reference_abbreviation, "PSA" | "PS2" | "LAM")
 }
@@ -228,6 +364,15 @@ pub fn get_book_name(reference_abbreviation: &str) -> Option<&'static str> {
         .map(|idx| BIBLE_BOOKS_CODES_ARRAY[idx].original_language_book_name)
 }
 
+pub fn get_full_entry(reference_abbreviation: &str) -> Result<&'static BibleBooksCodesArrayEntry<'static>, LookupError<'_>> {
+    let array_index = get_array_index(reference_abbreviation)?;
+    Ok(&BIBLE_BOOKS_CODES_ARRAY[array_index])
+}
+
+/// Returns the first English name for a book.
+/// Remember: These names are only intended as comments or for some basic module processing.
+/// They are not intended to be used for a proper international human interface.
+/// The first one in the list is supposed to be the more common.
 // nr stands for "Not Recommended" (because ideally the proper versification functions should be used instead)
 pub fn get_english_name_nr(reference_abbreviation: &str) -> Option<&'static str> {
     get_array_index(reference_abbreviation).ok()
@@ -249,87 +394,91 @@ pub fn get_english_name_list_nr(reference_abbreviation: &str) -> Vec<&'static st
     }
 }
 
-pub fn tidy_bbb(bbb: &str, title_case: bool, allow_four_chars: bool, insert_char: &str) -> String {
+/// Change book codes like SA1 to the conventional 1SA
+/// (or 1Sa using the titleCase flag or 1 SAM using the allowFourChars and with a space for insertChar).
+/// BBB is always three characters starting with an UPPERCASE LETTER.
+/// insertChar prevents 1SA (becomes 1-SA or whatever) from being mistaken for ISA.
+pub fn tidy_bbb(bbb: &str, title_case: bool, allow_four_chars: bool, insert_char: &str) -> CompactString {
     if title_case {
         if allow_four_chars {
             match bbb {
-                "RUT" => return "Ruth".to_string(),
-                "SA1" => return format!("1{}Sam", insert_char),
-                "SA2" => return format!("2{}Sam", insert_char),
-                "CH1" => return format!("1{}Chr", insert_char),
-                "CH2" => return format!("2{}Chr", insert_char),
-                "EZR" => return "Ezra".to_string(),
-                "PRO" => return "Prov".to_string(),
-                "JOL" => return "Joel".to_string(),
-                "AMO" => return "Amos".to_string(),
-                "MA1" => return format!("1{}Mac", insert_char),
-                "MA2" => return format!("2{}Mac", insert_char),
-                "MA3" => return format!("3{}Mac", insert_char),
-                "MA4" => return format!("4{}Mac", insert_char),
-                "MRK" => return "Mark".to_string(),
-                "LUK" => return "Luke".to_string(),
-                "JHN" => return "John".to_string(),
-                "ACT" => return "Acts".to_string(),
-                "CO1" => return format!("1{}Cor", insert_char),
-                "CO2" => return format!("2{}Cor", insert_char),
-                "TI1" => return format!("1{}Tim", insert_char),
-                "TI2" => return format!("2{}Tim", insert_char),
-                "PE1" => return format!("1{}Pet", insert_char),
-                "PE2" => return format!("2{}Pet", insert_char),
-                "JN1" => return format!("1{}Jhn", insert_char),
-                "JN2" => return format!("2{}Jhn", insert_char),
-                "JN3" => return format!("3{}Jhn", insert_char),
-                "JDE" => return "Jude".to_string(),
+                "RUT" => return CompactString::new("Ruth"),
+                "SA1" => return format_compact!("1{}Sam", insert_char),
+                "SA2" => return format_compact!("2{}Sam", insert_char),
+                "CH1" => return format_compact!("1{}Chr", insert_char),
+                "CH2" => return format_compact!("2{}Chr", insert_char),
+                "EZR" => return CompactString::new("Ezra"),
+                "PRO" => return CompactString::new("Prov"),
+                "JOL" => return CompactString::new("Joel"),
+                "AMO" => return CompactString::new("Amos"),
+                "MA1" => return format_compact!("1{}Mac", insert_char),
+                "MA2" => return format_compact!("2{}Mac", insert_char),
+                "MA3" => return format_compact!("3{}Mac", insert_char),
+                "MA4" => return format_compact!("4{}Mac", insert_char),
+                "MRK" => return CompactString::new("Mark"),
+                "LUK" => return CompactString::new("Luke"),
+                "JHN" => return CompactString::new("John"),
+                "ACT" => return CompactString::new("Acts"),
+                "CO1" => return format_compact!("1{}Cor", insert_char),
+                "CO2" => return format_compact!("2{}Cor", insert_char),
+                "TI1" => return format_compact!("1{}Tim", insert_char),
+                "TI2" => return format_compact!("2{}Tim", insert_char),
+                "PE1" => return format_compact!("1{}Pet", insert_char),
+                "PE2" => return format_compact!("2{}Pet", insert_char),
+                "JN1" => return format_compact!("1{}Jhn", insert_char),
+                "JN2" => return format_compact!("2{}Jhn", insert_char),
+                "JN3" => return format_compact!("3{}Jhn", insert_char),
+                "JDE" => return CompactString::new("Jude"),
                 _ => {}
             }
         }
         let bbb_chars: Vec<char> = bbb.chars().collect();
         if bbb_chars.len() >= 3 && bbb_chars[2].is_ascii_digit() {
-            return format!("{}{}{}{}", bbb_chars[2], insert_char, bbb_chars[0], bbb_chars[1].to_lowercase());
+            return format_compact!("{}{}{}{}", bbb_chars[2], insert_char, bbb_chars[0], bbb_chars[1].to_lowercase());
         } else {
-            return format!("{}{}", bbb_chars[0], bbb[1..].to_lowercase());
+            return format_compact!("{}{}", bbb_chars[0], bbb[1..].to_lowercase());
         }
     }
 
     if allow_four_chars {
         match bbb {
-            "RUT" => return "RUTH".to_string(),
-            "SA1" => return format!("1{}SAM", insert_char),
-            "SA2" => return format!("2{}SAM", insert_char),
-            "CH1" => return format!("1{}CHR", insert_char),
-            "CH2" => return format!("2{}CHR", insert_char),
-            "EZR" => return "EZRA".to_string(),
-            "PRO" => return "PROV".to_string(),
-            "JOL" => return "JOEL".to_string(),
-            "AMO" => return "AMOS".to_string(),
-            "MA1" => return format!("1{}MAC", insert_char),
-            "MA2" => return format!("2{}MAC", insert_char),
-            "MA3" => return format!("3{}MAC", insert_char),
-            "MA4" => return format!("4{}MAC", insert_char),
-            "MRK" => return "MARK".to_string(),
-            "LUK" => return "LUKE".to_string(),
-            "JHN" => return "JOHN".to_string(),
-            "ACT" => return "ACTS".to_string(),
-            "CO1" => return format!("1{}COR", insert_char),
-            "CO2" => return format!("2{}COR", insert_char),
-            "TI1" => return format!("1{}TIM", insert_char),
-            "TI2" => return format!("2{}TIM", insert_char),
-            "PE1" => return format!("1{}PET", insert_char),
-            "PE2" => return format!("2{}PET", insert_char),
-            "JN1" => return format!("1{}JHN", insert_char),
-            "JN2" => return format!("2{}JHN", insert_char),
-            "JN3" => return format!("3{}JHN", insert_char),
-            "JDE" => return "JUDE".to_string(),
+            "RUT" => return CompactString::new("RUTH"),
+            "SA1" => return format_compact!("1{}SAM", insert_char),
+            "SA2" => return format_compact!("2{}SAM", insert_char),
+            "CH1" => return format_compact!("1{}CHR", insert_char),
+            "CH2" => return format_compact!("2{}CHR", insert_char),
+            "EZR" => return CompactString::new("EZRA"),
+            "PRO" => return CompactString::new("PROV"),
+            "JOL" => return CompactString::new("JOEL"),
+            "AMO" => return CompactString::new("AMOS"),
+            "MA1" => return format_compact!("1{}MAC", insert_char),
+            "MA2" => return format_compact!("2{}MAC", insert_char),
+            "MA3" => return format_compact!("3{}MAC", insert_char),
+            "MA4" => return format_compact!("4{}MAC", insert_char),
+            "MRK" => return CompactString::new("MARK"),
+            "LUK" => return CompactString::new("LUKE"),
+            "JHN" => return CompactString::new("JOHN"),
+            "ACT" => return CompactString::new("ACTS"),
+            "CO1" => return format_compact!("1{}COR", insert_char),
+            "CO2" => return format_compact!("2{}COR", insert_char),
+            "TI1" => return format_compact!("1{}TIM", insert_char),
+            "TI2" => return format_compact!("2{}TIM", insert_char),
+            "PE1" => return format_compact!("1{}PET", insert_char),
+            "PE2" => return format_compact!("2{}PET", insert_char),
+            "JN1" => return format_compact!("1{}JHN", insert_char),
+            "JN2" => return format_compact!("2{}JHN", insert_char),
+            "JN3" => return format_compact!("3{}JHN", insert_char),
+            "JDE" => return CompactString::new("JUDE"),
             _ => {}
         }
     }
 
     let bbb_chars: Vec<char> = bbb.chars().collect();
     if bbb_chars.len() >= 3 && bbb_chars[2].is_ascii_digit() {
-        return format!("{}{}{}", bbb_chars[2], insert_char, &bbb[0..2]);
+        return format_compact!("{}{}{}", bbb_chars[2], insert_char, &bbb[0..2]);
     }
 
-    bbb.to_string()
+    CompactString::new(bbb)
 }
 
 #[inline]
@@ -377,17 +526,95 @@ pub fn usfm_abbrev_to_reference_abbrev<'a>(
 #[inline]
 pub fn osis_abbrev_to_reference_abbrev<'a>(
     osis_abbreviation: &'a str,
+    strict: bool,
 ) -> Result<&'static str, LookupError<'a>> {
     if let Some(&array_index) = OSIS_ABBREVIATION_MAP.get(osis_abbreviation) {
         Ok(BIBLE_BOOKS_CODES_ARRAY[array_index].BOS_reference_abbreviation)
+    } else if !strict {
+        if let Some(&array_index) = SWORD_ABBREVIATION_MAP.get(&osis_abbreviation.to_uppercase()) {
+             Ok(BIBLE_BOOKS_CODES_ARRAY[array_index].BOS_reference_abbreviation)
+        } else {
+            Err(LookupError::AbbrevNotFound("OSIS/Sword", osis_abbreviation))
+        }
     } else {
         Err(LookupError::AbbrevNotFound("OSIS", osis_abbreviation))
     }
 }
 
+#[inline]
+pub fn drupal_abbrev_to_reference_abbrev<'a>(
+    drupal_abbreviation: &'a str,
+) -> Result<&'static str, LookupError<'a>> {
+    if let Some(&array_index) = DRUPAL_BIBLE_ABBREVIATION_MAP.get(drupal_abbreviation) {
+        Ok(BIBLE_BOOKS_CODES_ARRAY[array_index].BOS_reference_abbreviation)
+    } else {
+        Err(LookupError::AbbrevNotFound("Drupal", drupal_abbreviation))
+    }
+}
+
+#[inline]
+pub fn unbound_code_to_reference_abbrev<'a>(
+    unbound_code: &'a str,
+) -> Result<&'static str, LookupError<'a>> {
+    if let Some(&array_index) = UNBOUND_CODE_MAP.get(unbound_code) {
+        Ok(BIBLE_BOOKS_CODES_ARRAY[array_index].BOS_reference_abbreviation)
+    } else {
+        Err(LookupError::AbbrevNotFound("Unbound", unbound_code))
+    }
+}
+
+/// Return the reference abbreviation string for the given short book code string.
+/// NOTE: This tends to be more forgiving than more specific Bible code systems.
+#[inline]
+pub fn short_abbrev_to_reference_abbrev<'a>(
+    short_abbreviation: &'a str,
+    strict: bool,
+) -> Result<&'static str, LookupError<'a>> {
+    let uc = short_abbreviation.to_uppercase();
+    if let Some(&array_index) = SHORT_ABBREVIATION_MAP.get(&uc) {
+        Ok(BIBLE_BOOKS_CODES_ARRAY[array_index].BOS_reference_abbreviation)
+    } else if !strict {
+        // Maybe it has a space in it?
+        let no_space = uc.replace(' ', "");
+        if let Some(&array_index) = SHORT_ABBREVIATION_MAP.get(&no_space) {
+            Ok(BIBLE_BOOKS_CODES_ARRAY[array_index].BOS_reference_abbreviation)
+        } else if let Some(&array_index) = SBL_ABBREVIATION_MAP.get(&uc) {
+            Ok(BIBLE_BOOKS_CODES_ARRAY[array_index].BOS_reference_abbreviation)
+        } else if let Some(&array_index) = NET_BIBLE_ABBREVIATION_MAP.get(&uc) {
+            Ok(BIBLE_BOOKS_CODES_ARRAY[array_index].BOS_reference_abbreviation)
+        } else {
+             Err(LookupError::AbbrevNotFound("Short/SBL/NET", short_abbreviation))
+        }
+    } else {
+        Err(LookupError::AbbrevNotFound("Short", short_abbreviation))
+    }
+}
+
+#[inline]
+pub fn sbl_abbrev_to_reference_abbrev<'a>(
+    sbl_abbreviation: &'a str,
+) -> Result<&'static str, LookupError<'a>> {
+    if let Some(&array_index) = SBL_ABBREVIATION_MAP.get(&sbl_abbreviation.to_uppercase()) {
+        Ok(BIBLE_BOOKS_CODES_ARRAY[array_index].BOS_reference_abbreviation)
+    } else {
+        Err(LookupError::AbbrevNotFound("SBL", sbl_abbreviation))
+    }
+}
+
+#[inline]
+pub fn net_bible_abbrev_to_reference_abbrev<'a>(
+    net_bible_abbreviation: &'a str,
+) -> Result<&'static str, LookupError<'a>> {
+    if let Some(&array_index) = NET_BIBLE_ABBREVIATION_MAP.get(&net_bible_abbreviation.to_uppercase()) {
+        Ok(BIBLE_BOOKS_CODES_ARRAY[array_index].BOS_reference_abbreviation)
+    } else {
+        Err(LookupError::AbbrevNotFound("NET", net_bible_abbreviation))
+    }
+}
+
 pub fn english_name_to_reference_abbrev(english_name: &str,) -> Option<&'static str> {
-    let adj_english_name = english_name.to_uppercase();
-    if let Some(&array_index) = ENGLISH_NAME_MAP.get(&adj_english_name) {
+    let adj_english_name = CompactString::from(english_name).to_uppercase();
+    if let Some(&array_index) = ENGLISH_NAME_MAP.get(adj_english_name.as_str()) {
         return Some(BIBLE_BOOKS_CODES_ARRAY[array_index].BOS_reference_abbreviation)
     }
 
@@ -402,7 +629,7 @@ pub fn english_name_to_reference_abbrev(english_name: &str,) -> Option<&'static 
 
     for (s1, s2) in pairs {
         if adj_english_name.starts_with(s1) {
-            if let Some(&array_index) = ENGLISH_NAME_MAP.get(&format!("{}{}", s2, &adj_english_name[s1.len()..])) {
+            if let Some(&array_index) = ENGLISH_NAME_MAP.get(format_compact!("{}{}", s2, &adj_english_name[s1.len()..]).as_str()) {
                 return Some(BIBLE_BOOKS_CODES_ARRAY[array_index].BOS_reference_abbreviation)
             }
         }
@@ -489,9 +716,51 @@ mod tests {
 
     #[test]
     fn test_osis_to_reference_abbreviation() {
-        assert_eq!(osis_abbrev_to_reference_abbrev("Exod"), Ok("EXO"));
-        assert!(osis_abbrev_to_reference_abbrev("XyZ").is_err());
-        assert!(matches!(osis_abbrev_to_reference_abbrev("XyZ"), Err(LookupError::AbbrevNotFound("OSIS","XyZ"))));
+        assert_eq!(osis_abbrev_to_reference_abbrev("Exod", true), Ok("EXO"));
+        assert!(osis_abbrev_to_reference_abbrev("XyZ", true).is_err());
+        assert!(matches!(osis_abbrev_to_reference_abbrev("XyZ", true), Err(LookupError::AbbrevNotFound("OSIS","XyZ"))));
+        // Test fallback
+        assert_eq!(osis_abbrev_to_reference_abbrev("Exod", false), Ok("EXO"));
+    }
+
+    #[test]
+    fn test_short_abbrev_to_reference_abbrev() {
+        assert_eq!(short_abbrev_to_reference_abbrev("Ge", true), Ok("GEN"));
+        assert_eq!(short_abbrev_to_reference_abbrev("ge", true), Ok("GEN"));
+        assert!(short_abbrev_to_reference_abbrev("1 Sa", true).is_err());
+        
+        // Test fallbacks
+        assert_eq!(short_abbrev_to_reference_abbrev("1 Sa", false), Ok("SA1")); // space removal
+        assert_eq!(short_abbrev_to_reference_abbrev("Gen", false), Ok("GEN")); // SBL fallback
+        assert_eq!(short_abbrev_to_reference_abbrev("Sos", false), Ok("SNG")); // NET fallback
+    }
+
+    #[test]
+    fn test_get_all_usfm_abbreviations() {
+        let all = get_all_usfm_abbreviations(false);
+        assert!(all.iter().any(|s| s == "Gen"));
+        assert!(!all.iter().any(|s| s == "GEN"));
+
+        let all_up = get_all_usfm_abbreviations(true);
+        assert!(all_up.iter().any(|s| s == "GEN"));
+        assert!(!all_up.iter().any(|s| s == "Gen"));
+    }
+
+    #[test]
+    fn test_bcv_reference_to_int() {
+        let gen1_1 = bcv_reference_to_int("GEN", "1", "1", None);
+        let gen1_2 = bcv_reference_to_int("GEN", "1", "2", None);
+        let exo1_1 = bcv_reference_to_int("EXO", "1", "1", None);
+        
+        assert!(gen1_1 < gen1_2);
+        assert!(gen1_2 < exo1_1);
+        
+        let psa119_1 = bcv_reference_to_int("PSA", "119", "1", None);
+        let psa119_1a = bcv_reference_to_int("PSA", "119", "1", Some("a"));
+        let psa119_1b = bcv_reference_to_int("PSA", "119", "1", Some("b"));
+        
+        assert_eq!(psa119_1, psa119_1a);
+        assert!(psa119_1a < psa119_1b);
     }
 
     #[test]
@@ -516,7 +785,7 @@ mod tests {
         assert_eq!(get_bbb_from_reference_number(999), Some("UNK"));
         assert_eq!(get_bbb_from_reference_number(1000), None);
 
-        assert_eq!(get_ccel_number("GEN"), Some(1));
+        assert_eq!(get_ccel_number_str("GEN"), Some("1"));
         assert_eq!(get_short_abbreviation("GEN"), Some("Ge"));
         assert_eq!(get_sbl_abbreviation("GEN"), Some("Gen"));
         assert_eq!(get_osis_abbreviation("GEN"), Some("Gen"));
@@ -524,8 +793,8 @@ mod tests {
         assert_eq!(get_usfm_num_str("MAT"), Some("41"));
         assert_eq!(get_usx_num_str("MAT"), Some("040"));
         assert_eq!(get_unbound_bible_code("GEN"), Some("01O"));
-        assert_eq!(get_bibledit_num_str("MAT"), Some(40));
-        assert_eq!(get_logos_num_str("MAT"), Some(61));
+        assert_eq!(get_bibledit_num_str("MAT"), Some("40"));
+        assert_eq!(get_logos_num_str("MAT"), Some("61"));
         assert_eq!(get_net_bible_abbreviation("SNG"), Some("Sos"));
         assert_eq!(get_drupal_bible_abbreviation("SNG"), Some("Son"));
         assert_eq!(get_byzantine_abbreviation("MAT"), Some("MT"));
@@ -535,7 +804,7 @@ mod tests {
     fn test_chapter_lookups() {
         assert_eq!(get_expected_chapters_list("EST"), vec![10]);
         assert_eq!(get_expected_chapters_list("PSA"), vec![150, 151]);
-        assert_eq!(get_expected_chapters_list("XyZ"), vec![]);
+        assert_eq!(get_expected_chapters_list("XyZ"), Vec::<u16>::new());
 
         assert_eq!(get_max_chapters("PSA"), 151);
         assert_eq!(get_max_chapters("EST"), 10);
@@ -589,6 +858,18 @@ mod tests {
         assert_eq!(tidy_bbb("GEN", true, true, ""), "Gen");
         assert_eq!(tidy_bbb("RUT", true, true, ""), "Ruth");
         assert_eq!(tidy_bbb("SA1", false, false, "-"), "1-SA");
+    }
+
+    #[test]
+    fn test_has_psalm_title() {
+        assert!(!has_psalm_title("PSA", "1"));
+        assert!(!has_psalm_title("PSA", "2"));
+        assert!(has_psalm_title("PSA", "3"));
+        assert!(has_psalm_title("PSA", "53"));
+        assert!(!has_psalm_title("GEN", "2"));
+        assert!(!has_psalm_title("PSA", "0"));
+        assert!(!has_psalm_title("PSA", "-1"));
+        assert!(!has_psalm_title("Psalm", "2"));
     }
 }
 

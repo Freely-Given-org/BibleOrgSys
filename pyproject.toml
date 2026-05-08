@@ -21,6 +21,7 @@ classifiers = [
 ]
 dependencies = [
     "bibleorgsys-rust>=0.1.1",
+    "bos_books_codes_py",
     "requests>=2.33.1",
 ]
 
@@ -56,6 +57,7 @@ members = [".", "Rust/bible_organisational_system"]
 
 [tool.uv.sources]
 bibleorgsys-rust = { workspace = true }
+bos_books_codes_py = { path = "../BibleOrgSys/Rust/bos_books_codes_py", editable = true }
 
 [dependency-groups]
 dev = [

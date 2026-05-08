@@ -93,6 +93,7 @@ import multiprocessing
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Bible import Bible, BibleBook
+import bos_books_codes_py
 
 
 LAST_MODIFIED_DATE = '2024-06-05' # by RJH
@@ -335,7 +336,7 @@ class UnboundBible( Bible ):
                 if bookCode != lastBookCode: # We've started a new book
                     if lastBookCode != -1: # Better save the last book
                         self.stashBook( thisBook )
-                    BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromUnboundBibleCode( bookCode )
+                    BBB = bos_books_codes_py.unbound_code_to_reference_abbrev_py( bookCode )
                     thisBook = BibleBook( self, BBB )
                     thisBook.objectNameString = 'Unbound Bible Book object'
                     thisBook.objectTypeString = 'Unbound'

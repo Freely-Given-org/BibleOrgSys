@@ -42,6 +42,7 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Bible import Bible, BibleBook
 from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
+import bos_books_codes_py
 
 
 LAST_MODIFIED_DATE = '2020-04-29' # by RJH
@@ -250,7 +251,7 @@ class GoBible( Bible ):
                     numBookFolders += 1
                     bookCode = folderName[:-4]
                     # Code below doesn't work -- foldernames vary
-                    #BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromOSISAbbreviation( bookCode )
+                    #BBB = bos_books_codes_py.osis_abbrev_to_reference_abbrev_py( bookCode )
                     #self.discoveredBookList.append( BBB )
                     continue
                 unexpectedFolders.append( folderName )

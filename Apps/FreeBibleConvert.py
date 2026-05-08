@@ -38,6 +38,7 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Misc.NoisyReplaceFunctions import noisyFind, noisyRegExFind, \
                                     noisyReplaceAll, noisyDeleteAll, noisyRegExReplaceAll
+import bos_books_codes_py
 
 
 LAST_MODIFIED_DATE = '2018-12-02' # by RJH
@@ -79,7 +80,7 @@ def splitAndWriteBooks( entireBibleText, folderpath ):
         assert splitText[3] == ' '
         bookID = splitText[:3]
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Got book id", repr(bookID) )
-        assert bookID in BibleOrgSysGlobals.loadedBibleBooksCodes.getAllUSFMBooksCodes( toUpper=True )
+        assert bookID in bos_books_codes_py.get_all_usfm_books_codes_py( toUpper=True )
         splitText = splitOnString + splitText
 
         # Last chance to fix things up (e.g., by bookID)

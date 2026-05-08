@@ -269,6 +269,11 @@ class BibleBooksCodes:
         """
         Return the full dictionary for the given book (code).
         """
+        if bos_books_codes_py:
+            try:
+                return bos_books_codes_py.get_full_bookcodes_entry_py( BBB )
+            except KeyError:
+                pass
         return self.__DataDicts['referenceAbbreviationDict'][BBB]
 
 
@@ -384,6 +389,11 @@ class BibleBooksCodes:
         Also tries adding spaces in codes like 1Sa unless strict is set to True.
         Also tries the SBL and NET book codes unless strict is set to True.
         """
+        if bos_books_codes_py:
+            try:
+                return bos_books_codes_py.short_abbrev_to_reference_abbrev_py( shortAbbreviation, strict )
+            except KeyError:
+                pass
         if strict:
             return self.__DataDicts['shortAbbreviationDict'][shortAbbreviation.upper()][1]
         # else: # not strict
@@ -404,8 +414,8 @@ class BibleBooksCodes:
         """
         if bos_books_codes_py:
             try:
-                return bos_books_codes_py.osis_abbrev_to_reference_abbrev_py( osisAbbreviation )
-            except:
+                return bos_books_codes_py.osis_abbrev_to_reference_abbrev_py( osisAbbreviation, strict )
+            except KeyError:
                 pass
         if strict:
             return self.__DataDicts['OSISAbbreviationDict'][osisAbbreviation.upper()][1]
@@ -548,6 +558,8 @@ class BibleBooksCodes:
         Returns True for 116 Psalms that traditional have a header field in the Hebrew (USFM /d field)
         Otherwise returns False (for the other 34, plus for other books).
         """
+        if bos_books_codes_py:
+            return bos_books_codes_py.has_psalm_title_py( BBB, C )
         if BBB != 'PSA': return False
         return int(C) not in (1,2, 10, 33, 43, 71, 91, 93,94,95,96,97,99,
                               104,105,106,107, 111,112,113,114,115,116,117,118,119, 135,136,137, 146,147,148,149,150)
@@ -592,6 +604,8 @@ class BibleBooksCodes:
         """
         Return a list of all available USFM book codes.
         """
+        if bos_books_codes_py:
+            return bos_books_codes_py.get_all_usfm_abbreviations_py( toUpper )
         result = []
         for BBB, values in self.__DataDicts['referenceAbbreviationDict'].items():
             pA = values['USFMAbbreviation']
@@ -724,6 +738,10 @@ class BibleBooksCodes:
         except:
             BBB, C, V, S = BCVReferenceTuple
             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, BCVReferenceTuple ); halt # Need to finish handling BCVReferenceTuple
+        
+        if bos_books_codes_py:
+            return bos_books_codes_py.bcv_reference_to_int_py( BBB, C, V, S )
+        
         result = self.getReferenceNumber( BBB )
 
         try:
@@ -754,6 +772,8 @@ class BibleBooksCodes:
             or 4-tuples of BBB,C,V,S strings
         """
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"sortBCVReferences( ({len(referencesList)}) {referencesList} )…" )
+        if bos_books_codes_py:
+            return bos_books_codes_py.sort_bcv_references_py( list(referencesList) )
         sortedList = sorted( referencesList, key=self.BCVReferenceToInt )
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  sortBCVReferences returning ({len(sortedList)}) {sortedList}" )
         # assert len(sortedList) == len(referencesList)
@@ -801,7 +821,7 @@ class BibleBooksCodes:
             NOTE: This is not truly international so it's not a recommended function.
         """
         if bos_books_codes_py:
-            return bos_books_codes_py.is_ot_py( BBB )
+            return bos_books_codes_py.is_ot_nr_py( BBB )
         return 1 <= self.getReferenceNumber(BBB) <= 39
     # end of BibleBooksCodes.isOldTestament_NR
 
@@ -811,7 +831,7 @@ class BibleBooksCodes:
             NOTE: This is not truly international so it's not a recommended function.
         """
         if bos_books_codes_py:
-            return bos_books_codes_py.is_nt_py( BBB )
+            return bos_books_codes_py.is_nt_nr_py( BBB )
         return 40 <= self.getReferenceNumber(BBB) <= 66
     # end of BibleBooksCodes.isNewTestament_NR
 
@@ -821,7 +841,7 @@ class BibleBooksCodes:
             NOTE: This is not truly international so it's not a recommended function.
         """
         if bos_books_codes_py:
-            return bos_books_codes_py.is_dc_py( BBB )
+            return bos_books_codes_py.is_dc_nr_py( BBB )
         return BBB in ('TOB','JDT','ESG','WIS','SIR','BAR','LJE','PAZ','SUS','BEL','MA1','MA2','GES','LES','MAN',)
     # end of BibleBooksCodes.isDeuterocanon_NR
 
@@ -925,6 +945,8 @@ class BibleBooksCodes:
         Change a list of book codes like SA1 to the conventional 1SA
             (or 1Sa using the titleCase flag).
         """
+        if bos_books_codes_py:
+            return bos_books_codes_py.tidy_bbbs_py( BBBs, titleCase, allowFourChars )
         assert all([BBB in BibleBooksCodes() for BBB in BBBs]), f"BibleBooksCodes,tidyBBBs {BBBs=}"
         return [BibleBooksCodes().tidyBBB( BBB, titleCase, allowFourChars ) for BBB in BBBs]
     # end of BibleBooksCodes.tidyBBBs

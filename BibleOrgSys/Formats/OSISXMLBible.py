@@ -46,6 +46,7 @@ from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Reference.ISO_639_3_Languages import ISO_639_3_Languages
 from BibleOrgSys.Reference.USFM3Markers import USFM_BIBLE_PARAGRAPH_MARKERS
 from BibleOrgSys.Bible import Bible, BibleBook
+import bos_books_codes_py
 
 
 LAST_MODIFIED_DATE = '2023-02-27' # by RJH
@@ -312,10 +313,10 @@ class OSISXMLBible( Bible ):
                                 if 'JONAH' in upperFilename and osisBkCode=='NAH': continue # Handle bad choice
                                 if 'ZEPH' in upperFilename and osisBkCode=='EPH': continue # Handle bad choice
                                 assert not foundBBB # Don't expect duplicates
-                                foundBBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromOSISAbbreviation( osisBkCode, strict=True )
+                                BBB = bos_books_codes_py.osis_abbrev_to_reference_abbrev_py( osisBkCode, strict=True )
                                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  FoundBBB1 = {foundBBB!r}" )
                         if not foundBBB: # Could try a USFM/Paratext book code -- what writer creates these???
-                            for bkCode in BibleOrgSysGlobals.loadedBibleBooksCodes.getAllUSFMBooksCodes( toUpper=True ):
+                            for bkCode in bos_books_codes_py.get_all_usfm_abbreviations_py( toUpper=True ):
                                 # returned bkCodes are all UPPERCASE
                                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'bc', bkCode, upperFilename )
                                 if bkCode in upperFilename:
@@ -2356,7 +2357,7 @@ class OSISXMLBible( Bible ):
                         if BibleOrgSysGlobals.debugFlag: assert len(bits) == 2
                         cmBBB = None
                         try:
-                            cmBBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromOSISAbbreviation( bits[0] )
+                            cmBBB = bos_books_codes_py.osis_abbrev_to_reference_abbrev_py( bits[0] )
                         except KeyError:
                             logging.critical( f"{bits[0]!r} is not a valid OSIS book identifier in chapter milestone {OSISChapterID}" )
                             loadErrors.append( f"{bits[0]!r} is not a valid OSIS book identifier in chapter milestone {OSISChapterID}" )
@@ -2908,7 +2909,7 @@ class OSISXMLBible( Bible ):
                 if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
                 mainDivOsisID = mainDivOsisID[:-2] # Change 1Kgs.1 to 1Kgs
             try:
-                BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromOSISAbbreviation( mainDivOsisID )
+                BBB = bos_books_codes_py.osis_abbrev_to_reference_abbrev_py( mainDivOsisID )
             except KeyError:
                 logging.critical( f"{mainDivOsisID!r} is not a valid OSIS book identifier in mainDiv" )
                 if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
@@ -3268,7 +3269,7 @@ class OSISXMLBible( Bible ):
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "cm", chapterMilestone )
                     OSISBookID = chapterMilestone.split('.')[0]
                     try:
-                        newBBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromOSISAbbreviation( OSISBookID )
+                        newBBB = bos_books_codes_py.osis_abbrev_to_reference_abbrev_py( OSISBookID )
                     except KeyError:
                         logging.critical( f"{OSISBookID!r} is not a valid OSIS book identifier" )
                         if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt

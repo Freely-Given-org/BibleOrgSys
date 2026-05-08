@@ -257,7 +257,7 @@ class CSVBible( Bible ):
                     filepath = os.path.join( self.sourceFolder, filename )
                     if os.path.isfile( filepath ) \
                     and ( filename.lower().endswith( '.csv' ) or filename.lower().endswith( '.tsv' ) or filename.lower().endswith( '.txt' ) ):
-                        for Uuu in BibleOrgSysGlobals.loadedBibleBooksCodes.getAllUSFMBooksCodes():
+                        for Uuu in bos_books_codes_py.get_all_usfm_abbreviations_py():
                             # dPrint( 'Info', DEBUGGING_THIS_MODULE, f"{Uuu=}" )
                             if Uuu in filename or Uuu.upper() in filename or Uuu.lower() in filename:
                                 bookFileCount += 1
@@ -381,7 +381,7 @@ class CSVBible( Bible ):
                                     BBB = tryBBB
                                     break
                             if not BBB:
-                                for Uuu in BibleOrgSysGlobals.loadedBibleBooksCodes.getAllUSFMBooksCodes():
+                                for Uuu in bos_books_codes_py.get_all_usfm_abbreviations_py():
                                     if filename.upper() == Uuu.upper():
                                         BBB = bos_books_codes_py.usfm_abbrev_to_reference_abbrev_py( Uuu )
                                         break
@@ -391,7 +391,7 @@ class CSVBible( Bible ):
                                     BBB = tryBBB
                                     break
                             if not BBB:
-                                for Uuu in BibleOrgSysGlobals.loadedBibleBooksCodes.getAllUSFMBooksCodes():
+                                for Uuu in bos_books_codes_py.get_all_usfm_abbreviations_py():
                                     if Uuu.upper().startswith( filename.upper ):
                                         BBB = bos_books_codes_py.usfm_abbrev_to_reference_abbrev_py( Uuu )
                                         break

@@ -38,6 +38,7 @@ from xml.etree.ElementTree import ElementTree, ParseError
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Bible import Bible, BibleBook
+import bos_books_codes_py
 
 
 LAST_MODIFIED_DATE = '2024-06-11' # by RJH
@@ -516,7 +517,7 @@ class USXXMLBibleBook( BibleBook ):
         if BibleOrgSysGlobals.verbosityLevel > 3:
             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  " + f"Loading {filename} from {folder}…" )
         else: vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + f"Loading {filename}…" )
-        self.isOneChapterBook = self.bos_books_codes_py.is_single_chapter_book_py( BBB )
+        self.isOneChapterBook = bos_books_codes_py.is_single_chapter_book_py( self.BBB )
         self.sourceFilename = filename
         self.sourceFolder = folder
         self.sourceFilepath = os.path.join( folder, filename ) if folder else filename

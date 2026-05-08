@@ -41,6 +41,7 @@ from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint, USFMAllExpan
 from BibleOrgSys.InputOutput.USXFilenames import USXFilenames
 from BibleOrgSys.Formats.USXXMLBibleBook import USXXMLBibleBook
 from BibleOrgSys.Bible import Bible
+import bos_books_codes_py
 
 
 LAST_MODIFIED_DATE = '2025-06-01' # by RJH
@@ -893,7 +894,7 @@ def createUSXXMLBible( self, outputFolderpath:Path|str, controlDict, validationS
 
         # Main code for writeUSXBook
         USXAbbrev = bos_books_codes_py.reference_abbrev_to_usfm_abbrev_py( BBB ).upper()
-        USXNumber = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSXNumStr( BBB )
+        USXNumber = bos_books_codes_py.get_usx_num_str_py( BBB )
         if not USXAbbrev:
             logger.error( f"toUSXXML: Can't write {BBB} USX book because no USFM code available" )
             unhandledBooks.append( BBB )

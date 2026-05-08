@@ -43,6 +43,7 @@ from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Bible import Bible, BibleBook
 from BibleOrgSys.Internals.InternalBibleBook import BOS_CUSTOM_NESTING_MARKERS
 from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
+import bos_books_codes_py
 
 
 LAST_MODIFIED_DATE = '2025-07-07' # by RJH
@@ -171,7 +172,7 @@ def createEpubBible( BibleObject, outputFolder=None ):
     # Books are written as C:V verseText with double-spaced lines
     compressedDictionary = {}
     for BBB,bookObject in BibleObject.books.items():
-        if not BibleOrgSysGlobals.loadedBibleBooksCodes.isChapterVerseBook( BBB ):
+        if not bos_books_codes_py.is_chapter_verse_book_py( BBB ):
             continue # Ignore these books
         pseudoESFMData = bookObject._processedLines
 

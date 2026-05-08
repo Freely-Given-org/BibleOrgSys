@@ -47,9 +47,9 @@ import multiprocessing
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Bible import Bible #, BibleBook
-from BibleOrgSys.Formats import SwordResources # import SwordType, SwordInterface -- the SwordType gets the old value if SwordType is rebound
+from BibleOrgSys.Formats import SwordResources # import SwordType, SwordInterface -- the SwordType gets the old value if SwordType is rebound 
                       # Normally it wouldn't be a problem, but we adjust SwordType in DemoTests to test both modes
-#from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
+import bos_books_codes_py
 
 
 LAST_MODIFIED_DATE = '2023-02-02' # by RJH
@@ -426,7 +426,7 @@ class SwordBible( Bible ):
                 #vkBits = verseKeyText.split()
                 #assert len(vkBits) == 2
                 #osisBBB = vkBits[0]
-                #BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromOSISAbbreviation( osisBBB )
+                #BBB = bos_books_codes_py.osis_abbrev_to_reference_abbrev_py( osisBBB )
                 #if isinstance( BBB, list ): BBB = BBB[0] # We sometimes get a list of options -- take the first = most likely one
                 #vkBits = vkBits[1].split( ':' )
                 #assert len(vkBits) == 2

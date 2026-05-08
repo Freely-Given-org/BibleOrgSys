@@ -6,7 +6,7 @@
 #
 # Module handling Global variables for our Bible Organisational System
 #
-# Copyright (C) 2010-2025 Robert Hunt
+# Copyright (C) 2010-2026 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -93,6 +93,7 @@ CHANGELOG:
     2024-06-14 Print more info for failed pickles
     2025-05-31 Add useful rreplace function
     2025-11-19 Add mission critical flag to global parameters
+    2025-05-07 Remove loadedBibleBooksCodes (because we now use the Rust functions)
 """
 import sys
 import logging
@@ -114,10 +115,10 @@ except ImportError:
 from bible_organisational_system import set_rust_verbosity, set_rust_debug, set_rust_strict_checking
 
 
-LAST_MODIFIED_DATE = '2026-04-18' # by RJH
+LAST_MODIFIED_DATE = '2026-05-07' # by RJH
 SHORT_PROGRAM_NAME = "BibleOrgSysGlobals"
 PROGRAM_NAME = "BibleOrgSys (BOS) Globals"
-PROGRAM_VERSION = '0.95'
+PROGRAM_VERSION = '0.96'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -1529,7 +1530,6 @@ def setMissionCriticalFlag( newValue=True ):
 
 
 # Some global variables
-loadedBibleBooksCodes = None # will contain the class
 loadedUSFMMarkers = None # will contain the class
 USFMParagraphMarkers:list[str] = []
 USFMCharacterMarkers:list[str] = []
@@ -1542,11 +1542,7 @@ def preloadCommonData() -> None:
         This includes BibleBooksCode and USFMMarkers
     """
     # Load Bible data sets that are globally useful
-    global loadedBibleBooksCodes, loadedUSFMMarkers, USFMParagraphMarkers, USFMCharacterMarkers, USFMAllExpandedCharacterMarkers, internal_SFMs_to_remove
-
-    from BibleOrgSys.Reference.BibleBooksCodes import BibleBooksCodes
-    loadedBibleBooksCodes = BibleBooksCodes().loadData() # This is a class 'BibleOrgSys.Reference.BibleBooksCodes.BibleBooksCodes'
-    assert len(loadedBibleBooksCodes) >= 243
+    global loadedUSFMMarkers, USFMParagraphMarkers, USFMCharacterMarkers, USFMAllExpandedCharacterMarkers, internal_SFMs_to_remove
 
     from BibleOrgSys.Reference.USFM3Markers import USFM3Markers
     loadedUSFMMarkers = USFM3Markers().loadData() # This is a class 'BibleOrgSys.Reference.USFM3Markers.USFM3Markers'

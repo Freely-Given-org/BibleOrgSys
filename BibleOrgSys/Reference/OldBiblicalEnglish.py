@@ -43,7 +43,7 @@ import BibleOrgSys.BibleOrgSysGlobals as BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2026-05-06' # by RJH
+LAST_MODIFIED_DATE = '2026-05-08' # by RJH
 SHORT_PROGRAM_NAME = "OldBiblicalEnglish"
 PROGRAM_NAME = "OpenBibleData English Language Handling functions"
 PROGRAM_VERSION = '0.97'
@@ -692,7 +692,6 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
                 ((' botere.',),' butter.'), ((' buttockes',),' buttocks'), ((' bottons',),' buttons'),
         (('Bi ',),'By '),((' bi ',),' by '),
     ((' kab ',),' cab '),
-            (('Cæsar','Cesar'),'Caesar'),
             ((' calamitie,',),' calamity,'),((' calamitie.',),' calamity.'),((' calamitie:',),' calamity:'),
                 ((' calendis',),' calendars'),
                 (('Calues',),'Calves'),((' calues',' caluys'),' calves'), (('Calfe',),'Calf'),((' calfe',),' calf'),
@@ -2306,7 +2305,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
                 ((' solempnytees',),' solemnities'),((' solempnyte ',' solempnete ',' solempnite ',' solempnytee ',' solemnitie '),' solemnity '),(('solempnytee,',),'solemnity,'), ((' solempne ',' solempe ',' solemne ',' solepne '),' solemn '),
                 ((' solitarie',),' solitary'),
                 (('solue',),'solve'),(('soluing',),'solving'), # includes dissolved and dissolving
-            ((' summe ',' sum '),' some '),((' summe,',),' some,'), ((' somthinge',' somthyng'),' something'), ((' somtime',' somtyme',' sumtyme'),' sometime'), (('somwhat','sumwhat'),'somewhat'), ((' somwhere',),' somewhere'),
+            (('Summen',),'Some'),((' summe ',' sum '),' some '),((' summe,',),' some,'), ((' somthinge',' somthyng'),' something'), ((' somtime',' somtyme',' sumtyme'),' sometime'), (('somwhat','sumwhat'),'somewhat'), ((' somwhere',),' somewhere'),
             (('Sones',),'Sons'),((' sonnes',' sones'),' sons'), (('SONNE ',),'SON '),(('Sonne ','Sone '),'Son '),(('Sonne,','Sone,'),'Son,'),(('Sonne:',),'Son:'),((' sonne ',' sone '),' son '),((' sonne,',' sone,'),' son,'),((' sonne.',' sone.'),' son.'),((' sonne?',' sone?'),' son?'),((' sonne:',),' son:'),((' sone;',),' son;'),((' sonne)',),' son)'),
                 ((' songues',' songis'),' songs'),((' songe',),' song'),
             ((' soone ',),' soon '),((' soone,',),' soon,'),((' soone:',),' soon:'),((' soone)',),' soon)'), (('Southsayers',),'Soothsayers'),(('soythsayers',),'soothsayers'),
@@ -2395,7 +2394,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
                         ((' straytly',),' straitly'),
                     (('Straungers',),'Strangers'),(('straungeris',),'strangers'), (('straunger','strauger','strager'),'stranger'),(('straunge ','strauge '),'strange '),
                         (('strangliden','stranglide','stranglid'),'strangled'),(('strangleth','stranglith'),'strangleth/strangles'),
-                    (('strawe,',),'straw,'),(('strawe:',),'straw:'),
+                    (('strawe ',),'straw '),(('strawe,',),'straw,'),(('strawe:',),'straw:'),
                     (('straied',),'strayed'),
                 ((' streames',' streemys',' stremys'),' streams'),((' streame ',),' stream '),((' streame,',),' stream,'),((' streame.',' streem.'),' stream.'),
                     (('streetes','stretis'),'streets'),(('streete','streate','strete'),'street'),
@@ -2765,7 +2764,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
                 ((' wittes',' wittis'),' wits'), ((' witti',),' witty'),
             ((' wyues',' wiues'),' wives'),
         (('Woo ','Wo '),'Woe '),(('Wo.',),'Woe.'),((' wo ',),' woe '),((' wo.',),' woe.'),((' wo!',),' woe!'),
-            ((' woolues',' wolues'),' wolves'),
+            ((' woolues',' wolues'),' wolves'),((' wolfe',),' wolf'),
             ((' womman',),' woman'), ((' wombe',' wombi',' wobe'),' womb'),
                 ((' wymmen',' wemen'),' women'),((' weme ',' wome '),' women '),((' wome,',),' women,'),
             ((' wonne ',),' won '),((' wonne,',),' won,'),((' wonne.',),' won.'),
@@ -2809,7 +2808,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
             (('Yit ',),'Yet '),((' yit ',),' yet '),((' yit,',),' yet,'),((' yit?',),' yet?'),
             (('Iewrie','Iewry'),'Yewry'), (('IEWES','JESEW'),'YEWS'),(('Iewes','Jewis'),'Yews'),#(('Iewes,','Jewis,'),'Yews,'),
             (('Iezreelitesse',),'Yezreelitess'),
-        ((' yeelded',' yeldide'),' yielded'),((' yieldeth',' yeeldeth',' yeldith'),' yieldeth/yields'),((' yeelding',' yeldyng'),' yielding'), ((' yeelde ',' yeeld ',' yelde '),' yield '),((' yeeld,',' yelde,'),' yield,'),((' yelde;',),' yield;'),
+        ((' yeelded',' yeldide'),' yielded'),((' yieldeth',' yeeldeth',' yeldith'),' yieldeth/yields'),((' yeldynge',' yeelding',' yeldyng'),' yielding'), ((' yeelde ',' yeeld ',' yelde '),' yield '),((' yelde.',),' yield.'),((' yeeld,',' yelde,'),' yield,'),((' yelde;',),' yield;'),
         (('Ioab',),'Yoab'),
             (('Ioanna','Joone'),'Yoanna'), (('Iohn','Ihon','Joon'),'Yohn'),
             ((' yocke ',' yock ',' yok '),' yoke '),((' yocke,',' yok,'),' yoke,'),
@@ -3056,7 +3055,8 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
         ((' unpitee',),' unpity/not_pity'), # Wycl Eze 7:11
         ((' usurere ',),' usurer/money-lender '), # Psa 108:11
         ((' unyuersite',),' university'), # Wycl Tob 8:19
-    ((' venie ',),' avenge '), # Wycl Deu 32:43
+    ((' vengere',),' avenger'), # Wycl Jer 51:56
+        ((' venie ',),' avenge '), # Wycl Deu 32:43
         (('Verily','Verely','Veryly','Uerily','Ueryly','Uerely'),'Verily/Truly'),((' verily',' verely',' veryly',' verili'),' verily/truly'), # Psa 57:2
         ((' verity',' veritie',' verite'),' verity/truth'), # Psa 111:7
         ((' vertues',),' hosts/armies'),((' vertu',),' power/strength'),
@@ -3128,6 +3128,8 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
     (('Bethanie',),'Bethany'),
     (('Cananite',),'Canaanite'), # Mrk 3:18
     (('Cades ',),'Kadesh '),
+    (('Cesarye','Cesarea'),'Caesarea'), # Wycl Mrk 8:27
+        (('Cæsar','Cesar'),'Caesar'),
     (('Danyel',),'Daniel'),
     (('Decapoleos',),'Decapolis'), # Wycl Mrk 7:31
     (('Elias','Helyas'),'Elias/Elijah'),(('Helie','Elie'),'Elye/Elijah'), # Mrk 6:15

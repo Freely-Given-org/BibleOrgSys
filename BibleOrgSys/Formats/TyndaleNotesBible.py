@@ -44,6 +44,7 @@ from xml.etree.ElementTree import ElementTree, ParseError
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Bible import Bible, BibleBook
+import bos_books_codes_py
 
 
 LAST_MODIFIED_DATE = '2023-06-14' # by RJH
@@ -285,7 +286,7 @@ class TyndaleNotesBible( Bible ):
                         if firstOSISBkCode.endswith('Thes'):
                             firstOSISBkCode += 's' # TODO: getBBBFromText should handle '1Thes'
                         BBB = bos_books_codes_py.english_name_to_reference_abbrev_py( firstOSISBkCode )
-                        # try: BBB2 = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromOSISAbbreviation( firstOSISBkCode )
+                        # try: BBB2 = bos_books_codes_py.osis_abbrev_to_reference_abbrev_py( firstOSISBkCode )
                         # except KeyError: BBB2 = None
                         # assert BBB, f"{firstOSISBkCode=} {BBB=} {BBB2=}"
                         # if isinstance( BBB2, list ): BBB2 = BBB2[0] # Just take the first one (that's the best guess)

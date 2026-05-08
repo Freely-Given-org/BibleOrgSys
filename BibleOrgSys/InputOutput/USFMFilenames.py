@@ -107,10 +107,10 @@ class USFMFilenames:
             return
 
         # Get the data tables that we need for proper checking
-        self._USFMBooksCodes = BibleOrgSysGlobals.loadedBibleBooksCodes.getAllUSFMBooksCodes()
+        self._USFMBooksCodes = bos_books_codes_py.get_all_usfm_abbreviations_py()
         self._USFMBooksCodesUpper = [x.upper() for x in self._USFMBooksCodes]
-        self._USFMBooksCodeNumberTriples = BibleOrgSysGlobals.loadedBibleBooksCodes.getAllUSFMBooksCodeNumberTriples()
-        self._BibleditBooksCodeNumberTriples = BibleOrgSysGlobals.loadedBibleBooksCodes.getAllBibleditBooksCodeNumberTriples()
+        self._USFMBooksCodeNumberTriples = bos_books_codes_py.get_all_usfm_books_code_number_triples_py()
+        self._BibleditBooksCodeNumberTriples = bos_books_codes_py.get_all_bibledit_books_code_number_triples_py()
 
         # Find how many files are in our folder
         self.lastTupleList = None
@@ -412,7 +412,7 @@ class USFMFilenames:
                         if filename[ix]=='*' and self.pattern[ix]!='*':
                             filename = filename[:ix] + self.pattern[ix] + filename[ix+1:]
                     self.doListAppend( BBB, filename, resultList, "getDerivedFilenameTuples" )
-        return BibleOrgSysGlobals.loadedBibleBooksCodes.getSequenceList( resultList )
+        return sorted( resultList, key=lambda x: bos_books_codes_py.get_sequence_number_py(x[0]) )
     # end of USFMFilenames.getDerivedFilenameTuples
 
 
@@ -467,7 +467,7 @@ class USFMFilenames:
                     if pFUpper[-1]!='~' and not pFUpperExt[1:] in EXTENSIONS_TO_IGNORE: # Compare without the first dot
                         self.doListAppend( bos_books_codes_py.usfm_abbrev_to_reference_abbrev_py( USFMBookCode ), possibleFilename, resultList, "getPossibleFilenameTuplesExt" )
         self.lastTupleList = resultList
-        return BibleOrgSysGlobals.loadedBibleBooksCodes.getSequenceList( resultList )
+        return sorted( resultList, key=lambda x: bos_books_codes_py.get_sequence_number_py(x[0]) )
     # end of USFMFilenames.getPossibleFilenameTuplesExt
 
 
@@ -487,7 +487,7 @@ class USFMFilenames:
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "getPossibleFilenameTuplesInt", folder, filename, self._fileDictionary )
                 self.doListAppend( self._fileDictionary[(folder,filename,)], filename, resultList, "getPossibleFilenameTuplesInt2" )
         self.lastTupleList = resultList
-        return BibleOrgSysGlobals.loadedBibleBooksCodes.getSequenceList( resultList )
+        return sorted( resultList, key=lambda x: bos_books_codes_py.get_sequence_number_py(x[0]) )
     # end of USFMFilenames.getPossibleFilenameTuplesInt
 
 

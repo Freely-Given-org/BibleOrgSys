@@ -72,6 +72,7 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Misc.singleton import singleton
 from BibleOrgSys.Online.GenericOnlineBible import GenericOnlineBible
+import bos_books_codes_py
 
 
 LAST_MODIFIED_DATE = '2020-07-12' # by RJH
@@ -522,7 +523,7 @@ class BibleBrainBible( GenericOnlineBible ):
             for bookDict in bookList:
                 OSISCode = bookDict['book_id']
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "OSIS", OSISCode )
-                BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromOSISAbbreviation( OSISCode )
+                BBB = bos_books_codes_py.get_bbb_from_osis_abbreviation( OSISCode )
                 if isinstance( BBB, list ): BBB = BBB[0] # Take the first one if we get something like ['EZR','EZN']
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "BBB", BBB )
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, bookDict )

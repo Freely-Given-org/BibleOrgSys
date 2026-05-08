@@ -37,6 +37,7 @@ from xml.etree.ElementTree import ElementTree
 from BibleOrgSys.Misc.singleton import singleton
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
+import bos_books_codes_py
 
 
 LAST_MODIFIED_DATE = '2021-01-19' # by RJH
@@ -276,8 +277,8 @@ class BibleVersificationSystemsConverter:
                 numChapters = bookElement.find("numChapters").text # This is a string
 
                 # Check the chapter data against the expected chapters in the BibleBooksCodes data
-                if numChapters not in BibleOrgSysGlobals.loadedBibleBooksCodes.getExpectedChaptersList(BBB):
-                    logging.info( f"Expected number of chapters for {BBB} is {BibleOrgSysGlobals.loadedBibleBooksCodes.getExpectedChaptersList(BBB)} but we got {numChapters!r} for {versificationSystemCode}" )
+                if numChapters not in bos_books_codes_py.get_expected_chapters_list(BBB):
+                    logging.info( f"Expected number of chapters for {BBB} is {bos_books_codes_py.get_expected_chapters_list(BBB)} but we got {numChapters!r} for {versificationSystemCode}" )
 
                 chapterData, omittedVersesData, combinedVersesData, reorderedVersesData = {}, [], [], []
                 chapterData['numChapters'] = numChapters

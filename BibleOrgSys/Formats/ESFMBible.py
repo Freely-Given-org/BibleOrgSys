@@ -859,8 +859,7 @@ def briefDemo() -> None:
                     if line.startswith("<title>"): title = line.replace("<title>","").replace("</title>","").strip()
                     if line.startswith('<option value="'):
                         adjLine = line.replace('<option value="','').replace('</option>','')
-                        ESFM_BBB, name = adjLine[:3], adjLine[11:]
-                        BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromESFM( ESFM_BBB )
+                        BBB, name = adjLine[:3], adjLine[11:]
                         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, ESFM_BBB, BBB, name )
                         nameDict[BBB] = name
             return title, nameDict
@@ -970,9 +969,7 @@ def fullDemo() -> None:
                     if line.startswith("<title>"): title = line.replace("<title>","").replace("</title>","").strip()
                     if line.startswith('<option value="'):
                         adjLine = line.replace('<option value="','').replace('</option>','')
-                        ESFM_BBB, name = adjLine[:3], adjLine[11:]
-                        BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromESFM( ESFM_BBB )
-                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, ESFM_BBB, BBB, name )
+                        BBB, name = adjLine[:3], adjLine[11:]
                         nameDict[BBB] = name
             return title, nameDict
         # end of findInfo

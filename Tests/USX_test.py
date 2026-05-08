@@ -48,6 +48,7 @@ from BibleOrgSys.Bible import Bible
 from BibleOrgSys.Formats.USFMBible import USFMBible
 from BibleOrgSys.Formats.PTX8Bible import PTX8Bible
 from BibleOrgSys.Formats.PickledBible import PickledBible, ZIPPED_PICKLE_FILENAME_END
+import bos_books_codes_py
 
 from Extras.BibleDropBoxHelpers import submitBDBFolder
 
@@ -202,7 +203,7 @@ def main() -> None:
             for BBB in thisUsfmBible.books:
                 Uuu = bos_books_codes_py.reference_abbrev_to_usfm_abbrev_py( BBB )
                 UUU = Uuu.upper()
-                nnn = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSXNumStr( BBB )
+                nnn = bos_books_codes_py.get_usx_num_str( BBB )
                 if not nnn:
                     logging.critical( f"Ignoring validation of {BBB=} {Uuu=} {UUU=}-- enable to determine nnn" )
                 usx_filename = f'{nnn}{UUU}.usx'

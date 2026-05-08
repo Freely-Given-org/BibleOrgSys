@@ -1,5 +1,5 @@
 version = 1
-revision = 2
+revision = 3
 requires-python = ">=3.13"
 resolution-markers = [
     "python_full_version < '3.14'",
@@ -22,6 +22,7 @@ version = "0.1.1"
 source = { editable = "." }
 dependencies = [
     { name = "bibleorgsys-rust", marker = "python_full_version < '3.15'" },
+    { name = "bos-books-codes-py", marker = "python_full_version < '3.15'" },
     { name = "requests", marker = "python_full_version < '3.15'" },
 ]
 
@@ -33,6 +34,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "bibleorgsys-rust", editable = "Rust/bible_organisational_system" },
+    { name = "bos-books-codes-py", editable = "Rust/bos_books_codes_py" },
     { name = "requests", specifier = ">=2.33.1" },
 ]
 
@@ -42,6 +44,10 @@ dev = [{ name = "ty", specifier = ">=0.0.18" }]
 [[package]]
 name = "bibleorgsys-rust"
 source = { editable = "Rust/bible_organisational_system" }
+
+[[package]]
+name = "bos-books-codes-py"
+source = { editable = "Rust/bos_books_codes_py" }
 
 [[package]]
 name = "certifi"

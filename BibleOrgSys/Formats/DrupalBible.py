@@ -80,6 +80,7 @@ import multiprocessing
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Bible import Bible, BibleBook
+import bos_books_codes_py
 
 
 LAST_MODIFIED_DATE = '2020-04-18' # by RJH
@@ -275,7 +276,7 @@ class DrupalBible( Bible ):
                         bits = line.split( '|' )
                         bookCode, bookFullName, bookShortName, numChapters = bits
                         assert bookShortName == bookCode
-                        BBBresult = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromDrupalBibleCode( bookCode )
+                        BBBresult = bos_books_codes_py.drupal_abbrev_to_reference_abbrev_py( bookCode )
                         BBB = BBBresult if isinstance( BBBresult, str ) else BBBresult[0] # Result can be string or list of strings (best guess first)
                         bookDetails[BBB] = bookFullName, bookShortName, numChapters
 
@@ -284,7 +285,7 @@ class DrupalBible( Bible ):
                     bookCode, chapterNumberString, verseNumberString, lineMark, verseText = bits
                     #chapterNumber, verseNumber = int( chapterNumberString ), int( verseNumberString )
                     if lineMark: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, repr(lineMark) ); halt
-                    BBBresult = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromDrupalBibleCode( bookCode )
+                    BBBresult = bos_books_codes_py.drupal_abbrev_to_reference_abbrev_py( bookCode )
                     BBB = BBBresult if isinstance( BBBresult, str ) else BBBresult[0] # Result can be string or list of strings (best guess first)
                     if BBB != lastBBB:
                         if lastBBB is not None:
