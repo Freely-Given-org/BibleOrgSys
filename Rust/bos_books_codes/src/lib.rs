@@ -20,7 +20,7 @@ use std::fmt;
 
 use phf::phf_map;
 use compact_str::{CompactString, format_compact};
-use std::collections::HashSet;
+// use std::collections::HashSet;
 
 
 // THESE VARIOUS STATIC ARRAYS AND HASHMAPS WERE CREATED AUTOMATICALLY BY build_static_tables.py
@@ -32,22 +32,6 @@ pub enum OptionalNumberOrTwoNumbers {
     TwoNumbers([u16; 2]),
     None,
 }
-
-//#[derive(Debug)]
-//pub enum OptionalAbbreviationOrListOfAbbreviations<'a> {
-//    Abbreviation(&'a str),
-//    TwoAbbreviations([&'a str; 2]),
-//    ThreeAbbreviations([&'a str; 3]),
-//    FourAbbreviations([&'a str; 4]),
-//    FiveAbbreviations([&'a str; 5]),
-//    SixAbbreviations([&'a str; 6]),
-//    SevenAbbreviations([&'a str; 7]),
-//    TwelveAbbreviations([&'a str; 12]),
-//    ThirteenAbbreviations([&'a str; 13]),
-//    FourteenAbbreviations([&'a str; 14]),
-//    SixteenAbbreviations([&'a str; 16]),
-//    None,
-//}
 
 #[derive(Debug)]
 pub struct BibleBooksCodesArrayEntry<'a> {
@@ -74,10 +58,7 @@ pub struct BibleBooksCodesArrayEntry<'a> {
     pub Drupal_Bible_abbreviation: Option<&'a str>,
     pub Bible_Works_abbreviation: Option<&'a str>,
     pub Byzantine_abbreviation: Option<&'a str>,
-    //possible_alternative_abbreviations: OptionalAbbreviationOrListOfAbbreviations<'a>,
     pub possible_alternative_abbreviations: &'static [&'static str],
-    //possible_alternative_books_codes: OptionalAbbreviationOrListOfAbbreviations<'a>,
-    //possible_alternative_books_codes: Option<&'static [&'static str]>,
     pub possible_alternative_books_codes: &'static [&'static str],
     pub consists_of_books_codes: Option<&'a str>,
     pub typical_section: Option<&'a str>,
@@ -8055,8 +8036,16 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
     },
 ];
 
+pub static ALL_REFERENCE_ABBREVIATIONS: &[&'static str] = &["GEN","EXO","LEV","NUM","DEU","JOS","JDG","RUT","SA1","SA2","KI1","KI2","CH1","CH2","EZR","NEH","EST","JOB","PSA","PRO","ECC","SNG","ISA","JER","LAM","EZE","DAN","HOS","JOL","AMO","OBA","JNA","MIC","NAH","HAB","ZEP","HAG","ZEC","MAL","MAT","MRK","LUK","JHN","ACT","ROM","CO1","CO2","GAL","EPH","PHP","COL","TH1","TH2","TI1","TI2","TIT","PHM","HEB","JAM","PE1","PE2","JN1","JN2","JN3","JDE","REV","ESG","ESA","ESC","DNG","DNA","DNC","BEL","SUS","JDT","MAN","SIR","SIP","TOB","WIS","PAZ","GES","LES","EZA","EZ5","EZ6","RVE","VSE","LJE","BAR","LJB","BA2","LBA","LB2","BA3","BA4","JRA","PSJ","MAC","MA1","MA2","MA3","MA4","MA5","MQ1","MQ2","MQ3","PB1","PB2","PB3","PB4","PB5","PSB","PS2","PS3","PSS","LAO","ODE","PSO","PJE","WSI","COP","CO3","EUT","DOJ","JUB","ENO","EN2","REP","LBB","CL1","CL2","DID","JSA","JSB","JGA","JGB","TBS","SST","DNT","BLT","GHE","GTR","GMA","GMC","GTW","GPH","GTH","GJU","GBA","AJA","WJC","TAD","LAE","ASS","TSO","TJB","MAI","AEZ","EZT","EUP","PEU","VAM","LAR","ARI","ABL","ART","CLM","ELM","HRE","LPR","EPL","TEO","TTP","TSA","TSB","TSD","TSG","TSI","TSJ","TSY","TSL","TSN","TSR","TSS","TSZ","JJW","SHE","SHM","SHS","SHV","IGE","IGM","IGT","IGR","IGP","IGS","IGC","PCP","MPC","DIO","APC","FOP","ROE","FOQ","TAT","P4D","A2Z","EHY","A2J","H2C","CMP","APS","CAT","P1A","P1B","MOS","SAM","KGS","SMK","CHR","EZN","P12","WOM","SES","SPR","SMC","LKA","FRT","PRF","ACK","INT","TOC","GLS","CNC","TPC","IXN","IXP","MAP","IXT","BAK","OTH","WRD","WDF","HYP","STR","SEM","XXA","XXB","XXC","XXD","XXE","XXF","XXG","OBS","TST","UNK"];
+pub static ALL_OSIS_ABBREVIATIONS: &[&'static str] = &["Gen","Exod","Lev","Num","Deut","Josh","Judg","Ruth","1Sam","2Sam","1Kgs","2Kgs","1Chr","2Chr","Ezra","Neh","Esth","Job","Ps","Prov","Eccl","Song","Isa","Jer","Lam","Ezek","Dan","Hos","Joel","Amos","Obad","Jonah","Mic","Nah","Hab","Zeph","Hag","Zech","Mal","Matt","Mark","Luke","John","Acts","Rom","1Cor","2Cor","Gal","Eph","Phil","Col","1Thess","2Thess","1Tim","2Tim","Titus","Phlm","Heb","Jas","1Pet","2Pet","1John","2John","3John","Jude","Rev","EsthGr","AddEsth","AddDan","Bel","Sus","Jdt","PrMan","Sir","SirP","Tob","Wis","PrAzar","1Esd","2Esd","RevEzra","VisEzra","EpJer","Bar","3Bar","1Macc","2Macc","3Macc","4Macc","5Macc","AddPs","2En"];
+pub static ALL_USFM_ABBREVIATIONS: &[&'static str] = &["Gen","Exo","Lev","Num","Deu","Jos","Jdg","Rut","1Sa","2Sa","1Ki","2Ki","1Ch","2Ch","Ezr","Neh","Est","Job","Psa","Pro","Ecc","Sng","Isa","Jer","Lam","Ezk","Dan","Hos","Jol","Amo","Oba","Jon","Mic","Nam","Hab","Zep","Hag","Zec","Mal","Mat","Mrk","Luk","Jhn","Act","Rom","1Co","2Co","Gal","Eph","Php","Col","1Th","2Th","1Ti","2Ti","Tit","Phm","Heb","Jas","1Pe","2Pe","1Jn","2Jn","3Jn","Jud","Rev","EsG","ADE","DaG","Bel","Sus","Jdt","Man","Sir","Tob","Wis","S3Y","1Es","2Es","EzA","5Ez","6Ez","LJe","Bar","2Ba","LBa","4Ba","1Ma","2Ma","3Ma","4Ma","1Mq","2Mq","3Mq","PsB","Ps2","Ps3","PsS","Lao","Oda","PSo","PJe","WSi","CoP","3Co","Eut","DoJ","Jub","Eno","Rep","1Cl","2Cl","Did","JsA","JsB","JdA","JdB","TbS","SsT","DnT","BlT","She","Frt","Int","Glo","Cnc","NDX","TDX","Bak","Oth","XXA","XXB","XXC","XXD","XXE","XXF","XXG"];
+pub static BOS_SEQUENCE_LIST: &[&'static str] = &["PRF","ACK","INT","FRT","TOC","MOS","GEN","EXO","LEV","NUM","DEU","JOS","SES","JDG","WOM","RUT","SAM","SA1","SA2","KGS","SMK","KI1","KI2","CHR","CH1","CH2","EZR","EZN","NEH","EST","ESA","ESC","JOB","PSA","PB1","PB2","PB3","PB4","PB5","PSB","PS2","PS3","PSS","PRO","ECC","SNG","ISA","JER","LAM","EZE","DAN","DNG","DNA","DNC","P12","HOS","JOL","SPR","AMO","OBA","JNA","MIC","NAH","HAB","ZEP","HAG","ZEC","MAL","SMC","TOB","JDT","ESG","WIS","SIP","SIR","BAR","LJB","LBA","LB2","BA2","BA3","BA4","JRA","PSJ","LJE","PAZ","SUS","BEL","MAC","MA1","MA2","MA3","MA4","MA5","GES","LES","EZA","EZ5","EZ6","RVE","VSE","MAN","ODE","PSO","PJE","WSI","JUB","ENO","EN2","REP","CL1","CL2","DID","JSA","JSB","JGA","JGB","TBS","SST","DNT","BLT","JJW","TTP","TSA","TSB","TSD","TSG","TSI","TSJ","TSY","TSL","TSN","TSR","TSS","TSZ","SHE","SHM","SHS","SHV","TAD","LAE","ASS","TSO","TJB","MAI","AEZ","EZT","EUP","PEU","VAM","LAR","ARI","ABL","ART","CLM","ELM","HRE","LPR","EPL","TEO","MQ1","MQ2","MQ3","MAT","MRK","LUK","JHN","LKA","ACT","ROM","CO1","CO2","GAL","EPH","PHP","COL","TH1","TH2","TI1","TI2","TIT","PHM","HEB","JAM","PE1","PE2","JN1","JN2","JN3","JDE","REV","LAO","COP","CO3","EUT","DOJ","LBB","GHE","GTR","GMA","GMC","GTW","GPH","GTH","GJU","GBA","AJA","WJC","IGE","IGM","IGT","IGR","IGP","IGS","IGC","PCP","MPC","DIO","APC","FOP","ROE","FOQ","TAT","P4D","A2Z","EHY","A2J","H2C","CMP","APS","CAT","P1A","P1B","GLS","CNC","TPC","IXN","IXP","IXT","BAK","MAP","XXA","XXB","XXC","XXD","XXE","XXF","XXG","OTH","WRD","WDF","HYP","STR","SEM","OBS","TST","UNK"];
+
+pub static USFM_CODE_NUMBER_TRIPLES: &[(&'static str, &'static str, &'static str)] = &[("Gen", "01", "GEN"),("Exo", "02", "EXO"),("Lev", "03", "LEV"),("Num", "04", "NUM"),("Deu", "05", "DEU"),("Jos", "06", "JOS"),("Jdg", "07", "JDG"),("Rut", "08", "RUT"),("1Sa", "09", "SA1"),("2Sa", "10", "SA2"),("1Ki", "11", "KI1"),("2Ki", "12", "KI2"),("1Ch", "13", "CH1"),("2Ch", "14", "CH2"),("Ezr", "15", "EZR"),("Neh", "16", "NEH"),("Est", "17", "EST"),("Job", "18", "JOB"),("Psa", "19", "PSA"),("Pro", "20", "PRO"),("Ecc", "21", "ECC"),("Sng", "22", "SNG"),("Isa", "23", "ISA"),("Jer", "24", "JER"),("Lam", "25", "LAM"),("Ezk", "26", "EZE"),("Dan", "27", "DAN"),("Hos", "28", "HOS"),("Jol", "29", "JOL"),("Amo", "30", "AMO"),("Oba", "31", "OBA"),("Jon", "32", "JNA"),("Mic", "33", "MIC"),("Nam", "34", "NAH"),("Hab", "35", "HAB"),("Zep", "36", "ZEP"),("Hag", "37", "HAG"),("Zec", "38", "ZEC"),("Mal", "39", "MAL"),("Mat", "41", "MAT"),("Mrk", "42", "MRK"),("Luk", "43", "LUK"),("Jhn", "44", "JHN"),("Act", "45", "ACT"),("Rom", "46", "ROM"),("1Co", "47", "CO1"),("2Co", "48", "CO2"),("Gal", "49", "GAL"),("Eph", "50", "EPH"),("Php", "51", "PHP"),("Col", "52", "COL"),("1Th", "53", "TH1"),("2Th", "54", "TH2"),("1Ti", "55", "TI1"),("2Ti", "56", "TI2"),("Tit", "57", "TIT"),("Phm", "58", "PHM"),("Heb", "59", "HEB"),("Jas", "60", "JAM"),("1Pe", "61", "PE1"),("2Pe", "62", "PE2"),("1Jn", "63", "JN1"),("2Jn", "64", "JN2"),("3Jn", "65", "JN3"),("Jud", "66", "JDE"),("Rev", "67", "REV"),("EsG", "70", "ESG"),("ADE", "70", "ESA"),("EsG", "70", "ESC"),("DaG", "B2", "DNG"),("DaG", "B2", "DNA"),("DaG", "B2", "DNC"),("Bel", "77", "BEL"),("Sus", "76", "SUS"),("Jdt", "69", "JDT"),("Man", "84", "MAN"),("Sir", "72", "SIR"),("Tob", "68", "TOB"),("Wis", "71", "WIS"),("S3Y", "75", "PAZ"),("1Es", "82", "GES"),("2Es", "83", "LES"),("EzA", "A4", "EZA"),("5Ez", "A5", "EZ5"),("6Ez", "A6", "EZ6"),("LJe", "74", "LJE"),("Bar", "73", "BAR"),("LJe", "74", "LJB"),("2Ba", "B4", "BA2"),("LBa", "B5", "LBA"),("2Ba", "B4", "LB2"),("4Ba", "C2", "BA4"),("1Ma", "78", "MA1"),("2Ma", "79", "MA2"),("3Ma", "80", "MA3"),("4Ma", "81", "MA4"),("1Mq", "B8", "MQ1"),("2Mq", "B9", "MQ2"),("3Mq", "C0", "MQ3"),("PsB", "88", "PSB"),("Ps2", "85", "PS2"),("Ps3", "B3", "PS3"),("PsS", "87", "PSS"),("Lao", "C3", "LAO"),("Oda", "86", "ODE"),("Jub", "B6", "JUB"),("Eno", "B7", "ENO"),("Rep", "C1", "REP"),("Ezr", "15", "EZN"),("Frt", "A0", "FRT"),("Glo", "A9", "GLS"),("XXA", "94", "XXA"),("XXB", "95", "XXB"),("XXC", "96", "XXC"),("XXD", "97", "XXD"),("XXE", "98", "XXE"),("XXF", "99", "XXF")];
+pub static USX_CODE_NUMBER_TRIPLES: &[(&'static str, &'static str, &'static str)] = &[("Gen", "001", "GEN"),("Exo", "002", "EXO"),("Lev", "003", "LEV"),("Num", "004", "NUM"),("Deu", "005", "DEU"),("Jos", "006", "JOS"),("Jdg", "007", "JDG"),("Rut", "008", "RUT"),("1Sa", "009", "SA1"),("2Sa", "010", "SA2"),("1Ki", "011", "KI1"),("2Ki", "012", "KI2"),("1Ch", "013", "CH1"),("2Ch", "014", "CH2"),("Ezr", "015", "EZR"),("Neh", "016", "NEH"),("Est", "017", "EST"),("Job", "018", "JOB"),("Psa", "019", "PSA"),("Pro", "020", "PRO"),("Ecc", "021", "ECC"),("Sng", "022", "SNG"),("Isa", "023", "ISA"),("Jer", "024", "JER"),("Lam", "025", "LAM"),("Ezk", "026", "EZE"),("Dan", "027", "DAN"),("Hos", "028", "HOS"),("Jol", "029", "JOL"),("Amo", "030", "AMO"),("Oba", "031", "OBA"),("Jon", "032", "JNA"),("Mic", "033", "MIC"),("Nam", "034", "NAH"),("Hab", "035", "HAB"),("Zep", "036", "ZEP"),("Hag", "037", "HAG"),("Zec", "038", "ZEC"),("Mal", "039", "MAL"),("Mat", "040", "MAT"),("Mrk", "041", "MRK"),("Luk", "042", "LUK"),("Jhn", "043", "JHN"),("Act", "044", "ACT"),("Rom", "045", "ROM"),("1Co", "046", "CO1"),("2Co", "047", "CO2"),("Gal", "048", "GAL"),("Eph", "049", "EPH"),("Php", "050", "PHP"),("Col", "051", "COL"),("1Th", "052", "TH1"),("2Th", "053", "TH2"),("1Ti", "054", "TI1"),("2Ti", "055", "TI2"),("Tit", "056", "TIT"),("Phm", "057", "PHM"),("Heb", "058", "HEB"),("Jas", "059", "JAM"),("1Pe", "060", "PE1"),("2Pe", "061", "PE2"),("1Jn", "062", "JN1"),("2Jn", "063", "JN2"),("3Jn", "064", "JN3"),("Jud", "065", "JDE"),("Rev", "066", "REV"),("EsG", "069", "ESG"),("DaG", "112", "DNG"),("Bel", "076", "BEL"),("Sus", "075", "SUS"),("Jdt", "068", "JDT"),("Man", "083", "MAN"),("Sir", "071", "SIR"),("Tob", "067", "TOB"),("Wis", "070", "WIS"),("S3Y", "074", "PAZ"),("1Es", "081", "GES"),("2Es", "082", "LES"),("EzA", "104", "EZA"),("LJe", "073", "LJE"),("Bar", "072", "BAR"),("2Ba", "114", "BA2"),("LBa", "115", "LBA"),("1Ma", "077", "MA1"),("2Ma", "078", "MA2"),("3Ma", "079", "MA3"),("4Ma", "080", "MA4"),("Ps2", "084", "PS2"),("Ps3", "113", "PS3"),("PsS", "086", "PSS"),("Lao", "123", "LAO"),("Oda", "085", "ODE"),("Frt", "100", "FRT"),("Int", "107", "INT"),("Glo", "109", "GLS"),("NDX", "111", "IXN"),("TDX", "110", "IXT"),("Bak", "101", "BAK"),("XXA", "093", "XXA"),("XXB", "094", "XXB"),("XXC", "095", "XXC"),("XXD", "096", "XXD"),("XXE", "097", "XXE"),("XXF", "098", "XXF"),("XXG", "099", "XXG")];
+pub static BIBLEDIT_CODE_NUMBER_TRIPLES: &[(&'static str, &'static str, &'static str)] = &[("Gen", "1", "GEN"),("Exo", "2", "EXO"),("Lev", "3", "LEV"),("Num", "4", "NUM"),("Deu", "5", "DEU"),("Jos", "6", "JOS"),("Jdg", "7", "JDG"),("Rut", "8", "RUT"),("1Sa", "9", "SA1"),("2Sa", "10", "SA2"),("1Ki", "11", "KI1"),("2Ki", "12", "KI2"),("1Ch", "13", "CH1"),("2Ch", "14", "CH2"),("Ezr", "15", "EZR"),("Neh", "16", "NEH"),("Est", "17", "EST"),("Job", "18", "JOB"),("Psa", "19", "PSA"),("Pro", "20", "PRO"),("Ecc", "21", "ECC"),("Sng", "22", "SNG"),("Isa", "23", "ISA"),("Jer", "24", "JER"),("Lam", "25", "LAM"),("Ezk", "26", "EZE"),("Dan", "27", "DAN"),("Hos", "28", "HOS"),("Jol", "29", "JOL"),("Amo", "30", "AMO"),("Oba", "31", "OBA"),("Jon", "32", "JNA"),("Mic", "33", "MIC"),("Nam", "34", "NAH"),("Hab", "35", "HAB"),("Zep", "36", "ZEP"),("Hag", "37", "HAG"),("Zec", "38", "ZEC"),("Mal", "39", "MAL"),("Mat", "40", "MAT"),("Mrk", "41", "MRK"),("Luk", "42", "LUK"),("Jhn", "43", "JHN"),("Act", "44", "ACT"),("Rom", "45", "ROM"),("1Co", "46", "CO1"),("2Co", "47", "CO2"),("Gal", "48", "GAL"),("Eph", "49", "EPH"),("Php", "50", "PHP"),("Col", "51", "COL"),("1Th", "52", "TH1"),("2Th", "53", "TH2"),("1Ti", "54", "TI1"),("2Ti", "55", "TI2"),("Tit", "56", "TIT"),("Phm", "57", "PHM"),("Heb", "58", "HEB"),("Jas", "59", "JAM"),("1Pe", "60", "PE1"),("2Pe", "61", "PE2"),("1Jn", "62", "JN1"),("2Jn", "63", "JN2"),("3Jn", "64", "JN3"),("Jud", "65", "JDE"),("Rev", "66", "REV"),("EsG", "72", "ESG"),("DaG", "88", "DNG"),("Bel", "79", "BEL"),("Sus", "78", "SUS"),("Jdt", "71", "JDT"),("Man", "83", "MAN"),("Sir", "74", "SIR"),("Tob", "70", "TOB"),("Wis", "73", "WIS"),("S3Y", "77", "PAZ"),("1Es", "82", "GES"),("2Es", "86", "LES"),("LJe", "76", "LJE"),("Bar", "75", "BAR"),("1Ma", "80", "MA1"),("2Ma", "81", "MA2"),("3Ma", "85", "MA3"),("4Ma", "87", "MA4"),("Ps2", "84", "PS2"),("Frt", "67", "FRT"),("Bak", "68", "BAK"),("XXA", "69", "XXA")];
+
 // NOTE: The following perfect_hash_function maps contain the array index of the entry in the above BIBLE_BOOKS_CODES_ARRAY
-//static REFERENCE_ABBREVIATION_ARRAY: [&'static str; 257] = ["GEN","EXO","LEV","NUM","DEU","JOS","JDG","RUT","SA1","SA2","KI1","KI2","CH1","CH2","EZR","NEH","EST","JOB","PSA","PRO","ECC","SNG","ISA","JER","LAM","EZE","DAN","HOS","JOL","AMO","OBA","JNA","MIC","NAH","HAB","ZEP","HAG","ZEC","MAL","MAT","MRK","LUK","JHN","ACT","ROM","CO1","CO2","GAL","EPH","PHP","COL","TH1","TH2","TI1","TI2","TIT","PHM","HEB","JAM","PE1","PE2","JN1","JN2","JN3","JDE","REV","ESG","ESA","ESC","DNG","DNA","DNC","BEL","SUS","JDT","MAN","SIR","SIP","TOB","WIS","PAZ","GES","LES","EZA","EZ5","EZ6","RVE","VSE","LJE","BAR","LJB","BA2","LBA","LB2","BA3","BA4","JRA","PSJ","MAC","MA1","MA2","MA3","MA4","MA5","MQ1","MQ2","MQ3","PB1","PB2","PB3","PB4","PB5","PSB","PS2","PS3","PSS","LAO","ODE","PSO","PJE","WSI","COP","CO3","EUT","DOJ","JUB","ENO","EN2","REP","LBB","CL1","CL2","DID","JSA","JSB","JGA","JGB","TBS","SST","DNT","BLT","GHE","GTR","GMA","GMC","GTW","GPH","GTH","GJU","GBA","AJA","WJC","TAD","LAE","ASS","TSO","TJB","MAI","AEZ","EZT","EUP","PEU","VAM","LAR","ARI","ABL","ART","CLM","ELM","HRE","LPR","EPL","TEO","TTP","TSA","TSB","TSD","TSG","TSI","TSJ","TSY","TSL","TSN","TSR","TSS","TSZ","JJW","SHE","SHM","SHS","SHV","IGE","IGM","IGT","IGR","IGP","IGS","IGC","PCP","MPC","DIO","APC","FOP","ROE","FOQ","TAT","P4D","A2Z","EHY","A2J","H2C","CMP","APS","CAT","P1A","P1B","MOS","SAM","KGS","SMK","CHR","EZN","P12","WOM","SES","SPR","SMC","LKA","FRT","PRF","ACK","INT","TOC","GLS","CNC","TPC","IXN","IXP","MAP","IXT","BAK","OTH","WRD","WDF","HYP","STR","SEM","XXA","XXB","XXC","XXD","XXE","XXF","XXG","OBS","TST","UNK"]; // The array index matches the BIBLE_BOOKS_CODES_ARRAY index
 static REFERENCE_ABBREVIATION_MAP: phf::Map<&'static str, usize> = phf_map! { "GEN"=>0,"EXO"=>1,"LEV"=>2,"NUM"=>3,"DEU"=>4,"JOS"=>5,"JDG"=>6,"RUT"=>7,"SA1"=>8,"SA2"=>9,"KI1"=>10,"KI2"=>11,"CH1"=>12,"CH2"=>13,"EZR"=>14,"NEH"=>15,"EST"=>16,"JOB"=>17,"PSA"=>18,"PRO"=>19,"ECC"=>20,"SNG"=>21,"ISA"=>22,"JER"=>23,"LAM"=>24,"EZE"=>25,"DAN"=>26,"HOS"=>27,"JOL"=>28,"AMO"=>29,"OBA"=>30,"JNA"=>31,"MIC"=>32,"NAH"=>33,"HAB"=>34,"ZEP"=>35,"HAG"=>36,"ZEC"=>37,"MAL"=>38,"MAT"=>39,"MRK"=>40,"LUK"=>41,"JHN"=>42,"ACT"=>43,"ROM"=>44,"CO1"=>45,"CO2"=>46,"GAL"=>47,"EPH"=>48,"PHP"=>49,"COL"=>50,"TH1"=>51,"TH2"=>52,"TI1"=>53,"TI2"=>54,"TIT"=>55,"PHM"=>56,"HEB"=>57,"JAM"=>58,"PE1"=>59,"PE2"=>60,"JN1"=>61,"JN2"=>62,"JN3"=>63,"JDE"=>64,"REV"=>65,"ESG"=>66,"ESA"=>67,"ESC"=>68,"DNG"=>69,"DNA"=>70,"DNC"=>71,"BEL"=>72,"SUS"=>73,"JDT"=>74,"MAN"=>75,"SIR"=>76,"SIP"=>77,"TOB"=>78,"WIS"=>79,"PAZ"=>80,"GES"=>81,"LES"=>82,"EZA"=>83,"EZ5"=>84,"EZ6"=>85,"RVE"=>86,"VSE"=>87,"LJE"=>88,"BAR"=>89,"LJB"=>90,"BA2"=>91,"LBA"=>92,"LB2"=>93,"BA3"=>94,"BA4"=>95,"JRA"=>96,"PSJ"=>97,"MAC"=>98,"MA1"=>99,"MA2"=>100,"MA3"=>101,"MA4"=>102,"MA5"=>103,"MQ1"=>104,"MQ2"=>105,"MQ3"=>106,"PB1"=>107,"PB2"=>108,"PB3"=>109,"PB4"=>110,"PB5"=>111,"PSB"=>112,"PS2"=>113,"PS3"=>114,"PSS"=>115,"LAO"=>116,"ODE"=>117,"PSO"=>118,"PJE"=>119,"WSI"=>120,"COP"=>121,"CO3"=>122,"EUT"=>123,"DOJ"=>124,"JUB"=>125,"ENO"=>126,"EN2"=>127,"REP"=>128,"LBB"=>129,"CL1"=>130,"CL2"=>131,"DID"=>132,"JSA"=>133,"JSB"=>134,"JGA"=>135,"JGB"=>136,"TBS"=>137,"SST"=>138,"DNT"=>139,"BLT"=>140,"GHE"=>141,"GTR"=>142,"GMA"=>143,"GMC"=>144,"GTW"=>145,"GPH"=>146,"GTH"=>147,"GJU"=>148,"GBA"=>149,"AJA"=>150,"WJC"=>151,"TAD"=>152,"LAE"=>153,"ASS"=>154,"TSO"=>155,"TJB"=>156,"MAI"=>157,"AEZ"=>158,"EZT"=>159,"EUP"=>160,"PEU"=>161,"VAM"=>162,"LAR"=>163,"ARI"=>164,"ABL"=>165,"ART"=>166,"CLM"=>167,"ELM"=>168,"HRE"=>169,"LPR"=>170,"EPL"=>171,"TEO"=>172,"TTP"=>173,"TSA"=>174,"TSB"=>175,"TSD"=>176,"TSG"=>177,"TSI"=>178,"TSJ"=>179,"TSY"=>180,"TSL"=>181,"TSN"=>182,"TSR"=>183,"TSS"=>184,"TSZ"=>185,"JJW"=>186,"SHE"=>187,"SHM"=>188,"SHS"=>189,"SHV"=>190,"IGE"=>191,"IGM"=>192,"IGT"=>193,"IGR"=>194,"IGP"=>195,"IGS"=>196,"IGC"=>197,"PCP"=>198,"MPC"=>199,"DIO"=>200,"APC"=>201,"FOP"=>202,"ROE"=>203,"FOQ"=>204,"TAT"=>205,"P4D"=>206,"A2Z"=>207,"EHY"=>208,"A2J"=>209,"H2C"=>210,"CMP"=>211,"APS"=>212,"CAT"=>213,"P1A"=>214,"P1B"=>215,"MOS"=>216,"SAM"=>217,"KGS"=>218,"SMK"=>219,"CHR"=>220,"EZN"=>221,"P12"=>222,"WOM"=>223,"SES"=>224,"SPR"=>225,"SMC"=>226,"LKA"=>227,"FRT"=>228,"PRF"=>229,"ACK"=>230,"INT"=>231,"TOC"=>232,"GLS"=>233,"CNC"=>234,"TPC"=>235,"IXN"=>236,"IXP"=>237,"MAP"=>238,"IXT"=>239,"BAK"=>240,"OTH"=>241,"WRD"=>242,"WDF"=>243,"HYP"=>244,"STR"=>245,"SEM"=>246,"XXA"=>247,"XXB"=>248,"XXC"=>249,"XXD"=>250,"XXE"=>251,"XXF"=>252,"XXG"=>253,"OBS"=>254,"TST"=>255,"UNK"=>256 };
 static USFM_ABBREVIATION_MAP: phf::Map<&'static str, usize> = phf_map! { "Gen"=>0, "Exo"=>1, "Lev"=>2, "Num"=>3, "Deu"=>4, "Jos"=>5, "Jdg"=>6, "Rut"=>7, "1Sa"=>8, "2Sa"=>9, "1Ki"=>10, "2Ki"=>11, "1Ch"=>12, "2Ch"=>13, "Ezr"=>14, "Neh"=>15, "Est"=>16, "Job"=>17, "Psa"=>18, "Pro"=>19, "Ecc"=>20, "Sng"=>21, "Isa"=>22, "Jer"=>23, "Lam"=>24, "Ezk"=>25, "Dan"=>26, "Hos"=>27, "Jol"=>28, "Amo"=>29, "Oba"=>30, "Jon"=>31, "Mic"=>32, "Nam"=>33, "Hab"=>34, "Zep"=>35, "Hag"=>36, "Zec"=>37, "Mal"=>38, "Mat"=>39, "Mrk"=>40, "Luk"=>41, "Jhn"=>42, "Act"=>43, "Rom"=>44, "1Co"=>45, "2Co"=>46, "Gal"=>47, "Eph"=>48, "Php"=>49, "Col"=>50, "1Th"=>51, "2Th"=>52, "1Ti"=>53, "2Ti"=>54, "Tit"=>55, "Phm"=>56, "Heb"=>57, "Jas"=>58, "1Pe"=>59, "2Pe"=>60, "1Jn"=>61, "2Jn"=>62, "3Jn"=>63, "Jud"=>64, "Rev"=>65, "EsG"=>66, "ADE"=>67, "DaG"=>69, "Bel"=>72, "Sus"=>73, "Jdt"=>74, "Man"=>75, "Sir"=>76, "Tob"=>78, "Wis"=>79, "S3Y"=>80, "1Es"=>81, "2Es"=>82, "EzA"=>83, "5Ez"=>84, "6Ez"=>85, "LJe"=>88, "Bar"=>89, "2Ba"=>91, "LBa"=>92, "4Ba"=>95, "1Ma"=>99, "2Ma"=>100, "3Ma"=>101, "4Ma"=>102, "1Mq"=>104, "2Mq"=>105, "3Mq"=>106, "PsB"=>112, "Ps2"=>113, "Ps3"=>114, "PsS"=>115, "Lao"=>116, "Oda"=>117, "PSo"=>118, "PJe"=>119, "WSi"=>120, "CoP"=>121, "3Co"=>122, "Eut"=>123, "DoJ"=>124, "Jub"=>125, "Eno"=>126, "Rep"=>128, "1Cl"=>130, "2Cl"=>131, "Did"=>132, "JsA"=>133, "JsB"=>134, "JdA"=>135, "JdB"=>136, "TbS"=>137, "SsT"=>138, "DnT"=>139, "BlT"=>140, "She"=>187, "Frt"=>228, "Int"=>231, "Glo"=>233, "Cnc"=>234, "NDX"=>236, "TDX"=>239, "Bak"=>240, "Oth"=>241, "XXA"=>247, "XXB"=>248, "XXC"=>249, "XXD"=>250, "XXE"=>251, "XXF"=>252, "XXG"=>253, };
 static UPPERCASE_USFM_ABBREVIATION_MAP: phf::Map<&'static str, usize> = phf_map! { "GEN"=>0, "EXO"=>1, "LEV"=>2, "NUM"=>3, "DEU"=>4, "JOS"=>5, "JDG"=>6, "RUT"=>7, "1SA"=>8, "2SA"=>9, "1KI"=>10, "2KI"=>11, "1CH"=>12, "2CH"=>13, "EZR"=>14, "NEH"=>15, "EST"=>16, "JOB"=>17, "PSA"=>18, "PRO"=>19, "ECC"=>20, "SNG"=>21, "ISA"=>22, "JER"=>23, "LAM"=>24, "EZK"=>25, "DAN"=>26, "HOS"=>27, "JOL"=>28, "AMO"=>29, "OBA"=>30, "JON"=>31, "MIC"=>32, "NAM"=>33, "HAB"=>34, "ZEP"=>35, "HAG"=>36, "ZEC"=>37, "MAL"=>38, "MAT"=>39, "MRK"=>40, "LUK"=>41, "JHN"=>42, "ACT"=>43, "ROM"=>44, "1CO"=>45, "2CO"=>46, "GAL"=>47, "EPH"=>48, "PHP"=>49, "COL"=>50, "1TH"=>51, "2TH"=>52, "1TI"=>53, "2TI"=>54, "TIT"=>55, "PHM"=>56, "HEB"=>57, "JAS"=>58, "1PE"=>59, "2PE"=>60, "1JN"=>61, "2JN"=>62, "3JN"=>63, "JUD"=>64, "REV"=>65, "ESG"=>66, "ADE"=>67, "DAG"=>69, "BEL"=>72, "SUS"=>73, "JDT"=>74, "MAN"=>75, "SIR"=>76, "TOB"=>78, "WIS"=>79, "S3Y"=>80, "1ES"=>81, "2ES"=>82, "EZA"=>83, "5EZ"=>84, "6EZ"=>85, "LJE"=>88, "BAR"=>89, "2BA"=>91, "LBA"=>92, "4BA"=>95, "1MA"=>99, "2MA"=>100, "3MA"=>101, "4MA"=>102, "1MQ"=>104, "2MQ"=>105, "3MQ"=>106, "PSB"=>112, "PS2"=>113, "PS3"=>114, "PSS"=>115, "LAO"=>116, "ODA"=>117, "PSO"=>118, "PJE"=>119, "WSI"=>120, "COP"=>121, "3CO"=>122, "EUT"=>123, "DOJ"=>124, "JUB"=>125, "ENO"=>126, "REP"=>128, "1CL"=>130, "2CL"=>131, "DID"=>132, "JSA"=>133, "JSB"=>134, "JDA"=>135, "JDB"=>136, "TBS"=>137, "SST"=>138, "DNT"=>139, "BLT"=>140, "SHE"=>187, "FRT"=>228, "INT"=>231, "GLO"=>233, "CNC"=>234, "NDX"=>236, "TDX"=>239, "BAK"=>240, "OTH"=>241, "XXA"=>247, "XXB"=>248, "XXC"=>249, "XXD"=>250, "XXE"=>251, "XXF"=>252, "XXG"=>253, };
@@ -8124,93 +8113,52 @@ pub fn get_bbb_from_reference_number(reference_number: u16) -> Option<&'static s
         .map(|e| e.BOS_reference_abbreviation)
 }
 
-pub fn get_all_reference_abbreviations() -> Vec<&'static str> {
-    BIBLE_BOOKS_CODES_ARRAY.iter()
-        .map(|e| e.BOS_reference_abbreviation)
-        .collect()
+#[inline]
+pub fn get_all_reference_abbreviations() -> &'static [&'static str] {
+    ALL_REFERENCE_ABBREVIATIONS
 }
 
-pub fn get_all_osis_abbreviations() -> Vec<&'static str> {
-    BIBLE_BOOKS_CODES_ARRAY.iter()
-        .filter_map(|e| e.OSIS_abbreviation)
-        .collect()
+#[inline]
+pub fn get_all_osis_abbreviations() -> &'static [&'static str] {
+    ALL_OSIS_ABBREVIATIONS
 }
 
 pub fn get_all_usfm_abbreviations(to_upper: bool) -> Vec<CompactString> {
-    let mut result = Vec::new();
-    let mut seen = HashSet::new();
-    for e in BIBLE_BOOKS_CODES_ARRAY.iter() {
-        if let Some(pa) = e.USFM_abbreviation {
-            let val = if to_upper { 
-                CompactString::from(pa).to_uppercase() 
-            } else { 
-                CompactString::from(pa)
-            };
-            if seen.insert(val.clone()) {
-                result.push(val);
-            }
-        }
+    if to_upper {
+        ALL_USFM_ABBREVIATIONS.iter()
+            .map(|&s| CompactString::from(s).to_uppercase())
+            .collect()
+    } else {
+        ALL_USFM_ABBREVIATIONS.iter()
+            .map(|&s| CompactString::from(s))
+            .collect()
     }
-    result
 }
 
-pub fn get_all_usfm_books_code_number_triples() -> Vec<(&'static str, &'static str, &'static str)> {
-    let mut result = Vec::new();
-    let mut found = Vec::new();
-    for e in BIBLE_BOOKS_CODES_ARRAY.iter() {
-        if let (Some(pa), Some(pn)) = (e.USFM_abbreviation, e.USFM_number_str) {
-            if !found.contains(&pa) {
-                result.push((pa, pn, e.BOS_reference_abbreviation));
-                found.push(pa);
-            }
-        }
-    }
-    result
+#[inline]
+pub fn get_all_usfm_books_code_number_triples() -> &'static [(&'static str, &'static str, &'static str)] {
+    USFM_CODE_NUMBER_TRIPLES
 }
 
-pub fn get_all_usx_books_code_number_triples() -> Vec<(&'static str, &'static str, &'static str)> {
-    let mut result = Vec::new();
-    let mut found = Vec::new();
-    for e in BIBLE_BOOKS_CODES_ARRAY.iter() {
-        if let (Some(pa), Some(pn)) = (e.USFM_abbreviation, e.USX_number_str) {
-            if !found.contains(&pa) {
-                result.push((pa, pn, e.BOS_reference_abbreviation));
-                found.push(pa);
-            }
-        }
-    }
-    result
+#[inline]
+pub fn get_all_usx_books_code_number_triples() -> &'static [(&'static str, &'static str, &'static str)] {
+    USX_CODE_NUMBER_TRIPLES
 }
 
-pub fn get_all_bibledit_books_code_number_triples() -> Vec<(&'static str, &'static str, &'static str)> {
-    let mut result = Vec::new();
-    let mut found = Vec::new();
-    for e in BIBLE_BOOKS_CODES_ARRAY.iter() {
-        if let (Some(pa), Some(pn)) = (e.USFM_abbreviation, e.Bibledit_number_str) {
-            if !found.contains(&pa) {
-                result.push((pa, pn, e.BOS_reference_abbreviation));
-                found.push(pa);
-            }
-        }
-    }
-    result
+#[inline]
+pub fn get_all_bibledit_books_code_number_triples() -> &'static [(&'static str, &'static str, &'static str)] {
+    BIBLEDIT_CODE_NUMBER_TRIPLES
 }
 
 /// Return a list of BBB codes in a sequence that could be used for the print order
 /// if no further information is available.
 /// If you supply a list of books, it puts your actual book codes into the default order.
 pub fn get_sequence_list(my_list: Option<Vec<&str>>) -> Vec<&'static str> {
-    let mut entries: Vec<_> = BIBLE_BOOKS_CODES_ARRAY.iter().collect();
-    entries.sort_by_key(|e| e.BOS_sequence_number);
-    let full_sequence: Vec<&'static str> = entries.into_iter()
-        .map(|e| e.BOS_reference_abbreviation)
-        .collect();
-
     match my_list {
-        None => full_sequence,
+        None => BOS_SEQUENCE_LIST.to_vec(),
         Some(list) => {
-            let mut result = Vec::new();
-            for bbb1 in full_sequence {
+            let mut result = Vec::with_capacity(list.len());
+            for &bbb1 in BOS_SEQUENCE_LIST {
                 for bbb2 in &list {
                     if *bbb2 == bbb1 {
                         result.push(bbb1);
@@ -8375,7 +8323,7 @@ pub fn get_typical_section(reference_abbreviation: &str) -> Option<&'static str>
 /// Returns true for 116 Psalms that traditionally have a header field in the Hebrew (USFM /d field).
 /// Otherwise returns false (for the other 34, plus for other books).
 pub fn has_psalm_title(bbb: &str, c: &str) -> bool {
-    if bbb != "PSA" || c.is_empty() || !c.chars().all(|ch| ch.is_ascii_digit()) { return false; }
+    if bbb != "PSA" || c.is_empty() || !c.as_bytes().iter().all(|&ch| ch.is_ascii_digit()) { return false; }
     !matches!(c, "0"| "1"|"2"| "10"| "33"| "43"| "71"| "91"| "93"|"94"|"95"|"96"|"97"|"99"|
                  "104"|"105"|"106"|"107"| "111"|"112"|"113"|"114"|"115"|"116"|"117"|"118"|"119"| "135"|"136"|"137"| "146"|"147"|"148"|"149"|"150")
 }
@@ -8386,9 +8334,9 @@ pub fn bcv_reference_to_int(bbb: &str, c: &str, v: &str, s: Option<&str>) -> i32
     let ref_num = get_reference_number(bbb).unwrap_or(999) as i32;
     let int_c = c.parse::<i32>().unwrap_or(0);
     let int_v = v.split('-').next().unwrap_or("0").parse::<i32>().unwrap_or(0);
-    let int_s = match s.map(|val| val.to_lowercase()) {
-        Some(ref val) if val == "a" => 0,
-        Some(ref val) if val == "b" => 1,
+    let int_s = match s {
+        Some(val) if val.eq_ignore_ascii_case("a") => 0,
+        Some(val) if val.eq_ignore_ascii_case("b") => 1,
         _ => 0,
     };
 
@@ -8582,7 +8530,8 @@ pub fn osis_abbrev_to_reference_abbrev<'a>(
     if let Some(&array_index) = OSIS_ABBREVIATION_MAP.get(osis_abbreviation) {
         Ok(BIBLE_BOOKS_CODES_ARRAY[array_index].BOS_reference_abbreviation)
     } else if !strict {
-        if let Some(&array_index) = SWORD_ABBREVIATION_MAP.get(&osis_abbreviation.to_uppercase()) {
+        let uc = CompactString::from(osis_abbreviation).to_uppercase();
+        if let Some(&array_index) = SWORD_ABBREVIATION_MAP.get(uc.as_str()) {
              Ok(BIBLE_BOOKS_CODES_ARRAY[array_index].BOS_reference_abbreviation)
         } else {
             Err(LookupError::AbbrevNotFound("OSIS/Sword", osis_abbreviation))
@@ -8621,17 +8570,17 @@ pub fn short_abbrev_to_reference_abbrev<'a>(
     short_abbreviation: &'a str,
     strict: bool,
 ) -> Result<&'static str, LookupError<'a>> {
-    let uc = short_abbreviation.to_uppercase();
-    if let Some(&array_index) = SHORT_ABBREVIATION_MAP.get(&uc) {
+    let uc = CompactString::from(short_abbreviation).to_uppercase();
+    if let Some(&array_index) = SHORT_ABBREVIATION_MAP.get(uc.as_str()) {
         Ok(BIBLE_BOOKS_CODES_ARRAY[array_index].BOS_reference_abbreviation)
     } else if !strict {
         // Maybe it has a space in it?
         let no_space = uc.replace(' ', "");
-        if let Some(&array_index) = SHORT_ABBREVIATION_MAP.get(&no_space) {
+        if let Some(&array_index) = SHORT_ABBREVIATION_MAP.get(no_space.as_str()) {
             Ok(BIBLE_BOOKS_CODES_ARRAY[array_index].BOS_reference_abbreviation)
-        } else if let Some(&array_index) = SBL_ABBREVIATION_MAP.get(&uc) {
+        } else if let Some(&array_index) = SBL_ABBREVIATION_MAP.get(uc.as_str()) {
             Ok(BIBLE_BOOKS_CODES_ARRAY[array_index].BOS_reference_abbreviation)
-        } else if let Some(&array_index) = NET_BIBLE_ABBREVIATION_MAP.get(&uc) {
+        } else if let Some(&array_index) = NET_BIBLE_ABBREVIATION_MAP.get(uc.as_str()) {
             Ok(BIBLE_BOOKS_CODES_ARRAY[array_index].BOS_reference_abbreviation)
         } else {
              Err(LookupError::AbbrevNotFound("Short/SBL/NET", short_abbreviation))
@@ -8645,7 +8594,8 @@ pub fn short_abbrev_to_reference_abbrev<'a>(
 pub fn sbl_abbrev_to_reference_abbrev<'a>(
     sbl_abbreviation: &'a str,
 ) -> Result<&'static str, LookupError<'a>> {
-    if let Some(&array_index) = SBL_ABBREVIATION_MAP.get(&sbl_abbreviation.to_uppercase()) {
+    let uc = CompactString::from(sbl_abbreviation).to_uppercase();
+    if let Some(&array_index) = SBL_ABBREVIATION_MAP.get(uc.as_str()) {
         Ok(BIBLE_BOOKS_CODES_ARRAY[array_index].BOS_reference_abbreviation)
     } else {
         Err(LookupError::AbbrevNotFound("SBL", sbl_abbreviation))
@@ -8656,7 +8606,8 @@ pub fn sbl_abbrev_to_reference_abbrev<'a>(
 pub fn net_bible_abbrev_to_reference_abbrev<'a>(
     net_bible_abbreviation: &'a str,
 ) -> Result<&'static str, LookupError<'a>> {
-    if let Some(&array_index) = NET_BIBLE_ABBREVIATION_MAP.get(&net_bible_abbreviation.to_uppercase()) {
+    let uc = CompactString::from(net_bible_abbreviation).to_uppercase();
+    if let Some(&array_index) = NET_BIBLE_ABBREVIATION_MAP.get(uc.as_str()) {
         Ok(BIBLE_BOOKS_CODES_ARRAY[array_index].BOS_reference_abbreviation)
     } else {
         Err(LookupError::AbbrevNotFound("NET", net_bible_abbreviation))
@@ -8805,13 +8756,33 @@ mod tests {
         
         assert!(gen1_1 < gen1_2);
         assert!(gen1_2 < exo1_1);
-        
+     
         let psa119_1 = bcv_reference_to_int("PSA", "119", "1", None);
         let psa119_1a = bcv_reference_to_int("PSA", "119", "1", Some("a"));
         let psa119_1b = bcv_reference_to_int("PSA", "119", "1", Some("b"));
-        
+     
         assert_eq!(psa119_1, psa119_1a);
         assert!(psa119_1a < psa119_1b);
+    }
+    
+    #[test]
+    fn test_tidy_bbb() {
+        // Defaults: title_case=false, allow_four_chars=true, insert_char=""
+        assert_eq!(tidy_bbb("SA1", false, true, ""), "1SAM");
+        assert_eq!(tidy_bbb("SA1", true, true, ""), "1Sam");
+        assert_eq!(tidy_bbb("SA1", true, false, ""), "1Sa");
+        assert_eq!(tidy_bbb("SA1", true, true, "-"), "1-Sam");
+        assert_eq!(tidy_bbb("SA1", true, true, " "), "1 Sam");
+        assert_eq!(tidy_bbb("SA1", false, false, "-"), "1-SA");
+
+        // Check standard 3-char codes
+        assert_eq!(tidy_bbb("GEN", false, true, ""), "GEN");
+        assert_eq!(tidy_bbb("GEN", true, true, ""), "Gen");
+
+        // Check 4-char specific mappings
+        assert_eq!(tidy_bbb("RUT", false, true, ""), "RUTH");
+        assert_eq!(tidy_bbb("RUT", true, true, ""), "Ruth");
+        assert_eq!(tidy_bbb("RUT", true, false, ""), "Rut");
     }
 
     #[test]
@@ -8899,16 +8870,6 @@ mod tests {
         // nr stands for "Not Recommended" (because ideally the proper versification functions should be used instead)
         assert_eq!(get_english_name_nr("GEN"), Some("Genesis"));
         assert_eq!(get_english_name_list_nr("GEN"), vec!["Genesis", "1 Moses"]);
-    }
-
-    #[test]
-    fn test_tidy_bbb() {
-        assert_eq!(tidy_bbb("SA1", false, true, ""), "1SAM");
-        assert_eq!(tidy_bbb("SA1", true, true, ""), "1Sam");
-        assert_eq!(tidy_bbb("SA1", true, true, " "), "1 Sam");
-        assert_eq!(tidy_bbb("GEN", true, true, ""), "Gen");
-        assert_eq!(tidy_bbb("RUT", true, true, ""), "Ruth");
-        assert_eq!(tidy_bbb("SA1", false, false, "-"), "1-SA");
     }
 
     #[test]

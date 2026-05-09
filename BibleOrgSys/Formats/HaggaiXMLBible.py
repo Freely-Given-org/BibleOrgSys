@@ -461,7 +461,7 @@ class HaggaiXMLBible( Bible ):
                 bookShortName = value
             else: logging.warning( f"Unprocessed {value!r} attribute ({attrib}) in book element" )
         if bookNumber:
-            try: BBB = bos_books_codes_py.get_bbb_from_reference_number_py( bookNumber )
+            try: BBB = bos_books_codes_py.get_bbb_from_reference_number( bookNumber )
             except KeyError:
                 logging.warning( f"Unable to deduce which book is number={bookNumber}, name={bookName}, shortName={bookShortName} -- ignoring it" )
         elif bookName:

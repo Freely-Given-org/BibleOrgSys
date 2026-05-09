@@ -33,7 +33,6 @@ import sys
 
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
-from BibleOrgSys.Reference import BibleBooksCodes
 from BibleOrgSys.Reference import BibleOrganisationalSystems
 from BibleOrgSys.Reference import BibleReferences
 

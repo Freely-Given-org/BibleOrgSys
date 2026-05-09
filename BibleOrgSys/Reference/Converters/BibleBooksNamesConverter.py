@@ -278,7 +278,7 @@ class BibleBooksNamesConverter:
 
         if bookList is not None:
             for BBB in bookList: # Just check this list is valid
-                if not bos_books_codes_py.is_valid_reference_abbreviation_py( BBB ): logging.error( f"Invalid {BBB!r} in booklist requested for expansion" )
+                if not bos_books_codes_py.is_valid_reference_abbreviation( BBB ): logging.error( f"Invalid {BBB!r} in booklist requested for expansion" )
 
         vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Expanding input abbreviations…" )
         for systemName in self.__BookNamesSystemsDict:
@@ -321,7 +321,7 @@ class BibleBooksNamesConverter:
                     includedBooks = []
                     for subelement in element.findall("includesBook"):
                         BBB = subelement.text
-                        if not bos_books_codes_py.is_valid_reference_abbreviation_py( BBB ):
+                        if not bos_books_codes_py.is_valid_reference_abbreviation( BBB ):
                             logging.error( f"Unrecognized {BBB!r} book abbreviation in BibleDivisionNames in {booksNamesSystemCode!r} booksNames system" )
                         if BBB in includedBooks:
                             logging.error( f"Duplicate {subelement.text!r} entry in includesBook field for {defaultName!r} division in {booksNamesSystemCode!r} booksNames system" )
@@ -338,7 +338,7 @@ class BibleBooksNamesConverter:
                     myBooknameLeadersDict[standardLeader+' '] = inputFields
                 elif element.tag == "BibleBookNames":
                     referenceAbbreviation = element.get("referenceAbbreviation")
-                    if not bos_books_codes_py.is_valid_reference_abbreviation_py( referenceAbbreviation ):
+                    if not bos_books_codes_py.is_valid_reference_abbreviation( referenceAbbreviation ):
                         logging.error( f"Unrecognized {referenceAbbreviation!r} book abbreviation in BibleBookNames in {booksNamesSystemCode!r} booksNames system" )
                     defaultName = element.find("defaultName").text
                     defaultAbbreviation = element.find("defaultAbbreviation").text

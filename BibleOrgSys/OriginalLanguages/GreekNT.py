@@ -406,7 +406,7 @@ class GreekNT( Bible ):
         #assert len(reference) == 3 # BBB,C,V
         #BBB, chapterString, verseString = reference
         #assert isinstance(BBB,str) and len(BBB)==3
-        #assert bos_books_codes_py.is_valid_reference_abbreviation_py( BBB )
+        #assert bos_books_codes_py.is_valid_reference_abbreviation( BBB )
         #assert isinstance( chapterString, str )
         #assert isinstance( verseString, str )
         #data = []

@@ -339,7 +339,7 @@ class USXXMLBible( Bible ):
                             #if line.startswith( '\\id ' ):
                                 #USXId = line[4:].strip()[:3] # Take the first three non-blank characters after the space after id
                                 #dPrint( 'Info', DEBUGGING_THIS_MODULE, f"Have possible USX ID {USXId!r}" )
-                                #BBB = bos_books_codes_py.usfm_abbrev_to_reference_abbrev_py( USXId )
+                                #BBB = bos_books_codes_py.usfm_abbrev_to_reference_abbrev( USXId )
                                 #dPrint( 'Info', DEBUGGING_THIS_MODULE, f"BBB is {BBB!r}" )
                                 #isUSX = True
                             #break # We only look at the first line
@@ -392,7 +392,7 @@ def makeRefs( BBB:str, C:str, V:str, BRL, text:str ) -> str:
         if match:  # e.g., Jos 3:4-4:5
             #dPrint( 'Info', DEBUGGING_THIS_MODULE, f"MatchA '{match.group(1)}' '{match.group(2)}' '{match.group(3)}' '{match.group(4)}'")
             currentBBB = BRL.getBBBFromText( match.group(2) )
-            USFMBookCode = bos_books_codes_py.usfm_abbrev_to_reference_abbrev_py( currentBBB ).upper()
+            USFMBookCode = bos_books_codes_py.usfm_abbrev_to_reference_abbrev( currentBBB ).upper()
             if USFMBookCode:
                 bitResult = f'{match.group(1)}<ref loc="{USFMBookCode} {match.group(3).replace("–","-")}">{match.group(2)} {match.group(3)}</ref>{match.group(4)}'
         else:
@@ -400,7 +400,7 @@ def makeRefs( BBB:str, C:str, V:str, BRL, text:str ) -> str:
             if match: # e.g., Jos 3:4-7,12
                 #dPrint( 'Info', DEBUGGING_THIS_MODULE, f"MatchB '{match.group(1)}' '{match.group(2)}' '{match.group(3)}' '{match.group(4)}' '{match.group(5)}' '{match.group(6)}' '{match.group(7)}' '{match.group(8)}' '{match.group(9)}'")
                 currentBBB = BRL.getBBBFromText( match.group(2) )
-                USFMBookCode = bos_books_codes_py.usfm_abbrev_to_reference_abbrev_py( currentBBB ).upper()
+                USFMBookCode = bos_books_codes_py.usfm_abbrev_to_reference_abbrev( currentBBB ).upper()
                 if USFMBookCode:
                     bitResult = f'{match.group(1)}<ref loc="{USFMBookCode} {match.group(3)}:{match.group(4)}{match.group(5).replace("–","-")}{match.group(6)}">{match.group(2)} {match.group(3)}:{match.group(4)}{match.group(5)}{match.group(6)}</ref>{match.group(7)}<ref loc="{USFMBookCode} {match.group(3)}:{match.group(8)}">{match.group(8)}</ref>{match.group(9)}'
             else:
@@ -408,7 +408,7 @@ def makeRefs( BBB:str, C:str, V:str, BRL, text:str ) -> str:
                 if match: # e.g., Jos 3:4-7
                     #dPrint( 'Info', DEBUGGING_THIS_MODULE, f"MatchC '{match.group(1)}' '{match.group(2)}' '{match.group(3)}' '{match.group(4)}'")
                     currentBBB = BRL.getBBBFromText( match.group(2) )
-                    USFMBookCode = bos_books_codes_py.usfm_abbrev_to_reference_abbrev_py( currentBBB ).upper()
+                    USFMBookCode = bos_books_codes_py.usfm_abbrev_to_reference_abbrev( currentBBB ).upper()
                     if USFMBookCode:
                         bitResult = f'{match.group(1)}<ref loc="{USFMBookCode} {match.group(3).replace("–","-")}">{match.group(2)} {match.group(3)}</ref>{match.group(4)}'
                 else:
@@ -416,7 +416,7 @@ def makeRefs( BBB:str, C:str, V:str, BRL, text:str ) -> str:
                     if match: # e.g., Jos 3:4,9
                         #dPrint( 'Info', DEBUGGING_THIS_MODULE, f"MatchD '{match.group(1)}' '{match.group(2)}' '{match.group(3)}':'{match.group(4)}' '{match.group(5)}' '{match.group(6)}' '{match.group(7)}'")
                         currentBBB = BRL.getBBBFromText( match.group(2) )
-                        USFMBookCode = bos_books_codes_py.usfm_abbrev_to_reference_abbrev_py( currentBBB ).upper()
+                        USFMBookCode = bos_books_codes_py.usfm_abbrev_to_reference_abbrev( currentBBB ).upper()
                         if USFMBookCode:
                             bitResult = f'{match.group(1)}<ref loc="{USFMBookCode} {match.group(3)}:{match.group(4)}">{match.group(2)} {match.group(3)}:{match.group(4)}</ref>{match.group(5)}<ref loc="{USFMBookCode} {match.group(3)}:{match.group(6)}">{match.group(6)}</ref>{match.group(7)}'
                     else:
@@ -424,7 +424,7 @@ def makeRefs( BBB:str, C:str, V:str, BRL, text:str ) -> str:
                         if match: # e.g., Jos 3:4
                             #dPrint( 'Info', DEBUGGING_THIS_MODULE, f"MatchE '{match.group(1)}' '{match.group(2)}' '{match.group(3)}' '{match.group(4)}'")
                             currentBBB = BRL.getBBBFromText( match.group(2) )
-                            USFMBookCode = bos_books_codes_py.usfm_abbrev_to_reference_abbrev_py( currentBBB ).upper()
+                            USFMBookCode = bos_books_codes_py.usfm_abbrev_to_reference_abbrev( currentBBB ).upper()
                             if USFMBookCode:
                                 bitResult = f'{match.group(1)}<ref loc="{USFMBookCode} {match.group(3)}">{match.group(2)} {match.group(3)}</ref>{match.group(4)}'
                         else:
@@ -434,35 +434,35 @@ def makeRefs( BBB:str, C:str, V:str, BRL, text:str ) -> str:
                                 currentBBB = BRL.getBBBFromText( match.group(2) )
                                 #dPrint( 'Info', DEBUGGING_THIS_MODULE, currentBBB )
                                 assert bos_books_codes_py.is_single_chapter_book( currentBBB )
-                                USFMBookCode = bos_books_codes_py.usfm_abbrev_to_reference_abbrev_py( currentBBB ).upper()
+                                USFMBookCode = bos_books_codes_py.usfm_abbrev_to_reference_abbrev( currentBBB ).upper()
                                 if USFMBookCode:
                                     bitResult = f'{match.group(1)}<ref loc="{USFMBookCode} {match.group(3)}">{match.group(2)} {match.group(3)}</ref>{match.group(4)}'
                             else:
                                 match = re.match( rf'(\s*)({CV_RE}[-–]{CV_RE})(\s*\.?)$', bit )
                                 if match: # e.g., 1:2-3:4
                                     #dPrint( 'Info', DEBUGGING_THIS_MODULE, f"MatchAA '{match.group(1)}' '{match.group(2)}' '{match.group(3)}'")
-                                    USFMBookCode = bos_books_codes_py.usfm_abbrev_to_reference_abbrev_py( currentBBB ).upper()
+                                    USFMBookCode = bos_books_codes_py.usfm_abbrev_to_reference_abbrev( currentBBB ).upper()
                                     if USFMBookCode:
                                         bitResult = f'{match.group(1)}<ref loc="{USFMBookCode} {match.group(2).replace("–","-")}">{match.group(2)}</ref>{match.group(3)}'
                                 else:
                                     match = re.match( rf'(\s*)({CV_RE}[-–]{CorV_RE})(\s*\.?)$', bit )
                                     if match: # e.g., 1:2-6
                                         #dPrint( 'Info', DEBUGGING_THIS_MODULE, f"MatchBB '{match.group(1)}' '{match.group(2)}' '{match.group(3)}'")
-                                        USFMBookCode = bos_books_codes_py.usfm_abbrev_to_reference_abbrev_py( currentBBB ).upper()
+                                        USFMBookCode = bos_books_codes_py.usfm_abbrev_to_reference_abbrev( currentBBB ).upper()
                                         if USFMBookCode:
                                             bitResult = f'{match.group(1)}<ref loc="{USFMBookCode} {match.group(2).replace("–","-")}">{match.group(2)}</ref>{match.group(3)}'
                                     else:
                                         match = re.match( rf'(\s*)({CorV_RE}):({CorV_RE})(, ?)({CorV_RE})(\s*\.?)$', bit )
                                         if match: # e.g., 3:5,9
                                             #dPrint( 'Info', DEBUGGING_THIS_MODULE, f"MatchCC '{match.group(1)}' '{match.group(2)}' '{match.group(3)}' '{match.group(4)}' '{match.group(5)}' '{match.group(6)}'")
-                                            USFMBookCode = bos_books_codes_py.usfm_abbrev_to_reference_abbrev_py( currentBBB ).upper()
+                                            USFMBookCode = bos_books_codes_py.usfm_abbrev_to_reference_abbrev( currentBBB ).upper()
                                             if USFMBookCode:
                                                 bitResult = f'{match.group(1)}<ref loc="{USFMBookCode} {match.group(2)}:{match.group(3)}">{match.group(2)}:{match.group(3)}</ref>{match.group(4)}<ref loc="{USFMBookCode} {match.group(2)}:{match.group(5)}">{match.group(5)}</ref>{match.group(6)}'
                                         else:
                                             match = re.match( rf'(\s*)({CV_RE})(\s*\.?)$', bit )
                                             if match: # e.g., 3:5
                                                 #dPrint( 'Info', DEBUGGING_THIS_MODULE, f"MatchDD '{match.group(1)}' '{match.group(2)}' '{match.group(3)}'")
-                                                USFMBookCode = bos_books_codes_py.usfm_abbrev_to_reference_abbrev_py( currentBBB ).upper()
+                                                USFMBookCode = bos_books_codes_py.usfm_abbrev_to_reference_abbrev( currentBBB ).upper()
                                                 if USFMBookCode:
                                                     bitResult = f'{match.group(1)}<ref loc="{USFMBookCode} {match.group(2)}">{match.group(2)}</ref>{match.group(3)}'
                                             else: logging.critical( f"toUSX makeRefs unable to parse {BBB} {C}:{V} '{bit}'")
@@ -893,8 +893,8 @@ def createUSXXMLBible( self, outputFolderpath:Path|str, controlDict, validationS
 
 
         # Main code for writeUSXBook
-        USXAbbrev = bos_books_codes_py.reference_abbrev_to_usfm_abbrev_py( BBB ).upper()
-        USXNumber = bos_books_codes_py.get_usx_num_str_py( BBB )
+        USXAbbrev = bos_books_codes_py.reference_abbrev_to_usfm_abbrev( BBB ).upper()
+        USXNumber = bos_books_codes_py.get_usx_num_str( BBB )
         if not USXAbbrev:
             logger.error( f"toUSXXML: Can't write {BBB} USX book because no USFM code available" )
             unhandledBooks.append( BBB )

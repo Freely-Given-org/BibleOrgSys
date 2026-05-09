@@ -1,0 +1,13 @@
+[package]
+name = "usfm_markers_py"
+version = "0.1.0"
+edition.workspace = true
+
+[lib]
+name = "usfm_markers_py"
+crate-type = ["cdylib"]
+
+[dependencies]
+pyo3.workspace = true
+usfm_markers = { path = "../usfm_markers" }
+compact_str.workspace = true

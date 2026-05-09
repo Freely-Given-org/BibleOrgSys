@@ -16,7 +16,7 @@ use std::fmt;
 
 use phf::phf_map;
 use compact_str::{CompactString, format_compact};
-use std::collections::HashSet;
+// use std::collections::HashSet;
 
 //STATIC_STRUCTS_GO_HERE
 
@@ -73,93 +73,52 @@ pub fn get_bbb_from_reference_number(reference_number: u16) -> Option<&'static s
         .map(|e| e.BOS_reference_abbreviation)
 }
 
-pub fn get_all_reference_abbreviations() -> Vec<&'static str> {
-    BIBLE_BOOKS_CODES_ARRAY.iter()
-        .map(|e| e.BOS_reference_abbreviation)
-        .collect()
+#[inline]
+pub fn get_all_reference_abbreviations() -> &'static [&'static str] {
+    ALL_REFERENCE_ABBREVIATIONS
 }
 
-pub fn get_all_osis_abbreviations() -> Vec<&'static str> {
-    BIBLE_BOOKS_CODES_ARRAY.iter()
-        .filter_map(|e| e.OSIS_abbreviation)
-        .collect()
+#[inline]
+pub fn get_all_osis_abbreviations() -> &'static [&'static str] {
+    ALL_OSIS_ABBREVIATIONS
 }
 
 pub fn get_all_usfm_abbreviations(to_upper: bool) -> Vec<CompactString> {
-    let mut result = Vec::new();
-    let mut seen = HashSet::new();
-    for e in BIBLE_BOOKS_CODES_ARRAY.iter() {
-        if let Some(pa) = e.USFM_abbreviation {
-            let val = if to_upper { 
-                CompactString::from(pa).to_uppercase() 
-            } else { 
-                CompactString::from(pa)
-            };
-            if seen.insert(val.clone()) {
-                result.push(val);
-            }
-        }
+    if to_upper {
+        ALL_USFM_ABBREVIATIONS.iter()
+            .map(|&s| CompactString::from(s).to_uppercase())
+            .collect()
+    } else {
+        ALL_USFM_ABBREVIATIONS.iter()
+            .map(|&s| CompactString::from(s))
+            .collect()
     }
-    result
 }
 
-pub fn get_all_usfm_books_code_number_triples() -> Vec<(&'static str, &'static str, &'static str)> {
-    let mut result = Vec::new();
-    let mut found = Vec::new();
-    for e in BIBLE_BOOKS_CODES_ARRAY.iter() {
-        if let (Some(pa), Some(pn)) = (e.USFM_abbreviation, e.USFM_number_str) {
-            if !found.contains(&pa) {
-                result.push((pa, pn, e.BOS_reference_abbreviation));
-                found.push(pa);
-            }
-        }
-    }
-    result
+#[inline]
+pub fn get_all_usfm_books_code_number_triples() -> &'static [(&'static str, &'static str, &'static str)] {
+    USFM_CODE_NUMBER_TRIPLES
 }
 
-pub fn get_all_usx_books_code_number_triples() -> Vec<(&'static str, &'static str, &'static str)> {
-    let mut result = Vec::new();
-    let mut found = Vec::new();
-    for e in BIBLE_BOOKS_CODES_ARRAY.iter() {
-        if let (Some(pa), Some(pn)) = (e.USFM_abbreviation, e.USX_number_str) {
-            if !found.contains(&pa) {
-                result.push((pa, pn, e.BOS_reference_abbreviation));
-                found.push(pa);
-            }
-        }
-    }
-    result
+#[inline]
+pub fn get_all_usx_books_code_number_triples() -> &'static [(&'static str, &'static str, &'static str)] {
+    USX_CODE_NUMBER_TRIPLES
 }
 
-pub fn get_all_bibledit_books_code_number_triples() -> Vec<(&'static str, &'static str, &'static str)> {
-    let mut result = Vec::new();
-    let mut found = Vec::new();
-    for e in BIBLE_BOOKS_CODES_ARRAY.iter() {
-        if let (Some(pa), Some(pn)) = (e.USFM_abbreviation, e.Bibledit_number_str) {
-            if !found.contains(&pa) {
-                result.push((pa, pn, e.BOS_reference_abbreviation));
-                found.push(pa);
-            }
-        }
-    }
-    result
+#[inline]
+pub fn get_all_bibledit_books_code_number_triples() -> &'static [(&'static str, &'static str, &'static str)] {
+    BIBLEDIT_CODE_NUMBER_TRIPLES
 }
 
 /// Return a list of BBB codes in a sequence that could be used for the print order
 /// if no further information is available.
 /// If you supply a list of books, it puts your actual book codes into the default order.
 pub fn get_sequence_list(my_list: Option<Vec<&str>>) -> Vec<&'static str> {
-    let mut entries: Vec<_> = BIBLE_BOOKS_CODES_ARRAY.iter().collect();
-    entries.sort_by_key(|e| e.BOS_sequence_number);
-    let full_sequence: Vec<&'static str> = entries.into_iter()
-        .map(|e| e.BOS_reference_abbreviation)
-        .collect();
-
     match my_list {
-        None => full_sequence,
+        None => BOS_SEQUENCE_LIST.to_vec(),
         Some(list) => {
-            let mut result = Vec::new();
-            for bbb1 in full_sequence {
+            let mut result = Vec::with_capacity(list.len());
+            for &bbb1 in BOS_SEQUENCE_LIST {
                 for bbb2 in &list {
                     if *bbb2 == bbb1 {
                         result.push(bbb1);
@@ -324,7 +283,7 @@ pub fn get_typical_section(reference_abbreviation: &str) -> Option<&'static str>
 /// Returns true for 116 Psalms that traditionally have a header field in the Hebrew (USFM /d field).
 /// Otherwise returns false (for the other 34, plus for other books).
 pub fn has_psalm_title(bbb: &str, c: &str) -> bool {
-    if bbb != "PSA" || c.is_empty() || !c.chars().all(|ch| ch.is_ascii_digit()) { return false; }
+    if bbb != "PSA" || c.is_empty() || !c.as_bytes().iter().all(|&ch| ch.is_ascii_digit()) { return false; }
     !matches!(c, "0"| "1"|"2"| "10"| "33"| "43"| "71"| "91"| "93"|"94"|"95"|"96"|"97"|"99"|
                  "104"|"105"|"106"|"107"| "111"|"112"|"113"|"114"|"115"|"116"|"117"|"118"|"119"| "135"|"136"|"137"| "146"|"147"|"148"|"149"|"150")
 }
@@ -335,9 +294,9 @@ pub fn bcv_reference_to_int(bbb: &str, c: &str, v: &str, s: Option<&str>) -> i32
     let ref_num = get_reference_number(bbb).unwrap_or(999) as i32;
     let int_c = c.parse::<i32>().unwrap_or(0);
     let int_v = v.split('-').next().unwrap_or("0").parse::<i32>().unwrap_or(0);
-    let int_s = match s.map(|val| val.to_lowercase()) {
-        Some(ref val) if val == "a" => 0,
-        Some(ref val) if val == "b" => 1,
+    let int_s = match s {
+        Some(val) if val.eq_ignore_ascii_case("a") => 0,
+        Some(val) if val.eq_ignore_ascii_case("b") => 1,
         _ => 0,
     };
 
@@ -531,7 +490,8 @@ pub fn osis_abbrev_to_reference_abbrev<'a>(
     if let Some(&array_index) = OSIS_ABBREVIATION_MAP.get(osis_abbreviation) {
         Ok(BIBLE_BOOKS_CODES_ARRAY[array_index].BOS_reference_abbreviation)
     } else if !strict {
-        if let Some(&array_index) = SWORD_ABBREVIATION_MAP.get(&osis_abbreviation.to_uppercase()) {
+        let uc = CompactString::from(osis_abbreviation).to_uppercase();
+        if let Some(&array_index) = SWORD_ABBREVIATION_MAP.get(uc.as_str()) {
              Ok(BIBLE_BOOKS_CODES_ARRAY[array_index].BOS_reference_abbreviation)
         } else {
             Err(LookupError::AbbrevNotFound("OSIS/Sword", osis_abbreviation))
@@ -570,17 +530,17 @@ pub fn short_abbrev_to_reference_abbrev<'a>(
     short_abbreviation: &'a str,
     strict: bool,
 ) -> Result<&'static str, LookupError<'a>> {
-    let uc = short_abbreviation.to_uppercase();
-    if let Some(&array_index) = SHORT_ABBREVIATION_MAP.get(&uc) {
+    let uc = CompactString::from(short_abbreviation).to_uppercase();
+    if let Some(&array_index) = SHORT_ABBREVIATION_MAP.get(uc.as_str()) {
         Ok(BIBLE_BOOKS_CODES_ARRAY[array_index].BOS_reference_abbreviation)
     } else if !strict {
         // Maybe it has a space in it?
         let no_space = uc.replace(' ', "");
-        if let Some(&array_index) = SHORT_ABBREVIATION_MAP.get(&no_space) {
+        if let Some(&array_index) = SHORT_ABBREVIATION_MAP.get(no_space.as_str()) {
             Ok(BIBLE_BOOKS_CODES_ARRAY[array_index].BOS_reference_abbreviation)
-        } else if let Some(&array_index) = SBL_ABBREVIATION_MAP.get(&uc) {
+        } else if let Some(&array_index) = SBL_ABBREVIATION_MAP.get(uc.as_str()) {
             Ok(BIBLE_BOOKS_CODES_ARRAY[array_index].BOS_reference_abbreviation)
-        } else if let Some(&array_index) = NET_BIBLE_ABBREVIATION_MAP.get(&uc) {
+        } else if let Some(&array_index) = NET_BIBLE_ABBREVIATION_MAP.get(uc.as_str()) {
             Ok(BIBLE_BOOKS_CODES_ARRAY[array_index].BOS_reference_abbreviation)
         } else {
              Err(LookupError::AbbrevNotFound("Short/SBL/NET", short_abbreviation))
@@ -594,7 +554,8 @@ pub fn short_abbrev_to_reference_abbrev<'a>(
 pub fn sbl_abbrev_to_reference_abbrev<'a>(
     sbl_abbreviation: &'a str,
 ) -> Result<&'static str, LookupError<'a>> {
-    if let Some(&array_index) = SBL_ABBREVIATION_MAP.get(&sbl_abbreviation.to_uppercase()) {
+    let uc = CompactString::from(sbl_abbreviation).to_uppercase();
+    if let Some(&array_index) = SBL_ABBREVIATION_MAP.get(uc.as_str()) {
         Ok(BIBLE_BOOKS_CODES_ARRAY[array_index].BOS_reference_abbreviation)
     } else {
         Err(LookupError::AbbrevNotFound("SBL", sbl_abbreviation))
@@ -605,7 +566,8 @@ pub fn sbl_abbrev_to_reference_abbrev<'a>(
 pub fn net_bible_abbrev_to_reference_abbrev<'a>(
     net_bible_abbreviation: &'a str,
 ) -> Result<&'static str, LookupError<'a>> {
-    if let Some(&array_index) = NET_BIBLE_ABBREVIATION_MAP.get(&net_bible_abbreviation.to_uppercase()) {
+    let uc = CompactString::from(net_bible_abbreviation).to_uppercase();
+    if let Some(&array_index) = NET_BIBLE_ABBREVIATION_MAP.get(uc.as_str()) {
         Ok(BIBLE_BOOKS_CODES_ARRAY[array_index].BOS_reference_abbreviation)
     } else {
         Err(LookupError::AbbrevNotFound("NET", net_bible_abbreviation))
@@ -754,13 +716,33 @@ mod tests {
         
         assert!(gen1_1 < gen1_2);
         assert!(gen1_2 < exo1_1);
-        
+     
         let psa119_1 = bcv_reference_to_int("PSA", "119", "1", None);
         let psa119_1a = bcv_reference_to_int("PSA", "119", "1", Some("a"));
         let psa119_1b = bcv_reference_to_int("PSA", "119", "1", Some("b"));
-        
+     
         assert_eq!(psa119_1, psa119_1a);
         assert!(psa119_1a < psa119_1b);
+    }
+    
+    #[test]
+    fn test_tidy_bbb() {
+        // Defaults: title_case=false, allow_four_chars=true, insert_char=""
+        assert_eq!(tidy_bbb("SA1", false, true, ""), "1SAM");
+        assert_eq!(tidy_bbb("SA1", true, true, ""), "1Sam");
+        assert_eq!(tidy_bbb("SA1", true, false, ""), "1Sa");
+        assert_eq!(tidy_bbb("SA1", true, true, "-"), "1-Sam");
+        assert_eq!(tidy_bbb("SA1", true, true, " "), "1 Sam");
+        assert_eq!(tidy_bbb("SA1", false, false, "-"), "1-SA");
+
+        // Check standard 3-char codes
+        assert_eq!(tidy_bbb("GEN", false, true, ""), "GEN");
+        assert_eq!(tidy_bbb("GEN", true, true, ""), "Gen");
+
+        // Check 4-char specific mappings
+        assert_eq!(tidy_bbb("RUT", false, true, ""), "RUTH");
+        assert_eq!(tidy_bbb("RUT", true, true, ""), "Ruth");
+        assert_eq!(tidy_bbb("RUT", true, false, ""), "Rut");
     }
 
     #[test]
@@ -848,16 +830,6 @@ mod tests {
         // nr stands for "Not Recommended" (because ideally the proper versification functions should be used instead)
         assert_eq!(get_english_name_nr("GEN"), Some("Genesis"));
         assert_eq!(get_english_name_list_nr("GEN"), vec!["Genesis", "1 Moses"]);
-    }
-
-    #[test]
-    fn test_tidy_bbb() {
-        assert_eq!(tidy_bbb("SA1", false, true, ""), "1SAM");
-        assert_eq!(tidy_bbb("SA1", true, true, ""), "1Sam");
-        assert_eq!(tidy_bbb("SA1", true, true, " "), "1 Sam");
-        assert_eq!(tidy_bbb("GEN", true, true, ""), "Gen");
-        assert_eq!(tidy_bbb("RUT", true, true, ""), "Ruth");
-        assert_eq!(tidy_bbb("SA1", false, false, "-"), "1-SA");
     }
 
     #[test]

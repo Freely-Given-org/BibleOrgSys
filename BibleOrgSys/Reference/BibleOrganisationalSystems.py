@@ -473,7 +473,7 @@ class BibleOrganisationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
         if self.containsBook( BBB ): return BBB
         # else
         # temp …. needs a try/except
-        return bos_books_codes_py.get_possible_alternative_books_py( BBB )[0]
+        return bos_books_codes_py.get_possible_alternative_books( BBB )[0]
     # end of BibleOrganisationalSystem.getAlternativeBBBIfNecessary
 
 
@@ -494,7 +494,7 @@ class BibleOrganisationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
         try: bookVersesList = BibleVersificationSystem.getNumVersesList( self, BBB )
         except KeyError: # BBB doesn't exist in this BOS -- try an alternative
             # Next line will raise an error if no alternatives (coz returns None)
-            for altBBB in bos_books_codes_py.get_possible_alternative_books_py( BBB ):
+            for altBBB in bos_books_codes_py.get_possible_alternative_books( BBB ):
                 try: bookVersesList = BibleVersificationSystem.getNumVersesList( self, altBBB ); break
                 except KeyError: continue # BBB doesn't exist in this BOS -- try an alternative
             if bookVersesList is not None:

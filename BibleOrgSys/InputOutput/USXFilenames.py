@@ -75,10 +75,10 @@ class USXFilenames:
         self.digitsIndex, self.USXBookCodeIndex = 0, 3
 
         # Get the data tables that we need for proper checking
-        #self._USFMBooksCodes = bos_books_codes_py.get_all_usfm_abbreviations_py()
+        #self._USFMBooksCodes = bos_books_codes_py.get_all_usfm_abbreviations()
         #self._USFMBooksCodesUpper = [x.upper() for x in self._USFMBooksCodes]
-        self._USFMBooksCodeNumberTriples = bos_books_codes_py.get_all_usfm_books_code_number_triples_py()
-        #self._BibleditBooksCodeNumberTriples = bos_books_codes_py.get_all_bibledit_books_code_number_triples_py()
+        self._USFMBooksCodeNumberTriples = bos_books_codes_py.get_all_usfm_books_code_number_triples()
+        #self._BibleditBooksCodeNumberTriples = bos_books_codes_py.get_all_bibledit_books_code_number_triples()
 
         # Find how many files are in our folder
         for possibleFilename in os.listdir( self.givenFolderName ):
@@ -114,7 +114,7 @@ class USXFilenames:
                 self.fileExtension = foundExtBit[1:]
                 if foundLength == 3:
                     self.hyphenIndex = None
-                    for USXBookCode,USXDigits,BBB in bos_books_codes_py.get_all_usx_books_code_number_triples_py():
+                    for USXBookCode,USXDigits,BBB in bos_books_codes_py.get_all_usx_books_code_number_triples():
                         if foundFileBit == BBB:
                             self.pattern = 'BBB'
                             matched = True
@@ -122,7 +122,7 @@ class USXFilenames:
                             self.pattern = 'bbb'
                             matched = True
                 elif foundLength>=6 and containsDigits:
-                    for USXBookCode,USXDigits,BBB in bos_books_codes_py.get_all_usx_books_code_number_triples_py():
+                    for USXBookCode,USXDigits,BBB in bos_books_codes_py.get_all_usx_books_code_number_triples():
                         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, USXBookCode,USXDigits,BBB )
                         if USXDigits in foundFileBit and (USXBookCode in foundFileBit or USXBookCode.upper() in foundFileBit):
                             digitsIndex = foundFileBit.index( USXDigits )
@@ -219,7 +219,7 @@ class USXFilenames:
 
         resultList = []
         if self.pattern:
-            for USFMBookCode,USXDigits,BBB in bos_books_codes_py.get_all_usx_books_code_number_triples_py():
+            for USFMBookCode,USXDigits,BBB in bos_books_codes_py.get_all_usx_books_code_number_triples():
                 filename = "------" # Six characters
                 if self.hyphenIndex is None:
                     if self.pattern == 'BBB':
@@ -241,7 +241,7 @@ class USXFilenames:
                 filename += f'.{self.fileExtension}'
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"getDerivedFilenames: Filename is {filename!r}" )
                 resultList.append( (BBB,filename,) )
-        return sorted( resultList, key=lambda x: bos_books_codes_py.get_sequence_number_py(x[0]) )
+        return sorted( resultList, key=lambda x: bos_books_codes_py.get_sequence_number(x[0]) )
     # end of USXFilenames.getDerivedFilenameTuples
 
 
@@ -309,10 +309,10 @@ class USXFilenames:
                                 vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"USXB (unexpected) first line was {thisFilename!r} in {firstLines}" )
                             if '<usx' not in firstLines[0] and '<usx' not in firstLines[1]:
                                 continue # so it doesn't get added
-                        self.doListAppend( bos_books_codes_py.usfm_abbrev_to_reference_abbrev_py( USFMBookCode ), possibleFilename, resultList, "getPossibleFilenameTuplesExt" )
+                        self.doListAppend( bos_books_codes_py.usfm_abbrev_to_reference_abbrev( USFMBookCode ), possibleFilename, resultList, "getPossibleFilenameTuplesExt" )
         self.lastTupleList = resultList
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "final resultList", len(resultList), resultList )
-        return sorted( resultList, key=lambda x: bos_books_codes_py.get_sequence_number_py(x[0]) )
+        return sorted( resultList, key=lambda x: bos_books_codes_py.get_sequence_number(x[0]) )
     # end of USXFilenames.getPossibleFilenameTuples
 
 

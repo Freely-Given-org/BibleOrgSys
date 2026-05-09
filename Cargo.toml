@@ -5,6 +5,8 @@ members = [
     "Rust/bos-internals",
     "Rust/bos_books_codes",
     "Rust/bos_books_codes_py",
+    "Rust/usfm_markers",
+    "Rust/usfm_markers_py",
 ]
 
 [workspace.package]
@@ -16,6 +18,7 @@ authors = ["Robert Hunt <Freely.Given.org+BOS@gmail.com>"]
 # local dependencies
 bos-internals = { path = "Rust/bos-internals" }
 bos_books_codes = { path = "Rust/bos_books_codes" }
+usfm_markers = { path = "Rust/usfm_markers" }
 
 compact_str = { version = "0.9.0", features = ["rkyv"] }
 indexmap = "2.14"

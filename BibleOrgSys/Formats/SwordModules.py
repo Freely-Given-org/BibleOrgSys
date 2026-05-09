@@ -59,10 +59,7 @@ import multiprocessing
 import struct, zlib
 
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
-
-#from BibleOrgSys.Misc.singleton import singleton
-from BibleOrgSys.Reference.BibleBooksCodes import BOOKLIST_OT39, BOOKLIST_NT27
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint, BOOKLIST_OT39, BOOKLIST_NT27
 from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
 from BibleOrgSys.Bible import Bible, BibleBook
 from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey

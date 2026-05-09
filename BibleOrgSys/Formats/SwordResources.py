@@ -1328,7 +1328,7 @@ class SwordInterface():
                 vkBits = verseKeyText.split()
                 assert len(vkBits) == 2
                 osisBBB = vkBits[0]
-                BBB = bos_books_codes_py.osis_abbrev_to_reference_abbrev_py( osisBBB )
+                BBB = bos_books_codes_py.osis_abbrev_to_reference_abbrev( osisBBB )
                 if isinstance( BBB, list ): BBB = BBB[0] # We sometimes get a list of options -- take the first = most likely one
                 vkBits = vkBits[1].split( ':' )
                 assert len(vkBits) == 2
@@ -1440,7 +1440,7 @@ class SwordInterface():
                 vkBits = verseKeyText.split()
                 assert len(vkBits) == 2
                 osisBBB = vkBits[0]
-                BBB = bos_books_codes_py.osis_abbrev_to_reference_abbrev_py( osisBBB )
+                BBB = bos_books_codes_py.osis_abbrev_to_reference_abbrev( osisBBB )
                 if isinstance( BBB, list ): BBB = BBB[0] # We sometimes get a list of options -- take the first = most likely one
                 vkBits = vkBits[1].split( ':' )
                 assert len(vkBits) == 2
@@ -1496,7 +1496,7 @@ class SwordInterface():
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Cached", BCV )
             #return self.keyCache[BCV]
         if SwordType == 'CrosswireLibrary':
-            B = bos_books_codes_py.get_osis_abbreviation_py( BBB )
+            B = bos_books_codes_py.get_osis_abbreviation( BBB )
             refString = f"{B} {C}:{V}"
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'refString', refString )
             verseKey = Sword.VerseKey( refString )

@@ -285,8 +285,8 @@ class TyndaleNotesBible( Bible ):
                             firstVs = '0'
                         if firstOSISBkCode.endswith('Thes'):
                             firstOSISBkCode += 's' # TODO: getBBBFromText should handle '1Thes'
-                        BBB = bos_books_codes_py.english_name_to_reference_abbrev_py( firstOSISBkCode )
-                        # try: BBB2 = bos_books_codes_py.osis_abbrev_to_reference_abbrev_py( firstOSISBkCode )
+                        BBB = bos_books_codes_py.english_name_to_reference_abbrev( firstOSISBkCode )
+                        # try: BBB2 = bos_books_codes_py.osis_abbrev_to_reference_abbrev( firstOSISBkCode )
                         # except KeyError: BBB2 = None
                         # assert BBB, f"{firstOSISBkCode=} {BBB=} {BBB2=}"
                         # if isinstance( BBB2, list ): BBB2 = BBB2[0] # Just take the first one (that's the best guess)
@@ -299,7 +299,7 @@ class TyndaleNotesBible( Bible ):
                             thisBook = BibleBook( self, BBB )
                             thisBook.objectNameString = 'Tyndale Study Notes Book object'
                             thisBook.objectTypeString = 'TyndaleStudyNotes'
-                            UUU = bos_books_codes_py.reference_abbrev_to_usfm_abbrev_py( BBB )
+                            UUU = bos_books_codes_py.reference_abbrev_to_usfm_abbrev( BBB )
                             thisBook.addLine( 'id', UUU )
                             thisBook.addLine( 'usfm', '3.0' )
                             thisBook.addLine( 'ide', 'utf-8' )

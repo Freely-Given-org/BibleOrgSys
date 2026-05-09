@@ -56,8 +56,7 @@ import re
 import multiprocessing
 
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
-from BibleOrgSys.Reference.BibleBooksCodes import BOOKLIST_OT39, BOOKLIST_NT27
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint, BOOKLIST_OT39, BOOKLIST_NT27
 from BibleOrgSys.Internals.InternalBibleBook import BOS_CUSTOM_NESTING_MARKERS
 from BibleOrgSys.Reference.USFM3Markers import OFTEN_IGNORED_USFM_HEADER_MARKERS, removeUSFMCharacterField, replaceUSFMCharacterFields
 from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem

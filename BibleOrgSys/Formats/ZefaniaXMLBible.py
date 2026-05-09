@@ -67,6 +67,7 @@ CHANGELOG:
     2023-10-11 Better handling of Strongs numbers
     2024-06-13 Work on making the class able to be pickled
     2026-04-08 Reduce some verbosity
+    2026-05-09 Upgraded to bos_books_codes_py
 """
 import logging
 import os
@@ -77,12 +78,12 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
 from BibleOrgSys.Bible import Bible, BibleBook
+import bos_books_codes_py
 
-
-LAST_MODIFIED_DATE = '2026-04-08' # by RJH
+LAST_MODIFIED_DATE = '2026-04-09' # by RJH
 SHORT_PROGRAM_NAME = "ZefaniaBible"
 PROGRAM_NAME = "Zefania XML Bible format handler"
-PROGRAM_VERSION = '0.41'
+PROGRAM_VERSION = '0.42'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -489,11 +490,12 @@ class ZefaniaXMLBible( Bible ):
                 bookShortName = value
             else: logging.error( f"Unprocessed {value!r} attribute ({attrib}) in book element" )
         if 1 <= int(bookNumber) <= 66:
-            BBB = bos_books_codes_py.get_bbb_from_reference_number_py( bookNumber )
+            BBB = bos_books_codes_py.get_bbb_from_reference_number( int(bookNumber)
+             )
             dPrint( 'Never', DEBUGGING_THIS_MODULE, f"Zefania got '{BBB}' from {bookNumber}" )
         else:
-            BBB1 = bos_books_codes_py.english_name_to_reference_abbrev_py( bookName )
-            BBB2 = bos_books_codes_py.english_name_to_reference_abbrev_py( bookShortName )
+            BBB1 = bos_books_codes_py.english_name_to_reference_abbrev( bookName )
+            BBB2 = bos_books_codes_py.english_name_to_reference_abbrev( bookShortName )
             if BBB1 == BBB2: BBB = BBB1
             else:
                 dPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Zefania got '{BBB1}' from '{bookName}' and '{BBB2}' from '{bookShortName}'" )

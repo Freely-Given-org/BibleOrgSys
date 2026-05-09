@@ -9,7 +9,7 @@
 #       and which in turn holds the Bible book objects
 #       (and acts as an intermediary to them).
 #
-# Copyright (C) 2010-2025 Robert Hunt
+# Copyright (C) 2010-2026 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -63,6 +63,7 @@ Note that this software does write some files to
 CHANGELOG:
     2024-01-24 add getContextVerseDataRange() function
     2025-02-13 Changed special characters in getVerseText() function and add includeNonCanonical parameter
+    2026-05-09 Upgraded to bos_books_codes_py
 """
 from __future__ import annotations # So we can use typing -> ClassName (before Python 3.10)
 import os
@@ -75,18 +76,17 @@ import multiprocessing
 import copy
 
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
-import bos_books_codes_py
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint, BOOKLIST_OT39, BOOKLIST_NT27
 from bible_organisational_system import InternalBibleEntryList, InternalBibleEntry
 from BibleOrgSys.Internals.InternalBibleBook import BCV_VERSION, BOS_EXTRA_TYPES, BOS_EXTRA_MARKERS
 from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
-from BibleOrgSys.Reference.BibleBooksCodes import BOOKLIST_OT39, BOOKLIST_NT27
+import bos_books_codes_py
 
 
-LAST_MODIFIED_DATE = '2026-04-29' # by RJH
+LAST_MODIFIED_DATE = '2026-05-09' # by RJH
 SHORT_PROGRAM_NAME = "InternalBible"
 PROGRAM_NAME = "Internal Bible handler"
-PROGRAM_VERSION = '0.92'
+PROGRAM_VERSION = '0.93'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -767,7 +767,10 @@ class InternalBible:
                     contentPath = bookDict['path']
                     assert contentPath == './content' # No need to save this here
                 else:
-                    BBB = bos_books_codes_py.usfm_abbrev_to_reference_abbrev_py( USFMBookCode )
+                    try: BBB = bos_books_codes_py.usfm_abbrev_to_reference_abbrev( USFMBookCode )
+                    except KeyError:
+                        print( f"applySuppliedMetadata for 'uW' {self.Workname} failed with {USFMBookCode=}")
+                        BBB = bos_books_codes_py.usfm_abbrev_to_reference_abbrev( USFMBookCode.title() )
                     filename = bookDict['path']
                     if filename.startswith( './' ): filename = filename[2:]
                     self.possibleFilenameDict[BBB] = filename
@@ -894,7 +897,7 @@ class InternalBible:
 
         The assumedBookName defaults to the long book name from \toc1 field.
         """
-        if BibleOrgSysGlobals.debugFlag: assert bos_books_codes_py.is_valid_reference_abbreviation_py( BBB )
+        if BibleOrgSysGlobals.debugFlag: assert bos_books_codes_py.is_valid_reference_abbreviation( BBB )
         #if BBB in self.BBBToNameDict: return self.BBBToNameDict[BBB] # What was this ???
         try: return self.books[BBB].assumedBookName
         except (KeyError, AttributeError): return None
@@ -905,7 +908,7 @@ class InternalBible:
         """
         Gets the long table of contents book name for the given book reference code.
         """
-        if BibleOrgSysGlobals.debugFlag: assert bos_books_codes_py.is_valid_reference_abbreviation_py( BBB )
+        if BibleOrgSysGlobals.debugFlag: assert bos_books_codes_py.is_valid_reference_abbreviation( BBB )
         try: return self.books[BBB].longTOCName
         except (KeyError, AttributeError): return None
     # end of InternalBible.getLongTOCName
@@ -913,7 +916,7 @@ class InternalBible:
 
     def getShortTOCName( self, BBB:str ):
         """Gets the short table of contents book name for the given book reference code."""
-        if BibleOrgSysGlobals.debugFlag: assert bos_books_codes_py.is_valid_reference_abbreviation_py( BBB )
+        if BibleOrgSysGlobals.debugFlag: assert bos_books_codes_py.is_valid_reference_abbreviation( BBB )
         try: return self.books[BBB].shortTOCName
         except (KeyError, AttributeError): return None
     # end of InternalBible.getShortTOCName
@@ -921,7 +924,7 @@ class InternalBible:
 
     def getBooknameAbbreviation( self, BBB:str ):
         """Gets the book abbreviation for the given book reference code."""
-        if BibleOrgSysGlobals.debugFlag: assert bos_books_codes_py.is_valid_reference_abbreviation_py( BBB )
+        if BibleOrgSysGlobals.debugFlag: assert bos_books_codes_py.is_valid_reference_abbreviation( BBB )
         try: return self.books[BBB].booknameAbbreviation
         except (KeyError, AttributeError): return None
     # end of InternalBible.getBooknameAbbreviation
@@ -1022,7 +1025,7 @@ class InternalBible:
             Return None if unsuccessful.
         """
         if BibleOrgSysGlobals.debugFlag: assert referenceString and isinstance( referenceString, str )
-        result = bos_books_codes_py.english_name_to_reference_abbrev_py( referenceString )
+        result = bos_books_codes_py.english_name_to_reference_abbrev( referenceString )
         if result is not None: return result # It's already a valid BBB
 
         adjRefString = referenceString.lower()
@@ -2221,7 +2224,7 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
         assert len(BBB) == 3
 
         #if 'KJV' not in self.sourceFolder and BBB in self.triedLoadingBook: halt
-        if not bos_books_codes_py.is_valid_reference_abbreviation_py( BBB ): raise KeyError
+        if not bos_books_codes_py.is_valid_reference_abbreviation( BBB ): raise KeyError
         self.loadBookIfNecessary( BBB )
         if BBB in self:
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "getNumChapters", self, self.books[BBB].getNumChapters() )
@@ -2238,7 +2241,7 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
         fnPrint( DEBUGGING_THIS_MODULE, f"getNumVerses( {BBB}, {C=} )" )
         assert len(BBB) == 3
 
-        if not bos_books_codes_py.is_valid_reference_abbreviation_py( BBB ): raise KeyError
+        if not bos_books_codes_py.is_valid_reference_abbreviation( BBB ): raise KeyError
         self.loadBookIfNecessary( BBB )
         if BBB in self:
             # NOTE: The next call will handle type conversion for the C parameter -- no need to do it here as well
@@ -2694,13 +2697,13 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
             dPrint( 'Info', DEBUGGING_THIS_MODULE, '  InternalBible.analyseAndExportUWoriginal', ref, origVerseText )
             if len(origVerseText) < 11: halt # Should be at least eleven characters (Jesus wept.)
 
-            if bos_books_codes_py.is_ot_nr_py( BBB ):
+            if bos_books_codes_py.is_ot_nr( BBB ):
                 analysedOTBookList.append( BBB )
                 lemmaDictSet, StrongsDictSet = OTLemmaDictSet, OTStrongsDictSet
-            elif bos_books_codes_py.is_nt_nr_py( BBB ):
+            elif bos_books_codes_py.is_nt_nr( BBB ):
                 analysedNTBookList.append( BBB )
                 lemmaDictSet, StrongsDictSet = NTLemmaDictSet, NTStrongsDictSet
-            elif bos_books_codes_py.is_dc_nr_py( BBB ):
+            elif bos_books_codes_py.is_dc_nr( BBB ):
                 analysedDCBookList.append( BBB )
                 lemmaDictSet, StrongsDictSet = None, None
             analysedBookCount += 1
@@ -2919,9 +2922,9 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
             dPrint( 'Info', debuggingThisFunction, '  InternalBible.analyseAndExportUWalignments', ref, origVerseText )
             if len(origVerseText) < 11: SOMETHING_WRONG # Should be at least eleven characters (Jesus wept.)
 
-            isOT = bos_books_codes_py.is_ot_nr_py( BBB )
-            isNT = bos_books_codes_py.is_nt_nr_py( BBB )
-            isDC = bos_books_codes_py.is_dc_nr_py( BBB )
+            isOT = bos_books_codes_py.is_ot_nr( BBB )
+            isNT = bos_books_codes_py.is_nt_nr( BBB )
+            isDC = bos_books_codes_py.is_dc_nr( BBB )
 
             if 'uWalignments' in bookObject.__dict__:
                 vPrint( 'Never', debuggingThisFunction, f"Cleaning alignments for {BBB} and aggregating…" )
@@ -3037,9 +3040,9 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
             # maxOriginalWords = max( len(originalWordsList), maxOriginalWords )
             # maxTranslatedWords = max( len(translatedWordsList), maxTranslatedWords )
 
-            isOT = bos_books_codes_py.is_ot_nr_py( BBB )
-            isNT = bos_books_codes_py.is_nt_nr_py( BBB )
-            isDC = bos_books_codes_py.is_dc_nr_py( BBB )
+            isOT = bos_books_codes_py.is_ot_nr( BBB )
+            isNT = bos_books_codes_py.is_nt_nr( BBB )
+            isDC = bos_books_codes_py.is_dc_nr( BBB )
 
             # For counting occurrences (not alignments), remove ampersand (non-contiguous words joiner)
             cleanedTranslatedWordsString = translatedWordsString.replace( ' & ', ' ' )

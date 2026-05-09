@@ -43,7 +43,7 @@ import BibleOrgSys.BibleOrgSysGlobals as BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2026-05-08' # by RJH
+LAST_MODIFIED_DATE = '2026-05-09' # by RJH
 SHORT_PROGRAM_NAME = "OldBiblicalEnglish"
 PROGRAM_NAME = "OpenBibleData English Language Handling functions"
 PROGRAM_VERSION = '0.97'
@@ -128,7 +128,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
     ((' sisters here ',),' sisters heere '), # KJB-1611 Mrk 6:3
     (('swete breed','swete bred'),'sweet bread'),
     (('summe the ',),'sum the '), # KJB-1611 2Ki 22:4
-    (('swines blood',),'swine\'s blood'),(('swines flesh',),'swine\'s flesh'), # Isa 66:3,17
+    (('swynes blood',),'swine\'s blood'),(('swynes flesh',),'swine\'s flesh'), # Isa 66:3,17
     ((' te cities',),' ten cities'), # Cvdl Mrk 7:31
     ((' that prophesie ',),' that prophecy '), # Wycl Tob 2:6
     ((' the as ',),' thee/you as '), # Cvdl 1 Sam 8:8
@@ -749,7 +749,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
                 (('Cherubims','Cherubins'),'Cherubims/winged_creatures'),(('cherubims','cherubyms','cherubyns'),'cherubims/winged_creatures'),(('cherubim ','cherubym '),'cherubim/winged_creature '),
                 (('chessenut','chesnut'),'chestnut'), ((' chestes',),' chests'),
                 (('chewiden',),'chewed'),(('cheweth','chaweth'),'cheweth/chews'), (('chewe.','chawe.'),'chew.'),
-            ((' chidden',),' chided/disputed/scolded'), # Lam 4:15
+            ((' chidden',),' chided/disputed/scolded'),((' chyde',),' chide'), # Lam 4:15, Mkr 8:32
                 (('chiefely',),'chiefly'),((' chiefe ',' chefe '),' chief '),((' chiefe,',),' chief,'), # Protect 'chiefest'
                 (('childberyng',),'childbearing'),
                     (('childehode','childehood','chyldhood','childhod','childhed'),'childhood'),
@@ -1924,7 +1924,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
                 (('pittes','pittis'),'pits'),((' pitte ',' pytte ',' pytt ',' pyt '),' pit '),((' pitte,',' pytte,',' pytt,',' pyt,'),' pit,'),((' pytte.',' pitte.'),' pit.'),
         ((' placis',),' places'),
             ((' plaged',),' plagued'),((' plages',),' plagues'),((' plage ',),' plague '),((' plage,',),' plague,'),((' plage.',),' plague.'),((' plage:',),' plague:'),
-                (('playnely','playnly','plainely'),'plainly'), ((' plaines',),' plains'),((' playne ',' plaine ',' pleyn '),' plain '),((' plaine.',' playne.'),' plain.'),((' plaine,',' playne,'),' plain,'),((' plaine?',),' plain?'),
+                (('playnely','playnly','plainely','pleynli'),'plainly'), ((' plaines',),' plains'),((' playne ',' plaine ',' pleyn '),' plain '),((' plaine.',' playne.'),' plain.'),((' plaine,',' playne,'),' plain,'),((' plaine?',),' plain?'),
                 ((' planckes',' plankes'),' planks'),
                     (('plauntidist','plauntide','plauntid'),'planted'), ((' plantes',),' plants'),((' plaunte ',' plante '),' plant '),((' plaunte,',' plante,'),' plant,'),
                 (('plastrid',),'plastered'),(('plaister',),'plaster'),
@@ -2149,7 +2149,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
                 ((' satisfaccioun',),' satisfaction'),((' satisfie ',),' satisfy '),
             ((' sauede',' sauyde',' sauyd',' saued',' savyd'),' saved'),((' savest',' sauest'),' savest/save'),((' saveth',' saueth'),' saveth/saves'), (('Saue ',),'Save '),((' saue',),' save'), ((' sauyng',' sauinge',' sauing',' savinge'),' saving'),#(('>sauing',),'>saving'), # ((' saue,',),' save,'),((' saue:',),' save:'),((' saue?',),' save?'),
                 (('Sauioure','Sauiour','Sauior','Sauyor'),'Saviour'),((' savioure',' sauioure',' sauiour',' sauyour',' saveour'),' saviour'),
-                ((' sauery',),' savoury'),((' sauoures',' sauours'),' savours'), ((' sauoure',' sauour'),' savour'),
+                ((' sauery',),' savoury'),(('savourest','sauourest','sauerest','sauerist'),'savourest/savour'),((' sauoures',' sauours'),' savours'), ((' sauoure ',' sauour '),' savour '),
             ((' sawest',),' sawest/saw'),((' sawes ',),' saws '),((' sawes,',),' saws,'), (('Sawe ',),'Saw '),((' sawe ',' sai ',' sayn ',' siyen ',' seyen ',' siy '),' saw '),((' sawe,',),' saw,'),
             ((' sayest',' saiest',' seist'),' sayest/say'),((' seiynge',' sayenge',' sayege',' sayinge',' saynge'),' saying'), ((' saith',' saieth',' sayeth',' seyeth',' seith',' sayth',' seyth'),' saith/says'),(('(saith','(saieth','(sayeth',),'(saith/says'), (('(saye ',),'(say '),(('Seie ','Saye ','Sei '),'Say '),((' seie ',' seye ',' saye ',' saie ',' saiy '),' say '),((' seie,',' saie,',' saye,'),' say,'),((' seie:',' saie:',' saye:'),' say:'),((' saye)',' saie)'),' say)'),
         ((' scabbe',),' scab'),
@@ -2599,7 +2599,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
                 (('vnkunnynge','vnkunnyng'),'uncunning/uneducated'),
             (('vndefyled',),'undefiled'),
                     (('vndurgoynge',),'undergoing'),
-                    (('understandeth','vnderstandeth','vndirstondith','vndurstondith','vnderstondeth'),'understandeth/understands'),(('vnderstondynge','vndirstondynge','vnderstondyng','vndurstondyng','vnderstanding','vnderstading'),'understanding'), (('Vndurstonde',),'Understand'),((' vndirstonde',' vnderstande',' vnderstand'),' understand'),
+                    (('understandest',),'understandest/understand'),(('understandeth','vnderstandeth','vndirstondith','vndurstondith','vnderstondeth'),'understandeth/understands'),(('vnderstondynge','vndirstondynge','vnderstondyng','vndurstondyng','vnderstanding','vnderstading'),'understanding'), (('Vndurstonde',),'Understand'),((' vndirstonde',' vnderstande',' vnderstand'),' understand'),
                         (('Vnderstonde',),'Understood'),(('vndurstonden','vnderstonde','vndurstonde','vnderstoode','vndurstoden','vnderstode','vndirstood'),'understood'),
                     (('vndertoke',),'undertook'), (('Vnder',),'Under'),((' vnder',' vndir',' vndur'),' under'),
                 ((' vndon.',),' undone.'),((' vndoe ',),' undo '),
@@ -3158,6 +3158,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
     (('SALOMON',),'SOLOMON'),(('Salomon',),'Solomon'),
     (('Samarie',),'Samaria'),
     (('Sare',),'Sara'),
+    (('Sata:',),'Satan:'), # Bshps Mrk 8:33
     (('Sydon',),'Sidon'), # Mrk 7:24
     (('Thaddeus','Taddeus','Thadee'),'Thaddaeus'), # Mrk 3:18
     (('Tigrys',),'Tigris'),

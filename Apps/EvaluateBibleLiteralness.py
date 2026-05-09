@@ -83,8 +83,7 @@ from collections import defaultdict
 import logging
 
 import BibleOrgSys.BibleOrgSysGlobals as BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
-from BibleOrgSys.Reference.BibleBooksCodes import BOOKLIST_OT39, BOOKLIST_NT27, BOOKLIST_66
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint, BOOKLIST_OT39, BOOKLIST_NT27, BOOKLIST_66
 from BibleOrgSys.Reference.BibleVersificationSystems import BibleVersificationSystem
 from BibleOrgSys.OriginalLanguages import Hebrew, Greek
 from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey

@@ -551,8 +551,8 @@ class BibleWriter( InternalBible ):
             except AttributeError: rawUSFMData = None # it's been deleted  :-(
             if rawUSFMData:
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\ninternalBibleBookData", internalBibleBookData[:50] ); halt
-                #USFMAbbreviation = bos_books_codes_py.reference_abbrev_to_usfm_abbrev_py( BBB )
-                #USFMNumber = bos_books_codes_py.get_usfm_num_str_py( BBB )
+                #USFMAbbreviation = bos_books_codes_py.reference_abbrev_to_usfm_abbrev( BBB )
+                #USFMNumber = bos_books_codes_py.get_usfm_num_str( BBB )
 
                 filename = f"{j:02}_{BBB}_BibleWriter.rSFM"
                 filepath = os.path.join( outputFolderpath, BibleOrgSysGlobals.makeSafeFilename( filename ) )
@@ -565,8 +565,8 @@ class BibleWriter( InternalBible ):
 
             internalBibleBookData = bookObject._processedLines
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\ninternalBibleBookData", internalBibleBookData[:50] ); halt
-            USFMAbbreviation = bos_books_codes_py.reference_abbrev_to_usfm_abbrev_py( BBB )
-            USFMNumber = bos_books_codes_py.get_usfm_num_str_py( BBB )
+            USFMAbbreviation = bos_books_codes_py.reference_abbrev_to_usfm_abbrev( BBB )
+            USFMNumber = bos_books_codes_py.get_usfm_num_str( BBB )
 
             filename = f"{j:02}_{BBB}_BibleWriter.pSFM"
             filepath = os.path.join( outputFolderpath, BibleOrgSysGlobals.makeSafeFilename( filename ) )
@@ -637,8 +637,8 @@ class BibleWriter( InternalBible ):
         for BBB,bookObject in self.books.items():
             internalBibleBookData = bookObject._processedLines
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\ninternalBibleBookData", internalBibleBookData[:50] ); halt
-            USFMAbbreviation = bos_books_codes_py.reference_abbrev_to_usfm_abbrev_py( BBB )
-            USFMNumber = bos_books_codes_py.get_usfm_num_str_py( BBB )
+            USFMAbbreviation = bos_books_codes_py.reference_abbrev_to_usfm_abbrev( BBB )
+            USFMNumber = bos_books_codes_py.get_usfm_num_str( BBB )
 
             if includeEmptyVersesFlag:
                 try:
@@ -803,8 +803,8 @@ class BibleWriter( InternalBible ):
         for BBB,bookObject in self.books.items():
             internalBibleBookData = bookObject._processedLines
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\ninternalBibleBookData", internalBibleBookData[:50] ); halt
-            USFMAbbreviation = bos_books_codes_py.reference_abbrev_to_usfm_abbrev_py( BBB )
-            USFMNumber = bos_books_codes_py.get_usfm_num_str_py( BBB )
+            USFMAbbreviation = bos_books_codes_py.reference_abbrev_to_usfm_abbrev( BBB )
+            USFMNumber = bos_books_codes_py.get_usfm_num_str( BBB )
 
             if includeEmptyVersesFlag:
                 try:
@@ -972,8 +972,8 @@ class BibleWriter( InternalBible ):
         for BBB,bookObject in self.books.items():
             internalBibleBookData = bookObject._processedLines
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\ninternalBibleBookData", internalBibleBookData[:50] ); halt
-            USFMAbbreviation = bos_books_codes_py.reference_abbrev_to_usfm_abbrev_py( BBB )
-            USFMNumber = bos_books_codes_py.get_usfm_num_str_py( BBB )
+            USFMAbbreviation = bos_books_codes_py.reference_abbrev_to_usfm_abbrev( BBB )
+            USFMNumber = bos_books_codes_py.get_usfm_num_str( BBB )
 
             filename = f"{USFMNumber}{USFMAbbreviation.upper()}BibleWriter.ESFM"
             #if not os.path.exists( ESFMOutputFolder ): os.makedirs( ESFMOutputFolder )
@@ -2643,8 +2643,8 @@ class BibleWriter( InternalBible ):
             except AttributeError: haveSectionHeadingsForBook = False
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nhaveSectionHeadingsForBook", BBB, haveSectionHeadingsForBook ) #, self.discoveryResults[BBB] )
             needToSaveByChapter = not haveSectionHeadingsForBook \
-                                  or not bos_books_codes_py.continues_through_chapters_py(BBB)
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{BBB} needToSaveByChapter={needToSaveByChapter} haveSectionHeadingsForBook={haveSectionHeadingsForBook} continuesThroughChapters={bos_books_codes_py.continues_through_chapters_py(BBB)}" )
+                                  or not bos_books_codes_py.continues_through_chapters(BBB)
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{BBB} needToSaveByChapter={needToSaveByChapter} haveSectionHeadingsForBook={haveSectionHeadingsForBook} continuesThroughChapters={bos_books_codes_py.continues_through_chapters(BBB)}" )
 
             internalBibleBookData = bookObject._processedLines
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\ninternalBibleBookData", internalBibleBookData[:50] ); halt
@@ -3060,13 +3060,13 @@ class BibleWriter( InternalBible ):
             def getDivisionName( BBB:str, doneAny=None, doneBooks=None ):
                 """ Given a book code, return the division name. """
                 result = ''
-                if bos_books_codes_py.is_ot_nr_py( BBB ) or BBB == 'PS2':
+                if bos_books_codes_py.is_ot_nr( BBB ) or BBB == 'PS2':
                     result = self.getSetting( 'OldTestamentName' )
                     if not result: result = "Old Testament"
-                elif bos_books_codes_py.is_nt_nr_py( BBB ):
+                elif bos_books_codes_py.is_nt_nr( BBB ):
                     result = self.getSetting( 'NewTestamentName' )
                     if not result: result = "New Testament"
-                elif bos_books_codes_py.is_dc_nr_py( BBB ) or BBB in ('MA3','MA4'):
+                elif bos_books_codes_py.is_dc_nr( BBB ) or BBB in ('MA3','MA4'):
                     result = self.getSetting( 'DeuterocanonName' )
                     if not result: result = "Deuterocanon"
                 elif doneAny == False:
@@ -3086,7 +3086,7 @@ class BibleWriter( InternalBible ):
                 divisionName = getDivisionName( BBB, doneAny, doneBooks )
                 if divisionName and divisionName not in divisionData:
                     divisionData.append( divisionName )
-                if bos_books_codes_py.is_ot_nr_py(BBB) or bos_books_codes_py.is_nt_nr_py(BBB) or bos_books_codes_py.is_dc_nr_py(BBB):
+                if bos_books_codes_py.is_ot_nr(BBB) or bos_books_codes_py.is_nt_nr(BBB) or bos_books_codes_py.is_dc_nr(BBB):
                     doneAny = doneBooks = True
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, divisionData )
             vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + f"Exporting division names to {divisionNamesFilepath}…" )
@@ -3116,7 +3116,7 @@ class BibleWriter( InternalBible ):
                     logger.error( f"_toBibleDoorJSONCHTML: no chapters in {BBB}" )
                     intNumChapters = 0
                 bkData.append( (BBB,abbreviation,shortName,longName,intNumChapters,numSectionsDict[BBB],divisionNumber) )
-                if bos_books_codes_py.is_ot_nr_py(BBB) or bos_books_codes_py.is_nt_nr_py(BBB) or bos_books_codes_py.is_dc_nr_py(BBB):
+                if bos_books_codes_py.is_ot_nr(BBB) or bos_books_codes_py.is_nt_nr(BBB) or bos_books_codes_py.is_dc_nr(BBB):
                     doneAny = doneBooks = True
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, bkData )
             vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + f"Exporting book names to {bookNamesFilepath}…" )
@@ -4108,8 +4108,8 @@ class BibleWriter( InternalBible ):
                 return adjText
             # end of toUSX2XML.handleNotes
 
-            USXAbbrev = bos_books_codes_py.reference_abbrev_to_usfm_abbrev_py( BBB ).upper()
-            USXNumber = bos_books_codes_py.get_usx_num_str_py( BBB )
+            USXAbbrev = bos_books_codes_py.reference_abbrev_to_usfm_abbrev( BBB ).upper()
+            USXNumber = bos_books_codes_py.get_usx_num_str( BBB )
             if not USXAbbrev:
                 logger.error( f"toUSX2XML: Can't write {BBB} USX book because no USFM code available" )
                 unhandledBooks.append( BBB )
@@ -4624,7 +4624,7 @@ class BibleWriter( InternalBible ):
                 return adjText
             # end of toUSFXXML.handleNotes
 
-            USFXAbbrev = bos_books_codes_py.reference_abbrev_to_usfm_abbrev_py( BBB ).upper()
+            USFXAbbrev = bos_books_codes_py.reference_abbrev_to_usfm_abbrev( BBB ).upper()
             if not USFXAbbrev:
                 logger.error( f"toUSFXXML: Can't write {BBB} USFX book because no USFM code available" )
                 unhandledBooks.append( BBB )
@@ -4801,7 +4801,7 @@ class BibleWriter( InternalBible ):
             for BBB in BibleOrganisationalSystem.getBookList():
                 if BBB in self.books:
                     vernacularName = getBookNameFunction(BBB)
-                    SwLocFile.write( f'{bos_books_codes_py.get_english_name_nr_py(BBB)}={vernacularName}\n' ) # Write the first English book name and the language book name
+                    SwLocFile.write( f'{bos_books_codes_py.get_english_name_nr(BBB)}={vernacularName}\n' ) # Write the first English book name and the language book name
                     bookList.append( vernacularName )
 
             # This second section contains many VERNACULARABBREV=SwordBookAbbrev
@@ -4809,7 +4809,7 @@ class BibleWriter( InternalBible ):
             abbreviationList = []
             for BBB in BibleOrganisationalSystem.getBookList(): # First pass writes the full vernacular book names (with and without spaces removed)
                 if BBB in self.books:
-                    swordAbbrev = bos_books_codes_py.get_sword_abbreviation_py( BBB )
+                    swordAbbrev = bos_books_codes_py.get_sword_abbreviation( BBB )
                     vernacularName = getBookNameFunction(BBB).upper()
                     #assert vernacularName not in abbreviationList
                     if vernacularName in abbreviationList:
@@ -4825,7 +4825,7 @@ class BibleWriter( InternalBible ):
                         abbreviationList.append( vernacularAbbrev )
             for BBB in BibleOrganisationalSystem.getBookList(): # Second pass writes the shorter vernacular book abbreviations
                 if BBB in self.books:
-                    swordAbbrev = bos_books_codes_py.get_sword_abbreviation_py( BBB )
+                    swordAbbrev = bos_books_codes_py.get_sword_abbreviation( BBB )
                     vernacularName = getBookNameFunction(BBB).replace( ' ', '' ).upper()
                     vernacularAbbrev = vernacularName
                     if len(vernacularName)>4  or (len(vernacularName)>3 and not vernacularName[0].isdigit):
@@ -4908,7 +4908,7 @@ class BibleWriter( InternalBible ):
             getBookAbbreviationFunction = BOS.getBookAbbreviation
         else: # else use our local functions from our deduced book names
             getBookNameFunction = self.getAssumedBookName # from BibleOrgSys.Formats.USFMBible (which gets it from BibleOrgSys.Formats.USFMBibleBook)
-            getBookAbbreviationFunction = bos_books_codes_py.get_osis_abbreviation_py
+            getBookAbbreviationFunction = bos_books_codes_py.get_osis_abbreviation
 
         ignoredMarkers, unhandledMarkers, unhandledBooks = set(), set(), []
 
@@ -4925,11 +4925,11 @@ class BibleWriter( InternalBible ):
             #SwLocFile.write( 'Encoding=UTF-8\n\n[Text]\n' )
             #for BBB in BOS.getBookList():
                 #if BBB in self.books:
-                    #SwLocFile.write( f'{bos_books_codes_py.get_english_name_nr_py(BBB)}={getBookNameFunction(BBB)}\n' ) # Write the first English book name and the language book name
+                    #SwLocFile.write( f'{bos_books_codes_py.get_english_name_nr(BBB)}={getBookNameFunction(BBB)}\n' ) # Write the first English book name and the language book name
             #SwLocFile.write( '\n[Book Abbrevs]\n' )
             #for BBB in BOS.getBookList():
                 #if BBB in self.books:
-                    #SwLocFile.write( f'{bos_books_codes_py.get_english_name_nr_py(BBB).upper()}={bos_books_codes_py.get_sword_abbreviation_py(BBB)}\n' ) # Write the UPPER CASE language book name and the Sword abbreviation
+                    #SwLocFile.write( f'{bos_books_codes_py.get_english_name_nr(BBB).upper()}={bos_books_codes_py.get_sword_abbreviation(BBB)}\n' ) # Write the UPPER CASE language book name and the Sword abbreviation
 
         def writeHeader( writerObject ):
             """
@@ -4959,7 +4959,7 @@ class BibleWriter( InternalBible ):
             writerObject.writeLineClose( 'header' )
         # end of toOSISXML.writeHeader
 
-        toOSISGlobals = { "verseRef":'', "XRefNum":0, "FootnoteNum":0, "lastRef":'', "OneChapterOSISBookCodes":bos_books_codes_py.get_osis_single_chapter_books_list_py() } # These are our global variables
+        toOSISGlobals = { "verseRef":'', "XRefNum":0, "FootnoteNum":0, "lastRef":'', "OneChapterOSISBookCodes":bos_books_codes_py.get_osis_single_chapter_books_list() } # These are our global variables
 
 
         def writeOSISBook( writerObject, BBB:str, bkData ):
@@ -5294,7 +5294,7 @@ class BibleWriter( InternalBible ):
 
 
             # Main code for toOSISXML.writeOSISBook
-            bookRef = bos_books_codes_py.get_osis_abbreviation_py( BBB ) # OSIS book name
+            bookRef = bos_books_codes_py.get_osis_abbreviation( BBB ) # OSIS book name
             if not bookRef:
                 logger.error( f"toOSIS: Can't write {BBB} OSIS book because no OSIS code available" )
                 unhandledBooks.append( BBB )
@@ -5651,7 +5651,7 @@ class BibleWriter( InternalBible ):
             getBookAbbreviationFunction = BOS.getBookAbbreviation
         else: # else use our local functions from our deduced book names
             getBookNameFunction = self.getAssumedBookName # from BibleOrgSys.Formats.USFMBible (which gets it from BibleOrgSys.Formats.USFMBibleBook)
-            getBookAbbreviationFunction = bos_books_codes_py.get_osis_abbreviation_py
+            getBookAbbreviationFunction = bos_books_codes_py.get_osis_abbreviation
 
         ignoredMarkers, unhandledMarkers, unhandledBooks = set(), set(), []
 
@@ -5677,14 +5677,14 @@ class BibleWriter( InternalBible ):
             writerObject.writeLineClose( 'INFORMATION' )
         # end of toZefaniaXML.writeHeader
 
-        toZefGlobals = { 'verseRef':'', 'XRefNum':0, 'FootnoteNum':0, 'lastRef':'', 'OneChapterOSISBookCodes':bos_books_codes_py.get_osis_single_chapter_books_list_py() } # These are our global variables
+        toZefGlobals = { 'verseRef':'', 'XRefNum':0, 'FootnoteNum':0, 'lastRef':'', 'OneChapterOSISBookCodes':bos_books_codes_py.get_osis_single_chapter_books_list() } # These are our global variables
 
         def writeZefBook( writerObject, BBB:str, bkData ):
             """
             Writes a book to the Zefania XML writerObject.
             """
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'BIBLEBOOK', [('bnumber',bos_books_codes_py.get_reference_number_py(BBB)), ('bname',bos_books_codes_py.get_english_name_nr_py(BBB)), ('bsname',bos_books_codes_py.get_osis_abbreviation_py(BBB))] )
-            OSISAbbrev = bos_books_codes_py.get_osis_abbreviation_py( BBB )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'BIBLEBOOK', [('bnumber',bos_books_codes_py.get_reference_number(BBB)), ('bname',bos_books_codes_py.get_english_name_nr(BBB)), ('bsname',bos_books_codes_py.get_osis_abbreviation(BBB))] )
+            OSISAbbrev = bos_books_codes_py.get_osis_abbreviation( BBB )
             if not OSISAbbrev:
                 logger.error( f"toZefania: Can't write {BBB} Zefania book because no OSIS code available" )
                 unhandledBooks.append( BBB )
@@ -5968,7 +5968,7 @@ class BibleWriter( InternalBible ):
 
 
             # Main code for toZefaniaXML.writeZefBook
-            writerObject.writeLineOpen( 'BIBLEBOOK', [('bnumber',bos_books_codes_py.get_reference_number_py(BBB)), ('bname',bos_books_codes_py.get_english_name_nr_py(BBB)), ('bsname',OSISAbbrev)] )
+            writerObject.writeLineOpen( 'BIBLEBOOK', [('bnumber',bos_books_codes_py.get_reference_number(BBB)), ('bname',bos_books_codes_py.get_english_name_nr(BBB)), ('bsname',OSISAbbrev)] )
             haveOpenChapter, gotVP = False, None
             C, V = '-1', '-1' # So first/id line starts at -1:0
             for processedBibleEntry in bkData._processedLines: # Process internal Bible data lines
@@ -6162,13 +6162,13 @@ class BibleWriter( InternalBible ):
             """
             Writes a book to the Haggai XML writerObject.
             """
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'BIBLEBOOK', [('bnumber',bos_books_codes_py.get_reference_number_py(BBB)), ('bname',bos_books_codes_py.get_english_name_nr_py(BBB)), ('bsname',bos_books_codes_py.get_osis_abbreviation_py(BBB))] )
-            OSISAbbrev = bos_books_codes_py.get_osis_abbreviation_py( BBB )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'BIBLEBOOK', [('bnumber',bos_books_codes_py.get_reference_number(BBB)), ('bname',bos_books_codes_py.get_english_name_nr(BBB)), ('bsname',bos_books_codes_py.get_osis_abbreviation(BBB))] )
+            OSISAbbrev = bos_books_codes_py.get_osis_abbreviation( BBB )
             if not OSISAbbrev:
                 logger.error( f"toHaggai: Can't write {BBB} Haggai book because no OSIS code available" )
                 unhandledBooks.append( BBB )
                 return
-            writerObject.writeLineOpen( 'BIBLEBOOK', [('bnumber',bos_books_codes_py.get_reference_number_py(BBB)), ('bname',bos_books_codes_py.get_english_name_nr_py(BBB)), ('bsname',OSISAbbrev)] )
+            writerObject.writeLineOpen( 'BIBLEBOOK', [('bnumber',bos_books_codes_py.get_reference_number(BBB)), ('bname',bos_books_codes_py.get_english_name_nr(BBB)), ('bsname',OSISAbbrev)] )
             haveOpenChapter = haveOpenParagraph = False
             gotVP = None
             C, V = '-1', '-1' # So first/id line starts at -1:0
@@ -6365,11 +6365,11 @@ class BibleWriter( InternalBible ):
             getBookAbbreviationFunction = BOS.getBookAbbreviation
         else: # else use our local functions from our deduced book names
             getBookNameFunction = self.getAssumedBookName # from BibleOrgSys.Formats.USFMBible (which gets it from BibleOrgSys.Formats.USFMBibleBook)
-            getBookAbbreviationFunction = bos_books_codes_py.get_osis_abbreviation_py
+            getBookAbbreviationFunction = bos_books_codes_py.get_osis_abbreviation
 
         if 0:
             bookAbbrevDict, bookNameDict, bookAbbrevNameDict = {}, {}, {}
-            for BBB in bos_books_codes_py.get_all_reference_abbreviations_py(): # Pre-process the language booknames
+            for BBB in bos_books_codes_py.get_all_reference_abbreviations(): # Pre-process the language booknames
                 if BBB in controlDict and controlDict[BBB]:
                     bits = controlDict[BBB].split(',')
                     if len(bits)!=2: logger.error( f"toSwordModule: Unrecognized language book abbreviation and name for {BBB}: {controlDict[BBB]!r}" )
@@ -6396,11 +6396,11 @@ class BibleWriter( InternalBible ):
             #SwLocFile.write( 'Encoding=UTF-8\n\n[Text]\n' )
             #for BBB in BOS.getBookList():
                 #if BBB in self.books:
-                    #SwLocFile.write( f'{bos_books_codes_py.get_english_name_nr_py(BBB)}={getBookNameFunction(BBB)}\n' ) # Write the first English book name and the vernacular book name
+                    #SwLocFile.write( f'{bos_books_codes_py.get_english_name_nr(BBB)}={getBookNameFunction(BBB)}\n' ) # Write the first English book name and the vernacular book name
             #SwLocFile.write( '\n[Book Abbrevs]\n' )
             #for BBB in BOS.getBookList():
                 #if BBB in self.books:
-                    #SwLocFile.write( f'{bos_books_codes_py.get_english_name_nr_py(BBB).upper()}={bos_books_codes_py.get_sword_abbreviation_py(BBB)}\n' ) # Write the UPPER CASE language book name and the Sword abbreviation
+                    #SwLocFile.write( f'{bos_books_codes_py.get_english_name_nr(BBB).upper()}={bos_books_codes_py.get_sword_abbreviation(BBB)}\n' ) # Write the UPPER CASE language book name and the Sword abbreviation
 
         # Make our other folders if necessary
         modsdFolder = os.path.join( outputFolderpath, 'mods.d' )
@@ -6416,7 +6416,7 @@ class BibleWriter( InternalBible ):
         lgFolder = os.path.join( rawTextFolder, BibleOrgSysGlobals.makeSafeFilename( oW ) )
         if not os.access( lgFolder, os.F_OK ): os.mkdir( lgFolder ) # Make the empty folder if there wasn't already one there
 
-        toSwordGlobals = { 'currentID':0, "idStack":[], "verseRef":'', "XRefNum":0, "FootnoteNum":0, "lastRef":'', 'offset':0, 'length':0, "OneChapterOSISBookCodes":bos_books_codes_py.get_osis_single_chapter_books_list_py() } # These are our global variables
+        toSwordGlobals = { 'currentID':0, "idStack":[], "verseRef":'', "XRefNum":0, "FootnoteNum":0, "lastRef":'', 'offset':0, 'length':0, "OneChapterOSISBookCodes":bos_books_codes_py.get_osis_single_chapter_books_list() } # These are our global variables
 
 
         def makeConfFile( modsdFolder, compressedFlag ):
@@ -6759,7 +6759,7 @@ class BibleWriter( InternalBible ):
 
 
             # Main code for toSwordModule.writeSwordBook
-            bookRef = bos_books_codes_py.get_osis_abbreviation_py( BBB ) # OSIS book name
+            bookRef = bos_books_codes_py.get_osis_abbreviation( BBB ) # OSIS book name
             writerObject.writeLineOpen( 'div', [('osisID',bookRef), getSID(), ('type',"book")] )
             haveOpenIntro = haveOpenOutline = haveOpenMajorSection = haveOpenSection = haveOpenSubsection = False
             needChapterEID = haveOpenParagraph = haveOpenVsID = haveOpenLG = haveOpenL = haveOpenList = False
@@ -7024,9 +7024,9 @@ class BibleWriter( InternalBible ):
             writeIndexEntry( xwOT, ixOT ) # Write the second entry pointing to the opening milestone
             writeIndexEntry( xwNT, ixNT ) # Write the second entry pointing to the opening milestone
             for BBB,bookData in self.books.items(): # Process each Bible book
-                if bos_books_codes_py.is_ot_nr_py( BBB ):
+                if bos_books_codes_py.is_ot_nr( BBB ):
                     xw = xwOT; ix = ixOT
-                elif bos_books_codes_py.is_nt_nr_py( BBB ):
+                elif bos_books_codes_py.is_nt_nr( BBB ):
                     xw = xwNT; ix = ixNT
                 else:
                     logger.error( f"toSwordModule: Sword module writer doesn't know how to encode {BBB} book or appendix" )
@@ -7346,7 +7346,7 @@ class BibleWriter( InternalBible ):
             writer.write( "*Chapter\n#book,fullname,shortname,chap-count\n" )
             for BBB,bookObject in self.books.items():
                 numChapters = None
-                try: bookCode = bos_books_codes_py.get_drupal_bible_abbreviation_py( BBB ).upper()
+                try: bookCode = bos_books_codes_py.get_drupal_bible_abbreviation( BBB ).upper()
                 except AttributeError: # Don't know how to encode this book
                     logger.warning( f"toDrupalBible: ignoring book: {BBB}" )
                     continue
@@ -7383,7 +7383,7 @@ class BibleWriter( InternalBible ):
             """
             Convert the internal Bible data to DrupalBible output.
             """
-            try: bookCode = bos_books_codes_py.get_drupal_bible_abbreviation_py( BBB ).upper()
+            try: bookCode = bos_books_codes_py.get_drupal_bible_abbreviation( BBB ).upper()
             except AttributeError:
                 logger.warning( "writeDrupalBibleBook: " + f"don't know how to encode {BBB} — ignored" )
                 unhandledBooks.append( BBB )
@@ -7864,7 +7864,7 @@ class BibleWriter( InternalBible ):
                         chapterFoldernameTemplate, filenameTemplate = '{:03}-{:02}-{}/', '{:03}-{:02}-{:02}-{}.jpg'
                     else:
                         chapterFoldernameTemplate, filenameTemplate = '{:03}-{:03}-{}/', '{:03}-{:03}-{:02}-{}.jpg'
-                chapterFolderName = chapterFoldernameTemplate.format( bos_books_codes_py.get_reference_number_py( BBB ), intC, BBB )
+                chapterFolderName = chapterFoldernameTemplate.format( bos_books_codes_py.get_reference_number( BBB ), intC, BBB )
                 if numVerses > 80: filenameTemplate = filenameTemplate.replace( '{:02}-{}', '{:03}-{}' )
             else: halt
 
@@ -7903,13 +7903,13 @@ class BibleWriter( InternalBible ):
             bookAbbrev = self.getBooknameAbbreviation( BBB )
             bookAbbrev = BBB if not bookAbbrev else BibleOrgSysGlobals.makeSafeFilename( bookAbbrev.replace( ' ', '' ) )
 
-            BBBnum = bos_books_codes_py.get_reference_number_py( BBB )
-            maxChapters = bos_books_codes_py.get_max_chapters_py( BBB )
+            BBBnum = bos_books_codes_py.get_reference_number( BBB )
+            maxChapters = bos_books_codes_py.get_max_chapters( BBB )
 
             # Find a suitable folder name and make the necessary folder(s)
-            if bos_books_codes_py.is_ot_nr_py( BBB ):
+            if bos_books_codes_py.is_ot_nr( BBB ):
                 subfolderName = 'OT/'
-            elif bos_books_codes_py.is_nt_nr_py( BBB ):
+            elif bos_books_codes_py.is_nt_nr( BBB ):
                 subfolderName = 'NT/'
             else:
                 subfolderName = 'Other/'
@@ -10215,7 +10215,7 @@ def briefDemo() -> None:
                         vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nComparing original and re-exported USFM files…" )
                         for jj, (BBB,filename1) in enumerate( fN.getMaximumPossibleFilenameTuples() ):
                             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, jj, BBB, filename1 )
-                            UUU, nn = bos_books_codes_py.reference_abbrev_to_usfm_abbrev_py( BBB ).upper(), bos_books_codes_py.get_usfm_num_str_py( BBB )
+                            UUU, nn = bos_books_codes_py.reference_abbrev_to_usfm_abbrev( BBB ).upper(), bos_books_codes_py.get_usfm_num_str( BBB )
                             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, jj, BBB, filename1, UUU )
                             filename2 = None
                             for fn in folderContents2:
@@ -10262,7 +10262,7 @@ def briefDemo() -> None:
                         vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nComparing original and re-exported USFM files…" )
                         for jj, (BBB,filename1) in enumerate( fN.getMaximumPossibleFilenameTuples() ):
                             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, jj, BBB, filename1 )
-                            UUU, nn = bos_books_codes_py.reference_abbrev_to_usfm_abbrev_py( BBB ).upper(), bos_books_codes_py.get_usfm_num_str_py( BBB )
+                            UUU, nn = bos_books_codes_py.reference_abbrev_to_usfm_abbrev( BBB ).upper(), bos_books_codes_py.get_usfm_num_str( BBB )
                             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, jj, BBB, filename1, UUU )
                             filename2 = None
                             for fn in folderContents2:
@@ -10311,7 +10311,7 @@ def briefDemo() -> None:
                         vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nComparing original and re-exported USFM files…" )
                         for jj, (BBB,filename1) in enumerate( fN.getMaximumPossibleFilenameTuples() ):
                             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, jj, BBB, filename1 )
-                            UUU, nn = bos_books_codes_py.reference_abbrev_to_usfm_abbrev_py( BBB ).upper(), bos_books_codes_py.get_usfm_num_str_py( BBB )
+                            UUU, nn = bos_books_codes_py.reference_abbrev_to_usfm_abbrev( BBB ).upper(), bos_books_codes_py.get_usfm_num_str( BBB )
                             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, jj, BBB, filename1, UUU )
                             filename2 = None
                             for fn in folderContents2:
@@ -10443,7 +10443,7 @@ def fullDemo() -> None:
                         vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nComparing original and re-exported USFM files…" )
                         for jj, (BBB,filename1) in enumerate( fN.getMaximumPossibleFilenameTuples() ):
                             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, jj, BBB, filename1 )
-                            UUU, nn = bos_books_codes_py.reference_abbrev_to_usfm_abbrev_py( BBB ).upper(), bos_books_codes_py.get_usfm_num_str_py( BBB )
+                            UUU, nn = bos_books_codes_py.reference_abbrev_to_usfm_abbrev( BBB ).upper(), bos_books_codes_py.get_usfm_num_str( BBB )
                             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, jj, BBB, filename1, UUU )
                             filename2 = None
                             for fn in folderContents2:
@@ -10510,7 +10510,7 @@ def fullDemo() -> None:
                         vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nComparing original and re-exported USFM files…" )
                         for jj, (BBB,filename1) in enumerate( fN.getMaximumPossibleFilenameTuples() ):
                             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, jj, BBB, filename1 )
-                            UUU, nn = bos_books_codes_py.reference_abbrev_to_usfm_abbrev_py( BBB ).upper(), bos_books_codes_py.get_usfm_num_str_py( BBB )
+                            UUU, nn = bos_books_codes_py.reference_abbrev_to_usfm_abbrev( BBB ).upper(), bos_books_codes_py.get_usfm_num_str( BBB )
                             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, jj, BBB, filename1, UUU )
                             filename2 = None
                             for fn in folderContents2:
@@ -10574,7 +10574,7 @@ def fullDemo() -> None:
                         vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nComparing original and re-exported USFM files…" )
                         for jj, (BBB,filename1) in enumerate( fN.getMaximumPossibleFilenameTuples() ):
                             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, jj, BBB, filename1 )
-                            UUU, nn = bos_books_codes_py.reference_abbrev_to_usfm_abbrev_py( BBB ).upper(), bos_books_codes_py.get_usfm_num_str_py( BBB )
+                            UUU, nn = bos_books_codes_py.reference_abbrev_to_usfm_abbrev( BBB ).upper(), bos_books_codes_py.get_usfm_num_str( BBB )
                             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, jj, BBB, filename1, UUU )
                             filename2 = None
                             for fn in folderContents2:

@@ -336,7 +336,7 @@ class UnboundBible( Bible ):
                 if bookCode != lastBookCode: # We've started a new book
                     if lastBookCode != -1: # Better save the last book
                         self.stashBook( thisBook )
-                    BBB = bos_books_codes_py.unbound_code_to_reference_abbrev_py( bookCode )
+                    BBB = bos_books_codes_py.unbound_code_to_reference_abbrev( bookCode )
                     thisBook = BibleBook( self, BBB )
                     thisBook.objectNameString = 'Unbound Bible Book object'
                     thisBook.objectTypeString = 'Unbound'

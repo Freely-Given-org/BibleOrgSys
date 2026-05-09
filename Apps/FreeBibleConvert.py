@@ -80,7 +80,7 @@ def splitAndWriteBooks( entireBibleText, folderpath ):
         assert splitText[3] == ' '
         bookID = splitText[:3]
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Got book id", repr(bookID) )
-        assert bookID in bos_books_codes_py.get_all_usfm_books_codes_py( toUpper=True )
+        assert bookID in bos_books_codes_py.get_all_usfm_books_codes( toUpper=True )
         splitText = splitOnString + splitText
 
         # Last chance to fix things up (e.g., by bookID)

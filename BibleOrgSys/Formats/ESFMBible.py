@@ -62,14 +62,13 @@ import re
 import requests
 
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint, BOOKLIST_88
 from BibleOrgSys.InputOutput.USFMFilenames import USFMFilenames
 from BibleOrgSys.Formats.PTX7Bible import loadPTX7ProjectData
 from BibleOrgSys.InputOutput.ESFMFile import ESFMFile
 from BibleOrgSys.Formats.ESFMBibleBook import ESFMBibleBook, ESFM_SEMANTIC_TAGS
 from bible_organisational_system import InternalBibleEntryList, InternalBibleEntry
 from BibleOrgSys.Bible import Bible
-from BibleOrgSys.Reference.BibleBooksCodes import BOOKLIST_88
 
 
 LAST_MODIFIED_DATE = '2026-04-12' # by RJH

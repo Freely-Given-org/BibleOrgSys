@@ -267,7 +267,7 @@ class BibleBookOrdersConverter:
                 bookRA = bookElement.text
                 ID = bookElement.get( "id" )
                 intID = int( ID )
-                if not bos_books_codes_py.is_valid_reference_abbreviation_py( bookRA ):
+                if not bos_books_codes_py.is_valid_reference_abbreviation( bookRA ):
                     logging.error( f"Unrecognized {bookRA!r} book abbreviation in {bookOrderSystemCode!r} book order system" )
                 # Save it by book reference abbreviation
                 if bookRA in bookDataDict:

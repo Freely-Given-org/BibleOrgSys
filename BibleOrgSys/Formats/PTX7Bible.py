@@ -449,7 +449,7 @@ def loadPTXVersifications( BibleObject ):
                 if line.startswith( '#! -' ): # It's an excluded verse (or passage???)
                     assert line[7] == ' '
                     USFMBookCode = line[4:7]
-                    BBB = bos_books_codes_py.usfm_abbrev_to_reference_abbrev_py( USFMBookCode )
+                    BBB = bos_books_codes_py.usfm_abbrev_to_reference_abbrev( USFMBookCode )
                     C,V = line[8:].split( ':', 1 )
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "CV", repr(C), repr(V) )
                     if BibleOrgSysGlobals.debugFlag: assert C.isdigit() and V.isdigit()
@@ -462,7 +462,7 @@ def loadPTXVersifications( BibleObject ):
                 elif line[0] == '-': # It's an excluded verse line -- similar to above
                     assert line[4] == ' '
                     USFMBookCode = line[1:4]
-                    BBB = bos_books_codes_py.usfm_abbrev_to_reference_abbrev_py( USFMBookCode )
+                    BBB = bos_books_codes_py.usfm_abbrev_to_reference_abbrev( USFMBookCode )
                     C,V = line[5:].split( ':', 1 )
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "CV", repr(C), repr(V) )
                     if BibleOrgSysGlobals.debugFlag: assert C.isdigit() and V.isdigit()
@@ -474,8 +474,8 @@ def loadPTXVersifications( BibleObject ):
                     left, right = line.split( ' = ', 1 )
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "left", repr(left), 'right', repr(right) )
                     USFMBookCode1, USFMBookCode2 = left[:3], right[:3]
-                    BBB1 = bos_books_codes_py.usfm_abbrev_to_reference_abbrev_py( USFMBookCode1 )
-                    BBB2 = bos_books_codes_py.usfm_abbrev_to_reference_abbrev_py( USFMBookCode2 )
+                    BBB1 = bos_books_codes_py.usfm_abbrev_to_reference_abbrev( USFMBookCode1 )
+                    BBB2 = bos_books_codes_py.usfm_abbrev_to_reference_abbrev( USFMBookCode2 )
                     if 'Mappings' not in PTXVersifications[versificationName]:
                         PTXVersifications[versificationName]['Mappings'] = {}
                     PTXVersifications[versificationName]['Mappings'][BBB1+left[3:]] = BBB2+right[3:]
@@ -485,7 +485,7 @@ def loadPTXVersifications( BibleObject ):
                     USFMBookCode = line[:3]
                     #if USFMBookCode == 'ODA': USFMBookCode = 'ODE'
                     try:
-                        BBB = bos_books_codes_py.usfm_abbrev_to_reference_abbrev_py( USFMBookCode )
+                        BBB = bos_books_codes_py.usfm_abbrev_to_reference_abbrev( USFMBookCode )
                         if 'VerseCounts' not in PTXVersifications[versificationName]:
                             PTXVersifications[versificationName]['VerseCounts'] = {}
                         PTXVersifications[versificationName]['VerseCounts'][BBB] = {}
@@ -712,7 +712,7 @@ class PTX7Bible( Bible ):
                         else: logging.error( f"Unprocessed {attrib} attribute ({value}) in {treeLocation}" )
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, bnCode, booksNamesDict[bnCode] )
                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: assert len(bnCode)==3
-                    try: BBB = bos_books_codes_py.usfm_abbrev_to_reference_abbrev_py( bnCode )
+                    try: BBB = bos_books_codes_py.usfm_abbrev_to_reference_abbrev( bnCode )
                     except:
                         logging.warning( f"loadPTXBooksNames can't find BOS code for PTX7 {bnCode!r} book" )
                         BBB = bnCode # temporarily use their code

@@ -8,9 +8,7 @@ use ::bos_books_codes::{
     reference_abbrev_to_usfm_abbrev, usfm_abbrev_to_reference_abbrev,
     get_reference_number, get_sequence_number, is_ot_nr, is_nt_nr, is_dc_nr, is_valid_reference_abbreviation,
     get_bbb_from_reference_number, get_all_reference_abbreviations,
-    get_all_osis_abbreviations, get_all_usfm_abbreviations,
-    get_all_usfm_books_code_number_triples, get_all_usx_books_code_number_triples,
-    get_all_bibledit_books_code_number_triples,
+    get_all_osis_abbreviations,
     get_sequence_list,
     get_ccel_number_str, get_short_abbreviation, get_sbl_abbreviation, get_osis_abbreviation,
     get_sword_abbreviation, get_usfm_num_str, get_usx_num_str, get_unbound_bible_code,
@@ -24,16 +22,18 @@ use ::bos_books_codes::{
     bcv_reference_to_int,
 };
 use pyo3::types::{PyDict, PyList, PyTuple};
-use compact_str::{CompactString, format_compact};
+use compact_str::format_compact;
 
 /// Returns True if the given reference abbreviation is valid.
 #[pyfunction]
+#[pyo3(name = "is_valid_reference_abbreviation")]
 fn is_valid_reference_abbreviation_py(reference_abbreviation: &str) -> PyResult<bool> {
     Ok(is_valid_reference_abbreviation(reference_abbreviation))
 }
 
 /// Converts a BibleOrgSys (BOS) reference abbreviation book code to a USFM book code.
 #[pyfunction]
+#[pyo3(name = "reference_abbrev_to_usfm_abbrev")]
 fn reference_abbrev_to_usfm_abbrev_py(reference_abbreviation: &str) -> PyResult<Option<String>> {
     Ok(reference_abbrev_to_usfm_abbrev(reference_abbreviation)
         .map_err(|e| PyErr::new::<pyo3::exceptions::PyKeyError, _>(e.to_string()))?
@@ -42,6 +42,7 @@ fn reference_abbrev_to_usfm_abbrev_py(reference_abbreviation: &str) -> PyResult<
 
 /// Returns the referenceNumber 1..999 for the given book code (referenceAbbreviation).
 #[pyfunction]
+#[pyo3(name = "get_reference_number")]
 fn get_reference_number_py(reference_abbreviation: &str) -> PyResult<u16> {
     Ok(get_reference_number(reference_abbreviation)
         .map_err(|e| PyErr::new::<pyo3::exceptions::PyKeyError, _>(e.to_string()))?)
@@ -49,6 +50,7 @@ fn get_reference_number_py(reference_abbreviation: &str) -> PyResult<u16> {
 
 /// Returns the sequence number for a given reference abbreviation.
 #[pyfunction]
+#[pyo3(name = "get_sequence_number")]
 fn get_sequence_number_py(reference_abbreviation: &str) -> PyResult<u16> {
     Ok(get_sequence_number(reference_abbreviation).unwrap_or(9999))
 }
@@ -56,6 +58,7 @@ fn get_sequence_number_py(reference_abbreviation: &str) -> PyResult<u16> {
 /// Returns True if the given reference abbreviation is an Old Testament book.
 /// nr stands for "Not Recommended" (because ideally the proper versification functions should be used instead)
 #[pyfunction]
+#[pyo3(name = "is_ot_nr")]
 fn is_ot_nr_py(reference_abbreviation: &str) -> PyResult<bool> {
     Ok(is_ot_nr(reference_abbreviation))
 }
@@ -63,6 +66,7 @@ fn is_ot_nr_py(reference_abbreviation: &str) -> PyResult<bool> {
 /// Returns True if the given reference abbreviation is a New Testament book.
 /// nr stands for "Not Recommended" (because ideally the proper versification functions should be used instead)
 #[pyfunction]
+#[pyo3(name = "is_nt_nr")]
 fn is_nt_nr_py(reference_abbreviation: &str) -> PyResult<bool> {
     Ok(is_nt_nr(reference_abbreviation))
 }
@@ -70,12 +74,14 @@ fn is_nt_nr_py(reference_abbreviation: &str) -> PyResult<bool> {
 /// Returns True if the given reference abbreviation is a Deuterocanonical book.
 /// nr stands for "Not Recommended" (because ideally the proper versification functions should be used instead)
 #[pyfunction]
+#[pyo3(name = "is_dc_nr")]
 fn is_dc_nr_py(reference_abbreviation: &str) -> PyResult<bool> {
     Ok(is_dc_nr(reference_abbreviation))
 }
 
 /// Converts a USFM book code to a BibleOrgSys (BOS) reference abbreviation book code.
 #[pyfunction]
+#[pyo3(name = "usfm_abbrev_to_reference_abbrev")]
 fn usfm_abbrev_to_reference_abbrev_py(usfm_abbreviation: &str) -> PyResult<String> {
     Ok(usfm_abbrev_to_reference_abbrev(usfm_abbreviation)
         .map_err(|e| PyErr::new::<pyo3::exceptions::PyKeyError, _>(e.to_string()))?
@@ -84,7 +90,7 @@ fn usfm_abbrev_to_reference_abbrev_py(usfm_abbreviation: &str) -> PyResult<Strin
 
 /// Converts an OSIS book code to a BibleOrgSys (BOS) reference abbreviation book code.
 #[pyfunction]
-#[pyo3(signature = (osis_abbreviation, strict=false))]
+#[pyo3(name = "osis_abbrev_to_reference_abbrev", signature = (osis_abbreviation, strict=false))]
 fn osis_abbrev_to_reference_abbrev_py(osis_abbreviation: &str, strict: bool) -> PyResult<String> {
     Ok(osis_abbrev_to_reference_abbrev(osis_abbreviation, strict)
         .map_err(|e| PyErr::new::<pyo3::exceptions::PyKeyError, _>(e.to_string()))?
@@ -93,6 +99,7 @@ fn osis_abbrev_to_reference_abbrev_py(osis_abbreviation: &str, strict: bool) -> 
 
 /// Converts a Drupal book code to a BibleOrgSys (BOS) reference abbreviation book code.
 #[pyfunction]
+#[pyo3(name = "drupal_abbrev_to_reference_abbrev")]
 fn drupal_abbrev_to_reference_abbrev_py(drupal_abbreviation: &str) -> PyResult<String> {
     Ok(drupal_abbrev_to_reference_abbrev(drupal_abbreviation)
         .map_err(|e| PyErr::new::<pyo3::exceptions::PyKeyError, _>(e.to_string()))?
@@ -101,6 +108,7 @@ fn drupal_abbrev_to_reference_abbrev_py(drupal_abbreviation: &str) -> PyResult<S
 
 /// Converts an Unbound book code to a BibleOrgSys (BOS) reference abbreviation book code.
 #[pyfunction]
+#[pyo3(name = "unbound_code_to_reference_abbrev")]
 fn unbound_code_to_reference_abbrev_py(unbound_code: &str) -> PyResult<String> {
     Ok(unbound_code_to_reference_abbrev(unbound_code)
         .map_err(|e| PyErr::new::<pyo3::exceptions::PyKeyError, _>(e.to_string()))?
@@ -110,7 +118,7 @@ fn unbound_code_to_reference_abbrev_py(unbound_code: &str) -> PyResult<String> {
 /// Converts a short book code to a BibleOrgSys (BOS) reference abbreviation book code.
 /// NOTE: This tends to be more forgiving than more specific Bible code systems.
 #[pyfunction]
-#[pyo3(signature = (short_abbreviation, strict=false))]
+#[pyo3(name = "short_abbrev_to_reference_abbrev", signature = (short_abbreviation, strict=false))]
 fn short_abbrev_to_reference_abbrev_py(short_abbreviation: &str, strict: bool) -> PyResult<String> {
     Ok(short_abbrev_to_reference_abbrev(short_abbreviation, strict)
         .map_err(|e| PyErr::new::<pyo3::exceptions::PyKeyError, _>(e.to_string()))?
@@ -119,6 +127,7 @@ fn short_abbrev_to_reference_abbrev_py(short_abbreviation: &str, strict: bool) -
 
 /// Converts an SBL book code to a BibleOrgSys (BOS) reference abbreviation book code.
 #[pyfunction]
+#[pyo3(name = "sbl_abbrev_to_reference_abbrev")]
 fn sbl_abbrev_to_reference_abbrev_py(sbl_abbreviation: &str) -> PyResult<String> {
     Ok(sbl_abbrev_to_reference_abbrev(sbl_abbreviation)
         .map_err(|e| PyErr::new::<pyo3::exceptions::PyKeyError, _>(e.to_string()))?
@@ -127,6 +136,7 @@ fn sbl_abbrev_to_reference_abbrev_py(sbl_abbreviation: &str) -> PyResult<String>
 
 /// Converts a NET Bible book code to a BibleOrgSys (BOS) reference abbreviation book code.
 #[pyfunction]
+#[pyo3(name = "net_bible_abbrev_to_reference_abbrev")]
 fn net_bible_abbrev_to_reference_abbrev_py(net_bible_abbreviation: &str) -> PyResult<String> {
     Ok(net_bible_abbrev_to_reference_abbrev(net_bible_abbreviation)
         .map_err(|e| PyErr::new::<pyo3::exceptions::PyKeyError, _>(e.to_string()))?
@@ -135,6 +145,7 @@ fn net_bible_abbrev_to_reference_abbrev_py(net_bible_abbreviation: &str) -> PyRe
 
 // Tries to see if an English book name can be narrowed down to a a reference abbreviation book code.
 #[pyfunction]
+#[pyo3(name = "english_name_to_reference_abbrev")]
 fn english_name_to_reference_abbrev_py(english_name: &str) -> PyResult<Option<&'static str>> {
     Ok(english_name_to_reference_abbrev(english_name))
 }
@@ -143,117 +154,165 @@ fn english_name_to_reference_abbrev_py(english_name: &str) -> PyResult<Option<&'
 /// This is probably only useful in the range 1..66 (GEN..REV).
 /// (After that, it specifies our arbitrary order.)
 #[pyfunction]
+#[pyo3(name = "get_bbb_from_reference_number")]
 fn get_bbb_from_reference_number_py(reference_number: u16) -> PyResult<Option<&'static str>> {
     Ok(get_bbb_from_reference_number(reference_number))
 }
 
 #[pyfunction]
-fn get_all_reference_abbreviations_py() -> PyResult<Vec<&'static str>> {
-    Ok(get_all_reference_abbreviations())
+#[pyo3(name = "get_all_reference_abbreviations")]
+fn get_all_reference_abbreviations_py<'py>(py: Python<'py>) -> PyResult<Bound<'py, PyList>> {
+    let list = PyList::empty(py);
+    for bbb in get_all_reference_abbreviations() {
+        list.append(bbb)?;
+    }
+    Ok(list)
 }
 
 #[pyfunction]
-fn get_all_osis_abbreviations_py() -> PyResult<Vec<&'static str>> {
-    Ok(get_all_osis_abbreviations())
+#[pyo3(name = "get_all_osis_abbreviations")]
+fn get_all_osis_abbreviations_py<'py>(py: Python<'py>) -> PyResult<Bound<'py, PyList>> {
+    let list = PyList::empty(py);
+    for abbrev in get_all_osis_abbreviations() {
+        list.append(abbrev)?;
+    }
+    Ok(list)
 }
 
 #[pyfunction]
-#[pyo3(signature = (to_upper=false))]
-fn get_all_usfm_abbreviations_py(to_upper: bool) -> PyResult<Vec<String>> {
-    Ok(get_all_usfm_abbreviations(to_upper).into_iter().map(|s| s.to_string()).collect())
+#[pyo3(name = "get_all_usfm_abbreviations", signature = (to_upper=false))]
+fn get_all_usfm_abbreviations_py<'py>(py: Python<'py>, to_upper: bool) -> PyResult<Bound<'py, PyList>> {
+    let list = PyList::empty(py);
+    for abbrev in ::bos_books_codes::get_all_usfm_abbreviations(to_upper) {
+        list.append(abbrev.as_str())?;
+    }
+    Ok(list)
 }
 
 #[pyfunction]
-fn get_all_usfm_books_code_number_triples_py() -> PyResult<Vec<(&'static str, &'static str, &'static str)>> {
-    Ok(get_all_usfm_books_code_number_triples())
+#[pyo3(name = "get_all_usfm_books_code_number_triples")]
+fn get_all_usfm_books_code_number_triples_py<'py>(py: Python<'py>) -> PyResult<Bound<'py, PyList>> {
+    let list = PyList::empty(py);
+    for triple in ::bos_books_codes::get_all_usfm_books_code_number_triples() {
+        list.append(PyTuple::new(py, &[triple.0, triple.1, triple.2])?)?;
+    }
+    Ok(list)
 }
 
 #[pyfunction]
-fn get_all_usx_books_code_number_triples_py() -> PyResult<Vec<(&'static str, &'static str, &'static str)>> {
-    Ok(get_all_usx_books_code_number_triples())
+#[pyo3(name = "get_all_usx_books_code_number_triples")]
+fn get_all_usx_books_code_number_triples_py<'py>(py: Python<'py>) -> PyResult<Bound<'py, PyList>> {
+    let list = PyList::empty(py);
+    for triple in ::bos_books_codes::get_all_usx_books_code_number_triples() {
+        list.append(PyTuple::new(py, &[triple.0, triple.1, triple.2])?)?;
+    }
+    Ok(list)
 }
 
 #[pyfunction]
-fn get_all_bibledit_books_code_number_triples_py() -> PyResult<Vec<(&'static str, &'static str, &'static str)>> {
-    Ok(get_all_bibledit_books_code_number_triples())
+#[pyo3(name = "get_all_bibledit_books_code_number_triples")]
+fn get_all_bibledit_books_code_number_triples_py<'py>(py: Python<'py>) -> PyResult<Bound<'py, PyList>> {
+    let list = PyList::empty(py);
+    for triple in ::bos_books_codes::get_all_bibledit_books_code_number_triples() {
+        list.append(PyTuple::new(py, &[triple.0, triple.1, triple.2])?)?;
+    }
+    Ok(list)
 }
 
 /// Return a list of BBB codes in a sequence that could be used for the print order
 /// if no further information is available.
 /// If you supply a list of books, it puts your actual book codes into the default order.
 #[pyfunction]
-#[pyo3(signature = (my_list=None))]
-fn get_sequence_list_py(my_list: Option<Vec<String>>) -> PyResult<Vec<&'static str>> {
+#[pyo3(name = "get_sequence_list", signature = (my_list=None))]
+fn get_sequence_list_py<'py>(py: Python<'py>, my_list: Option<Vec<String>>) -> PyResult<Bound<'py, PyList>> {
     let list_refs: Option<Vec<&str>> = my_list.as_ref().map(|v| v.iter().map(|s| s.as_str()).collect());
-    Ok(get_sequence_list(list_refs))
+    let list = PyList::empty(py);
+    for bbb in get_sequence_list(list_refs) {
+        list.append(bbb)?;
+    }
+    Ok(list)
 }
 
 #[pyfunction]
+#[pyo3(name = "get_ccel_number")]
 fn get_ccel_number_py(reference_abbreviation: &str) -> PyResult<Option<&'static str>> {
     Ok(get_ccel_number_str(reference_abbreviation))
 }
 
 #[pyfunction]
+#[pyo3(name = "get_short_abbreviation")]
 fn get_short_abbreviation_py(reference_abbreviation: &str) -> PyResult<Option<&'static str>> {
     Ok(get_short_abbreviation(reference_abbreviation))
 }
 
 #[pyfunction]
+#[pyo3(name = "get_sbl_abbreviation")]
 fn get_sbl_abbreviation_py(reference_abbreviation: &str) -> PyResult<Option<&'static str>> {
     Ok(get_sbl_abbreviation(reference_abbreviation))
 }
 
 #[pyfunction]
+#[pyo3(name = "get_osis_abbreviation")]
 fn get_osis_abbreviation_py(reference_abbreviation: &str) -> PyResult<Option<&'static str>> {
     Ok(get_osis_abbreviation(reference_abbreviation))
 }
 
 #[pyfunction]
+#[pyo3(name = "get_sword_abbreviation")]
 fn get_sword_abbreviation_py(reference_abbreviation: &str) -> PyResult<Option<&'static str>> {
     Ok(get_sword_abbreviation(reference_abbreviation))
 }
 
 #[pyfunction]
+#[pyo3(name = "get_usfm_num_str")]
 fn get_usfm_num_str_py(reference_abbreviation: &str) -> PyResult<Option<&'static str>> {
     Ok(get_usfm_num_str(reference_abbreviation))
 }
 
 #[pyfunction]
+#[pyo3(name = "get_usx_num_str")]
 fn get_usx_num_str_py(reference_abbreviation: &str) -> PyResult<Option<&'static str>> {
     Ok(get_usx_num_str(reference_abbreviation))
 }
 
 #[pyfunction]
+#[pyo3(name = "get_unbound_bible_code")]
 fn get_unbound_bible_code_py(reference_abbreviation: &str) -> PyResult<Option<&'static str>> {
     Ok(get_unbound_bible_code(reference_abbreviation))
 }
 
 #[pyfunction]
+#[pyo3(name = "get_bibledit_num_str")]
 fn get_bibledit_num_str_py(reference_abbreviation: &str) -> PyResult<Option<&'static str>> {
     Ok(get_bibledit_num_str(reference_abbreviation))
 }
 
 #[pyfunction]
+#[pyo3(name = "get_logos_num_str")]
 fn get_logos_num_str_py(reference_abbreviation: &str) -> PyResult<Option<&'static str>> {
     Ok(get_logos_num_str(reference_abbreviation))
 }
 
 #[pyfunction]
+#[pyo3(name = "get_net_bible_abbreviation")]
 fn get_net_bible_abbreviation_py(reference_abbreviation: &str) -> PyResult<Option<&'static str>> {
     Ok(get_net_bible_abbreviation(reference_abbreviation))
 }
 
 #[pyfunction]
+#[pyo3(name = "get_drupal_bible_abbreviation")]
 fn get_drupal_bible_abbreviation_py(reference_abbreviation: &str) -> PyResult<Option<&'static str>> {
     Ok(get_drupal_bible_abbreviation(reference_abbreviation))
 }
 
 #[pyfunction]
+#[pyo3(name = "get_byzantine_abbreviation")]
 fn get_byzantine_abbreviation_py(reference_abbreviation: &str) -> PyResult<Option<&'static str>> {
     Ok(get_byzantine_abbreviation(reference_abbreviation))
 }
 
 #[pyfunction]
+#[pyo3(name = "get_possible_alternative_books")]
 fn get_possible_alternative_books_py(reference_abbreviation: &str) -> PyResult<Vec<&'static str>> {
     Ok(get_possible_alternative_books(reference_abbreviation))
 }
@@ -262,36 +321,43 @@ fn get_possible_alternative_books_py(reference_abbreviation: &str) -> PyResult<V
 /// Why is it a list? Because some books have alternate possible numbers of chapters
 /// depending on the Biblical tradition.
 #[pyfunction]
+#[pyo3(name = "get_expected_chapters_list")]
 fn get_expected_chapters_list_py(reference_abbreviation: &str) -> PyResult<Vec<u16>> {
     Ok(get_expected_chapters_list(reference_abbreviation))
 }
 
 #[pyfunction]
+#[pyo3(name = "get_max_chapters")]
 fn get_max_chapters_py(reference_abbreviation: &str) -> PyResult<i16> {
     Ok(get_max_chapters(reference_abbreviation))
 }
 
 #[pyfunction]
+#[pyo3(name = "get_single_chapter_books_list")]
 fn get_single_chapter_books_list_py() -> PyResult<Vec<&'static str>> {
     Ok(get_single_chapter_books_list())
 }
 
 #[pyfunction]
+#[pyo3(name = "get_osis_single_chapter_books_list")]
 fn get_osis_single_chapter_books_list_py() -> PyResult<Vec<&'static str>> {
     Ok(get_osis_single_chapter_books_list())
 }
 
 #[pyfunction]
+#[pyo3(name = "is_single_chapter_book")]
 fn is_single_chapter_book_py(reference_abbreviation: &str) -> PyResult<bool> {
     Ok(is_single_chapter_book(reference_abbreviation))
 }
 
 #[pyfunction]
+#[pyo3(name = "is_chapter_verse_book")]
 fn is_chapter_verse_book_py(reference_abbreviation: &str) -> PyResult<bool> {
     Ok(is_chapter_verse_book(reference_abbreviation))
 }
 
 #[pyfunction]
+#[pyo3(name = "get_typical_section")]
 fn get_typical_section_py(reference_abbreviation: &str) -> PyResult<Option<&'static str>> {
     Ok(get_typical_section(reference_abbreviation))
 }
@@ -300,6 +366,7 @@ fn get_typical_section_py(reference_abbreviation: &str) -> PyResult<Option<&'sta
 /// i.e., the chapter divisions are artificial.
 /// Returns false for books like Psalms where chapters are actual units.
 #[pyfunction]
+#[pyo3(name = "continues_through_chapters")]
 fn continues_through_chapters_py(reference_abbreviation: &str) -> PyResult<bool> {
     Ok(continues_through_chapters(reference_abbreviation))
 }
@@ -307,11 +374,13 @@ fn continues_through_chapters_py(reference_abbreviation: &str) -> PyResult<bool>
 /// Returns true for 116 Psalms that traditionally have a header field in the Hebrew (USFM /d field).
 /// Otherwise returns false (for the other 34, plus for other books).
 #[pyfunction]
+#[pyo3(name = "has_psalm_title")]
 fn has_psalm_title_py(bbb: &str, c: &str) -> PyResult<bool> {
     Ok(has_psalm_title(bbb, c))
 }
 
 #[pyfunction]
+#[pyo3(name = "get_book_name")]
 fn get_book_name_py(reference_abbreviation: &str) -> PyResult<Option<&'static str>> {
     Ok(get_book_name(reference_abbreviation))
 }
@@ -322,11 +391,13 @@ fn get_book_name_py(reference_abbreviation: &str) -> PyResult<Option<&'static st
 /// The first one in the list is supposed to be the more common.
 // nr stands for "Not Recommended" (because ideally the proper versification functions should be used instead)
 #[pyfunction]
+#[pyo3(name = "get_english_name_nr")]
 fn get_english_name_nr_py(reference_abbreviation: &str) -> PyResult<Option<&'static str>> {
     Ok(get_english_name_nr(reference_abbreviation))
 }
 
 #[pyfunction]
+#[pyo3(name = "get_english_name_list_nr")]
 fn get_english_name_list_nr_py(reference_abbreviation: &str) -> PyResult<Vec<&'static str>> {
     Ok(get_english_name_list_nr(reference_abbreviation))
 }
@@ -336,24 +407,31 @@ fn get_english_name_list_nr_py(reference_abbreviation: &str) -> PyResult<Vec<&'s
 /// BBB is always three characters starting with an UPPERCASE LETTER.
 /// insertChar prevents 1SA (becomes 1-SA or whatever) from being mistaken for ISA.
 #[pyfunction]
-fn tidy_bbb_py(bbb: &str, title_case: bool, allow_four_chars: bool, insert_char: &str) -> PyResult<String> {
-    Ok(tidy_bbb(bbb, title_case, allow_four_chars, insert_char).to_string())
+#[pyo3(name = "tidy_bbb", signature = (bbb, title_case=false, allow_four_chars=true, insert_char=None))]
+fn tidy_bbb_py(bbb: &str, title_case: bool, allow_four_chars: bool, insert_char: Option<&str>) -> PyResult<String> {
+    Ok(tidy_bbb(bbb, title_case, allow_four_chars, insert_char.unwrap_or("")).to_string())
 }
 
 #[pyfunction]
-fn tidy_bbbs_py(bbbs: Vec<String>, title_case: bool, allow_four_chars: bool) -> PyResult<Vec<String>> {
-    Ok(bbbs.into_iter().map(|bbb| tidy_bbb(&bbb, title_case, allow_four_chars, "").to_string()).collect())
+#[pyo3(name = "tidy_bbbs", signature = (bbbs, title_case=false, allow_four_chars=true))]
+fn tidy_bbbs_py<'py>(py: Python<'py>, bbbs: Vec<String>, title_case: bool, allow_four_chars: bool) -> PyResult<Bound<'py, PyList>> {
+    let list = PyList::empty(py);
+    for bbb in bbbs {
+        list.append(tidy_bbb(&bbb, title_case, allow_four_chars, "").as_str())?;
+    }
+    Ok(list)
 }
 
 /// Convert a BCV or BCVS reference to an integer especially so that references can be sorted.
 /// If a verse is a verse span with a hyphen (e.g., '3-4'), it uses the value before the hyphen.
 #[pyfunction]
-#[pyo3(signature = (bbb, c, v, s=None))]
+#[pyo3(name = "bcv_reference_to_int", signature = (bbb, c, v, s=None))]
 fn bcv_reference_to_int_py(bbb: &str, c: &str, v: &str, s: Option<&str>) -> PyResult<i32> {
     Ok(bcv_reference_to_int(bbb, c, v, s))
 }
 
 #[pyfunction]
+#[pyo3(name = "sort_bcv_references")]
 fn sort_bcv_references_py<'py>(py: Python<'py>, references: Bound<'py, PyList>) -> PyResult<Bound<'py, PyList>> {
     let mut refs: Vec<(String, String, String, Option<String>)> = Vec::new();
     for item in references.iter() {
@@ -386,6 +464,7 @@ fn sort_bcv_references_py<'py>(py: Python<'py>, references: Bound<'py, PyList>) 
 }
 
 #[pyfunction]
+#[pyo3(name = "get_full_bookcodes_entry")]
 fn get_full_bookcodes_entry_py<'py>(py: Python<'py>, reference_abbreviation: &str) -> PyResult<Bound<'py, PyDict>> {
     let entry = get_full_entry(reference_abbreviation).map_err(|e| PyErr::new::<pyo3::exceptions::PyKeyError, _>(e.to_string()))?;
     let dict = PyDict::new(py);

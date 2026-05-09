@@ -685,17 +685,17 @@ class PalmDBBible( Bible ):
                 BBB = None
                 if bookNumber % 10 == 0:
                     if bookNumber <= 160:
-                        BBB = bos_books_codes_py.get_bbb_from_reference_number_py( bookNumber / 10 )
+                        BBB = bos_books_codes_py.get_bbb_from_reference_number( bookNumber / 10 )
                     elif bookNumber == 170: BBB = 'TOB'
                     elif bookNumber == 180: BBB = 'JDT'
                     elif bookNumber == 190: BBB = 'EST'
                     elif 220 <= bookNumber <= 260:
-                        BBB = bos_books_codes_py.get_bbb_from_reference_number_py( (bookNumber-40) / 10 )
+                        BBB = bos_books_codes_py.get_bbb_from_reference_number( (bookNumber-40) / 10 )
                     elif 290 <= bookNumber <= 310:
-                        BBB = bos_books_codes_py.get_bbb_from_reference_number_py( (bookNumber-60) / 10 )
+                        BBB = bos_books_codes_py.get_bbb_from_reference_number( (bookNumber-60) / 10 )
                     elif bookNumber == 320: BBB = 'BAR'
                     elif 330 <= bookNumber <= 730:
-                        BBB = bos_books_codes_py.get_bbb_from_reference_number_py( (bookNumber-70) / 10 )
+                        BBB = bos_books_codes_py.get_bbb_from_reference_number( (bookNumber-70) / 10 )
                 elif bookNumber == 315: BBB = 'LJE'
                 #BBB = convertBNtoBBB[bookNumber]
                 #shortNameUpper = shortName.upper()

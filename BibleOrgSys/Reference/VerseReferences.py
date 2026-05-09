@@ -217,7 +217,7 @@ class SimpleVerseKey():
             if isinstance( SI, int ): SI = str( SI )
             #if BibleOrgSysGlobals.debugFlag:
             if not isinstance( BBB, str ) or len(BBB) != 3 \
-            or not bos_books_codes_py.is_valid_reference_abbreviation_py( BBB ) and BBB!='   ':
+            or not bos_books_codes_py.is_valid_reference_abbreviation( BBB ) and BBB!='   ':
                 logging.error( f"SimpleVerseKey: bad {BBB!r} BBB in {(BBB,C,V,SI)}" ); raise TypeError
             if not isinstance( C, str ) or not 1<=len(C)<=3:
                 logging.error( f"SimpleVerseKey: bad {C!r} C in {(BBB,C,V,SI)}" ); raise TypeError
@@ -306,7 +306,7 @@ class SimpleVerseKey():
     # end of SimpleVerseKey.getVerseNumberInt
 
     def getOSISBookAbbreviation( self ):
-        return bos_books_codes_py.get_osis_abbreviation_py( self.BBB )
+        return bos_books_codes_py.get_osis_abbreviation( self.BBB )
     def getOSISReference( self ):
         return f'{self.getOSISBookAbbreviation()}.{self.C}.{self.V}'
 
@@ -338,10 +338,10 @@ class SimpleVerseKey():
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Matched", match.start(), match.end() )
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)), repr(match.group(5)) )
             self.BBB, self.C, self.V, self.S, self.I = match.group(1), match.group(2), match.group(3), (match.group(4) if match.group(4) else ''), None
-            if not bos_books_codes_py.is_valid_reference_abbreviation_py( self.BBB ):
+            if not bos_books_codes_py.is_valid_reference_abbreviation( self.BBB ):
                 logging.error( f"SimpleVerseKey: Invalid {self.BBB!r} book code" )
             if BibleOrgSysGlobals.strictCheckingFlag:
-                assert bos_books_codes_py.is_valid_reference_abbreviation_py( self.BBB )
+                assert bos_books_codes_py.is_valid_reference_abbreviation( self.BBB )
             self.keyType = 'ParsedBCVS'
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, self.getShortText() )
             return True
@@ -351,10 +351,10 @@ class SimpleVerseKey():
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Matched", match.start(), match.end() )
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)), repr(match.group(5)) )
             self.BBB, self.C, self.V, self.I, self.S = match.group(1), match.group(2), match.group(3), (match.group(4) if match.group(4) else ''), None
-            if not bos_books_codes_py.is_valid_reference_abbreviation_py( self.BBB ):
+            if not bos_books_codes_py.is_valid_reference_abbreviation( self.BBB ):
                 logging.error( f"SimpleVerseKey: Invalid {self.BBB!r} book code" )
             if BibleOrgSysGlobals.strictCheckingFlag:
-                assert bos_books_codes_py.is_valid_reference_abbreviation_py( self.BBB )
+                assert bos_books_codes_py.is_valid_reference_abbreviation( self.BBB )
             self.keyType = 'ParsedBCVI'
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, self.getShortText() )
             return True
@@ -380,11 +380,11 @@ class SimpleVerseKey():
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Matched", match.start(), match.end() )
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)), repr(match.group(5)) )
             bk, self.C, self.V, self.S, self.I = match.group(1), match.group(2), match.group(3), (match.group(4) if match.group(4) else ''), None
-            self.BBB = bos_books_codes_py.osis_abbrev_to_reference_abbrev_py( bk )
-            if not bos_books_codes_py.is_valid_reference_abbreviation_py( self.BBB ):
+            self.BBB = bos_books_codes_py.osis_abbrev_to_reference_abbrev( bk )
+            if not bos_books_codes_py.is_valid_reference_abbreviation( self.BBB ):
                 logging.error( f"SimpleVerseKey: Invalid {self.BBB!r} book code" )
             if BibleOrgSysGlobals.strictCheckingFlag:
-                assert bos_books_codes_py.is_valid_reference_abbreviation_py( self.BBB )
+                assert bos_books_codes_py.is_valid_reference_abbreviation( self.BBB )
             self.keyType = 'ParsedBCVS'
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, self.getShortText() )
             return True
@@ -490,10 +490,10 @@ class SimpleVersesKey():
             BBB, C = match.group(1), match.group(2)
             V1, S1 = match.group(3), match.group(4) if match.group(4) else ''
             V2, S2 = match.group(5), match.group(6) if match.group(6) else ''
-            if not bos_books_codes_py.is_valid_reference_abbreviation_py( BBB ):
+            if not bos_books_codes_py.is_valid_reference_abbreviation( BBB ):
                 logging.error( f"SimpleVersesKey: Invalid {BBB!r} book code" )
             if BibleOrgSysGlobals.strictCheckingFlag:
-                assert bos_books_codes_py.is_valid_reference_abbreviation_py( BBB )
+                assert bos_books_codes_py.is_valid_reference_abbreviation( BBB )
                 vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "QWEQW", referenceString )
                 assert int(V2)>int(V1)+1 or S2!=S1
             self.verseKeysList = [SimpleVerseKey(BBB,C,V1,S1), SimpleVerseKey(BBB,C,V2,S2)]
@@ -506,10 +506,10 @@ class SimpleVersesKey():
             BBB = match.group(1)
             C1, V1, S1 = match.group(2), match.group(3), match.group(4) if match.group(4) else ''
             C2, V2, S2 = match.group(5), match.group(6), match.group(7) if match.group(7) else ''
-            if not bos_books_codes_py.is_valid_reference_abbreviation_py( BBB ):
+            if not bos_books_codes_py.is_valid_reference_abbreviation( BBB ):
                 logging.error( f"SimpleVersesKey: Invalid {self.BBB!r} book code" )
             if BibleOrgSysGlobals.strictCheckingFlag:
-                assert bos_books_codes_py.is_valid_reference_abbreviation_py( BBB )
+                assert bos_books_codes_py.is_valid_reference_abbreviation( BBB )
             self.verseKeysList = [SimpleVerseKey(BBB,C1,V1,S1), SimpleVerseKey(BBB,C2,V2,S2)]
             self.keyType = '2CV'
             return True
@@ -521,10 +521,10 @@ class SimpleVersesKey():
             V1, S1 = match.group(3), match.group(4) if match.group(4) else ''
             V2, S2 = match.group(5), match.group(6) if match.group(6) else ''
             V3, S3 = match.group(7), match.group(8) if match.group(8) else ''
-            if not bos_books_codes_py.is_valid_reference_abbreviation_py( BBB ):
+            if not bos_books_codes_py.is_valid_reference_abbreviation( BBB ):
                 logging.error( f"SimpleVersesKey: Invalid {self.BBB!r} book code" )
             if BibleOrgSysGlobals.strictCheckingFlag:
-                assert bos_books_codes_py.is_valid_reference_abbreviation_py( BBB )
+                assert bos_books_codes_py.is_valid_reference_abbreviation( BBB )
                 vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "SDADQ", referenceString )
                 assert int(V2)>int(V1)+1 or S2!=S1
                 assert int(V3)>int(V2)+1 or S3!=S2
@@ -539,10 +539,10 @@ class SimpleVersesKey():
             C1, V1, S1 = match.group(2), match.group(3), match.group(4) if match.group(4) else ''
             C2, V2, S2 = match.group(5), match.group(6), match.group(7) if match.group(7) else ''
             C3, V3, S3 = match.group(8), match.group(9), match.group(10) if match.group(10) else ''
-            if not bos_books_codes_py.is_valid_reference_abbreviation_py( BBB ):
+            if not bos_books_codes_py.is_valid_reference_abbreviation( BBB ):
                 logging.error( f"SimpleVersesKey: Invalid {self.BBB!r} book code" )
             if BibleOrgSysGlobals.strictCheckingFlag:
-                assert bos_books_codes_py.is_valid_reference_abbreviation_py( BBB )
+                assert bos_books_codes_py.is_valid_reference_abbreviation( BBB )
             self.verseKeysList = [SimpleVerseKey(BBB,C1,V1,S1), SimpleVerseKey(BBB,C2,V2,S2), SimpleVerseKey(BBB,C3,V3,S3)]
             self.keyType = '3CV'
             return True
@@ -555,10 +555,10 @@ class SimpleVersesKey():
             V2, S2 = match.group(5), match.group(6) if match.group(6) else ''
             V3, S3 = match.group(7), match.group(8) if match.group(8) else ''
             V4, S4 = match.group(9), match.group(10) if match.group(10) else ''
-            if not bos_books_codes_py.is_valid_reference_abbreviation_py( BBB ):
+            if not bos_books_codes_py.is_valid_reference_abbreviation( BBB ):
                 logging.error( f"SimpleVersesKey: Invalid {self.BBB!r} book code" )
             if BibleOrgSysGlobals.strictCheckingFlag:
-                assert bos_books_codes_py.is_valid_reference_abbreviation_py( BBB )
+                assert bos_books_codes_py.is_valid_reference_abbreviation( BBB )
                 vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "CCVSD", referenceString )
                 assert int(V2)>int(V1)+1 or S2!=S1
                 assert int(V3)>int(V2)+1 or S3!=S2
@@ -577,10 +577,10 @@ class SimpleVersesKey():
             V3, S3 = match.group(7), match.group(8) if match.group(8) else ''
             V4, S4 = match.group(9), match.group(10) if match.group(10) else ''
             V5, S5 = match.group(11), match.group(12) if match.group(12) else ''
-            if not bos_books_codes_py.is_valid_reference_abbreviation_py( BBB ):
+            if not bos_books_codes_py.is_valid_reference_abbreviation( BBB ):
                 logging.error( f"SimpleVersesKey: Invalid {self.BBB!r} book code" )
             if BibleOrgSysGlobals.strictCheckingFlag:
-                assert bos_books_codes_py.is_valid_reference_abbreviation_py( BBB )
+                assert bos_books_codes_py.is_valid_reference_abbreviation( BBB )
                 assert int(V2)>int(V1)+1 or S2!=S1
                 assert int(V3)>int(V2)+1 or S3!=S2
                 assert int(V4)>int(V3)+1 or S4!=S3
@@ -600,10 +600,10 @@ class SimpleVersesKey():
             V4, S4 = match.group(9), match.group(10) if match.group(10) else ''
             V5, S5 = match.group(11), match.group(12) if match.group(12) else ''
             V6, S6 = match.group(12), match.group(13) if match.group(13) else ''
-            if not bos_books_codes_py.is_valid_reference_abbreviation_py( BBB ):
+            if not bos_books_codes_py.is_valid_reference_abbreviation( BBB ):
                 logging.error( f"SimpleVersesKey: Invalid {self.BBB!r} book code" )
             if BibleOrgSysGlobals.strictCheckingFlag:
-                assert bos_books_codes_py.is_valid_reference_abbreviation_py( BBB )
+                assert bos_books_codes_py.is_valid_reference_abbreviation( BBB )
                 assert int(V2)>int(V1)+1 or S2!=S1
                 assert int(V3)>int(V2)+1 or S3!=S2
                 assert int(V4)>int(V3)+1 or S4!=S3
@@ -625,10 +625,10 @@ class SimpleVersesKey():
             V5, S5 = match.group(11), match.group(12) if match.group(12) else ''
             V6, S6 = match.group(13), match.group(14) if match.group(14) else ''
             V7, S7 = match.group(15), match.group(16) if match.group(16) else ''
-            if not bos_books_codes_py.is_valid_reference_abbreviation_py( BBB ):
+            if not bos_books_codes_py.is_valid_reference_abbreviation( BBB ):
                 logging.error( f"SimpleVersesKey: Invalid {self.BBB!r} book code" )
             if BibleOrgSysGlobals.strictCheckingFlag:
-                assert bos_books_codes_py.is_valid_reference_abbreviation_py( BBB )
+                assert bos_books_codes_py.is_valid_reference_abbreviation( BBB )
                 assert int(V2)>int(V1)+1 or S2!=S1
                 assert int(V3)>int(V2)+1 or S3!=S2
                 assert int(V4)>int(V3)+1 or S4!=S3
@@ -653,10 +653,10 @@ class SimpleVersesKey():
             V6, S6 = match.group(12), match.group(13) if match.group(13) else ''
             V7, S7 = match.group(14), match.group(15) if match.group(15) else ''
             V8, S8 = match.group(16), match.group(17) if match.group(17) else ''
-            if not bos_books_codes_py.is_valid_reference_abbreviation_py( BBB ):
+            if not bos_books_codes_py.is_valid_reference_abbreviation( BBB ):
                 logging.error( f"SimpleVersesKey: Invalid {self.BBB!r} book code" )
             if BibleOrgSysGlobals.strictCheckingFlag:
-                assert bos_books_codes_py.is_valid_reference_abbreviation_py( BBB )
+                assert bos_books_codes_py.is_valid_reference_abbreviation( BBB )
                 assert int(V2)>int(V1)+1 or S2!=S1
                 assert int(V3)>int(V2)+1 or S3!=S2
                 assert int(V4)>int(V3)+1 or S4!=S3
@@ -683,10 +683,10 @@ class SimpleVersesKey():
             V7, S7 = match.group(14), match.group(15) if match.group(15) else ''
             V8, S8 = match.group(16), match.group(17) if match.group(17) else ''
             V9, S9 = match.group(18), match.group(19) if match.group(19) else ''
-            if not bos_books_codes_py.is_valid_reference_abbreviation_py( BBB ):
+            if not bos_books_codes_py.is_valid_reference_abbreviation( BBB ):
                 logging.error( f"SimpleVersesKey: Invalid {self.BBB!r} book code" )
             if BibleOrgSysGlobals.strictCheckingFlag:
-                assert bos_books_codes_py.is_valid_reference_abbreviation_py( BBB )
+                assert bos_books_codes_py.is_valid_reference_abbreviation( BBB )
                 assert int(V2)>int(V1)+1 or S2!=S1
                 assert int(V3)>int(V2)+1 or S3!=S2
                 assert int(V4)>int(V3)+1 or S4!=S3
@@ -723,10 +723,10 @@ class SimpleVersesKey():
             bk, C = match.group(1), match.group(2)
             V1, S1 = match.group(3), match.group(4) if match.group(4) else ''
             V2, S2 = match.group(5), match.group(6) if match.group(6) else ''
-            if not bos_books_codes_py.is_valid_reference_abbreviation_py( BBB ):
+            if not bos_books_codes_py.is_valid_reference_abbreviation( BBB ):
                 logging.error( f"SimpleVersesKey: Invalid {BBB!r} book code" )
             if BibleOrgSysGlobals.strictCheckingFlag:
-                assert bos_books_codes_py.is_valid_reference_abbreviation_py( BBB )
+                assert bos_books_codes_py.is_valid_reference_abbreviation( BBB )
                 assert int(V2)>int(V1)+1 or S2!=S1
             self.verseKeysList = [SimpleVerseKey(BBB,C,V1,S1), SimpleVerseKey(BBB,C,V2,S2)]
             self.keyType = '2V'
@@ -738,10 +738,10 @@ class SimpleVersesKey():
             bk = match.group(1)
             C1, V1, S1 = match.group(2), match.group(3), match.group(4) if match.group(4) else ''
             C2, V2, S2 = match.group(5), match.group(6), match.group(7) if match.group(7) else ''
-            if not bos_books_codes_py.is_valid_reference_abbreviation_py( BBB ):
+            if not bos_books_codes_py.is_valid_reference_abbreviation( BBB ):
                 logging.error( f"SimpleVersesKey: Invalid {self.BBB!r} book code" )
             if BibleOrgSysGlobals.strictCheckingFlag:
-                assert bos_books_codes_py.is_valid_reference_abbreviation_py( BBB )
+                assert bos_books_codes_py.is_valid_reference_abbreviation( BBB )
             self.verseKeysList = [SimpleVerseKey(BBB,C1,V1,S1), SimpleVerseKey(BBB,C2,V2,S2)]
             self.keyType = '2CV'
             return True
@@ -753,10 +753,10 @@ class SimpleVersesKey():
             V1, S1 = match.group(3), match.group(4) if match.group(4) else ''
             V2, S2 = match.group(5), match.group(6) if match.group(6) else ''
             V3, S3 = match.group(7), match.group(8) if match.group(8) else ''
-            if not bos_books_codes_py.is_valid_reference_abbreviation_py( BBB ):
+            if not bos_books_codes_py.is_valid_reference_abbreviation( BBB ):
                 logging.error( f"SimpleVersesKey: Invalid {self.BBB!r} book code" )
             if BibleOrgSysGlobals.strictCheckingFlag:
-                assert bos_books_codes_py.is_valid_reference_abbreviation_py( BBB )
+                assert bos_books_codes_py.is_valid_reference_abbreviation( BBB )
                 assert int(V2)>int(V1)+1 or S2!=S1
                 assert int(V3)>int(V2)+1 or S3!=S2
             self.keyType = '3V'
@@ -769,10 +769,10 @@ class SimpleVersesKey():
             C1, V1, S1 = match.group(2), match.group(3), match.group(4) if match.group(4) else ''
             C2, V2, S2 = match.group(5), match.group(6), match.group(7) if match.group(7) else ''
             C3, V3, S3 = match.group(8), match.group(9), match.group(10) if match.group(10) else ''
-            if not bos_books_codes_py.is_valid_reference_abbreviation_py( BBB ):
+            if not bos_books_codes_py.is_valid_reference_abbreviation( BBB ):
                 logging.error( f"SimpleVersesKey: Invalid {self.BBB!r} book code" )
             if BibleOrgSysGlobals.strictCheckingFlag:
-                assert bos_books_codes_py.is_valid_reference_abbreviation_py( BBB )
+                assert bos_books_codes_py.is_valid_reference_abbreviation( BBB )
             self.keyType = '3CV'
             return True
         # else:
@@ -871,10 +871,10 @@ class VerseRangeKey():
             BBB, C = match.group(1), match.group(2)
             V1, S1 = match.group(3), match.group(4) if match.group(4) else ''
             V2, S2 = match.group(5), match.group(6) if match.group(6) else ''
-            if not bos_books_codes_py.is_valid_reference_abbreviation_py( BBB ):
+            if not bos_books_codes_py.is_valid_reference_abbreviation( BBB ):
                 logging.error( f"VerseRangeKey: Invalid {BBB!r} book code" )
             if BibleOrgSysGlobals.strictCheckingFlag:
-                assert bos_books_codes_py.is_valid_reference_abbreviation_py( BBB )
+                assert bos_books_codes_py.is_valid_reference_abbreviation( BBB )
                 assert int(V2)>int(V1) or S2!=S1
             self.rangeStart = SimpleVerseKey( BBB, C, V1, S1 )
             self.rangeEnd = SimpleVerseKey( BBB, C, V2, S2 )
@@ -899,10 +899,10 @@ class VerseRangeKey():
             BBB = match.group(1)
             C1, V1, S1 = match.group(2), match.group(3), match.group(4) if match.group(4) else ''
             C2, V2, S2 = match.group(5), match.group(6), match.group(7) if match.group(7) else ''
-            if not bos_books_codes_py.is_valid_reference_abbreviation_py( BBB ):
+            if not bos_books_codes_py.is_valid_reference_abbreviation( BBB ):
                 logging.error( f"VerseRangeKey: Invalid {BBB!r} book code" )
             if BibleOrgSysGlobals.strictCheckingFlag:
-                assert bos_books_codes_py.is_valid_reference_abbreviation_py( BBB )
+                assert bos_books_codes_py.is_valid_reference_abbreviation( BBB )
             self.rangeStart = SimpleVerseKey( BBB, C1, V1, S1 )
             self.rangeEnd = SimpleVerseKey( BBB, C2, V2, S2 )
             self.verseKeysList = []
@@ -922,10 +922,10 @@ class VerseRangeKey():
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Matched", match.start(), match.end() )
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)), repr(match.group(5)), repr(match.group(6)) )
             BBB, C = match.group(1), match.group(2)
-            if not bos_books_codes_py.is_valid_reference_abbreviation_py( BBB ):
+            if not bos_books_codes_py.is_valid_reference_abbreviation( BBB ):
                 logging.error( f"VerseRangeKey: Invalid {self.BBB!r} book code" )
             if BibleOrgSysGlobals.strictCheckingFlag:
-                assert bos_books_codes_py.is_valid_reference_abbreviation_py( BBB )
+                assert bos_books_codes_py.is_valid_reference_abbreviation( BBB )
             self.rangeStart = SimpleVerseKey( BBB, C, '1' )
             self.rangeEnd = SimpleVerseKey( BBB, C, '999' )
             self.keyType = 'C'
@@ -953,10 +953,10 @@ class VerseRangeKey():
             bk, C = match.group(1), match.group(2)
             V1, S1 = match.group(3), match.group(4) if match.group(4) else ''
             V2, S2 = match.group(5), match.group(6) if match.group(6) else ''
-            if not bos_books_codes_py.is_valid_reference_abbreviation_py( BBB ):
+            if not bos_books_codes_py.is_valid_reference_abbreviation( BBB ):
                 logging.error( f"VerseRangeKey: Invalid {BBB!r} book code" )
             if BibleOrgSysGlobals.strictCheckingFlag:
-                assert bos_books_codes_py.is_valid_reference_abbreviation_py( BBB )
+                assert bos_books_codes_py.is_valid_reference_abbreviation( BBB )
             self.rangeStart = SimpleVerseKey( BBB, C, V1, S1 )
             self.rangeEnd = SimpleVerseKey( BBB, C, V2, S2 )
             self.verseKeysList = []
@@ -976,10 +976,10 @@ class VerseRangeKey():
             bk = match.group(1)
             C1, V1, S1 = match.group(2), match.group(3), match.group(4) if match.group(4) else ''
             C2, V2, S2 = match.group(5), match.group(6), match.group(7) if match.group(7) else ''
-            if not bos_books_codes_py.is_valid_reference_abbreviation_py( BBB ):
+            if not bos_books_codes_py.is_valid_reference_abbreviation( BBB ):
                 logging.error( f"VerseRangeKey: Invalid {BBB!r} book code" )
             if BibleOrgSysGlobals.strictCheckingFlag:
-                assert bos_books_codes_py.is_valid_reference_abbreviation_py( BBB )
+                assert bos_books_codes_py.is_valid_reference_abbreviation( BBB )
             self.rangeStart = SimpleVerseKey( BBB, C1, V1, S1 )
             self.rangeEnd = SimpleVerseKey( BBB, C2, V2, S2 )
             self.verseKeysList = []
@@ -999,10 +999,10 @@ class VerseRangeKey():
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Matched", match.start(), match.end() )
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)), repr(match.group(5)), repr(match.group(6)) )
             bk, C = match.group(1), match.group(2)
-            if not bos_books_codes_py.is_valid_reference_abbreviation_py( BBB ):
+            if not bos_books_codes_py.is_valid_reference_abbreviation( BBB ):
                 logging.error( f"VerseRangeKey: Invalid {self.BBB!r} book code" )
             if BibleOrgSysGlobals.strictCheckingFlag:
-                assert bos_books_codes_py.is_valid_reference_abbreviation_py( BBB )
+                assert bos_books_codes_py.is_valid_reference_abbreviation( BBB )
             self.rangeStart = SimpleVerseKey( BBB, C, '1' )
             self.rangeEnd = SimpleVerseKey( BBB, C, '999' )
             self.keyType = 'C'
@@ -1131,10 +1131,10 @@ class FlexibleVersesKey():
             V1, S1 = match.group(3), match.group(4) if match.group(4) else ''
             V2, S2 = match.group(5), match.group(6) if match.group(6) else ''
             V3, S3 = match.group(7), match.group(8) if match.group(8) else ''
-            if not bos_books_codes_py.is_valid_reference_abbreviation_py( BBB ):
+            if not bos_books_codes_py.is_valid_reference_abbreviation( BBB ):
                 logging.error( f"FlexibleVersesKey: Invalid {BBB!r} book code" )
             if BibleOrgSysGlobals.strictCheckingFlag:
-                assert bos_books_codes_py.is_valid_reference_abbreviation_py( BBB )
+                assert bos_books_codes_py.is_valid_reference_abbreviation( BBB )
                 assert int(V2)>int(V1) or S2!=S1
                 assert int(V3)>int(V2)+1 or S3!=S2
             resultKey = VerseRangeKey( f"{BBB}_{C}:{V1}{'!' if S1 else ''}{S1}-{V2}{'!' if S2 else ''}{S2}", ignoreParseErrors=True )
@@ -1151,10 +1151,10 @@ class FlexibleVersesKey():
             V2, S2 = match.group(5), match.group(6) if match.group(6) else ''
             V3, S3 = match.group(7), match.group(8) if match.group(8) else ''
             V4, S4 = match.group(9), match.group(10) if match.group(10) else ''
-            if not bos_books_codes_py.is_valid_reference_abbreviation_py( BBB ):
+            if not bos_books_codes_py.is_valid_reference_abbreviation( BBB ):
                 logging.error( f"FlexibleVersesKey: Invalid {BBB!r} book code" )
             if BibleOrgSysGlobals.strictCheckingFlag:
-                assert bos_books_codes_py.is_valid_reference_abbreviation_py( BBB )
+                assert bos_books_codes_py.is_valid_reference_abbreviation( BBB )
                 assert int(V2)>int(V1) or S2!=S1
                 assert int(V3)>int(V2)+1 or S3!=S2
                 assert int(V4)>int(V3)+1 or S4!=S3
@@ -1174,10 +1174,10 @@ class FlexibleVersesKey():
             V3, S3 = match.group(7), match.group(8) if match.group(8) else ''
             V4, S4 = match.group(9), match.group(10) if match.group(10) else ''
             V5, S5 = match.group(11), match.group(12) if match.group(12) else ''
-            if not bos_books_codes_py.is_valid_reference_abbreviation_py( BBB ):
+            if not bos_books_codes_py.is_valid_reference_abbreviation( BBB ):
                 logging.error( f"FlexibleVersesKey: Invalid {BBB!r} book code" )
             if BibleOrgSysGlobals.strictCheckingFlag:
-                assert bos_books_codes_py.is_valid_reference_abbreviation_py( BBB )
+                assert bos_books_codes_py.is_valid_reference_abbreviation( BBB )
                 assert int(V2)>int(V1) or S2!=S1
                 assert int(V3)>int(V2)+1 or S3!=S2
                 assert int(V4)>int(V3)+1 or S4!=S3
@@ -1200,10 +1200,10 @@ class FlexibleVersesKey():
             V4, S4 = match.group(9), match.group(10) if match.group(10) else ''
             V5, S5 = match.group(11), match.group(12) if match.group(12) else ''
             V6, S6 = match.group(13), match.group(14) if match.group(14) else ''
-            if not bos_books_codes_py.is_valid_reference_abbreviation_py( BBB ):
+            if not bos_books_codes_py.is_valid_reference_abbreviation( BBB ):
                 logging.error( f"FlexibleVersesKey: Invalid {BBB!r} book code" )
             if BibleOrgSysGlobals.strictCheckingFlag:
-                assert bos_books_codes_py.is_valid_reference_abbreviation_py( BBB )
+                assert bos_books_codes_py.is_valid_reference_abbreviation( BBB )
                 assert int(V2)>int(V1) or S2!=S1
                 assert int(V3)>int(V2)+1 or S3!=S2
                 assert int(V4)>int(V3)+1 or S4!=S3
@@ -1225,10 +1225,10 @@ class FlexibleVersesKey():
             V1, S1 = match.group(3), match.group(4) if match.group(4) else ''
             V2, S2 = match.group(5), match.group(6) if match.group(6) else ''
             V3, S3 = match.group(7), match.group(8) if match.group(8) else ''
-            if not bos_books_codes_py.is_valid_reference_abbreviation_py( BBB ):
+            if not bos_books_codes_py.is_valid_reference_abbreviation( BBB ):
                 logging.error( f"FlexibleVersesKey: Invalid {BBB!r} book code" )
             if BibleOrgSysGlobals.strictCheckingFlag:
-                assert bos_books_codes_py.is_valid_reference_abbreviation_py( BBB )
+                assert bos_books_codes_py.is_valid_reference_abbreviation( BBB )
                 assert int(V2)>int(V1)+1 or S2!=S1
                 assert int(V3)>int(V2) or S3!=S2
             self.verseKeyObjectList.append( SimpleVerseKey( BBB, C, V1, S1 ) )
@@ -1246,10 +1246,10 @@ class FlexibleVersesKey():
             V3, S3 = match.group(7), match.group(8) if match.group(8) else ''
             V4, S4 = match.group(9), match.group(10) if match.group(10) else ''
             V5, S5 = match.group(11), match.group(12) if match.group(12) else ''
-            if not bos_books_codes_py.is_valid_reference_abbreviation_py( BBB ):
+            if not bos_books_codes_py.is_valid_reference_abbreviation( BBB ):
                 logging.error( f"FlexibleVersesKey: Invalid {BBB!r} book code" )
             if BibleOrgSysGlobals.strictCheckingFlag:
-                assert bos_books_codes_py.is_valid_reference_abbreviation_py( BBB )
+                assert bos_books_codes_py.is_valid_reference_abbreviation( BBB )
                 assert int(V2)>int(V1)+1 or S2!=S1
                 assert int(V3)>int(V2) or S3!=S2
                 assert int(V4)>int(V3)+1 or S4!=S3
@@ -1272,10 +1272,10 @@ class FlexibleVersesKey():
             V4, S4 = match.group(9), match.group(10) if match.group(10) else ''
             V5, S5 = match.group(11), match.group(12) if match.group(12) else ''
             V6, S6 = match.group(13), match.group(14) if match.group(14) else ''
-            if not bos_books_codes_py.is_valid_reference_abbreviation_py( BBB ):
+            if not bos_books_codes_py.is_valid_reference_abbreviation( BBB ):
                 logging.error( f"FlexibleVersesKey: Invalid {BBB!r} book code" )
             if BibleOrgSysGlobals.strictCheckingFlag:
-                assert bos_books_codes_py.is_valid_reference_abbreviation_py( BBB )
+                assert bos_books_codes_py.is_valid_reference_abbreviation( BBB )
                 assert int(V2)>int(V1)+1 or S2!=S1
                 assert int(V3)>int(V2)+1 or S3!=S2
                 assert int(V4)>int(V3) or S4!=S3
@@ -1299,10 +1299,10 @@ class FlexibleVersesKey():
             V3, S3 = match.group(7), match.group(8) if match.group(8) else ''
             V4, S4 = match.group(9), match.group(10) if match.group(10) else ''
             V5, S5 = match.group(11), match.group(12) if match.group(12) else ''
-            if not bos_books_codes_py.is_valid_reference_abbreviation_py( BBB ):
+            if not bos_books_codes_py.is_valid_reference_abbreviation( BBB ):
                 logging.error( f"FlexibleVersesKey: Invalid {BBB!r} book code" )
             if BibleOrgSysGlobals.strictCheckingFlag:
-                assert bos_books_codes_py.is_valid_reference_abbreviation_py( BBB )
+                assert bos_books_codes_py.is_valid_reference_abbreviation( BBB )
                 assert int(V2)>int(V1) or S2!=S1
                 assert int(V3)>int(V2)+1 or S3!=S2
                 assert int(V4)>int(V3)+1 or S4!=S3
@@ -1325,10 +1325,10 @@ class FlexibleVersesKey():
             V4, S4 = match.group(9), match.group(10) if match.group(10) else ''
             V5, S5 = match.group(11), match.group(12) if match.group(12) else ''
             V6, S6 = match.group(13), match.group(14) if match.group(14) else ''
-            if not bos_books_codes_py.is_valid_reference_abbreviation_py( BBB ):
+            if not bos_books_codes_py.is_valid_reference_abbreviation( BBB ):
                 logging.error( f"FlexibleVersesKey: Invalid {BBB!r} book code" )
             if BibleOrgSysGlobals.strictCheckingFlag:
-                assert bos_books_codes_py.is_valid_reference_abbreviation_py( BBB )
+                assert bos_books_codes_py.is_valid_reference_abbreviation( BBB )
                 assert int(V2)>int(V1) or S2!=S1
                 assert int(V3)>int(V2)+1 or S3!=S2
                 assert int(V4)>int(V3)+1 or S4!=S3
@@ -1351,10 +1351,10 @@ class FlexibleVersesKey():
             V2, S2 = match.group(5), match.group(6) if match.group(6) else ''
             V3, S3 = match.group(7), match.group(8) if match.group(8) else ''
             V4, S4 = match.group(9), match.group(10) if match.group(10) else ''
-            if not bos_books_codes_py.is_valid_reference_abbreviation_py( BBB ):
+            if not bos_books_codes_py.is_valid_reference_abbreviation( BBB ):
                 logging.error( f"FlexibleVersesKey: Invalid {BBB!r} book code" )
             if BibleOrgSysGlobals.strictCheckingFlag:
-                assert bos_books_codes_py.is_valid_reference_abbreviation_py( BBB )
+                assert bos_books_codes_py.is_valid_reference_abbreviation( BBB )
                 assert int(V2)>int(V1)+1 or S2!=S1
                 assert int(V3)>int(V2) or S3!=S2
                 assert int(V4)>int(V3) or S4!=S3
@@ -1374,10 +1374,10 @@ class FlexibleVersesKey():
             V3, S3 = match.group(7), match.group(8) if match.group(8) else ''
             V4, S4 = match.group(9), match.group(10) if match.group(10) else ''
             V5, S5 = match.group(11), match.group(12) if match.group(12) else ''
-            if not bos_books_codes_py.is_valid_reference_abbreviation_py( BBB ):
+            if not bos_books_codes_py.is_valid_reference_abbreviation( BBB ):
                 logging.error( f"FlexibleVersesKey: Invalid {BBB!r} book code" )
             if BibleOrgSysGlobals.strictCheckingFlag:
-                assert bos_books_codes_py.is_valid_reference_abbreviation_py( BBB )
+                assert bos_books_codes_py.is_valid_reference_abbreviation( BBB )
                 assert int(V2)>int(V1)+1 or S2!=S1
                 assert int(V3)>int(V2) or S3!=S2
                 assert int(V4)>int(V3) or S4!=S3
@@ -1400,10 +1400,10 @@ class FlexibleVersesKey():
             V4, S4 = match.group(9), match.group(10) if match.group(10) else ''
             V5, S5 = match.group(11), match.group(12) if match.group(12) else ''
             V6, S6 = match.group(13), match.group(14) if match.group(14) else ''
-            if not bos_books_codes_py.is_valid_reference_abbreviation_py( BBB ):
+            if not bos_books_codes_py.is_valid_reference_abbreviation( BBB ):
                 logging.error( f"FlexibleVersesKey: Invalid {BBB!r} book code" )
             if BibleOrgSysGlobals.strictCheckingFlag:
-                assert bos_books_codes_py.is_valid_reference_abbreviation_py( BBB )
+                assert bos_books_codes_py.is_valid_reference_abbreviation( BBB )
                 assert int(V2)>int(V1)+1 or S2!=S1
                 assert int(V3)>int(V2) or S3!=S2
                 assert int(V4)>int(V3) or S4!=S3
@@ -1426,10 +1426,10 @@ class FlexibleVersesKey():
             V2, S2 = match.group(5), match.group(6) if match.group(6) else ''
             V3, S3 = match.group(7), match.group(8) if match.group(8) else ''
             V4, S4 = match.group(9), match.group(10) if match.group(10) else ''
-            if not bos_books_codes_py.is_valid_reference_abbreviation_py( BBB ):
+            if not bos_books_codes_py.is_valid_reference_abbreviation( BBB ):
                 logging.error( f"FlexibleVersesKey: Invalid {BBB!r} book code" )
             if BibleOrgSysGlobals.strictCheckingFlag:
-                assert bos_books_codes_py.is_valid_reference_abbreviation_py( BBB )
+                assert bos_books_codes_py.is_valid_reference_abbreviation( BBB )
                 assert int(V2)>int(V1)+1 or S2!=S1
                 assert int(V3)>int(V2) or S3!=S2
                 assert int(V4)>int(V3)+1 or S4!=S3
@@ -1449,10 +1449,10 @@ class FlexibleVersesKey():
             V3, S3 = match.group(7), match.group(8) if match.group(8) else ''
             V4, S4 = match.group(9), match.group(10) if match.group(10) else ''
             V5, S5 = match.group(11), match.group(12) if match.group(12) else ''
-            if not bos_books_codes_py.is_valid_reference_abbreviation_py( BBB ):
+            if not bos_books_codes_py.is_valid_reference_abbreviation( BBB ):
                 logging.error( f"FlexibleVersesKey: Invalid {BBB!r} book code" )
             if BibleOrgSysGlobals.strictCheckingFlag:
-                assert bos_books_codes_py.is_valid_reference_abbreviation_py( BBB )
+                assert bos_books_codes_py.is_valid_reference_abbreviation( BBB )
                 assert int(V2)>int(V1)+1 or S2!=S1
                 assert int(V3)>int(V2)+1 or S3!=S2
                 assert int(V4)>int(V3) or S4!=S3
@@ -1473,10 +1473,10 @@ class FlexibleVersesKey():
             V2, S2 = match.group(5), match.group(6) if match.group(6) else ''
             V3, S3 = match.group(7), match.group(8) if match.group(8) else ''
             V4, S4 = match.group(9), match.group(10) if match.group(10) else ''
-            if not bos_books_codes_py.is_valid_reference_abbreviation_py( BBB ):
+            if not bos_books_codes_py.is_valid_reference_abbreviation( BBB ):
                 logging.error( f"FlexibleVersesKey: Invalid {BBB!r} book code" )
             if BibleOrgSysGlobals.strictCheckingFlag:
-                assert bos_books_codes_py.is_valid_reference_abbreviation_py( BBB )
+                assert bos_books_codes_py.is_valid_reference_abbreviation( BBB )
                 assert int(V2)>int(V1) or S2!=S1
                 assert int(V3)>int(V2)+1 or S3!=S2
                 assert int(V4)>int(V3) or S4!=S3
@@ -1496,10 +1496,10 @@ class FlexibleVersesKey():
             V3, S3 = match.group(7), match.group(8) if match.group(8) else ''
             V4, S4 = match.group(9), match.group(10) if match.group(10) else ''
             V5, S5 = match.group(11), match.group(12) if match.group(12) else ''
-            if not bos_books_codes_py.is_valid_reference_abbreviation_py( BBB ):
+            if not bos_books_codes_py.is_valid_reference_abbreviation( BBB ):
                 logging.error( f"FlexibleVersesKey: Invalid {BBB!r} book code" )
             if BibleOrgSysGlobals.strictCheckingFlag:
-                assert bos_books_codes_py.is_valid_reference_abbreviation_py( BBB )
+                assert bos_books_codes_py.is_valid_reference_abbreviation( BBB )
                 assert int(V2)>int(V1) or S2!=S1
                 assert int(V3)>int(V2)+1 or S3!=S2
                 assert int(V4)>int(V3) or S4!=S3
@@ -1522,10 +1522,10 @@ class FlexibleVersesKey():
             V4, S4 = match.group(9), match.group(10) if match.group(10) else ''
             V5, S5 = match.group(11), match.group(12) if match.group(12) else ''
             V6, S6 = match.group(13), match.group(14) if match.group(14) else ''
-            if not bos_books_codes_py.is_valid_reference_abbreviation_py( BBB ):
+            if not bos_books_codes_py.is_valid_reference_abbreviation( BBB ):
                 logging.error( f"FlexibleVersesKey: Invalid {BBB!r} book code" )
             if BibleOrgSysGlobals.strictCheckingFlag:
-                assert bos_books_codes_py.is_valid_reference_abbreviation_py( BBB )
+                assert bos_books_codes_py.is_valid_reference_abbreviation( BBB )
                 assert int(V2)>int(V1) or S2!=S1
                 assert int(V3)>int(V2)+1 or S3!=S2
                 assert int(V4)>int(V3) or S4!=S3
@@ -1551,10 +1551,10 @@ class FlexibleVersesKey():
             V4, S4 = match.group(9), match.group(10) if match.group(10) else ''
             V5, S5 = match.group(11), match.group(12) if match.group(12) else ''
             V6, S6 = match.group(13), match.group(14) if match.group(14) else ''
-            if not bos_books_codes_py.is_valid_reference_abbreviation_py( BBB ):
+            if not bos_books_codes_py.is_valid_reference_abbreviation( BBB ):
                 logging.error( f"FlexibleVersesKey: Invalid {BBB!r} book code" )
             if BibleOrgSysGlobals.strictCheckingFlag:
-                assert bos_books_codes_py.is_valid_reference_abbreviation_py( BBB )
+                assert bos_books_codes_py.is_valid_reference_abbreviation( BBB )
                 assert int(V2)>int(V1) or S2!=S1
                 assert int(V3)>int(V2)+1 or S3!=S2
                 assert int(V4)>int(V3) or S4!=S3
@@ -1581,10 +1581,10 @@ class FlexibleVersesKey():
             V6, S6 = match.group(13), match.group(14) if match.group(14) else ''
             V7, S7 = match.group(15), match.group(16) if match.group(16) else ''
             V8, S8 = match.group(17), match.group(18) if match.group(18) else ''
-            if not bos_books_codes_py.is_valid_reference_abbreviation_py( BBB ):
+            if not bos_books_codes_py.is_valid_reference_abbreviation( BBB ):
                 logging.error( f"FlexibleVersesKey: Invalid {BBB!r} book code" )
             if BibleOrgSysGlobals.strictCheckingFlag:
-                assert bos_books_codes_py.is_valid_reference_abbreviation_py( BBB )
+                assert bos_books_codes_py.is_valid_reference_abbreviation( BBB )
                 assert int(V2)>int(V1) or S2!=S1
                 assert int(V3)>int(V2)+1 or S3!=S2
                 assert int(V4)>int(V3) or S4!=S3
@@ -1642,10 +1642,10 @@ class FlexibleVersesKey():
             V1, S1 = match.group(3), match.group(4) if match.group(4) else ''
             V2, S2 = match.group(5), match.group(6) if match.group(6) else ''
             V3, S3 = match.group(7), match.group(8) if match.group(8) else ''
-            if not bos_books_codes_py.is_valid_reference_abbreviation_py( BBB ):
+            if not bos_books_codes_py.is_valid_reference_abbreviation( BBB ):
                 logging.error( f"FlexibleVersesKey: Invalid {BBB!r} book code" )
             if BibleOrgSysGlobals.strictCheckingFlag:
-                assert bos_books_codes_py.is_valid_reference_abbreviation_py( BBB )
+                assert bos_books_codes_py.is_valid_reference_abbreviation( BBB )
                 assert int(V2)>int(V1) or S2!=S1
                 assert int(V3)>int(V2)+1 or S3!=S2
             resultKey = VerseRangeKey( f"{BBB}_{C}:{V1}{'!' if S1 else ''}{S1}-{V2}{'!' if S2 else ''}{S2}", ignoreParseErrors=True )
@@ -1661,10 +1661,10 @@ class FlexibleVersesKey():
             V1, S1 = match.group(3), match.group(4) if match.group(4) else ''
             V2, S2 = match.group(5), match.group(6) if match.group(6) else ''
             V3, S3 = match.group(7), match.group(8) if match.group(8) else ''
-            if not bos_books_codes_py.is_valid_reference_abbreviation_py( BBB ):
+            if not bos_books_codes_py.is_valid_reference_abbreviation( BBB ):
                 logging.error( f"FlexibleVersesKey: Invalid {BBB!r} book code" )
             if BibleOrgSysGlobals.strictCheckingFlag:
-                assert bos_books_codes_py.is_valid_reference_abbreviation_py( BBB )
+                assert bos_books_codes_py.is_valid_reference_abbreviation( BBB )
                 assert int(V2)>int(V1)+1 or S2!=S1
                 assert int(V3)>int(V2) or S3!=S2
             self.verseKeyObjectList.append( SimpleVerseKey( BBB, C, V1, S1 ) )
@@ -1681,10 +1681,10 @@ class FlexibleVersesKey():
             V2, S2 = match.group(5), match.group(6) if match.group(6) else ''
             V3, S3 = match.group(7), match.group(8) if match.group(8) else ''
             V4, S4 = match.group(9), match.group(10) if match.group(10) else ''
-            if not bos_books_codes_py.is_valid_reference_abbreviation_py( BBB ):
+            if not bos_books_codes_py.is_valid_reference_abbreviation( BBB ):
                 logging.error( f"FlexibleVersesKey: Invalid {BBB!r} book code" )
             if BibleOrgSysGlobals.strictCheckingFlag:
-                assert bos_books_codes_py.is_valid_reference_abbreviation_py( BBB )
+                assert bos_books_codes_py.is_valid_reference_abbreviation( BBB )
                 assert int(V2)>int(V1)+1 or S2!=S1
                 assert int(V3)>int(V2) or S3!=S2
                 assert int(V4)>int(V3)+1 or S4!=S3

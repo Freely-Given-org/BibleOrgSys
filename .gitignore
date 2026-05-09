@@ -3,6 +3,7 @@ __pycache__/
 *.o
 *.snap
 *.off
+*.so
 
 *.bak
 *.bak1

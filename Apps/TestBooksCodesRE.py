@@ -64,7 +64,7 @@ OSIS_BOOK_RE = '([1-5A-EG-JL-PRSTVWZ][BCEJKMPSTa-ehimoprsuxz](?:[AJMa-eghik-pr-v
 def doBBB():
     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\ndoBBB" )
     Letter0, Letter1, Letter2 = defaultdict( int ), defaultdict( int ), defaultdict( int )
-    for BBB in bos_books_codes_py.get_all_reference_abbreviations_py():
+    for BBB in bos_books_codes_py.get_all_reference_abbreviations():
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB )
         Letter0[BBB[0]] += 1
         Letter1[BBB[1]] += 1
@@ -74,7 +74,7 @@ def doBBB():
     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ' ', sorted(L2) )
 
     # Now test the RE on the books codes
-    for BBB in bos_books_codes_py.get_all_reference_abbreviations_py():
+    for BBB in bos_books_codes_py.get_all_reference_abbreviations():
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB )
         match = re.search( BBB_RE, BBB )
         if not match:
@@ -87,9 +87,9 @@ def doOSIS():
     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\ndoOSIS" )
     minL, maxL = 999, 0
     L = {}
-    for BBB in bos_books_codes_py.get_all_reference_abbreviations_py():
+    for BBB in bos_books_codes_py.get_all_reference_abbreviations():
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB )
-        OB = bos_books_codes_py.get_osis_abbreviation_py( BBB )
+        OB = bos_books_codes_py.get_osis_abbreviation( BBB )
         if not OB: continue
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, OB )
         lOB = len( OB )
@@ -104,9 +104,9 @@ def doOSIS():
     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ' ', minL, maxL )
 
     # Now test the RE on the books codes
-    for BBB in bos_books_codes_py.get_all_reference_abbreviations_py():
+    for BBB in bos_books_codes_py.get_all_reference_abbreviations():
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB )
-        OB = bos_books_codes_py.get_osis_abbreviation_py( BBB )
+        OB = bos_books_codes_py.get_osis_abbreviation( BBB )
         if not OB: continue
         match = re.search( OSIS_BOOK_RE, OB )
         if not match:

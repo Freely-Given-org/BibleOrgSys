@@ -257,7 +257,7 @@ class CSVBible( Bible ):
                     filepath = os.path.join( self.sourceFolder, filename )
                     if os.path.isfile( filepath ) \
                     and ( filename.lower().endswith( '.csv' ) or filename.lower().endswith( '.tsv' ) or filename.lower().endswith( '.txt' ) ):
-                        for Uuu in bos_books_codes_py.get_all_usfm_abbreviations_py():
+                        for Uuu in bos_books_codes_py.get_all_usfm_abbreviations():
                             # dPrint( 'Info', DEBUGGING_THIS_MODULE, f"{Uuu=}" )
                             if Uuu in filename or Uuu.upper() in filename or Uuu.lower() in filename:
                                 bookFileCount += 1
@@ -365,9 +365,9 @@ class CSVBible( Bible ):
                 if booknameString:
                     try: bookNumber = int( booknameString )
                     except ValueError: # Assume it's a book code of some sort or a book name
-                        BBB = bos_books_codes_py.english_name_to_reference_abbrev_py( booknameString )
+                        BBB = bos_books_codes_py.english_name_to_reference_abbrev( booknameString )
                         if BBB:
-                            bookNumber = bos_books_codes_py.get_reference_number_py( BBB )
+                            bookNumber = bos_books_codes_py.get_reference_number( BBB )
                 elif not BBB: # Try the filename
                     thisFilepath = Path(filepath) if isinstance( filepath, str ) else filepath
                     filename = thisFilepath.stem
@@ -376,28 +376,28 @@ class CSVBible( Bible ):
                     except KeyError: pass # no problem
                     if not BBB:
                         if len(filename) == 3:
-                            for tryBBB in bos_books_codes_py.get_all_reference_abbreviations_py():
+                            for tryBBB in bos_books_codes_py.get_all_reference_abbreviations():
                                 if filename.upper() == tryBBB:
                                     BBB = tryBBB
                                     break
                             if not BBB:
-                                for Uuu in bos_books_codes_py.get_all_usfm_abbreviations_py():
+                                for Uuu in bos_books_codes_py.get_all_usfm_abbreviations():
                                     if filename.upper() == Uuu.upper():
-                                        BBB = bos_books_codes_py.usfm_abbrev_to_reference_abbrev_py( Uuu )
+                                        BBB = bos_books_codes_py.usfm_abbrev_to_reference_abbrev( Uuu )
                                         break
                         elif len(filename) == 2:
-                            for tryBBB in bos_books_codes_py.get_all_reference_abbreviations_py():
+                            for tryBBB in bos_books_codes_py.get_all_reference_abbreviations():
                                 if tryBBB.startswith( filename.upper() ):
                                     BBB = tryBBB
                                     break
                             if not BBB:
-                                for Uuu in bos_books_codes_py.get_all_usfm_abbreviations_py():
+                                for Uuu in bos_books_codes_py.get_all_usfm_abbreviations():
                                     if Uuu.upper().startswith( filename.upper ):
-                                        BBB = bos_books_codes_py.usfm_abbrev_to_reference_abbrev_py( Uuu )
+                                        BBB = bos_books_codes_py.usfm_abbrev_to_reference_abbrev( Uuu )
                                         break
                     if BBB:
                         dPrint( 'Info', DEBUGGING_THIS_MODULE, f"Got {BBB=}" )
-                        bookNumber = bos_books_codes_py.get_reference_number_py( BBB )
+                        bookNumber = bos_books_codes_py.get_reference_number( BBB )
                         dPrint( 'Info', DEBUGGING_THIS_MODULE, f"Got {bookNumber=}" )
                     else:
                         dPrint( 'Info', DEBUGGING_THIS_MODULE, f"Got {filename=} {booknameString=} {BBB=} {bookNumber=}" )
@@ -417,7 +417,7 @@ class CSVBible( Bible ):
                         if temporaryBookStore is not None: temporaryBookStore[thisBook.BBB] = thisBook
                         else: self.stashBook( thisBook )
                         dPrint( 'Info', DEBUGGING_THIS_MODULE, f"    Now have {len(temporaryBookStore)=} books: {temporaryBookStore.keys()=}." )
-                    BBB = bos_books_codes_py.get_bbb_from_reference_number_py( bookNumber )  # Try to guess
+                    BBB = bos_books_codes_py.get_bbb_from_reference_number( bookNumber )  # Try to guess
                     assert BBB
                     thisBook = BibleBook( self, BBB )
                     thisBook.objectNameString = 'CSV Bible Book object'
@@ -835,15 +835,15 @@ class CSVBible( Bible ):
                 bookName, CV = ' '.join( bits[:-1] ), bits[-1]
                 C, V = CV.split( ':', 1 )
                 vStr = V # Tells us that we need to print it
-                BBB = bos_books_codes_py.english_name_to_reference_abbrev_py( bookName )
+                BBB = bos_books_codes_py.english_name_to_reference_abbrev( bookName )
                 # print( f"  {BBB} {C}:{V}")
                 assert BBB, f"{n} {row[verseIdColumnName]=}"
                 fgRef = f'{BBB}_{C}:{V}'
                 if fgRef == 'MAT_1:1': wordBSBOffset = 0 # Special case for start of NT
                 chapterNumber, verseNumber = int(C), int(V)
-                isOT = bos_books_codes_py.is_ot_nr_py( BBB )
-                isDC = bos_books_codes_py.is_dc_nr_py( BBB )
-                isNT = bos_books_codes_py.is_nt_nr_py( BBB )
+                isOT = bos_books_codes_py.is_ot_nr( BBB )
+                isDC = bos_books_codes_py.is_dc_nr( BBB )
+                isNT = bos_books_codes_py.is_nt_nr( BBB )
                 assert not isDC
                 word_table_filename = WORD_TABLE_FILENAMES[0 if isOT else 1]
                 # print( f"\n\n\n{fgRef} {word_table_filename=} {word_table_indexes[word_table_filename][fgRef]=}" )
@@ -1270,14 +1270,14 @@ class CSVBible( Bible ):
                     continue # Not sure what this is
                 if filenameStart == 'PA': # from RP-GNT
                     continue # Not sure what this is
-                BBB = bos_books_codes_py.english_name_to_reference_abbrev_py( filenameStart )
+                BBB = bos_books_codes_py.english_name_to_reference_abbrev( filenameStart )
                 dPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Got {BBB=} from {filenameStart=}")
                 self._loadFile( os.path.join( self.sourceFolder, filename ), tempBookStore )
 
         dPrint( 'Info', DEBUGGING_THIS_MODULE, f"{len(tempBookStore)}" )
 
         # Now save the books in the right Biblical order
-        for BBB in bos_books_codes_py.get_all_reference_abbreviations_py():
+        for BBB in bos_books_codes_py.get_all_reference_abbreviations():
             if BBB in tempBookStore:
                 self.stashBook( tempBookStore[BBB] )
 

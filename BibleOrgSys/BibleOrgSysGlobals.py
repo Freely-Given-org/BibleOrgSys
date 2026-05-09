@@ -115,6 +115,25 @@ except ImportError:
 from bible_organisational_system import set_rust_verbosity, set_rust_debug, set_rust_strict_checking
 
 
+BOOKLIST_OT39 = [ 'GEN', 'EXO', 'LEV', 'NUM', 'DEU', 'JOS', 'JDG', 'RUT', 'SA1', 'SA2', 'KI1', 'KI2', 'CH1', 'CH2', \
+        'EZR', 'NEH', 'EST', 'JOB', 'PSA', 'PRO', 'ECC', 'SNG', 'ISA', 'JER', 'LAM', 'EZE', 'DAN', \
+        'HOS', 'JOL', 'AMO', 'OBA', 'JNA', 'MIC', 'NAH', 'HAB', 'ZEP', 'HAG', 'ZEC', 'MAL' ]
+assert len( BOOKLIST_OT39 ) == 39
+BOOKLIST_NT27 = [ 'MAT', 'MRK', 'LUK', 'JHN', 'ACT', 'ROM', 'CO1', 'CO2', 'GAL', 'EPH', 'PHP', 'COL', \
+        'TH1', 'TH2', 'TI1', 'TI2', 'TIT', 'PHM', 'HEB', 'JAM', 'PE1', 'PE2', 'JN1', 'JN2', 'JN3', 'JDE', 'REV' ]
+assert len( BOOKLIST_NT27 ) == 27
+BOOKLIST_66 = BOOKLIST_OT39 + BOOKLIST_NT27
+assert len( BOOKLIST_66 ) == 66
+BOOKLIST_DC15 = ['GES','LES', 'TOB', 'JDT', 'ESA', 'WIS', 'SIR', 'BAR', 'LJE', 'PAZ', 'SUS', 'BEL', 'MAN', 'MA1','MA2' ]
+assert len( BOOKLIST_DC15 ) == 15
+BOOKLIST_81 = BOOKLIST_OT39 + BOOKLIST_DC15 + BOOKLIST_NT27
+assert len( BOOKLIST_81 ) == 81
+BOOKLIST_DC22 = ['GES','LES', 'ES1','ES2','ESG', 'TOB', 'JDT', 'ESA', 'WIS', 'SIR', 'BAR', 'LJE', 'PAZ', 'SUS', 'BEL', 'MAN', 'MA1','MA2','MA3','MA4', 'DAG', 'PS2' ]
+assert len( BOOKLIST_DC22 ) == 22
+BOOKLIST_88 = BOOKLIST_OT39 + BOOKLIST_DC22 + BOOKLIST_NT27
+assert len( BOOKLIST_88 ) == 88
+
+
 LAST_MODIFIED_DATE = '2026-05-07' # by RJH
 SHORT_PROGRAM_NAME = "BibleOrgSysGlobals"
 PROGRAM_NAME = "BibleOrgSys (BOS) Globals"

@@ -172,7 +172,7 @@ def createEpubBible( BibleObject, outputFolder=None ):
     # Books are written as C:V verseText with double-spaced lines
     compressedDictionary = {}
     for BBB,bookObject in BibleObject.books.items():
-        if not bos_books_codes_py.is_chapter_verse_book_py( BBB ):
+        if not bos_books_codes_py.is_chapter_verse_book( BBB ):
             continue # Ignore these books
         pseudoESFMData = bookObject._processedLines
 
@@ -416,7 +416,7 @@ class EpubBible( Bible ):
         if not self.preloaded: self.preload()
 
         vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Loading {BBB}…" )
-        UUU = bos_books_codes_py.reference_abbrev_to_usfm_abbrev_py( BBB )
+        UUU = bos_books_codes_py.reference_abbrev_to_usfm_abbrev( BBB )
         uuu = UUU.lower()
         bookFilename = self.ePubBookDict[uuu]
         bookXMLContent = self.inputZipfile.read( f'OEBPS/{bookFilename}' ).decode( 'utf-8' )
@@ -625,7 +625,7 @@ class EpubBible( Bible ):
         for idref,_bookPath in self.ePubBookDict.items():
             # dPrint( 'Normal', DEBUGGING_THIS_MODULE, f"{idref=} {_bookPath=}" )
             if len(idref)==3:
-                BBB = bos_books_codes_py.usfm_abbrev_to_reference_abbrev_py( idref.upper() )
+                BBB = bos_books_codes_py.usfm_abbrev_to_reference_abbrev( idref.upper() )
                 self.loadBook( BBB )
     # end of EpubBible.load
 # end of EpubBible class

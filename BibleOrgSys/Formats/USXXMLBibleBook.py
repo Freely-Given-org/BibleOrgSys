@@ -517,7 +517,7 @@ class USXXMLBibleBook( BibleBook ):
         if BibleOrgSysGlobals.verbosityLevel > 3:
             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  " + f"Loading {filename} from {folder}…" )
         else: vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + f"Loading {filename}…" )
-        self.isOneChapterBook = bos_books_codes_py.is_single_chapter_book_py( self.BBB )
+        self.isOneChapterBook = bos_books_codes_py.is_single_chapter_book( self.BBB )
         self.sourceFilename = filename
         self.sourceFolder = folder
         self.sourceFilepath = os.path.join( folder, filename ) if folder else filename

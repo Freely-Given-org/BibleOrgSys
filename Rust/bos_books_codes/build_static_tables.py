@@ -74,6 +74,9 @@ if __name__ == '__main__':
     fullArrayEntries, refAbbrevEntries, englishNameEntries = [], [], [] # Only for values that are compulsory on every line and unique
     usfmDictEntries, osisDictEntries, drupalDictEntries, unboundDictEntries = {}, {}, {}, {} # These ones are more complex because if there may be duplicate entries
     shortAbbrevDictEntries, sblAbbrevDictEntries, netAbbrevDictEntries, swordDictEntries = {}, {}, {}, {}
+    osisAbbrevEntries, usfmAbbrevEntries = [], []
+    usfmTriples, usxTriples, bibleditTriples = [], [], []
+    sequenceEntries = [] # (sequence_number, BBB)
 
     for n, row in enumerate( DictReader(tsv_lines, delimiter='\t') ):
         if len(row) != NUM_EXPECTED_TSV_COLUMNS:
@@ -87,52 +90,6 @@ if __name__ == '__main__':
             expected_num_chapters = f"{'OptionalNumberOrTwoNumbers::TwoNumbers(['+row['expectedChapters']+'])' if ',' in row['expectedChapters'] else 'OptionalNumberOrTwoNumbers::Number('+row['expectedChapters']+')'}"
         else:
             expected_num_chapters = 'OptionalNumberOrTwoNumbers::None'
-
-        # if row['possibleAlternativeAbbreviations']:
-        #     alts = row['possibleAlternativeAbbreviations'].split( ',' )
-        #     if len(alts) == 1:
-        #         possible_alternative_abbreviations = f'''OptionalAbbreviationOrListOfAbbreviations::Abbreviation("{row['possibleAlternativeAbbreviations']}")'''
-        #     elif len(alts) == 2:
-        #         possible_alternative_abbreviations = f'''OptionalAbbreviationOrListOfAbbreviations::TwoAbbreviations([{','.join([f'"{abbrev}"' for abbrev in alts])}])'''
-        #     elif len(alts) == 3:
-        #         possible_alternative_abbreviations = f'''OptionalAbbreviationOrListOfAbbreviations::ThreeAbbreviations([{','.join([f'"{abbrev}"' for abbrev in alts])}])'''
-        #     elif len(alts) == 4:
-        #         possible_alternative_abbreviations = f'''OptionalAbbreviationOrListOfAbbreviations::FourAbbreviations([{','.join([f'"{abbrev}"' for abbrev in alts])}])'''
-        #     elif len(alts) == 5:
-        #         possible_alternative_abbreviations = f'''OptionalAbbreviationOrListOfAbbreviations::FiveAbbreviations([{','.join([f'"{abbrev}"' for abbrev in alts])}])'''
-        #     elif len(alts) == 6:
-        #         possible_alternative_abbreviations = f'''OptionalAbbreviationOrListOfAbbreviations::SixAbbreviations([{','.join([f'"{abbrev}"' for abbrev in alts])}])'''
-        #     elif len(alts) == 7:
-        #         possible_alternative_abbreviations = f'''OptionalAbbreviationOrListOfAbbreviations::SevenAbbreviations([{','.join([f'"{abbrev}"' for abbrev in alts])}])'''
-        #     else: raise ValueError(f"Too many possible_alternative_abbreviations: {n} {row['BOSReferenceAbbreviation']} ({len(alts)}) {row['possibleAlternativeAbbreviations']=}")
-        # else:
-        #     possible_alternative_abbreviations = 'OptionalAbbreviationOrListOfAbbreviations::None'
-
-        # if row['possibleAlternativeBooksCodes']:
-        #     alts = row['possibleAlternativeBooksCodes'].split( ',' )
-        #     if len(alts) == 1:
-        #         possible_alternative_books_codes = f'''OptionalAbbreviationOrListOfAbbreviations::Abbreviation("{row['possibleAlternativeBooksCodes']}")'''
-        #     elif len(alts) == 2:
-        #         possible_alternative_books_codes = f'''OptionalAbbreviationOrListOfAbbreviations::TwoAbbreviations([{','.join([f'"{abbrev}"' for abbrev in alts])}])'''
-        #     elif len(alts) == 3:
-        #         possible_alternative_books_codes = f'''OptionalAbbreviationOrListOfAbbreviations::ThreeAbbreviations([{','.join([f'"{abbrev}"' for abbrev in alts])}])'''
-        #     elif len(alts) == 4:
-        #         possible_alternative_books_codes = f'''OptionalAbbreviationOrListOfAbbreviations::FourAbbreviations([{','.join([f'"{abbrev}"' for abbrev in alts])}])'''
-        #     elif len(alts) == 5:
-        #         possible_alternative_books_codes = f'''OptionalAbbreviationOrListOfAbbreviations::FiveAbbreviations([{','.join([f'"{abbrev}"' for abbrev in alts])}])'''
-        #     elif len(alts) == 6:
-        #         possible_alternative_books_codes = f'''OptionalAbbreviationOrListOfAbbreviations::SixAbbreviations([{','.join([f'"{abbrev}"' for abbrev in alts])}])'''
-        #     elif len(alts) == 12:
-        #         possible_alternative_books_codes = f'''OptionalAbbreviationOrListOfAbbreviations::TwelveAbbreviations([{','.join([f'"{abbrev}"' for abbrev in alts])}])'''
-        #     elif len(alts) == 13:
-        #         possible_alternative_books_codes = f'''OptionalAbbreviationOrListOfAbbreviations::ThirteenAbbreviations([{','.join([f'"{abbrev}"' for abbrev in alts])}])'''
-        #     elif len(alts) == 14:
-        #         possible_alternative_books_codes = f'''OptionalAbbreviationOrListOfAbbreviations::FourteenAbbreviations([{','.join([f'"{abbrev}"' for abbrev in alts])}])'''
-        #     elif len(alts) == 16:
-        #         possible_alternative_books_codes = f'''OptionalAbbreviationOrListOfAbbreviations::SixteenAbbreviations([{','.join([f'"{abbrev}"' for abbrev in alts])}])'''
-        #     else: raise ValueError(f"Too many possibleAlternativeBooksCodes: {n} {row['BOSReferenceAbbreviation']} ({len(alts)}) {row['possibleAlternativeBooksCodes']=}")
-        # else:
-        #     possible_alternative_books_codes = 'OptionalAbbreviationOrListOfAbbreviations::None'
 
         fullArrayEntries.append( f'''    BibleBooksCodesArrayEntry {{
         original_language_code: "{row['originalLanguageCode']}",
@@ -165,20 +122,31 @@ if __name__ == '__main__':
         typical_subsection: {'Some("'+row['typicalSubsection']+'")' if row['typicalSubsection'] else 'None'},
         all_English_derived_abbreviations: "{row['allEnglishDerivedAbbreviations']}",
     }},''' )
-        # //possible_alternative_abbreviations: {possible_alternative_abbreviations},
-        # //possible_alternative_books_codes: {possible_alternative_books_codes},
-        # possible_alternative_books_codes: {f'''Some(&[{','.join([f'"{abbrev}"' for abbrev in row['possibleAlternativeBooksCodes'].split(',')])}])''' if row['possibleAlternativeBooksCodes'] else 'None'},
+
         assert row['BOSReferenceAbbreviation'] not in refAbbrevEntries
         refAbbrevEntries.append( f'"{row['BOSReferenceAbbreviation']}"' )
+        sequenceEntries.append( (int(row['BOSSequenceNumber']), row['BOSReferenceAbbreviation']) )
+
         for englishName in row['allEnglishDerivedAbbreviations'].split( ',' ):
             englishNameEntries.append( f'"{englishName}"=>{n}' )
-        if row['USFMAbbreviation']:
-            # assert row['USFMNumber'], f"{row['USFMAbbreviation']=} {row['USFMNumber']=}" // Not true for 'PSo'
-            if f'"{row['USFMAbbreviation']}"' not in usfmDictEntries: # already
-                usfmDictEntries[f'"{row['USFMAbbreviation']}"'] = f'=>{n},' # We always take the first one for any given abbreviation
+        
         if row['OSISAbbreviation']:
-            if f'"{row['OSISAbbreviation']}"' not in osisDictEntries: # already
-                osisDictEntries[f'"{row['OSISAbbreviation']}"'] = f'=>{n},' # We always take the first one for any given abbreviation
+            if f'"{row['OSISAbbreviation']}"' not in osisDictEntries:
+                osisDictEntries[f'"{row['OSISAbbreviation']}"'] = f'=>{n},'
+                osisAbbrevEntries.append( f'"{row['OSISAbbreviation']}"' )
+        
+        if row['USFMAbbreviation']:
+            if f'"{row['USFMAbbreviation']}"' not in usfmDictEntries:
+                usfmDictEntries[f'"{row['USFMAbbreviation']}"'] = f'=>{n},'
+                usfmAbbrevEntries.append( f'"{row['USFMAbbreviation']}"' )
+            
+            if row['USFMNumber']:
+                usfmTriples.append( f'("{row['USFMAbbreviation']}", "{row['USFMNumber']}", "{row['BOSReferenceAbbreviation']}")' )
+            if row['USXNumber']:
+                usxTriples.append( f'("{row['USFMAbbreviation']}", "{row['USXNumber']}", "{row['BOSReferenceAbbreviation']}")' )
+            if row['BibleditNumber']:
+                bibleditTriples.append( f'("{row['USFMAbbreviation']}", "{row['BibleditNumber']}", "{row['BOSReferenceAbbreviation']}")' )
+
         if row['DrupalBibleAbbreviation']:
             if f'"{row['DrupalBibleAbbreviation']}"' not in drupalDictEntries:
                 drupalDictEntries[f'"{row['DrupalBibleAbbreviation']}"'] = f'=>{n},'
@@ -198,11 +166,13 @@ if __name__ == '__main__':
             if f'"{row['SwordAbbreviation'].upper()}"' not in swordDictEntries:
                 swordDictEntries[f'"{row['SwordAbbreviation'].upper()}"'] = f'=>{n},'
 
+    # Pre-sort sequence list
+    sequenceEntries.sort()
+    sortedSequenceBBBs = [f'"{bbb}"' for _, bbb in sequenceEntries]
+
     # The following field names should have 'Option' below (because they don't exist for every code)
     sorted_field_names_with_optional_values = sorted( field_names_with_optional_values )
-    text = f"{sorted_field_names_with_optional_values=}" # {'DrupalBibleAbbreviation', 'LogosNumber', 'USFMAbbreviation', 'typicalSubsection', 'OSISAbbreviation', 'allEnglishDerivedAbbreviations',
-        # 'BibleditNumber', 'expectedChapters', 'possibleAlternativeBooksCodes', 'NETBibleAbbreviation', 'SwordAbbreviation', 'SBLAbbreviation', 'shortAbbreviation',
-        # 'UnboundCode', 'possibleAlternativeAbbreviations', 'USXNumber', 'CCELNumber', 'ByzantineAbbreviation', 'USFMNumber', 'LogosAbbreviation', 'BibleWorksAbbreviation'}
+    text = f"{sorted_field_names_with_optional_values=}"
     summary_text = f'{summary_text}\n{text}'
 
     static_rust_structs_str = f'''
@@ -212,22 +182,6 @@ pub enum OptionalNumberOrTwoNumbers {{
     TwoNumbers([u16; 2]),
     None,
 }}
-
-//#[derive(Debug)]
-//pub enum OptionalAbbreviationOrListOfAbbreviations<'a> {{
-//    Abbreviation(&'a str),
-//    TwoAbbreviations([&'a str; 2]),
-//    ThreeAbbreviations([&'a str; 3]),
-//    FourAbbreviations([&'a str; 4]),
-//    FiveAbbreviations([&'a str; 5]),
-//    SixAbbreviations([&'a str; 6]),
-//    SevenAbbreviations([&'a str; 7]),
-//    TwelveAbbreviations([&'a str; 12]),
-//    ThirteenAbbreviations([&'a str; 13]),
-//    FourteenAbbreviations([&'a str; 14]),
-//    SixteenAbbreviations([&'a str; 16]),
-//    None,
-//}}
 
 #[derive(Debug)]
 pub struct BibleBooksCodesArrayEntry<'a> {{
@@ -254,10 +208,7 @@ pub struct BibleBooksCodesArrayEntry<'a> {{
     pub Drupal_Bible_abbreviation: Option<&'a str>,
     pub Bible_Works_abbreviation: Option<&'a str>,
     pub Byzantine_abbreviation: Option<&'a str>,
-    //possible_alternative_abbreviations: OptionalAbbreviationOrListOfAbbreviations<'a>,
     pub possible_alternative_abbreviations: &'static [&'static str],
-    //possible_alternative_books_codes: OptionalAbbreviationOrListOfAbbreviations<'a>,
-    //possible_alternative_books_codes: Option<&'static [&'static str]>,
     pub possible_alternative_books_codes: &'static [&'static str],
     pub consists_of_books_codes: Option<&'a str>,
     pub typical_section: Option<&'a str>,
@@ -269,8 +220,16 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; {len(tsv_lines)-
     {'\n'.join(fullArrayEntries)}
 ];
 
+pub static ALL_REFERENCE_ABBREVIATIONS: &[&'static str] = &[{','.join(refAbbrevEntries)}];
+pub static ALL_OSIS_ABBREVIATIONS: &[&'static str] = &[{','.join(osisAbbrevEntries)}];
+pub static ALL_USFM_ABBREVIATIONS: &[&'static str] = &[{','.join(usfmAbbrevEntries)}];
+pub static BOS_SEQUENCE_LIST: &[&'static str] = &[{','.join(sortedSequenceBBBs)}];
+
+pub static USFM_CODE_NUMBER_TRIPLES: &[(&'static str, &'static str, &'static str)] = &[{','.join(usfmTriples)}];
+pub static USX_CODE_NUMBER_TRIPLES: &[(&'static str, &'static str, &'static str)] = &[{','.join(usxTriples)}];
+pub static BIBLEDIT_CODE_NUMBER_TRIPLES: &[(&'static str, &'static str, &'static str)] = &[{','.join(bibleditTriples)}];
+
 // NOTE: The following perfect_hash_function maps contain the array index of the entry in the above BIBLE_BOOKS_CODES_ARRAY
-//static REFERENCE_ABBREVIATION_ARRAY: [&'static str; {len(refAbbrevEntries)}] = [{','.join(refAbbrevEntries)}]; // The array index matches the BIBLE_BOOKS_CODES_ARRAY index
 static REFERENCE_ABBREVIATION_MAP: phf::Map<&'static str, usize> = phf_map! {{ {','.join([f'{v}=>{i}' for i,v in enumerate(refAbbrevEntries)])} }};
 static USFM_ABBREVIATION_MAP: phf::Map<&'static str, usize> = phf_map! {{ {' '.join([f'{k}{v}' for k,v in usfmDictEntries.items()])} }};
 static UPPERCASE_USFM_ABBREVIATION_MAP: phf::Map<&'static str, usize> = phf_map! {{ {' '.join([f'{k.upper()}{v}' for k,v in usfmDictEntries.items()])} }};
@@ -283,6 +242,7 @@ static SBL_ABBREVIATION_MAP: phf::Map<&'static str, usize> = phf_map! {{ {' '.jo
 static NET_BIBLE_ABBREVIATION_MAP: phf::Map<&'static str, usize> = phf_map! {{ {' '.join([f'{k}{v}' for k,v in netAbbrevDictEntries.items()])} }};
 static ENGLISH_NAME_MAP: phf::Map<&'static str, usize> = phf_map! {{ {', '.join(englishNameEntries)} }};
 '''
+
 
     summary_text = f'{summary_text}\nWrote {len(fullArrayEntries):,} full array entries to BIBLE_BOOKS_CODES_ARRAY'
     summary_text = f'{summary_text}\nWrote {len(refAbbrevEntries):,} entries to REFERENCE_ABBREVIATION_ARRAY and/or REFERENCE_ABBREVIATION_MAP'

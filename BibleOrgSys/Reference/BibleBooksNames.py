@@ -395,7 +395,7 @@ class BibleBooksNamesSystems:
         """
         if bookList is not None:
             for BBB in bookList: # Just check this list is valid
-                if not bos_books_codes_py.is_valid_reference_abbreviation_py( BBB ):
+                if not bos_books_codes_py.is_valid_reference_abbreviation( BBB ):
                     logging.error( f"Invalid {systemName!r} in booklist requested for {BBB} books names system" )
 
         if systemName in self.__DataDicts:
@@ -551,7 +551,7 @@ class BibleBooksNamesSystem:
                 if key.startswith( upperCaseBookNameOrAbbreviation[0] ) and len(key)==thisLen: myList.append( key )
             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Possibility list is", myList )
 
-        return bos_books_codes_py.english_name_to_reference_abbrev_py( bookNameOrAbbreviation )
+        return bos_books_codes_py.english_name_to_reference_abbrev( bookNameOrAbbreviation )
     # end of BibleBooksNamesSystem.getBBBFromText
 
 
