@@ -335,7 +335,7 @@ class USFMFilenames:
                     USFMId = self.getUSFMIDFromFile( givenFolder, possibleFilename, filepath )
                     if USFMId:
                         assert filepath not in self._fileDictionary
-                        BBB = bos_books_codes_py.usfm_abbrev_to_reference_abbrev( USFMId )
+                        BBB = bos_books_codes_py.usfm_abbrev_to_bos_book_code( USFMId )
                         self._fileDictionary[(givenFolder,possibleFilename,)] = BBB
                         if BBB in self._BBBDictionary: logging.error( f"{'getUSFMIDsFromFiles: ' if BibleOrgSysGlobals.debugFlag else ''}Oops, already found {BBB!r} in {self._BBBDictionary[BBB]}, now we have a duplicate in {possibleFilename}" )
                         self._BBBDictionary[BBB] = (givenFolder,possibleFilename,)
@@ -402,7 +402,7 @@ class USFMFilenames:
                             break
             elif self.pattern == "dd-OEBName":
                 for AltFilename in ALTERNATE_FILENAMES:
-                    BBB = bos_books_codes_py.get_bbb_from_reference_number( int(AltFilename[0:2]) )
+                    BBB = bos_books_codes_py.get_bos_book_code_from_reference_number( int(AltFilename[0:2]) )
                     resultList.append( (BBB,AltFilename+'.'+self.fileExtension,) )
             else: # they are Paratext style
                 for USFMBookCode,USFMDigits,BBB in self._USFMBooksCodeNumberTriples:
@@ -438,7 +438,7 @@ class USFMFilenames:
                     if USFMId is None:
                         logging.error( f"{'getConfirmedFilenameTuples: ' if BibleOrgSysGlobals.debugFlag else ''}internal USFM Id missing for {BBB} in {derivedFilename}" )
                         continue # so it doesn't get added
-                    BBB = bos_books_codes_py.usfm_abbrev_to_reference_abbrev( USFMId )
+                    BBB = bos_books_codes_py.usfm_abbrev_to_bos_book_code( USFMId )
                     if BBB != BBB:
                         logging.error( "{}Internal USFM Id ({}{}) doesn't match {} for {}".format( 'getConfirmedFilenameTuples: ' if BibleOrgSysGlobals.debugFlag else '', USFMId, '' if BBB==USFMId else f" -> {BBB}", BBB, derivedFilename ) )
                         continue # so it doesn't get added
@@ -468,7 +468,7 @@ class USFMFilenames:
                 if ignore: continue
                 if USFMBookCode.upper() in pFUpperProper:
                     if pFUpper[-1]!='~' and not pFUpperExt[1:] in EXTENSIONS_TO_IGNORE: # Compare without the first dot
-                        self.doListAppend( bos_books_codes_py.usfm_abbrev_to_reference_abbrev( USFMBookCode ), possibleFilename, resultList, "getPossibleFilenameTuplesExt" )
+                        self.doListAppend( bos_books_codes_py.usfm_abbrev_to_bos_book_code( USFMBookCode ), possibleFilename, resultList, "getPossibleFilenameTuplesExt" )
         self.lastTupleList = resultList
         return sorted( resultList, key=lambda x: bos_books_codes_py.get_sequence_number(x[0]) )
     # end of USFMFilenames.getPossibleFilenameTuplesExt

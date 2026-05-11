@@ -438,7 +438,7 @@ class MyBibleBible( Bible ):
                 else:
                     raise ValueError( f"Unexpected number of columns in MyBible BOOKS_ALL table row: {len(row)}" )
                 if BibleOrgSysGlobals.debugFlag: assert bookNumber in BOOKNUMBER_TABLE
-                if len(rows) == 66: BBB = bos_books_codes_py.get_bbb_from_reference_number( j+1 )
+                if len(rows) == 66: BBB = bos_books_codes_py.get_bos_book_code_from_reference_number( j+1 )
                 else:
                     BBB = self.BibleOrganisationalSystem.getBBBFromText( longName ) # Might not work for other languages
                     if BBB is None: BBB = self.BibleOrganisationalSystem.getBBBFromText( shortName ) # Might not work for other languages
@@ -464,7 +464,7 @@ class MyBibleBible( Bible ):
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, bookColor, bookNumber, shortName, longName, isPresent )
                     if BibleOrgSysGlobals.debugFlag: assert bookNumber in BOOKNUMBER_TABLE
                     longName = longName.strip() # Why do some have a \n at the end???
-                    if len(rows) == 66: BBB = bos_books_codes_py.get_bbb_from_reference_number( j+1 )
+                    if len(rows) == 66: BBB = bos_books_codes_py.get_bos_book_code_from_reference_number( j+1 )
                     else:
                         BBB = self.BibleOrganisationalSystem.getBBBFromText( longName ) # Might not work for other languages
                         if BBB is None: BBB = self.BibleOrganisationalSystem.getBBBFromText( shortName ) # Might not work for other languages
@@ -786,7 +786,7 @@ def createMyBibleModule( self, outputFolder, controlDict ) -> bool:
 
         if '\\x' in line: # Remove cross-references completely (why???)
             #line = line.replace('\\x ','<RX>').replace('\\x*','<Rx>')
-            line = removeUSFMCharacterField( 'x', line, closedFlag=True ).lstrip() # Remove superfluous spaces
+            line = removeUSFMCharacterField( 'x', line, closed_flag=True ).lstrip() # Remove superfluous spaces
 
         if '\\f' in line: # Handle footnotes
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "originalLine", repr(originalLine) )
@@ -820,9 +820,9 @@ def createMyBibleModule( self, outputFolder, controlDict ) -> bool:
                 line = line[:match.start()] + '<n>' + newNote + '</n>' + line[match.end():]
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "line2", repr(line) )
 
-            #line = removeUSFMCharacterField( 'f', line, closedFlag=True ).lstrip() # Remove superfluous spaces
+            #line = removeUSFMCharacterField( 'f', line, closed_flag=True ).lstrip() # Remove superfluous spaces
             ##for marker in ( 'fr', 'fm', ): # simply remove these whole field
-                ##line = removeUSFMCharacterField( marker, line, closedFlag=None )
+                ##line = removeUSFMCharacterField( marker, line, closed_flag=None )
             ##for marker in ( 'fq', 'fqa', 'fl', 'fk', ): # italicise these ones
                 ##while '\\'+marker+' ' in line:
                     ###dPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, C, V, marker, line.count('\\'+marker+' '), line )
@@ -847,9 +847,9 @@ def createMyBibleModule( self, outputFolder, controlDict ) -> bool:
                 ###halt
 
         if '\\' in line: # Handle character formatting fields
-            line = removeUSFMCharacterField( 'fig', line, closedFlag=True ) # Remove figures
-            #line = removeUSFMCharacterField( 'str', line, closedFlag=True ) # Remove Strong's numbers
-            line = removeUSFMCharacterField( 'sem', line, closedFlag=True ) # Remove semantic tagging
+            line = removeUSFMCharacterField( 'fig', line, closed_flag=True ) # Remove figures
+            #line = removeUSFMCharacterField( 'str', line, closed_flag=True ) # Remove Strong's numbers
+            line = removeUSFMCharacterField( 'sem', line, closed_flag=True ) # Remove semantic tagging
             replacements = (
                 ( ('add',), '<i>','</i>' ),
                 ( ('qt',), '','' ),

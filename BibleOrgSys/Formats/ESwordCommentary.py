@@ -230,7 +230,7 @@ class ESwordCommentary( Bible ):
             #BBBn, C, V, text = row # First three are integers, the last is a string
             ##dPrint( 'Quiet', DEBUGGING_THIS_MODULE, repr(BBBn), repr(C), repr(V), repr(text) )
             #if BBBn<1 or BBBn>66: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Found book number {BBBn}" )
-            #BBB = bos_books_codes_py.get_bbb_from_reference_number( BBBn )
+            #BBB = bos_books_codes_py.get_bos_book_code_from_reference_number( BBBn )
             #if not BOS.isValidBCVRef( (BBB,str(C),str(V),''), 'checkForExtraMaterial' ):
                 #logging.error( f"checkForExtraMaterial: {self.name} contains {BBB} {C}:{V} {text!r}" )
                 #if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE:
@@ -281,7 +281,7 @@ class ESwordCommentary( Bible ):
         #if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'First book number is {BBBn1}' )
         #del rows
         #BBB1 = None
-        #if BBBn1 <= 66: BBB1 = bos_books_codes_py.get_bbb_from_reference_number( BBBn1 )
+        #if BBBn1 <= 66: BBB1 = bos_books_codes_py.get_bos_book_code_from_reference_number( BBBn1 )
 
 
         #testament = BBB = None
@@ -381,11 +381,11 @@ class ESwordCommentary( Bible ):
             BBBn1 = bookRows[0][0]
             if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2:
                 vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'  First book number is {BBBn1}' )
-            if BBBn1 <= 66: BBB1 = bos_books_codes_py.get_bbb_from_reference_number( BBBn1 )
+            if BBBn1 <= 66: BBB1 = bos_books_codes_py.get_bos_book_code_from_reference_number( BBBn1 )
 
             bookCommentary = {}
             for bkNum,line in bookRows:
-                BBB = bos_books_codes_py.get_bbb_from_reference_number( bkNum )
+                BBB = bos_books_codes_py.get_bos_book_code_from_reference_number( bkNum )
                 BBBList.append( BBB )
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Bk={bkNum} BBB={BBB} Line: {line[:120]!r}…" )
                 bookCommentary[BBB] = line
@@ -399,7 +399,7 @@ class ESwordCommentary( Bible ):
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2:
             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'{len(chapterRows)} chapter rows found' )
         for bkNum,chNum,line in chapterRows:
-            BBB = bos_books_codes_py.get_bbb_from_reference_number( bkNum )
+            BBB = bos_books_codes_py.get_bos_book_code_from_reference_number( bkNum )
             if BBBn1 is None:
                 BBBn1, BBB1 = bkNum, BBB
             if BBB not in BBBList:
@@ -418,7 +418,7 @@ class ESwordCommentary( Bible ):
             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'{len(verseRows)} verse rows found' )
         for bkNum,chBegin,chEnd,vBegin,vEnd,line in verseRows:
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, bkNum,chBegin,chEnd,vBegin,vEnd )
-            BBB = bos_books_codes_py.get_bbb_from_reference_number( bkNum )
+            BBB = bos_books_codes_py.get_bos_book_code_from_reference_number( bkNum )
             if BBBn1 is None:
                 BBBn1, BBB1 = bkNum, BBB
             if BBB not in BBBList:
@@ -632,12 +632,12 @@ def createESwordCommentaryModule( self, outputFolder, controlDict ):
 
         if '\\x' in line: # Remove cross-references completely (why???)
             #line = line.replace('\\x ','<RX>').replace('\\x*','<Rx>')
-            line = removeUSFMCharacterField( 'x', line, closedFlag=True ).lstrip() # Remove superfluous spaces
+            line = removeUSFMCharacterField( 'x', line, closed_flag=True ).lstrip() # Remove superfluous spaces
 
         if '\\f' in line: # Handle footnotes
-            line = removeUSFMCharacterField( 'f', line, closedFlag=True ).lstrip() # Remove superfluous spaces
+            line = removeUSFMCharacterField( 'f', line, closed_flag=True ).lstrip() # Remove superfluous spaces
             #for marker in ( 'fr', 'fm', ): # simply remove these whole field
-                #line = removeUSFMCharacterField( marker, line, closedFlag=None )
+                #line = removeUSFMCharacterField( marker, line, closed_flag=None )
             #for marker in ( 'fq', 'fqa', 'fl', 'fk', ): # italicise these ones
                 #while '\\'+marker+' ' in line:
                     ##dPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, C, V, marker, line.count('\\'+marker+' '), line )
@@ -662,9 +662,9 @@ def createESwordCommentaryModule( self, outputFolder, controlDict ):
                 ##halt
 
         if '\\' in line: # Handle character formatting fields
-            line = removeUSFMCharacterField( 'fig', line, closedFlag=True ) # Remove figures
-            line = removeUSFMCharacterField( 'str', line, closedFlag=True ) # Remove Strong's numbers
-            line = removeUSFMCharacterField( 'sem', line, closedFlag=True ) # Remove semantic tagging
+            line = removeUSFMCharacterField( 'fig', line, closed_flag=True ) # Remove figures
+            line = removeUSFMCharacterField( 'str', line, closed_flag=True ) # Remove Strong's numbers
+            line = removeUSFMCharacterField( 'sem', line, closed_flag=True ) # Remove semantic tagging
             replacements = (
                 ( ('add',), '~^~cf15~^~i','~^~cf0~^~i0' ),
                 ( ('qt',), '<FO>','<Fo>' ),

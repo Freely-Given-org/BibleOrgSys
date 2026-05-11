@@ -38,7 +38,7 @@ pub struct BibleBooksCodesArrayEntry<'a> {
     pub original_language_code: &'a str,
     pub original_language_book_name: &'a str,
     pub book_name_English_guide: &'a str,
-    pub BOS_reference_abbreviation: &'a str,
+    pub BOS_book_code: &'a str,
     pub BOS_reference_number: u16,
     pub BOS_sequence_number: u16,
     pub expected_num_chapters: OptionalNumberOrTwoNumbers,
@@ -71,7 +71,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "hbo",
         original_language_book_name: "בְּרֵאשִׁית",
         book_name_English_guide: "Genesis / 1 Moses",
-        BOS_reference_abbreviation: "GEN",
+        BOS_book_code: "GEN",
         BOS_reference_number: 1,
         BOS_sequence_number: 20,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(50),
@@ -102,7 +102,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "hbo",
         original_language_book_name: "שְׁמֹות",
         book_name_English_guide: "Exodus / 2 Moses",
-        BOS_reference_abbreviation: "EXO",
+        BOS_book_code: "EXO",
         BOS_reference_number: 2,
         BOS_sequence_number: 22,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(40),
@@ -133,7 +133,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "hbo",
         original_language_book_name: "וַיִּקְרָא",
         book_name_English_guide: "Leviticus / 3 Moses",
-        BOS_reference_abbreviation: "LEV",
+        BOS_book_code: "LEV",
         BOS_reference_number: 3,
         BOS_sequence_number: 24,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(27),
@@ -164,7 +164,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "hbo",
         original_language_book_name: "בְּמִדְבַּר",
         book_name_English_guide: "Numbers / 4 Moses",
-        BOS_reference_abbreviation: "NUM",
+        BOS_book_code: "NUM",
         BOS_reference_number: 4,
         BOS_sequence_number: 26,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(36),
@@ -195,7 +195,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "hbo",
         original_language_book_name: "דְּבָרִים",
         book_name_English_guide: "Deuteronomy / 5 Moses",
-        BOS_reference_abbreviation: "DEU",
+        BOS_book_code: "DEU",
         BOS_reference_number: 5,
         BOS_sequence_number: 28,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(34),
@@ -226,7 +226,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "hbo",
         original_language_book_name: "יְהוֹשֻעַ",
         book_name_English_guide: "Joshua / Joshua son of Nun",
-        BOS_reference_abbreviation: "JOS",
+        BOS_book_code: "JOS",
         BOS_reference_number: 6,
         BOS_sequence_number: 30,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(24),
@@ -257,7 +257,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "hbo",
         original_language_book_name: "שֹׁפְטִים",
         book_name_English_guide: "Judges",
-        BOS_reference_abbreviation: "JDG",
+        BOS_book_code: "JDG",
         BOS_reference_number: 7,
         BOS_sequence_number: 32,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(21),
@@ -288,7 +288,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "hbo",
         original_language_book_name: "רוּת",
         book_name_English_guide: "Ruth",
-        BOS_reference_abbreviation: "RUT",
+        BOS_book_code: "RUT",
         BOS_reference_number: 8,
         BOS_sequence_number: 34,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(4),
@@ -319,7 +319,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "hbo",
         original_language_book_name: "שְׁמוּאֵל א",
         book_name_English_guide: "1 Samuel / 1 Kingdoms / 1 Kings",
-        BOS_reference_abbreviation: "SA1",
+        BOS_book_code: "SA1",
         BOS_reference_number: 9,
         BOS_sequence_number: 38,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(31),
@@ -350,7 +350,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "hbo",
         original_language_book_name: "שְׁמוּאֵל ב",
         book_name_English_guide: "2 Samuel / 2 Kingdoms / 2 Kings",
-        BOS_reference_abbreviation: "SA2",
+        BOS_book_code: "SA2",
         BOS_reference_number: 10,
         BOS_sequence_number: 40,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(24),
@@ -381,7 +381,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "hbo",
         original_language_book_name: "מְלָכִים א",
         book_name_English_guide: "1 Kings / 3 Kingdoms / 3 Kings",
-        BOS_reference_abbreviation: "KI1",
+        BOS_book_code: "KI1",
         BOS_reference_number: 11,
         BOS_sequence_number: 44,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(22),
@@ -412,7 +412,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "hbo",
         original_language_book_name: "מְלָכִים ב",
         book_name_English_guide: "2 Kings / 4 Kingdoms / 4 Kings",
-        BOS_reference_abbreviation: "KI2",
+        BOS_book_code: "KI2",
         BOS_reference_number: 12,
         BOS_sequence_number: 46,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(25),
@@ -443,7 +443,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "hbo",
         original_language_book_name: "דִּבְרֵי הַיָּמִים א",
         book_name_English_guide: "1 Chronicles / 1 Paralipomenon",
-        BOS_reference_abbreviation: "CH1",
+        BOS_book_code: "CH1",
         BOS_reference_number: 13,
         BOS_sequence_number: 50,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(29),
@@ -474,7 +474,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "hbo",
         original_language_book_name: "דִּבְרֵי הַיָּמִים ב",
         book_name_English_guide: "2 Chronicles / 2 Paralipomenon",
-        BOS_reference_abbreviation: "CH2",
+        BOS_book_code: "CH2",
         BOS_reference_number: 14,
         BOS_sequence_number: 52,
         expected_num_chapters: OptionalNumberOrTwoNumbers::TwoNumbers([36,37]),
@@ -505,7 +505,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "hbo",
         original_language_book_name: "עֶזְרָא",
         book_name_English_guide: "Ezra / 1 Ezra / 1 Esdras",
-        BOS_reference_abbreviation: "EZR",
+        BOS_book_code: "EZR",
         BOS_reference_number: 15,
         BOS_sequence_number: 60,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(10),
@@ -536,7 +536,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "hbo",
         original_language_book_name: "נְחֶמְיָה",
         book_name_English_guide: "Nehemiah / 2 Ezra / 2 Esdras",
-        BOS_reference_abbreviation: "NEH",
+        BOS_book_code: "NEH",
         BOS_reference_number: 16,
         BOS_sequence_number: 70,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(13),
@@ -567,7 +567,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "hbo",
         original_language_book_name: "אֶסְתֵר",
         book_name_English_guide: "Esther",
-        BOS_reference_abbreviation: "EST",
+        BOS_book_code: "EST",
         BOS_reference_number: 17,
         BOS_sequence_number: 80,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(10),
@@ -598,7 +598,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "hbo",
         original_language_book_name: "אִיּוֹב",
         book_name_English_guide: "Job",
-        BOS_reference_abbreviation: "JOB",
+        BOS_book_code: "JOB",
         BOS_reference_number: 18,
         BOS_sequence_number: 90,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(42),
@@ -629,7 +629,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "hbo",
         original_language_book_name: "תְהִלִּים",
         book_name_English_guide: "Psalms / Gallicanum / Psalms A",
-        BOS_reference_abbreviation: "PSA",
+        BOS_book_code: "PSA",
         BOS_reference_number: 19,
         BOS_sequence_number: 100,
         expected_num_chapters: OptionalNumberOrTwoNumbers::TwoNumbers([150,151]),
@@ -660,7 +660,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "hbo",
         original_language_book_name: "מִשְׁלֵי",
         book_name_English_guide: "Proverbs",
-        BOS_reference_abbreviation: "PRO",
+        BOS_book_code: "PRO",
         BOS_reference_number: 20,
         BOS_sequence_number: 110,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(31),
@@ -691,7 +691,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "hbo",
         original_language_book_name: "קֹהֶלֶת",
         book_name_English_guide: "Ecclesiastes / Qoholeth",
-        BOS_reference_abbreviation: "ECC",
+        BOS_book_code: "ECC",
         BOS_reference_number: 21,
         BOS_sequence_number: 120,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(12),
@@ -722,7 +722,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "hbo",
         original_language_book_name: "שִׁיר הַשִּׁירִים",
         book_name_English_guide: "Song of Solomon / Song of Songs / Canticles / Canticle of Canticles",
-        BOS_reference_abbreviation: "SNG",
+        BOS_book_code: "SNG",
         BOS_reference_number: 22,
         BOS_sequence_number: 130,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(8),
@@ -753,7 +753,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "hbo",
         original_language_book_name: "יְשַׁעְיָהוּ",
         book_name_English_guide: "Isaiah",
-        BOS_reference_abbreviation: "ISA",
+        BOS_book_code: "ISA",
         BOS_reference_number: 23,
         BOS_sequence_number: 132,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(66),
@@ -784,7 +784,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "hbo",
         original_language_book_name: "יִרְמְיָהוּ",
         book_name_English_guide: "Jeremiah",
-        BOS_reference_abbreviation: "JER",
+        BOS_book_code: "JER",
         BOS_reference_number: 24,
         BOS_sequence_number: 134,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(52),
@@ -815,7 +815,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "hbo",
         original_language_book_name: "אֵיכָה",
         book_name_English_guide: "Lamentations / Lamentations of Jeremiah",
-        BOS_reference_abbreviation: "LAM",
+        BOS_book_code: "LAM",
         BOS_reference_number: 25,
         BOS_sequence_number: 136,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(5),
@@ -846,7 +846,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "hbo",
         original_language_book_name: "יְחֶזְקֵאל",
         book_name_English_guide: "Ezekiel",
-        BOS_reference_abbreviation: "EZE",
+        BOS_book_code: "EZE",
         BOS_reference_number: 26,
         BOS_sequence_number: 138,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(48),
@@ -877,7 +877,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "hbo",
         original_language_book_name: "דָּנִיֵּאל",
         book_name_English_guide: "Daniel",
-        BOS_reference_abbreviation: "DAN",
+        BOS_book_code: "DAN",
         BOS_reference_number: 27,
         BOS_sequence_number: 140,
         expected_num_chapters: OptionalNumberOrTwoNumbers::TwoNumbers([12,14]),
@@ -908,7 +908,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "hbo",
         original_language_book_name: "הוֹשֵׁעַ",
         book_name_English_guide: "Hosea",
-        BOS_reference_abbreviation: "HOS",
+        BOS_book_code: "HOS",
         BOS_reference_number: 28,
         BOS_sequence_number: 152,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(14),
@@ -939,7 +939,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "hbo",
         original_language_book_name: "יוֹאֵל",
         book_name_English_guide: "Joel",
-        BOS_reference_abbreviation: "JOL",
+        BOS_book_code: "JOL",
         BOS_reference_number: 29,
         BOS_sequence_number: 154,
         expected_num_chapters: OptionalNumberOrTwoNumbers::TwoNumbers([3,4]),
@@ -970,7 +970,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "hbo",
         original_language_book_name: "עָמוֹס",
         book_name_English_guide: "Amos",
-        BOS_reference_abbreviation: "AMO",
+        BOS_book_code: "AMO",
         BOS_reference_number: 30,
         BOS_sequence_number: 156,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(9),
@@ -1001,7 +1001,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "hbo",
         original_language_book_name: "עֹבַדְיָה",
         book_name_English_guide: "Obadiah",
-        BOS_reference_abbreviation: "OBA",
+        BOS_book_code: "OBA",
         BOS_reference_number: 31,
         BOS_sequence_number: 158,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(1),
@@ -1032,7 +1032,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "hbo",
         original_language_book_name: "יוֹנָה",
         book_name_English_guide: "Jonah",
-        BOS_reference_abbreviation: "JNA",
+        BOS_book_code: "JNA",
         BOS_reference_number: 32,
         BOS_sequence_number: 160,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(4),
@@ -1063,7 +1063,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "hbo",
         original_language_book_name: "מִיכָה",
         book_name_English_guide: "Micah",
-        BOS_reference_abbreviation: "MIC",
+        BOS_book_code: "MIC",
         BOS_reference_number: 33,
         BOS_sequence_number: 162,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(7),
@@ -1094,7 +1094,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "hbo",
         original_language_book_name: "נַחוּם",
         book_name_English_guide: "Nahum",
-        BOS_reference_abbreviation: "NAH",
+        BOS_book_code: "NAH",
         BOS_reference_number: 34,
         BOS_sequence_number: 164,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(3),
@@ -1125,7 +1125,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "hbo",
         original_language_book_name: "חֲבַקּוּק",
         book_name_English_guide: "Habakkuk",
-        BOS_reference_abbreviation: "HAB",
+        BOS_book_code: "HAB",
         BOS_reference_number: 35,
         BOS_sequence_number: 166,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(3),
@@ -1156,7 +1156,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "hbo",
         original_language_book_name: "צְפַנְיָה",
         book_name_English_guide: "Zephaniah",
-        BOS_reference_abbreviation: "ZEP",
+        BOS_book_code: "ZEP",
         BOS_reference_number: 36,
         BOS_sequence_number: 168,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(3),
@@ -1187,7 +1187,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "hbo",
         original_language_book_name: "חַגַּי",
         book_name_English_guide: "Haggai",
-        BOS_reference_abbreviation: "HAG",
+        BOS_book_code: "HAG",
         BOS_reference_number: 37,
         BOS_sequence_number: 170,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(2),
@@ -1218,7 +1218,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "hbo",
         original_language_book_name: "זְכַרְיָה",
         book_name_English_guide: "Zechariah",
-        BOS_reference_abbreviation: "ZEC",
+        BOS_book_code: "ZEC",
         BOS_reference_number: 38,
         BOS_sequence_number: 172,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(14),
@@ -1249,7 +1249,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "hbo",
         original_language_book_name: "מַלְאָכִי",
         book_name_English_guide: "Malachi",
-        BOS_reference_abbreviation: "MAL",
+        BOS_book_code: "MAL",
         BOS_reference_number: 39,
         BOS_sequence_number: 174,
         expected_num_chapters: OptionalNumberOrTwoNumbers::TwoNumbers([4,3]),
@@ -1280,7 +1280,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "el-x-koine",
         original_language_book_name: "Κατὰ Μαθθαῖον",
         book_name_English_guide: "Matthew",
-        BOS_reference_abbreviation: "MAT",
+        BOS_book_code: "MAT",
         BOS_reference_number: 40,
         BOS_sequence_number: 600,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(28),
@@ -1311,7 +1311,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "el-x-koine",
         original_language_book_name: "Κατὰ Μᾶρκον",
         book_name_English_guide: "Mark",
-        BOS_reference_abbreviation: "MRK",
+        BOS_book_code: "MRK",
         BOS_reference_number: 41,
         BOS_sequence_number: 602,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(16),
@@ -1342,7 +1342,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "el-x-koine",
         original_language_book_name: "Κατὰ Λουκᾶν",
         book_name_English_guide: "Luke",
-        BOS_reference_abbreviation: "LUK",
+        BOS_book_code: "LUK",
         BOS_reference_number: 42,
         BOS_sequence_number: 604,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(24),
@@ -1373,7 +1373,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "el-x-koine",
         original_language_book_name: "Κατὰ Ἰωάννην",
         book_name_English_guide: "John",
-        BOS_reference_abbreviation: "JHN",
+        BOS_book_code: "JHN",
         BOS_reference_number: 43,
         BOS_sequence_number: 606,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(21),
@@ -1404,7 +1404,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "el-x-koine",
         original_language_book_name: "Πράξεις Ἀποστόλων",
         book_name_English_guide: "Acts / Acts of the Apostles",
-        BOS_reference_abbreviation: "ACT",
+        BOS_book_code: "ACT",
         BOS_reference_number: 44,
         BOS_sequence_number: 610,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(28),
@@ -1435,7 +1435,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "el-x-koine",
         original_language_book_name: "Πρὸς Ῥωμαίους",
         book_name_English_guide: "Romans",
-        BOS_reference_abbreviation: "ROM",
+        BOS_book_code: "ROM",
         BOS_reference_number: 45,
         BOS_sequence_number: 612,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(16),
@@ -1466,7 +1466,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "el-x-koine",
         original_language_book_name: "Πρὸς Κορινθίους α",
         book_name_English_guide: "1 Corinthians",
-        BOS_reference_abbreviation: "CO1",
+        BOS_book_code: "CO1",
         BOS_reference_number: 46,
         BOS_sequence_number: 614,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(16),
@@ -1497,7 +1497,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "el-x-koine",
         original_language_book_name: "Πρὸς Κορινθίους β",
         book_name_English_guide: "2 Corinthians",
-        BOS_reference_abbreviation: "CO2",
+        BOS_book_code: "CO2",
         BOS_reference_number: 47,
         BOS_sequence_number: 616,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(13),
@@ -1528,7 +1528,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "el-x-koine",
         original_language_book_name: "Πρὸς Γαλάτας",
         book_name_English_guide: "Galatians",
-        BOS_reference_abbreviation: "GAL",
+        BOS_book_code: "GAL",
         BOS_reference_number: 48,
         BOS_sequence_number: 618,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(6),
@@ -1559,7 +1559,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "el-x-koine",
         original_language_book_name: "Πρὸς Ἐφεσίους",
         book_name_English_guide: "Ephesians",
-        BOS_reference_abbreviation: "EPH",
+        BOS_book_code: "EPH",
         BOS_reference_number: 49,
         BOS_sequence_number: 620,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(6),
@@ -1590,7 +1590,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "el-x-koine",
         original_language_book_name: "Πρὸς Φιλιππησίους",
         book_name_English_guide: "Philippians",
-        BOS_reference_abbreviation: "PHP",
+        BOS_book_code: "PHP",
         BOS_reference_number: 50,
         BOS_sequence_number: 622,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(4),
@@ -1621,7 +1621,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "el-x-koine",
         original_language_book_name: "Πρὸς Κολοσσαεῖς",
         book_name_English_guide: "Colossians",
-        BOS_reference_abbreviation: "COL",
+        BOS_book_code: "COL",
         BOS_reference_number: 51,
         BOS_sequence_number: 624,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(4),
@@ -1652,7 +1652,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "el-x-koine",
         original_language_book_name: "Πρὸς Θεσσαλονικεῖς α",
         book_name_English_guide: "1 Thessalonians",
-        BOS_reference_abbreviation: "TH1",
+        BOS_book_code: "TH1",
         BOS_reference_number: 52,
         BOS_sequence_number: 626,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(5),
@@ -1683,7 +1683,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "el-x-koine",
         original_language_book_name: "Πρὸς Θεσσαλονικεῖς β",
         book_name_English_guide: "2 Thessalonians",
-        BOS_reference_abbreviation: "TH2",
+        BOS_book_code: "TH2",
         BOS_reference_number: 53,
         BOS_sequence_number: 628,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(3),
@@ -1714,7 +1714,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "el-x-koine",
         original_language_book_name: "Πρὸς Τιμόθεον α",
         book_name_English_guide: "1 Timothy",
-        BOS_reference_abbreviation: "TI1",
+        BOS_book_code: "TI1",
         BOS_reference_number: 54,
         BOS_sequence_number: 630,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(6),
@@ -1745,7 +1745,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "el-x-koine",
         original_language_book_name: "Πρὸς Τιμόθεον β",
         book_name_English_guide: "2 Timothy",
-        BOS_reference_abbreviation: "TI2",
+        BOS_book_code: "TI2",
         BOS_reference_number: 55,
         BOS_sequence_number: 632,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(4),
@@ -1776,7 +1776,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "el-x-koine",
         original_language_book_name: "Πρὸς Τίτον",
         book_name_English_guide: "Titus",
-        BOS_reference_abbreviation: "TIT",
+        BOS_book_code: "TIT",
         BOS_reference_number: 56,
         BOS_sequence_number: 634,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(3),
@@ -1807,7 +1807,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "el-x-koine",
         original_language_book_name: "Πρὸς Φιλήμονα",
         book_name_English_guide: "Philemon",
-        BOS_reference_abbreviation: "PHM",
+        BOS_book_code: "PHM",
         BOS_reference_number: 57,
         BOS_sequence_number: 636,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(1),
@@ -1838,7 +1838,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "el-x-koine",
         original_language_book_name: "Πρὸς Ἑβραίους",
         book_name_English_guide: "Hebrews",
-        BOS_reference_abbreviation: "HEB",
+        BOS_book_code: "HEB",
         BOS_reference_number: 58,
         BOS_sequence_number: 638,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(13),
@@ -1869,7 +1869,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "el-x-koine",
         original_language_book_name: "Ἰακώβου",
         book_name_English_guide: "James / Jacob",
-        BOS_reference_abbreviation: "JAM",
+        BOS_book_code: "JAM",
         BOS_reference_number: 59,
         BOS_sequence_number: 640,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(5),
@@ -1900,7 +1900,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "el-x-koine",
         original_language_book_name: "Πέτρου α",
         book_name_English_guide: "1 Peter",
-        BOS_reference_abbreviation: "PE1",
+        BOS_book_code: "PE1",
         BOS_reference_number: 60,
         BOS_sequence_number: 642,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(5),
@@ -1931,7 +1931,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "el-x-koine",
         original_language_book_name: "Πέτρου β",
         book_name_English_guide: "2 Peter",
-        BOS_reference_abbreviation: "PE2",
+        BOS_book_code: "PE2",
         BOS_reference_number: 61,
         BOS_sequence_number: 644,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(3),
@@ -1962,7 +1962,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "el-x-koine",
         original_language_book_name: "Ἰωάννου α",
         book_name_English_guide: "1 John",
-        BOS_reference_abbreviation: "JN1",
+        BOS_book_code: "JN1",
         BOS_reference_number: 62,
         BOS_sequence_number: 646,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(5),
@@ -1993,7 +1993,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "el-x-koine",
         original_language_book_name: "Ἰωάννου β",
         book_name_English_guide: "2 John",
-        BOS_reference_abbreviation: "JN2",
+        BOS_book_code: "JN2",
         BOS_reference_number: 63,
         BOS_sequence_number: 648,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(1),
@@ -2024,7 +2024,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "el-x-koine",
         original_language_book_name: "Ἰωάννου γ",
         book_name_English_guide: "3 John",
-        BOS_reference_abbreviation: "JN3",
+        BOS_book_code: "JN3",
         BOS_reference_number: 64,
         BOS_sequence_number: 650,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(1),
@@ -2055,7 +2055,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "el-x-koine",
         original_language_book_name: "Ἰούδας",
         book_name_English_guide: "Jude / Judas",
-        BOS_reference_abbreviation: "JDE",
+        BOS_book_code: "JDE",
         BOS_reference_number: 65,
         BOS_sequence_number: 652,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(1),
@@ -2086,7 +2086,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "el-x-koine",
         original_language_book_name: "Ἀποκάλυψις Ἰωάννου",
         book_name_English_guide: "Revelation / Revelation of John / Apocalypse of St. John",
-        BOS_reference_abbreviation: "REV",
+        BOS_book_code: "REV",
         BOS_reference_number: 66,
         BOS_sequence_number: 654,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(22),
@@ -2117,7 +2117,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "el-x-koine",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Greek Esther / Esther (Greek)",
-        BOS_reference_abbreviation: "ESG",
+        BOS_book_code: "ESG",
         BOS_reference_number: 70,
         BOS_sequence_number: 204,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(10),
@@ -2148,7 +2148,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "el-x-koine",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Greek additions to Esther / Esther (additions)",
-        BOS_reference_abbreviation: "ESA",
+        BOS_book_code: "ESA",
         BOS_reference_number: 71,
         BOS_sequence_number: 84,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(10),
@@ -2179,7 +2179,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "hbo,el-x-koine",
         original_language_book_name: "אֶסְתֵר",
         book_name_English_guide: "Combined Hebrew/Greek Esther / Esther (combined)",
-        BOS_reference_abbreviation: "ESC",
+        BOS_book_code: "ESC",
         BOS_reference_number: 72,
         BOS_sequence_number: 86,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(10),
@@ -2210,7 +2210,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "el-x-koine",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Greek Daniel / Daniel (Greek)",
-        BOS_reference_abbreviation: "DNG",
+        BOS_book_code: "DNG",
         BOS_reference_number: 73,
         BOS_sequence_number: 142,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(14),
@@ -2241,7 +2241,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "el-x-koine",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Greek additions to Daniel / Daniel (additions)",
-        BOS_reference_abbreviation: "DNA",
+        BOS_book_code: "DNA",
         BOS_reference_number: 74,
         BOS_sequence_number: 144,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(14),
@@ -2272,7 +2272,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "hbo,el-x-koine",
         original_language_book_name: "דָּנִיֵּאל",
         book_name_English_guide: "Combined Hebrew/Greek Daniel / Daniel (combined)",
-        BOS_reference_abbreviation: "DNC",
+        BOS_book_code: "DNC",
         BOS_reference_number: 75,
         BOS_sequence_number: 146,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(14),
@@ -2303,7 +2303,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "el-x-koine",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Bel and the dragon",
-        BOS_reference_abbreviation: "BEL",
+        BOS_book_code: "BEL",
         BOS_reference_number: 80,
         BOS_sequence_number: 262,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(1),
@@ -2334,7 +2334,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Susanna",
-        BOS_reference_abbreviation: "SUS",
+        BOS_book_code: "SUS",
         BOS_reference_number: 81,
         BOS_sequence_number: 260,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(1),
@@ -2365,7 +2365,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Judith",
-        BOS_reference_abbreviation: "JDT",
+        BOS_book_code: "JDT",
         BOS_reference_number: 82,
         BOS_sequence_number: 202,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(16),
@@ -2396,7 +2396,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Prayer of Manasses / Prayer of Manasseh",
-        BOS_reference_abbreviation: "MAN",
+        BOS_book_code: "MAN",
         BOS_reference_number: 83,
         BOS_sequence_number: 294,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(1),
@@ -2427,7 +2427,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Sirach / Ecclesiasticus / Wisdom of Ben Sira / Wisdom of Jesus son of Sirach",
-        BOS_reference_abbreviation: "SIR",
+        BOS_book_code: "SIR",
         BOS_reference_number: 84,
         BOS_sequence_number: 208,
         expected_num_chapters: OptionalNumberOrTwoNumbers::TwoNumbers([51,52]),
@@ -2458,7 +2458,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Sirach Prologue",
-        BOS_reference_abbreviation: "SIP",
+        BOS_book_code: "SIP",
         BOS_reference_number: 85,
         BOS_sequence_number: 207,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -2489,7 +2489,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Tobit / Tobias",
-        BOS_reference_abbreviation: "TOB",
+        BOS_book_code: "TOB",
         BOS_reference_number: 86,
         BOS_sequence_number: 200,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(14),
@@ -2520,7 +2520,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Wisdom / Wisdom of Solomon",
-        BOS_reference_abbreviation: "WIS",
+        BOS_book_code: "WIS",
         BOS_reference_number: 87,
         BOS_sequence_number: 206,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(19),
@@ -2551,7 +2551,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Prayer of Azariah and the Song of the Three Young Men / Prayer of Azariah / Song of the Three Young Men / Song of the Three Children",
-        BOS_reference_abbreviation: "PAZ",
+        BOS_book_code: "PAZ",
         BOS_reference_number: 88,
         BOS_sequence_number: 250,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(1),
@@ -2582,7 +2582,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "el-x-koine",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Greek Esdras / Greek Ezra / 1 Esdras / 1 Ezra / 2 Ezra / 3 Ezra / 3 Esdras",
-        BOS_reference_abbreviation: "GES",
+        BOS_book_code: "GES",
         BOS_reference_number: 90,
         BOS_sequence_number: 282,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(9),
@@ -2613,7 +2613,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "lat",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Latin Esdras / 2 Esdras / 3 Esdras / 4 Esdras / 4 Ezra",
-        BOS_reference_abbreviation: "LES",
+        BOS_book_code: "LES",
         BOS_reference_number: 91,
         BOS_sequence_number: 284,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(16),
@@ -2644,7 +2644,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Apocalypse of Ezra / Ezra Apocalypse / 4 Ezra / Ezra Shealtiel",
-        BOS_reference_abbreviation: "EZA",
+        BOS_book_code: "EZA",
         BOS_reference_number: 92,
         BOS_sequence_number: 286,
         expected_num_chapters: OptionalNumberOrTwoNumbers::TwoNumbers([12,13]),
@@ -2675,7 +2675,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "lat",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "5 Ezra / 3 Esdras / 5 Esdras",
-        BOS_reference_abbreviation: "EZ5",
+        BOS_book_code: "EZ5",
         BOS_reference_number: 93,
         BOS_sequence_number: 288,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(2),
@@ -2706,7 +2706,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "lat",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "6 Ezra / 5 Esdras / 6 Esdras",
-        BOS_reference_abbreviation: "EZ6",
+        BOS_book_code: "EZ6",
         BOS_reference_number: 94,
         BOS_sequence_number: 290,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(2),
@@ -2737,7 +2737,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Revelation of Ezra",
-        BOS_reference_abbreviation: "RVE",
+        BOS_book_code: "RVE",
         BOS_reference_number: 95,
         BOS_sequence_number: 292,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -2768,7 +2768,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Vison of Ezra",
-        BOS_reference_abbreviation: "VSE",
+        BOS_book_code: "VSE",
         BOS_reference_number: 96,
         BOS_sequence_number: 293,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -2799,7 +2799,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Letter of Jeremiah / Epistle of Jeremiah",
-        BOS_reference_abbreviation: "LJE",
+        BOS_book_code: "LJE",
         BOS_reference_number: 100,
         BOS_sequence_number: 240,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(1),
@@ -2830,7 +2830,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Baruch / 1 Baruch",
-        BOS_reference_abbreviation: "BAR",
+        BOS_book_code: "BAR",
         BOS_reference_number: 101,
         BOS_sequence_number: 220,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(5),
@@ -2861,7 +2861,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Letter of Jeremiah with Baruch / Epistle of Jeremiah with Baruch",
-        BOS_reference_abbreviation: "LJB",
+        BOS_book_code: "LJB",
         BOS_reference_number: 102,
         BOS_sequence_number: 222,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(6),
@@ -2892,7 +2892,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "2 Baruch / Apocalypse of Baruch",
-        BOS_reference_abbreviation: "BA2",
+        BOS_book_code: "BA2",
         BOS_reference_number: 103,
         BOS_sequence_number: 228,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(77),
@@ -2923,7 +2923,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Letter of Baruch / Epistle of Baruch",
-        BOS_reference_abbreviation: "LBA",
+        BOS_book_code: "LBA",
         BOS_reference_number: 104,
         BOS_sequence_number: 224,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(9),
@@ -2954,7 +2954,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "2 Baruch with the Letter of Baruch",
-        BOS_reference_abbreviation: "LB2",
+        BOS_book_code: "LB2",
         BOS_reference_number: 105,
         BOS_sequence_number: 226,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(86),
@@ -2985,7 +2985,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "3 Baruch",
-        BOS_reference_abbreviation: "BA3",
+        BOS_book_code: "BA3",
         BOS_reference_number: 106,
         BOS_sequence_number: 230,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -3016,7 +3016,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "4 Baruch / Paralipomenon of Jeremiah / Paraleipomena Ieremiou / Rest of the Words of Baruch",
-        BOS_reference_abbreviation: "BA4",
+        BOS_book_code: "BA4",
         BOS_reference_number: 107,
         BOS_sequence_number: 232,
         expected_num_chapters: OptionalNumberOrTwoNumbers::TwoNumbers([6,5]),
@@ -3047,7 +3047,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Additions to Jeremiah / Rest of Jeremiah",
-        BOS_reference_abbreviation: "JRA",
+        BOS_book_code: "JRA",
         BOS_reference_number: 108,
         BOS_sequence_number: 233,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -3078,7 +3078,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Pseudo-Josephus",
-        BOS_reference_abbreviation: "PSJ",
+        BOS_book_code: "PSJ",
         BOS_reference_number: 109,
         BOS_sequence_number: 234,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -3109,7 +3109,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Maccabees",
-        BOS_reference_abbreviation: "MAC",
+        BOS_book_code: "MAC",
         BOS_reference_number: 110,
         BOS_sequence_number: 270,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(31),
@@ -3140,7 +3140,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "1 Maccabees",
-        BOS_reference_abbreviation: "MA1",
+        BOS_book_code: "MA1",
         BOS_reference_number: 111,
         BOS_sequence_number: 272,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(16),
@@ -3171,7 +3171,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "2 Maccabees",
-        BOS_reference_abbreviation: "MA2",
+        BOS_book_code: "MA2",
         BOS_reference_number: 112,
         BOS_sequence_number: 274,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(15),
@@ -3202,7 +3202,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "3 Maccabees",
-        BOS_reference_abbreviation: "MA3",
+        BOS_book_code: "MA3",
         BOS_reference_number: 113,
         BOS_sequence_number: 276,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(7),
@@ -3233,7 +3233,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "4 Maccabees",
-        BOS_reference_abbreviation: "MA4",
+        BOS_book_code: "MA4",
         BOS_reference_number: 114,
         BOS_sequence_number: 278,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(18),
@@ -3264,7 +3264,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "5 Maccabees",
-        BOS_reference_abbreviation: "MA5",
+        BOS_book_code: "MA5",
         BOS_reference_number: 115,
         BOS_sequence_number: 280,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -3295,7 +3295,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "1 Meqabyan / 1 Makabian / Mekabis of Benjamin",
-        BOS_reference_abbreviation: "MQ1",
+        BOS_book_code: "MQ1",
         BOS_reference_number: 116,
         BOS_sequence_number: 500,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(36),
@@ -3326,7 +3326,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "2 Meqabyan / 2 Makabian / Mekabis of Moab",
-        BOS_reference_abbreviation: "MQ2",
+        BOS_book_code: "MQ2",
         BOS_reference_number: 117,
         BOS_sequence_number: 502,
         expected_num_chapters: OptionalNumberOrTwoNumbers::TwoNumbers([20,21]),
@@ -3357,7 +3357,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "3 Meqabyan / 3 Makabian",
-        BOS_reference_abbreviation: "MQ3",
+        BOS_book_code: "MQ3",
         BOS_reference_number: 118,
         BOS_sequence_number: 506,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(10),
@@ -3388,7 +3388,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "hbo",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Psalms Book 1 / Psalms Book I",
-        BOS_reference_abbreviation: "PB1",
+        BOS_book_code: "PB1",
         BOS_reference_number: 120,
         BOS_sequence_number: 101,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(41),
@@ -3419,7 +3419,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "hbo",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Psalms Book 2 / Psalms Book II",
-        BOS_reference_abbreviation: "PB2",
+        BOS_book_code: "PB2",
         BOS_reference_number: 121,
         BOS_sequence_number: 102,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(31),
@@ -3450,7 +3450,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "hbo",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Psalms Book 3 / Psalms Book III",
-        BOS_reference_abbreviation: "PB3",
+        BOS_book_code: "PB3",
         BOS_reference_number: 122,
         BOS_sequence_number: 103,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(17),
@@ -3481,7 +3481,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "hbo",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Psalms Book 4 / Psalms Book IV",
-        BOS_reference_abbreviation: "PB4",
+        BOS_book_code: "PB4",
         BOS_reference_number: 123,
         BOS_sequence_number: 104,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(17),
@@ -3512,7 +3512,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "hbo",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Psalms Book 5 / Psalms Book V",
-        BOS_reference_abbreviation: "PB5",
+        BOS_book_code: "PB5",
         BOS_reference_number: 124,
         BOS_sequence_number: 105,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(44),
@@ -3543,7 +3543,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "hbo",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Psalms B / Liturgical Psalms / Metrical Psalms / Alternative Psalms / Grail Psalms",
-        BOS_reference_abbreviation: "PSB",
+        BOS_book_code: "PSB",
         BOS_reference_number: 125,
         BOS_sequence_number: 106,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(150),
@@ -3574,7 +3574,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Psalm 151",
-        BOS_reference_abbreviation: "PS2",
+        BOS_book_code: "PS2",
         BOS_reference_number: 126,
         BOS_sequence_number: 107,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(1),
@@ -3605,7 +3605,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "hbo",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Syriac Psalms 152-155 / Five apocryphal Syriac Psalms / Additional Syriac Psalms",
-        BOS_reference_abbreviation: "PS3",
+        BOS_book_code: "PS3",
         BOS_reference_number: 127,
         BOS_sequence_number: 108,
         expected_num_chapters: OptionalNumberOrTwoNumbers::TwoNumbers([5,4]),
@@ -3636,7 +3636,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Additional Psalms of Solomon",
-        BOS_reference_abbreviation: "PSS",
+        BOS_book_code: "PSS",
         BOS_reference_number: 128,
         BOS_sequence_number: 109,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(18),
@@ -3667,7 +3667,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Letter to the Laodiceans",
-        BOS_reference_abbreviation: "LAO",
+        BOS_book_code: "LAO",
         BOS_reference_number: 130,
         BOS_sequence_number: 660,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(1),
@@ -3698,7 +3698,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Odes / Odae",
-        BOS_reference_abbreviation: "ODE",
+        BOS_book_code: "ODE",
         BOS_reference_number: 131,
         BOS_sequence_number: 300,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(14),
@@ -3729,7 +3729,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Prayer of Solomon",
-        BOS_reference_abbreviation: "PSO",
+        BOS_book_code: "PSO",
         BOS_reference_number: 132,
         BOS_sequence_number: 310,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -3760,7 +3760,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Prayer of Jeremiah",
-        BOS_reference_abbreviation: "PJE",
+        BOS_book_code: "PJE",
         BOS_reference_number: 133,
         BOS_sequence_number: 312,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(1),
@@ -3791,7 +3791,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Words of Sirach",
-        BOS_reference_abbreviation: "WSI",
+        BOS_book_code: "WSI",
         BOS_reference_number: 134,
         BOS_sequence_number: 320,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(1),
@@ -3822,7 +3822,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Letter of the Corinthians to Paul / Epistle of the Corinthians to Paul",
-        BOS_reference_abbreviation: "COP",
+        BOS_book_code: "COP",
         BOS_reference_number: 135,
         BOS_sequence_number: 662,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(1),
@@ -3853,7 +3853,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "3 Corinthians",
-        BOS_reference_abbreviation: "CO3",
+        BOS_book_code: "CO3",
         BOS_reference_number: 136,
         BOS_sequence_number: 664,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(1),
@@ -3884,7 +3884,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Prayer of Euthalius",
-        BOS_reference_abbreviation: "EUT",
+        BOS_book_code: "EUT",
         BOS_reference_number: 137,
         BOS_sequence_number: 670,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(1),
@@ -3915,7 +3915,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Dormition of John",
-        BOS_reference_abbreviation: "DOJ",
+        BOS_book_code: "DOJ",
         BOS_reference_number: 138,
         BOS_sequence_number: 680,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(1),
@@ -3946,7 +3946,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "hbo",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Jubilees",
-        BOS_reference_abbreviation: "JUB",
+        BOS_book_code: "JUB",
         BOS_reference_number: 140,
         BOS_sequence_number: 340,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(34),
@@ -3977,7 +3977,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "hbo",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Enoch / 1 Enoch / Ethiopic Apocalypse of Enoch",
-        BOS_reference_abbreviation: "ENO",
+        BOS_book_code: "ENO",
         BOS_reference_number: 141,
         BOS_sequence_number: 342,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(42),
@@ -4008,7 +4008,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "2 Enoch",
-        BOS_reference_abbreviation: "EN2",
+        BOS_book_code: "EN2",
         BOS_reference_number: 142,
         BOS_sequence_number: 344,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -4039,7 +4039,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Reproof / Tegsas / Tegsats / Taagsas",
-        BOS_reference_abbreviation: "REP",
+        BOS_book_code: "REP",
         BOS_reference_number: 143,
         BOS_sequence_number: 350,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(6),
@@ -4070,7 +4070,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Letter of Barnabas / Epistle of Barnabas / Barnabas",
-        BOS_reference_abbreviation: "LBB",
+        BOS_book_code: "LBB",
         BOS_reference_number: 144,
         BOS_sequence_number: 690,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -4101,7 +4101,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "1 Clement",
-        BOS_reference_abbreviation: "CL1",
+        BOS_book_code: "CL1",
         BOS_reference_number: 150,
         BOS_sequence_number: 360,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(65),
@@ -4132,7 +4132,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "2 Clement",
-        BOS_reference_abbreviation: "CL2",
+        BOS_book_code: "CL2",
         BOS_reference_number: 151,
         BOS_sequence_number: 362,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(20),
@@ -4163,7 +4163,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Didache",
-        BOS_reference_abbreviation: "DID",
+        BOS_book_code: "DID",
         BOS_reference_number: 153,
         BOS_sequence_number: 366,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(16),
@@ -4194,7 +4194,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Joshua A",
-        BOS_reference_abbreviation: "JSA",
+        BOS_book_code: "JSA",
         BOS_reference_number: 154,
         BOS_sequence_number: 370,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(24),
@@ -4225,7 +4225,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Joshua B",
-        BOS_reference_abbreviation: "JSB",
+        BOS_book_code: "JSB",
         BOS_reference_number: 155,
         BOS_sequence_number: 371,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(24),
@@ -4256,7 +4256,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Judges A",
-        BOS_reference_abbreviation: "JGA",
+        BOS_book_code: "JGA",
         BOS_reference_number: 156,
         BOS_sequence_number: 372,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(21),
@@ -4287,7 +4287,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Judges B",
-        BOS_reference_abbreviation: "JGB",
+        BOS_book_code: "JGB",
         BOS_reference_number: 157,
         BOS_sequence_number: 373,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(21),
@@ -4318,7 +4318,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Tobit S",
-        BOS_reference_abbreviation: "TBS",
+        BOS_book_code: "TBS",
         BOS_reference_number: 158,
         BOS_sequence_number: 374,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(14),
@@ -4349,7 +4349,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Susanna θ / Susanna Th",
-        BOS_reference_abbreviation: "SST",
+        BOS_book_code: "SST",
         BOS_reference_number: 159,
         BOS_sequence_number: 375,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(1),
@@ -4380,7 +4380,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Daniel θ / Daniel Th",
-        BOS_reference_abbreviation: "DNT",
+        BOS_book_code: "DNT",
         BOS_reference_number: 160,
         BOS_sequence_number: 376,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(12),
@@ -4411,7 +4411,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Bel and the dragon θ / Bel and the dragon Th",
-        BOS_reference_abbreviation: "BLT",
+        BOS_book_code: "BLT",
         BOS_reference_number: 161,
         BOS_sequence_number: 377,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(1),
@@ -4442,7 +4442,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Gospel of the Hebrews",
-        BOS_reference_abbreviation: "GHE",
+        BOS_book_code: "GHE",
         BOS_reference_number: 170,
         BOS_sequence_number: 700,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -4473,7 +4473,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Gospel of Truth",
-        BOS_reference_abbreviation: "GTR",
+        BOS_book_code: "GTR",
         BOS_reference_number: 171,
         BOS_sequence_number: 702,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -4504,7 +4504,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Gospel of Mary",
-        BOS_reference_abbreviation: "GMA",
+        BOS_book_code: "GMA",
         BOS_reference_number: 172,
         BOS_sequence_number: 704,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -4535,7 +4535,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Gospel of Marcion",
-        BOS_reference_abbreviation: "GMC",
+        BOS_book_code: "GMC",
         BOS_reference_number: 173,
         BOS_sequence_number: 706,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -4566,7 +4566,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Gospel of the Twelve",
-        BOS_reference_abbreviation: "GTW",
+        BOS_book_code: "GTW",
         BOS_reference_number: 174,
         BOS_sequence_number: 708,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -4597,7 +4597,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Gospel of Philip",
-        BOS_reference_abbreviation: "GPH",
+        BOS_book_code: "GPH",
         BOS_reference_number: 175,
         BOS_sequence_number: 710,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -4628,7 +4628,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Gospel of Thomas",
-        BOS_reference_abbreviation: "GTH",
+        BOS_book_code: "GTH",
         BOS_reference_number: 176,
         BOS_sequence_number: 712,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -4659,7 +4659,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Gospel of Judas",
-        BOS_reference_abbreviation: "GJU",
+        BOS_book_code: "GJU",
         BOS_reference_number: 177,
         BOS_sequence_number: 714,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -4690,7 +4690,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Gospel of Bartholomew",
-        BOS_reference_abbreviation: "GBA",
+        BOS_book_code: "GBA",
         BOS_reference_number: 178,
         BOS_sequence_number: 716,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -4721,7 +4721,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Apocrypha of James / Apocryphal James",
-        BOS_reference_abbreviation: "AJA",
+        BOS_book_code: "AJA",
         BOS_reference_number: 179,
         BOS_sequence_number: 718,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -4752,7 +4752,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Wisdom of Jesus Christ",
-        BOS_reference_abbreviation: "WJC",
+        BOS_book_code: "WJC",
         BOS_reference_number: 180,
         BOS_sequence_number: 720,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -4783,7 +4783,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Testament of Adam",
-        BOS_reference_abbreviation: "TAD",
+        BOS_book_code: "TAD",
         BOS_reference_number: 190,
         BOS_sequence_number: 400,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -4814,7 +4814,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Life of Adam and Eve",
-        BOS_reference_abbreviation: "LAE",
+        BOS_book_code: "LAE",
         BOS_reference_number: 191,
         BOS_sequence_number: 402,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -4845,7 +4845,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Assumption of Moses / Testament of Moses",
-        BOS_reference_abbreviation: "ASS",
+        BOS_book_code: "ASS",
         BOS_reference_number: 192,
         BOS_sequence_number: 404,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -4876,7 +4876,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Testament of Solomon",
-        BOS_reference_abbreviation: "TSO",
+        BOS_book_code: "TSO",
         BOS_reference_number: 193,
         BOS_sequence_number: 406,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -4907,7 +4907,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Testament of Job",
-        BOS_reference_abbreviation: "TJB",
+        BOS_book_code: "TJB",
         BOS_reference_number: 194,
         BOS_sequence_number: 408,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -4938,7 +4938,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Martyrdom and Ascension of Isaiah",
-        BOS_reference_abbreviation: "MAI",
+        BOS_book_code: "MAI",
         BOS_reference_number: 195,
         BOS_sequence_number: 410,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -4969,7 +4969,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Apocrypha of Ezekiel / Apocryphon of Ezekiel",
-        BOS_reference_abbreviation: "AEZ",
+        BOS_book_code: "AEZ",
         BOS_reference_number: 196,
         BOS_sequence_number: 412,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -5000,7 +5000,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Ezekiel the Tragedian",
-        BOS_reference_abbreviation: "EZT",
+        BOS_book_code: "EZT",
         BOS_reference_number: 197,
         BOS_sequence_number: 414,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -5031,7 +5031,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Eupolemus",
-        BOS_reference_abbreviation: "EUP",
+        BOS_book_code: "EUP",
         BOS_reference_number: 198,
         BOS_sequence_number: 416,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -5062,7 +5062,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Pseudo of Eupolemus / Pseudo-Eupolemus",
-        BOS_reference_abbreviation: "PEU",
+        BOS_book_code: "PEU",
         BOS_reference_number: 199,
         BOS_sequence_number: 418,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -5093,7 +5093,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Visions of Amram",
-        BOS_reference_abbreviation: "VAM",
+        BOS_book_code: "VAM",
         BOS_reference_number: 200,
         BOS_sequence_number: 420,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -5124,7 +5124,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Letter of Aristeas / Epistle of Aristeas",
-        BOS_reference_abbreviation: "LAR",
+        BOS_book_code: "LAR",
         BOS_reference_number: 201,
         BOS_sequence_number: 422,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -5155,7 +5155,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Aristeas the Exegete",
-        BOS_reference_abbreviation: "ARI",
+        BOS_book_code: "ARI",
         BOS_reference_number: 202,
         BOS_sequence_number: 424,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -5186,7 +5186,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Aristobulus",
-        BOS_reference_abbreviation: "ABL",
+        BOS_book_code: "ABL",
         BOS_reference_number: 203,
         BOS_sequence_number: 426,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -5217,7 +5217,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Artapanus",
-        BOS_reference_abbreviation: "ART",
+        BOS_book_code: "ART",
         BOS_reference_number: 204,
         BOS_sequence_number: 428,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -5248,7 +5248,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Cleodemus Malchus",
-        BOS_reference_abbreviation: "CLM",
+        BOS_book_code: "CLM",
         BOS_reference_number: 205,
         BOS_sequence_number: 430,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -5279,7 +5279,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Eldad and Modad",
-        BOS_reference_abbreviation: "ELM",
+        BOS_book_code: "ELM",
         BOS_reference_number: 206,
         BOS_sequence_number: 432,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -5310,7 +5310,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "History of the Rechabites",
-        BOS_reference_abbreviation: "HRE",
+        BOS_book_code: "HRE",
         BOS_reference_number: 207,
         BOS_sequence_number: 434,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -5341,7 +5341,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Lives of the Prophets",
-        BOS_reference_abbreviation: "LPR",
+        BOS_book_code: "LPR",
         BOS_reference_number: 208,
         BOS_sequence_number: 436,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -5372,7 +5372,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Philo the Epic Poet",
-        BOS_reference_abbreviation: "EPL",
+        BOS_book_code: "EPL",
         BOS_reference_number: 209,
         BOS_sequence_number: 438,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -5403,7 +5403,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Theodotus",
-        BOS_reference_abbreviation: "TEO",
+        BOS_book_code: "TEO",
         BOS_reference_number: 210,
         BOS_sequence_number: 440,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -5434,7 +5434,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Testaments of the Twelve Patriarchs",
-        BOS_reference_abbreviation: "TTP",
+        BOS_book_code: "TTP",
         BOS_reference_number: 250,
         BOS_sequence_number: 380,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -5465,7 +5465,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Testament of Asher",
-        BOS_reference_abbreviation: "TSA",
+        BOS_book_code: "TSA",
         BOS_reference_number: 251,
         BOS_sequence_number: 381,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -5496,7 +5496,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Testament of Benjamin",
-        BOS_reference_abbreviation: "TSB",
+        BOS_book_code: "TSB",
         BOS_reference_number: 252,
         BOS_sequence_number: 382,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -5527,7 +5527,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Testament of Dan",
-        BOS_reference_abbreviation: "TSD",
+        BOS_book_code: "TSD",
         BOS_reference_number: 253,
         BOS_sequence_number: 383,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -5558,7 +5558,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Testament of Gad",
-        BOS_reference_abbreviation: "TSG",
+        BOS_book_code: "TSG",
         BOS_reference_number: 254,
         BOS_sequence_number: 384,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -5589,7 +5589,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Testament of Issachar",
-        BOS_reference_abbreviation: "TSI",
+        BOS_book_code: "TSI",
         BOS_reference_number: 255,
         BOS_sequence_number: 385,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -5620,7 +5620,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Testament of Joseph",
-        BOS_reference_abbreviation: "TSJ",
+        BOS_book_code: "TSJ",
         BOS_reference_number: 256,
         BOS_sequence_number: 386,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -5651,7 +5651,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Testament of Judah",
-        BOS_reference_abbreviation: "TSY",
+        BOS_book_code: "TSY",
         BOS_reference_number: 257,
         BOS_sequence_number: 387,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -5682,7 +5682,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Testament of Levi",
-        BOS_reference_abbreviation: "TSL",
+        BOS_book_code: "TSL",
         BOS_reference_number: 258,
         BOS_sequence_number: 388,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -5713,7 +5713,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Testament of Naphtali",
-        BOS_reference_abbreviation: "TSN",
+        BOS_book_code: "TSN",
         BOS_reference_number: 259,
         BOS_sequence_number: 389,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -5744,7 +5744,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Testament of Reuben",
-        BOS_reference_abbreviation: "TSR",
+        BOS_book_code: "TSR",
         BOS_reference_number: 260,
         BOS_sequence_number: 390,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -5775,7 +5775,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Testament of Simeon",
-        BOS_reference_abbreviation: "TSS",
+        BOS_book_code: "TSS",
         BOS_reference_number: 261,
         BOS_sequence_number: 391,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -5806,7 +5806,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Testament of Zebulun",
-        BOS_reference_abbreviation: "TSZ",
+        BOS_book_code: "TSZ",
         BOS_reference_number: 262,
         BOS_sequence_number: 392,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -5837,7 +5837,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Josephus Jewish War VI",
-        BOS_reference_abbreviation: "JJW",
+        BOS_book_code: "JJW",
         BOS_reference_number: 270,
         BOS_sequence_number: 378,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -5868,7 +5868,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "el-x-koine",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Shepherd of Hermas",
-        BOS_reference_abbreviation: "SHE",
+        BOS_book_code: "SHE",
         BOS_reference_number: 280,
         BOS_sequence_number: 394,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -5899,7 +5899,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "el-x-koine",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Shepherd of Hermas Mandates",
-        BOS_reference_abbreviation: "SHM",
+        BOS_book_code: "SHM",
         BOS_reference_number: 281,
         BOS_sequence_number: 395,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -5930,7 +5930,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "el-x-koine",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Shepherd of Hermas Similitudes",
-        BOS_reference_abbreviation: "SHS",
+        BOS_book_code: "SHS",
         BOS_reference_number: 282,
         BOS_sequence_number: 396,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -5961,7 +5961,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "el-x-koine",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Shepherd of Hermas Visions",
-        BOS_reference_abbreviation: "SHV",
+        BOS_book_code: "SHV",
         BOS_reference_number: 283,
         BOS_sequence_number: 397,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -5992,7 +5992,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Ignatius to the Ephesians",
-        BOS_reference_abbreviation: "IGE",
+        BOS_book_code: "IGE",
         BOS_reference_number: 290,
         BOS_sequence_number: 730,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -6023,7 +6023,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Ignatius to the Magnesians",
-        BOS_reference_abbreviation: "IGM",
+        BOS_book_code: "IGM",
         BOS_reference_number: 291,
         BOS_sequence_number: 731,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -6054,7 +6054,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Ignatius to the Trallians",
-        BOS_reference_abbreviation: "IGT",
+        BOS_book_code: "IGT",
         BOS_reference_number: 292,
         BOS_sequence_number: 732,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -6085,7 +6085,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Ignatius to the Romans",
-        BOS_reference_abbreviation: "IGR",
+        BOS_book_code: "IGR",
         BOS_reference_number: 293,
         BOS_sequence_number: 733,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -6116,7 +6116,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Ignatius to the Philadelphians",
-        BOS_reference_abbreviation: "IGP",
+        BOS_book_code: "IGP",
         BOS_reference_number: 294,
         BOS_sequence_number: 734,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -6147,7 +6147,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Ignatius to the Smyrnaeans",
-        BOS_reference_abbreviation: "IGS",
+        BOS_book_code: "IGS",
         BOS_reference_number: 295,
         BOS_sequence_number: 735,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -6178,7 +6178,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Ignatius to Polycarp",
-        BOS_reference_abbreviation: "IGC",
+        BOS_book_code: "IGC",
         BOS_reference_number: 296,
         BOS_sequence_number: 736,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -6209,7 +6209,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Polycarp to the Philippians",
-        BOS_reference_abbreviation: "PCP",
+        BOS_book_code: "PCP",
         BOS_reference_number: 297,
         BOS_sequence_number: 740,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -6240,7 +6240,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Martydom of Polycarp",
-        BOS_reference_abbreviation: "MPC",
+        BOS_book_code: "MPC",
         BOS_reference_number: 298,
         BOS_sequence_number: 741,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -6271,7 +6271,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Diognetus",
-        BOS_reference_abbreviation: "DIO",
+        BOS_book_code: "DIO",
         BOS_reference_number: 300,
         BOS_sequence_number: 750,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -6302,7 +6302,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Apostles' Creed",
-        BOS_reference_abbreviation: "APC",
+        BOS_book_code: "APC",
         BOS_reference_number: 301,
         BOS_sequence_number: 751,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -6333,7 +6333,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Fragments of Papias",
-        BOS_reference_abbreviation: "FOP",
+        BOS_book_code: "FOP",
         BOS_reference_number: 302,
         BOS_sequence_number: 752,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -6364,7 +6364,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Reliques of the Elders",
-        BOS_reference_abbreviation: "ROE",
+        BOS_book_code: "ROE",
         BOS_reference_number: 303,
         BOS_sequence_number: 753,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -6395,7 +6395,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Fragment of Quadratus",
-        BOS_reference_abbreviation: "FOQ",
+        BOS_book_code: "FOQ",
         BOS_reference_number: 304,
         BOS_sequence_number: 754,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -6426,7 +6426,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Tatian / Tatian's Diatessaron / Diatessaron",
-        BOS_reference_abbreviation: "TAT",
+        BOS_book_code: "TAT",
         BOS_reference_number: 310,
         BOS_sequence_number: 760,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -6457,7 +6457,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Plea for Deliverance",
-        BOS_reference_abbreviation: "P4D",
+        BOS_book_code: "P4D",
         BOS_reference_number: 400,
         BOS_sequence_number: 770,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -6488,7 +6488,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Apostrophe to Zion",
-        BOS_reference_abbreviation: "A2Z",
+        BOS_book_code: "A2Z",
         BOS_reference_number: 401,
         BOS_sequence_number: 771,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -6519,7 +6519,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Eschatalogical Hymn",
-        BOS_reference_abbreviation: "EHY",
+        BOS_book_code: "EHY",
         BOS_reference_number: 402,
         BOS_sequence_number: 772,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -6550,7 +6550,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Apostrophe to Judah",
-        BOS_reference_abbreviation: "A2J",
+        BOS_book_code: "A2J",
         BOS_reference_number: 403,
         BOS_sequence_number: 773,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -6581,7 +6581,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Hymn to the Creator",
-        BOS_reference_abbreviation: "H2C",
+        BOS_book_code: "H2C",
         BOS_reference_number: 404,
         BOS_sequence_number: 774,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -6612,7 +6612,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "David's Compositions",
-        BOS_reference_abbreviation: "CMP",
+        BOS_book_code: "CMP",
         BOS_reference_number: 405,
         BOS_sequence_number: 775,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -6643,7 +6643,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Apocryphal Psalms",
-        BOS_reference_abbreviation: "APS",
+        BOS_book_code: "APS",
         BOS_reference_number: 406,
         BOS_sequence_number: 776,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -6674,7 +6674,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Catena",
-        BOS_reference_abbreviation: "CAT",
+        BOS_book_code: "CAT",
         BOS_reference_number: 407,
         BOS_sequence_number: 777,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -6705,7 +6705,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Psalm 151A",
-        BOS_reference_abbreviation: "P1A",
+        BOS_book_code: "P1A",
         BOS_reference_number: 408,
         BOS_sequence_number: 778,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -6736,7 +6736,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Psalm 151B",
-        BOS_reference_abbreviation: "P1B",
+        BOS_book_code: "P1B",
         BOS_reference_number: 409,
         BOS_sequence_number: 779,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -6767,7 +6767,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "hbo",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Book of the Pentateuch / Pentateuch / Torah / Books of Moses",
-        BOS_reference_abbreviation: "MOS",
+        BOS_book_code: "MOS",
         BOS_reference_number: 600,
         BOS_sequence_number: 18,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(187),
@@ -6798,7 +6798,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "hbo",
         original_language_book_name: "שְׁמוּאֵל",
         book_name_English_guide: "Samuel",
-        BOS_reference_abbreviation: "SAM",
+        BOS_book_code: "SAM",
         BOS_reference_number: 605,
         BOS_sequence_number: 36,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(55),
@@ -6829,7 +6829,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "hbo",
         original_language_book_name: "מְלָכִים",
         book_name_English_guide: "Kings",
-        BOS_reference_abbreviation: "KGS",
+        BOS_book_code: "KGS",
         BOS_reference_number: 610,
         BOS_sequence_number: 42,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(47),
@@ -6860,7 +6860,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "hbo",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Samuel-Kings",
-        BOS_reference_abbreviation: "SMK",
+        BOS_book_code: "SMK",
         BOS_reference_number: 615,
         BOS_sequence_number: 43,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(102),
@@ -6891,7 +6891,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "hbo",
         original_language_book_name: "דִּבְרֵי הַיָּמִים",
         book_name_English_guide: "Chronicles",
-        BOS_reference_abbreviation: "CHR",
+        BOS_book_code: "CHR",
         BOS_reference_number: 620,
         BOS_sequence_number: 48,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(65),
@@ -6922,7 +6922,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(Unknown)",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Ezra-Nehemiah / 1 Esdras",
-        BOS_reference_abbreviation: "EZN",
+        BOS_book_code: "EZN",
         BOS_reference_number: 625,
         BOS_sequence_number: 65,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(26),
@@ -6953,7 +6953,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "hbo",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Twelve Prophets",
-        BOS_reference_abbreviation: "P12",
+        BOS_book_code: "P12",
         BOS_reference_number: 630,
         BOS_sequence_number: 150,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -6984,7 +6984,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "hbo",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Book of Women",
-        BOS_reference_abbreviation: "WOM",
+        BOS_book_code: "WOM",
         BOS_reference_number: 640,
         BOS_sequence_number: 33,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -7015,7 +7015,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "hbo",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Book of Sessions",
-        BOS_reference_abbreviation: "SES",
+        BOS_book_code: "SES",
         BOS_reference_number: 645,
         BOS_sequence_number: 31,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -7046,7 +7046,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "hbo",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Book of the Prophets",
-        BOS_reference_abbreviation: "SPR",
+        BOS_book_code: "SPR",
         BOS_reference_number: 650,
         BOS_sequence_number: 155,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -7077,7 +7077,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "hbo",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Book of the Maccabees",
-        BOS_reference_abbreviation: "SMC",
+        BOS_book_code: "SMC",
         BOS_reference_number: 655,
         BOS_sequence_number: 180,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -7108,7 +7108,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "el-x-koine",
         original_language_book_name: "(Unknown)",
         book_name_English_guide: "Luke-Acts",
-        BOS_reference_abbreviation: "LKA",
+        BOS_book_code: "LKA",
         BOS_reference_number: 690,
         BOS_sequence_number: 608,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(52),
@@ -7139,7 +7139,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(None)",
         original_language_book_name: "(Generic front matter)",
         book_name_English_guide: "Generic front matter",
-        BOS_reference_abbreviation: "FRT",
+        BOS_book_code: "FRT",
         BOS_reference_number: 700,
         BOS_sequence_number: 5,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -7170,7 +7170,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(None)",
         original_language_book_name: "Preface",
         book_name_English_guide: "Preface",
-        BOS_reference_abbreviation: "PRF",
+        BOS_book_code: "PRF",
         BOS_reference_number: 705,
         BOS_sequence_number: 1,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -7201,7 +7201,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(None)",
         original_language_book_name: "Acknowledgements",
         book_name_English_guide: "Acknowledgements",
-        BOS_reference_abbreviation: "ACK",
+        BOS_book_code: "ACK",
         BOS_reference_number: 710,
         BOS_sequence_number: 2,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -7232,7 +7232,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(None)",
         original_language_book_name: "Introduction",
         book_name_English_guide: "Introduction",
-        BOS_reference_abbreviation: "INT",
+        BOS_book_code: "INT",
         BOS_reference_number: 715,
         BOS_sequence_number: 3,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -7263,7 +7263,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(None)",
         original_language_book_name: "(Table of Contents)",
         book_name_English_guide: "Table of Contents",
-        BOS_reference_abbreviation: "TOC",
+        BOS_book_code: "TOC",
         BOS_reference_number: 720,
         BOS_sequence_number: 8,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -7294,7 +7294,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(None)",
         original_language_book_name: "Glossary",
         book_name_English_guide: "Glossary",
-        BOS_reference_abbreviation: "GLS",
+        BOS_book_code: "GLS",
         BOS_reference_number: 725,
         BOS_sequence_number: 800,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -7325,7 +7325,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(None)",
         original_language_book_name: "Concordance",
         book_name_English_guide: "Concordance",
-        BOS_reference_abbreviation: "CNC",
+        BOS_book_code: "CNC",
         BOS_reference_number: 730,
         BOS_sequence_number: 810,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -7356,7 +7356,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(None)",
         original_language_book_name: "(Topical Concordance)",
         book_name_English_guide: "Topical Concordance",
-        BOS_reference_abbreviation: "TPC",
+        BOS_book_code: "TPC",
         BOS_reference_number: 735,
         BOS_sequence_number: 820,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -7387,7 +7387,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(None)",
         original_language_book_name: "(Names Index)",
         book_name_English_guide: "Names Index",
-        BOS_reference_abbreviation: "IXN",
+        BOS_book_code: "IXN",
         BOS_reference_number: 740,
         BOS_sequence_number: 830,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -7418,7 +7418,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(None)",
         original_language_book_name: "(Places Index)",
         book_name_English_guide: "Places Index",
-        BOS_reference_abbreviation: "IXP",
+        BOS_book_code: "IXP",
         BOS_reference_number: 745,
         BOS_sequence_number: 840,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -7449,7 +7449,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(None)",
         original_language_book_name: "Maps",
         book_name_English_guide: "Maps",
-        BOS_reference_abbreviation: "MAP",
+        BOS_book_code: "MAP",
         BOS_reference_number: 750,
         BOS_sequence_number: 890,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -7480,7 +7480,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(None)",
         original_language_book_name: "(Thematic Index)",
         book_name_English_guide: "Thematic Index",
-        BOS_reference_abbreviation: "IXT",
+        BOS_book_code: "IXT",
         BOS_reference_number: 755,
         BOS_sequence_number: 850,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -7511,7 +7511,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(None)",
         original_language_book_name: "(Generic back matter)",
         book_name_English_guide: "Generic back matter",
-        BOS_reference_abbreviation: "BAK",
+        BOS_book_code: "BAK",
         BOS_reference_number: 760,
         BOS_sequence_number: 860,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -7542,7 +7542,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(None)",
         original_language_book_name: "(OTHER)",
         book_name_English_guide: "Unspecified other OTH",
-        BOS_reference_abbreviation: "OTH",
+        BOS_book_code: "OTH",
         BOS_reference_number: 870,
         BOS_sequence_number: 970,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -7573,7 +7573,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(None)",
         original_language_book_name: "(Spelling dictionary / word list)",
         book_name_English_guide: "Spelling dictionary / word list",
-        BOS_reference_abbreviation: "WRD",
+        BOS_book_code: "WRD",
         BOS_reference_number: 880,
         BOS_sequence_number: 980,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -7604,7 +7604,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(None)",
         original_language_book_name: "(Word definitions dictionary)",
         book_name_English_guide: "Word definitions dictionary",
-        BOS_reference_abbreviation: "WDF",
+        BOS_book_code: "WDF",
         BOS_reference_number: 882,
         BOS_sequence_number: 982,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -7635,7 +7635,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(None)",
         original_language_book_name: "(Hyphenation dictionary)",
         book_name_English_guide: "Hyphenation dictionary",
-        BOS_reference_abbreviation: "HYP",
+        BOS_book_code: "HYP",
         BOS_reference_number: 884,
         BOS_sequence_number: 984,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -7666,7 +7666,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(None)",
         original_language_book_name: "(Strong's Database)",
         book_name_English_guide: "Strongs Database / Strong's Database",
-        BOS_reference_abbreviation: "STR",
+        BOS_book_code: "STR",
         BOS_reference_number: 888,
         BOS_sequence_number: 988,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -7697,7 +7697,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(None)",
         original_language_book_name: "(Semantic Database)",
         book_name_English_guide: "Semantic Database",
-        BOS_reference_abbreviation: "SEM",
+        BOS_book_code: "SEM",
         BOS_reference_number: 890,
         BOS_sequence_number: 990,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -7728,7 +7728,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(None)",
         original_language_book_name: "(XXA)",
         book_name_English_guide: "Unspecified extra XXA",
-        BOS_reference_abbreviation: "XXA",
+        BOS_book_code: "XXA",
         BOS_reference_number: 800,
         BOS_sequence_number: 900,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -7759,7 +7759,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(None)",
         original_language_book_name: "(XXB)",
         book_name_English_guide: "Unspecified extra XXB",
-        BOS_reference_abbreviation: "XXB",
+        BOS_book_code: "XXB",
         BOS_reference_number: 810,
         BOS_sequence_number: 910,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -7790,7 +7790,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(None)",
         original_language_book_name: "(XXC)",
         book_name_English_guide: "Unspecified extra XXC",
-        BOS_reference_abbreviation: "XXC",
+        BOS_book_code: "XXC",
         BOS_reference_number: 820,
         BOS_sequence_number: 920,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -7821,7 +7821,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(None)",
         original_language_book_name: "(XXD)",
         book_name_English_guide: "Unspecified extra XXD",
-        BOS_reference_abbreviation: "XXD",
+        BOS_book_code: "XXD",
         BOS_reference_number: 830,
         BOS_sequence_number: 930,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -7852,7 +7852,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(None)",
         original_language_book_name: "(XXE)",
         book_name_English_guide: "Unspecified extra XXE",
-        BOS_reference_abbreviation: "XXE",
+        BOS_book_code: "XXE",
         BOS_reference_number: 840,
         BOS_sequence_number: 940,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -7883,7 +7883,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(None)",
         original_language_book_name: "(XXF)",
         book_name_English_guide: "Unspecified extra XXF",
-        BOS_reference_abbreviation: "XXF",
+        BOS_book_code: "XXF",
         BOS_reference_number: 850,
         BOS_sequence_number: 950,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -7914,7 +7914,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(None)",
         original_language_book_name: "(XXG)",
         book_name_English_guide: "Unspecified extra XXG",
-        BOS_reference_abbreviation: "XXG",
+        BOS_book_code: "XXG",
         BOS_reference_number: 860,
         BOS_sequence_number: 960,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -7945,7 +7945,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(None)",
         original_language_book_name: "Open Bible Stories",
         book_name_English_guide: "Open Bible Stories",
-        BOS_reference_abbreviation: "OBS",
+        BOS_book_code: "OBS",
         BOS_reference_number: 997,
         BOS_sequence_number: 997,
         expected_num_chapters: OptionalNumberOrTwoNumbers::Number(50),
@@ -7976,7 +7976,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(None)",
         original_language_book_name: "(TEST)",
         book_name_English_guide: "TEST",
-        BOS_reference_abbreviation: "TST",
+        BOS_book_code: "TST",
         BOS_reference_number: 998,
         BOS_sequence_number: 998,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -8007,7 +8007,7 @@ pub static BIBLE_BOOKS_CODES_ARRAY: [BibleBooksCodesArrayEntry; 257] = [
         original_language_code: "(None)",
         original_language_book_name: "(UNKNOWN)",
         book_name_English_guide: "UNKNOWN",
-        BOS_reference_abbreviation: "UNK",
+        BOS_book_code: "UNK",
         BOS_reference_number: 999,
         BOS_sequence_number: 999,
         expected_num_chapters: OptionalNumberOrTwoNumbers::None,
@@ -8081,45 +8081,45 @@ impl Error for LookupError<'_> {}
 
 
 #[inline]
-pub fn is_valid_reference_abbreviation(reference_abbreviation: &str) -> bool {
-    REFERENCE_ABBREVIATION_MAP.contains_key(reference_abbreviation)
+pub fn is_valid_bos_book_code(bos_book_code: &str) -> bool {
+    REFERENCE_ABBREVIATION_MAP.contains_key(bos_book_code)
 }
 
 #[inline]
-fn get_array_index(reference_abbreviation: &str) -> Result<usize, LookupError<'_>> {
-    REFERENCE_ABBREVIATION_MAP.get(reference_abbreviation)
+fn get_array_index(bos_book_code: &str) -> Result<usize, LookupError<'_>> {
+    REFERENCE_ABBREVIATION_MAP.get(bos_book_code)
         .copied()
-        .ok_or_else(|| LookupError::AbbrevNotFound("Reference", reference_abbreviation))
+        .ok_or_else(|| LookupError::AbbrevNotFound("Reference", bos_book_code))
 }
 
 /// Returns the referenceNumber 1..999 for the given book code (referenceAbbreviation).
-pub fn get_reference_number(reference_abbreviation: &str) -> Result<u16, LookupError<'_>> {
-    let array_index = get_array_index(reference_abbreviation)?;
+pub fn get_reference_number(bos_book_code: &str) -> Result<u16, LookupError<'_>> {
+    let array_index = get_array_index(bos_book_code)?;
     Ok(BIBLE_BOOKS_CODES_ARRAY[array_index].BOS_reference_number)
 }
 
 /// Returns the sequence number for a given reference abbreviation.
-pub fn get_sequence_number(reference_abbreviation: &str) -> Result<u16, LookupError<'_>> {
-    let array_index = get_array_index(reference_abbreviation)?;
+pub fn get_sequence_number(bos_book_code: &str) -> Result<u16, LookupError<'_>> {
+    let array_index = get_array_index(bos_book_code)?;
     Ok(BIBLE_BOOKS_CODES_ARRAY[array_index].BOS_sequence_number)
 }
 
 /// Return the reference abbreviation for the given book number (reference number).
 /// This is probably only useful in the range 1..66 (GEN..REV).
 /// (After that, it specifies our arbitrary order.)
-pub fn get_bbb_from_reference_number(reference_number: u16) -> Option<&'static str> {
+pub fn get_bos_book_code_from_reference_number(reference_number: u16) -> Option<&'static str> {
     BIBLE_BOOKS_CODES_ARRAY.iter()
         .find(|e| e.BOS_reference_number == reference_number)
-        .map(|e| e.BOS_reference_abbreviation)
+        .map(|e| e.BOS_book_code)
 }
 
 #[inline]
-pub fn get_all_reference_abbreviations() -> &'static [&'static str] {
+pub fn get_all_bos_book_codes() -> &'static [&'static str] {
     ALL_REFERENCE_ABBREVIATIONS
 }
 
 #[inline]
-pub fn get_all_osis_abbreviations() -> &'static [&'static str] {
+pub fn get_all_osis_book_codes() -> &'static [&'static str] {
     ALL_OSIS_ABBREVIATIONS
 }
 
@@ -8172,102 +8172,102 @@ pub fn get_sequence_list(my_list: Option<Vec<&str>>) -> Vec<&'static str> {
 }
 
 // nr stands for "Not Recommended" (because ideally the proper versification functions should be used instead)
-pub fn is_ot_nr(reference_abbreviation: &str) -> bool {
-    if let Ok(num) = get_reference_number(reference_abbreviation) {
+pub fn is_old_testament_nr(bos_book_code: &str) -> bool {
+    if let Ok(num) = get_reference_number(bos_book_code) {
         return 1 <= num && num <= 39;
     }
     false
 }
 
 // nr stands for "Not Recommended" (because ideally the proper versification functions should be used instead)
-pub fn is_nt_nr(reference_abbreviation: &str) -> bool {
-    if let Ok(num) = get_reference_number(reference_abbreviation) {
+pub fn is_new_testament_nr(bos_book_code: &str) -> bool {
+    if let Ok(num) = get_reference_number(bos_book_code) {
         return 40 <= num && num <= 66;
     }
     false
 }
 
 // nr stands for "Not Recommended" (because ideally the proper versification functions should be used instead)
-pub fn is_dc_nr(reference_abbreviation: &str) -> bool {
-    matches!(reference_abbreviation, "TOB"|"JDT"|"ESG"|"WIS"|"SIR"|"BAR"|"LJE"|"PAZ"|"SUS"|"BEL"|"MA1"|"MA2"|"GES"|"LES"|"MAN")
+pub fn is_deuterocanon_nr(bos_book_code: &str) -> bool {
+    matches!(bos_book_code, "TOB"|"JDT"|"ESG"|"WIS"|"SIR"|"BAR"|"LJE"|"PAZ"|"SUS"|"BEL"|"MA1"|"MA2"|"GES"|"LES"|"MAN")
 }
 
-pub fn get_ccel_number_str(reference_abbreviation: &str) -> Option<&'static str> {
-    get_array_index(reference_abbreviation).ok()
+pub fn get_ccel_number_str(bos_book_code: &str) -> Option<&'static str> {
+    get_array_index(bos_book_code).ok()
         .and_then(|idx| BIBLE_BOOKS_CODES_ARRAY[idx].CCEL_number_str)
 }
 
-pub fn get_short_abbreviation(reference_abbreviation: &str) -> Option<&'static str> {
-    get_array_index(reference_abbreviation).ok()
+pub fn get_short_abbreviation(bos_book_code: &str) -> Option<&'static str> {
+    get_array_index(bos_book_code).ok()
         .and_then(|idx| BIBLE_BOOKS_CODES_ARRAY[idx].short_abbreviation)
 }
 
-pub fn get_sbl_abbreviation(reference_abbreviation: &str) -> Option<&'static str> {
-    get_array_index(reference_abbreviation).ok()
+pub fn get_sbl_abbreviation(bos_book_code: &str) -> Option<&'static str> {
+    get_array_index(bos_book_code).ok()
         .and_then(|idx| BIBLE_BOOKS_CODES_ARRAY[idx].SBL_abbreviation)
 }
 
-pub fn get_osis_abbreviation(reference_abbreviation: &str) -> Option<&'static str> {
-    get_array_index(reference_abbreviation).ok()
+pub fn bos_to_osis_book_code(bos_book_code: &str) -> Option<&'static str> {
+    get_array_index(bos_book_code).ok()
         .and_then(|idx| BIBLE_BOOKS_CODES_ARRAY[idx].OSIS_abbreviation)
 }
 
-pub fn get_sword_abbreviation(reference_abbreviation: &str) -> Option<&'static str> {
-    get_array_index(reference_abbreviation).ok()
+pub fn bos_to_sword_book_code(bos_book_code: &str) -> Option<&'static str> {
+    get_array_index(bos_book_code).ok()
         .and_then(|idx| BIBLE_BOOKS_CODES_ARRAY[idx].Sword_abbreviation)
 }
 
-pub fn get_usfm_num_str(reference_abbreviation: &str) -> Option<&'static str> {
-    get_array_index(reference_abbreviation).ok()
+pub fn bos_book_code_to_usfm_num_str(bos_book_code: &str) -> Option<&'static str> {
+    get_array_index(bos_book_code).ok()
         .and_then(|idx| BIBLE_BOOKS_CODES_ARRAY[idx].USFM_number_str)
 }
 
-pub fn get_usx_num_str(reference_abbreviation: &str) -> Option<&'static str> {
-    get_array_index(reference_abbreviation).ok()
+pub fn get_usx_num_str(bos_book_code: &str) -> Option<&'static str> {
+    get_array_index(bos_book_code).ok()
         .and_then(|idx| BIBLE_BOOKS_CODES_ARRAY[idx].USX_number_str)
 }
 
-pub fn get_unbound_bible_code(reference_abbreviation: &str) -> Option<&'static str> {
-    get_array_index(reference_abbreviation).ok()
+pub fn get_unbound_bible_code(bos_book_code: &str) -> Option<&'static str> {
+    get_array_index(bos_book_code).ok()
         .and_then(|idx| BIBLE_BOOKS_CODES_ARRAY[idx].Unbound_Code)
 }
 
-pub fn get_bibledit_num_str(reference_abbreviation: &str) -> Option<&'static str> {
-    get_array_index(reference_abbreviation).ok()
+pub fn get_bibledit_num_str(bos_book_code: &str) -> Option<&'static str> {
+    get_array_index(bos_book_code).ok()
         .and_then(|idx| BIBLE_BOOKS_CODES_ARRAY[idx].Bibledit_number_str)
 }
 
-pub fn get_possible_alternative_books(reference_abbreviation: &str) -> Vec<&'static str> {
-    get_array_index(reference_abbreviation).ok()
+pub fn get_possible_alternative_books(bos_book_code: &str) -> Vec<&'static str> {
+    get_array_index(bos_book_code).ok()
         .map(|idx| BIBLE_BOOKS_CODES_ARRAY[idx].possible_alternative_books_codes.to_vec())
         .unwrap_or_default()
 }
 
-pub fn get_logos_num_str(reference_abbreviation: &str) -> Option<&'static str> {
-    get_array_index(reference_abbreviation).ok()
+pub fn get_logos_num_str(bos_book_code: &str) -> Option<&'static str> {
+    get_array_index(bos_book_code).ok()
         .and_then(|idx| BIBLE_BOOKS_CODES_ARRAY[idx].Logos_number_str)
 }
 
-pub fn get_net_bible_abbreviation(reference_abbreviation: &str) -> Option<&'static str> {
-    get_array_index(reference_abbreviation).ok()
+pub fn bos_to_net_bible_book_code(bos_book_code: &str) -> Option<&'static str> {
+    get_array_index(bos_book_code).ok()
         .and_then(|idx| BIBLE_BOOKS_CODES_ARRAY[idx].NET_Bible_abbreviation)
 }
 
-pub fn get_drupal_bible_abbreviation(reference_abbreviation: &str) -> Option<&'static str> {
-    get_array_index(reference_abbreviation).ok()
+pub fn bos_to_drupal_book_code(bos_book_code: &str) -> Option<&'static str> {
+    get_array_index(bos_book_code).ok()
         .and_then(|idx| BIBLE_BOOKS_CODES_ARRAY[idx].Drupal_Bible_abbreviation)
 }
 
-pub fn get_byzantine_abbreviation(reference_abbreviation: &str) -> Option<&'static str> {
-    get_array_index(reference_abbreviation).ok()
+pub fn get_byzantine_abbreviation(bos_book_code: &str) -> Option<&'static str> {
+    get_array_index(bos_book_code).ok()
         .and_then(|idx| BIBLE_BOOKS_CODES_ARRAY[idx].Byzantine_abbreviation)
 }
 
 /// Gets a list with the number of expected chapters for the given book code (reference abbreviation).
 /// Why is it a list? Because some books have alternate possible numbers of chapters
 /// depending on the Biblical tradition.
-pub fn get_expected_chapters_list(reference_abbreviation: &str) -> Vec<u16> {
-    if let Ok(idx) = get_array_index(reference_abbreviation) {
+pub fn get_expected_chapters_list(bos_book_code: &str) -> Vec<u16> {
+    if let Ok(idx) = get_array_index(bos_book_code) {
         match BIBLE_BOOKS_CODES_ARRAY[idx].expected_num_chapters {
             OptionalNumberOrTwoNumbers::Number(n) => vec![n],
             OptionalNumberOrTwoNumbers::TwoNumbers(nums) => vec![nums[0], nums[1]],
@@ -8278,8 +8278,8 @@ pub fn get_expected_chapters_list(reference_abbreviation: &str) -> Vec<u16> {
     }
 }
 
-pub fn get_max_chapters(reference_abbreviation: &str) -> i16 {
-    let list = get_expected_chapters_list(reference_abbreviation);
+pub fn get_max_chapters(bos_book_code: &str) -> i16 {
+    let list = get_expected_chapters_list(bos_book_code);
     if list.is_empty() {
         -1
     } else {
@@ -8290,7 +8290,7 @@ pub fn get_max_chapters(reference_abbreviation: &str) -> i16 {
 pub fn get_single_chapter_books_list() -> Vec<&'static str> {
     BIBLE_BOOKS_CODES_ARRAY.iter()
         .filter(|e| matches!(e.expected_num_chapters, OptionalNumberOrTwoNumbers::Number(1)))
-        .map(|e| e.BOS_reference_abbreviation)
+        .map(|e| e.BOS_book_code)
         .collect()
 }
 
@@ -8301,22 +8301,22 @@ pub fn get_osis_single_chapter_books_list() -> Vec<&'static str> {
         .collect()
 }
 
-pub fn is_single_chapter_book(reference_abbreviation: &str) -> bool {
-    if let Ok(idx) = get_array_index(reference_abbreviation) {
+pub fn is_single_chapter_book(bos_book_code: &str) -> bool {
+    if let Ok(idx) = get_array_index(bos_book_code) {
         return matches!(BIBLE_BOOKS_CODES_ARRAY[idx].expected_num_chapters, OptionalNumberOrTwoNumbers::Number(1));
     }
     false
 }
 
-pub fn is_chapter_verse_book(reference_abbreviation: &str) -> bool {
-    if let Ok(idx) = get_array_index(reference_abbreviation) {
+pub fn is_chapter_verse_book(bos_book_code: &str) -> bool {
+    if let Ok(idx) = get_array_index(bos_book_code) {
         return !matches!(BIBLE_BOOKS_CODES_ARRAY[idx].expected_num_chapters, OptionalNumberOrTwoNumbers::None);
     }
     false
 }
 
-pub fn get_typical_section(reference_abbreviation: &str) -> Option<&'static str> {
-    get_array_index(reference_abbreviation).ok()
+pub fn get_typical_section(bos_book_code: &str) -> Option<&'static str> {
+    get_array_index(bos_book_code).ok()
         .and_then(|idx| BIBLE_BOOKS_CODES_ARRAY[idx].typical_section)
 }
 
@@ -8354,17 +8354,17 @@ pub fn sort_bcv_references<T>(references: &mut [T], get_parts: impl Fn(&T) -> (&
 /// Returns true if the storyline of the book continues through chapters,
 /// i.e., the chapter divisions are artificial.
 /// Returns false for books like Psalms where chapters are actual units.
-pub fn continues_through_chapters(reference_abbreviation: &str) -> bool {
-    !matches!(reference_abbreviation, "PSA" | "PS2" | "LAM")
+pub fn continues_through_chapters(bos_book_code: &str) -> bool {
+    !matches!(bos_book_code, "PSA" | "PS2" | "LAM")
 }
 
-pub fn get_book_name(reference_abbreviation: &str) -> Option<&'static str> {
-    get_array_index(reference_abbreviation).ok()
+pub fn get_book_name(bos_book_code: &str) -> Option<&'static str> {
+    get_array_index(bos_book_code).ok()
         .map(|idx| BIBLE_BOOKS_CODES_ARRAY[idx].original_language_book_name)
 }
 
-pub fn get_full_entry(reference_abbreviation: &str) -> Result<&'static BibleBooksCodesArrayEntry<'static>, LookupError<'_>> {
-    let array_index = get_array_index(reference_abbreviation)?;
+pub fn get_full_entry(bos_book_code: &str) -> Result<&'static BibleBooksCodesArrayEntry<'static>, LookupError<'_>> {
+    let array_index = get_array_index(bos_book_code)?;
     Ok(&BIBLE_BOOKS_CODES_ARRAY[array_index])
 }
 
@@ -8373,8 +8373,8 @@ pub fn get_full_entry(reference_abbreviation: &str) -> Result<&'static BibleBook
 /// They are not intended to be used for a proper international human interface.
 /// The first one in the list is supposed to be the more common.
 // nr stands for "Not Recommended" (because ideally the proper versification functions should be used instead)
-pub fn get_english_name_nr(reference_abbreviation: &str) -> Option<&'static str> {
-    get_array_index(reference_abbreviation).ok()
+pub fn get_english_name_nr(bos_book_code: &str) -> Option<&'static str> {
+    get_array_index(bos_book_code).ok()
         .map(|idx| {
             let guide = BIBLE_BOOKS_CODES_ARRAY[idx].book_name_English_guide;
             guide.split('/').next().unwrap_or(guide).trim()
@@ -8382,8 +8382,8 @@ pub fn get_english_name_nr(reference_abbreviation: &str) -> Option<&'static str>
 }
 
 // nr stands for "Not Recommended" (because ideally the proper versification functions should be used instead)
-pub fn get_english_name_list_nr(reference_abbreviation: &str) -> Vec<&'static str> {
-    if let Ok(idx) = get_array_index(reference_abbreviation) {
+pub fn get_english_name_list_nr(bos_book_code: &str) -> Vec<&'static str> {
+    if let Ok(idx) = get_array_index(bos_book_code) {
         BIBLE_BOOKS_CODES_ARRAY[idx].book_name_English_guide
             .split('/')
             .map(|s| s.trim())
@@ -8481,83 +8481,66 @@ pub fn tidy_bbb(bbb: &str, title_case: bool, allow_four_chars: bool, insert_char
 }
 
 #[inline]
-pub fn reference_abbrev_to_usfm_abbrev<'a>(
-    reference_abbreviation: &str,
+pub fn bos_book_code_to_usfm_abbrev<'a>(
+    bos_book_code: &str,
 ) -> Result<Option<&'static str>, LookupError<'_>> {
-    let array_index = *REFERENCE_ABBREVIATION_MAP.get(reference_abbreviation)
-        .ok_or_else(|| LookupError::AbbrevNotFound("Reference", reference_abbreviation))?;
+    let array_index = *REFERENCE_ABBREVIATION_MAP.get(bos_book_code)
+        .ok_or_else(|| LookupError::AbbrevNotFound("Reference", bos_book_code))?;
 
     Ok(BIBLE_BOOKS_CODES_ARRAY[array_index].USFM_abbreviation)
         // .as_ref()
-        // .ok_or_else(|| Box::new(LookupError::ValueIsNone(reference_abbreviation.to_string())) as Box<dyn Error>)?)
+        // .ok_or_else(|| Box::new(LookupError::ValueIsNone(bos_book_code.to_string())) as Box<dyn Error>)?)
 }
 
 #[inline]
-pub fn usfm_abbrev_to_reference_abbrev<'a>(
+pub fn usfm_abbrev_to_bos_book_code<'a>(
     usfm_abbreviation: &'a str,
 ) -> Result<&'static str, LookupError<'a>> {
-    // println!("usfm_abbrev_to_reference_abbrev for {}", &usfm_abbreviation);
-    // let USFM_ABBREVIATION_MAP: HashMap<&str, usize> = hash_map!{ "NEG"=>1,"OXE"=>2,"VEL"=>3,};
-    // println!("The unmutable hash map is {:?}", USFM_ABBREVIATION_MAP);
-    // let mut USFMAbbreviationDict: HashMap<&str, usize> = HashMap::new();
-    // println!(
-    //     "USFMAbbreviationDict length = {}",
-    //     USFMAbbreviationDict.len()
-    // );
-
-    // if USFMAbbreviationDict.len() == 0 {
-    //     // we need to create the index
-    //     for (i, el) in BIBLE_BOOKS_CODES_ARRAY.iter().enumerate() {
-    //         println!("The current element is {:#?}", el);
-    //         USFMAbbreviationDict.insert(el.usfm_abbreviation, i);
-    //     }
-    //     println!("The new hash map is {:?}", USFMAbbreviationDict);
-    // }
     if let Some(&array_index) = USFM_ABBREVIATION_MAP.get(usfm_abbreviation) {
-        Ok(BIBLE_BOOKS_CODES_ARRAY[array_index].BOS_reference_abbreviation)
-    } else if let Some(&array_index) = UPPERCASE_USFM_ABBREVIATION_MAP.get(usfm_abbreviation) {
-        Ok(BIBLE_BOOKS_CODES_ARRAY[array_index].BOS_reference_abbreviation)
+        Ok(BIBLE_BOOKS_CODES_ARRAY[array_index].BOS_book_code)
+    } else if let Some(&array_index) = UPPERCASE_USFM_ABBREVIATION_MAP.get(usfm_abbreviation.to_uppercase().as_str()) {
+        Ok(BIBLE_BOOKS_CODES_ARRAY[array_index].BOS_book_code)
     } else {
         Err(LookupError::AbbrevNotFound("USFM", usfm_abbreviation))
     }
 }
 
 #[inline]
-pub fn osis_abbrev_to_reference_abbrev<'a>(
-    osis_abbreviation: &'a str,
+pub fn osis_book_code_to_bos_book_code<'a>(
+    osis_book_code: &'a str,
     strict: bool,
 ) -> Result<&'static str, LookupError<'a>> {
-    if let Some(&array_index) = OSIS_ABBREVIATION_MAP.get(osis_abbreviation) {
-        Ok(BIBLE_BOOKS_CODES_ARRAY[array_index].BOS_reference_abbreviation)
+    if let Some(&array_index) = OSIS_ABBREVIATION_MAP.get(osis_book_code) {
+        Ok(BIBLE_BOOKS_CODES_ARRAY[array_index].BOS_book_code)
     } else if !strict {
-        let uc = CompactString::from(osis_abbreviation).to_uppercase();
+        let uc = CompactString::from(osis_book_code).to_uppercase();
         if let Some(&array_index) = SWORD_ABBREVIATION_MAP.get(uc.as_str()) {
-             Ok(BIBLE_BOOKS_CODES_ARRAY[array_index].BOS_reference_abbreviation)
+             Ok(BIBLE_BOOKS_CODES_ARRAY[array_index].BOS_book_code)
         } else {
-            Err(LookupError::AbbrevNotFound("OSIS/Sword", osis_abbreviation))
+            Err(LookupError::AbbrevNotFound("OSIS/Sword", osis_book_code))
         }
     } else {
-        Err(LookupError::AbbrevNotFound("OSIS", osis_abbreviation))
+        Err(LookupError::AbbrevNotFound("OSIS", osis_book_code))
     }
 }
 
 #[inline]
-pub fn drupal_abbrev_to_reference_abbrev<'a>(
-    drupal_abbreviation: &'a str,
+pub fn drupal_book_code_to_bos_book_code<'a>(
+    drupal_book_code: &'a str,
 ) -> Result<&'static str, LookupError<'a>> {
-    if let Some(&array_index) = DRUPAL_BIBLE_ABBREVIATION_MAP.get(drupal_abbreviation) {
-        Ok(BIBLE_BOOKS_CODES_ARRAY[array_index].BOS_reference_abbreviation)
+    if let Some(&array_index) = DRUPAL_BIBLE_ABBREVIATION_MAP.get(drupal_book_code) {
+        Ok(BIBLE_BOOKS_CODES_ARRAY[array_index].BOS_book_code)
     } else {
-        Err(LookupError::AbbrevNotFound("Drupal", drupal_abbreviation))
+        Err(LookupError::AbbrevNotFound("Drupal", drupal_book_code))
     }
 }
 
 #[inline]
-pub fn unbound_code_to_reference_abbrev<'a>(
+pub fn unbound_code_to_bos_book_code<'a>(
     unbound_code: &'a str,
 ) -> Result<&'static str, LookupError<'a>> {
     if let Some(&array_index) = UNBOUND_CODE_MAP.get(unbound_code) {
-        Ok(BIBLE_BOOKS_CODES_ARRAY[array_index].BOS_reference_abbreviation)
+        Ok(BIBLE_BOOKS_CODES_ARRAY[array_index].BOS_book_code)
     } else {
         Err(LookupError::AbbrevNotFound("Unbound", unbound_code))
     }
@@ -8566,22 +8549,22 @@ pub fn unbound_code_to_reference_abbrev<'a>(
 /// Return the reference abbreviation string for the given short book code string.
 /// NOTE: This tends to be more forgiving than more specific Bible code systems.
 #[inline]
-pub fn short_abbrev_to_reference_abbrev<'a>(
+pub fn short_abbrev_to_bos_book_code<'a>(
     short_abbreviation: &'a str,
     strict: bool,
 ) -> Result<&'static str, LookupError<'a>> {
     let uc = CompactString::from(short_abbreviation).to_uppercase();
     if let Some(&array_index) = SHORT_ABBREVIATION_MAP.get(uc.as_str()) {
-        Ok(BIBLE_BOOKS_CODES_ARRAY[array_index].BOS_reference_abbreviation)
+        Ok(BIBLE_BOOKS_CODES_ARRAY[array_index].BOS_book_code)
     } else if !strict {
         // Maybe it has a space in it?
         let no_space = uc.replace(' ', "");
         if let Some(&array_index) = SHORT_ABBREVIATION_MAP.get(no_space.as_str()) {
-            Ok(BIBLE_BOOKS_CODES_ARRAY[array_index].BOS_reference_abbreviation)
+            Ok(BIBLE_BOOKS_CODES_ARRAY[array_index].BOS_book_code)
         } else if let Some(&array_index) = SBL_ABBREVIATION_MAP.get(uc.as_str()) {
-            Ok(BIBLE_BOOKS_CODES_ARRAY[array_index].BOS_reference_abbreviation)
+            Ok(BIBLE_BOOKS_CODES_ARRAY[array_index].BOS_book_code)
         } else if let Some(&array_index) = NET_BIBLE_ABBREVIATION_MAP.get(uc.as_str()) {
-            Ok(BIBLE_BOOKS_CODES_ARRAY[array_index].BOS_reference_abbreviation)
+            Ok(BIBLE_BOOKS_CODES_ARRAY[array_index].BOS_book_code)
         } else {
              Err(LookupError::AbbrevNotFound("Short/SBL/NET", short_abbreviation))
         }
@@ -8591,33 +8574,33 @@ pub fn short_abbrev_to_reference_abbrev<'a>(
 }
 
 #[inline]
-pub fn sbl_abbrev_to_reference_abbrev<'a>(
+pub fn sbl_abbrev_to_bos_book_code<'a>(
     sbl_abbreviation: &'a str,
 ) -> Result<&'static str, LookupError<'a>> {
     let uc = CompactString::from(sbl_abbreviation).to_uppercase();
     if let Some(&array_index) = SBL_ABBREVIATION_MAP.get(uc.as_str()) {
-        Ok(BIBLE_BOOKS_CODES_ARRAY[array_index].BOS_reference_abbreviation)
+        Ok(BIBLE_BOOKS_CODES_ARRAY[array_index].BOS_book_code)
     } else {
         Err(LookupError::AbbrevNotFound("SBL", sbl_abbreviation))
     }
 }
 
 #[inline]
-pub fn net_bible_abbrev_to_reference_abbrev<'a>(
+pub fn net_bible_abbrev_to_bos_book_code<'a>(
     net_bible_abbreviation: &'a str,
 ) -> Result<&'static str, LookupError<'a>> {
     let uc = CompactString::from(net_bible_abbreviation).to_uppercase();
     if let Some(&array_index) = NET_BIBLE_ABBREVIATION_MAP.get(uc.as_str()) {
-        Ok(BIBLE_BOOKS_CODES_ARRAY[array_index].BOS_reference_abbreviation)
+        Ok(BIBLE_BOOKS_CODES_ARRAY[array_index].BOS_book_code)
     } else {
         Err(LookupError::AbbrevNotFound("NET", net_bible_abbreviation))
     }
 }
 
-pub fn english_name_to_reference_abbrev(english_name: &str,) -> Option<&'static str> {
+pub fn english_name_to_bos_book_code(english_name: &str,) -> Option<&'static str> {
     let adj_english_name = CompactString::from(english_name).to_uppercase();
     if let Some(&array_index) = ENGLISH_NAME_MAP.get(adj_english_name.as_str()) {
-        return Some(BIBLE_BOOKS_CODES_ARRAY[array_index].BOS_reference_abbreviation)
+        return Some(BIBLE_BOOKS_CODES_ARRAY[array_index].BOS_book_code)
     }
 
     let pairs = [
@@ -8632,7 +8615,7 @@ pub fn english_name_to_reference_abbrev(english_name: &str,) -> Option<&'static 
     for (s1, s2) in pairs {
         if adj_english_name.starts_with(s1) {
             if let Some(&array_index) = ENGLISH_NAME_MAP.get(format_compact!("{}{}", s2, &adj_english_name[s1.len()..]).as_str()) {
-                return Some(BIBLE_BOOKS_CODES_ARRAY[array_index].BOS_reference_abbreviation)
+                return Some(BIBLE_BOOKS_CODES_ARRAY[array_index].BOS_book_code)
             }
         }
     }
@@ -8653,7 +8636,7 @@ pub fn english_name_to_reference_abbrev(english_name: &str,) -> Option<&'static 
 //     }
 // }
 
-// pub fn usfm_num_to_reference_abbreviation(usfm_num_str: &str) -> Result<String, Box<dyn Error>> {
+// pub fn usfm_num_to_bos_book_code(usfm_num_str: &str) -> Result<String, Box<dyn Error>> {
 //     println!("usfm_num_to_usfm_bbb for {:?}", usfm_num_str);
 //     if !&self.USFMNumberDict.contains_key(usfm_num_str) {
 //         return Err("Invalid USFM number: '".to_owned() + &usfm_num_str + "'")?; // I never actually figured out why I need the question mark?
@@ -8684,57 +8667,58 @@ mod tests {
     }
 
     #[test]
-    fn test_is_valid_reference_abbreviation() {
-        assert_eq!(is_valid_reference_abbreviation("SAM"), true);
-        assert_eq!(is_valid_reference_abbreviation("SIM"), false);
+    fn test_is_valid_bos_book_code() {
+        assert_eq!(is_valid_bos_book_code("SAM"), true);
+        assert_eq!(is_valid_bos_book_code("SIM"), false);
     }
 
     #[test]
-    fn test_reference_abbrev_to_usfm_abbrev() {
-        assert_eq!(reference_abbrev_to_usfm_abbrev("EXO"), Ok(Some("Exo")));
-        assert_eq!(reference_abbrev_to_usfm_abbrev("CH1"), Ok(Some("1Ch")));
+    fn test_bos_book_code_to_usfm_abbrev() {
+        assert_eq!(bos_book_code_to_usfm_abbrev("EXO"), Ok(Some("Exo")));
+        assert_eq!(bos_book_code_to_usfm_abbrev("CH1"), Ok(Some("1Ch")));
         println!(
-            "    reference_abbrev_to_usfm_abbrev for 'SAM' got {:?}",
-            reference_abbrev_to_usfm_abbrev("SAM")
+            "    bos_book_code_to_usfm_abbrev for 'SAM' got {:?}",
+            bos_book_code_to_usfm_abbrev("SAM")
         );
         println!(
-            "    reference_abbrev_to_usfm_abbrev for 'XyZ' got {:?}",
-            reference_abbrev_to_usfm_abbrev("XyZ")
+            "    bos_book_code_to_usfm_abbrev for 'XyZ' got {:?}",
+            bos_book_code_to_usfm_abbrev("XyZ")
         );
-        assert_eq!(reference_abbrev_to_usfm_abbrev("SAM"), Ok(None));
-        assert!(matches!(reference_abbrev_to_usfm_abbrev("XyZ"), Err(LookupError::AbbrevNotFound("Reference",ref key)) if *key == "XyZ"));
-        assert!(matches!(reference_abbrev_to_usfm_abbrev("XyZ"), Err(LookupError::AbbrevNotFound("Reference","XyZ"))));
+        assert_eq!(bos_book_code_to_usfm_abbrev("SAM"), Ok(None));
+        assert!(matches!(bos_book_code_to_usfm_abbrev("XyZ"), Err(LookupError::AbbrevNotFound("Reference",ref key)) if *key == "XyZ"));
+        assert!(matches!(bos_book_code_to_usfm_abbrev("XyZ"), Err(LookupError::AbbrevNotFound("Reference","XyZ"))));
     }
 
     #[test]
-    fn test_usfm_to_reference_abbreviation() {
-        assert_eq!(usfm_abbrev_to_reference_abbrev("Exo"), Ok("EXO"));
-        assert_eq!(usfm_abbrev_to_reference_abbrev("1Ki"), Ok("KI1"));
-        assert_eq!(usfm_abbrev_to_reference_abbrev("MAT"), Ok("MAT"));
-        assert_eq!(usfm_abbrev_to_reference_abbrev("1PE"), Ok("PE1"));
-        assert!(usfm_abbrev_to_reference_abbrev("XyZ").is_err());
-        assert!(matches!(usfm_abbrev_to_reference_abbrev("XyZ"), Err(LookupError::AbbrevNotFound("USFM","XyZ"))));
+    fn test_usfm_to_bos_book_code() {
+        assert_eq!(usfm_abbrev_to_bos_book_code("Exo"), Ok("EXO"));
+        assert_eq!(usfm_abbrev_to_bos_book_code("exo"), Ok("EXO"));
+        assert_eq!(usfm_abbrev_to_bos_book_code("1Ki"), Ok("KI1"));
+        assert_eq!(usfm_abbrev_to_bos_book_code("MAT"), Ok("MAT"));
+        assert_eq!(usfm_abbrev_to_bos_book_code("1PE"), Ok("PE1"));
+        assert!(usfm_abbrev_to_bos_book_code("XyZ").is_err());
+        assert!(matches!(usfm_abbrev_to_bos_book_code("XyZ"), Err(LookupError::AbbrevNotFound("USFM","XyZ"))));
     }
 
     #[test]
-    fn test_osis_to_reference_abbreviation() {
-        assert_eq!(osis_abbrev_to_reference_abbrev("Exod", true), Ok("EXO"));
-        assert!(osis_abbrev_to_reference_abbrev("XyZ", true).is_err());
-        assert!(matches!(osis_abbrev_to_reference_abbrev("XyZ", true), Err(LookupError::AbbrevNotFound("OSIS","XyZ"))));
+    fn test_osis_to_bos_book_code() {
+        assert_eq!(osis_book_code_to_bos_book_code("Exod", true), Ok("EXO"));
+        assert!(osis_book_code_to_bos_book_code("XyZ", true).is_err());
+        assert!(matches!(osis_book_code_to_bos_book_code("XyZ", true), Err(LookupError::AbbrevNotFound("OSIS","XyZ"))));
         // Test fallback
-        assert_eq!(osis_abbrev_to_reference_abbrev("Exod", false), Ok("EXO"));
+        assert_eq!(osis_book_code_to_bos_book_code("Exod", false), Ok("EXO"));
     }
 
     #[test]
-    fn test_short_abbrev_to_reference_abbrev() {
-        assert_eq!(short_abbrev_to_reference_abbrev("Ge", true), Ok("GEN"));
-        assert_eq!(short_abbrev_to_reference_abbrev("ge", true), Ok("GEN"));
-        assert!(short_abbrev_to_reference_abbrev("1 Sa", true).is_err());
+    fn test_short_abbrev_to_bos_book_code() {
+        assert_eq!(short_abbrev_to_bos_book_code("Ge", true), Ok("GEN"));
+        assert_eq!(short_abbrev_to_bos_book_code("ge", true), Ok("GEN"));
+        assert!(short_abbrev_to_bos_book_code("1 Sa", true).is_err());
         
         // Test fallbacks
-        assert_eq!(short_abbrev_to_reference_abbrev("1 Sa", false), Ok("SA1")); // space removal
-        assert_eq!(short_abbrev_to_reference_abbrev("Gen", false), Ok("GEN")); // SBL fallback
-        assert_eq!(short_abbrev_to_reference_abbrev("Sos", false), Ok("SNG")); // NET fallback
+        assert_eq!(short_abbrev_to_bos_book_code("1 Sa", false), Ok("SA1")); // space removal
+        assert_eq!(short_abbrev_to_bos_book_code("Gen", false), Ok("GEN")); // SBL fallback
+        assert_eq!(short_abbrev_to_bos_book_code("Sos", false), Ok("SNG")); // NET fallback
     }
 
     #[test]
@@ -8786,39 +8770,39 @@ mod tests {
     }
 
     #[test]
-    fn test_english_name_to_reference_abbrev() {
-        assert_eq!(english_name_to_reference_abbrev("Exodus"), Some("EXO"));
-        assert_eq!(english_name_to_reference_abbrev("Esther"), Some("EST"));
-        assert_eq!(english_name_to_reference_abbrev("Ester"), Some("EST"));
-        assert_eq!(english_name_to_reference_abbrev("Eccle"), Some("ECC"));
-        assert_eq!(english_name_to_reference_abbrev("1 Cor"), Some("CO1"));
-        assert_eq!(english_name_to_reference_abbrev("1 Co"), Some("CO1"));
-        assert_eq!(english_name_to_reference_abbrev("1Cor"), Some("CO1"));
-        assert_eq!(english_name_to_reference_abbrev("1Co"), Some("CO1"));
-        assert_eq!(english_name_to_reference_abbrev("1.Cor"), Some("CO1"));
-        assert_eq!(english_name_to_reference_abbrev("1.Co"), Some("CO1"));
-        assert_eq!(english_name_to_reference_abbrev("XyZ"), None);
+    fn test_english_name_to_bos_book_code() {
+        assert_eq!(english_name_to_bos_book_code("Exodus"), Some("EXO"));
+        assert_eq!(english_name_to_bos_book_code("Esther"), Some("EST"));
+        assert_eq!(english_name_to_bos_book_code("Ester"), Some("EST"));
+        assert_eq!(english_name_to_bos_book_code("Eccle"), Some("ECC"));
+        assert_eq!(english_name_to_bos_book_code("1 Cor"), Some("CO1"));
+        assert_eq!(english_name_to_bos_book_code("1 Co"), Some("CO1"));
+        assert_eq!(english_name_to_bos_book_code("1Cor"), Some("CO1"));
+        assert_eq!(english_name_to_bos_book_code("1Co"), Some("CO1"));
+        assert_eq!(english_name_to_bos_book_code("1.Cor"), Some("CO1"));
+        assert_eq!(english_name_to_bos_book_code("1.Co"), Some("CO1"));
+        assert_eq!(english_name_to_bos_book_code("XyZ"), None);
     }
 
     #[test]
     fn test_book_metadata_lookups() {
-        assert_eq!(get_bbb_from_reference_number(1), Some("GEN"));
-        assert_eq!(get_bbb_from_reference_number(66), Some("REV"));
-        assert_eq!(get_bbb_from_reference_number(999), Some("UNK"));
-        assert_eq!(get_bbb_from_reference_number(1000), None);
+        assert_eq!(get_bos_book_code_from_reference_number(1), Some("GEN"));
+        assert_eq!(get_bos_book_code_from_reference_number(66), Some("REV"));
+        assert_eq!(get_bos_book_code_from_reference_number(999), Some("UNK"));
+        assert_eq!(get_bos_book_code_from_reference_number(1000), None);
 
         assert_eq!(get_ccel_number_str("GEN"), Some("1"));
         assert_eq!(get_short_abbreviation("GEN"), Some("Ge"));
         assert_eq!(get_sbl_abbreviation("GEN"), Some("Gen"));
-        assert_eq!(get_osis_abbreviation("GEN"), Some("Gen"));
-        assert_eq!(get_sword_abbreviation("GEN"), Some("Gen"));
-        assert_eq!(get_usfm_num_str("MAT"), Some("41"));
+        assert_eq!(bos_to_osis_book_code("GEN"), Some("Gen"));
+        assert_eq!(bos_to_sword_book_code("GEN"), Some("Gen"));
+        assert_eq!(bos_book_code_to_usfm_num_str("MAT"), Some("41"));
         assert_eq!(get_usx_num_str("MAT"), Some("040"));
         assert_eq!(get_unbound_bible_code("GEN"), Some("01O"));
         assert_eq!(get_bibledit_num_str("MAT"), Some("40"));
         assert_eq!(get_logos_num_str("MAT"), Some("61"));
-        assert_eq!(get_net_bible_abbreviation("SNG"), Some("Sos"));
-        assert_eq!(get_drupal_bible_abbreviation("SNG"), Some("Son"));
+        assert_eq!(bos_to_net_bible_book_code("SNG"), Some("Sos"));
+        assert_eq!(bos_to_drupal_book_code("SNG"), Some("Son"));
         assert_eq!(get_byzantine_abbreviation("MAT"), Some("MT"));
     }
 
@@ -8844,19 +8828,19 @@ mod tests {
     #[test]
     fn test_categorization() {
         // nr stands for "Not Recommended" (because ideally the proper versification functions should be used instead)
-        assert!(is_ot_nr("GEN"));
-        assert!(!is_ot_nr("TOB"));
-        assert!(!is_ot_nr("MAT"));
-        assert!(is_nt_nr("MAT"));
-        assert!(!is_nt_nr("TOB"));
-        assert!(!is_nt_nr("GEN"));
-        assert!(is_dc_nr("TOB"));
-        assert!(!is_dc_nr("GEN"));
-        assert!(!is_dc_nr("MRK"));
+        assert!(is_old_testament_nr("GEN"));
+        assert!(!is_old_testament_nr("TOB"));
+        assert!(!is_old_testament_nr("MAT"));
+        assert!(is_new_testament_nr("MAT"));
+        assert!(!is_new_testament_nr("TOB"));
+        assert!(!is_new_testament_nr("GEN"));
+        assert!(is_deuterocanon_nr("TOB"));
+        assert!(!is_deuterocanon_nr("GEN"));
+        assert!(!is_deuterocanon_nr("MRK"));
 
-        assert!(!is_ot_nr("FRT"));
-        assert!(!is_nt_nr("FRT"));
-        assert!(!is_dc_nr("FRT"));
+        assert!(!is_old_testament_nr("FRT"));
+        assert!(!is_new_testament_nr("FRT"));
+        assert!(!is_deuterocanon_nr("FRT"));
 
         assert_eq!(get_typical_section("GEN"), Some("OT"));
         assert_eq!(get_typical_section("MAT"), Some("NT"));

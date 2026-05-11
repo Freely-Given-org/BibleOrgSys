@@ -59,7 +59,7 @@ if __name__ == '__main__':
         description = f'Some("{description_raw}")' if description_raw else 'None'
         name_english = row['nameEnglish'].replace('\\', '\\\\').replace('"', '\\"')
         occurs_in = row['occursIn'].replace('\\', '\\\\').replace('"', '\\"')
-        
+
         fullArrayEntries.append( f'''    USFMMarkerArrayEntry {{
         name_english: "{name_english}",
         marker: "{marker}",
@@ -73,7 +73,7 @@ if __name__ == '__main__':
         occurs_in: "{occurs_in}",
         deprecated: {deprecated},
         description: {description},
-    }},''' )
+        }},''' )
         
         markerDictEntries[f'"{marker}"'] = f'=>{n},'
         if highest_suffix_val != 'None':

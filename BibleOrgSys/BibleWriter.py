@@ -109,11 +109,8 @@ from BibleOrgSys.Internals.InternalBibleBook import BOS_CUSTOM_NESTING_MARKERS, 
 from BibleOrgSys.Internals.InternalBible import InternalBible
 from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
 from BibleOrgSys.Reference.BibleReferences import BibleReferenceList
-from BibleOrgSys.Reference.USFM3Markers import OFTEN_IGNORED_USFM_HEADER_MARKERS, USFM_ALL_TITLE_MARKERS, \
-                            USFM_ALL_INTRODUCTION_MARKERS, USFM_PRECHAPTER_MARKERS, \
-                            USFM_ALL_SECTION_HEADING_MARKERS, \
-                            USFM_BIBLE_PARAGRAPH_MARKERS, USFM_ALL_BIBLE_PARAGRAPH_MARKERS
 from BibleOrgSys.Misc.NoisyReplaceFunctions import noisyRegExDeleteAll
+import usfm_markers_py
 
 
 LAST_MODIFIED_DATE = '2026-04-29' # by RJH
@@ -465,7 +462,7 @@ class BibleWriter( InternalBible ):
                 #if marker=='c' and text: C, V = text.split()[0], '0'
                 #elif marker=='v' and text: V = text.split()[0]
 
-                #if text and BibleOrgSysGlobals.loadedUSFMMarkers.isPrinted(marker): # process this main text
+                #if text and usfm_markers_py.isPrinted(marker): # process this main text
                     #countWords( marker, cleanText, "main" )
 
                 #if extras:
@@ -551,8 +548,8 @@ class BibleWriter( InternalBible ):
             except AttributeError: rawUSFMData = None # it's been deleted  :-(
             if rawUSFMData:
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\ninternalBibleBookData", internalBibleBookData[:50] ); halt
-                #USFMAbbreviation = bos_books_codes_py.reference_abbrev_to_usfm_abbrev( BBB )
-                #USFMNumber = bos_books_codes_py.get_usfm_num_str( BBB )
+                #USFMAbbreviation = bos_books_codes_py.bos_book_code_to_usfm_abbrev( BBB )
+                #USFMNumber = bos_books_codes_py.bos_book_code_to_usfm_num_str( BBB )
 
                 filename = f"{j:02}_{BBB}_BibleWriter.rSFM"
                 filepath = os.path.join( outputFolderpath, BibleOrgSysGlobals.makeSafeFilename( filename ) )
@@ -565,8 +562,8 @@ class BibleWriter( InternalBible ):
 
             internalBibleBookData = bookObject._processedLines
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\ninternalBibleBookData", internalBibleBookData[:50] ); halt
-            USFMAbbreviation = bos_books_codes_py.reference_abbrev_to_usfm_abbrev( BBB )
-            USFMNumber = bos_books_codes_py.get_usfm_num_str( BBB )
+            USFMAbbreviation = bos_books_codes_py.bos_book_code_to_usfm_abbrev( BBB )
+            USFMNumber = bos_books_codes_py.bos_book_code_to_usfm_num_str( BBB )
 
             filename = f"{j:02}_{BBB}_BibleWriter.pSFM"
             filepath = os.path.join( outputFolderpath, BibleOrgSysGlobals.makeSafeFilename( filename ) )
@@ -637,8 +634,8 @@ class BibleWriter( InternalBible ):
         for BBB,bookObject in self.books.items():
             internalBibleBookData = bookObject._processedLines
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\ninternalBibleBookData", internalBibleBookData[:50] ); halt
-            USFMAbbreviation = bos_books_codes_py.reference_abbrev_to_usfm_abbrev( BBB )
-            USFMNumber = bos_books_codes_py.get_usfm_num_str( BBB )
+            USFMAbbreviation = bos_books_codes_py.bos_book_code_to_usfm_abbrev( BBB )
+            USFMNumber = bos_books_codes_py.bos_book_code_to_usfm_num_str( BBB )
 
             if includeEmptyVersesFlag:
                 try:
@@ -702,7 +699,7 @@ class BibleWriter( InternalBible ):
                                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, ' ', BBB, repr(vBridgeStartInt), repr(vBridgeEndInt) )
                                 break
                     if fullText and fullText[-1]!=' ': fullText += ' ' # Append a space since it didn't have one
-                elif pseudoMarker[-1]=='~' or BibleOrgSysGlobals.loadedUSFMMarkers.isNewlineMarker(pseudoMarker): # Have a continuation field
+                elif pseudoMarker[-1]=='~' or usfm_markers_py.is_newline_marker(pseudoMarker): # Have a continuation field
                     if inField is not None:
                         bookUSFM += f'\\{inField}*' # Do a close marker for footnotes and cross-references
                         inField = None
@@ -803,8 +800,8 @@ class BibleWriter( InternalBible ):
         for BBB,bookObject in self.books.items():
             internalBibleBookData = bookObject._processedLines
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\ninternalBibleBookData", internalBibleBookData[:50] ); halt
-            USFMAbbreviation = bos_books_codes_py.reference_abbrev_to_usfm_abbrev( BBB )
-            USFMNumber = bos_books_codes_py.get_usfm_num_str( BBB )
+            USFMAbbreviation = bos_books_codes_py.bos_book_code_to_usfm_abbrev( BBB )
+            USFMNumber = bos_books_codes_py.bos_book_code_to_usfm_num_str( BBB )
 
             if includeEmptyVersesFlag:
                 try:
@@ -875,7 +872,7 @@ class BibleWriter( InternalBible ):
                                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, ' ', BBB, repr(vBridgeStartInt), repr(vBridgeEndInt) )
                                 break
                     if fullText and fullText[-1]!=' ': fullText += ' ' # Append a space since it didn't have one
-                elif pseudoMarker[-1]=='~' or BibleOrgSysGlobals.loadedUSFMMarkers.isNewlineMarker(pseudoMarker): # Have a continuation field
+                elif pseudoMarker[-1]=='~' or usfm_markers_py.is_newline_marker(pseudoMarker): # Have a continuation field
                     if inField is not None:
                         bookUSFM += f'\\{inField}*' # Do a close marker for footnotes and cross-references
                         inField = None
@@ -972,8 +969,8 @@ class BibleWriter( InternalBible ):
         for BBB,bookObject in self.books.items():
             internalBibleBookData = bookObject._processedLines
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\ninternalBibleBookData", internalBibleBookData[:50] ); halt
-            USFMAbbreviation = bos_books_codes_py.reference_abbrev_to_usfm_abbrev( BBB )
-            USFMNumber = bos_books_codes_py.get_usfm_num_str( BBB )
+            USFMAbbreviation = bos_books_codes_py.bos_book_code_to_usfm_abbrev( BBB )
+            USFMNumber = bos_books_codes_py.bos_book_code_to_usfm_num_str( BBB )
 
             filename = f"{USFMNumber}{USFMAbbreviation.upper()}BibleWriter.ESFM"
             #if not os.path.exists( ESFMOutputFolder ): os.makedirs( ESFMOutputFolder )
@@ -1053,7 +1050,7 @@ class BibleWriter( InternalBible ):
                             #             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, ' ', BBB, repr(vBridgeStartInt), repr(vBridgeEndInt) )
                             #             break
                             if value and value[-1] != ' ': value += ' ' # Append a space since it didn't have one
-                        elif pseudoMarker[-1]=='~' or BibleOrgSysGlobals.loadedUSFMMarkers.isNewlineMarker(pseudoMarker): # Have a continuation field
+                        elif pseudoMarker[-1]=='~' or usfm_markers_py.is_newline_marker(pseudoMarker): # Have a continuation field
                             if inField is not None:
                                 ESFMLine += f'\\{inField}*' # Do a close marker for footnotes and cross-references
                                 inField = None
@@ -1396,7 +1393,7 @@ class BibleWriter( InternalBible ):
                     <p id="FNote2" class="footnote"><a title="Go back up to 4:11 in the text" href="#C4V11"><span class="ChapterVerse">4:11 </span></a><a title="ne" href="../../Lexicon/indexLN-90.htm#ne1a"><span class="WordLink">Kene</span></a> <a title="ne" href="../../Lexicon/indexLN-90.htm#ne1a"><span class="WordLink">ne</span></a> <a title="adj. clear" href="../../Lexicon/Details/klaru.htm"><span class="WordLink">klaru</span></a> <a title="diya" href="../../Lexicon/indexLD-80.htm#diyav"><span class="WordLink">diye</span></a> <a title="te" href="../../Lexicon/indexLT-96.htm#ta"><span class="WordLink">te</span></a> <a title="adj. true (lehet)" href="../../Lexicon/Details/lehet1.htm"><span class="WordLink">malehet</span></a> <a title="ne" href="../../Lexicon/indexLN-90.htm#ne1a"><span class="WordLink">ne</span></a> <a title="migpuun" href="../../Lexicon/Details/puun.htm"><span class="WordLink">migpuunan</span></a> <a title="ke" href="../../Lexicon/indexLK-87.htm#ka"><span class="WordLink">ke</span></a> <a title="n. other" href="../../Lexicon/Details/lein.htm"><span class="WordLink">lein</span></a> <a title="e" href="../../Lexicon/indexLA-77.htm#a"><span class="WordLink">e</span></a> <a title="part. also" href="../../Lexicon/Details/degma.htm"><span class="WordLink">degma</span></a> <a title="ne" href="../../Lexicon/indexLN-90.htm#ne1a"><span class="WordLink">ne</span></a> <a title="n. place" href="../../Lexicon/Details/inged.htm"><span class="WordLink">inged</span></a> <a title="ka" href="../../Lexicon/indexLK-87.htm#ka"><span class="WordLink">ka</span></a> <span class="NameWordLink">Iprata</span>. <a title="kahiyen" href="../../Lexicon/Details/kahi.htm"><span class="WordLink">Kahiyen</span></a> <a title="te" href="../../Lexicon/indexLT-96.htm#ta"><span class="WordLink">te</span></a> <a title="adj. other" href="../../Lexicon/Details/duma.htm"><span class="WordLink">duma</span></a> <a title="ne" href="../../Lexicon/indexLN-90.htm#ne1a"><span class="WordLink">ne</span></a> <a title="ka" href="../../Lexicon/indexLK-87.htm#ka"><span class="WordLink">ka</span></a> <span class="NameWordLink">Iprata</span> <a title="dem. that" href="../../Lexicon/Details/iyan.htm"><span class="WordLink">iyan</span></a> <a title="ka" href="../../Lexicon/indexLK-87.htm#ka"><span class="WordLink">ka</span></a> <a title="tapey" href="../../Lexicon/indexLT-96.htm#tapey1"><span class="WordLink">tapey</span></a> <a title="ne" href="../../Lexicon/indexLN-90.htm#ne1a"><span class="WordLink">ne</span></a> <a title="n. name" href="../../Lexicon/Details/ngaran.htm"><span class="WordLink">ngaran</span></a> <a title="te" href="../../Lexicon/indexLT-96.htm#ta"><span class="WordLink">te</span></a> <a title="See glossary entry for Bitlihim" href="../indexGlossary.htm#Bitlihim"><span class="WordLink">Bitlihim</span><span class="GlossaryLinkSymbol"><sup>[gl]</sup></span></a>.</p></div>
                     """
                     assert noteType in ('footnote','endnote',)
-                    markerList = BibleOrgSysGlobals.loadedUSFMMarkers.getMarkerListFromText( rawFootnoteContents, includeInitialText=True )
+                    markerList = usfm_markers_py.get_marker_list_from_text( rawFootnoteContents, include_initial_text=True )
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"formatMarkdownVerseText.processFootnote( {repr(rawFootnoteContents)}, {ourGlobals} ) found {markerList}" )
                     if noteType == 'footnote':
                         fnIndex = ourGlobals['nextFootnoteIndex']; ourGlobals['nextFootnoteIndex'] += 1
@@ -1482,7 +1479,7 @@ class BibleWriter( InternalBible ):
                         plus
                     <p id="XRef0" class="XRef"><a title="Go back up to 2:2 in the text" href="#C2V2"><span class="ChapterVerse">2:2</span></a> <span class="VernacularCrossReference">Lib 19:9&#x2011;10</span>; <span class="VernacularCrossReference">Diy 24:19</span></p>
                     """
-                    markerList = BibleOrgSysGlobals.loadedUSFMMarkers.getMarkerListFromText( MDxref, includeInitialText=True )
+                    markerList = usfm_markers_py.get_marker_list_from_text( MDxref, include_initial_text=True )
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'\nformatMarkdownVerseText.processXRef( {repr(MDxref)}, {"…"} ) gives {markerList}' )
                     xrefIndex = ourGlobals['nextXRefIndex']; ourGlobals['nextXRefIndex'] += 1
                     caller = origin = originCV = xrefText = ''
@@ -1777,7 +1774,7 @@ class BibleWriter( InternalBible ):
                 <p id="FNote2" class="footnote"><a title="Go back up to 4:11 in the text" href="#C4V11"><span class="ChapterVerse">4:11 </span></a><a title="ne" href="../../Lexicon/indexLN-90.htm#ne1a"><span class="WordLink">Kene</span></a> <a title="ne" href="../../Lexicon/indexLN-90.htm#ne1a"><span class="WordLink">ne</span></a> <a title="adj. clear" href="../../Lexicon/Details/klaru.htm"><span class="WordLink">klaru</span></a> <a title="diya" href="../../Lexicon/indexLD-80.htm#diyav"><span class="WordLink">diye</span></a> <a title="te" href="../../Lexicon/indexLT-96.htm#ta"><span class="WordLink">te</span></a> <a title="adj. true (lehet)" href="../../Lexicon/Details/lehet1.htm"><span class="WordLink">malehet</span></a> <a title="ne" href="../../Lexicon/indexLN-90.htm#ne1a"><span class="WordLink">ne</span></a> <a title="migpuun" href="../../Lexicon/Details/puun.htm"><span class="WordLink">migpuunan</span></a> <a title="ke" href="../../Lexicon/indexLK-87.htm#ka"><span class="WordLink">ke</span></a> <a title="n. other" href="../../Lexicon/Details/lein.htm"><span class="WordLink">lein</span></a> <a title="e" href="../../Lexicon/indexLA-77.htm#a"><span class="WordLink">e</span></a> <a title="part. also" href="../../Lexicon/Details/degma.htm"><span class="WordLink">degma</span></a> <a title="ne" href="../../Lexicon/indexLN-90.htm#ne1a"><span class="WordLink">ne</span></a> <a title="n. place" href="../../Lexicon/Details/inged.htm"><span class="WordLink">inged</span></a> <a title="ka" href="../../Lexicon/indexLK-87.htm#ka"><span class="WordLink">ka</span></a> <span class="NameWordLink">Iprata</span>. <a title="kahiyen" href="../../Lexicon/Details/kahi.htm"><span class="WordLink">Kahiyen</span></a> <a title="te" href="../../Lexicon/indexLT-96.htm#ta"><span class="WordLink">te</span></a> <a title="adj. other" href="../../Lexicon/Details/duma.htm"><span class="WordLink">duma</span></a> <a title="ne" href="../../Lexicon/indexLN-90.htm#ne1a"><span class="WordLink">ne</span></a> <a title="ka" href="../../Lexicon/indexLK-87.htm#ka"><span class="WordLink">ka</span></a> <span class="NameWordLink">Iprata</span> <a title="dem. that" href="../../Lexicon/Details/iyan.htm"><span class="WordLink">iyan</span></a> <a title="ka" href="../../Lexicon/indexLK-87.htm#ka"><span class="WordLink">ka</span></a> <a title="tapey" href="../../Lexicon/indexLT-96.htm#tapey1"><span class="WordLink">tapey</span></a> <a title="ne" href="../../Lexicon/indexLN-90.htm#ne1a"><span class="WordLink">ne</span></a> <a title="n. name" href="../../Lexicon/Details/ngaran.htm"><span class="WordLink">ngaran</span></a> <a title="te" href="../../Lexicon/indexLT-96.htm#ta"><span class="WordLink">te</span></a> <a title="See glossary entry for Bitlihim" href="../indexGlossary.htm#Bitlihim"><span class="WordLink">Bitlihim</span><span class="GlossaryLinkSymbol"><sup>[gl]</sup></span></a>.</p></div>
                 """
                 assert noteType in ('footnote','endnote',)
-                markerList = BibleOrgSysGlobals.loadedUSFMMarkers.getMarkerListFromText( rawFootnoteContents, includeInitialText=True )
+                markerList = usfm_markers_py.get_marker_list_from_text( rawFootnoteContents, include_initial_text=True )
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"formatHTMLVerseText.processFootnote( {repr(rawFootnoteContents)}, {ourGlobals} ) found {markerList}" )
                 if noteType == 'footnote':
                     fnIndex = ourGlobals['nextFootnoteIndex']; ourGlobals['nextFootnoteIndex'] += 1
@@ -1863,7 +1860,7 @@ class BibleWriter( InternalBible ):
                     plus
                 <p id="XRef0" class="XRef"><a title="Go back up to 2:2 in the text" href="#C2V2"><span class="ChapterVerse">2:2</span></a> <span class="VernacularCrossReference">Lib 19:9&#x2011;10</span>; <span class="VernacularCrossReference">Diy 24:19</span></p>
                 """
-                markerList = BibleOrgSysGlobals.loadedUSFMMarkers.getMarkerListFromText( HTML5xref, includeInitialText=True )
+                markerList = usfm_markers_py.get_marker_list_from_text( HTML5xref, include_initial_text=True )
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'\nformatHTMLVerseText.processXRef( {repr(HTML5xref)}, {"…"} ) gives {markerList}' )
                 xrefIndex = ourGlobals['nextXRefIndex']; ourGlobals['nextXRefIndex'] += 1
                 caller = origin = originCV = xrefText = ''
@@ -3060,13 +3057,13 @@ class BibleWriter( InternalBible ):
             def getDivisionName( BBB:str, doneAny=None, doneBooks=None ):
                 """ Given a book code, return the division name. """
                 result = ''
-                if bos_books_codes_py.is_ot_nr( BBB ) or BBB == 'PS2':
+                if bos_books_codes_py.is_old_testament_nr( BBB ) or BBB == 'PS2':
                     result = self.getSetting( 'OldTestamentName' )
                     if not result: result = "Old Testament"
-                elif bos_books_codes_py.is_nt_nr( BBB ):
+                elif bos_books_codes_py.is_new_testament_nr( BBB ):
                     result = self.getSetting( 'NewTestamentName' )
                     if not result: result = "New Testament"
-                elif bos_books_codes_py.is_dc_nr( BBB ) or BBB in ('MA3','MA4'):
+                elif bos_books_codes_py.is_deuterocanon_nr( BBB ) or BBB in ('MA3','MA4'):
                     result = self.getSetting( 'DeuterocanonName' )
                     if not result: result = "Deuterocanon"
                 elif doneAny == False:
@@ -3086,7 +3083,7 @@ class BibleWriter( InternalBible ):
                 divisionName = getDivisionName( BBB, doneAny, doneBooks )
                 if divisionName and divisionName not in divisionData:
                     divisionData.append( divisionName )
-                if bos_books_codes_py.is_ot_nr(BBB) or bos_books_codes_py.is_nt_nr(BBB) or bos_books_codes_py.is_dc_nr(BBB):
+                if bos_books_codes_py.is_old_testament_nr(BBB) or bos_books_codes_py.is_new_testament_nr(BBB) or bos_books_codes_py.is_deuterocanon_nr(BBB):
                     doneAny = doneBooks = True
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, divisionData )
             vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + f"Exporting division names to {divisionNamesFilepath}…" )
@@ -3116,7 +3113,7 @@ class BibleWriter( InternalBible ):
                     logger.error( f"_toBibleDoorJSONCHTML: no chapters in {BBB}" )
                     intNumChapters = 0
                 bkData.append( (BBB,abbreviation,shortName,longName,intNumChapters,numSectionsDict[BBB],divisionNumber) )
-                if bos_books_codes_py.is_ot_nr(BBB) or bos_books_codes_py.is_nt_nr(BBB) or bos_books_codes_py.is_dc_nr(BBB):
+                if bos_books_codes_py.is_old_testament_nr(BBB) or bos_books_codes_py.is_new_testament_nr(BBB) or bos_books_codes_py.is_deuterocanon_nr(BBB):
                     doneAny = doneBooks = True
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, bkData )
             vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + f"Exporting book names to {bookNamesFilepath}…" )
@@ -3788,21 +3785,21 @@ class BibleWriter( InternalBible ):
         def writeUSXBook( BBB:str, bkData ):
             """ Writes a book to the filesFolder. """
 
-            def handleInternalTextMarkersForUSX2( originalText ):
+            def handleInternalTextMarkersForUSX2( original_text ):
                 """
-                Handles character formatting markers within the originalText.
+                Handles character formatting markers within the original_text.
                 Tries to find pairs of markers and replaces them with html char segments.
                 """
-                if not originalText: return ''
-                if '\\' not in originalText: return originalText
-                vPrint( 'Never', DEBUGGING_THIS_MODULE, "toUSX2XML:hITM4USX:", BBB, C, V, marker, "'"+originalText+"'" )
-                markerList = sorted( BibleOrgSysGlobals.loadedUSFMMarkers.getMarkerListFromText( originalText ),
+                if not original_text: return ''
+                if '\\' not in original_text: return original_text
+                vPrint( 'Never', DEBUGGING_THIS_MODULE, "toUSX2XML:hITM4USX:", BBB, C, V, marker, "'"+original_text+"'" )
+                markerList = sorted( usfm_markers_py.get_marker_list_from_text( original_text ),
                                             key=lambda s: -len(s[4])) # Sort by longest characterContext first (maximum nesting)
                 # for insideMarker, iMIndex, nextSignificantChar, fullMarker, characterContext, endIndex, markerField in markerList: # check for internal markers
                 #     pass
 
                 # Old code
-                adjText = originalText
+                adjText = original_text
                 haveOpenChar = False
                 for charMarker in BibleOrgSysGlobals.USFMAllExpandedCharacterMarkers:
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "handleInternalTextMarkersForUSX2", charMarker )
@@ -3811,13 +3808,13 @@ class BibleWriter( InternalBible ):
                     if fullCharMarker in adjText:
                         if haveOpenChar:
                             adjText = adjText.replace( 'CLOSED_BIT', ' closed="false"' ) # Fix up closed bit since it wasn't closed
-                            logger.info( f"toUSX2XML: USX export had to close automatically in {BBB} {C}:{V} {marker}:{originalText!r} now {adjText!r}" ) # The last marker presumably only had optional closing (or else we just messed up nesting markers)
+                            logger.info( f"toUSX2XML: USX export had to close automatically in {BBB} {C}:{V} {marker}:{original_text!r} now {adjText!r}" ) # The last marker presumably only had optional closing (or else we just messed up nesting markers)
                         adjText = adjText.replace( fullCharMarker, f'{"</char>" if haveOpenChar else ""}<char style="{charMarker}"CLOSED_BIT>' )
                         haveOpenChar = True
                     endCharMarker = '\\' + charMarker + '*'
                     if endCharMarker in adjText:
                         if not haveOpenChar: # Then we must have a missing open marker (or extra closing marker)
-                            logger.error( f"toUSX2XML: Ignored extra {marker!r} closing marker in {charMarker} {BBB}:{C} {V}:{originalText!r} now {adjText!r}" )
+                            logger.error( f"toUSX2XML: Ignored extra {marker!r} closing marker in {charMarker} {BBB}:{C} {V}:{original_text!r} now {adjText!r}" )
                             adjText = adjText.replace( endCharMarker, '' ) # Remove the unused marker
                         else: # looks good
                             adjText = adjText.replace( 'CLOSED_BIT', '' ) # Fix up closed bit since it was specifically closed
@@ -3843,12 +3840,12 @@ class BibleWriter( InternalBible ):
                 if haveOpenChar:
                     adjText = adjText.replace( 'CLOSED_BIT', ' closed="false"' ) # Fix up closed bit since it wasn't closed
                     adjText += f"{'' if adjText[-1]==' ' else ' '}</char>"
-                    logger.info( f"toUSX2XML: Had to close automatically in {BBB} {C}:{V} {marker}:{originalText!r} now {adjText!r}" )
+                    logger.info( f"toUSX2XML: Had to close automatically in {BBB} {C}:{V} {marker}:{original_text!r} now {adjText!r}" )
                 if '\\' in adjText:
-                    logger.critical( f"toUSX2XML: Didn't handle a backslash in {BBB} {C}:{V} {marker}:{originalText!r} now {adjText!r}" )
+                    logger.critical( f"toUSX2XML: Didn't handle a backslash in {BBB} {C}:{V} {marker}:{original_text!r} now {adjText!r}" )
                     if self.doExtraChecking: halt
                 if 'CLOSED_BIT' in adjText:
-                    logger.critical( f"toUSX2XML: Didn't handle a character style correctly in {BBB} {C}:{V} {marker}:{originalText!r} now {adjText!r}" )
+                    logger.critical( f"toUSX2XML: Didn't handle a character style correctly in {BBB} {C}:{V} {marker}:{original_text!r} now {adjText!r}" )
                 return adjText
             # end of toUSX2XML.handleInternalTextMarkersForUSX2
 
@@ -4108,7 +4105,7 @@ class BibleWriter( InternalBible ):
                 return adjText
             # end of toUSX2XML.handleNotes
 
-            USXAbbrev = bos_books_codes_py.reference_abbrev_to_usfm_abbrev( BBB ).upper()
+            USXAbbrev = bos_books_codes_py.bos_book_code_to_usfm_abbrev( BBB ).upper()
             USXNumber = bos_books_codes_py.get_usx_num_str( BBB )
             if not USXAbbrev:
                 logger.error( f"toUSX2XML: Can't write {BBB} USX book because no USFM code available" )
@@ -4137,7 +4134,7 @@ class BibleWriter( InternalBible ):
                     if self.doExtraChecking:
                         assert C=='-1' or marker=='rem' or marker.startswith('mte')
                     V = str( int(V) + 1 )
-                getMarkerContentType = BibleOrgSysGlobals.loadedUSFMMarkers.getMarkerContentType( marker )
+                getMarkerContentType = usfm_markers_py.getMarkerContentType( marker )
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, C, V, marker, getMarkerContentType, haveOpenPara, paraJustOpened )
 
                 adjText = handleNotes( text, extras )
@@ -4361,21 +4358,21 @@ class BibleWriter( InternalBible ):
         def writeUSFXBook( xw, BBB:str, bkData ):
             """ Writes a book to the given USFX XML writerObject. """
 
-            def handleInternalTextMarkersForUSFX( originalText ):
+            def handleInternalTextMarkersForUSFX( original_text ):
                 """
-                Handles character formatting markers within the originalText.
+                Handles character formatting markers within the original_text.
                 Tries to find pairs of markers and replaces them with html char segments.
                 """
-                if not originalText: return ''
-                if '\\' not in originalText: return originalText
-                vPrint( 'Never', DEBUGGING_THIS_MODULE, "toUSFXXML:hITM4USFX:", BBB, C, V, marker, "'"+originalText+"'" )
-                markerList = sorted( BibleOrgSysGlobals.loadedUSFMMarkers.getMarkerListFromText( originalText ),
+                if not original_text: return ''
+                if '\\' not in original_text: return original_text
+                vPrint( 'Never', DEBUGGING_THIS_MODULE, "toUSFXXML:hITM4USFX:", BBB, C, V, marker, "'"+original_text+"'" )
+                markerList = sorted( usfm_markers_py.get_marker_list_from_text( original_text ),
                                             key=lambda s: -len(s[4])) # Sort by longest characterContext first (maximum nesting)
                 for insideMarker, iMIndex, nextSignificantChar, fullMarker, characterContext, endIndex, markerField in markerList: # check for internal markers
                     pass
 
                 # Old code
-                adjText = originalText
+                adjText = original_text
                 haveOpenChar = False
                 for charMarker in BibleOrgSysGlobals.USFMAllExpandedCharacterMarkers:
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "handleInternalTextMarkersForUSFX", charMarker )
@@ -4384,13 +4381,13 @@ class BibleWriter( InternalBible ):
                     if fullCharMarker in adjText:
                         if haveOpenChar:
                             adjText = adjText.replace( 'CLOSED_BIT', ' closed="false"' ) # Fix up closed bit since it wasn't closed
-                            logger.info( f"toUSFXXML: USFX export had to close automatically in {BBB} {C}:{V} {marker}:{originalText!r} now {adjText!r}" ) # The last marker presumably only had optional closing (or else we just messed up nesting markers)
+                            logger.info( f"toUSFXXML: USFX export had to close automatically in {BBB} {C}:{V} {marker}:{original_text!r} now {adjText!r}" ) # The last marker presumably only had optional closing (or else we just messed up nesting markers)
                         adjText = adjText.replace( fullCharMarker, '{}<char style="{}"CLOSED_BIT>'.format( '</char>' if haveOpenChar else '', charMarker ) )
                         haveOpenChar = True
                     endCharMarker = '\\' + charMarker + '*'
                     if endCharMarker in adjText:
                         if not haveOpenChar: # Then we must have a missing open marker (or extra closing marker)
-                            logger.error( f"toUSFXXML: Ignored extra {marker!r} closing marker in {charMarker} {BBB}:{C} {V}:{originalText!r} now {adjText!r}" )
+                            logger.error( f"toUSFXXML: Ignored extra {marker!r} closing marker in {charMarker} {BBB}:{C} {V}:{original_text!r} now {adjText!r}" )
                             adjText = adjText.replace( endCharMarker, '' ) # Remove the unused marker
                         else: # looks good
                             adjText = adjText.replace( 'CLOSED_BIT', '' ) # Fix up closed bit since it was specifically closed
@@ -4399,8 +4396,8 @@ class BibleWriter( InternalBible ):
                 if haveOpenChar:
                     adjText = adjText.replace( 'CLOSED_BIT', ' closed="false"' ) # Fix up closed bit since it wasn't closed
                     adjText += f"{'' if adjText[-1]==' ' else ' '}</char>"
-                    logger.info( f"toUSFXXML: Had to close automatically in {BBB} {C}:{V} {marker}:{originalText!r} now {adjText!r}" )
-                if '\\' in adjText: logger.critical( f"toUSFXXML: Didn't handle a backslash in {BBB} {C}:{V} {marker}:{originalText!r} now {adjText!r}" )
+                    logger.info( f"toUSFXXML: Had to close automatically in {BBB} {C}:{V} {marker}:{original_text!r} now {adjText!r}" )
+                if '\\' in adjText: logger.critical( f"toUSFXXML: Didn't handle a backslash in {BBB} {C}:{V} {marker}:{original_text!r} now {adjText!r}" )
                 return adjText
             # end of toUSFXXML.handleInternalTextMarkersForUSFX
 
@@ -4624,7 +4621,7 @@ class BibleWriter( InternalBible ):
                 return adjText
             # end of toUSFXXML.handleNotes
 
-            USFXAbbrev = bos_books_codes_py.reference_abbrev_to_usfm_abbrev( BBB ).upper()
+            USFXAbbrev = bos_books_codes_py.bos_book_code_to_usfm_abbrev( BBB ).upper()
             if not USFXAbbrev:
                 logger.error( f"toUSFXXML: Can't write {BBB} USFX book because no USFM code available" )
                 unhandledBooks.append( BBB )
@@ -4644,7 +4641,7 @@ class BibleWriter( InternalBible ):
                     if self.doExtraChecking:
                         assert C=='-1' or marker=='rem' or marker.startswith('mte')
                     V = str( int(V) + 1 )
-                getMarkerContentType = BibleOrgSysGlobals.loadedUSFMMarkers.getMarkerContentType( marker )
+                getMarkerContentType = usfm_markers_py.getMarkerContentType( marker )
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, C, V, marker, getMarkerContentType, haveOpenPara, paraJustOpened )
 
                 adjText = handleNotes( text, extras )
@@ -4809,7 +4806,7 @@ class BibleWriter( InternalBible ):
             abbreviationList = []
             for BBB in BibleOrganisationalSystem.getBookList(): # First pass writes the full vernacular book names (with and without spaces removed)
                 if BBB in self.books:
-                    swordAbbrev = bos_books_codes_py.get_sword_abbreviation( BBB )
+                    swordAbbrev = bos_books_codes_py.bos_to_sword_book_code( BBB )
                     vernacularName = getBookNameFunction(BBB).upper()
                     #assert vernacularName not in abbreviationList
                     if vernacularName in abbreviationList:
@@ -4825,7 +4822,7 @@ class BibleWriter( InternalBible ):
                         abbreviationList.append( vernacularAbbrev )
             for BBB in BibleOrganisationalSystem.getBookList(): # Second pass writes the shorter vernacular book abbreviations
                 if BBB in self.books:
-                    swordAbbrev = bos_books_codes_py.get_sword_abbreviation( BBB )
+                    swordAbbrev = bos_books_codes_py.bos_to_sword_book_code( BBB )
                     vernacularName = getBookNameFunction(BBB).replace( ' ', '' ).upper()
                     vernacularAbbrev = vernacularName
                     if len(vernacularName)>4  or (len(vernacularName)>3 and not vernacularName[0].isdigit):
@@ -4908,7 +4905,7 @@ class BibleWriter( InternalBible ):
             getBookAbbreviationFunction = BOS.getBookAbbreviation
         else: # else use our local functions from our deduced book names
             getBookNameFunction = self.getAssumedBookName # from BibleOrgSys.Formats.USFMBible (which gets it from BibleOrgSys.Formats.USFMBibleBook)
-            getBookAbbreviationFunction = bos_books_codes_py.get_osis_abbreviation
+            getBookAbbreviationFunction = bos_books_codes_py.bos_to_osis_book_code
 
         ignoredMarkers, unhandledMarkers, unhandledBooks = set(), set(), []
 
@@ -4929,7 +4926,7 @@ class BibleWriter( InternalBible ):
             #SwLocFile.write( '\n[Book Abbrevs]\n' )
             #for BBB in BOS.getBookList():
                 #if BBB in self.books:
-                    #SwLocFile.write( f'{bos_books_codes_py.get_english_name_nr(BBB).upper()}={bos_books_codes_py.get_sword_abbreviation(BBB)}\n' ) # Write the UPPER CASE language book name and the Sword abbreviation
+                    #SwLocFile.write( f'{bos_books_codes_py.get_english_name_nr(BBB).upper()}={bos_books_codes_py.bos_to_sword_book_code(BBB)}\n' ) # Write the UPPER CASE language book name and the Sword abbreviation
 
         def writeHeader( writerObject ):
             """
@@ -5294,7 +5291,7 @@ class BibleWriter( InternalBible ):
 
 
             # Main code for toOSISXML.writeOSISBook
-            bookRef = bos_books_codes_py.get_osis_abbreviation( BBB ) # OSIS book name
+            bookRef = bos_books_codes_py.bos_to_osis_book_code( BBB ) # OSIS book name
             if not bookRef:
                 logger.error( f"toOSIS: Can't write {BBB} OSIS book because no OSIS code available" )
                 unhandledBooks.append( BBB )
@@ -5651,7 +5648,7 @@ class BibleWriter( InternalBible ):
             getBookAbbreviationFunction = BOS.getBookAbbreviation
         else: # else use our local functions from our deduced book names
             getBookNameFunction = self.getAssumedBookName # from BibleOrgSys.Formats.USFMBible (which gets it from BibleOrgSys.Formats.USFMBibleBook)
-            getBookAbbreviationFunction = bos_books_codes_py.get_osis_abbreviation
+            getBookAbbreviationFunction = bos_books_codes_py.bos_to_osis_book_code
 
         ignoredMarkers, unhandledMarkers, unhandledBooks = set(), set(), []
 
@@ -5683,8 +5680,8 @@ class BibleWriter( InternalBible ):
             """
             Writes a book to the Zefania XML writerObject.
             """
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'BIBLEBOOK', [('bnumber',bos_books_codes_py.get_reference_number(BBB)), ('bname',bos_books_codes_py.get_english_name_nr(BBB)), ('bsname',bos_books_codes_py.get_osis_abbreviation(BBB))] )
-            OSISAbbrev = bos_books_codes_py.get_osis_abbreviation( BBB )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'BIBLEBOOK', [('bnumber',bos_books_codes_py.get_reference_number(BBB)), ('bname',bos_books_codes_py.get_english_name_nr(BBB)), ('bsname',bos_books_codes_py.bos_to_osis_book_code(BBB))] )
+            OSISAbbrev = bos_books_codes_py.bos_to_osis_book_code( BBB )
             if not OSISAbbrev:
                 logger.error( f"toZefania: Can't write {BBB} Zefania book because no OSIS code available" )
                 unhandledBooks.append( BBB )
@@ -6162,8 +6159,8 @@ class BibleWriter( InternalBible ):
             """
             Writes a book to the Haggai XML writerObject.
             """
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'BIBLEBOOK', [('bnumber',bos_books_codes_py.get_reference_number(BBB)), ('bname',bos_books_codes_py.get_english_name_nr(BBB)), ('bsname',bos_books_codes_py.get_osis_abbreviation(BBB))] )
-            OSISAbbrev = bos_books_codes_py.get_osis_abbreviation( BBB )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'BIBLEBOOK', [('bnumber',bos_books_codes_py.get_reference_number(BBB)), ('bname',bos_books_codes_py.get_english_name_nr(BBB)), ('bsname',bos_books_codes_py.bos_to_osis_book_code(BBB))] )
+            OSISAbbrev = bos_books_codes_py.bos_to_osis_book_code( BBB )
             if not OSISAbbrev:
                 logger.error( f"toHaggai: Can't write {BBB} Haggai book because no OSIS code available" )
                 unhandledBooks.append( BBB )
@@ -6365,11 +6362,11 @@ class BibleWriter( InternalBible ):
             getBookAbbreviationFunction = BOS.getBookAbbreviation
         else: # else use our local functions from our deduced book names
             getBookNameFunction = self.getAssumedBookName # from BibleOrgSys.Formats.USFMBible (which gets it from BibleOrgSys.Formats.USFMBibleBook)
-            getBookAbbreviationFunction = bos_books_codes_py.get_osis_abbreviation
+            getBookAbbreviationFunction = bos_books_codes_py.bos_to_osis_book_code
 
         if 0:
             bookAbbrevDict, bookNameDict, bookAbbrevNameDict = {}, {}, {}
-            for BBB in bos_books_codes_py.get_all_reference_abbreviations(): # Pre-process the language booknames
+            for BBB in bos_books_codes_py.get_all_bos_book_codes(): # Pre-process the language booknames
                 if BBB in controlDict and controlDict[BBB]:
                     bits = controlDict[BBB].split(',')
                     if len(bits)!=2: logger.error( f"toSwordModule: Unrecognized language book abbreviation and name for {BBB}: {controlDict[BBB]!r}" )
@@ -6400,7 +6397,7 @@ class BibleWriter( InternalBible ):
             #SwLocFile.write( '\n[Book Abbrevs]\n' )
             #for BBB in BOS.getBookList():
                 #if BBB in self.books:
-                    #SwLocFile.write( f'{bos_books_codes_py.get_english_name_nr(BBB).upper()}={bos_books_codes_py.get_sword_abbreviation(BBB)}\n' ) # Write the UPPER CASE language book name and the Sword abbreviation
+                    #SwLocFile.write( f'{bos_books_codes_py.get_english_name_nr(BBB).upper()}={bos_books_codes_py.bos_to_sword_book_code(BBB)}\n' ) # Write the UPPER CASE language book name and the Sword abbreviation
 
         # Make our other folders if necessary
         modsdFolder = os.path.join( outputFolderpath, 'mods.d' )
@@ -6759,7 +6756,7 @@ class BibleWriter( InternalBible ):
 
 
             # Main code for toSwordModule.writeSwordBook
-            bookRef = bos_books_codes_py.get_osis_abbreviation( BBB ) # OSIS book name
+            bookRef = bos_books_codes_py.bos_to_osis_book_code( BBB ) # OSIS book name
             writerObject.writeLineOpen( 'div', [('osisID',bookRef), getSID(), ('type',"book")] )
             haveOpenIntro = haveOpenOutline = haveOpenMajorSection = haveOpenSection = haveOpenSubsection = False
             needChapterEID = haveOpenParagraph = haveOpenVsID = haveOpenLG = haveOpenL = haveOpenList = False
@@ -7024,9 +7021,9 @@ class BibleWriter( InternalBible ):
             writeIndexEntry( xwOT, ixOT ) # Write the second entry pointing to the opening milestone
             writeIndexEntry( xwNT, ixNT ) # Write the second entry pointing to the opening milestone
             for BBB,bookData in self.books.items(): # Process each Bible book
-                if bos_books_codes_py.is_ot_nr( BBB ):
+                if bos_books_codes_py.is_old_testament_nr( BBB ):
                     xw = xwOT; ix = ixOT
-                elif bos_books_codes_py.is_nt_nr( BBB ):
+                elif bos_books_codes_py.is_new_testament_nr( BBB ):
                     xw = xwNT; ix = ixNT
                 else:
                     logger.error( f"toSwordModule: Sword module writer doesn't know how to encode {BBB} book or appendix" )
@@ -7346,7 +7343,7 @@ class BibleWriter( InternalBible ):
             writer.write( "*Chapter\n#book,fullname,shortname,chap-count\n" )
             for BBB,bookObject in self.books.items():
                 numChapters = None
-                try: bookCode = bos_books_codes_py.get_drupal_bible_abbreviation( BBB ).upper()
+                try: bookCode = bos_books_codes_py.bos_to_drupal_book_code( BBB ).upper()
                 except AttributeError: # Don't know how to encode this book
                     logger.warning( f"toDrupalBible: ignoring book: {BBB}" )
                     continue
@@ -7383,7 +7380,7 @@ class BibleWriter( InternalBible ):
             """
             Convert the internal Bible data to DrupalBible output.
             """
-            try: bookCode = bos_books_codes_py.get_drupal_bible_abbreviation( BBB ).upper()
+            try: bookCode = bos_books_codes_py.bos_to_drupal_book_code( BBB ).upper()
             except AttributeError:
                 logger.warning( "writeDrupalBibleBook: " + f"don't know how to encode {BBB} — ignored" )
                 unhandledBooks.append( BBB )
@@ -7907,9 +7904,9 @@ class BibleWriter( InternalBible ):
             maxChapters = bos_books_codes_py.get_max_chapters( BBB )
 
             # Find a suitable folder name and make the necessary folder(s)
-            if bos_books_codes_py.is_ot_nr( BBB ):
+            if bos_books_codes_py.is_old_testament_nr( BBB ):
                 subfolderName = 'OT/'
-            elif bos_books_codes_py.is_nt_nr( BBB ):
+            elif bos_books_codes_py.is_new_testament_nr( BBB ):
                 subfolderName = 'NT/'
             else:
                 subfolderName = 'Other/'
@@ -8885,7 +8882,7 @@ class BibleWriter( InternalBible ):
                 \\f + \\fr 1:20 \\ft Su ka kaluwasan te Nawumi ‘keupianan,’ piru ka kaluwasan te Mara ‘masakit se geyinawa.’\\f* (Backslashes are shown doubled here)
                 """
                 assert noteType in ('fn','en',)
-                markerList = BibleOrgSysGlobals.loadedUSFMMarkers.getMarkerListFromText( rawFootnoteContents, includeInitialText=True )
+                markerList = usfm_markers_py.get_marker_list_from_text( rawFootnoteContents, include_initial_text=True )
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"formatODFVerseText.processFootnote( {repr(rawFootnoteContents)}, {ourGlobals} ) found {markerList}" )
                 note = document.createInstance( "com.sun.star.text.Footnote" if noteType=='fn' else "com.sun.star.text.Endnote" )
                 document.Text.insertTextContent( textCursor, note, False )
@@ -8929,7 +8926,7 @@ class BibleWriter( InternalBible ):
 
                 \\x - \\xo 2:2: \\xt Lib 19:9-10; Diy 24:19.\\xt*\\x* (Backslashes are shown doubled here)
                 """
-                markerList = BibleOrgSysGlobals.loadedUSFMMarkers.getMarkerListFromText( rawXRef, includeInitialText=True )
+                markerList = usfm_markers_py.get_marker_list_from_text( rawXRef, include_initial_text=True )
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'\nformatODFVerseText.processCrossReference( {repr(rawXRef)}, {"…"} ) gives {markerList}' )
 
                 xrefNote = document.createInstance( "com.sun.star.text.Footnote" )
@@ -8994,7 +8991,7 @@ class BibleWriter( InternalBible ):
                 Insert a text segment, complete with the correct character styles if any.
                 """
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"BibleWriter.toODF.handleTextSubsegment( {repr(textSegment)} ) for {BBB} {C}:{V}" )
-                markerList = BibleOrgSysGlobals.loadedUSFMMarkers.getMarkerListFromText( textSegment, includeInitialText=True )
+                markerList = usfm_markers_py.get_marker_list_from_text( textSegment, include_initial_text=True )
                 if markerList: # we found character formatting within the text
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, C, V, f"toODF.insertFormattedODFText: {repr(textSegment)} found {markerList}" )
                     for marker, ixBS, nextSignificantChar, fullMarkerText, context, ixEnd, txt in markerList:
@@ -10215,7 +10212,7 @@ def briefDemo() -> None:
                         vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nComparing original and re-exported USFM files…" )
                         for jj, (BBB,filename1) in enumerate( fN.getMaximumPossibleFilenameTuples() ):
                             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, jj, BBB, filename1 )
-                            UUU, nn = bos_books_codes_py.reference_abbrev_to_usfm_abbrev( BBB ).upper(), bos_books_codes_py.get_usfm_num_str( BBB )
+                            UUU, nn = bos_books_codes_py.bos_book_code_to_usfm_abbrev( BBB ).upper(), bos_books_codes_py.bos_book_code_to_usfm_num_str( BBB )
                             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, jj, BBB, filename1, UUU )
                             filename2 = None
                             for fn in folderContents2:
@@ -10262,7 +10259,7 @@ def briefDemo() -> None:
                         vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nComparing original and re-exported USFM files…" )
                         for jj, (BBB,filename1) in enumerate( fN.getMaximumPossibleFilenameTuples() ):
                             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, jj, BBB, filename1 )
-                            UUU, nn = bos_books_codes_py.reference_abbrev_to_usfm_abbrev( BBB ).upper(), bos_books_codes_py.get_usfm_num_str( BBB )
+                            UUU, nn = bos_books_codes_py.bos_book_code_to_usfm_abbrev( BBB ).upper(), bos_books_codes_py.bos_book_code_to_usfm_num_str( BBB )
                             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, jj, BBB, filename1, UUU )
                             filename2 = None
                             for fn in folderContents2:
@@ -10311,7 +10308,7 @@ def briefDemo() -> None:
                         vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nComparing original and re-exported USFM files…" )
                         for jj, (BBB,filename1) in enumerate( fN.getMaximumPossibleFilenameTuples() ):
                             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, jj, BBB, filename1 )
-                            UUU, nn = bos_books_codes_py.reference_abbrev_to_usfm_abbrev( BBB ).upper(), bos_books_codes_py.get_usfm_num_str( BBB )
+                            UUU, nn = bos_books_codes_py.bos_book_code_to_usfm_abbrev( BBB ).upper(), bos_books_codes_py.bos_book_code_to_usfm_num_str( BBB )
                             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, jj, BBB, filename1, UUU )
                             filename2 = None
                             for fn in folderContents2:
@@ -10443,7 +10440,7 @@ def fullDemo() -> None:
                         vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nComparing original and re-exported USFM files…" )
                         for jj, (BBB,filename1) in enumerate( fN.getMaximumPossibleFilenameTuples() ):
                             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, jj, BBB, filename1 )
-                            UUU, nn = bos_books_codes_py.reference_abbrev_to_usfm_abbrev( BBB ).upper(), bos_books_codes_py.get_usfm_num_str( BBB )
+                            UUU, nn = bos_books_codes_py.bos_book_code_to_usfm_abbrev( BBB ).upper(), bos_books_codes_py.bos_book_code_to_usfm_num_str( BBB )
                             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, jj, BBB, filename1, UUU )
                             filename2 = None
                             for fn in folderContents2:
@@ -10510,7 +10507,7 @@ def fullDemo() -> None:
                         vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nComparing original and re-exported USFM files…" )
                         for jj, (BBB,filename1) in enumerate( fN.getMaximumPossibleFilenameTuples() ):
                             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, jj, BBB, filename1 )
-                            UUU, nn = bos_books_codes_py.reference_abbrev_to_usfm_abbrev( BBB ).upper(), bos_books_codes_py.get_usfm_num_str( BBB )
+                            UUU, nn = bos_books_codes_py.bos_book_code_to_usfm_abbrev( BBB ).upper(), bos_books_codes_py.bos_book_code_to_usfm_num_str( BBB )
                             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, jj, BBB, filename1, UUU )
                             filename2 = None
                             for fn in folderContents2:
@@ -10574,7 +10571,7 @@ def fullDemo() -> None:
                         vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nComparing original and re-exported USFM files…" )
                         for jj, (BBB,filename1) in enumerate( fN.getMaximumPossibleFilenameTuples() ):
                             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, jj, BBB, filename1 )
-                            UUU, nn = bos_books_codes_py.reference_abbrev_to_usfm_abbrev( BBB ).upper(), bos_books_codes_py.get_usfm_num_str( BBB )
+                            UUU, nn = bos_books_codes_py.bos_book_code_to_usfm_abbrev( BBB ).upper(), bos_books_codes_py.bos_book_code_to_usfm_num_str( BBB )
                             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, jj, BBB, filename1, UUU )
                             filename2 = None
                             for fn in folderContents2:

@@ -2,6 +2,7 @@
 
 //! Module handling USFM3Markers.
 //! See http://ubsicap.github.io/usfm/
+// Converted from Python to Rust by Gemini AI, May 2026 by RJH.
 
 #![allow(non_snake_case)]
 
@@ -9,6 +10,172 @@ use phf::phf_map;
 use compact_str::{CompactString, format_compact};
 use std::error::Error;
 use std::fmt;
+
+/// STATIC USFM TABLES
+
+/// Markers that are often ignored in USFM headers.
+pub static OFTEN_IGNORED_USFM_HEADER_MARKERS: &[&str] = &[ "id","usfm","ide", "sts","h", "toc1","toc2","toc3", "cl¤", "rem" ];
+
+/// All possible title markers, including numbered variants.
+pub static USFM_ALL_TITLE_MARKERS: &[&str] = &[ "mt","mt1","mt2","mt3","mt4", "mte","mte1","mte2","mte3","mte4",
+                      "imt","imt1","imt2","imt3","imt4", "imte","imte1","imte2","imte3","imte4" ];
+
+/// Markers used specifically in introductions.
+pub static USFM_INTRODUCTION_PARAGRAPH_MARKERS: &[&str] = &[ "ip","ipi", "im","imi", "ipq","imq","ipr",
+                            "iq","iq1","iq2","iq3","iq4",
+                           "iot", "io","io1","io2","io3","io4", "ili","ili1","ili2","ili3","ili4",
+                           "iex","iqt" ]; // Doesn't include ie
+
+/// All introduction markers including titles and headings.
+pub static USFM_ALL_INTRODUCTION_MARKERS: &[&str] = &[
+    "imt","imt1","imt2","imt3","imt4", "imte","imte1","imte2","imte3","imte4",
+    "is","is1","is2","is3","is4", "ip","ipi", "im","imi", "ipq","imq","ipr",
+    "iq","iq1","iq2","iq3","iq4",
+    "iot", "io","io1","io2","io3","io4", "ili","ili1","ili2","ili3","ili4",
+    "iex","iqt"
+];
+
+/// Markers for section headings.
+pub static USFM_ALL_SECTION_HEADING_MARKERS: &[&str] = &[ "s","s1","s2","s3","s4", "is","is1","is2","is3","is4", "qa", "qc" ];
+
+/// Standard Bible paragraph markers.
+pub static USFM_BIBLE_PARAGRAPH_MARKERS: &[&str] = &[ "p","pc","pr", "m","mi", "pm","pmo","pmc","pmr", "cls",
+                            "pi","pi1","pi2","pi3","pi4", "ph","ph1","ph2","ph3","ph4",
+                            "q","q1","q2","q3","q4", "qr", "qm","qm1","qm2","qm3","qm4",
+                            "li","li1","li2","li3","li4" ];
+
+/// All paragraph markers, including those for introductions.
+pub static USFM_ALL_BIBLE_PARAGRAPH_MARKERS: &[&str] = &[
+    "ip","ipi", "im","imi", "ipq","imq","ipr",
+    "iq","iq1","iq2","iq3","iq4",
+    "iot", "io","io1","io2","io3","io4", "ili","ili1","ili2","ili3","ili4",
+    "iex","iqt",
+    "p","pc","pr", "m","mi", "pm","pmo","pmc","pmr", "cls",
+    "pi","pi1","pi2","pi3","pi4", "ph","ph1","ph2","ph3","ph4",
+    "q","q1","q2","q3","q4", "qr", "qm","qm1","qm2","qm3","qm4",
+    "li","li1","li2","li3","li4"
+];
+
+/// Markers that typically appear before the first chapter.
+pub static USFM_PRECHAPTER_MARKERS: &[&str] = &[
+    "id","usfm","ide", "sts","h", "toc1","toc2","toc3", "cl¤", "rem",
+    "mt","mt1","mt2","mt3","mt4", "mte","mte1","mte2","mte3","mte4",
+    "imt","imt1","imt2","imt3","imt4", "imte","imte1","imte2","imte3","imte4",
+    "is","is1","is2","is3","is4", "ip","ipi", "im","imi", "ipq","imq","ipr",
+    "iq","iq1","iq2","iq3","iq4",
+    "iot", "io","io1","io2","io3","io4", "ili","ili1","ili2","ili3","ili4",
+    "iex","iqt", "ie"
+];
+
+/// Markers that contain printable Scripture text or related content.
+pub static USFM_PRINTABLE_MARKERS: &[&str] = &[
+    "v","r","ms1",
+    "mt","mt1","mt2","mt3","mt4", "mte","mte1","mte2","mte3","mte4",
+    "imt","imt1","imt2","imt3","imt4", "imte","imte1","imte2","imte3","imte4",
+    "is","is1","is2","is3","is4", "ip","ipi", "im","imi", "ipq","imq","ipr",
+    "iq","iq1","iq2","iq3","iq4",
+    "iot", "io","io1","io2","io3","io4", "ili","ili1","ili2","ili3","ili4",
+    "iex","iqt",
+    "s","s1","s2","s3","s4", "qa", "qc",
+    "p","pc","pr", "m","mi", "pm","pmo","pmc","pmr", "cls",
+    "pi","pi1","pi2","pi3","pi4", "ph","ph1","ph2","ph3","ph4",
+    "q","q1","q2","q3","q4", "qr", "qm","qm1","qm2","qm3","qm4",
+    "li","li1","li2","li3","li4"
+];
+
+/// Define commonly used sets of footnote markers
+pub static FOOTNOTE_SETS: &[&[&str]] = &[
+    &["fr", "fr*"],
+    &["fr", "ft"], &["fr", "ft", "ft*"],
+    &["fr", "fq"], &["fr", "fq", "fq*"],
+    &["fr", "ft", "fq"], &["fr", "ft", "fq", "fq*"],
+    &["fr", "fq", "ft"], &["fr", "fq", "ft", "ft*"],
+    &["fr", "ft", "fv"], &["fr", "ft", "fv", "fv*"],
+    &["fr", "fk", "ft"], &["fr", "fk", "ft", "ft*"],
+    &["fr", "ft", "fq", "ft"], &["fr", "ft", "fq", "ft", "ft*"],
+    &["fr", "fq", "ft", "fq"], &["fr", "fq", "ft", "fq", "fq*"],
+    &["fr", "fq", "ft", "fq", "fv"], &["fr", "fq", "ft", "fq", "fv", "fv*"],
+    &["fr", "fq", "ft", "fq", "fq"], &["fr", "fq", "ft", "fq", "fq", "fq*"],
+    &["fr", "ft", "fq", "fv", "fq"], &["fr", "ft", "fq", "fv", "fq", "fq*"],
+    &["fr", "fk", "ft", "fq", "ft"], &["fr", "fk", "ft", "fq", "ft", "ft*"],
+    &["fr", "ft", "fq", "ft", "ft"], &["fr", "ft", "fq", "ft", "ft", "ft*"],
+    &["fr", "ft", "fv", "fv*", "fq"], &["fr", "ft", "fv", "fv*", "fq", "fq*"],
+    &["fr", "ft", "fv", "fv*", "fv"], &["fr", "ft", "fv", "fv*", "fv", "fv*"],
+    &["fr", "ft", "fq", "ft", "fq", "ft"], &["fr", "ft", "fq", "ft", "fq", "ft", "ft*"],
+    &["fr", "fq", "ft", "fq", "ft", "fq"], &["fr", "fq", "ft", "fq", "ft", "fq", "fq*"],
+    &["fr", "fq", "ft", "fq", "fq", "ft"], &["fr", "fq", "ft", "fq", "fq", "ft", "ft*"],
+    &["fr", "fq", "ft", "fq", "fv", "fq"], &["fr", "fq", "ft", "fq", "fv", "fq", "fq*"],
+    &["fr", "ft", "fq", "fv", "fv*", "fq"], &["fr", "ft", "fq", "fv", "fv*", "fq", "fq*"],
+    &["fr", "ft", "fq", "fv", "fv*", "fv"], &["fr", "ft", "fq", "fv", "fv*", "fv", "fv*"],
+    &["fr", "ft", "fq", "ft", "fv", "fv", "fq"], &["fr", "ft", "fq", "ft", "fv", "fv", "fq", "fq*"],
+    &["fr", "fq", "ft", "fq", "ft", "fq", "ft"], &["fr", "fq", "ft", "fq", "ft", "fq", "ft", "ft*"],
+    &["fr", "ft", "fq", "ft", "fq", "ft", "fq"], &["fr", "ft", "fq", "ft", "fq", "ft", "fq", "fq*"],
+    &["fr", "fq", "ft", "fq", "fq", "ft", "fq"], &["fr", "fq", "ft", "fq", "fq", "ft", "fq", "fq*"],
+    &["fr", "fq", "ft", "fq", "ft", "fq", "fv"], &["fr", "fq", "ft", "fq", "ft", "fq", "fv", "fv*"],
+    &["fr", "ft", "fq", "fv", "fq", "fv", "fq"], &["fr", "ft", "fq", "fv", "fq", "fv", "fq", "fq*"],
+    &["fr", "fk", "ft", "fq", "ft", "fq", "ft"], &["fr", "fk", "ft", "fq", "ft", "fq", "ft", "ft*"],
+    &["fr", "fq", "ft", "fq", "fv", "fv*", "fv"], &["fr", "fq", "ft", "fq", "fv", "fv*", "fv", "fv*"],
+    &["fr", "ft", "fq", "ft", "fv", "fv*", "fq"], &["fr", "ft", "fq", "ft", "fv", "fv*", "fq", "fq*"],
+    &["fr", "fq", "ft", "fq", "fv", "fv*", "ft"], &["fr", "fq", "ft", "fq", "fv", "fv*", "ft", "ft*"],
+    &["fr", "ft", "fq", "fq", "fv", "fv*", "ft"], &["fr", "ft", "fq", "fq", "fv", "fv*", "ft", "ft*"],
+    &["fr", "ft", "fq", "fq", "fv", "fv*", "fq"], &["fr", "ft", "fq", "fq", "fv", "fv*", "fq", "fq*"],
+    &["fr", "fq", "fv", "fv*", "ft", "fq", "fv"], &["fr", "fq", "fv", "fv*", "ft", "fq", "fv", "fv*"],
+    &["fr", "ft", "fk", "ft", "fk", "ft", "fk", "ft"], &["fr", "ft", "fk", "ft", "fk", "ft", "fk", "ft", "ft*"],
+    &["fr", "fq", "ft", "fq", "ft", "fq", "ft", "fq"], &["fr", "fq", "ft", "fq", "ft", "fq", "ft", "fq", "fq*"],
+    &["fr", "fq", "ft", "fq", "ft", "fq", "fq", "ft"], &["fr", "fq", "ft", "fq", "ft", "fq", "fq", "ft", "ft*"],
+    &["fr", "fq", "ft", "fq", "fq", "ft", "fq", "ft"], &["fr", "fq", "ft", "fq", "fq", "ft", "fq", "ft", "ft*"],
+    &["fr", "fq", "ft", "fq", "fq", "ft", "fq", "fv"], &["fr", "fq", "ft", "fq", "fq", "ft", "fq", "fv", "fv*"],
+    &["fr", "ft", "fq", "ft", "fq", "fq", "ft", "fq"], &["fr", "ft", "fq", "ft", "fq", "fq", "ft", "fq", "fq*"],
+    &["fr", "ft", "fq", "ft", "fq", "ft", "fq", "ft"], &["fr", "ft", "fq", "ft", "fq", "ft", "fq", "ft", "ft*"],
+    &["fr", "fq", "fv", "fq", "ft", "fq", "fv", "fq"], &["fr", "fq", "fv", "fq", "ft", "fq", "fv", "fq", "fq*"],
+    &["fr", "ft", "fq", "ft", "fv", "fv*", "fq", "ft"], &["fr", "ft", "fq", "ft", "fv", "fv*", "fq", "ft", "ft*"],
+    &["fr", "fq", "ft", "fq", "fv", "fv*", "ft", "fq"], &["fr", "fq", "ft", "fq", "fv", "fv*", "ft", "fq", "fq*"],
+    &["fr", "ft", "fv", "fq", "ft", "fv", "fq", "fv", "fq"], &["fr", "ft", "fv", "fq", "ft", "fv", "fq", "fv", "fq", "fq*"],
+    &["fr", "fq", "ft", "fq", "ft", "fq", "fq", "ft", "fq"], &["fr", "fq", "ft", "fq", "ft", "fq", "fq", "ft", "fq", "fq*"],
+    &["fr", "fq", "ft", "fq", "fq", "ft", "fq", "ft", "fq"], &["fr", "fq", "ft", "fq", "fq", "ft", "fq", "ft", "fq", "fq*"],
+    &["fr", "fq", "ft", "fq", "fq", "ft", "fq", "fq", "ft"], &["fr", "fq", "ft", "fq", "fq", "ft", "fq", "fq", "ft", "ft*"],
+    &["fr", "ft", "fq", "ft", "fq", "ft", "fq", "ft", "fq"], &["fr", "ft", "fq", "ft", "fq", "ft", "fq", "ft", "fq", "fq*"],
+    &["fr", "ft", "fv", "fv*", "fq", "ft", "fv", "fv*", "fq"], &["fr", "ft", "fv", "fv*", "fq", "ft", "fv", "fv*", "fq", "fq*"],
+    &["fr", "fq", "ft", "fq", "fq", "ft", "fq", "fq", "ft", "fq"], &["fr", "fq", "ft", "fq", "fq", "ft", "fq", "fq", "ft", "fq", "fq*"],
+    &["fr", "fq", "ft", "fq", "ft", "fq", "ft", "fq", "fq", "ft"], &["fr", "fq", "ft", "fq", "ft", "fq", "ft", "fq", "fq", "ft", "ft*"],
+    &["fr", "fq", "ft", "fq", "fq", "ft", "fq", "ft", "fq", "ft"], &["fr", "fq", "ft", "fq", "fq", "ft", "fq", "ft", "fq", "ft", "ft*"],
+    &["fr", "fq", "ft", "fq", "ft", "fq", "ft", "fq", "ft", "fq"], &["fr", "fq", "ft", "fq", "ft", "fq", "ft", "fq", "ft", "fq", "fq*"],
+    &["fr", "ft", "fq", "ft", "fq", "ft", "fq", "ft", "fq", "ft"], &["fr", "ft", "fq", "ft", "fq", "ft", "fq", "ft", "fq", "ft", "ft*"],
+    &["fr", "ft", "fq", "fv", "fv*", "ft", "fq", "fv", "fv*", "fv"], &["fr", "ft", "fq", "fv", "fv*", "ft", "fq", "fv", "fv*", "fv", "fv*"],
+    &["fr", "ft", "fq", "fv", "fv*", "fv", "fv*", "fv", "fv*", "fv"], &["fr", "ft", "fq", "fv", "fv*", "fv", "fv*", "fv", "fv*", "fv", "fv*"],
+    &["fr", "fq", "ft", "fq", "fq", "ft", "fq", "ft", "fq", "ft", "fq"], &["fr", "fq", "ft", "fq", "fq", "ft", "fq", "ft", "fq", "ft", "fq", "fq*"],
+    &["fr", "fq", "ft", "fq", "ft", "fq", "fq", "ft", "fq", "ft", "fq"], &["fr", "fq", "ft", "fq", "ft", "fq", "fq", "ft", "fq", "ft", "fq", "fq*"],
+    &["fr", "ft", "fq", "ft", "fv", "fv*", "fq", "ft", "fv", "fv*", "fq"], &["fr", "ft", "fq", "ft", "fv", "fv*", "fq", "ft", "fv", "fv*", "fq", "fq*"],
+    &["fr", "fq", "ft", "fq", "ft", "fq", "ft", "fq", "ft", "fq", "ft", "fq"], &["fr", "fq", "ft", "fq", "ft", "fq", "ft", "fq", "ft", "fq", "ft", "fq", "fq*"],
+    &["fr", "ft", "fq", "ft", "fq", "ft", "fq", "ft", "fq", "ft", "fq", "ft", "fq"], &["fr", "ft", "fq", "ft", "fq", "ft", "fq", "ft", "fq", "ft", "fq", "ft", "fq", "fq*"],
+    &["fr", "fq", "ft", "fq", "fq", "ft", "fq", "fq", "ft", "fq", "fq", "ft", "fq"], &["fr", "fq", "ft", "fq", "fq", "ft", "fq", "fq", "ft", "fq", "fq", "ft", "fq", "fq*"],
+    &["fr", "fq", "ft", "fq", "fv", "fv*", "fv", "fv*", "ft", "fq", "fv", "fv*", "fv"], &["fr", "fq", "ft", "fq", "fv", "fv*", "fv", "fv*", "ft", "fq", "fv", "fv*", "fv", "fv*"],
+    &["fr", "ft", "fv", "fv*", "fq", "ft", "fv", "fv*", "fq", "ft", "fv", "fv*", "fq"], &["fr", "ft", "fv", "fv*", "fq", "ft", "fv", "fv*", "fq", "ft", "fv", "fv*", "fq", "fq*"],
+    &["fr", "fq", "ft", "fq", "fq", "ft", "fq", "fq", "ft", "fq", "fq", "ft", "fq", "fq", "ft", "fq"], &["fr", "fq", "ft", "fq", "fq", "ft", "fq", "fq", "ft", "fq", "fq", "ft", "fq", "fq", "ft", "fq", "fq*"],
+    &["fr", "ft", "fq", "fv", "fq", "fv", "fq", "fv", "fq", "fv", "fq", "fv", "fq", "fv", "fq", "fv", "fq", "fv", "fq"], &["fr", "ft", "fq", "fv", "fq", "fv", "fq", "fv", "fq", "fv", "fq", "fv", "fq", "fv", "fq", "fv", "fq", "fv", "fq", "fq*"],
+    &["fr", "ft", "fq", "fv", "fv*", "fv", "fv*", "fv", "fv*", "fv", "fv*", "fv", "fv*", "fv", "fv*", "fv", "fv*", "fv"], &["fr", "ft", "fq", "fv", "fv*", "fv", "fv*", "fv", "fv*", "fv", "fv*", "fv", "fv*", "fv", "fv*", "fv", "fv*", "fv", "fv*"],
+];
+
+/// Define commonly used sets of cross-reference markers
+pub static XREF_SETS: &[&[&str]] = &[
+    &["xo", "xdc"], &["xo", "xdc", "xdc*"],
+    &["xo", "xt"],&["xo", "xt", "xt*"],
+    &["xo", "xt", "xk"],
+    &["xo", "xt", "xdc"], &["xo", "xt", "xdc*"],
+    &["xo", "xdc", "xt"], &["xo", "xdc", "xt", "xt*"],
+    &["xo", "xt", "xo", "xt"], &["xo", "xt", "xo", "xt", "xt*"],
+    &["xo", "xt", "xk", "xt"], &["xo", "xt", "xk", "xt", "xt*"],
+    &["xo", "xt", "xdc", "xt"], &["xo", "xt", "xdc", "xt", "xt*"],
+    &["xo", "xt", "xt", "xo", "xt"], &["xo", "xt", "xt", "xo", "xt", "xt*"],
+    &["xo", "xt", "xo", "xt", "xdc"], &["xo", "xt", "xo", "xt", "xdc", "xdc*"],
+    &["xo", "xt", "xo", "xt", "xo", "xt"], &["xo", "xt", "xo", "xt", "xo", "xt", "xt*"],
+    &["xo", "xdc", "xt", "xt", "xo", "xt"], &["xo", "xdc", "xt", "xt", "xo", "xt", "xt*"],
+    &["xo", "xt", "xdc", "xt", "xo", "xt"], &["xo", "xt", "xdc", "xt", "xo", "xt", "xt*"],
+    &["xo", "xt", "xo", "xt", "xo", "xt", "xo", "xt"], &["xo", "xt", "xo", "xt", "xo", "xt", "xo", "xt", "xt*"],
+    &["xo", "xt", "xdc", "xt", "xo", "xt", "xo", "xt"], &["xo", "xt", "xdc", "xt", "xo", "xt", "xo", "xt", "xt*"],
+    &["xo", "xt", "xo", "xt", "xo", "xt", "xo", "xt", "xo", "xt"], &["xo", "xt", "xo", "xt", "xo", "xt", "xo", "xt", "xo", "xt", "xt*"],
+    &["xo", "xt", "xo", "xt", "xo", "xt", "xo", "xt", "xo", "xt", "xo", "xt"], &["xo", "xt", "xo", "xt", "xo", "xt", "xo", "xt", "xo", "xt", "xo", "xt", "xt*"],
+];
 
 //STATIC_STRUCTS_GO_HERE
 
@@ -109,11 +276,30 @@ pub fn get_marker_content_type(marker: &str) -> Option<char> {
 }
 
 /// Returns a marker without numerical suffixes, i.e., s1 -> s, q1 -> q, etc.
+/// This "un-numbers" the marker if it has a numeric suffix.
 pub fn to_raw_marker(marker: &str) -> Option<&'static str> {
     get_array_index(marker).ok().map(|idx| USFM_MARKER_ARRAY[idx].marker)
 }
 
+/// Returns a standard marker, i.e., s -> s1, q -> q1, etc.
+/// This ensures the marker has the standard '1' suffix if it is a numberable marker
+/// and no suffix was provided.
+pub fn to_standard_marker(marker: &str) -> Option<&'static str> {
+    let idx = get_array_index(marker).ok()?;
+    let entry = &USFM_MARKER_ARRAY[idx];
+    if marker == entry.marker && entry.highest_number_suffix.is_some() {
+        // It's a base marker that needs '1', e.g., "q" -> "q1"
+        let standard = format_compact!("{}1", marker);
+        USFM_MARKER_MAP.get_key(standard.as_str()).copied()
+    } else {
+        // It's already a numbered marker (e.g., "q2") or not numberable (e.g., "p")
+        // Return the static version of the input from the map
+        USFM_MARKER_MAP.get_key(marker).copied()
+    }
+}
+
 /// Return a short string indicating where the marker occurs, e.g. "Introduction", "Text".
+/// Use get_occurs_in_list() to get a list of all possibilities.
 pub fn marker_occurs_in(marker: &str) -> Option<&'static str> {
     get_array_index(marker).ok().map(|idx| USFM_MARKER_ARRAY[idx].occurs_in)
 }
@@ -126,6 +312,17 @@ pub fn get_marker_english_name(marker: &str) -> Option<&'static str> {
 /// Returns the description for a marker (or None).
 pub fn get_marker_description(marker: &str) -> Option<&'static str> {
     get_array_index(marker).ok().and_then(|idx| USFM_MARKER_ARRAY[idx].description)
+}
+
+/// Returns a list of strings which marker_occurs_in can return.
+pub fn get_occurs_in_list() -> Vec<&'static str> {
+    let mut oi_list = Vec::new();
+    for entry in USFM_MARKER_ARRAY.iter() {
+        if !oi_list.contains(&entry.occurs_in) {
+            oi_list.push(entry.occurs_in);
+        }
+    }
+    oi_list
 }
 
 /// Returns a list of all possible internal markers.
@@ -186,10 +383,8 @@ pub fn get_character_markers_list(
                         if include_end_markers {
                             result.push(format_compact!("{}*", m_with_digit).to_string());
                             if include_nested_markers {
-                                result.push(if include_backslash { format_compact!("\\+{}*{}", marker, digit) } else { format_compact!("+{}*{}", marker, digit) }.to_string()); // Wait, USFM digit comes before asterisk? No, \it1*
-                                // Let's check USFM spec. Usually \it1 ... \it1*
-                                // My Python code said: result.append( adjMarker + str_digit + '*' )
-                                // So \it1*
+                                result.push(if include_backslash { format_compact!("\\+{}*{}", marker, digit) } else { format_compact!("+{}*{}", marker, digit) }.to_string()); 
+                                // s1 -> \s1*
                             }
                         }
                     }
@@ -202,6 +397,7 @@ pub fn get_character_markers_list(
 
 /// Returns a list of all possible note markers.
 /// This includes figure, footnote and xref markers.
+/// These are fields that should not normally be displayed inline with the text.
 pub fn get_note_markers_list() -> Vec<&'static str> {
     USFM_MARKER_ARRAY.iter()
         .filter(|m| m.level == USFMMarkerLevel::Note)
@@ -209,7 +405,26 @@ pub fn get_note_markers_list() -> Vec<&'static str> {
         .collect()
 }
 
-/// Returns a list of all possible new line markers.
+/// Returns a container of typical footnote and xref sets.
+/// Use select="fn" for footnotes, "xr" for cross-references, or "All" for both.
+pub fn get_typical_note_sets(select: &str) -> Vec<&'static [&'static str]> {
+    match select {
+        "fn" => FOOTNOTE_SETS.to_vec(),
+        "xr" => XREF_SETS.to_vec(),
+        "All" => {
+            let mut res = FOOTNOTE_SETS.to_vec();
+            res.extend_from_slice(XREF_SETS);
+            res
+        }
+        _ => Vec::new(),
+    }
+}
+
+/// Returns a list of all possible new line markers depending on the parameter:
+///     'Raw': Doesn't include q1, q2, ...
+///     'Numbered': Doesn't include q
+///     'Combined': Includes q, q1, q2, ...
+///     'CanonicalText': Doesn't include id, h1, b, q
 pub fn get_newline_markers_list(option: &str) -> Vec<String> {
     match option {
         "Raw" => {
@@ -272,6 +487,7 @@ pub fn get_newline_markers_list(option: &str) -> Vec<String> {
 /// If closed_flag=Some(false), goes to the next marker or end of line.
 /// If closed_flag=None (unknown), stops at the first of closing marker, next marker, or end of line.
 pub fn remove_usfm_character_field(marker: &str, original_text: &str, closed_flag: Option<bool>) -> CompactString {
+    // dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "removeUSFMCharacterField( {}, {}, {} )".format( original_text, marker, closed_flag ) )
     let mut text = CompactString::new(original_text);
     let open_pattern = format_compact!("\\{} ", marker);
     let close_pattern = format_compact!("\\{}*", marker);
@@ -284,12 +500,15 @@ pub fn remove_usfm_character_field(marker: &str, original_text: &str, closed_fla
                     .map(|rel| rel + ix + open_pattern.len());
                 match ix_end {
                     None => {
+                        // remove until end of line
                         text.truncate(ix);
                     }
                     Some(end) => {
                         if text[end..].starts_with(close_pattern.as_str()) {
+                            // remove the end marker also
                             text.replace_range(ix..end + close_pattern.len(), "");
                         } else {
+                            // leave the next marker in place
                             text.replace_range(ix..end, "");
                         }
                     }
@@ -300,6 +519,7 @@ pub fn remove_usfm_character_field(marker: &str, original_text: &str, closed_fla
                     .map(|rel| rel + ix + open_pattern.len()) {
                     text.replace_range(ix..ix_end + close_pattern.len(), "");
                 } else {
+                    // logging.error( "removeUSFMCharacterField: no end marker for {!r} in {!r}".format( marker, original_text ) )
                     break;
                 }
             }
@@ -308,11 +528,14 @@ pub fn remove_usfm_character_field(marker: &str, original_text: &str, closed_fla
                     .map(|rel| rel + ix + open_pattern.len());
                 match ix_end {
                     None => {
+                        // remove until end of line
                         text.truncate(ix);
                     }
                     Some(end) => {
                         if end < t_len - 1 && text.as_bytes()[end + 1] == b'+' {
-                            // Doesn't handle embedded markers yet
+                            // We've hit an embedded marker
+                            // logger = logging.critical if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag else logging.error
+                            // logger( "removeUSFMCharacterField: doesn't handle embedded markers yet with {!r} in {!r}".format( marker, original_text ) )
                             break;
                         } else {
                             text.replace_range(ix..end, "");
@@ -330,6 +553,12 @@ pub fn remove_usfm_character_field(marker: &str, original_text: &str, closed_fla
 /// so it doesn't work with footnote or cross-reference fields where
 /// the next open marker implicitly closes the previous marker.
 ///
+/// Parameter 1 is a list of 3-tuples of the replacements to be made:
+///     1/ The set of markers
+///     2/ The replacement text for the opening marker
+///     3/ The replacement text for the closing marker
+/// Parameter 2 is the original text.
+///
 /// Produces warning messages if the opening and close markers don't match.
 ///
 /// Returns the adjusted text.
@@ -337,12 +566,24 @@ pub fn replace_usfm_character_fields(replacements: &[(&[&str], &str, &str)], ori
     let mut text = CompactString::new(original_text);
     for (markers, open_rep, close_rep) in replacements {
         for &marker in *markers {
+            // Handle the traditional USFM markers
             let open_m = format_compact!("\\{} ", marker);
             let close_m = format_compact!("\\{}*", marker);
+            // openCount, closedCount = original_text.count( openMarker ), original_text.count( closeMarker )
+            // if openCount > closedCount:
+            //     logging.warning( "replaceUSFMCharacterFields: missing close marker for {!r} in {!r}".format( openMarker, original_text ) )
+            // elif openCount < closedCount:
+            //     logging.warning( "replaceUSFMCharacterFields: superfluous {!r} close marker in {!r}".format( closeMarker, original_text ) )
             text = text.replace(open_m.as_str(), open_rep).replace(close_m.as_str(), close_rep).into();
             
+            // Handle the new v2.4 nested markers
             let nested_open_m = format_compact!("\\+{} ", marker);
             let nested_close_m = format_compact!("\\+{}*", marker);
+            // openCount, closedCount = original_text.count( openMarker ), original_text.count( closeMarker )
+            // if openCount > closedCount:
+            //     logging.warning( "replaceUSFMCharacterFields: missing nested close marker for {!r} in {!r}".format( openMarker, original_text ) )
+            // elif openCount < closedCount:
+            //     logging.warning( "replaceUSFMCharacterFields: superfluous {!r} nested close marker in {!r}".format( closeMarker, original_text ) )
             text = text.replace(nested_open_m.as_str(), open_rep).replace(nested_close_m.as_str(), close_rep).into();
         }
     }
@@ -375,6 +616,22 @@ pub struct MarkerInfo<'a> {
 
 /// Given a text, return a list of the actual markers
 /// (along with their positions and other useful derived information).
+///
+/// Returns a list of MarkerInfo containing:
+/// 1: marker or None for initial text (if include_initial_text)
+/// 2: indexOfBackslashCharacter in text string
+/// 3: nextSignificantChar
+///     ' ' for normal opening marker
+///     '+' for nested opening marker
+///     '-' for nested closing marker
+///     '*' for normal closing marker
+///     None for end of line.
+/// 4: full marker text including the backslash (can be used to search for)
+/// 5: character context for the following text (list of markers, including this one)
+/// 6: index (to the result list of this function) of the
+///     marker which closes this opening marker (or None if it's not an opening marker)
+/// 7: text field from the marker until the next USFM
+///     but any text preceding the first USFM is not returned anywhere unless include_initial_text is set.
 pub fn get_marker_list_from_text(text: &str, include_initial_text: bool, _verify_markers: bool) -> Vec<MarkerInfo<'_>> {
     if text.is_empty() { return Vec::new(); }
     
@@ -545,6 +802,20 @@ mod tests {
     }
 
     #[test]
+    fn test_to_standard_marker() {
+        assert_eq!(to_standard_marker("q"), Some("q1"));
+        assert_eq!(to_standard_marker("q1"), Some("q1"));
+        assert_eq!(to_standard_marker("q2"), Some("q2"));
+        assert_eq!(to_standard_marker("p"), Some("p"));
+        assert_eq!(to_standard_marker("s"), Some("s1"));
+        assert_eq!(to_standard_marker("s2"), Some("s2"));
+        assert_eq!(to_standard_marker("s3"), Some("s3"));
+        assert_eq!(to_standard_marker("s4"), Some("s4"));
+        assert_eq!(to_standard_marker("s5"), None); // s5 is not a valid marker
+        assert_eq!(to_standard_marker("xyz"), None);
+    }
+
+    #[test]
     fn test_marker_metadata() {
         assert_eq!(get_marker_closure_type("it"), Some('A'));
         assert_eq!(get_marker_closure_type("p"), Some('N'));
@@ -635,6 +906,13 @@ mod tests {
         assert!(nl_num.contains(&"q1".to_string()));
         assert!(!nl_num.contains(&"q".to_string())); // Numbered only
     }
-}
 
-//WARNINGS_GO_HERE
+    #[test]
+    fn test_typical_note_sets() {
+        let fn_sets = get_typical_note_sets("fn");
+        assert!(fn_sets.contains(&&["fr", "fr*"][..]));
+        
+        let xr_sets = get_typical_note_sets("xr");
+        assert!(xr_sets.contains(&&["xo", "xt"][..]));
+    }
+}

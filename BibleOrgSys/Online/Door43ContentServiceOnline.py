@@ -405,7 +405,7 @@ class DCSBible( USFMBible ):
                 # TODO: Change to .tar.gz instead of zip
                 nn = bos_books_codes_py.get_reference_number( BBB )
                 if nn > 39: nn += 1 # DSC uses #41 for MAT (not 39)
-                uBBB = bos_books_codes_py.reference_abbrev_to_usfm_abbrev( BBB ).upper()
+                uBBB = bos_books_codes_py.bos_book_code_to_usfm_abbrev( BBB ).upper()
                 USFMfilename = f'{nn:02}-{uBBB}.usfm'
                 zipURL = f'{self.baseURL}/raw/branch/master/{USFMfilename}'
                 if BibleOrgSysGlobals.verbosityLevel > 1:

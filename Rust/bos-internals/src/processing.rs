@@ -360,7 +360,7 @@ pub fn process_lines(
 #[cfg(test)]
 mod tests {
 
-    use bos_books_codes::{is_ot_nr, is_nt_nr};
+    use bos_books_codes::{is_old_testament_nr, is_new_testament_nr};
 
     use super::*;
     use std::fs::File;
@@ -718,7 +718,7 @@ mod tests {
             if let Some(file_name) = path.file_name().and_then(|s| s.to_str()) {
                 if file_name.starts_with("OET-LV_") && file_name.ends_with(".ESFM") {
                     let book_code = &file_name[7..file_name.len() - 5];
-                    if book_code.len() == 3 && is_ot_nr(book_code){
+                    if book_code.len() == 3 && is_old_testament_nr(book_code){
                         books_to_verify.push((book_code.to_string(), path.to_str().unwrap().to_string()));
                     }
                 }
@@ -775,7 +775,7 @@ mod tests {
             if let Some(file_name) = path.file_name().and_then(|s| s.to_str()) {
                 if file_name.starts_with("OET-LV_") && file_name.ends_with(".ESFM") {
                     let book_code = &file_name[7..file_name.len() - 5];
-                    if book_code.len() == 3 && is_nt_nr(book_code){
+                    if book_code.len() == 3 && is_new_testament_nr(book_code){
                         books_to_verify.push((book_code.to_string(), path.to_str().unwrap().to_string()));
                     }
                 }
@@ -832,7 +832,7 @@ mod tests {
             if let Some(file_name) = path.file_name().and_then(|s| s.to_str()) {
                 if file_name.starts_with("OET-RV_") && file_name.ends_with(".ESFM") {
                     let book_code = &file_name[7..file_name.len() - 5];
-                    if book_code.len() == 3 && (is_ot_nr(book_code) || is_nt_nr(book_code)){
+                    if book_code.len() == 3 && (is_old_testament_nr(book_code) || is_new_testament_nr(book_code)){
                         books_to_verify.push((book_code.to_string(), path.to_str().unwrap().to_string()));
                     }
                 }

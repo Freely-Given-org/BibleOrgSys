@@ -404,9 +404,9 @@ def theWordAdjustLine( BBB:str, C:str, V:str, originalLine:str ):
         <RX Ps 90:2><RX Jes 40:21-22><RX Joh 1:1-3><RX Hand 17:24><RX Kol 1:16-17><RX Heb 1:10><RX Heb 11:3>"""
     if '\\x' in line: # Remove cross-references completely (why???)
         # #line = line.replace('\\x ','<RX>').replace('\\x*','<Rx>')
-        # line = removeUSFMCharacterField( 'x', line, closedFlag=True ).lstrip() # Remove superfluous spaces
+        # line = removeUSFMCharacterField( 'x', line, closed_flag=True ).lstrip() # Remove superfluous spaces
         for marker in ( 'xo', ): # simply remove these whole fields if they exist
-            line = removeUSFMCharacterField( marker, line, closedFlag=None )
+            line = removeUSFMCharacterField( marker, line, closed_flag=None )
         for safetyCount in range(1,10):
             if '\\x' not in line: break # all done
             ixStart = line.index( '\\x ')
@@ -420,11 +420,11 @@ def theWordAdjustLine( BBB:str, C:str, V:str, originalLine:str ):
             line = f"{line[:ixStart]}{''.join(newList)}{line[ixEnd+3]}" # Reassemble the line
         else:
             logging.critical( "theWordAdjustLine had footnote nesting problem with {BBB} {C}:{V} '{originalLine}'" )
-            line = removeUSFMCharacterField( 'x', originalLine, closedFlag=True ).lstrip() # Remove superfluous spaces
+            line = removeUSFMCharacterField( 'x', originalLine, closed_flag=True ).lstrip() # Remove superfluous spaces
 
     if '\\f' in line: # Handle footnotes
         for marker in ( 'fr', 'fm', ): # simply remove these whole fields
-            line = removeUSFMCharacterField( marker, line, closedFlag=None )
+            line = removeUSFMCharacterField( marker, line, closed_flag=None )
         for marker in ( 'fq', 'fqa', 'fl', 'fk', ): # italicise these ones
             while f'\\{marker} ' in line:
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, C, V, marker, line.count('\\'+marker+' '), line )
@@ -449,9 +449,9 @@ def theWordAdjustLine( BBB:str, C:str, V:str, originalLine:str ):
             #halt
 
     if '\\' in line: # Handle character formatting fields
-        line = removeUSFMCharacterField( 'fig', line, closedFlag=True ) # Remove figures
-        line = removeUSFMCharacterField( 'str', line, closedFlag=True ) # Remove Strong's numbers
-        line = removeUSFMCharacterField( 'sem', line, closedFlag=True ) # Remove semantic tagging
+        line = removeUSFMCharacterField( 'fig', line, closed_flag=True ) # Remove figures
+        line = removeUSFMCharacterField( 'str', line, closed_flag=True ) # Remove Strong's numbers
+        line = removeUSFMCharacterField( 'sem', line, closed_flag=True ) # Remove semantic tagging
         replacements = (
             ( ('add',), '<FI>','<Fi>' ),
             ( ('qt',), '<FO>','<Fo>' ),
@@ -759,7 +759,7 @@ def handleRTFLine( myName, BBB:str, C:str, V:str, originalLine:str, bookObject, 
                 marker = bits[0][1:]
                 if len(bits) == 1:
                     #if bits[0] in ('\\p','\\b'):
-                    if BibleOrgSysGlobals.loadedUSFMMarkers.isNewlineMarker( marker ):
+                    if usfm_markers_py.is_newline_marker( marker ):
                         if C==1 and V==1 and not appendedCFlag: bookObject.addLine( 'c', str(C) ); appendedCFlag = True
                         bookObject.addLine( marker, '' )
                     else:
@@ -776,7 +776,7 @@ def handleRTFLine( myName, BBB:str, C:str, V:str, originalLine:str, bookObject, 
                         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "marker", marker )
                         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "leftovers", repr(leftovers) )
                         assert marker in ('mt1','mt2','mt3', 's1','s2','s3', 'q1','q2','q3', 'r')
-                    if BibleOrgSysGlobals.loadedUSFMMarkers.isNewlineMarker( marker ):
+                    if usfm_markers_py.is_newline_marker( marker ):
                         bookObject.addLine( marker, bits[1] )
                     elif not writtenV:
                         bookObject.addLine( 'v', f'{V} {segment}' )

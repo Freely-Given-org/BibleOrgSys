@@ -4,6 +4,7 @@
 
 //! Module handling USFM3Markers.
 //! See http://ubsicap.github.io/usfm/
+// Converted from Python to Rust by Gemini AI, May 2026 by RJH.
 
 #![allow(non_snake_case)]
 
@@ -11,6 +12,172 @@ use phf::phf_map;
 use compact_str::{CompactString, format_compact};
 use std::error::Error;
 use std::fmt;
+
+/// STATIC USFM TABLES
+
+/// Markers that are often ignored in USFM headers.
+pub static OFTEN_IGNORED_USFM_HEADER_MARKERS: &[&str] = &[ "id","usfm","ide", "sts","h", "toc1","toc2","toc3", "cl¤", "rem" ];
+
+/// All possible title markers, including numbered variants.
+pub static USFM_ALL_TITLE_MARKERS: &[&str] = &[ "mt","mt1","mt2","mt3","mt4", "mte","mte1","mte2","mte3","mte4",
+                      "imt","imt1","imt2","imt3","imt4", "imte","imte1","imte2","imte3","imte4" ];
+
+/// Markers used specifically in introductions.
+pub static USFM_INTRODUCTION_PARAGRAPH_MARKERS: &[&str] = &[ "ip","ipi", "im","imi", "ipq","imq","ipr",
+                            "iq","iq1","iq2","iq3","iq4",
+                           "iot", "io","io1","io2","io3","io4", "ili","ili1","ili2","ili3","ili4",
+                           "iex","iqt" ]; // Doesn't include ie
+
+/// All introduction markers including titles and headings.
+pub static USFM_ALL_INTRODUCTION_MARKERS: &[&str] = &[
+    "imt","imt1","imt2","imt3","imt4", "imte","imte1","imte2","imte3","imte4",
+    "is","is1","is2","is3","is4", "ip","ipi", "im","imi", "ipq","imq","ipr",
+    "iq","iq1","iq2","iq3","iq4",
+    "iot", "io","io1","io2","io3","io4", "ili","ili1","ili2","ili3","ili4",
+    "iex","iqt"
+];
+
+/// Markers for section headings.
+pub static USFM_ALL_SECTION_HEADING_MARKERS: &[&str] = &[ "s","s1","s2","s3","s4", "is","is1","is2","is3","is4", "qa", "qc" ];
+
+/// Standard Bible paragraph markers.
+pub static USFM_BIBLE_PARAGRAPH_MARKERS: &[&str] = &[ "p","pc","pr", "m","mi", "pm","pmo","pmc","pmr", "cls",
+                            "pi","pi1","pi2","pi3","pi4", "ph","ph1","ph2","ph3","ph4",
+                            "q","q1","q2","q3","q4", "qr", "qm","qm1","qm2","qm3","qm4",
+                            "li","li1","li2","li3","li4" ];
+
+/// All paragraph markers, including those for introductions.
+pub static USFM_ALL_BIBLE_PARAGRAPH_MARKERS: &[&str] = &[
+    "ip","ipi", "im","imi", "ipq","imq","ipr",
+    "iq","iq1","iq2","iq3","iq4",
+    "iot", "io","io1","io2","io3","io4", "ili","ili1","ili2","ili3","ili4",
+    "iex","iqt",
+    "p","pc","pr", "m","mi", "pm","pmo","pmc","pmr", "cls",
+    "pi","pi1","pi2","pi3","pi4", "ph","ph1","ph2","ph3","ph4",
+    "q","q1","q2","q3","q4", "qr", "qm","qm1","qm2","qm3","qm4",
+    "li","li1","li2","li3","li4"
+];
+
+/// Markers that typically appear before the first chapter.
+pub static USFM_PRECHAPTER_MARKERS: &[&str] = &[
+    "id","usfm","ide", "sts","h", "toc1","toc2","toc3", "cl¤", "rem",
+    "mt","mt1","mt2","mt3","mt4", "mte","mte1","mte2","mte3","mte4",
+    "imt","imt1","imt2","imt3","imt4", "imte","imte1","imte2","imte3","imte4",
+    "is","is1","is2","is3","is4", "ip","ipi", "im","imi", "ipq","imq","ipr",
+    "iq","iq1","iq2","iq3","iq4",
+    "iot", "io","io1","io2","io3","io4", "ili","ili1","ili2","ili3","ili4",
+    "iex","iqt", "ie"
+];
+
+/// Markers that contain printable Scripture text or related content.
+pub static USFM_PRINTABLE_MARKERS: &[&str] = &[
+    "v","r","ms1",
+    "mt","mt1","mt2","mt3","mt4", "mte","mte1","mte2","mte3","mte4",
+    "imt","imt1","imt2","imt3","imt4", "imte","imte1","imte2","imte3","imte4",
+    "is","is1","is2","is3","is4", "ip","ipi", "im","imi", "ipq","imq","ipr",
+    "iq","iq1","iq2","iq3","iq4",
+    "iot", "io","io1","io2","io3","io4", "ili","ili1","ili2","ili3","ili4",
+    "iex","iqt",
+    "s","s1","s2","s3","s4", "qa", "qc",
+    "p","pc","pr", "m","mi", "pm","pmo","pmc","pmr", "cls",
+    "pi","pi1","pi2","pi3","pi4", "ph","ph1","ph2","ph3","ph4",
+    "q","q1","q2","q3","q4", "qr", "qm","qm1","qm2","qm3","qm4",
+    "li","li1","li2","li3","li4"
+];
+
+/// Define commonly used sets of footnote markers
+pub static FOOTNOTE_SETS: &[&[&str]] = &[
+    &["fr", "fr*"],
+    &["fr", "ft"], &["fr", "ft", "ft*"],
+    &["fr", "fq"], &["fr", "fq", "fq*"],
+    &["fr", "ft", "fq"], &["fr", "ft", "fq", "fq*"],
+    &["fr", "fq", "ft"], &["fr", "fq", "ft", "ft*"],
+    &["fr", "ft", "fv"], &["fr", "ft", "fv", "fv*"],
+    &["fr", "fk", "ft"], &["fr", "fk", "ft", "ft*"],
+    &["fr", "ft", "fq", "ft"], &["fr", "ft", "fq", "ft", "ft*"],
+    &["fr", "fq", "ft", "fq"], &["fr", "fq", "ft", "fq", "fq*"],
+    &["fr", "fq", "ft", "fq", "fv"], &["fr", "fq", "ft", "fq", "fv", "fv*"],
+    &["fr", "fq", "ft", "fq", "fq"], &["fr", "fq", "ft", "fq", "fq", "fq*"],
+    &["fr", "ft", "fq", "fv", "fq"], &["fr", "ft", "fq", "fv", "fq", "fq*"],
+    &["fr", "fk", "ft", "fq", "ft"], &["fr", "fk", "ft", "fq", "ft", "ft*"],
+    &["fr", "ft", "fq", "ft", "ft"], &["fr", "ft", "fq", "ft", "ft", "ft*"],
+    &["fr", "ft", "fv", "fv*", "fq"], &["fr", "ft", "fv", "fv*", "fq", "fq*"],
+    &["fr", "ft", "fv", "fv*", "fv"], &["fr", "ft", "fv", "fv*", "fv", "fv*"],
+    &["fr", "ft", "fq", "ft", "fq", "ft"], &["fr", "ft", "fq", "ft", "fq", "ft", "ft*"],
+    &["fr", "fq", "ft", "fq", "ft", "fq"], &["fr", "fq", "ft", "fq", "ft", "fq", "fq*"],
+    &["fr", "fq", "ft", "fq", "fq", "ft"], &["fr", "fq", "ft", "fq", "fq", "ft", "ft*"],
+    &["fr", "fq", "ft", "fq", "fv", "fq"], &["fr", "fq", "ft", "fq", "fv", "fq", "fq*"],
+    &["fr", "ft", "fq", "fv", "fv*", "fq"], &["fr", "ft", "fq", "fv", "fv*", "fq", "fq*"],
+    &["fr", "ft", "fq", "fv", "fv*", "fv"], &["fr", "ft", "fq", "fv", "fv*", "fv", "fv*"],
+    &["fr", "ft", "fq", "ft", "fv", "fv", "fq"], &["fr", "ft", "fq", "ft", "fv", "fv", "fq", "fq*"],
+    &["fr", "fq", "ft", "fq", "ft", "fq", "ft"], &["fr", "fq", "ft", "fq", "ft", "fq", "ft", "ft*"],
+    &["fr", "ft", "fq", "ft", "fq", "ft", "fq"], &["fr", "ft", "fq", "ft", "fq", "ft", "fq", "fq*"],
+    &["fr", "fq", "ft", "fq", "fq", "ft", "fq"], &["fr", "fq", "ft", "fq", "fq", "ft", "fq", "fq*"],
+    &["fr", "fq", "ft", "fq", "ft", "fq", "fv"], &["fr", "fq", "ft", "fq", "ft", "fq", "fv", "fv*"],
+    &["fr", "ft", "fq", "fv", "fq", "fv", "fq"], &["fr", "ft", "fq", "fv", "fq", "fv", "fq", "fq*"],
+    &["fr", "fk", "ft", "fq", "ft", "fq", "ft"], &["fr", "fk", "ft", "fq", "ft", "fq", "ft", "ft*"],
+    &["fr", "fq", "ft", "fq", "fv", "fv*", "fv"], &["fr", "fq", "ft", "fq", "fv", "fv*", "fv", "fv*"],
+    &["fr", "ft", "fq", "ft", "fv", "fv*", "fq"], &["fr", "ft", "fq", "ft", "fv", "fv*", "fq", "fq*"],
+    &["fr", "fq", "ft", "fq", "fv", "fv*", "ft"], &["fr", "fq", "ft", "fq", "fv", "fv*", "ft", "ft*"],
+    &["fr", "ft", "fq", "fq", "fv", "fv*", "ft"], &["fr", "ft", "fq", "fq", "fv", "fv*", "ft", "ft*"],
+    &["fr", "ft", "fq", "fq", "fv", "fv*", "fq"], &["fr", "ft", "fq", "fq", "fv", "fv*", "fq", "fq*"],
+    &["fr", "fq", "fv", "fv*", "ft", "fq", "fv"], &["fr", "fq", "fv", "fv*", "ft", "fq", "fv", "fv*"],
+    &["fr", "ft", "fk", "ft", "fk", "ft", "fk", "ft"], &["fr", "ft", "fk", "ft", "fk", "ft", "fk", "ft", "ft*"],
+    &["fr", "fq", "ft", "fq", "ft", "fq", "ft", "fq"], &["fr", "fq", "ft", "fq", "ft", "fq", "ft", "fq", "fq*"],
+    &["fr", "fq", "ft", "fq", "ft", "fq", "fq", "ft"], &["fr", "fq", "ft", "fq", "ft", "fq", "fq", "ft", "ft*"],
+    &["fr", "fq", "ft", "fq", "fq", "ft", "fq", "ft"], &["fr", "fq", "ft", "fq", "fq", "ft", "fq", "ft", "ft*"],
+    &["fr", "fq", "ft", "fq", "fq", "ft", "fq", "fv"], &["fr", "fq", "ft", "fq", "fq", "ft", "fq", "fv", "fv*"],
+    &["fr", "ft", "fq", "ft", "fq", "fq", "ft", "fq"], &["fr", "ft", "fq", "ft", "fq", "fq", "ft", "fq", "fq*"],
+    &["fr", "ft", "fq", "ft", "fq", "ft", "fq", "ft"], &["fr", "ft", "fq", "ft", "fq", "ft", "fq", "ft", "ft*"],
+    &["fr", "fq", "fv", "fq", "ft", "fq", "fv", "fq"], &["fr", "fq", "fv", "fq", "ft", "fq", "fv", "fq", "fq*"],
+    &["fr", "ft", "fq", "ft", "fv", "fv*", "fq", "ft"], &["fr", "ft", "fq", "ft", "fv", "fv*", "fq", "ft", "ft*"],
+    &["fr", "fq", "ft", "fq", "fv", "fv*", "ft", "fq"], &["fr", "fq", "ft", "fq", "fv", "fv*", "ft", "fq", "fq*"],
+    &["fr", "ft", "fv", "fq", "ft", "fv", "fq", "fv", "fq"], &["fr", "ft", "fv", "fq", "ft", "fv", "fq", "fv", "fq", "fq*"],
+    &["fr", "fq", "ft", "fq", "ft", "fq", "fq", "ft", "fq"], &["fr", "fq", "ft", "fq", "ft", "fq", "fq", "ft", "fq", "fq*"],
+    &["fr", "fq", "ft", "fq", "fq", "ft", "fq", "ft", "fq"], &["fr", "fq", "ft", "fq", "fq", "ft", "fq", "ft", "fq", "fq*"],
+    &["fr", "fq", "ft", "fq", "fq", "ft", "fq", "fq", "ft"], &["fr", "fq", "ft", "fq", "fq", "ft", "fq", "fq", "ft", "ft*"],
+    &["fr", "ft", "fq", "ft", "fq", "ft", "fq", "ft", "fq"], &["fr", "ft", "fq", "ft", "fq", "ft", "fq", "ft", "fq", "fq*"],
+    &["fr", "ft", "fv", "fv*", "fq", "ft", "fv", "fv*", "fq"], &["fr", "ft", "fv", "fv*", "fq", "ft", "fv", "fv*", "fq", "fq*"],
+    &["fr", "fq", "ft", "fq", "fq", "ft", "fq", "fq", "ft", "fq"], &["fr", "fq", "ft", "fq", "fq", "ft", "fq", "fq", "ft", "fq", "fq*"],
+    &["fr", "fq", "ft", "fq", "ft", "fq", "ft", "fq", "fq", "ft"], &["fr", "fq", "ft", "fq", "ft", "fq", "ft", "fq", "fq", "ft", "ft*"],
+    &["fr", "fq", "ft", "fq", "fq", "ft", "fq", "ft", "fq", "ft"], &["fr", "fq", "ft", "fq", "fq", "ft", "fq", "ft", "fq", "ft", "ft*"],
+    &["fr", "fq", "ft", "fq", "ft", "fq", "ft", "fq", "ft", "fq"], &["fr", "fq", "ft", "fq", "ft", "fq", "ft", "fq", "ft", "fq", "fq*"],
+    &["fr", "ft", "fq", "ft", "fq", "ft", "fq", "ft", "fq", "ft"], &["fr", "ft", "fq", "ft", "fq", "ft", "fq", "ft", "fq", "ft", "ft*"],
+    &["fr", "ft", "fq", "fv", "fv*", "ft", "fq", "fv", "fv*", "fv"], &["fr", "ft", "fq", "fv", "fv*", "ft", "fq", "fv", "fv*", "fv", "fv*"],
+    &["fr", "ft", "fq", "fv", "fv*", "fv", "fv*", "fv", "fv*", "fv"], &["fr", "ft", "fq", "fv", "fv*", "fv", "fv*", "fv", "fv*", "fv", "fv*"],
+    &["fr", "fq", "ft", "fq", "fq", "ft", "fq", "ft", "fq", "ft", "fq"], &["fr", "fq", "ft", "fq", "fq", "ft", "fq", "ft", "fq", "ft", "fq", "fq*"],
+    &["fr", "fq", "ft", "fq", "ft", "fq", "fq", "ft", "fq", "ft", "fq"], &["fr", "fq", "ft", "fq", "ft", "fq", "fq", "ft", "fq", "ft", "fq", "fq*"],
+    &["fr", "ft", "fq", "ft", "fv", "fv*", "fq", "ft", "fv", "fv*", "fq"], &["fr", "ft", "fq", "ft", "fv", "fv*", "fq", "ft", "fv", "fv*", "fq", "fq*"],
+    &["fr", "fq", "ft", "fq", "ft", "fq", "ft", "fq", "ft", "fq", "ft", "fq"], &["fr", "fq", "ft", "fq", "ft", "fq", "ft", "fq", "ft", "fq", "ft", "fq", "fq*"],
+    &["fr", "ft", "fq", "ft", "fq", "ft", "fq", "ft", "fq", "ft", "fq", "ft", "fq"], &["fr", "ft", "fq", "ft", "fq", "ft", "fq", "ft", "fq", "ft", "fq", "ft", "fq", "fq*"],
+    &["fr", "fq", "ft", "fq", "fq", "ft", "fq", "fq", "ft", "fq", "fq", "ft", "fq"], &["fr", "fq", "ft", "fq", "fq", "ft", "fq", "fq", "ft", "fq", "fq", "ft", "fq", "fq*"],
+    &["fr", "fq", "ft", "fq", "fv", "fv*", "fv", "fv*", "ft", "fq", "fv", "fv*", "fv"], &["fr", "fq", "ft", "fq", "fv", "fv*", "fv", "fv*", "ft", "fq", "fv", "fv*", "fv", "fv*"],
+    &["fr", "ft", "fv", "fv*", "fq", "ft", "fv", "fv*", "fq", "ft", "fv", "fv*", "fq"], &["fr", "ft", "fv", "fv*", "fq", "ft", "fv", "fv*", "fq", "ft", "fv", "fv*", "fq", "fq*"],
+    &["fr", "fq", "ft", "fq", "fq", "ft", "fq", "fq", "ft", "fq", "fq", "ft", "fq", "fq", "ft", "fq"], &["fr", "fq", "ft", "fq", "fq", "ft", "fq", "fq", "ft", "fq", "fq", "ft", "fq", "fq", "ft", "fq", "fq*"],
+    &["fr", "ft", "fq", "fv", "fq", "fv", "fq", "fv", "fq", "fv", "fq", "fv", "fq", "fv", "fq", "fv", "fq", "fv", "fq"], &["fr", "ft", "fq", "fv", "fq", "fv", "fq", "fv", "fq", "fv", "fq", "fv", "fq", "fv", "fq", "fv", "fq", "fv", "fq", "fq*"],
+    &["fr", "ft", "fq", "fv", "fv*", "fv", "fv*", "fv", "fv*", "fv", "fv*", "fv", "fv*", "fv", "fv*", "fv", "fv*", "fv"], &["fr", "ft", "fq", "fv", "fv*", "fv", "fv*", "fv", "fv*", "fv", "fv*", "fv", "fv*", "fv", "fv*", "fv", "fv*", "fv", "fv*"],
+];
+
+/// Define commonly used sets of cross-reference markers
+pub static XREF_SETS: &[&[&str]] = &[
+    &["xo", "xdc"], &["xo", "xdc", "xdc*"],
+    &["xo", "xt"],&["xo", "xt", "xt*"],
+    &["xo", "xt", "xk"],
+    &["xo", "xt", "xdc"], &["xo", "xt", "xdc*"],
+    &["xo", "xdc", "xt"], &["xo", "xdc", "xt", "xt*"],
+    &["xo", "xt", "xo", "xt"], &["xo", "xt", "xo", "xt", "xt*"],
+    &["xo", "xt", "xk", "xt"], &["xo", "xt", "xk", "xt", "xt*"],
+    &["xo", "xt", "xdc", "xt"], &["xo", "xt", "xdc", "xt", "xt*"],
+    &["xo", "xt", "xt", "xo", "xt"], &["xo", "xt", "xt", "xo", "xt", "xt*"],
+    &["xo", "xt", "xo", "xt", "xdc"], &["xo", "xt", "xo", "xt", "xdc", "xdc*"],
+    &["xo", "xt", "xo", "xt", "xo", "xt"], &["xo", "xt", "xo", "xt", "xo", "xt", "xt*"],
+    &["xo", "xdc", "xt", "xt", "xo", "xt"], &["xo", "xdc", "xt", "xt", "xo", "xt", "xt*"],
+    &["xo", "xt", "xdc", "xt", "xo", "xt"], &["xo", "xt", "xdc", "xt", "xo", "xt", "xt*"],
+    &["xo", "xt", "xo", "xt", "xo", "xt", "xo", "xt"], &["xo", "xt", "xo", "xt", "xo", "xt", "xo", "xt", "xt*"],
+    &["xo", "xt", "xdc", "xt", "xo", "xt", "xo", "xt"], &["xo", "xt", "xdc", "xt", "xo", "xt", "xo", "xt", "xt*"],
+    &["xo", "xt", "xo", "xt", "xo", "xt", "xo", "xt", "xo", "xt"], &["xo", "xt", "xo", "xt", "xo", "xt", "xo", "xt", "xo", "xt", "xt*"],
+    &["xo", "xt", "xo", "xt", "xo", "xt", "xo", "xt", "xo", "xt", "xo", "xt"], &["xo", "xt", "xo", "xt", "xo", "xt", "xo", "xt", "xo", "xt", "xo", "xt", "xt*"],
+];
 
 
 
@@ -66,7 +233,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Header",
         deprecated: false,
         description: Some("This is the initial USFM marker in any scripture text file."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "USFM version specification",
         marker: "usfm",
@@ -80,7 +247,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Header",
         deprecated: false,
         description: Some("Used to identify the USFM version which a USFM editor / processor will be required to support in order to manage all markup found within the file."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "An optional character encoding specification",
         marker: "ide",
@@ -94,7 +261,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Header",
         deprecated: false,
         description: Some("This marker should be used to specify the character encoding of the text within the file. For example: CP-1252, CP-1251, UTF-8, UTF-16, OR Custom <specify font name>. If the character encoding does not conform to a known standard, but is rather a customized solution for the project, a minimum of the name of the font used for the project should be included. For archive purposes, texts which rely upon a custom encoding solution should be converted to Unicode, if at all possible."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Project status tracking",
         marker: "sts",
@@ -108,7 +275,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Header",
         deprecated: false,
         description: Some("The contents of the status marker can be defined by the downstream system being used to track project status."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Remark/Comment",
         marker: "rem",
@@ -122,7 +289,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Header",
         deprecated: false,
         description: Some("Used for adding brief comments by a translator, consultant, or support person."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Running header text",
         marker: "h",
@@ -136,7 +303,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Header",
         deprecated: false,
         description: None,
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Long table of contents text",
         marker: "toc1",
@@ -150,7 +317,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Header",
         deprecated: false,
         description: Some("Not for use directly within the front matter (FRT) peripheral file."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Short table of contents text",
         marker: "toc2",
@@ -164,7 +331,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Header",
         deprecated: false,
         description: Some("Not for use directly within the front matter (FRT) peripheral file."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Book abbreviation",
         marker: "toc3",
@@ -178,7 +345,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Header",
         deprecated: false,
         description: Some("Commonly used for books names in a list of cross-reference."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Psalm singular name",
         marker: "toc4",
@@ -192,7 +359,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Header",
         deprecated: false,
         description: Some("Not in USFM 2.4 but rather an addition used by Michael Kahunapule Johnson (Haiola/USFX)."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Alternative language long table of contents text",
         marker: "toca1",
@@ -206,7 +373,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Header",
         deprecated: false,
         description: Some("Used to specify an alternate set of table of contents texts (for example, in a language of wider communication)."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Alternative language short table of contents text",
         marker: "toca2",
@@ -220,7 +387,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Header",
         deprecated: false,
         description: Some("Used to specify an alternate set of table of contents texts (for example, in a language of wider communication)."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Alternative language book abbreviation",
         marker: "toca3",
@@ -234,7 +401,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Header",
         deprecated: false,
         description: Some("Used to specify an alternate set of table of contents texts (for example, in a language of wider communication)."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Introduction main title",
         marker: "imt",
@@ -248,7 +415,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Introduction",
         deprecated: false,
         description: Some("May be used for the introduction title or other major introduction division (rather than \\is) when the introduction text contains numerous additional sub-divisions."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Introduction section heading",
         marker: "is",
@@ -262,7 +429,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Introduction",
         deprecated: false,
         description: None,
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Introduction paragraph",
         marker: "ip",
@@ -276,7 +443,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Introduction",
         deprecated: false,
         description: None,
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Indented introduction paragraph",
         marker: "ipi",
@@ -290,7 +457,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Introduction",
         deprecated: false,
         description: None,
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Introduction flush left (margin) paragraph",
         marker: "im",
@@ -304,7 +471,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Introduction",
         deprecated: false,
         description: None,
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Introduction flush left (margin) indented paragraph",
         marker: "imi",
@@ -318,7 +485,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Introduction",
         deprecated: false,
         description: None,
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Introduction quote from text paragraph",
         marker: "ipq",
@@ -332,7 +499,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Introduction",
         deprecated: false,
         description: None,
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Introduction flush left (margin) quote from text paragraph",
         marker: "imq",
@@ -346,7 +513,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Introduction",
         deprecated: false,
         description: None,
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Introduction right-aligned paragraph",
         marker: "ipr",
@@ -360,7 +527,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Introduction",
         deprecated: false,
         description: Some("Typically used for a quote from text reference."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Introduction poetic line",
         marker: "iq",
@@ -374,7 +541,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Introduction",
         deprecated: false,
         description: None,
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Introduction blank line",
         marker: "ib",
@@ -388,7 +555,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Introduction",
         deprecated: false,
         description: Some("May be used to explicitly indicate additional white space between paragraphs."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Introduction list item",
         marker: "ili",
@@ -402,7 +569,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Introduction",
         deprecated: false,
         description: None,
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Introduction outline title",
         marker: "iot",
@@ -416,7 +583,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Introduction",
         deprecated: false,
         description: None,
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Introduction outline entry",
         marker: "io",
@@ -430,7 +597,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Introduction",
         deprecated: false,
         description: Some("The outline entry typically ends with a range of references in parentheses."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Introduction outline reference range",
         marker: "ior",
@@ -444,7 +611,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Introduction",
         deprecated: false,
         description: Some("An outline entry typically ends with a range of references in parentheses. This is an optional character style for marking (and potentially formatting) these references separately."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Introduction explanatory or bridge text",
         marker: "iex",
@@ -458,7 +625,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Introduction",
         deprecated: false,
         description: Some("e.g. explanation of missing book in a short Old Testament."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Introduction quoted text",
         marker: "iqt",
@@ -472,7 +639,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Introduction",
         deprecated: false,
         description: Some("Scripture quotations, or other quoted text, appearing in the introduction."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Introduction major title ending",
         marker: "imte",
@@ -486,7 +653,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Introduction",
         deprecated: false,
         description: Some("Used to mark a major title indicating the end of the introduction."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Introduction end",
         marker: "ie",
@@ -500,7 +667,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Introduction",
         deprecated: false,
         description: Some("Optionally included to explicitly indicate the end of the introduction material."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Major title",
         marker: "mt",
@@ -514,7 +681,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Header",
         deprecated: false,
         description: Some("The key components in the title of a biblical book."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Major title at ending",
         marker: "mte",
@@ -528,7 +695,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Text",
         deprecated: false,
         description: Some("May be used in texts which repeat the main title at the end of the introduction, or to mark a major title indicating the end of the introduction. The content is not typically identical to \\mt#."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Major section heading",
         marker: "ms",
@@ -542,7 +709,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Text",
         deprecated: false,
         description: Some("These are headings before larger text divisions than what is typically considered a \"section\" division (see \\s#)."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Major section reference range",
         marker: "mr",
@@ -556,7 +723,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Text",
         deprecated: false,
         description: Some("The text reference range listed under a major section heading. Perhaps it could be described as the verse range which the \\ms major section heading above it applies to."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Section heading",
         marker: "s",
@@ -570,7 +737,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Text",
         deprecated: false,
         description: Some("The typical (common) section division heading."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Section reference range",
         marker: "sr",
@@ -584,7 +751,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Text",
         deprecated: false,
         description: Some("The text reference range listed under a section heading. \\sr is not equivalent to \\r which is used for marking parallel references. Perhaps it could be described as the verse range which the \\s section heading above it applies to."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Parallel passage reference(s)",
         marker: "r",
@@ -598,7 +765,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Text",
         deprecated: false,
         description: Some("A reference to a parallel passage usually located under a section heading \\s#."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Inline quotation reference(s)",
         marker: "rq",
@@ -612,7 +779,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Text",
         deprecated: false,
         description: Some("A (cross) reference indicating the source text for the preceding quotation (usually an Old Testament quote). The reference(s) are intended to be formatted (typeset) within the scripture body text column, and not extracted from the text as are regular cross-references (\\x…\\x*). They are also typically separated from the main text of Scripture using a different type style and alignment."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Descriptive title (or \"Hebrew subtitle\")",
         marker: "d",
@@ -626,7 +793,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Text",
         deprecated: false,
         description: Some("Sometimes used in Psalms under the section title (e.g. \"For the director of Music\")."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Speaker Identification",
         marker: "sp",
@@ -640,7 +807,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Text",
         deprecated: false,
         description: Some("(e.g. Job and Song of Songs)."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Semantic division (semantic space)",
         marker: "sd",
@@ -654,7 +821,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Text",
         deprecated: false,
         description: Some("Vertical space used to divide the text into sections, in a manner similar to the structure added through the use of a sequence of heading texts (i.e. \\ms# and \\s#). The purpose of \\sd# is distinct from \\b which primarily denotes whitespace (and in particular at poetic stanza breaks) and not hierarchy or division. The variable # represents the level of division being marked."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Chapter number",
         marker: "c",
@@ -668,7 +835,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Numbering",
         deprecated: false,
         description: Some("No text should follow this marker (i.e., after the chapter number? But some versions have footnotes here!."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Alternate (second) chapter number",
         marker: "ca",
@@ -682,7 +849,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Numbering",
         deprecated: false,
         description: Some("Used for marking the chapter number used in an alternate versification scheme. Required when different versification traditions need to be supported in the same translation text."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Chapter label",
         marker: "cl",
@@ -696,7 +863,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Numbering",
         deprecated: false,
         description: Some("Used when the chosen publishing presentation will render chapter divisions as headings, and not drop cap numerals. Usage note: If \\cl is entered once before chapter 1 (\\c 1) it represents the text for \"chapter\" to be used throughout the current book. If \\cl is used after each individual chapter marker, it represents the particular text to be used for the display of the current chapter heading (usually done if numbers are being presented as words, not numerals)."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Published chapter character",
         marker: "cp",
@@ -710,7 +877,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Numbering",
         deprecated: false,
         description: Some("This is a chapter marker (number, letter) which would be displayed in the published text (where the published marker is different than the \\c # used within the translation editing environment)."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Chapter description",
         marker: "cd",
@@ -724,7 +891,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Text",
         deprecated: false,
         description: Some("A brief description of chapter content (similar to \\d - descriptive heading, or \\iex - )."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Verse number",
         marker: "v",
@@ -738,7 +905,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Numbering",
         deprecated: false,
         description: Some("Marker is followed by the verse number #, and the text of the verse."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Alternate (second) verse number",
         marker: "va",
@@ -752,7 +919,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Numbering",
         deprecated: false,
         description: Some("Used for marking verse numbers used in an alternate versification scheme. Required when different versification traditions need to be supported in the same translation text."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Published verse character",
         marker: "vp",
@@ -766,7 +933,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Numbering",
         deprecated: false,
         description: Some("This is a verse marker (number, letter) which would be displayed in the published text (where the published marker is different than the \\v # used within the translation editing environment)."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Normal paragraph",
         marker: "p",
@@ -780,7 +947,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Canonical Text",
         deprecated: false,
         description: Some("Followed immediately by a space and paragraph text, or by a new line and a verse marker."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Flush left (margin) paragraph",
         marker: "m",
@@ -794,7 +961,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Canonical Text",
         deprecated: false,
         description: Some("No first line indent. Followed immediately by a space and paragraph text, or by a new line and a verse marker. Usually used to resume prose at the margin (without indent) after poetry or OT quotation (i.e. continuation of the previous paragraph)."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Opening of an epistle/letter",
         marker: "po",
@@ -808,7 +975,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Canonical Text",
         deprecated: false,
         description: None,
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Embedded text opening",
         marker: "pmo",
@@ -822,7 +989,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Canonical Text",
         deprecated: false,
         description: None,
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Embedded text paragraph",
         marker: "pm",
@@ -836,7 +1003,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Canonical Text",
         deprecated: false,
         description: None,
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Embedded text closing",
         marker: "pmc",
@@ -850,7 +1017,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Canonical Text",
         deprecated: false,
         description: None,
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Embedded text refrain",
         marker: "pmr",
@@ -864,7 +1031,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Canonical Text",
         deprecated: false,
         description: None,
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Indented paragraph",
         marker: "pi",
@@ -878,7 +1045,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Canonical Text",
         deprecated: false,
         description: Some("Used in some texts for discourse sections. The variable # represents the level of indent.         See also \\pm."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Indented flush left paragraph",
         marker: "mi",
@@ -892,7 +1059,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Canonical Text",
         deprecated: false,
         description: Some("No first line indent."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "No-break paragraph continuation",
         marker: "nb",
@@ -906,7 +1073,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Canonical Text",
         deprecated: false,
         description: Some("Indicates \"no-break\" with previous paragraph (regardless of previous paragraph type).         Commonly used in cases where the previous paragraph spans the chapter boundary.         No-break markup within poetry: Some translations have a publishing tradition of inserting a small             amount of additional white-space at chapter boundaries.         It is important in these texts to use the b marker within any specific poetic contexts where             no visible break in the flow of the the text is intended at a particular chapter boundary."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Closure of an epistle/letter",
         marker: "cls",
@@ -920,7 +1087,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Canonical Text",
         deprecated: false,
         description: Some("Similar to \"With love,\" or \"Sincerely yours,\"."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "List header",
         marker: "lh",
@@ -934,7 +1101,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Canonical Text",
         deprecated: false,
         description: Some("Some lists include an introductory and concluding remark (\\lf). They are an integral part of the list content, but are not list items. A list does not require either or both of these elements."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "List item",
         marker: "li",
@@ -948,7 +1115,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Canonical Text",
         deprecated: false,
         description: Some("An out-dented paragraph meant to highlight the items of a list. Lists may be used to markup the elements of a recurrent structure, such as the days within the creation account, or the Decalogue (10 commandments). The variable # represents the level of indent."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "List footer",
         marker: "lf",
@@ -962,7 +1129,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Canonical Text",
         deprecated: false,
         description: Some("Some lists include an introductory (\\lh) and concluding remark. They are an integral part of the list content, but are not list items. A list does not require either or both of these elements."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Embedded list item",
         marker: "lim",
@@ -976,7 +1143,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Canonical Text",
         deprecated: false,
         description: Some("An out-dented paragraph meant to highlight the items of an embedded list. The variable # represents the level of indent."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "List entry total",
         marker: "litl",
@@ -990,7 +1157,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Canonical Text",
         deprecated: false,
         description: Some("Use in “accounting” lists for denoting the total component of the text within a list item (\\li). An alternative to using tables for the same content."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "List entry “key” content",
         marker: "lik",
@@ -1004,7 +1171,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Canonical Text",
         deprecated: false,
         description: None,
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "List entry “value” content",
         marker: "liv",
@@ -1018,7 +1185,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Canonical Text",
         deprecated: false,
         description: None,
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Centered paragraph",
         marker: "pc",
@@ -1032,7 +1199,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Canonical Text",
         deprecated: false,
         description: Some("Recommended for inscriptions."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Right-aligned paragraph",
         marker: "pr",
@@ -1046,7 +1213,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Canonical Text",
         deprecated: true,
         description: Some("\"Deprecated\" (i.e. use is strongly discouraged). Recommended alternate: \\pmr."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Indented paragraph with hanging indent",
         marker: "ph",
@@ -1060,7 +1227,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Canonical Text",
         deprecated: true,
         description: Some("\"Deprecated\" (i.e. use is strongly discouraged).         The variable # represents the level of overall paragraph indent."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Blank line",
         marker: "b",
@@ -1074,7 +1241,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Text, Poetry",
         deprecated: false,
         description: Some("May be used to explicitly indicate additional white space between paragraphs.         No text should follow this marker, and it should not be used before or after titles to indicate white-space.         Also use for stanza breaks in poetry, or between poetry and prose."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Poetic line",
         marker: "q",
@@ -1088,7 +1255,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Canonical Text",
         deprecated: false,
         description: Some("The variable # represents the level of indent (i.e. \\q1, \\q2, \\q3 etc.)."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Right-aligned poetic line",
         marker: "qr",
@@ -1102,7 +1269,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Canonical Text",
         deprecated: false,
         description: Some("Common use: Poetic refrain."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Centered poetic line",
         marker: "qc",
@@ -1116,7 +1283,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Canonical Text",
         deprecated: false,
         description: None,
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Selah field",
         marker: "qs",
@@ -1130,7 +1297,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Canonical Text",
         deprecated: false,
         description: Some("Used for the expression \"Selah\" commonly found in Psalms and Habakkuk. This text is frequently right aligned, and rendered on the same line as the previous poetic text, if space allows."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Acrostic heading",
         marker: "qa",
@@ -1144,7 +1311,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Canonical Text",
         deprecated: false,
         description: Some("For example, the Aleph, Beth, etc. headings in Lamentations or Psalm 119."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Acrostic letter",
         marker: "qac",
@@ -1158,7 +1325,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Acrostic verse",
         deprecated: false,
         description: Some("Marker to indicate the acrostic letter within a poetic line."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Embedded text poetic line",
         marker: "qm",
@@ -1172,7 +1339,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Canonical Text",
         deprecated: false,
         description: Some("The variable # represents the level of indent (i.e. \\qm1, \\qm2 etc.)."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Hebrew note",
         marker: "qd",
@@ -1186,7 +1353,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Canonical Text",
         deprecated: false,
         description: Some("A Hebrew musical performance comment similar in content to many of the Hebrew Psalm titles (\\d), but placed at the end of the poetic section."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Table row start",
         marker: "tr",
@@ -1200,7 +1367,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Text",
         deprecated: false,
         description: Some("The first \\tr initiates a new table. Rows contain column headings or cells."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Table column heading",
         marker: "th",
@@ -1214,7 +1381,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Table row",
         deprecated: false,
         description: Some("The variable # represents the table column number."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Right-aligned table column heading",
         marker: "thr",
@@ -1228,7 +1395,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Table row",
         deprecated: false,
         description: Some("The variable # represents the table column number."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Table cell",
         marker: "tc",
@@ -1242,7 +1409,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Table row",
         deprecated: false,
         description: Some("The variable # represents the table column number. An empty table cell still requires a corresponding marker in the table text."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Right-aligned table cell",
         marker: "tcr",
@@ -1256,7 +1423,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Table row",
         deprecated: false,
         description: Some("The variable # represents the table column number. An empty table cell still requires a corresponding marker in the table text."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Footnote",
         marker: "f",
@@ -1270,7 +1437,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Text",
         deprecated: false,
         description: Some("Footnotes are entered inline within the main scripture body text. The boundaries of the footnote text are defined by an opening and closing marker."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Endnote",
         marker: "e",
@@ -1284,7 +1451,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Text",
         deprecated: false,
         description: Some("Endnotes are entered inline within the main scripture body text. The boundaries of the endnote text are defined by an opening and closing marker."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Footnote \"origin\" reference",
         marker: "fr",
@@ -1298,7 +1465,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Footnote",
         deprecated: false,
         description: Some("This is the chapter and verse(s) that note refers to. Chapter and verse numbers must have a separator between them."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Footnote keyword",
         marker: "fk",
@@ -1312,7 +1479,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Footnote",
         deprecated: false,
         description: Some("The specific keyword/term from the text for which the footnote is being provided."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Footnote translation quotation",
         marker: "fq",
@@ -1326,7 +1493,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Footnote",
         deprecated: false,
         description: Some("A quotation from the current scripture text translation for which the note is being provided. Longer quotations are sometimes shortened using an ellipsis (i.e. suspension dots \"…\"). Many existing translation texts have marked both quotations from the existing translation text, as well as alternative translations, using \\fq. An additional marker – \\fqa – is provided for marking alternative translations, and can be used to distinguish between quotations and alternatives."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Footnote alternate translation",
         marker: "fqa",
@@ -1340,7 +1507,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Footnote",
         deprecated: false,
         description: Some("Used to distinguish between a quotation of the current scripture text translation, and an alternate translation."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Footnote \"label\" text",
         marker: "fl",
@@ -1354,7 +1521,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Footnote",
         deprecated: false,
         description: Some("Can be used for marking or \"labeling\" a word or words which are used consistently across certain types of translation notes (such as the words \"Or\" in an alternative translation note, \"Others\", \"Heb.\", \"LXX\" etc.)."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Footnote witness list",
         marker: "fw",
@@ -1368,7 +1535,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Footnote",
         deprecated: false,
         description: Some("For distinguishing a list of sigla representing witnesses in critical editions. (Apparatus entries of printed critical editions are densely packed with information. One key part is the list of witnesses supporting a specific reading. The witnesses are usually represented by sigla consisting of one character, an abbreviation, or a number. It can be very helpful to distinguish witness lists from other footnote text, which can make it simpler to introduce checking tools for these lists, and to create linking and reader helps in digital representations.)"),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Footnote additional paragraph",
         marker: "fp",
@@ -1382,7 +1549,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Footnote",
         deprecated: false,
         description: Some("Use this marker to if you need to indicate the start of a new paragraph within a footnote (uncommon in standard Bible notes)."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Footnote verse number",
         marker: "fv",
@@ -1396,7 +1563,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Footnote",
         deprecated: false,
         description: Some("To mark the location of a verse number in the the text quotation or alternative translation."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Footnote number",
         marker: "fn",
@@ -1410,7 +1577,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Footnote",
         deprecated: false,
         description: Some("To mark the location of a sequential footnote number in the the text quotation or alternative translation."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Footnote text",
         marker: "ft",
@@ -1424,7 +1591,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Footnote",
         deprecated: false,
         description: Some("The essential (explanatory) text of the footnote."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Deuterocanon footnote text",
         marker: "fdc",
@@ -1438,7 +1605,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Footnote",
         deprecated: false,
         description: Some("Text between these markers is material to be included only in published editions that contain the Deuterocanonical books."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Footnote reference mark",
         marker: "fm",
@@ -1452,7 +1619,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Footnote",
         deprecated: false,
         description: Some("Used where two or more locations in the scripture text should ideally refer the reader to the same footnote text (as seen in identical footnote text which is referred to at Gen 2.9 and Gen 2.17 in some English translations). Because the nature of this marker is related directly to the published form of the text, it is not intended for use in scripture authoring. It may be used during the publishing process to connect two callers to the same footnote text."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Cross-reference",
         marker: "x",
@@ -1466,7 +1633,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Text",
         deprecated: false,
         description: Some("Cross-references are entered inline within the main scripture body text. The boundaries of the cross-reference text are defined by an opening and closing marker."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Cross-reference \"origin\" reference",
         marker: "xo",
@@ -1480,7 +1647,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Cross-reference",
         deprecated: false,
         description: Some("This is the chapter and verse(s) that note refers to. Chapter and verse numbers must have a separator between them."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Cross-reference keyword",
         marker: "xk",
@@ -1494,7 +1661,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Cross-reference",
         deprecated: false,
         description: Some("A keyword from the scripture translation text which the target reference(s) also refer to."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Cross-reference quotation",
         marker: "xq",
@@ -1508,7 +1675,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Cross-reference",
         deprecated: false,
         description: Some("A quotation from the scripture text. Use of a quotation would be intended to help the reader to understand the portion of text (or concept) for which the target reference(s) are being supplied."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Target reference(s)",
         marker: "xt",
@@ -1522,7 +1689,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Cross-reference",
         deprecated: false,
         description: Some("The list of target scripture locations being provided as alternate references to the text (or concept) of the origin reference. This is a list of book name abbreviations and chapter + verse references, separated by semicolons (though there may be an alternate references format for this list in different areas and countries)."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Target reference(s) extra/added text",
         marker: "xta",
@@ -1536,7 +1703,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Cross-reference",
         deprecated: false,
         description: Some("Used for marking text which should be ignored when identifying or linking to cross reference target references."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Published cross reference origin text",
         marker: "xop",
@@ -1550,7 +1717,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Cross-reference",
         deprecated: false,
         description: Some("In some texts, the content intended to be published in the position of the cross reference origin text \\xo does not follow the typical chapter/separator/verse pattern. An origin reference following this pattern is required for validation of the cross reference location. \\xop ...\\xop* can be used in order to supply the content intended for publishing, similar to the use of \\cp and vp …vp*."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Old Testament reference(s)",
         marker: "xot",
@@ -1564,7 +1731,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Cross-reference",
         deprecated: false,
         description: Some("References (or other text) between these markers is material to be included only in published editions that contain the Old Testament books. (optional)."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "New Testament reference(s)",
         marker: "xnt",
@@ -1578,7 +1745,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Cross-reference",
         deprecated: false,
         description: Some("References (or other text) between these markers is material to be included only in published editions that contain the New Testament books. (optional)."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Deuterocanon reference(s)",
         marker: "xdc",
@@ -1592,7 +1759,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Cross-reference",
         deprecated: false,
         description: Some("References (or other text) between these markers is material to be included only in published editions that contain the Deuterocanonical books. (optional)."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Translator's addition",
         marker: "add",
@@ -1606,7 +1773,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Text",
         deprecated: false,
         description: Some("A translator's explanation; words added by the translator for clarity – text which is not literally a part of the original language, but which was supplied to make the meaning of the original clear."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Quoted book title",
         marker: "bk",
@@ -1620,7 +1787,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Text",
         deprecated: false,
         description: None,
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Deuterocanonical addition",
         marker: "dc",
@@ -1634,7 +1801,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Text",
         deprecated: false,
         description: Some("Deuterocanonical/LXX additions or insertions in the Protocanonical text."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Keyword/keyterm",
         marker: "k",
@@ -1648,7 +1815,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Text",
         deprecated: false,
         description: None,
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Liturgical note/comment",
         marker: "lit",
@@ -1662,7 +1829,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Text",
         deprecated: false,
         description: Some("e.g. a guide which tells the reader/worshipper that he should recite a prayer or recitation etc."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Name of God/Deity",
         marker: "nd",
@@ -1676,7 +1843,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Text",
         deprecated: false,
         description: None,
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Ordinal number ending",
         marker: "ord",
@@ -1690,7 +1857,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Text",
         deprecated: false,
         description: Some("i.e. in \"1st\"."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Proper name",
         marker: "pn",
@@ -1704,7 +1871,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Text",
         deprecated: false,
         description: None,
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Geographic proper name",
         marker: "png",
@@ -1718,7 +1885,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Text",
         deprecated: false,
         description: Some("Particularly in China, there are various groups which have the practice of distinguishing visually between proper names of people and proper names of geographic places in published texts. Published materials may use a single underline to present proper names of people, and double underline to present proper names of geographic places. Alternatively, dotted underlines have been used for geographic proper names. Special presentation for names can assist readers to know what the text means, especially readers who may struggle with reading skills and may be overloaded by the transliterated names."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Quoted text",
         marker: "qt",
@@ -1732,7 +1899,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Text",
         deprecated: false,
         description: Some("Old Testament quotations in the New Testament, or other quotations."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Signature",
         marker: "sig",
@@ -1746,7 +1913,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Text",
         deprecated: false,
         description: Some("of the author of an epistle/letter."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Secondary language source",
         marker: "sls",
@@ -1760,7 +1927,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Text",
         deprecated: false,
         description: Some("Passage of text based on a secondary language or alternate text source. E.g. The NBS02 has large sections of text in EZR and DAN in italics, to represent where the original text is in Aramaic, not Hebrew."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Transliterated word(s)",
         marker: "tl",
@@ -1774,7 +1941,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Text",
         deprecated: false,
         description: Some("Or foreign words."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Words of Jesus",
         marker: "wj",
@@ -1788,7 +1955,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Text",
         deprecated: false,
         description: None,
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Emphasis text",
         marker: "em",
@@ -1802,7 +1969,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Text",
         deprecated: false,
         description: None,
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Bold text",
         marker: "bd",
@@ -1816,7 +1983,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Text",
         deprecated: false,
         description: None,
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Italic text",
         marker: "it",
@@ -1830,7 +1997,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Text",
         deprecated: false,
         description: None,
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Bold-italic text",
         marker: "bdit",
@@ -1844,7 +2011,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Text",
         deprecated: false,
         description: None,
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Normal text",
         marker: "no",
@@ -1858,7 +2025,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Text",
         deprecated: false,
         description: None,
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Small-caps text",
         marker: "sc",
@@ -1872,7 +2039,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Text",
         deprecated: false,
         description: None,
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Superscript text",
         marker: "sup",
@@ -1886,7 +2053,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Text",
         deprecated: false,
         description: Some("Typically for use in critical edition footnotes."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Page break",
         marker: "pb",
@@ -1900,7 +2067,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Text",
         deprecated: false,
         description: None,
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Figure",
         marker: "fig",
@@ -1914,7 +2081,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Text",
         deprecated: false,
         description: None,
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Subject index entry",
         marker: "ndx",
@@ -1928,7 +2095,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Text",
         deprecated: false,
         description: Some("Surround word(s) with this markup to indicate that it should appear in the subject index."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Ruby glossing",
         marker: "rb",
@@ -1942,7 +2109,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Text",
         deprecated: false,
         description: Some("Used to mark the base text being annotated with ruby characters."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Pronunciation information",
         marker: "pro",
@@ -1956,7 +2123,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Text",
         deprecated: false,
         description: Some("Used for Chinese/Japanese/Korean texts."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Wordlist/glossary/dictionary entry",
         marker: "w",
@@ -1970,7 +2137,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Text",
         deprecated: false,
         description: Some("Surround word(s) with this markup to indicate that it should appear in the word list."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Greek wordlist entry",
         marker: "wg",
@@ -1984,7 +2151,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Text",
         deprecated: false,
         description: Some("Surround word(s) with this markup to indicate that it should appear in the Greek word list."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Hebrew wordlist entry",
         marker: "wh",
@@ -1998,7 +2165,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Text",
         deprecated: false,
         description: Some("Surround word(s) with this markup to indicate that it should appear in the Hebrew word list."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Aramaic wordlist entry",
         marker: "wa",
@@ -2012,7 +2179,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Text",
         deprecated: false,
         description: Some("Surround word(s) with this markup to indicate that it should appear in the Aramaic word list."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Quotation start",
         marker: "qt-s",
@@ -2026,7 +2193,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Text",
         deprecated: false,
         description: Some("Quotation start milestone. Typically used for indicating the speaker of the text. The (optional) number represents the level of nesting of the quotation being marked (i.e. a quote within a quote)."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Quotation end",
         marker: "qt-e",
@@ -2040,7 +2207,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Text",
         deprecated: false,
         description: Some("Quotation end milestone. Typically used for indicating the speaker of the text. The (optional) number represents the level of nesting of the quotation being marked (i.e. a quote within a quote)."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Translator's section",
         marker: "ts",
@@ -2054,7 +2221,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Text",
         deprecated: false,
         description: Some("Translator’s section milestone. For identifying a section (chunk) of text suitable for translating at one time."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Translator's section start",
         marker: "ts-s",
@@ -2068,7 +2235,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Text",
         deprecated: false,
         description: Some("Translator’s section start milestone. For identifying a section (chunk) of text suitable for translating at one time."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Translator's section end",
         marker: "ts-e",
@@ -2082,7 +2249,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Text",
         deprecated: false,
         description: Some("Translator’s section end milestone. For identifying a section (chunk) of text suitable for translating at one time."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Extended footnote",
         marker: "ef",
@@ -2096,7 +2263,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Text",
         deprecated: false,
         description: Some("Extended footnotes (for study Bibles) are entered inline within the main scripture body text. The boundaries of the footnote text are defined by an opening and closing marker."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Footnote summary",
         marker: "fs",
@@ -2110,7 +2277,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Footnote",
         deprecated: true,
         description: Some("\"Deprecated\" (i.e. use is strongly discouraged). A summary text for the concept/idea/quotation from the current Scripture text translation for which the note is being provided."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Extended cross-reference",
         marker: "ex",
@@ -2124,7 +2291,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Text",
         deprecated: false,
         description: Some("Extended cross-references (for study Bibles) are entered inline within the main scripture body text. The boundaries of the cross-reference text are defined by an opening and closing marker."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Sidebar content",
         marker: "esb",
@@ -2138,7 +2305,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Text",
         deprecated: false,
         description: Some("In study Bibles. Finishes at next \\esb marker or at end of chapter."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Category tag",
         marker: "cat",
@@ -2152,7 +2319,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Text",
         deprecated: false,
         description: Some("Categories can optionally be assigned to extended study notes or sidebars by supplying a category tag (name) inside of opening and closing \\cat … \\cat* markers. Category tags should be restricted to alpha-numeric characters. A list of category tags are defined individually and uniquely for each study Bible project."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Peripheral content",
         marker: "periph",
@@ -2166,7 +2333,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Front and back matter",
         deprecated: false,
         description: None,
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "PDI",
         marker: "pdi",
@@ -2180,7 +2347,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Text",
         deprecated: true,
         description: Some("\"Deprecated\" (i.e. use is strongly discouraged) in 2004 for USFM 2.0. Substituted with embedded text markup."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "PDE",
         marker: "pde",
@@ -2194,7 +2361,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Text",
         deprecated: true,
         description: Some("\"Deprecated\" (i.e. use is strongly discouraged) in 2004 for USFM 2.0. Substituted with embedded text markup."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "WR",
         marker: "wr",
@@ -2208,7 +2375,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Text",
         deprecated: true,
         description: Some("\"Deprecated\" (i.e. use is strongly discouraged) in 2004 for USFM 2.0. Was really a duplicate of \\w … \\w* used for marking words in the Scripture text which are included in the wordlist."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Span paragraph",
         marker: "ps",
@@ -2222,7 +2389,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Text",
         deprecated: true,
         description: Some("\"Deprecated\" (i.e. use is strongly discouraged) in 2004 for USFM 2.0. This was used in conjunction with \\nb to indicate that the paragraph spans the chapter boundary. It should be sufficient to just start the new chapter with \\nb and use the appropriate paragraph marker for the previous chapter (\\p, \\m, etc.)."),
-    },
+        },
     USFMMarkerArrayEntry {
         name_english: "Link text",
         marker: "jmp",
@@ -2236,7 +2403,7 @@ pub static USFM_MARKER_ARRAY: [USFMMarkerArrayEntry; 156] = [
         occurs_in: "Text",
         deprecated: true,
         description: Some("Available for associating linking attributes to a span of text when no other character level markup is already applied to the text at this location."),
-    },
+        },
 ];
 
 static USFM_MARKER_MAP: phf::Map<&'static str, usize> = phf_map! { "id"=>0, "usfm"=>1, "ide"=>2, "sts"=>3, "rem"=>4, "h"=>5, "toc1"=>6, "toc2"=>7, "toc3"=>8, "toc4"=>9, "toca1"=>10, "toca2"=>11, "toca3"=>12, "imt"=>13, "imt1"=>13, "imt2"=>13, "imt3"=>13, "imt4"=>13, "is"=>14, "is1"=>14, "is2"=>14, "is3"=>14, "is4"=>14, "ip"=>15, "ipi"=>16, "im"=>17, "imi"=>18, "ipq"=>19, "imq"=>20, "ipr"=>21, "iq"=>22, "iq1"=>22, "iq2"=>22, "iq3"=>22, "iq4"=>22, "ib"=>23, "ili"=>24, "ili1"=>24, "ili2"=>24, "ili3"=>24, "ili4"=>24, "iot"=>25, "io"=>26, "io1"=>26, "io2"=>26, "io3"=>26, "io4"=>26, "ior"=>27, "iex"=>28, "iqt"=>29, "imte"=>30, "imte1"=>30, "imte2"=>30, "imte3"=>30, "imte4"=>30, "ie"=>31, "mt"=>32, "mt1"=>32, "mt2"=>32, "mt3"=>32, "mt4"=>32, "mte"=>33, "mte1"=>33, "mte2"=>33, "mte3"=>33, "mte4"=>33, "ms"=>34, "ms1"=>34, "ms2"=>34, "ms3"=>34, "ms4"=>34, "mr"=>35, "s"=>36, "s1"=>36, "s2"=>36, "s3"=>36, "s4"=>36, "sr"=>37, "r"=>38, "rq"=>39, "d"=>40, "sp"=>41, "sd"=>42, "sd1"=>42, "sd2"=>42, "sd3"=>42, "sd4"=>42, "c"=>43, "ca"=>44, "cl"=>45, "cp"=>46, "cd"=>47, "v"=>48, "va"=>49, "vp"=>50, "p"=>51, "m"=>52, "po"=>53, "pmo"=>54, "pm"=>55, "pmc"=>56, "pmr"=>57, "pi"=>58, "pi1"=>58, "pi2"=>58, "pi3"=>58, "pi4"=>58, "mi"=>59, "nb"=>60, "cls"=>61, "lh"=>62, "li"=>63, "li1"=>63, "li2"=>63, "li3"=>63, "li4"=>63, "lf"=>64, "lim"=>65, "lim1"=>65, "lim2"=>65, "lim3"=>65, "lim4"=>65, "litl"=>66, "lik"=>67, "liv"=>68, "liv1"=>68, "liv2"=>68, "pc"=>69, "pr"=>70, "ph"=>71, "ph1"=>71, "ph2"=>71, "ph3"=>71, "ph4"=>71, "b"=>72, "q"=>73, "q1"=>73, "q2"=>73, "q3"=>73, "q4"=>73, "qr"=>74, "qc"=>75, "qs"=>76, "qa"=>77, "qac"=>78, "qm"=>79, "qm1"=>79, "qm2"=>79, "qm3"=>79, "qm4"=>79, "qd"=>80, "tr"=>81, "th"=>82, "th1"=>82, "th2"=>82, "th3"=>82, "th4"=>82, "thr"=>83, "thr1"=>83, "thr2"=>83, "thr3"=>83, "thr4"=>83, "tc"=>84, "tc1"=>84, "tc2"=>84, "tc3"=>84, "tc4"=>84, "tcr"=>85, "tcr1"=>85, "tcr2"=>85, "tcr3"=>85, "tcr4"=>85, "f"=>86, "e"=>87, "fr"=>88, "fk"=>89, "fq"=>90, "fqa"=>91, "fl"=>92, "fw"=>93, "fp"=>94, "fv"=>95, "fn"=>96, "ft"=>97, "fdc"=>98, "fm"=>99, "x"=>100, "xo"=>101, "xk"=>102, "xq"=>103, "xt"=>104, "xta"=>105, "xop"=>106, "xot"=>107, "xnt"=>108, "xdc"=>109, "add"=>110, "bk"=>111, "dc"=>112, "k"=>113, "lit"=>114, "nd"=>115, "ord"=>116, "pn"=>117, "png"=>118, "qt"=>119, "sig"=>120, "sls"=>121, "tl"=>122, "wj"=>123, "em"=>124, "bd"=>125, "it"=>126, "bdit"=>127, "no"=>128, "sc"=>129, "sup"=>130, "pb"=>131, "fig"=>132, "ndx"=>133, "rb"=>134, "pro"=>135, "w"=>136, "wg"=>137, "wh"=>138, "wa"=>139, "qt-s"=>140, "qt-s1"=>140, "qt-s2"=>140, "qt-s3"=>140, "qt-s4"=>140, "qt-e"=>141, "qt-e1"=>141, "qt-e2"=>141, "qt-e3"=>141, "qt-e4"=>141, "ts"=>142, "ts-s"=>143, "ts-e"=>144, "ef"=>145, "fs"=>146, "ex"=>147, "esb"=>148, "cat"=>149, "periph"=>150, "pdi"=>151, "pde"=>152, "wr"=>153, "ps"=>154, "jmp"=>155, };
@@ -2340,11 +2507,30 @@ pub fn get_marker_content_type(marker: &str) -> Option<char> {
 }
 
 /// Returns a marker without numerical suffixes, i.e., s1 -> s, q1 -> q, etc.
+/// This "un-numbers" the marker if it has a numeric suffix.
 pub fn to_raw_marker(marker: &str) -> Option<&'static str> {
     get_array_index(marker).ok().map(|idx| USFM_MARKER_ARRAY[idx].marker)
 }
 
+/// Returns a standard marker, i.e., s -> s1, q -> q1, etc.
+/// This ensures the marker has the standard '1' suffix if it is a numberable marker
+/// and no suffix was provided.
+pub fn to_standard_marker(marker: &str) -> Option<&'static str> {
+    let idx = get_array_index(marker).ok()?;
+    let entry = &USFM_MARKER_ARRAY[idx];
+    if marker == entry.marker && entry.highest_number_suffix.is_some() {
+        // It's a base marker that needs '1', e.g., "q" -> "q1"
+        let standard = format_compact!("{}1", marker);
+        USFM_MARKER_MAP.get_key(standard.as_str()).copied()
+    } else {
+        // It's already a numbered marker (e.g., "q2") or not numberable (e.g., "p")
+        // Return the static version of the input from the map
+        USFM_MARKER_MAP.get_key(marker).copied()
+    }
+}
+
 /// Return a short string indicating where the marker occurs, e.g. "Introduction", "Text".
+/// Use get_occurs_in_list() to get a list of all possibilities.
 pub fn marker_occurs_in(marker: &str) -> Option<&'static str> {
     get_array_index(marker).ok().map(|idx| USFM_MARKER_ARRAY[idx].occurs_in)
 }
@@ -2357,6 +2543,17 @@ pub fn get_marker_english_name(marker: &str) -> Option<&'static str> {
 /// Returns the description for a marker (or None).
 pub fn get_marker_description(marker: &str) -> Option<&'static str> {
     get_array_index(marker).ok().and_then(|idx| USFM_MARKER_ARRAY[idx].description)
+}
+
+/// Returns a list of strings which marker_occurs_in can return.
+pub fn get_occurs_in_list() -> Vec<&'static str> {
+    let mut oi_list = Vec::new();
+    for entry in USFM_MARKER_ARRAY.iter() {
+        if !oi_list.contains(&entry.occurs_in) {
+            oi_list.push(entry.occurs_in);
+        }
+    }
+    oi_list
 }
 
 /// Returns a list of all possible internal markers.
@@ -2417,10 +2614,8 @@ pub fn get_character_markers_list(
                         if include_end_markers {
                             result.push(format_compact!("{}*", m_with_digit).to_string());
                             if include_nested_markers {
-                                result.push(if include_backslash { format_compact!("\\+{}*{}", marker, digit) } else { format_compact!("+{}*{}", marker, digit) }.to_string()); // Wait, USFM digit comes before asterisk? No, \it1*
-                                // Let's check USFM spec. Usually \it1 ... \it1*
-                                // My Python code said: result.append( adjMarker + str_digit + '*' )
-                                // So \it1*
+                                result.push(if include_backslash { format_compact!("\\+{}*{}", marker, digit) } else { format_compact!("+{}*{}", marker, digit) }.to_string()); 
+                                // s1 -> \s1*
                             }
                         }
                     }
@@ -2433,6 +2628,7 @@ pub fn get_character_markers_list(
 
 /// Returns a list of all possible note markers.
 /// This includes figure, footnote and xref markers.
+/// These are fields that should not normally be displayed inline with the text.
 pub fn get_note_markers_list() -> Vec<&'static str> {
     USFM_MARKER_ARRAY.iter()
         .filter(|m| m.level == USFMMarkerLevel::Note)
@@ -2440,7 +2636,26 @@ pub fn get_note_markers_list() -> Vec<&'static str> {
         .collect()
 }
 
-/// Returns a list of all possible new line markers.
+/// Returns a container of typical footnote and xref sets.
+/// Use select="fn" for footnotes, "xr" for cross-references, or "All" for both.
+pub fn get_typical_note_sets(select: &str) -> Vec<&'static [&'static str]> {
+    match select {
+        "fn" => FOOTNOTE_SETS.to_vec(),
+        "xr" => XREF_SETS.to_vec(),
+        "All" => {
+            let mut res = FOOTNOTE_SETS.to_vec();
+            res.extend_from_slice(XREF_SETS);
+            res
+        }
+        _ => Vec::new(),
+    }
+}
+
+/// Returns a list of all possible new line markers depending on the parameter:
+///     'Raw': Doesn't include q1, q2, ...
+///     'Numbered': Doesn't include q
+///     'Combined': Includes q, q1, q2, ...
+///     'CanonicalText': Doesn't include id, h1, b, q
 pub fn get_newline_markers_list(option: &str) -> Vec<String> {
     match option {
         "Raw" => {
@@ -2503,6 +2718,7 @@ pub fn get_newline_markers_list(option: &str) -> Vec<String> {
 /// If closed_flag=Some(false), goes to the next marker or end of line.
 /// If closed_flag=None (unknown), stops at the first of closing marker, next marker, or end of line.
 pub fn remove_usfm_character_field(marker: &str, original_text: &str, closed_flag: Option<bool>) -> CompactString {
+    // dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "removeUSFMCharacterField( {}, {}, {} )".format( original_text, marker, closed_flag ) )
     let mut text = CompactString::new(original_text);
     let open_pattern = format_compact!("\\{} ", marker);
     let close_pattern = format_compact!("\\{}*", marker);
@@ -2515,12 +2731,15 @@ pub fn remove_usfm_character_field(marker: &str, original_text: &str, closed_fla
                     .map(|rel| rel + ix + open_pattern.len());
                 match ix_end {
                     None => {
+                        // remove until end of line
                         text.truncate(ix);
                     }
                     Some(end) => {
                         if text[end..].starts_with(close_pattern.as_str()) {
+                            // remove the end marker also
                             text.replace_range(ix..end + close_pattern.len(), "");
                         } else {
+                            // leave the next marker in place
                             text.replace_range(ix..end, "");
                         }
                     }
@@ -2531,6 +2750,7 @@ pub fn remove_usfm_character_field(marker: &str, original_text: &str, closed_fla
                     .map(|rel| rel + ix + open_pattern.len()) {
                     text.replace_range(ix..ix_end + close_pattern.len(), "");
                 } else {
+                    // logging.error( "removeUSFMCharacterField: no end marker for {!r} in {!r}".format( marker, original_text ) )
                     break;
                 }
             }
@@ -2539,11 +2759,14 @@ pub fn remove_usfm_character_field(marker: &str, original_text: &str, closed_fla
                     .map(|rel| rel + ix + open_pattern.len());
                 match ix_end {
                     None => {
+                        // remove until end of line
                         text.truncate(ix);
                     }
                     Some(end) => {
                         if end < t_len - 1 && text.as_bytes()[end + 1] == b'+' {
-                            // Doesn't handle embedded markers yet
+                            // We've hit an embedded marker
+                            // logger = logging.critical if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag else logging.error
+                            // logger( "removeUSFMCharacterField: doesn't handle embedded markers yet with {!r} in {!r}".format( marker, original_text ) )
                             break;
                         } else {
                             text.replace_range(ix..end, "");
@@ -2561,6 +2784,12 @@ pub fn remove_usfm_character_field(marker: &str, original_text: &str, closed_fla
 /// so it doesn't work with footnote or cross-reference fields where
 /// the next open marker implicitly closes the previous marker.
 ///
+/// Parameter 1 is a list of 3-tuples of the replacements to be made:
+///     1/ The set of markers
+///     2/ The replacement text for the opening marker
+///     3/ The replacement text for the closing marker
+/// Parameter 2 is the original text.
+///
 /// Produces warning messages if the opening and close markers don't match.
 ///
 /// Returns the adjusted text.
@@ -2568,12 +2797,24 @@ pub fn replace_usfm_character_fields(replacements: &[(&[&str], &str, &str)], ori
     let mut text = CompactString::new(original_text);
     for (markers, open_rep, close_rep) in replacements {
         for &marker in *markers {
+            // Handle the traditional USFM markers
             let open_m = format_compact!("\\{} ", marker);
             let close_m = format_compact!("\\{}*", marker);
+            // openCount, closedCount = original_text.count( openMarker ), original_text.count( closeMarker )
+            // if openCount > closedCount:
+            //     logging.warning( "replaceUSFMCharacterFields: missing close marker for {!r} in {!r}".format( openMarker, original_text ) )
+            // elif openCount < closedCount:
+            //     logging.warning( "replaceUSFMCharacterFields: superfluous {!r} close marker in {!r}".format( closeMarker, original_text ) )
             text = text.replace(open_m.as_str(), open_rep).replace(close_m.as_str(), close_rep).into();
             
+            // Handle the new v2.4 nested markers
             let nested_open_m = format_compact!("\\+{} ", marker);
             let nested_close_m = format_compact!("\\+{}*", marker);
+            // openCount, closedCount = original_text.count( openMarker ), original_text.count( closeMarker )
+            // if openCount > closedCount:
+            //     logging.warning( "replaceUSFMCharacterFields: missing nested close marker for {!r} in {!r}".format( openMarker, original_text ) )
+            // elif openCount < closedCount:
+            //     logging.warning( "replaceUSFMCharacterFields: superfluous {!r} nested close marker in {!r}".format( closeMarker, original_text ) )
             text = text.replace(nested_open_m.as_str(), open_rep).replace(nested_close_m.as_str(), close_rep).into();
         }
     }
@@ -2606,6 +2847,22 @@ pub struct MarkerInfo<'a> {
 
 /// Given a text, return a list of the actual markers
 /// (along with their positions and other useful derived information).
+///
+/// Returns a list of MarkerInfo containing:
+/// 1: marker or None for initial text (if include_initial_text)
+/// 2: indexOfBackslashCharacter in text string
+/// 3: nextSignificantChar
+///     ' ' for normal opening marker
+///     '+' for nested opening marker
+///     '-' for nested closing marker
+///     '*' for normal closing marker
+///     None for end of line.
+/// 4: full marker text including the backslash (can be used to search for)
+/// 5: character context for the following text (list of markers, including this one)
+/// 6: index (to the result list of this function) of the
+///     marker which closes this opening marker (or None if it's not an opening marker)
+/// 7: text field from the marker until the next USFM
+///     but any text preceding the first USFM is not returned anywhere unless include_initial_text is set.
 pub fn get_marker_list_from_text(text: &str, include_initial_text: bool, _verify_markers: bool) -> Vec<MarkerInfo<'_>> {
     if text.is_empty() { return Vec::new(); }
     
@@ -2776,6 +3033,20 @@ mod tests {
     }
 
     #[test]
+    fn test_to_standard_marker() {
+        assert_eq!(to_standard_marker("q"), Some("q1"));
+        assert_eq!(to_standard_marker("q1"), Some("q1"));
+        assert_eq!(to_standard_marker("q2"), Some("q2"));
+        assert_eq!(to_standard_marker("p"), Some("p"));
+        assert_eq!(to_standard_marker("s"), Some("s1"));
+        assert_eq!(to_standard_marker("s2"), Some("s2"));
+        assert_eq!(to_standard_marker("s3"), Some("s3"));
+        assert_eq!(to_standard_marker("s4"), Some("s4"));
+        assert_eq!(to_standard_marker("s5"), None); // s5 is not a valid marker
+        assert_eq!(to_standard_marker("xyz"), None);
+    }
+
+    #[test]
     fn test_marker_metadata() {
         assert_eq!(get_marker_closure_type("it"), Some('A'));
         assert_eq!(get_marker_closure_type("p"), Some('N'));
@@ -2866,8 +3137,13 @@ mod tests {
         assert!(nl_num.contains(&"q1".to_string()));
         assert!(!nl_num.contains(&"q".to_string())); // Numbered only
     }
-}
 
-// WARNING: DO NOT EDIT THIS FILE!!!
-//   This file was created by build_static_tables.py v0.1.0
-//   To change the functions in this library, edit lib.src.rs
+    #[test]
+    fn test_typical_note_sets() {
+        let fn_sets = get_typical_note_sets("fn");
+        assert!(fn_sets.contains(&&["fr", "fr*"][..]));
+        
+        let xr_sets = get_typical_note_sets("xr");
+        assert!(xr_sets.contains(&&["xo", "xt"][..]));
+    }
+}

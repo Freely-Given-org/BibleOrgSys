@@ -339,7 +339,7 @@ class USXXMLBible( Bible ):
                             #if line.startswith( '\\id ' ):
                                 #USXId = line[4:].strip()[:3] # Take the first three non-blank characters after the space after id
                                 #dPrint( 'Info', DEBUGGING_THIS_MODULE, f"Have possible USX ID {USXId!r}" )
-                                #BBB = bos_books_codes_py.usfm_abbrev_to_reference_abbrev( USXId )
+                                #BBB = bos_books_codes_py.usfm_abbrev_to_bos_book_code( USXId )
                                 #dPrint( 'Info', DEBUGGING_THIS_MODULE, f"BBB is {BBB!r}" )
                                 #isUSX = True
                             #break # We only look at the first line
@@ -392,7 +392,7 @@ def makeRefs( BBB:str, C:str, V:str, BRL, text:str ) -> str:
         if match:  # e.g., Jos 3:4-4:5
             #dPrint( 'Info', DEBUGGING_THIS_MODULE, f"MatchA '{match.group(1)}' '{match.group(2)}' '{match.group(3)}' '{match.group(4)}'")
             currentBBB = BRL.getBBBFromText( match.group(2) )
-            USFMBookCode = bos_books_codes_py.usfm_abbrev_to_reference_abbrev( currentBBB ).upper()
+            USFMBookCode = bos_books_codes_py.usfm_abbrev_to_bos_book_code( currentBBB ).upper()
             if USFMBookCode:
                 bitResult = f'{match.group(1)}<ref loc="{USFMBookCode} {match.group(3).replace("–","-")}">{match.group(2)} {match.group(3)}</ref>{match.group(4)}'
         else:
@@ -400,7 +400,7 @@ def makeRefs( BBB:str, C:str, V:str, BRL, text:str ) -> str:
             if match: # e.g., Jos 3:4-7,12
                 #dPrint( 'Info', DEBUGGING_THIS_MODULE, f"MatchB '{match.group(1)}' '{match.group(2)}' '{match.group(3)}' '{match.group(4)}' '{match.group(5)}' '{match.group(6)}' '{match.group(7)}' '{match.group(8)}' '{match.group(9)}'")
                 currentBBB = BRL.getBBBFromText( match.group(2) )
-                USFMBookCode = bos_books_codes_py.usfm_abbrev_to_reference_abbrev( currentBBB ).upper()
+                USFMBookCode = bos_books_codes_py.usfm_abbrev_to_bos_book_code( currentBBB ).upper()
                 if USFMBookCode:
                     bitResult = f'{match.group(1)}<ref loc="{USFMBookCode} {match.group(3)}:{match.group(4)}{match.group(5).replace("–","-")}{match.group(6)}">{match.group(2)} {match.group(3)}:{match.group(4)}{match.group(5)}{match.group(6)}</ref>{match.group(7)}<ref loc="{USFMBookCode} {match.group(3)}:{match.group(8)}">{match.group(8)}</ref>{match.group(9)}'
             else:
@@ -408,7 +408,7 @@ def makeRefs( BBB:str, C:str, V:str, BRL, text:str ) -> str:
                 if match: # e.g., Jos 3:4-7
                     #dPrint( 'Info', DEBUGGING_THIS_MODULE, f"MatchC '{match.group(1)}' '{match.group(2)}' '{match.group(3)}' '{match.group(4)}'")
                     currentBBB = BRL.getBBBFromText( match.group(2) )
-                    USFMBookCode = bos_books_codes_py.usfm_abbrev_to_reference_abbrev( currentBBB ).upper()
+                    USFMBookCode = bos_books_codes_py.usfm_abbrev_to_bos_book_code( currentBBB ).upper()
                     if USFMBookCode:
                         bitResult = f'{match.group(1)}<ref loc="{USFMBookCode} {match.group(3).replace("–","-")}">{match.group(2)} {match.group(3)}</ref>{match.group(4)}'
                 else:
@@ -416,7 +416,7 @@ def makeRefs( BBB:str, C:str, V:str, BRL, text:str ) -> str:
                     if match: # e.g., Jos 3:4,9
                         #dPrint( 'Info', DEBUGGING_THIS_MODULE, f"MatchD '{match.group(1)}' '{match.group(2)}' '{match.group(3)}':'{match.group(4)}' '{match.group(5)}' '{match.group(6)}' '{match.group(7)}'")
                         currentBBB = BRL.getBBBFromText( match.group(2) )
-                        USFMBookCode = bos_books_codes_py.usfm_abbrev_to_reference_abbrev( currentBBB ).upper()
+                        USFMBookCode = bos_books_codes_py.usfm_abbrev_to_bos_book_code( currentBBB ).upper()
                         if USFMBookCode:
                             bitResult = f'{match.group(1)}<ref loc="{USFMBookCode} {match.group(3)}:{match.group(4)}">{match.group(2)} {match.group(3)}:{match.group(4)}</ref>{match.group(5)}<ref loc="{USFMBookCode} {match.group(3)}:{match.group(6)}">{match.group(6)}</ref>{match.group(7)}'
                     else:
@@ -424,7 +424,7 @@ def makeRefs( BBB:str, C:str, V:str, BRL, text:str ) -> str:
                         if match: # e.g., Jos 3:4
                             #dPrint( 'Info', DEBUGGING_THIS_MODULE, f"MatchE '{match.group(1)}' '{match.group(2)}' '{match.group(3)}' '{match.group(4)}'")
                             currentBBB = BRL.getBBBFromText( match.group(2) )
-                            USFMBookCode = bos_books_codes_py.usfm_abbrev_to_reference_abbrev( currentBBB ).upper()
+                            USFMBookCode = bos_books_codes_py.usfm_abbrev_to_bos_book_code( currentBBB ).upper()
                             if USFMBookCode:
                                 bitResult = f'{match.group(1)}<ref loc="{USFMBookCode} {match.group(3)}">{match.group(2)} {match.group(3)}</ref>{match.group(4)}'
                         else:
@@ -434,35 +434,35 @@ def makeRefs( BBB:str, C:str, V:str, BRL, text:str ) -> str:
                                 currentBBB = BRL.getBBBFromText( match.group(2) )
                                 #dPrint( 'Info', DEBUGGING_THIS_MODULE, currentBBB )
                                 assert bos_books_codes_py.is_single_chapter_book( currentBBB )
-                                USFMBookCode = bos_books_codes_py.usfm_abbrev_to_reference_abbrev( currentBBB ).upper()
+                                USFMBookCode = bos_books_codes_py.usfm_abbrev_to_bos_book_code( currentBBB ).upper()
                                 if USFMBookCode:
                                     bitResult = f'{match.group(1)}<ref loc="{USFMBookCode} {match.group(3)}">{match.group(2)} {match.group(3)}</ref>{match.group(4)}'
                             else:
                                 match = re.match( rf'(\s*)({CV_RE}[-–]{CV_RE})(\s*\.?)$', bit )
                                 if match: # e.g., 1:2-3:4
                                     #dPrint( 'Info', DEBUGGING_THIS_MODULE, f"MatchAA '{match.group(1)}' '{match.group(2)}' '{match.group(3)}'")
-                                    USFMBookCode = bos_books_codes_py.usfm_abbrev_to_reference_abbrev( currentBBB ).upper()
+                                    USFMBookCode = bos_books_codes_py.usfm_abbrev_to_bos_book_code( currentBBB ).upper()
                                     if USFMBookCode:
                                         bitResult = f'{match.group(1)}<ref loc="{USFMBookCode} {match.group(2).replace("–","-")}">{match.group(2)}</ref>{match.group(3)}'
                                 else:
                                     match = re.match( rf'(\s*)({CV_RE}[-–]{CorV_RE})(\s*\.?)$', bit )
                                     if match: # e.g., 1:2-6
                                         #dPrint( 'Info', DEBUGGING_THIS_MODULE, f"MatchBB '{match.group(1)}' '{match.group(2)}' '{match.group(3)}'")
-                                        USFMBookCode = bos_books_codes_py.usfm_abbrev_to_reference_abbrev( currentBBB ).upper()
+                                        USFMBookCode = bos_books_codes_py.usfm_abbrev_to_bos_book_code( currentBBB ).upper()
                                         if USFMBookCode:
                                             bitResult = f'{match.group(1)}<ref loc="{USFMBookCode} {match.group(2).replace("–","-")}">{match.group(2)}</ref>{match.group(3)}'
                                     else:
                                         match = re.match( rf'(\s*)({CorV_RE}):({CorV_RE})(, ?)({CorV_RE})(\s*\.?)$', bit )
                                         if match: # e.g., 3:5,9
                                             #dPrint( 'Info', DEBUGGING_THIS_MODULE, f"MatchCC '{match.group(1)}' '{match.group(2)}' '{match.group(3)}' '{match.group(4)}' '{match.group(5)}' '{match.group(6)}'")
-                                            USFMBookCode = bos_books_codes_py.usfm_abbrev_to_reference_abbrev( currentBBB ).upper()
+                                            USFMBookCode = bos_books_codes_py.usfm_abbrev_to_bos_book_code( currentBBB ).upper()
                                             if USFMBookCode:
                                                 bitResult = f'{match.group(1)}<ref loc="{USFMBookCode} {match.group(2)}:{match.group(3)}">{match.group(2)}:{match.group(3)}</ref>{match.group(4)}<ref loc="{USFMBookCode} {match.group(2)}:{match.group(5)}">{match.group(5)}</ref>{match.group(6)}'
                                         else:
                                             match = re.match( rf'(\s*)({CV_RE})(\s*\.?)$', bit )
                                             if match: # e.g., 3:5
                                                 #dPrint( 'Info', DEBUGGING_THIS_MODULE, f"MatchDD '{match.group(1)}' '{match.group(2)}' '{match.group(3)}'")
-                                                USFMBookCode = bos_books_codes_py.usfm_abbrev_to_reference_abbrev( currentBBB ).upper()
+                                                USFMBookCode = bos_books_codes_py.usfm_abbrev_to_bos_book_code( currentBBB ).upper()
                                                 if USFMBookCode:
                                                     bitResult = f'{match.group(1)}<ref loc="{USFMBookCode} {match.group(2)}">{match.group(2)}</ref>{match.group(3)}'
                                             else: logging.critical( f"toUSX makeRefs unable to parse {BBB} {C}:{V} '{bit}'")
@@ -510,22 +510,22 @@ def createUSXXMLBible( self, outputFolderpath:Path|str, controlDict, validationS
         """
         attributeStringStarts = set() # Set of start of string of first /ww attributes (from /w after |)
 
-        def _handleInternalTextMarkersForUSX( originalText:str ) -> str:
+        def _handleInternalTextMarkersForUSX( original_text:str ) -> str:
             """
-            Handles character formatting markers within the originalText.
+            Handles character formatting markers within the original_text.
             Tries to find pairs of markers and replaces them with html char segments.
 
             Note: Has to do extra work for /w USFM markers with attributes
             """
-            if not originalText: return ''
-            if '\\' not in originalText: return originalText
-            # dPrint( 'Never', DEBUGGING_THIS_MODULE, "toUSXXML:hITM4USX:", BBB, C,V, marker, "'"+originalText+"'" )
-            markerList = sorted( BibleOrgSysGlobals.loadedUSFMMarkers.getMarkerListFromText( originalText ),
+            if not original_text: return ''
+            if '\\' not in original_text: return original_text
+            # dPrint( 'Never', DEBUGGING_THIS_MODULE, "toUSXXML:hITM4USX:", BBB, C,V, marker, "'"+original_text+"'" )
+            markerList = sorted( usfm_markers_py.get_marker_list_from_text( original_text ),
                                         key=lambda s: -len(s[4])) # Sort by longest characterContext first (maximum nesting)
             # for insideMarker, iMIndex, nextSignificantChar, fullMarker, characterContext, endIndex, markerField in markerList: # check for internal markers
             #     pass
 
-            adjText = originalText
+            adjText = original_text
             # haveOpenChar = False
             for charMarker in USFMAllExpandedCharacterMarkers:
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "_handleInternalTextMarkersForUSX", charMarker )
@@ -534,14 +534,14 @@ def createUSXXMLBible( self, outputFolderpath:Path|str, controlDict, validationS
                 if fullCharMarker in adjText:
                     # if haveOpenChar:
                     #     adjText = adjText.replace( 'CLOSED_BIT', ' closed="false"' ) # Fix up closed bit since it wasn't closed
-                    #     logger.info( f"toUSXXML: USX export had to close automatically in {BBB} {C}:{V} {marker}:{originalText!r} now {adjText!r}" ) # The last marker presumably only had optional closing (or else we just messed up nesting markers)
+                    #     logger.info( f"toUSXXML: USX export had to close automatically in {BBB} {C}:{V} {marker}:{original_text!r} now {adjText!r}" ) # The last marker presumably only had optional closing (or else we just messed up nesting markers)
                     # adjText = adjText.replace( fullCharMarker, f'{"</char>" if haveOpenChar else ""}<char style="{charMarker}"CLOSED_BIT>' )
                     adjText = adjText.replace( fullCharMarker, f'<char style="{charMarker}">' )
                     # haveOpenChar = True
                 endCharMarker = f'\\{charMarker}*'
                 if endCharMarker in adjText:
                     # if not haveOpenChar: # Then we must have a missing open marker (or extra closing marker)
-                    #     logger.error( f"toUSXXML: Ignored extra {marker!r} closing marker in {charMarker} {BBB}:{C} {V}:{originalText!r} now {adjText!r}" )
+                    #     logger.error( f"toUSXXML: Ignored extra {marker!r} closing marker in {charMarker} {BBB}:{C} {V}:{original_text!r} now {adjText!r}" )
                     #     adjText = adjText.replace( endCharMarker, '' ) # Remove the unused marker
                     # else: # looks good
                         # adjText = adjText.replace( 'CLOSED_BIT', '' ) # Fix up closed bit since it was specifically closed
@@ -577,12 +577,12 @@ def createUSXXMLBible( self, outputFolderpath:Path|str, controlDict, validationS
             # if haveOpenChar:
             #     adjText = adjText.replace( 'CLOSED_BIT', ' closed="false"' ) # Fix up closed bit since it wasn't closed
             #     adjText += f"{'' if adjText[-1]==' ' else ' '}</char>"
-            #     logger.info( f"toUSXXML: Had to close automatically in {BBB} {C}:{V} {marker}:{originalText!r} now {adjText!r}" )
+            #     logger.info( f"toUSXXML: Had to close automatically in {BBB} {C}:{V} {marker}:{original_text!r} now {adjText!r}" )
             if '\\' in adjText: # still
-                logger.critical( f"toUSXXML: Didn't handle a backslash in {BBB} {C}:{V} {marker}:{originalText!r} now {adjText!r}" )
+                logger.critical( f"toUSXXML: Didn't handle a backslash in {BBB} {C}:{V} {marker}:{original_text!r} now {adjText!r}" )
                 if self.doExtraChecking: need_to_fix_this_critical_error
             if 'CLOSED_BIT' in adjText:
-                logger.critical( f"toUSXXML: Didn't handle a character style correctly in {BBB} {C}:{V} {marker}:{originalText!r} now {adjText!r}" )
+                logger.critical( f"toUSXXML: Didn't handle a character style correctly in {BBB} {C}:{V} {marker}:{original_text!r} now {adjText!r}" )
             if '"ior"' in adjText: # Usually in \\iot lines
                 # Make these into live references
                 match = IOR_RE.search( adjText, 0 )
@@ -893,7 +893,7 @@ def createUSXXMLBible( self, outputFolderpath:Path|str, controlDict, validationS
 
 
         # Main code for writeUSXBook
-        USXAbbrev = bos_books_codes_py.reference_abbrev_to_usfm_abbrev( BBB ).upper()
+        USXAbbrev = bos_books_codes_py.bos_book_code_to_usfm_abbrev( BBB ).upper()
         USXNumber = bos_books_codes_py.get_usx_num_str( BBB )
         if not USXAbbrev:
             logger.error( f"toUSXXML: Can't write {BBB} USX book because no USFM code available" )
@@ -940,7 +940,7 @@ def createUSXXMLBible( self, outputFolderpath:Path|str, controlDict, validationS
                 if self.doExtraChecking:
                     assert C=='-1' or marker=='rem' or marker.startswith('mte')
                 V = str( int(V) + 1 )
-            markerContentType = BibleOrgSysGlobals.loadedUSFMMarkers.getMarkerContentType( marker )
+            markerContentType = usfm_markers_py.getMarkerContentType( marker )
             # if BBB=='RUT': vPrint( 'Quiet', DEBUGGING_THIS_MODULE,
             #     f"{BBB} {C}:{V} {marker}({originalMarker})='{text}'{'+extras' if extras else ''} mCT={getMarkerContentType} hOP={haveOpenPara} pJO={paraJustOpened} hOV={haveOpenVerse} nCV={needToCloseVerse}" )
 

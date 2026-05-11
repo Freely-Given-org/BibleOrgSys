@@ -313,7 +313,7 @@ class OSISXMLBible( Bible ):
                                 if 'JONAH' in upperFilename and osisBkCode=='NAH': continue # Handle bad choice
                                 if 'ZEPH' in upperFilename and osisBkCode=='EPH': continue # Handle bad choice
                                 assert not foundBBB # Don't expect duplicates
-                                BBB = bos_books_codes_py.osis_abbrev_to_reference_abbrev( osisBkCode, strict=True )
+                                BBB = bos_books_codes_py.osis_book_code_to_bos_book_code( osisBkCode, strict=True )
                                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  FoundBBB1 = {foundBBB!r}" )
                         if not foundBBB: # Could try a USFM/Paratext book code -- what writer creates these???
                             for bkCode in bos_books_codes_py.get_all_usfm_abbreviations( toUpper=True ):
@@ -323,7 +323,7 @@ class OSISXMLBible( Bible ):
                                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'OSISXMLBible.__init__ ' + f"found {bkCode!r} in {upperFilename!r}" )
                                     if foundBBB: # already -- don't expect doubles
                                         logging.warning( 'OSISXMLBible.__init__: ' + f"Found a second possible book abbreviation for {foundBBB} in {filename}" )
-                                    foundBBB = bos_books_codes_py.usfm_abbrev_to_reference_abbrev( bkCode, strict=True )
+                                    foundBBB = bos_books_codes_py.usfm_abbrev_to_bos_book_code( bkCode, strict=True )
                                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  FoundBBB2 = {foundBBB!r}" )
                         if foundBBB:
                             if isinstance( foundBBB, list ): foundBBB = foundBBB[0] # Take the first option
@@ -337,7 +337,7 @@ class OSISXMLBible( Bible ):
             assert (len(BBBList)==0 and len(self.possibleFilenames)==1) \
                     or len(BBBList) == len(self.possibleFilenames) # Might be no book files (if all in one file)
             newCorrectlyOrderedList = []
-            for BBB in bos_books_codes_py.get_all_reference_abbreviations(): # ordered by reference number
+            for BBB in bos_books_codes_py.get_all_bos_book_codes(): # ordered by reference number
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB )
                 if BBB in BBBList:
                     ix = BBBList.index( BBB )
@@ -2357,7 +2357,7 @@ class OSISXMLBible( Bible ):
                         if BibleOrgSysGlobals.debugFlag: assert len(bits) == 2
                         cmBBB = None
                         try:
-                            cmBBB = bos_books_codes_py.osis_abbrev_to_reference_abbrev( bits[0] )
+                            cmBBB = bos_books_codes_py.osis_book_code_to_bos_book_code( bits[0] )
                         except KeyError:
                             logging.critical( f"{bits[0]!r} is not a valid OSIS book identifier in chapter milestone {OSISChapterID}" )
                             loadErrors.append( f"{bits[0]!r} is not a valid OSIS book identifier in chapter milestone {OSISChapterID}" )
@@ -2406,8 +2406,8 @@ class OSISXMLBible( Bible ):
                                 foundH = False
                             BBB = cmBBB[0] if isinstance( cmBBB, list) else cmBBB # It can be a list like: ['EZR', 'EZN']
                             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "23f4 BBB is", BBB )
-                            USFMAbbreviation = bos_books_codes_py.reference_abbrev_to_usfm_abbrev( BBB )
-                            USFMNumber = bos_books_codes_py.get_usfm_num_str( BBB )
+                            USFMAbbreviation = bos_books_codes_py.bos_book_code_to_usfm_abbrev( BBB )
+                            USFMNumber = bos_books_codes_py.bos_book_code_to_usfm_num_str( BBB )
                             vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  It seems we have {BBB}" )
                             thisBook = BibleBook( self, BBB )
                             thisBook.objectNameString = 'OSIS XML Bible Book object'
@@ -2909,7 +2909,7 @@ class OSISXMLBible( Bible ):
                 if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
                 mainDivOsisID = mainDivOsisID[:-2] # Change 1Kgs.1 to 1Kgs
             try:
-                BBB = bos_books_codes_py.osis_abbrev_to_reference_abbrev( mainDivOsisID )
+                BBB = bos_books_codes_py.osis_book_code_to_bos_book_code( mainDivOsisID )
             except KeyError:
                 logging.critical( f"{mainDivOsisID!r} is not a valid OSIS book identifier in mainDiv" )
                 if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
@@ -2921,8 +2921,8 @@ class OSISXMLBible( Bible ):
                     vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Multiple alternatives for OSIS {BBB!r}: {mainDivOsisID} (Choosing the first one)" )
                     BBB = BBB[0]
                 vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Loading {self.abbreviation+' ' if self.abbreviation else ''}{BBB}…" )
-                USFMAbbreviation = bos_books_codes_py.reference_abbrev_to_usfm_abbrev( BBB )
-                USFMNumber = bos_books_codes_py.get_usfm_num_str( BBB )
+                USFMAbbreviation = bos_books_codes_py.bos_book_code_to_usfm_abbrev( BBB )
+                USFMNumber = bos_books_codes_py.bos_book_code_to_usfm_num_str( BBB )
                 thisBook = BibleBook( self, BBB )
                 thisBook.objectNameString = 'OSIS XML Bible Book object'
                 thisBook.objectTypeString = 'OSIS'
@@ -3269,7 +3269,7 @@ class OSISXMLBible( Bible ):
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "cm", chapterMilestone )
                     OSISBookID = chapterMilestone.split('.')[0]
                     try:
-                        newBBB = bos_books_codes_py.osis_abbrev_to_reference_abbrev( OSISBookID )
+                        newBBB = bos_books_codes_py.osis_book_code_to_bos_book_code( OSISBookID )
                     except KeyError:
                         logging.critical( f"{OSISBookID!r} is not a valid OSIS book identifier" )
                         if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
@@ -3278,8 +3278,8 @@ class OSISXMLBible( Bible ):
                         newBBB = newBBB[0]
                     if newBBB != BBB:
                         BBB = newBBB
-                        USFMAbbreviation = bos_books_codes_py.reference_abbrev_to_usfm_abbrev( BBB )
-                        USFMNumber = bos_books_codes_py.get_usfm_num_str( BBB )
+                        USFMAbbreviation = bos_books_codes_py.bos_book_code_to_usfm_abbrev( BBB )
+                        USFMNumber = bos_books_codes_py.bos_book_code_to_usfm_num_str( BBB )
                         vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  Loading {self.abbreviation+' ' if self.abbreviation else ''}{BBB}…" )
                 if chapterMilestone.startswith('chapterContainer.'): # it must have been a container -- process the subelements
                     OSISChapterID = chapterMilestone[17:] # Remove the 'chapterContainer.' prefix

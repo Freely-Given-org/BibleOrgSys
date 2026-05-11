@@ -188,7 +188,7 @@ class BibleBookOrderSystems:
         assert len(self.__DataLists)
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, thisSystemName, bookOrderSchemeToCheck )
         for BBB in bookOrderSchemeToCheck:
-            if not bos_books_codes_py.is_valid_reference_abbreviation( BBB ):
+            if not bos_books_codes_py.is_valid_bos_book_code( BBB ):
                 logging.error( f"Invalid '{BBB}' book code" )
 
         matchedBookOrderSystemCodes = []

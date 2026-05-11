@@ -353,7 +353,7 @@ def handleRTFLine( self, myName, BBB:str, C:str, V:str, originalLine, bookObject
                 marker = bits[0][1:]
                 if len(bits) == 1:
                     #if bits[0] in ('\\p','\\b'):
-                    if BibleOrgSysGlobals.loadedUSFMMarkers.isNewlineMarker( marker ):
+                    if usfm_markers_py.is_newline_marker( marker ):
                         if C==1 and V==1 and not appendedCFlag: bookObject.addLine( 'c', str(C) ); appendedCFlag = True
                         bookObject.addLine( marker, '' )
                     else:
@@ -369,7 +369,7 @@ def handleRTFLine( self, myName, BBB:str, C:str, V:str, originalLine, bookObject
                         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "bits", bits )
                         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "marker", marker )
                         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "leftovers", repr(leftovers) )
-                    if BibleOrgSysGlobals.loadedUSFMMarkers.isNewlineMarker( marker ):
+                    if usfm_markers_py.is_newline_marker( marker ):
                         if BibleOrgSysGlobals.debugFlag:
                             assert marker in ('mt1','mt2','mt3', 's1','s2','s3', 'p', 'q1','q2','q3', 'm', 'r', 'b',)
                         bookObject.addLine( marker, bits[1] )
@@ -451,7 +451,7 @@ def handleHTMLLine( self, myName, BBB:str, C:str, V:str, originalLine, bookObjec
                 marker = bits[0][1:]
                 if len(bits) == 1:
                     #if bits[0] in ('\\p','\\b'):
-                    if BibleOrgSysGlobals.loadedUSFMMarkers.isNewlineMarker( marker ):
+                    if usfm_markers_py.is_newline_marker( marker ):
                         if C==1 and V==1 and not appendedCFlag: bookObject.addLine( 'c', str(C) ); appendedCFlag = True
                         bookObject.addLine( marker, '' )
                     else:
@@ -467,7 +467,7 @@ def handleHTMLLine( self, myName, BBB:str, C:str, V:str, originalLine, bookObjec
                         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "bits", bits )
                         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "marker", marker )
                         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "leftovers", repr(leftovers) )
-                    if BibleOrgSysGlobals.loadedUSFMMarkers.isNewlineMarker( marker ):
+                    if usfm_markers_py.is_newline_marker( marker ):
                         if BibleOrgSysGlobals.debugFlag:
                             assert marker in ('mt1','mt2','mt3', 's1','s2','s3', 'p', 'q1','q2','q3', 'm', 'r', 'b',)
                         bookObject.addLine( marker, bits[1] )
@@ -725,7 +725,7 @@ class ESwordBible( Bible ):
                     #marker = bits[0][1:]
                     #if len(bits) == 1:
                         ##if bits[0] in ('\\p','\\b'):
-                        #if BibleOrgSysGlobals.loadedUSFMMarkers.isNewlineMarker( marker ):
+                        #if usfm_markers_py.is_newline_marker( marker ):
                             #if C==1 and V==1 and not appendedCFlag: bookObject.addLine( 'c', str(C) ); appendedCFlag = True
                             #bookObject.addLine( marker, '' )
                         #else:
@@ -741,7 +741,7 @@ class ESwordBible( Bible ):
                             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "bits", bits )
                             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "marker", marker )
                             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "leftovers", repr(leftovers) )
-                        #if BibleOrgSysGlobals.loadedUSFMMarkers.isNewlineMarker( marker ):
+                        #if usfm_markers_py.is_newline_marker( marker ):
                             #if BibleOrgSysGlobals.debugFlag:
                                 #assert marker in ('mt1','mt2','mt3', 's1','s2','s3', 'p', 'q1','q2','q3', 'm', 'r', 'b',)
                             #bookObject.addLine( marker, bits[1] )
@@ -783,7 +783,7 @@ class ESwordBible( Bible ):
             BBBn, C, V, text = row # First three are integers, the last is a string
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, repr(BBBn), repr(C), repr(V), repr(text) )
             if BBBn<1 or BBBn>66: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Found book number {BBBn}" )
-            BBB = bos_books_codes_py.get_bbb_from_reference_number( BBBn )
+            BBB = bos_books_codes_py.get_bos_book_code_from_reference_number( BBBn )
             if not BOS.isValidBCVRef( (BBB,str(C),str(V),''), 'checkForExtraMaterial' ):
                 logging.error( f"checkForExtraMaterial: {self.name} contains {BBB} {C}:{V} {text!r}" )
                 if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE:
@@ -834,7 +834,7 @@ class ESwordBible( Bible ):
         #if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'First book number is {BBBn1}' )
         #del rows
         #BBB1 = None
-        #if BBBn1 <= 66: BBB1 = bos_books_codes_py.get_bbb_from_reference_number( BBBn1 )
+        #if BBBn1 <= 66: BBB1 = bos_books_codes_py.get_bos_book_code_from_reference_number( BBBn1 )
 
 
         #testament = BBB = None
@@ -930,7 +930,7 @@ class ESwordBible( Bible ):
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'First book number is {BBBn1}' )
         del rows
         BBB1 = None
-        if BBBn1 <= 66: BBB1 = bos_books_codes_py.get_bbb_from_reference_number( BBBn1 )
+        if BBBn1 <= 66: BBB1 = bos_books_codes_py.get_bos_book_code_from_reference_number( BBBn1 )
 
 
         testament = BBB = None
@@ -1179,12 +1179,12 @@ def createESwordBibleModule( self, outputFolder, controlDict ):
 
         if '\\x' in line: # Remove cross-references completely (why???)
             #line = line.replace('\\x ','<RX>').replace('\\x*','<Rx>')
-            line = removeUSFMCharacterField( 'x', line, closedFlag=True ).lstrip() # Remove superfluous spaces
+            line = removeUSFMCharacterField( 'x', line, closed_flag=True ).lstrip() # Remove superfluous spaces
 
         if '\\f' in line: # Handle footnotes
-            line = removeUSFMCharacterField( 'f', line, closedFlag=True ).lstrip() # Remove superfluous spaces
+            line = removeUSFMCharacterField( 'f', line, closed_flag=True ).lstrip() # Remove superfluous spaces
             #for marker in ( 'fr', 'fm', ): # simply remove these whole field
-                #line = removeUSFMCharacterField( marker, line, closedFlag=None )
+                #line = removeUSFMCharacterField( marker, line, closed_flag=None )
             #for marker in ( 'fq', 'fqa', 'fl', 'fk', ): # italicise these ones
                 #while '\\'+marker+' ' in line:
                     ##dPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, C, V, marker, line.count('\\'+marker+' '), line )
@@ -1209,9 +1209,9 @@ def createESwordBibleModule( self, outputFolder, controlDict ):
                 ##halt
 
         if '\\' in line: # Handle character formatting fields
-            line = removeUSFMCharacterField( 'fig', line, closedFlag=True ) # Remove figures
-            line = removeUSFMCharacterField( 'str', line, closedFlag=True ) # Remove Strong's numbers
-            line = removeUSFMCharacterField( 'sem', line, closedFlag=True ) # Remove semantic tagging
+            line = removeUSFMCharacterField( 'fig', line, closed_flag=True ) # Remove figures
+            line = removeUSFMCharacterField( 'str', line, closed_flag=True ) # Remove Strong's numbers
+            line = removeUSFMCharacterField( 'sem', line, closed_flag=True ) # Remove semantic tagging
             replacements = (
                 ( ('add',), '~^~cf15~^~i ',' ~^~cf0~^~i0' ), # Note the spaces!
                 ( ('qt',), '<FO>','<Fo>' ),

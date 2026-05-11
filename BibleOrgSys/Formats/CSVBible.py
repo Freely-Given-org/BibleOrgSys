@@ -365,7 +365,7 @@ class CSVBible( Bible ):
                 if booknameString:
                     try: bookNumber = int( booknameString )
                     except ValueError: # Assume it's a book code of some sort or a book name
-                        BBB = bos_books_codes_py.english_name_to_reference_abbrev( booknameString )
+                        BBB = bos_books_codes_py.english_name_to_bos_book_code( booknameString )
                         if BBB:
                             bookNumber = bos_books_codes_py.get_reference_number( BBB )
                 elif not BBB: # Try the filename
@@ -376,24 +376,24 @@ class CSVBible( Bible ):
                     except KeyError: pass # no problem
                     if not BBB:
                         if len(filename) == 3:
-                            for tryBBB in bos_books_codes_py.get_all_reference_abbreviations():
+                            for tryBBB in bos_books_codes_py.get_all_bos_book_codes():
                                 if filename.upper() == tryBBB:
                                     BBB = tryBBB
                                     break
                             if not BBB:
                                 for Uuu in bos_books_codes_py.get_all_usfm_abbreviations():
                                     if filename.upper() == Uuu.upper():
-                                        BBB = bos_books_codes_py.usfm_abbrev_to_reference_abbrev( Uuu )
+                                        BBB = bos_books_codes_py.usfm_abbrev_to_bos_book_code( Uuu )
                                         break
                         elif len(filename) == 2:
-                            for tryBBB in bos_books_codes_py.get_all_reference_abbreviations():
+                            for tryBBB in bos_books_codes_py.get_all_bos_book_codes():
                                 if tryBBB.startswith( filename.upper() ):
                                     BBB = tryBBB
                                     break
                             if not BBB:
                                 for Uuu in bos_books_codes_py.get_all_usfm_abbreviations():
                                     if Uuu.upper().startswith( filename.upper ):
-                                        BBB = bos_books_codes_py.usfm_abbrev_to_reference_abbrev( Uuu )
+                                        BBB = bos_books_codes_py.usfm_abbrev_to_bos_book_code( Uuu )
                                         break
                     if BBB:
                         dPrint( 'Info', DEBUGGING_THIS_MODULE, f"Got {BBB=}" )
@@ -417,7 +417,7 @@ class CSVBible( Bible ):
                         if temporaryBookStore is not None: temporaryBookStore[thisBook.BBB] = thisBook
                         else: self.stashBook( thisBook )
                         dPrint( 'Info', DEBUGGING_THIS_MODULE, f"    Now have {len(temporaryBookStore)=} books: {temporaryBookStore.keys()=}." )
-                    BBB = bos_books_codes_py.get_bbb_from_reference_number( bookNumber )  # Try to guess
+                    BBB = bos_books_codes_py.get_bos_book_code_from_reference_number( bookNumber )  # Try to guess
                     assert BBB
                     thisBook = BibleBook( self, BBB )
                     thisBook.objectNameString = 'CSV Bible Book object'
@@ -835,15 +835,15 @@ class CSVBible( Bible ):
                 bookName, CV = ' '.join( bits[:-1] ), bits[-1]
                 C, V = CV.split( ':', 1 )
                 vStr = V # Tells us that we need to print it
-                BBB = bos_books_codes_py.english_name_to_reference_abbrev( bookName )
+                BBB = bos_books_codes_py.english_name_to_bos_book_code( bookName )
                 # print( f"  {BBB} {C}:{V}")
                 assert BBB, f"{n} {row[verseIdColumnName]=}"
                 fgRef = f'{BBB}_{C}:{V}'
                 if fgRef == 'MAT_1:1': wordBSBOffset = 0 # Special case for start of NT
                 chapterNumber, verseNumber = int(C), int(V)
-                isOT = bos_books_codes_py.is_ot_nr( BBB )
-                isDC = bos_books_codes_py.is_dc_nr( BBB )
-                isNT = bos_books_codes_py.is_nt_nr( BBB )
+                isOT = bos_books_codes_py.is_old_testament_nr( BBB )
+                isDC = bos_books_codes_py.is_deuterocanon_nr( BBB )
+                isNT = bos_books_codes_py.is_new_testament_nr( BBB )
                 assert not isDC
                 word_table_filename = WORD_TABLE_FILENAMES[0 if isOT else 1]
                 # print( f"\n\n\n{fgRef} {word_table_filename=} {word_table_indexes[word_table_filename][fgRef]=}" )
@@ -1051,9 +1051,9 @@ class CSVBible( Bible ):
                                 #  'MAT_7:20','MAT_12:48','MAT_17:22','MAT_17:26','MAT_18:12','MAT_23:15',
                                 #  'MRK_1:14','MRK_3:4','MRK_7:17','MRK_9:8','MRK_9:45','MRK_9:47','MRK_10:24',
                                 #  'LUK_2:48','ACT_8:38','ROM_16:25','GAL_1:1'):
-                    assert wordNumberInVerse >= 1, f"From {fgRef} {thisSortNumber=} ({wordBSBOffset=}) got {wordNumberInVerse=} for {originalText=}"
+                    assert wordNumberInVerse >= 1, f"From {fgRef} {thisSortNumber=} ({wordBSBOffset=}) got {wordNumberInVerse=} for {original_text=}"
 
-                originalText = ( row[' BSB version ']
+                original_text = ( row[' BSB version ']
                                     # I just guessed at these BSB fixes, so they really need checking out properly
                                     # (I presume that having different opening and closing [] and {} is a human error and not some code for something special ???)
                                     .replace( '{He did this]', '{He did this}' ) # Josh 4:24
@@ -1072,13 +1072,13 @@ class CSVBible( Bible ):
                                     .replace( '[When}', '[When]' ) # Act 28:15
                                     .replace( '{Let] the', '{Let} the' ) # Col 3:15
                                 )
-                # print( f"From {thisSortNumber=} ({wordBSBOffset=}) got {wordNumberInVerse=} for {originalLanguageWord=} {originalText=}" )
-                assert originalText.count( '[' ) == originalText.count( ']' ), f"    {n} {BBB} {C}:{V} {originalText=}"
-                assert originalText.count( '<i>' ) == originalText.count( '</i>' ), f"    {n} {BBB} {C}:{V} {originalText=}"
-                # print( f"    {n} {BBB} {C}:{V}w{wordNumberInVerse} {originalText=}" ); halt
+                # print( f"From {thisSortNumber=} ({wordBSBOffset=}) got {wordNumberInVerse=} for {originalLanguageWord=} {original_text=}" )
+                assert original_text.count( '[' ) == original_text.count( ']' ), f"    {n} {BBB} {C}:{V} {original_text=}"
+                assert original_text.count( '<i>' ) == original_text.count( '</i>' ), f"    {n} {BBB} {C}:{V} {original_text=}"
+                # print( f"    {n} {BBB} {C}:{V}w{wordNumberInVerse} {original_text=}" ); halt
                 fgWRef = f'{fgRef}w{wordNumberInVerse}'
-                if '<' in originalText: # e.g., a q2 in the middle of a verse
-                    for tt, textBit in enumerate( originalText.split( '<' ) ):
+                if '<' in original_text: # e.g., a q2 in the middle of a verse
+                    for tt, textBit in enumerate( original_text.split( '<' ) ):
                         # print( f"      {n} {BBB} {C}:{V} {tt} {textBit=}" )
                         text = textBit.rstrip()
                         if text.startswith( 'p class=|indent2|>' ):
@@ -1113,7 +1113,7 @@ class CSVBible( Bible ):
                         thisVerseText = f'{thisVerseText} {textEntry.lstrip()}'
                         # thisBook.appendToLastLine( textEntry )
                 else: # should be just a simple text string (without any HTML)
-                    text = originalText.rstrip()
+                    text = original_text.rstrip()
                     assert '|' not in text and '<' not in text and '>' not in text and '/' not in text
 
                     footnoteText = ( row['footnotes']
@@ -1156,15 +1156,15 @@ class CSVBible( Bible ):
             elif 'MSB' in row and row['MSB'] and row['MSB'] != ' ': # and row['MSB'] != ' . . . ' and row['MSB'] != ' - ' and row['MSB'] != ' vvv ':
                 thisSortNumber = int( row['Greek Sort'] )
                 wordNumberInVerse = thisSortNumber - wordBSBOffset
-                assert wordNumberInVerse >= 1, f"From {fgRef} {thisSortNumber=} ({wordBSBOffset=}) got {wordNumberInVerse=} for {originalText=}"
-                originalText = row['MSB']
-                assert originalText.count( '[' ) == originalText.count( ']' ), f"    {n} {BBB} {C}:{V} {originalText=}"
-                assert originalText.count( '<i>' ) == originalText.count( '</i>' ), f"    {n} {BBB} {C}:{V} {originalText=}"
-                # print( f"    {n} {BBB} {C}:{V} {originalText=}" )
+                assert wordNumberInVerse >= 1, f"From {fgRef} {thisSortNumber=} ({wordBSBOffset=}) got {wordNumberInVerse=} for {original_text=}"
+                original_text = row['MSB']
+                assert original_text.count( '[' ) == original_text.count( ']' ), f"    {n} {BBB} {C}:{V} {original_text=}"
+                assert original_text.count( '<i>' ) == original_text.count( '</i>' ), f"    {n} {BBB} {C}:{V} {original_text=}"
+                # print( f"    {n} {BBB} {C}:{V} {original_text=}" )
                 fgWRef = f'{fgRef}w{wordNumberInVerse}'
-                if '<' in originalText: # e.g., a q2 in the middle of a verse
+                if '<' in original_text: # e.g., a q2 in the middle of a verse
                     halt
-                    for tt, textBit in enumerate( originalText.split( '<' ) ):
+                    for tt, textBit in enumerate( original_text.split( '<' ) ):
                         # print( f"      {n} {BBB} {C}:{V} {tt} {textBit=}" )
                         text = textBit.rstrip()
                         if text.startswith( 'p class=|indent2|>' ):
@@ -1196,7 +1196,7 @@ class CSVBible( Bible ):
                         thisVerseText = f'{thisVerseText} {textEntry.lstrip()}'
                         # thisBook.appendToLastLine( textEntry )
                 else: # should be just a simple text string (without any HTML)
-                    text = originalText.rstrip()
+                    text = original_text.rstrip()
                     assert '|' not in text and '<' not in text and '>' not in text and '/' not in text
                     footnoteText = row['Footnotes'].replace('<i>','\\+it ').replace('</i>','\\+it*') \
                                         .replace( '<span class=|fnv|>', '\\xt ', ).replace( '</span>', '\\ft ', )
@@ -1270,14 +1270,14 @@ class CSVBible( Bible ):
                     continue # Not sure what this is
                 if filenameStart == 'PA': # from RP-GNT
                     continue # Not sure what this is
-                BBB = bos_books_codes_py.english_name_to_reference_abbrev( filenameStart )
+                BBB = bos_books_codes_py.english_name_to_bos_book_code( filenameStart )
                 dPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Got {BBB=} from {filenameStart=}")
                 self._loadFile( os.path.join( self.sourceFolder, filename ), tempBookStore )
 
         dPrint( 'Info', DEBUGGING_THIS_MODULE, f"{len(tempBookStore)}" )
 
         # Now save the books in the right Biblical order
-        for BBB in bos_books_codes_py.get_all_reference_abbreviations():
+        for BBB in bos_books_codes_py.get_all_bos_book_codes():
             if BBB in tempBookStore:
                 self.stashBook( tempBookStore[BBB] )
 

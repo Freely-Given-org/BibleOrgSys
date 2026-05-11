@@ -41,45 +41,45 @@ impl Error for LookupError<'_> {}
 
 
 #[inline]
-pub fn is_valid_reference_abbreviation(reference_abbreviation: &str) -> bool {
-    REFERENCE_ABBREVIATION_MAP.contains_key(reference_abbreviation)
+pub fn is_valid_bos_book_code(bos_book_code: &str) -> bool {
+    REFERENCE_ABBREVIATION_MAP.contains_key(bos_book_code)
 }
 
 #[inline]
-fn get_array_index(reference_abbreviation: &str) -> Result<usize, LookupError<'_>> {
-    REFERENCE_ABBREVIATION_MAP.get(reference_abbreviation)
+fn get_array_index(bos_book_code: &str) -> Result<usize, LookupError<'_>> {
+    REFERENCE_ABBREVIATION_MAP.get(bos_book_code)
         .copied()
-        .ok_or_else(|| LookupError::AbbrevNotFound("Reference", reference_abbreviation))
+        .ok_or_else(|| LookupError::AbbrevNotFound("Reference", bos_book_code))
 }
 
 /// Returns the referenceNumber 1..999 for the given book code (referenceAbbreviation).
-pub fn get_reference_number(reference_abbreviation: &str) -> Result<u16, LookupError<'_>> {
-    let array_index = get_array_index(reference_abbreviation)?;
+pub fn get_reference_number(bos_book_code: &str) -> Result<u16, LookupError<'_>> {
+    let array_index = get_array_index(bos_book_code)?;
     Ok(BIBLE_BOOKS_CODES_ARRAY[array_index].BOS_reference_number)
 }
 
 /// Returns the sequence number for a given reference abbreviation.
-pub fn get_sequence_number(reference_abbreviation: &str) -> Result<u16, LookupError<'_>> {
-    let array_index = get_array_index(reference_abbreviation)?;
+pub fn get_sequence_number(bos_book_code: &str) -> Result<u16, LookupError<'_>> {
+    let array_index = get_array_index(bos_book_code)?;
     Ok(BIBLE_BOOKS_CODES_ARRAY[array_index].BOS_sequence_number)
 }
 
 /// Return the reference abbreviation for the given book number (reference number).
 /// This is probably only useful in the range 1..66 (GEN..REV).
 /// (After that, it specifies our arbitrary order.)
-pub fn get_bbb_from_reference_number(reference_number: u16) -> Option<&'static str> {
+pub fn get_bos_book_code_from_reference_number(reference_number: u16) -> Option<&'static str> {
     BIBLE_BOOKS_CODES_ARRAY.iter()
         .find(|e| e.BOS_reference_number == reference_number)
-        .map(|e| e.BOS_reference_abbreviation)
+        .map(|e| e.BOS_book_code)
 }
 
 #[inline]
-pub fn get_all_reference_abbreviations() -> &'static [&'static str] {
+pub fn get_all_bos_book_codes() -> &'static [&'static str] {
     ALL_REFERENCE_ABBREVIATIONS
 }
 
 #[inline]
-pub fn get_all_osis_abbreviations() -> &'static [&'static str] {
+pub fn get_all_osis_book_codes() -> &'static [&'static str] {
     ALL_OSIS_ABBREVIATIONS
 }
 
@@ -132,102 +132,102 @@ pub fn get_sequence_list(my_list: Option<Vec<&str>>) -> Vec<&'static str> {
 }
 
 // nr stands for "Not Recommended" (because ideally the proper versification functions should be used instead)
-pub fn is_ot_nr(reference_abbreviation: &str) -> bool {
-    if let Ok(num) = get_reference_number(reference_abbreviation) {
+pub fn is_old_testament_nr(bos_book_code: &str) -> bool {
+    if let Ok(num) = get_reference_number(bos_book_code) {
         return 1 <= num && num <= 39;
     }
     false
 }
 
 // nr stands for "Not Recommended" (because ideally the proper versification functions should be used instead)
-pub fn is_nt_nr(reference_abbreviation: &str) -> bool {
-    if let Ok(num) = get_reference_number(reference_abbreviation) {
+pub fn is_new_testament_nr(bos_book_code: &str) -> bool {
+    if let Ok(num) = get_reference_number(bos_book_code) {
         return 40 <= num && num <= 66;
     }
     false
 }
 
 // nr stands for "Not Recommended" (because ideally the proper versification functions should be used instead)
-pub fn is_dc_nr(reference_abbreviation: &str) -> bool {
-    matches!(reference_abbreviation, "TOB"|"JDT"|"ESG"|"WIS"|"SIR"|"BAR"|"LJE"|"PAZ"|"SUS"|"BEL"|"MA1"|"MA2"|"GES"|"LES"|"MAN")
+pub fn is_deuterocanon_nr(bos_book_code: &str) -> bool {
+    matches!(bos_book_code, "TOB"|"JDT"|"ESG"|"WIS"|"SIR"|"BAR"|"LJE"|"PAZ"|"SUS"|"BEL"|"MA1"|"MA2"|"GES"|"LES"|"MAN")
 }
 
-pub fn get_ccel_number_str(reference_abbreviation: &str) -> Option<&'static str> {
-    get_array_index(reference_abbreviation).ok()
+pub fn get_ccel_number_str(bos_book_code: &str) -> Option<&'static str> {
+    get_array_index(bos_book_code).ok()
         .and_then(|idx| BIBLE_BOOKS_CODES_ARRAY[idx].CCEL_number_str)
 }
 
-pub fn get_short_abbreviation(reference_abbreviation: &str) -> Option<&'static str> {
-    get_array_index(reference_abbreviation).ok()
+pub fn get_short_abbreviation(bos_book_code: &str) -> Option<&'static str> {
+    get_array_index(bos_book_code).ok()
         .and_then(|idx| BIBLE_BOOKS_CODES_ARRAY[idx].short_abbreviation)
 }
 
-pub fn get_sbl_abbreviation(reference_abbreviation: &str) -> Option<&'static str> {
-    get_array_index(reference_abbreviation).ok()
+pub fn get_sbl_abbreviation(bos_book_code: &str) -> Option<&'static str> {
+    get_array_index(bos_book_code).ok()
         .and_then(|idx| BIBLE_BOOKS_CODES_ARRAY[idx].SBL_abbreviation)
 }
 
-pub fn get_osis_abbreviation(reference_abbreviation: &str) -> Option<&'static str> {
-    get_array_index(reference_abbreviation).ok()
+pub fn bos_to_osis_book_code(bos_book_code: &str) -> Option<&'static str> {
+    get_array_index(bos_book_code).ok()
         .and_then(|idx| BIBLE_BOOKS_CODES_ARRAY[idx].OSIS_abbreviation)
 }
 
-pub fn get_sword_abbreviation(reference_abbreviation: &str) -> Option<&'static str> {
-    get_array_index(reference_abbreviation).ok()
+pub fn bos_to_sword_book_code(bos_book_code: &str) -> Option<&'static str> {
+    get_array_index(bos_book_code).ok()
         .and_then(|idx| BIBLE_BOOKS_CODES_ARRAY[idx].Sword_abbreviation)
 }
 
-pub fn get_usfm_num_str(reference_abbreviation: &str) -> Option<&'static str> {
-    get_array_index(reference_abbreviation).ok()
+pub fn bos_book_code_to_usfm_num_str(bos_book_code: &str) -> Option<&'static str> {
+    get_array_index(bos_book_code).ok()
         .and_then(|idx| BIBLE_BOOKS_CODES_ARRAY[idx].USFM_number_str)
 }
 
-pub fn get_usx_num_str(reference_abbreviation: &str) -> Option<&'static str> {
-    get_array_index(reference_abbreviation).ok()
+pub fn get_usx_num_str(bos_book_code: &str) -> Option<&'static str> {
+    get_array_index(bos_book_code).ok()
         .and_then(|idx| BIBLE_BOOKS_CODES_ARRAY[idx].USX_number_str)
 }
 
-pub fn get_unbound_bible_code(reference_abbreviation: &str) -> Option<&'static str> {
-    get_array_index(reference_abbreviation).ok()
+pub fn get_unbound_bible_code(bos_book_code: &str) -> Option<&'static str> {
+    get_array_index(bos_book_code).ok()
         .and_then(|idx| BIBLE_BOOKS_CODES_ARRAY[idx].Unbound_Code)
 }
 
-pub fn get_bibledit_num_str(reference_abbreviation: &str) -> Option<&'static str> {
-    get_array_index(reference_abbreviation).ok()
+pub fn get_bibledit_num_str(bos_book_code: &str) -> Option<&'static str> {
+    get_array_index(bos_book_code).ok()
         .and_then(|idx| BIBLE_BOOKS_CODES_ARRAY[idx].Bibledit_number_str)
 }
 
-pub fn get_possible_alternative_books(reference_abbreviation: &str) -> Vec<&'static str> {
-    get_array_index(reference_abbreviation).ok()
+pub fn get_possible_alternative_books(bos_book_code: &str) -> Vec<&'static str> {
+    get_array_index(bos_book_code).ok()
         .map(|idx| BIBLE_BOOKS_CODES_ARRAY[idx].possible_alternative_books_codes.to_vec())
         .unwrap_or_default()
 }
 
-pub fn get_logos_num_str(reference_abbreviation: &str) -> Option<&'static str> {
-    get_array_index(reference_abbreviation).ok()
+pub fn get_logos_num_str(bos_book_code: &str) -> Option<&'static str> {
+    get_array_index(bos_book_code).ok()
         .and_then(|idx| BIBLE_BOOKS_CODES_ARRAY[idx].Logos_number_str)
 }
 
-pub fn get_net_bible_abbreviation(reference_abbreviation: &str) -> Option<&'static str> {
-    get_array_index(reference_abbreviation).ok()
+pub fn bos_to_net_bible_book_code(bos_book_code: &str) -> Option<&'static str> {
+    get_array_index(bos_book_code).ok()
         .and_then(|idx| BIBLE_BOOKS_CODES_ARRAY[idx].NET_Bible_abbreviation)
 }
 
-pub fn get_drupal_bible_abbreviation(reference_abbreviation: &str) -> Option<&'static str> {
-    get_array_index(reference_abbreviation).ok()
+pub fn bos_to_drupal_book_code(bos_book_code: &str) -> Option<&'static str> {
+    get_array_index(bos_book_code).ok()
         .and_then(|idx| BIBLE_BOOKS_CODES_ARRAY[idx].Drupal_Bible_abbreviation)
 }
 
-pub fn get_byzantine_abbreviation(reference_abbreviation: &str) -> Option<&'static str> {
-    get_array_index(reference_abbreviation).ok()
+pub fn get_byzantine_abbreviation(bos_book_code: &str) -> Option<&'static str> {
+    get_array_index(bos_book_code).ok()
         .and_then(|idx| BIBLE_BOOKS_CODES_ARRAY[idx].Byzantine_abbreviation)
 }
 
 /// Gets a list with the number of expected chapters for the given book code (reference abbreviation).
 /// Why is it a list? Because some books have alternate possible numbers of chapters
 /// depending on the Biblical tradition.
-pub fn get_expected_chapters_list(reference_abbreviation: &str) -> Vec<u16> {
-    if let Ok(idx) = get_array_index(reference_abbreviation) {
+pub fn get_expected_chapters_list(bos_book_code: &str) -> Vec<u16> {
+    if let Ok(idx) = get_array_index(bos_book_code) {
         match BIBLE_BOOKS_CODES_ARRAY[idx].expected_num_chapters {
             OptionalNumberOrTwoNumbers::Number(n) => vec![n],
             OptionalNumberOrTwoNumbers::TwoNumbers(nums) => vec![nums[0], nums[1]],
@@ -238,8 +238,8 @@ pub fn get_expected_chapters_list(reference_abbreviation: &str) -> Vec<u16> {
     }
 }
 
-pub fn get_max_chapters(reference_abbreviation: &str) -> i16 {
-    let list = get_expected_chapters_list(reference_abbreviation);
+pub fn get_max_chapters(bos_book_code: &str) -> i16 {
+    let list = get_expected_chapters_list(bos_book_code);
     if list.is_empty() {
         -1
     } else {
@@ -250,7 +250,7 @@ pub fn get_max_chapters(reference_abbreviation: &str) -> i16 {
 pub fn get_single_chapter_books_list() -> Vec<&'static str> {
     BIBLE_BOOKS_CODES_ARRAY.iter()
         .filter(|e| matches!(e.expected_num_chapters, OptionalNumberOrTwoNumbers::Number(1)))
-        .map(|e| e.BOS_reference_abbreviation)
+        .map(|e| e.BOS_book_code)
         .collect()
 }
 
@@ -261,22 +261,22 @@ pub fn get_osis_single_chapter_books_list() -> Vec<&'static str> {
         .collect()
 }
 
-pub fn is_single_chapter_book(reference_abbreviation: &str) -> bool {
-    if let Ok(idx) = get_array_index(reference_abbreviation) {
+pub fn is_single_chapter_book(bos_book_code: &str) -> bool {
+    if let Ok(idx) = get_array_index(bos_book_code) {
         return matches!(BIBLE_BOOKS_CODES_ARRAY[idx].expected_num_chapters, OptionalNumberOrTwoNumbers::Number(1));
     }
     false
 }
 
-pub fn is_chapter_verse_book(reference_abbreviation: &str) -> bool {
-    if let Ok(idx) = get_array_index(reference_abbreviation) {
+pub fn is_chapter_verse_book(bos_book_code: &str) -> bool {
+    if let Ok(idx) = get_array_index(bos_book_code) {
         return !matches!(BIBLE_BOOKS_CODES_ARRAY[idx].expected_num_chapters, OptionalNumberOrTwoNumbers::None);
     }
     false
 }
 
-pub fn get_typical_section(reference_abbreviation: &str) -> Option<&'static str> {
-    get_array_index(reference_abbreviation).ok()
+pub fn get_typical_section(bos_book_code: &str) -> Option<&'static str> {
+    get_array_index(bos_book_code).ok()
         .and_then(|idx| BIBLE_BOOKS_CODES_ARRAY[idx].typical_section)
 }
 
@@ -314,17 +314,17 @@ pub fn sort_bcv_references<T>(references: &mut [T], get_parts: impl Fn(&T) -> (&
 /// Returns true if the storyline of the book continues through chapters,
 /// i.e., the chapter divisions are artificial.
 /// Returns false for books like Psalms where chapters are actual units.
-pub fn continues_through_chapters(reference_abbreviation: &str) -> bool {
-    !matches!(reference_abbreviation, "PSA" | "PS2" | "LAM")
+pub fn continues_through_chapters(bos_book_code: &str) -> bool {
+    !matches!(bos_book_code, "PSA" | "PS2" | "LAM")
 }
 
-pub fn get_book_name(reference_abbreviation: &str) -> Option<&'static str> {
-    get_array_index(reference_abbreviation).ok()
+pub fn get_book_name(bos_book_code: &str) -> Option<&'static str> {
+    get_array_index(bos_book_code).ok()
         .map(|idx| BIBLE_BOOKS_CODES_ARRAY[idx].original_language_book_name)
 }
 
-pub fn get_full_entry(reference_abbreviation: &str) -> Result<&'static BibleBooksCodesArrayEntry<'static>, LookupError<'_>> {
-    let array_index = get_array_index(reference_abbreviation)?;
+pub fn get_full_entry(bos_book_code: &str) -> Result<&'static BibleBooksCodesArrayEntry<'static>, LookupError<'_>> {
+    let array_index = get_array_index(bos_book_code)?;
     Ok(&BIBLE_BOOKS_CODES_ARRAY[array_index])
 }
 
@@ -333,8 +333,8 @@ pub fn get_full_entry(reference_abbreviation: &str) -> Result<&'static BibleBook
 /// They are not intended to be used for a proper international human interface.
 /// The first one in the list is supposed to be the more common.
 // nr stands for "Not Recommended" (because ideally the proper versification functions should be used instead)
-pub fn get_english_name_nr(reference_abbreviation: &str) -> Option<&'static str> {
-    get_array_index(reference_abbreviation).ok()
+pub fn get_english_name_nr(bos_book_code: &str) -> Option<&'static str> {
+    get_array_index(bos_book_code).ok()
         .map(|idx| {
             let guide = BIBLE_BOOKS_CODES_ARRAY[idx].book_name_English_guide;
             guide.split('/').next().unwrap_or(guide).trim()
@@ -342,8 +342,8 @@ pub fn get_english_name_nr(reference_abbreviation: &str) -> Option<&'static str>
 }
 
 // nr stands for "Not Recommended" (because ideally the proper versification functions should be used instead)
-pub fn get_english_name_list_nr(reference_abbreviation: &str) -> Vec<&'static str> {
-    if let Ok(idx) = get_array_index(reference_abbreviation) {
+pub fn get_english_name_list_nr(bos_book_code: &str) -> Vec<&'static str> {
+    if let Ok(idx) = get_array_index(bos_book_code) {
         BIBLE_BOOKS_CODES_ARRAY[idx].book_name_English_guide
             .split('/')
             .map(|s| s.trim())
@@ -441,83 +441,66 @@ pub fn tidy_bbb(bbb: &str, title_case: bool, allow_four_chars: bool, insert_char
 }
 
 #[inline]
-pub fn reference_abbrev_to_usfm_abbrev<'a>(
-    reference_abbreviation: &str,
+pub fn bos_book_code_to_usfm_abbrev<'a>(
+    bos_book_code: &str,
 ) -> Result<Option<&'static str>, LookupError<'_>> {
-    let array_index = *REFERENCE_ABBREVIATION_MAP.get(reference_abbreviation)
-        .ok_or_else(|| LookupError::AbbrevNotFound("Reference", reference_abbreviation))?;
+    let array_index = *REFERENCE_ABBREVIATION_MAP.get(bos_book_code)
+        .ok_or_else(|| LookupError::AbbrevNotFound("Reference", bos_book_code))?;
 
     Ok(BIBLE_BOOKS_CODES_ARRAY[array_index].USFM_abbreviation)
         // .as_ref()
-        // .ok_or_else(|| Box::new(LookupError::ValueIsNone(reference_abbreviation.to_string())) as Box<dyn Error>)?)
+        // .ok_or_else(|| Box::new(LookupError::ValueIsNone(bos_book_code.to_string())) as Box<dyn Error>)?)
 }
 
 #[inline]
-pub fn usfm_abbrev_to_reference_abbrev<'a>(
+pub fn usfm_abbrev_to_bos_book_code<'a>(
     usfm_abbreviation: &'a str,
 ) -> Result<&'static str, LookupError<'a>> {
-    // println!("usfm_abbrev_to_reference_abbrev for {}", &usfm_abbreviation);
-    // let USFM_ABBREVIATION_MAP: HashMap<&str, usize> = hash_map!{ "NEG"=>1,"OXE"=>2,"VEL"=>3,};
-    // println!("The unmutable hash map is {:?}", USFM_ABBREVIATION_MAP);
-    // let mut USFMAbbreviationDict: HashMap<&str, usize> = HashMap::new();
-    // println!(
-    //     "USFMAbbreviationDict length = {}",
-    //     USFMAbbreviationDict.len()
-    // );
-
-    // if USFMAbbreviationDict.len() == 0 {
-    //     // we need to create the index
-    //     for (i, el) in BIBLE_BOOKS_CODES_ARRAY.iter().enumerate() {
-    //         println!("The current element is {:#?}", el);
-    //         USFMAbbreviationDict.insert(el.usfm_abbreviation, i);
-    //     }
-    //     println!("The new hash map is {:?}", USFMAbbreviationDict);
-    // }
     if let Some(&array_index) = USFM_ABBREVIATION_MAP.get(usfm_abbreviation) {
-        Ok(BIBLE_BOOKS_CODES_ARRAY[array_index].BOS_reference_abbreviation)
-    } else if let Some(&array_index) = UPPERCASE_USFM_ABBREVIATION_MAP.get(usfm_abbreviation) {
-        Ok(BIBLE_BOOKS_CODES_ARRAY[array_index].BOS_reference_abbreviation)
+        Ok(BIBLE_BOOKS_CODES_ARRAY[array_index].BOS_book_code)
+    } else if let Some(&array_index) = UPPERCASE_USFM_ABBREVIATION_MAP.get(usfm_abbreviation.to_uppercase().as_str()) {
+        Ok(BIBLE_BOOKS_CODES_ARRAY[array_index].BOS_book_code)
     } else {
         Err(LookupError::AbbrevNotFound("USFM", usfm_abbreviation))
     }
 }
 
 #[inline]
-pub fn osis_abbrev_to_reference_abbrev<'a>(
-    osis_abbreviation: &'a str,
+pub fn osis_book_code_to_bos_book_code<'a>(
+    osis_book_code: &'a str,
     strict: bool,
 ) -> Result<&'static str, LookupError<'a>> {
-    if let Some(&array_index) = OSIS_ABBREVIATION_MAP.get(osis_abbreviation) {
-        Ok(BIBLE_BOOKS_CODES_ARRAY[array_index].BOS_reference_abbreviation)
+    if let Some(&array_index) = OSIS_ABBREVIATION_MAP.get(osis_book_code) {
+        Ok(BIBLE_BOOKS_CODES_ARRAY[array_index].BOS_book_code)
     } else if !strict {
-        let uc = CompactString::from(osis_abbreviation).to_uppercase();
+        let uc = CompactString::from(osis_book_code).to_uppercase();
         if let Some(&array_index) = SWORD_ABBREVIATION_MAP.get(uc.as_str()) {
-             Ok(BIBLE_BOOKS_CODES_ARRAY[array_index].BOS_reference_abbreviation)
+             Ok(BIBLE_BOOKS_CODES_ARRAY[array_index].BOS_book_code)
         } else {
-            Err(LookupError::AbbrevNotFound("OSIS/Sword", osis_abbreviation))
+            Err(LookupError::AbbrevNotFound("OSIS/Sword", osis_book_code))
         }
     } else {
-        Err(LookupError::AbbrevNotFound("OSIS", osis_abbreviation))
+        Err(LookupError::AbbrevNotFound("OSIS", osis_book_code))
     }
 }
 
 #[inline]
-pub fn drupal_abbrev_to_reference_abbrev<'a>(
-    drupal_abbreviation: &'a str,
+pub fn drupal_book_code_to_bos_book_code<'a>(
+    drupal_book_code: &'a str,
 ) -> Result<&'static str, LookupError<'a>> {
-    if let Some(&array_index) = DRUPAL_BIBLE_ABBREVIATION_MAP.get(drupal_abbreviation) {
-        Ok(BIBLE_BOOKS_CODES_ARRAY[array_index].BOS_reference_abbreviation)
+    if let Some(&array_index) = DRUPAL_BIBLE_ABBREVIATION_MAP.get(drupal_book_code) {
+        Ok(BIBLE_BOOKS_CODES_ARRAY[array_index].BOS_book_code)
     } else {
-        Err(LookupError::AbbrevNotFound("Drupal", drupal_abbreviation))
+        Err(LookupError::AbbrevNotFound("Drupal", drupal_book_code))
     }
 }
 
 #[inline]
-pub fn unbound_code_to_reference_abbrev<'a>(
+pub fn unbound_code_to_bos_book_code<'a>(
     unbound_code: &'a str,
 ) -> Result<&'static str, LookupError<'a>> {
     if let Some(&array_index) = UNBOUND_CODE_MAP.get(unbound_code) {
-        Ok(BIBLE_BOOKS_CODES_ARRAY[array_index].BOS_reference_abbreviation)
+        Ok(BIBLE_BOOKS_CODES_ARRAY[array_index].BOS_book_code)
     } else {
         Err(LookupError::AbbrevNotFound("Unbound", unbound_code))
     }
@@ -526,22 +509,22 @@ pub fn unbound_code_to_reference_abbrev<'a>(
 /// Return the reference abbreviation string for the given short book code string.
 /// NOTE: This tends to be more forgiving than more specific Bible code systems.
 #[inline]
-pub fn short_abbrev_to_reference_abbrev<'a>(
+pub fn short_abbrev_to_bos_book_code<'a>(
     short_abbreviation: &'a str,
     strict: bool,
 ) -> Result<&'static str, LookupError<'a>> {
     let uc = CompactString::from(short_abbreviation).to_uppercase();
     if let Some(&array_index) = SHORT_ABBREVIATION_MAP.get(uc.as_str()) {
-        Ok(BIBLE_BOOKS_CODES_ARRAY[array_index].BOS_reference_abbreviation)
+        Ok(BIBLE_BOOKS_CODES_ARRAY[array_index].BOS_book_code)
     } else if !strict {
         // Maybe it has a space in it?
         let no_space = uc.replace(' ', "");
         if let Some(&array_index) = SHORT_ABBREVIATION_MAP.get(no_space.as_str()) {
-            Ok(BIBLE_BOOKS_CODES_ARRAY[array_index].BOS_reference_abbreviation)
+            Ok(BIBLE_BOOKS_CODES_ARRAY[array_index].BOS_book_code)
         } else if let Some(&array_index) = SBL_ABBREVIATION_MAP.get(uc.as_str()) {
-            Ok(BIBLE_BOOKS_CODES_ARRAY[array_index].BOS_reference_abbreviation)
+            Ok(BIBLE_BOOKS_CODES_ARRAY[array_index].BOS_book_code)
         } else if let Some(&array_index) = NET_BIBLE_ABBREVIATION_MAP.get(uc.as_str()) {
-            Ok(BIBLE_BOOKS_CODES_ARRAY[array_index].BOS_reference_abbreviation)
+            Ok(BIBLE_BOOKS_CODES_ARRAY[array_index].BOS_book_code)
         } else {
              Err(LookupError::AbbrevNotFound("Short/SBL/NET", short_abbreviation))
         }
@@ -551,33 +534,33 @@ pub fn short_abbrev_to_reference_abbrev<'a>(
 }
 
 #[inline]
-pub fn sbl_abbrev_to_reference_abbrev<'a>(
+pub fn sbl_abbrev_to_bos_book_code<'a>(
     sbl_abbreviation: &'a str,
 ) -> Result<&'static str, LookupError<'a>> {
     let uc = CompactString::from(sbl_abbreviation).to_uppercase();
     if let Some(&array_index) = SBL_ABBREVIATION_MAP.get(uc.as_str()) {
-        Ok(BIBLE_BOOKS_CODES_ARRAY[array_index].BOS_reference_abbreviation)
+        Ok(BIBLE_BOOKS_CODES_ARRAY[array_index].BOS_book_code)
     } else {
         Err(LookupError::AbbrevNotFound("SBL", sbl_abbreviation))
     }
 }
 
 #[inline]
-pub fn net_bible_abbrev_to_reference_abbrev<'a>(
+pub fn net_bible_abbrev_to_bos_book_code<'a>(
     net_bible_abbreviation: &'a str,
 ) -> Result<&'static str, LookupError<'a>> {
     let uc = CompactString::from(net_bible_abbreviation).to_uppercase();
     if let Some(&array_index) = NET_BIBLE_ABBREVIATION_MAP.get(uc.as_str()) {
-        Ok(BIBLE_BOOKS_CODES_ARRAY[array_index].BOS_reference_abbreviation)
+        Ok(BIBLE_BOOKS_CODES_ARRAY[array_index].BOS_book_code)
     } else {
         Err(LookupError::AbbrevNotFound("NET", net_bible_abbreviation))
     }
 }
 
-pub fn english_name_to_reference_abbrev(english_name: &str,) -> Option<&'static str> {
+pub fn english_name_to_bos_book_code(english_name: &str,) -> Option<&'static str> {
     let adj_english_name = CompactString::from(english_name).to_uppercase();
     if let Some(&array_index) = ENGLISH_NAME_MAP.get(adj_english_name.as_str()) {
-        return Some(BIBLE_BOOKS_CODES_ARRAY[array_index].BOS_reference_abbreviation)
+        return Some(BIBLE_BOOKS_CODES_ARRAY[array_index].BOS_book_code)
     }
 
     let pairs = [
@@ -592,7 +575,7 @@ pub fn english_name_to_reference_abbrev(english_name: &str,) -> Option<&'static 
     for (s1, s2) in pairs {
         if adj_english_name.starts_with(s1) {
             if let Some(&array_index) = ENGLISH_NAME_MAP.get(format_compact!("{}{}", s2, &adj_english_name[s1.len()..]).as_str()) {
-                return Some(BIBLE_BOOKS_CODES_ARRAY[array_index].BOS_reference_abbreviation)
+                return Some(BIBLE_BOOKS_CODES_ARRAY[array_index].BOS_book_code)
             }
         }
     }
@@ -613,7 +596,7 @@ pub fn english_name_to_reference_abbrev(english_name: &str,) -> Option<&'static 
 //     }
 // }
 
-// pub fn usfm_num_to_reference_abbreviation(usfm_num_str: &str) -> Result<String, Box<dyn Error>> {
+// pub fn usfm_num_to_bos_book_code(usfm_num_str: &str) -> Result<String, Box<dyn Error>> {
 //     println!("usfm_num_to_usfm_bbb for {:?}", usfm_num_str);
 //     if !&self.USFMNumberDict.contains_key(usfm_num_str) {
 //         return Err("Invalid USFM number: '".to_owned() + &usfm_num_str + "'")?; // I never actually figured out why I need the question mark?
@@ -644,57 +627,58 @@ mod tests {
     }
 
     #[test]
-    fn test_is_valid_reference_abbreviation() {
-        assert_eq!(is_valid_reference_abbreviation("SAM"), true);
-        assert_eq!(is_valid_reference_abbreviation("SIM"), false);
+    fn test_is_valid_bos_book_code() {
+        assert_eq!(is_valid_bos_book_code("SAM"), true);
+        assert_eq!(is_valid_bos_book_code("SIM"), false);
     }
 
     #[test]
-    fn test_reference_abbrev_to_usfm_abbrev() {
-        assert_eq!(reference_abbrev_to_usfm_abbrev("EXO"), Ok(Some("Exo")));
-        assert_eq!(reference_abbrev_to_usfm_abbrev("CH1"), Ok(Some("1Ch")));
+    fn test_bos_book_code_to_usfm_abbrev() {
+        assert_eq!(bos_book_code_to_usfm_abbrev("EXO"), Ok(Some("Exo")));
+        assert_eq!(bos_book_code_to_usfm_abbrev("CH1"), Ok(Some("1Ch")));
         println!(
-            "    reference_abbrev_to_usfm_abbrev for 'SAM' got {:?}",
-            reference_abbrev_to_usfm_abbrev("SAM")
+            "    bos_book_code_to_usfm_abbrev for 'SAM' got {:?}",
+            bos_book_code_to_usfm_abbrev("SAM")
         );
         println!(
-            "    reference_abbrev_to_usfm_abbrev for 'XyZ' got {:?}",
-            reference_abbrev_to_usfm_abbrev("XyZ")
+            "    bos_book_code_to_usfm_abbrev for 'XyZ' got {:?}",
+            bos_book_code_to_usfm_abbrev("XyZ")
         );
-        assert_eq!(reference_abbrev_to_usfm_abbrev("SAM"), Ok(None));
-        assert!(matches!(reference_abbrev_to_usfm_abbrev("XyZ"), Err(LookupError::AbbrevNotFound("Reference",ref key)) if *key == "XyZ"));
-        assert!(matches!(reference_abbrev_to_usfm_abbrev("XyZ"), Err(LookupError::AbbrevNotFound("Reference","XyZ"))));
+        assert_eq!(bos_book_code_to_usfm_abbrev("SAM"), Ok(None));
+        assert!(matches!(bos_book_code_to_usfm_abbrev("XyZ"), Err(LookupError::AbbrevNotFound("Reference",ref key)) if *key == "XyZ"));
+        assert!(matches!(bos_book_code_to_usfm_abbrev("XyZ"), Err(LookupError::AbbrevNotFound("Reference","XyZ"))));
     }
 
     #[test]
-    fn test_usfm_to_reference_abbreviation() {
-        assert_eq!(usfm_abbrev_to_reference_abbrev("Exo"), Ok("EXO"));
-        assert_eq!(usfm_abbrev_to_reference_abbrev("1Ki"), Ok("KI1"));
-        assert_eq!(usfm_abbrev_to_reference_abbrev("MAT"), Ok("MAT"));
-        assert_eq!(usfm_abbrev_to_reference_abbrev("1PE"), Ok("PE1"));
-        assert!(usfm_abbrev_to_reference_abbrev("XyZ").is_err());
-        assert!(matches!(usfm_abbrev_to_reference_abbrev("XyZ"), Err(LookupError::AbbrevNotFound("USFM","XyZ"))));
+    fn test_usfm_to_bos_book_code() {
+        assert_eq!(usfm_abbrev_to_bos_book_code("Exo"), Ok("EXO"));
+        assert_eq!(usfm_abbrev_to_bos_book_code("exo"), Ok("EXO"));
+        assert_eq!(usfm_abbrev_to_bos_book_code("1Ki"), Ok("KI1"));
+        assert_eq!(usfm_abbrev_to_bos_book_code("MAT"), Ok("MAT"));
+        assert_eq!(usfm_abbrev_to_bos_book_code("1PE"), Ok("PE1"));
+        assert!(usfm_abbrev_to_bos_book_code("XyZ").is_err());
+        assert!(matches!(usfm_abbrev_to_bos_book_code("XyZ"), Err(LookupError::AbbrevNotFound("USFM","XyZ"))));
     }
 
     #[test]
-    fn test_osis_to_reference_abbreviation() {
-        assert_eq!(osis_abbrev_to_reference_abbrev("Exod", true), Ok("EXO"));
-        assert!(osis_abbrev_to_reference_abbrev("XyZ", true).is_err());
-        assert!(matches!(osis_abbrev_to_reference_abbrev("XyZ", true), Err(LookupError::AbbrevNotFound("OSIS","XyZ"))));
+    fn test_osis_to_bos_book_code() {
+        assert_eq!(osis_book_code_to_bos_book_code("Exod", true), Ok("EXO"));
+        assert!(osis_book_code_to_bos_book_code("XyZ", true).is_err());
+        assert!(matches!(osis_book_code_to_bos_book_code("XyZ", true), Err(LookupError::AbbrevNotFound("OSIS","XyZ"))));
         // Test fallback
-        assert_eq!(osis_abbrev_to_reference_abbrev("Exod", false), Ok("EXO"));
+        assert_eq!(osis_book_code_to_bos_book_code("Exod", false), Ok("EXO"));
     }
 
     #[test]
-    fn test_short_abbrev_to_reference_abbrev() {
-        assert_eq!(short_abbrev_to_reference_abbrev("Ge", true), Ok("GEN"));
-        assert_eq!(short_abbrev_to_reference_abbrev("ge", true), Ok("GEN"));
-        assert!(short_abbrev_to_reference_abbrev("1 Sa", true).is_err());
+    fn test_short_abbrev_to_bos_book_code() {
+        assert_eq!(short_abbrev_to_bos_book_code("Ge", true), Ok("GEN"));
+        assert_eq!(short_abbrev_to_bos_book_code("ge", true), Ok("GEN"));
+        assert!(short_abbrev_to_bos_book_code("1 Sa", true).is_err());
         
         // Test fallbacks
-        assert_eq!(short_abbrev_to_reference_abbrev("1 Sa", false), Ok("SA1")); // space removal
-        assert_eq!(short_abbrev_to_reference_abbrev("Gen", false), Ok("GEN")); // SBL fallback
-        assert_eq!(short_abbrev_to_reference_abbrev("Sos", false), Ok("SNG")); // NET fallback
+        assert_eq!(short_abbrev_to_bos_book_code("1 Sa", false), Ok("SA1")); // space removal
+        assert_eq!(short_abbrev_to_bos_book_code("Gen", false), Ok("GEN")); // SBL fallback
+        assert_eq!(short_abbrev_to_bos_book_code("Sos", false), Ok("SNG")); // NET fallback
     }
 
     #[test]
@@ -746,39 +730,39 @@ mod tests {
     }
 
     #[test]
-    fn test_english_name_to_reference_abbrev() {
-        assert_eq!(english_name_to_reference_abbrev("Exodus"), Some("EXO"));
-        assert_eq!(english_name_to_reference_abbrev("Esther"), Some("EST"));
-        assert_eq!(english_name_to_reference_abbrev("Ester"), Some("EST"));
-        assert_eq!(english_name_to_reference_abbrev("Eccle"), Some("ECC"));
-        assert_eq!(english_name_to_reference_abbrev("1 Cor"), Some("CO1"));
-        assert_eq!(english_name_to_reference_abbrev("1 Co"), Some("CO1"));
-        assert_eq!(english_name_to_reference_abbrev("1Cor"), Some("CO1"));
-        assert_eq!(english_name_to_reference_abbrev("1Co"), Some("CO1"));
-        assert_eq!(english_name_to_reference_abbrev("1.Cor"), Some("CO1"));
-        assert_eq!(english_name_to_reference_abbrev("1.Co"), Some("CO1"));
-        assert_eq!(english_name_to_reference_abbrev("XyZ"), None);
+    fn test_english_name_to_bos_book_code() {
+        assert_eq!(english_name_to_bos_book_code("Exodus"), Some("EXO"));
+        assert_eq!(english_name_to_bos_book_code("Esther"), Some("EST"));
+        assert_eq!(english_name_to_bos_book_code("Ester"), Some("EST"));
+        assert_eq!(english_name_to_bos_book_code("Eccle"), Some("ECC"));
+        assert_eq!(english_name_to_bos_book_code("1 Cor"), Some("CO1"));
+        assert_eq!(english_name_to_bos_book_code("1 Co"), Some("CO1"));
+        assert_eq!(english_name_to_bos_book_code("1Cor"), Some("CO1"));
+        assert_eq!(english_name_to_bos_book_code("1Co"), Some("CO1"));
+        assert_eq!(english_name_to_bos_book_code("1.Cor"), Some("CO1"));
+        assert_eq!(english_name_to_bos_book_code("1.Co"), Some("CO1"));
+        assert_eq!(english_name_to_bos_book_code("XyZ"), None);
     }
 
     #[test]
     fn test_book_metadata_lookups() {
-        assert_eq!(get_bbb_from_reference_number(1), Some("GEN"));
-        assert_eq!(get_bbb_from_reference_number(66), Some("REV"));
-        assert_eq!(get_bbb_from_reference_number(999), Some("UNK"));
-        assert_eq!(get_bbb_from_reference_number(1000), None);
+        assert_eq!(get_bos_book_code_from_reference_number(1), Some("GEN"));
+        assert_eq!(get_bos_book_code_from_reference_number(66), Some("REV"));
+        assert_eq!(get_bos_book_code_from_reference_number(999), Some("UNK"));
+        assert_eq!(get_bos_book_code_from_reference_number(1000), None);
 
         assert_eq!(get_ccel_number_str("GEN"), Some("1"));
         assert_eq!(get_short_abbreviation("GEN"), Some("Ge"));
         assert_eq!(get_sbl_abbreviation("GEN"), Some("Gen"));
-        assert_eq!(get_osis_abbreviation("GEN"), Some("Gen"));
-        assert_eq!(get_sword_abbreviation("GEN"), Some("Gen"));
-        assert_eq!(get_usfm_num_str("MAT"), Some("41"));
+        assert_eq!(bos_to_osis_book_code("GEN"), Some("Gen"));
+        assert_eq!(bos_to_sword_book_code("GEN"), Some("Gen"));
+        assert_eq!(bos_book_code_to_usfm_num_str("MAT"), Some("41"));
         assert_eq!(get_usx_num_str("MAT"), Some("040"));
         assert_eq!(get_unbound_bible_code("GEN"), Some("01O"));
         assert_eq!(get_bibledit_num_str("MAT"), Some("40"));
         assert_eq!(get_logos_num_str("MAT"), Some("61"));
-        assert_eq!(get_net_bible_abbreviation("SNG"), Some("Sos"));
-        assert_eq!(get_drupal_bible_abbreviation("SNG"), Some("Son"));
+        assert_eq!(bos_to_net_bible_book_code("SNG"), Some("Sos"));
+        assert_eq!(bos_to_drupal_book_code("SNG"), Some("Son"));
         assert_eq!(get_byzantine_abbreviation("MAT"), Some("MT"));
     }
 
@@ -804,19 +788,19 @@ mod tests {
     #[test]
     fn test_categorization() {
         // nr stands for "Not Recommended" (because ideally the proper versification functions should be used instead)
-        assert!(is_ot_nr("GEN"));
-        assert!(!is_ot_nr("TOB"));
-        assert!(!is_ot_nr("MAT"));
-        assert!(is_nt_nr("MAT"));
-        assert!(!is_nt_nr("TOB"));
-        assert!(!is_nt_nr("GEN"));
-        assert!(is_dc_nr("TOB"));
-        assert!(!is_dc_nr("GEN"));
-        assert!(!is_dc_nr("MRK"));
+        assert!(is_old_testament_nr("GEN"));
+        assert!(!is_old_testament_nr("TOB"));
+        assert!(!is_old_testament_nr("MAT"));
+        assert!(is_new_testament_nr("MAT"));
+        assert!(!is_new_testament_nr("TOB"));
+        assert!(!is_new_testament_nr("GEN"));
+        assert!(is_deuterocanon_nr("TOB"));
+        assert!(!is_deuterocanon_nr("GEN"));
+        assert!(!is_deuterocanon_nr("MRK"));
 
-        assert!(!is_ot_nr("FRT"));
-        assert!(!is_nt_nr("FRT"));
-        assert!(!is_dc_nr("FRT"));
+        assert!(!is_old_testament_nr("FRT"));
+        assert!(!is_new_testament_nr("FRT"));
+        assert!(!is_deuterocanon_nr("FRT"));
 
         assert_eq!(get_typical_section("GEN"), Some("OT"));
         assert_eq!(get_typical_section("MAT"), Some("NT"));

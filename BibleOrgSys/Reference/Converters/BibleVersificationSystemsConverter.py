@@ -272,7 +272,7 @@ class BibleVersificationSystemsConverter:
             for bookElement in self.__XMLSystems[versificationSystemCode]['tree']:
                 BBB = bookElement.find("referenceAbbreviation").text
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB )
-                if not bos_books_codes_py.is_valid_reference_abbreviation( BBB ):
+                if not bos_books_codes_py.is_valid_bos_book_code( BBB ):
                     logging.error( f"Unrecognized {BBB!r} book abbreviation in {versificationSystemCode!r} versification system" )
                 numChapters = bookElement.find("numChapters").text # This is a string
 

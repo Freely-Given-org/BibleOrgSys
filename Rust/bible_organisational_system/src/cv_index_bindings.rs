@@ -165,7 +165,7 @@ impl From<&PyChapterVerse> for ChapterVerse {
 /// Backward-compatible with the Python InternalBibleEntry class.
 ///
 /// Constructor accepts either:
-/// - Full 6-arg form: (marker, originalMarker, adjustedText, cleanText, extras, originalText)
+/// - Full 6-arg form: (marker, originalMarker, adjustedText, cleanText, extras, original_text)
 /// - Simple 2-arg form: (marker, cleanText) — creates entry with all text fields set to cleanText
 ///
 /// Supports both snake_case properties and camelCase getter methods.
@@ -181,9 +181,9 @@ impl PyInternalBibleEntry {
     /// Create a new InternalBibleEntry.
     ///
     /// Matches the Python constructor signature:
-    ///     InternalBibleEntry(marker, originalMarker, adjustedText, cleanText, extras, originalText)
+    ///     InternalBibleEntry(marker, originalMarker, adjustedText, cleanText, extras, original_text)
     ///
-    /// For end markers / added nesting markers, originalMarker through originalText should be None.
+    /// For end markers / added nesting markers, originalMarker through original_text should be None.
     #[new]
     #[pyo3(signature = (marker, original_marker, adjusted_text=None, clean_text=None, extras=None, original_text=None))]
     fn new(
@@ -232,7 +232,7 @@ impl PyInternalBibleEntry {
         let cln_text = clean_text
             .ok_or_else(|| PyValueError::new_err(format!("cleanText is required for regular entries (marker={} original_marker={:?} adjusted_text={:?} clean_text={:?} extras={:?} original_text={:?})", marker, original_marker, adjusted_text, clean_text, extras, original_text)))?;
         let orig_text = original_text
-            .ok_or_else(|| PyValueError::new_err(format!("originalText is required for regular entries (marker={} original_marker={:?} adjusted_text={:?} clean_text={:?} extras={:?} original_text={:?})", marker, original_marker, adjusted_text, clean_text, extras, original_text)))?;
+            .ok_or_else(|| PyValueError::new_err(format!("original_text is required for regular entries (marker={} original_marker={:?} adjusted_text={:?} clean_text={:?} extras={:?} original_text={:?})", marker, original_marker, adjusted_text, clean_text, extras, original_text)))?;
 
         let rust_extras = extras.map(|e| e.inner.clone());
 
@@ -296,7 +296,7 @@ impl PyInternalBibleEntry {
     }
 
     /// Get the original text (full USFM).
-    #[getter(originalText)]
+    #[getter(original_text)]
     fn original_text(&self) -> Option<&str> {
         self.inner.original_text()
     }
@@ -343,7 +343,7 @@ impl PyInternalBibleEntry {
         self.inner.original_text()
     }
 
-    /// Get the full text — returns originalText (Python compat).
+    /// Get the full text — returns original_text (Python compat).
     fn getFullText(&self) -> Option<&str> {
         self.inner.original_text()
     }

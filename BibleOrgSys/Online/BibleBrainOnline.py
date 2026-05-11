@@ -523,7 +523,7 @@ class BibleBrainBible( GenericOnlineBible ):
             for bookDict in bookList:
                 OSISCode = bookDict['book_id']
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "OSIS", OSISCode )
-                BBB = bos_books_codes_py.get_bbb_from_osis_abbreviation( OSISCode )
+                BBB = bos_books_codes_py.get_bbb_from_osis_book_code( OSISCode )
                 if isinstance( BBB, list ): BBB = BBB[0] # Take the first one if we get something like ['EZR','EZN']
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "BBB", BBB )
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, bookDict )

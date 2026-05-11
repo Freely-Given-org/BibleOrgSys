@@ -350,7 +350,7 @@ class VerseViewXMLBible( Bible ):
             adjustedBookName = BibleOrgSysGlobals.removeAccents( bookName )
             if adjustedBookName != bookName:
                 BBB = self.genericBOS.getBBBFromText( adjustedBookName )
-        BBB2 = bos_books_codes_py.get_bbb_from_reference_number( bookNumber )
+        BBB2 = bos_books_codes_py.get_bos_book_code_from_reference_number( bookNumber )
         if BBB2 != BBB: # Just double check using the book number
             if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
                 vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Assuming that book {bookNumber} {BBB!r} is {bookName} (not {BBB2})" )

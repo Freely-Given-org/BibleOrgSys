@@ -68,7 +68,7 @@ class USXXMLBibleBook( BibleBook ):
 
         global sortedNLMarkers
         if sortedNLMarkers is None:
-            sortedNLMarkers = sorted( BibleOrgSysGlobals.loadedUSFMMarkers.getNewlineMarkersList('Combined'), key=len, reverse=True )
+            sortedNLMarkers = sorted( usfm_markers_py.get_newline_markers_list('Combined'), key=len, reverse=True )
     # end of USXXMLBibleBook.__init__
 
 
@@ -220,7 +220,7 @@ class USXXMLBibleBook( BibleBook ):
                 if attrib=='style':
                     charStyle = value # This is basically the USFM character marker name
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  charStyle", charStyle )
-                    assert not BibleOrgSysGlobals.loadedUSFMMarkers.isNewlineMarker( charStyle )
+                    assert not usfm_markers_py.is_newline_marker( charStyle )
                 elif attrib == 'closed':
                     assert value == 'false'
                     charClosed = False
@@ -581,9 +581,9 @@ class USXXMLBibleBook( BibleBook ):
                     if C == '-1': V = str( int(V) + 1 ) # first/id line will be -1:0
                     BibleOrgSysGlobals.checkXMLNoTail( element, location )
                     USFMMarker = element.attrib['style'] # Get the USFM code for the paragraph style
-                    if BibleOrgSysGlobals.loadedUSFMMarkers.isNewlineMarker( USFMMarker ):
+                    if usfm_markers_py.is_newline_marker( USFMMarker ):
                         loadParagraph( element, location )
-                    elif BibleOrgSysGlobals.loadedUSFMMarkers.isInternalMarker( USFMMarker ): # the line begins with an internal USFM Marker -- append it to the previous line
+                    elif usfm_markers_py.isInternalMarker( USFMMarker ): # the line begins with an internal USFM Marker -- append it to the previous line
                         text = element.text
                         if text is None: text = ''
                         if BibleOrgSysGlobals.debugFlag:

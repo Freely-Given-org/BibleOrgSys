@@ -122,8 +122,8 @@ def main() -> None:
 
     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Loading {INPUT_FILEPATH}…" )
     with open( INPUT_FILEPATH, 'rt', encoding='utf-8' ) as textFile:
-        originalText = textFile.read()
-    vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  Loaded {len(originalText):,} characters ({originalText.count('
+        original_text = textFile.read()
+    vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  Loaded {len(original_text):,} characters ({original_text.count('
 '):,} lines)" )
 
     # Preparation by inserting some lines at the beginning
@@ -131,7 +131,7 @@ def main() -> None:
     entireText += f'\\rem Converted by {!r}\n'
     entireText += f'\\rem Converted from \'{INPUT_FILEPATH}\'\n'
     entireText += f'\\rem Converted {datetime.now()}\n' )
-    entireText += originalText
+    entireText += original_text
 
     # More preparation
     entireText = noisyReplaceAll( entireText, '\n\r', '\n' ) # Makes it easier later

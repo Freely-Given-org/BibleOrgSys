@@ -443,16 +443,16 @@ class ESFMBible( Bible ):
         originalBook.read( sourceFilepath )
 
         count = 0
-        for marker,originalText in originalBook.lines:
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, marker, repr(originalText) )
-            if marker == 'rem' and originalText.startswith('ESFM '):
-                if ' SEM' not in originalText: return
+        for marker,original_text in originalBook.lines:
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, marker, repr(original_text) )
+            if marker == 'rem' and original_text.startswith('ESFM '):
+                if ' SEM' not in original_text: return
             elif marker == 'gl':
-                if originalText[0] in ESFM_SEMANTIC_TAGS \
-                and originalText[1] == ' ' \
-                and len(originalText)>2:
-                    tagMarker = originalText[0]
-                    tagContent = originalText[2:]
+                if original_text[0] in ESFM_SEMANTIC_TAGS \
+                and original_text[1] == ' ' \
+                and len(original_text)>2:
+                    tagMarker = original_text[0]
+                    tagContent = original_text[2:]
                     if tagMarker not in self.semanticDict: self.semanticDict[tagMarker] = {}
                     if tagContent not in self.semanticDict[tagMarker]: self.semanticDict[tagMarker][tagContent] = []
                     count += 1
@@ -472,16 +472,16 @@ class ESFMBible( Bible ):
         originalBook.read( sourceFilepath )
 
         count = 0
-        for marker,originalText in originalBook.lines:
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, marker, repr(originalText) )
-            if marker == 'rem' and originalText.startswith('ESFM '):
-                if ' STR' not in originalText: return
+        for marker,original_text in originalBook.lines:
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, marker, repr(original_text) )
+            if marker == 'rem' and original_text.startswith('ESFM '):
+                if ' STR' not in original_text: return
             elif marker == 'gl':
-                if originalText[0] in 'HG':
-                    tagMarker = originalText[0]
-                    sNumber = originalText[1:]
+                if original_text[0] in 'HG':
+                    tagMarker = original_text[0]
+                    sNumber = original_text[1:]
             elif marker == 'html':
-                dictEntry = originalText
+                dictEntry = original_text
                 if tagMarker not in self.StrongsDict: self.StrongsDict[tagMarker] = {}
                 if sNumber not in self.StrongsDict[tagMarker]: self.StrongsDict[tagMarker][sNumber] = dictEntry
                 count += 1
@@ -733,18 +733,18 @@ class ESFMBible( Bible ):
 
         updatedVerseList = InternalBibleEntryList()
         for entry in verseList:
-            originalText = entry.getOriginalText()
-            if originalText is None or '¦' not in originalText:
+            original_text = entry.getOriginalText()
+            if original_text is None or '¦' not in original_text:
                 updatedVerseList.append( entry )
                 continue
             # If we get here, we have at least one ESFM wordlink row number in the text
-            # print( f"{n}: '{originalText}'")
+            # print( f"{n}: '{original_text}'")
             searchStartIndex = 0
             count = 0
             # Note that single words might include a \\sup \\sup* span as in 'Aʸsaias/(Yəshaˊə\\sup yāh\\sup*)'
-            originalText = originalText.replace( '\\sup ', 'SSsupP' ).replace( '\\sup*', 'ESsupP' ) # We have to temporarily make these into normal word-formation chars for the regex to include them
+            original_text = original_text.replace( '\\sup ', 'SSsupP' ).replace( '\\sup*', 'ESsupP' ) # We have to temporarily make these into normal word-formation chars for the regex to include them
             while True:
-                match = linkedWordRegex.search( originalText, searchStartIndex )
+                match = linkedWordRegex.search( original_text, searchStartIndex )
                 if not match:
                     break
                 # print( f"{BBB} word match 1='{match.group(1)}' 2='{match.group(2)}' all='{book_html[match.start():match.end()]}'" )
@@ -761,20 +761,20 @@ class ESFMBible( Bible ):
                     # print( f"  {titleHTML=}")
                 # assert '<br>' not in titleHTML, f"{titleTemplate=} {titleHTML=}"
                 # assert '\n' not in titleHTML, f"{titleTemplate=} {titleHTML=}"
-                originalText = f'''{originalText[:match.start()]}<a {titleHTML}href="{linkTemplate.replace('{W}',word).replace('{BBB}',BBB).replace('{n}', digits)}">{word}</a>{originalText[match.end():]}'''
+                original_text = f'''{original_text[:match.start()]}<a {titleHTML}href="{linkTemplate.replace('{W}',word).replace('{BBB}',BBB).replace('{n}', digits)}">{word}</a>{original_text[match.end():]}'''
                 searchStartIndex = match.end() + len(linkTemplate) + len(titleHTML) + 4 # We've added at least that many characters
                 count += 1
-            originalText = originalText.replace( 'SSsupP', '\\sup ' ).replace( 'ESsupP', '\\sup*' ) # Restores our 'hidden' HTML markup
+            original_text = original_text.replace( 'SSsupP', '\\sup ' ).replace( 'ESsupP', '\\sup*' ) # Restores our 'hidden' HTML markup
             if count > 0:
-                # print( f"  Now '{originalText}'")
+                # print( f"  Now '{original_text}'")
                 vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"  Made {count:,} {self.abbreviation} {BBB} ESFM words into live links." )
                 # adjText, cleanText, extras = _processLineFix( self, C:str,V:str, originalMarker:str, text:str, fixErrors:list[str] )
-                # newEntry = InternalBibleEntry( entry.getMarker(), entry.getOriginalMarker(), entry.getAdjustedText(), entry.getCleanText(), entry.getExtras(), originalText )
+                # newEntry = InternalBibleEntry( entry.getMarker(), entry.getOriginalMarker(), entry.getAdjustedText(), entry.getCleanText(), entry.getExtras(), original_text )
                 # Since we messed up many of the fields, set them to blank/null entries so that the old/wrong/outdated values can't be accidentally used
-                newEntry = InternalBibleEntry( entry.getMarker(), entry.getOriginalMarker(), '', '', None, originalText )
+                newEntry = InternalBibleEntry( entry.getMarker(), entry.getOriginalMarker(), '', '', None, original_text )
                 updatedVerseList.append( newEntry )
             else:
-                logging.critical( f"ESFMBible.livenESFMWordLinks unable to find wordlink in '{originalText}'" )
+                logging.critical( f"ESFMBible.livenESFMWordLinks unable to find wordlink in '{original_text}'" )
                 updatedVerseList.append( entry )
 
         return updatedVerseList, self.ESFMWordTables[wordFileName] if wordFileName else None
@@ -1023,7 +1023,7 @@ def fullDemo() -> None:
                     # This loop is used for several types of data
                     assert isinstance( verseDataEntry, InternalBibleEntry )
                     marker, cleanText, extras = verseDataEntry.getMarker(), verseDataEntry.getCleanText(), verseDataEntry.getExtras()
-                    adjustedText, originalText = verseDataEntry.getAdjustedText(), verseDataEntry.getOriginalText()
+                    adjustedText, original_text = verseDataEntry.getAdjustedText(), verseDataEntry.getOriginalText()
                     fullText = verseDataEntry.getFullText()
                     if BibleOrgSysGlobals.verbosityLevel > 0:
                         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "marker={} cleanText={!r}{}".format( marker, cleanText,
@@ -1032,8 +1032,8 @@ def fullDemo() -> None:
                             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ' '*(len(marker)+4), f"adjustedText={adjustedText!r}" )
                         if fullText and fullText!=cleanText:
                             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ' '*(len(marker)+4), f"fullText={fullText!r}" )
-                        if originalText and originalText!=cleanText:
-                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ' '*(len(marker)+4), f"originalText={originalText!r}" )
+                        if original_text and original_text!=cleanText:
+                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ' '*(len(marker)+4), f"original_text={original_text!r}" )
 # end of ESFMBible.fullDemo
 
 if __name__ == '__main__':

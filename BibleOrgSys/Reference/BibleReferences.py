@@ -1246,9 +1246,9 @@ class BibleReferenceList( BibleReferenceBase ):
         """
         # Set things up for OSIS system e.g., 1Cor.3.5-1Cor.3.9
         self.punctuationDict = {'booknameCase': 'M', 'booknameLength': 'M', 'spaceAllowedAfterBCS': 'N', 'punctuationAfterBookAbbreviation': '', 'chapterVerseSeparator': '.', 'bookChapterSeparator': '.', 'chapterSeparator': ';', 'bookBridgeCharacter': '-', 'chapterBridgeCharacter': '-', 'verseBridgeCharacter': '-', 'bookSeparator': ';', 'verseSeparator': ',', 'allowedVerseSuffixes': ''}
-        OSISList = bos_books_codes_py.get_all_osis_abbreviations()
-        #self.getBBBFromText = lambda s: bos_books_codes_py.osis_abbrev_to_reference_abbrev(s)
-        self.getBBBFromText = bos_books_codes_py.osis_abbrev_to_reference_abbrev
+        OSISList = bos_books_codes_py.get_all_osis_book_codes()
+        #self.getBBBFromText = lambda s: bos_books_codes_py.osis_book_code_to_bos_book_code(s)
+        self.getBBBFromText = bos_books_codes_py.osis_book_code_to_bos_book_code
 
         # Now do the actual parsing using the standard routine
         sucessFlag, haveWarnings, resultList = self.parseReferenceString( referenceString )
@@ -1293,8 +1293,8 @@ class BibleReferenceList( BibleReferenceBase ):
             if result: result += self.punctuationDict['bookSeparator'] + ' ' # The separator between multiple references
             if len(refOrRefRange) == 2: # it must be a range (start and end tuples)
                 (BBB1, C1, V1, S1), (BBB2, C2, V2, S2) = refOrRefRange
-                Bk1 = bos_books_codes_py.get_osis_abbreviation( BBB1 )
-                Bk2 = bos_books_codes_py.get_osis_abbreviation( BBB2 )
+                Bk1 = bos_books_codes_py.bos_to_osis_book_code( BBB1 )
+                Bk2 = bos_books_codes_py.bos_to_osis_book_code( BBB2 )
                 if V1 and V2: result += f"{Bk1}.{C1}.{V1}-{Bk2}.{C2}.{V2}"
                 elif not V1 and not V2: result += f"{Bk1}.{C1}-{Bk2}.{C2}"
                 elif V2: result += f"{Bk1}.{C1}.1-{Bk2}.{C2}.{V2}"
@@ -1302,7 +1302,7 @@ class BibleReferenceList( BibleReferenceBase ):
                 lastBk, lastC, lastV = Bk2, C2, V2
             else: # It must be a single reference
                 BBB, C, V, S = refOrRefRange
-                Bk = bos_books_codes_py.get_osis_abbreviation( BBB )
+                Bk = bos_books_codes_py.bos_to_osis_book_code( BBB )
                 if V: result += f"{Bk}.{C}.{V}"
                 else: result += f"{Bk}.{C}"
                 lastBk, lastC, lastV = Bk, C, V
@@ -1438,7 +1438,7 @@ class BibleAnchorReference:
         self.suffixString = '' if suffixString is None else suffixString
         self.homeTuple = (self.BBB,self.chapterString,self.verseString,self.suffixString,)
 
-        assert bos_books_codes_py.is_valid_reference_abbreviation( BBB )
+        assert bos_books_codes_py.is_valid_bos_book_code( BBB )
         self.isSingleChapterBook = bos_books_codes_py.is_single_chapter_book( BBB )
         self.allowedVerseSuffixes = ( 'a', 'b', 'c', 'd', 'e', )
         self.allowedCVSeparators = ( ':', '.', )

@@ -24,6 +24,7 @@ dependencies = [
     { name = "bibleorgsys-rust", marker = "python_full_version < '3.15'" },
     { name = "bos-books-codes-py", marker = "python_full_version < '3.15'" },
     { name = "requests", marker = "python_full_version < '3.15'" },
+    { name = "usfm-markers-py", marker = "python_full_version < '3.15'" },
 ]
 
 [package.dev-dependencies]
@@ -36,6 +37,7 @@ requires-dist = [
     { name = "bibleorgsys-rust", editable = "Rust/bible_organisational_system" },
     { name = "bos-books-codes-py", editable = "Rust/bos_books_codes_py" },
     { name = "requests", specifier = ">=2.33.1" },
+    { name = "usfm-markers-py", editable = "Rust/usfm_markers_py" },
 ]
 
 [package.metadata.requires-dev]
@@ -171,3 +173,7 @@ sdist = { url = "https://files.pythonhosted.org/packages/c7/24/5f1b3bdffd70275f6
 wheels = [
     { url = "https://files.pythonhosted.org/packages/39/08/aaaad47bc4e9dc8c725e68f9d04865dbcb2052843ff09c97b08904852d84/urllib3-2.6.3-py3-none-any.whl", hash = "sha256:bf272323e553dfb2e87d9bfd225ca7b0f467b919d7bbd355436d3fd37cb0acd4", size = 131584, upload-time = "2026-01-07T16:24:42.685Z" },
 ]
+
+[[package]]
+name = "usfm-markers-py"
+source = { editable = "Rust/usfm_markers_py" }

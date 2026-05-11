@@ -61,9 +61,9 @@ Contains functions:
     getFlattenedXML( element, locationString, idString=None, level=0 )
     isBlank( elementText )
 
-    applyStringAdjustments( originalText:str, adjustmentList )
+    applyStringAdjustments( original_text:str, adjustmentList )
     stripWordEndsPunctuation( wordToken:str )
-    removeStringEndings( originalText:str, endingsList )
+    removeStringEndings( original_text:str, endingsList )
     rreplace( s:str, old:str, new:str, num:int ) -> str
 
     pickleObject( theObject, filename, folderName=None )
@@ -1225,12 +1225,12 @@ def isBlank( elementText ):
 # Fixing strings
 #
 
-def applyStringAdjustments( originalText, adjustmentList ):
+def applyStringAdjustments( original_text, adjustmentList ):
     """
     Applies the list of adjustments to the text and returns the new text.
 
     The adjustmentList is a list object containing 3-tuples with:
-        1/ index where field should be found (in originalText)
+        1/ index where field should be found (in original_text)
         2/ findString (null for a pure insert)
         3/ replaceString (often a different length)
 
@@ -1241,13 +1241,13 @@ def applyStringAdjustments( originalText, adjustmentList ):
             (note that all of the above indexes refer to the original string before any substitutions)
         gives "A very quick orange fox tripped over the fat dog."
     """
-    text = originalText
+    text = original_text
     offset = 0
     for ix, findStr, replaceStr in sorted(adjustmentList): # sorted with lowest index first
         lenFS, lenRS = len(findStr), len(replaceStr)
         if debugFlag: assert text[ix+offset:ix+offset+lenFS] == findStr # Our find string must be there
         elif text[ix+offset:ix+offset+lenFS] != findStr:
-            logging.error( f"applyStringAdjustments programming error -- given bad data for {originalText!r}: {adjustmentList}" )
+            logging.error( f"applyStringAdjustments programming error -- given bad data for {original_text!r}: {adjustmentList}" )
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "before", repr(text) )
         text = text[:ix+offset] + replaceStr + text[ix+offset+lenFS:]
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, " after", repr(text) )
@@ -1299,12 +1299,12 @@ def stripWordEndsPunctuation( wordToken:str ) -> str:
 # end of BibleOrgSysGlobals.stripWordEndsPunctuation
 
 
-def removeStringEndings( originalText:str, endingsList:list[str] ) -> str:
+def removeStringEndings( original_text:str, endingsList:list[str] ) -> str:
     """
     Go through the given list of endings (in order)
         and remove any endings from the end of the string.
     """
-    newText = originalText
+    newText = original_text
     for ending in endingsList:
         if newText.endswith( ending ):
             newText = newText[:-len(ending)]
@@ -1549,7 +1549,6 @@ def setMissionCriticalFlag( newValue=True ):
 
 
 # Some global variables
-loadedUSFMMarkers = None # will contain the class
 USFMParagraphMarkers:list[str] = []
 USFMCharacterMarkers:list[str] = []
 USFMAllExpandedCharacterMarkers:list[str] = []
@@ -1561,21 +1560,19 @@ def preloadCommonData() -> None:
         This includes BibleBooksCode and USFMMarkers
     """
     # Load Bible data sets that are globally useful
-    global loadedUSFMMarkers, USFMParagraphMarkers, USFMCharacterMarkers, USFMAllExpandedCharacterMarkers, internal_SFMs_to_remove
+    global USFMParagraphMarkers, USFMCharacterMarkers, USFMAllExpandedCharacterMarkers, internal_SFMs_to_remove
 
-    from BibleOrgSys.Reference.USFM3Markers import USFM3Markers
-    loadedUSFMMarkers = USFM3Markers().loadData() # This is a class 'BibleOrgSys.Reference.USFM3Markers.USFM3Markers'
-    assert len(loadedUSFMMarkers) >= 220
-    USFMParagraphMarkers += loadedUSFMMarkers.getNewlineMarkersList( 'CanonicalText' )
+    import usfm_markers_py
+    USFMParagraphMarkers = usfm_markers_py.get_newline_markers_list( 'CanonicalText' )
     USFMParagraphMarkers.remove( 'qa' ) # This is actually a heading marker
     USFMParagraphMarkers.remove( 'qc' ) # Treat this like a heading marker also
     assert len(USFMParagraphMarkers) >= 32
-    USFMCharacterMarkers += loadedUSFMMarkers.getCharacterMarkersList()
+    USFMCharacterMarkers = usfm_markers_py.get_character_markers_list()
     assert 'qac' in USFMCharacterMarkers
     assert len(USFMCharacterMarkers) >= 42
-    USFMAllExpandedCharacterMarkers += loadedUSFMMarkers.getCharacterMarkersList( expandNumberableMarkers=True )
+    USFMAllExpandedCharacterMarkers = usfm_markers_py.get_character_markers_list( expand_numberable_markers=True )
     assert len(USFMAllExpandedCharacterMarkers) >= 66
-    internal_SFMs_to_remove += loadedUSFMMarkers.getCharacterMarkersList( includeBackslash=True, includeNestedMarkers=True, includeEndMarkers=True )
+    internal_SFMs_to_remove = usfm_markers_py.get_character_markers_list( include_backslash=True, include_nested_markers=True, include_end_markers=True )
     assert len(internal_SFMs_to_remove) >= 160
     internal_SFMs_to_remove.sort( key=len, reverse=True ) # List longest first
 # end of BibleOrgSysGlobals.preloadCommonData
@@ -1692,7 +1689,7 @@ setVerbosity( verbosityString )
     #BibleBooksCodes = BibleBooksCodes().loadData()
     #from BibleOrgSys.Reference.USFM3Markers import USFM3Markers
     #USFMMarkers = USFM3Markers().loadData()
-    #USFMParagraphMarkers = USFMMarkers.getNewlineMarkersList( 'CanonicalText' )
+    #USFMParagraphMarkers = USFMMarkers.get_newline_markers_list( 'CanonicalText' )
     ##dPrint( 'Quiet', DEBUGGING_THIS_MODULE, len(USFMParagraphMarkers), sorted(USFMParagraphMarkers) )
     ##for marker in ( ):
         ##dPrint( 'Quiet', DEBUGGING_THIS_MODULE, marker )

@@ -416,7 +416,7 @@ class EpubBible( Bible ):
         if not self.preloaded: self.preload()
 
         vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Loading {BBB}…" )
-        UUU = bos_books_codes_py.reference_abbrev_to_usfm_abbrev( BBB )
+        UUU = bos_books_codes_py.bos_book_code_to_usfm_abbrev( BBB )
         uuu = UUU.lower()
         bookFilename = self.ePubBookDict[uuu]
         bookXMLContent = self.inputZipfile.read( f'OEBPS/{bookFilename}' ).decode( 'utf-8' )
@@ -625,7 +625,7 @@ class EpubBible( Bible ):
         for idref,_bookPath in self.ePubBookDict.items():
             # dPrint( 'Normal', DEBUGGING_THIS_MODULE, f"{idref=} {_bookPath=}" )
             if len(idref)==3:
-                BBB = bos_books_codes_py.usfm_abbrev_to_reference_abbrev( idref.upper() )
+                BBB = bos_books_codes_py.usfm_abbrev_to_bos_book_code( idref.upper() )
                 self.loadBook( BBB )
     # end of EpubBible.load
 # end of EpubBible class

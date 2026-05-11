@@ -950,7 +950,7 @@ mod tests {
     use super::*;
     use std::fs;
     use crate::processing::{process_lines, ProcessLinesOptions};
-    use bos_books_codes::is_valid_reference_abbreviation;
+    use bos_books_codes::is_valid_bos_book_code;
 
     #[test]
     fn test_oet_lv_checking() {
@@ -964,7 +964,7 @@ mod tests {
                 // OET-LV_HAG.ESFM -> HAG
                 let bos_book_code = filename.split('_').nth(1).unwrap().split('.').next().unwrap();
                 if bos_book_code != "DAG" && bos_book_code != "ES1" && bos_book_code != "ES2" { // Need to sort out these OET-LV filenames
-                    assert!(is_valid_reference_abbreviation(bos_book_code), "Invalid book code: {}", bos_book_code); // Not really required here, but a good test for bos_books_codes
+                    assert!(is_valid_bos_book_code(bos_book_code), "Invalid book code: {}", bos_book_code); // Not really required here, but a good test for bos_books_codes
                 }
                 
                 let content = fs::read_to_string(&path).expect("Could not read file");
@@ -1024,7 +1024,7 @@ mod tests {
                 // OET-RV_HAG.ESFM -> HAG
                 let bos_book_code = filename.split('_').nth(1).unwrap().split('.').next().unwrap();
                 if bos_book_code != "DAG" && bos_book_code != "ES1" && bos_book_code != "ES2" { // Need to sort out these OET-RV filenames
-                    assert!(is_valid_reference_abbreviation(bos_book_code), "Invalid book code: {}", bos_book_code); // Not really required here, but a good test for bos_books_codes
+                    assert!(is_valid_bos_book_code(bos_book_code), "Invalid book code: {}", bos_book_code); // Not really required here, but a good test for bos_books_codes
                 }
                 
                 let content = fs::read_to_string(&path).expect("Could not read file");

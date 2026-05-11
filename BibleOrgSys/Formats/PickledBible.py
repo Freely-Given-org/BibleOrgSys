@@ -849,7 +849,7 @@ def briefDemo() -> None:
                         # This loop is used for several types of data
                         assert isinstance( verseDataEntry, InternalBibleEntry )
                         marker, cleanText, extras = verseDataEntry.getMarker(), verseDataEntry.getCleanText(), verseDataEntry.getExtras()
-                        adjustedText, originalText = verseDataEntry.getAdjustedText(), verseDataEntry.getOriginalText()
+                        adjustedText, original_text = verseDataEntry.getAdjustedText(), verseDataEntry.getOriginalText()
                         fullText = verseDataEntry.getFullText()
                         if BibleOrgSysGlobals.verbosityLevel > 0:
                             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "marker={} cleanText={!r}{}".format( marker, cleanText,
@@ -858,8 +858,8 @@ def briefDemo() -> None:
                                 vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ' '*(len(marker)+4), f"adjustedText={adjustedText!r}" )
                             if fullText and fullText!=cleanText:
                                 vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ' '*(len(marker)+4), f"fullText={fullText!r}" )
-                            if originalText and originalText!=cleanText:
-                                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ' '*(len(marker)+4), f"originalText={originalText!r}" )
+                            if original_text and original_text!=cleanText:
+                                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ' '*(len(marker)+4), f"original_text={original_text!r}" )
         else:
             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '\n' + f"Sorry, test folder {testFolder!r} is not readable on this computer." )
 
@@ -1055,7 +1055,7 @@ def fullDemo() -> None:
                             # This loop is used for several types of data
                             assert isinstance( verseDataEntry, InternalBibleEntry )
                             marker, cleanText, extras = verseDataEntry.getMarker(), verseDataEntry.getCleanText(), verseDataEntry.getExtras()
-                            adjustedText, originalText = verseDataEntry.getAdjustedText(), verseDataEntry.getOriginalText()
+                            adjustedText, original_text = verseDataEntry.getAdjustedText(), verseDataEntry.getOriginalText()
                             fullText = verseDataEntry.getFullText()
                             if BibleOrgSysGlobals.verbosityLevel > 0:
                                 vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "marker={} cleanText={!r}{}".format( marker, cleanText,
@@ -1064,8 +1064,8 @@ def fullDemo() -> None:
                                     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ' '*(len(marker)+4), f"adjustedText={adjustedText!r}" )
                                 if fullText and fullText!=cleanText:
                                     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ' '*(len(marker)+4), f"fullText={fullText!r}" )
-                                if originalText and originalText!=cleanText:
-                                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ' '*(len(marker)+4), f"originalText={originalText!r}" )
+                                if original_text and original_text!=cleanText:
+                                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ' '*(len(marker)+4), f"original_text={original_text!r}" )
             else:
                 vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '\n' + f"Sorry, test folder {testFolder!r} is not readable on this computer." )
 

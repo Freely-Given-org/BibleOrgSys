@@ -81,10 +81,10 @@ class TextFile:
             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"TextFile.replace( {replaceString!r}, {replaceCount!r}, {findString} )" )
         assert self.fileText is not None
 
-        self.originalText = self.fileText
+        self.original_text = self.fileText
         if replaceCount is None: self.fileText = self.fileText.replace( findString, replaceString )
         else: self.fileText = self.fileText.replace( findString, replaceString, replaceCount )
-        if self.fileText!= self.originalText: self.changed = True
+        if self.fileText!= self.original_text: self.changed = True
     # end of TextFile.replace
 
 

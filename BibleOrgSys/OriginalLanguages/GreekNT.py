@@ -406,7 +406,7 @@ class GreekNT( Bible ):
         #assert len(reference) == 3 # BBB,C,V
         #BBB, chapterString, verseString = reference
         #assert isinstance(BBB,str) and len(BBB)==3
-        #assert bos_books_codes_py.is_valid_reference_abbreviation( BBB )
+        #assert bos_books_codes_py.is_valid_bos_book_code( BBB )
         #assert isinstance( chapterString, str )
         #assert isinstance( verseString, str )
         #data = []
@@ -427,14 +427,14 @@ class GreekNT( Bible ):
     #def xgetVerseText( self, reference ):
         #""" Return the text for the verse with some adjustments. """
         #verseData = self.getVerseDataList( reference )
-        #self.originalText = ''
+        #self.original_text = ''
         #for stuff in verseData: # Stuff is: reference,parsing,words
-            #if self.originalText: self.originalText += ' '
-            #self.originalText += stuff[2][0]
-        ##if self.originalText: self.originalText = self.originalText.replace(' '+'־'+' ','־') # Remove spaces around the maqqef
-        ##if self.originalText: self.originalText = self.originalText.replace('/','=') # We use = for morpheme break character not /
-        #self.currentText = self.originalText
-        #if self.originalText: return self.originalText
+            #if self.original_text: self.original_text += ' '
+            #self.original_text += stuff[2][0]
+        ##if self.original_text: self.original_text = self.original_text.replace(' '+'־'+' ','־') # Remove spaces around the maqqef
+        ##if self.original_text: self.original_text = self.original_text.replace('/','=') # We use = for morpheme break character not /
+        #self.currentText = self.original_text
+        #if self.original_text: return self.original_text
         #else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "oops. empty verse text for", reference )
     ## end of getVerseText
 # end of GreekNT class

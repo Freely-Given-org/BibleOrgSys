@@ -296,7 +296,7 @@ class YETBible( Bible ):
                     continue
                 elif bits[0] == 'book_name':
                     if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag: assert 3 <= len(bits) <= 4
-                    thisBBB = bos_books_codes_py.get_bbb_from_reference_number( bits[1] )
+                    thisBBB = bos_books_codes_py.get_bos_book_code_from_reference_number( bits[1] )
                     if len(bits) == 3:
                         bookNameDict[thisBBB] = bits[2], ''
                     elif len(bits) == 4:
@@ -309,7 +309,7 @@ class YETBible( Bible ):
                         assert bookNumberString.isdigit()
                         assert chapterNumberString.isdigit()
                         assert verseNumberString.isdigit()
-                    BBB = bos_books_codes_py.get_bbb_from_reference_number( bookNumberString )
+                    BBB = bos_books_codes_py.get_bos_book_code_from_reference_number( bookNumberString )
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{BBB} {chapterNumberString}:{verseNumberString} = {repr(encodedVerseString)}" )
                     if BBB != lastBBB: # We have a new book
                         if lastBBB is not None: # We have a completed book to save
@@ -327,7 +327,7 @@ class YETBible( Bible ):
                         assert bookNumberString.isdigit()
                         assert chapterNumberString.isdigit()
                         assert verseNumberString.isdigit()
-                    BBB = bos_books_codes_py.get_bbb_from_reference_number( bookNumberString )
+                    BBB = bos_books_codes_py.get_bos_book_code_from_reference_number( bookNumberString )
                     headingString = encodedHeadingString.replace( '@9', '\\it ' ).replace( '@7', '\\it*' )
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, repr(encodedHeadingString), repr(headingString) )
                     if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag: assert '@' not in headingString
@@ -348,7 +348,7 @@ class YETBible( Bible ):
                         assert chapterNumberString.isdigit()
                         assert verseNumberString.isdigit()
                         assert indexNumberString.isdigit()
-                    BBB = bos_books_codes_py.get_bbb_from_reference_number( bookNumberString )
+                    BBB = bos_books_codes_py.get_bos_book_code_from_reference_number( bookNumberString )
                     noteString = encodedNoteString.replace( '@9', '\\it ' ).replace( '@7', '\\it*' )
                     noteString = re.sub( r'@<ta(.+?)@>', r'', noteString ) # Get rid of these encoded BCV references for now
                     noteString = re.sub( r'@<to(.+?)@>', r'', noteString ) # Get rid of these OSIS BCV references for now
@@ -365,7 +365,7 @@ class YETBible( Bible ):
                         assert chapterNumberString.isdigit()
                         assert verseNumberString.isdigit()
                         assert indexNumberString.isdigit()
-                    BBB = bos_books_codes_py.get_bbb_from_reference_number( bookNumberString )
+                    BBB = bos_books_codes_py.get_bos_book_code_from_reference_number( bookNumberString )
                     noteString = encodedNoteString.replace( '@9', '\\it ' ).replace( '@7', '\\it*' )
                     if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag: assert '@' not in noteString
                     footnoteDict[(BBB,chapterNumberString,verseNumberString,indexNumberString)] = noteString

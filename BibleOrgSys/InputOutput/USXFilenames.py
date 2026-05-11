@@ -309,7 +309,7 @@ class USXFilenames:
                                 vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"USXB (unexpected) first line was {thisFilename!r} in {firstLines}" )
                             if '<usx' not in firstLines[0] and '<usx' not in firstLines[1]:
                                 continue # so it doesn't get added
-                        self.doListAppend( bos_books_codes_py.usfm_abbrev_to_reference_abbrev( USFMBookCode ), possibleFilename, resultList, "getPossibleFilenameTuplesExt" )
+                        self.doListAppend( bos_books_codes_py.usfm_abbrev_to_bos_book_code( USFMBookCode ), possibleFilename, resultList, "getPossibleFilenameTuplesExt" )
         self.lastTupleList = resultList
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "final resultList", len(resultList), resultList )
         return sorted( resultList, key=lambda x: bos_books_codes_py.get_sequence_number(x[0]) )

@@ -426,7 +426,7 @@ class SwordBible( Bible ):
                 #vkBits = verseKeyText.split()
                 #assert len(vkBits) == 2
                 #osisBBB = vkBits[0]
-                #BBB = bos_books_codes_py.osis_abbrev_to_reference_abbrev( osisBBB )
+                #BBB = bos_books_codes_py.osis_book_code_to_bos_book_code( osisBBB )
                 #if isinstance( BBB, list ): BBB = BBB[0] # We sometimes get a list of options -- take the first = most likely one
                 #vkBits = vkBits[1].split( ':' )
                 #assert len(vkBits) == 2
