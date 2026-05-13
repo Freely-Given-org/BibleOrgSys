@@ -26,5 +26,6 @@ all_include_private = false
 strategy = "any"
 
 [tool.uv]
+exclude-newer = "7 days"
 # Rebuild the extension module if the rust code changes.
 cache-keys = [{file = "pyproject.toml"}, {file = "Cargo.toml"}, {file = "**/*.rs"}, {file = "../bos-internals/Cargo.toml"}, {file = "../bos-internals/**/*.rs"}]

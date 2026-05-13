@@ -53,6 +53,7 @@ CHANGELOG:
     2023-08-07 Handle numbers in word regex, e.g. 'feeding 5,000 men'
     2024-03-21 Add code to handle two word tables (OT and NT) from different source folders
     2026-04-12 Allow for an online folder to be used
+    2026-05-12 Upgrade to Rust code and PTX7->PTX8
 """
 import os
 from pathlib import Path
@@ -64,7 +65,7 @@ import requests
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint, BOOKLIST_88
 from BibleOrgSys.InputOutput.USFMFilenames import USFMFilenames
-from BibleOrgSys.Formats.PTX7Bible import loadPTX7ProjectData
+from BibleOrgSys.Formats.PTX8Bible import loadPTX8ProjectData
 from BibleOrgSys.InputOutput.ESFMFile import ESFMFile
 from BibleOrgSys.Formats.ESFMBibleBook import ESFMBibleBook, ESFM_SEMANTIC_TAGS
 from bible_organisational_system import InternalBibleEntryList, InternalBibleEntry
@@ -282,7 +283,7 @@ class ESFMBible( Bible ):
         if isinstance( self.sourceFolder, str ) and self.sourceFolder.startswith( 'https://' ): # then it's an online source
             # # Attempt to load an SSF file
             # self.ssfFilepath = f'{self.sourceFolder}Settings.xml'
-            # PTXSettingsDict = loadPTX7ProjectData( self, self.ssfFilepath )
+            # PTXSettingsDict = loadPTX8ProjectData( self, self.ssfFilepath )
             # if PTXSettingsDict:
             #     if 'PTX7' not in self.suppliedMetadata: self.suppliedMetadata['PTX7'] = {}
             #     self.suppliedMetadata['PTX7']['SSF'] = PTXSettingsDict
@@ -341,7 +342,7 @@ class ESFMBible( Bible ):
             ssfFilepathList = self.USFMFilenamesObject.getSSFFilenames( searchAbove=True, auto=True )
             if len(ssfFilepathList) == 1: # Seems we found the right one
                 self.ssfFilepath = ssfFilepathList[0]
-                PTXSettingsDict = loadPTX7ProjectData( self, self.ssfFilepath )
+                PTXSettingsDict = loadPTX8ProjectData( self, self.ssfFilepath )
                 if PTXSettingsDict:
                     if 'PTX7' not in self.suppliedMetadata: self.suppliedMetadata['PTX7'] = {}
                     self.suppliedMetadata['PTX7']['SSF'] = PTXSettingsDict

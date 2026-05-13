@@ -15,8 +15,11 @@ use bos_internals::{
     CVIndexEntry, ChapterVerse, InternalBibleBookCVIndex, InternalBibleEntry,
     InternalBibleEntryList, abbreviate, markers::is_end_marker, verbosity_println
 };
+use indexmap::IndexMap;
+use rayon::prelude::*;
 
 use crate::extras_bindings::PyInternalBibleExtraList;
+use crate::discovery_bindings::PyBookDiscoveryResults;
 
 // ============================================================================
 // PyChapterVerse
@@ -930,16 +933,14 @@ impl PyInternalBibleBookCVIndex {
     }
 
     /// Iterate over ((C,V), CVIndexEntry) pairs.
-    fn items(&self) -> Vec<((String, String), PyCVIndexEntry)> {
-        self.inner
-            .iter()
-            .map(|(cv, entry)| {
-                (
-                    (cv.chapter().to_string(), cv.verse().to_string()),
-                    PyCVIndexEntry::from(entry),
-                )
-            })
-            .collect()
+    fn items<'py>(&self, py: Python<'py>) -> PyResult<Bound<'py, pyo3::types::PyList>> {
+        let list = pyo3::types::PyList::empty(py);
+        for (cv, entry) in self.inner.iter() {
+            let key = (cv.chapter().to_string(), cv.verse().to_string());
+            let val = Bound::new(py, PyCVIndexEntry { inner: entry.clone() })?;
+            list.append((key, val))?;
+        }
+        Ok(list)
     }
 
     /// Get all chapters in the index.
@@ -957,61 +958,56 @@ impl PyInternalBibleBookCVIndex {
 
     /// Get verse entries using a ChapterVerse object.
     #[pyo3(signature = (cv, strict=true))]
-    fn get_verse_entries(&self, cv: &PyChapterVerse, strict: bool) -> PyResult<PyInternalBibleEntryList> {
-        self.inner
+    fn get_verse_entries<'py>(&self, py: Python<'py>, cv: &PyChapterVerse, strict: bool) -> PyResult<Bound<'py, PyInternalBibleEntryList>> {
+        let entries = self.inner
             .get_verse_entries(&cv.inner, strict)
-            .map(PyInternalBibleEntryList::from)
-            .map_err(|x| PyRuntimeError::new_err(x.to_string()))
+            .map_err(|x| PyRuntimeError::new_err(x.to_string()))?;
+        Bound::new(py, PyInternalBibleEntryList::from(entries))
     }
 
     /// Get verse entries with context using a ChapterVerse object.
     #[pyo3(signature = (cv, strict=true, complete=false))]
-    fn get_verse_entries_with_context(
+    fn get_verse_entries_with_context<'py>(
         &self,
+        py: Python<'py>,
         cv: &PyChapterVerse,
         strict: bool,
         complete: bool,
-    ) -> PyResult<(PyInternalBibleEntryList, Vec<String>)> {
-        self.inner
+    ) -> PyResult<(Bound<'py, PyInternalBibleEntryList>, Vec<String>)> {
+        let (entries, context) = self.inner
             .get_verse_entries_with_context(&cv.inner, strict, complete)
-            .map(|(entries, context)| {
-                (
-                    PyInternalBibleEntryList::from(entries),
-                    context.into_iter().map(|s| s.to_string()).collect(),
-                )
-            })
-            .map_err(|x| PyRuntimeError::new_err(x.to_string()))
+            .map_err(|x| PyRuntimeError::new_err(x.to_string()))?;
+        
+        Ok((
+            Bound::new(py, PyInternalBibleEntryList::from(entries))?,
+            context.into_iter().map(|s| s.to_string()).collect(),
+        ))
     }
 
     /// Get all entries for a chapter (snake_case).
-    fn get_chapter_entries(&self, chapter: &str) -> PyResult<PyInternalBibleEntryList> {
-        self.inner
+    fn get_chapter_entries<'py>(&self, py: Python<'py>, chapter: &str) -> PyResult<Bound<'py, PyInternalBibleEntryList>> {
+        let entries = self.inner
             .get_chapter_entries(chapter)
-            .map(PyInternalBibleEntryList::from)
-            .map_err(|x| PyRuntimeError::new_err(x.to_string()))
-    }
-
-    /// Get the CV index entry for a specific ChapterVerse reference.
-    fn get_index_entry(&self, cv: &PyChapterVerse) -> Option<PyCVIndexEntry> {
-        self.inner.get_index_entry(&cv.inner).map(PyCVIndexEntry::from)
+            .map_err(|x| PyRuntimeError::new_err(x.to_string()))?;
+        Bound::new(py, PyInternalBibleEntryList::from(entries))
     }
 
     /// Build the CV index from processed entries (snake_case).
-    fn build(&mut self, entries: &PyInternalBibleEntryList) -> PyResult<()> {
+    fn build<'py>(&mut self, _py: Python<'py>, entries: &PyInternalBibleEntryList) -> PyResult<()> {
         self.inner
             .build(entries.inner.clone())
             .map_err(|e| PyValueError::new_err(e.to_string()))
     }
 
     /// Validate the index structure.
-    fn validate(&self) -> Vec<String> {
+    fn validate<'py>(&self, _py: Python<'py>) -> Vec<String> {
         self.inner.validate()
     }
 
     // === camelCase methods (Python backward compat, accept tuples) ===
 
     /// Build the CV index from processed entries (Python compat).
-    fn makeBookCVIndex(&mut self, entries: &PyInternalBibleEntryList) -> PyResult<()> {
+    fn makeBookCVIndex<'py>(&mut self, _py: Python<'py>, entries: &PyInternalBibleEntryList) -> PyResult<()> {
         verbosity_println!(3, "Building CV index for {} {}…", self.inner.work_name(), self.inner.bos_book_code());
         self.inner
             .build(entries.inner.clone())
@@ -1019,9 +1015,9 @@ impl PyInternalBibleBookCVIndex {
     }
 
     /// Perform discovery on this book (Python compat).
-    fn discover(&self) -> crate::discovery_bindings::PyBookDiscoveryResults {
+    fn discover<'py>(&self, py: Python<'py>) -> PyResult<Bound<'py, PyBookDiscoveryResults>> {
         let results = bos_internals::discovery::discover_book(self.inner.entries(), self.inner.bos_book_code());
-        crate::discovery_bindings::PyBookDiscoveryResults { inner: results }
+        Bound::new(py, PyBookDiscoveryResults { inner: results })
     }
 
     /// Get verse entries for a (C,V) tuple key.
@@ -1151,5 +1147,36 @@ impl PyCVIndexIter {
             None
         }
     }
+}
+
+/// Build CV indexes for all books in parallel.
+#[pyfunction]
+#[pyo3(name = "buildBibleCVIndexes")]
+pub fn py_build_bible_cv_indexes<'py>(
+    py: Python<'py>,
+    books_dict: &Bound<'py, pyo3::types::PyDict>,
+    work_name: &str,
+) -> PyResult<Bound<'py, pyo3::types::PyDict>> {
+    let mut books = IndexMap::new();
+    for (key, value) in books_dict.iter() {
+        let bbb: String = key.extract()?;
+        let py_list: PyRef<PyInternalBibleEntryList> = value.extract()?;
+        books.insert(bbb, py_list.inner.clone());
+    }
+
+    let results: IndexMap<String, InternalBibleBookCVIndex> = books
+        .into_par_iter()
+        .map(|(bbb, entries)| {
+            let mut index = InternalBibleBookCVIndex::new(work_name, &bbb);
+            let _ = index.build(entries);
+            (bbb, index)
+        })
+        .collect();
+
+    let dict = pyo3::types::PyDict::new(py);
+    for (bbb, index) in results {
+        dict.set_item(bbb, Bound::new(py, PyInternalBibleBookCVIndex { inner: index })?)?;
+    }
+    Ok(dict)
 }
 

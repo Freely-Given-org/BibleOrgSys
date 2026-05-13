@@ -526,8 +526,8 @@ class USFMBibleBook( BibleBook ):
                     lastMarker = lastText = None
                 if gotUWEncoding:
                     marker, text = handleUWEncoding( marker, text, alignmentVariables )
-            elif usfm_markers_py.isInternalMarker( marker ) \
-            or (marker and marker.endswith('*') and usfm_markers_py.isInternalMarker(marker[:-1]) ): # the line begins with an internal marker -- append it to the previous line
+            elif usfm_markers_py.is_internal_marker( marker ) \
+            or (marker and marker.endswith('*') and usfm_markers_py.is_internal_marker(marker[:-1]) ): # the line begins with an internal marker -- append it to the previous line
                 if issueLinePositioningErrors \
                 and (not gotUWEncoding or marker!='w'):
                     if text:
@@ -577,8 +577,8 @@ class USFMBibleBook( BibleBook ):
                     #dPrint( 'Never', debuggingThisFunction, 'USFM Para Markers', BibleOrgSysGlobals.USFMParagraphMarkers )
                     logging.critical( f"Programming error: USFMBibleBook.load() lost '{self.workName}' {self.BBB}_{C}:{V} text after {lastMarker}='{lastText}': {marker}='{text}'" )
                     if self.doExtraChecking or DEBUGGING_THIS_MODULE: halt
-            elif usfm_markers_py.isNoteMarker( marker ) \
-            or (marker and marker.endswith('*') and usfm_markers_py.isNoteMarker(marker[:-1]) ): # the line begins with a note marker -- append it to the previous line
+            elif usfm_markers_py.is_note_marker( marker ) \
+            or (marker and marker.endswith('*') and usfm_markers_py.is_note_marker(marker[:-1]) ): # the line begins with a note marker -- append it to the previous line
                 if text:
                     loadErrors.append( f"{self.BBB} {C}:{V} Found '\\{marker}' note marker at beginning of line with text: {text!r}" )
                     logging.warning( f"Found '\\{marker}' note marker after {self.BBB} {C}:{V} at beginning of line with text: {text!r}" )

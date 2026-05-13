@@ -3,6 +3,7 @@
 use pyo3::prelude::*;
 use bos_internals::processing::{ObjectType, ProcessLinesOptions, process_lines};
 use crate::cv_index_bindings::PyInternalBibleEntryList;
+use indexmap::IndexMap;
 
 #[pyclass(name = "ObjectType", module = "bible_organisational_system", from_py_object)]
 #[derive(Clone, Copy, PartialEq, Eq)]
@@ -77,12 +78,38 @@ impl From<PyProcessLinesOptions> for ProcessLinesOptions {
 
 #[pyfunction]
 #[pyo3(name = "processLines")]
-pub fn py_process_lines(
+pub fn py_process_lines<'py>(
+    py: Python<'py>,
     raw_lines: Vec<(String, String)>,
     book_code: &str,
     work_name: &str,
     options: PyProcessLinesOptions,
-) -> PyInternalBibleEntryList {
+) -> PyResult<Bound<'py, PyInternalBibleEntryList>> {
     let result = process_lines(raw_lines, book_code, work_name, &options.into());
-    PyInternalBibleEntryList { inner: result }
+    Bound::new(py, PyInternalBibleEntryList { inner: result })
+}
+
+#[pyfunction]
+#[pyo3(name = "processBible")]
+pub fn py_process_bible<'py>(
+    py: Python<'py>,
+    books_dict: &Bound<'py, pyo3::types::PyDict>,
+    work_name: &str,
+    options: PyProcessLinesOptions,
+) -> PyResult<Bound<'py, pyo3::types::PyDict>> {
+    let mut raw_books = IndexMap::new();
+    for (key, value) in books_dict.iter() {
+        let bbb: String = key.extract()?;
+        let lines: Vec<(String, String)> = value.extract()?;
+        raw_books.insert(bbb, lines);
+    }
+
+    let results = bos_internals::processing::process_bible(raw_books, work_name, &options.into());
+
+    let dict = pyo3::types::PyDict::new(py);
+    for (bbb, entries) in results {
+        let py_entries = PyInternalBibleEntryList { inner: entries };
+        dict.set_item(bbb, Bound::new(py, py_entries)?)?;
+    }
+    Ok(dict)
 }

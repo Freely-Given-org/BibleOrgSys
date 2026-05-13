@@ -12,6 +12,9 @@ classifiers = [
 ]
 dynamic = ["version"]
 
+[tool.uv]
+exclude-newer = "7 days"
+
 [tool.maturin]
 features = ["pyo3/extension-module"]
 # This ensures maturin knows where the actual Rust crate is 

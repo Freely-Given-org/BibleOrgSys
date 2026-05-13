@@ -27,6 +27,7 @@ dependencies = [
 ]
 
 [tool.uv]
+exclude-newer = "7 days"
 environments = [
     "python_version == '3.13'",
     "python_version == '3.14'"

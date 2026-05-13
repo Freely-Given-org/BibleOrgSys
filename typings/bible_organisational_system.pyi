@@ -9,13 +9,20 @@ __all__ = [
     "set_rust_debug",
     "set_rust_strict_checking",
     "processLines",
+    "processBible",
     "discoverBook",
     "discoverBible",
     "parseWordAttributes",
     "validateMarkers",
+    "validateBibleMarkers",
     "getVersification",
+    "getBibleVersification",
     "getAddedUnits",
+    "getBibleAddedUnits",
     "checkBook",
+    "checkBible",
+    "buildBibleCVIndexes",
+    "buildBibleSectionIndexes",
     "DiscoveryFlags",
     "CheckOptions",
     "InternalBibleExtra",
@@ -54,6 +61,9 @@ def processLines(
     work_name: str,
     options: ProcessLinesOptions,
 ) -> InternalBibleEntryList: ...
+def processBible(
+    books_dict: dict, work_name: str, options: ProcessLinesOptions
+) -> dict: ...
 def discoverBook(entries: InternalBibleEntryList, bbb: str) -> BookDiscoveryResults: ...
 def discoverBible(books_dict: dict) -> BibleDiscoveryResults: ...
 def parseWordAttributes(*args, **_kwargs) -> dict:
@@ -68,10 +78,15 @@ def validateMarkers(
     work_name: str,
     strict_checking: bool,
 ) -> dict: ...
+def validateBibleMarkers(
+    books_dict: dict, work_name: str, strict_checking: bool
+) -> dict: ...
 def getVersification(
     entries: InternalBibleEntryList, book_code: str, work_name: str
 ) -> dict: ...
+def getBibleVersification(books_dict: dict, work_name: str) -> dict: ...
 def getAddedUnits(entries: InternalBibleEntryList, book_code: str) -> dict: ...
+def getBibleAddedUnits(books_dict: dict) -> dict: ...
 def checkBook(
     entries: InternalBibleEntryList,
     book_code: str,
@@ -79,6 +94,17 @@ def checkBook(
     options: CheckOptions,
     discovery: DiscoveryFlags,
 ) -> dict: ...
+def checkBible(
+    books_dict: dict,
+    work_name: str,
+    options: CheckOptions,
+    discovery_results: BibleDiscoveryResults,
+) -> dict: ...
+def buildBibleCVIndexes(books_dict: dict, work_name: str) -> dict:
+    """Build CV indexes for all books in parallel."""
+
+def buildBibleSectionIndexes(books_dict: dict, work_name: str) -> dict:
+    """Build section indexes for all books in parallel."""
 
 @t.final
 class DiscoveryFlags:
@@ -726,7 +752,7 @@ class InternalBibleBookCVIndex:
     def __iter__(self) -> PyCVIndexIter:
         """Iterate over (C,V) tuples."""
 
-    def items(self) -> list[tuple[tuple[str, str], CVIndexEntry]]:
+    def items(self) -> list:
         """Iterate over ((C,V), CVIndexEntry) pairs."""
 
     def chapters(self) -> list[str]:
@@ -747,9 +773,6 @@ class InternalBibleBookCVIndex:
 
     def get_chapter_entries(self, chapter: str) -> InternalBibleEntryList:
         """Get all entries for a chapter (snake_case)."""
-
-    def get_index_entry(self, cv: ChapterVerse) -> CVIndexEntry | None:
-        """Get the CV index entry for a specific ChapterVerse reference."""
 
     def build(self, entries: InternalBibleEntryList) -> None:
         """Build the CV index from processed entries (snake_case)."""

@@ -12,5 +12,8 @@ classifiers = [
 ]
 dynamic = ["version"]
 
+[tool.uv]
+exclude-newer = "7 days"
+
 [tool.maturin]
 features = ["pyo3/extension-module"]

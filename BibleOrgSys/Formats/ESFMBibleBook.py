@@ -55,7 +55,6 @@ import logging
 
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
-from BibleOrgSys.Reference.USFM3Markers import OFTEN_IGNORED_USFM_HEADER_MARKERS
 from BibleOrgSys.InputOutput.ESFMFile import ESFMFile
 from BibleOrgSys.Bible import Bible, BibleBook
 import usfm_markers_py
@@ -396,8 +395,7 @@ class ESFMBibleBook( BibleBook ):
             #if (DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.verbosityLevel > 1) \
                 #and (originalMarker not in ('c','v') or len(original_text)>5): # Don't display for "blank" lines (like '\v 10 ')
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"ESFM doAddLine( {originalMarker!r}, {original_text!r} )" )
-            if original_text == "Southern kingdom":
-                dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"ESFM doAddLine( {originalMarker=}, {original_text=} )" )
+            # dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"ESFM doAddLine( {originalMarker=}, {original_text=} )" )
 
             marker, text = usfm_markers_py.to_standard_marker( originalMarker ), original_text.replace( '~', ' ' )
             if marker != originalMarker:
@@ -484,8 +482,8 @@ class ESFMBibleBook( BibleBook ):
             if usfm_markers_py.is_newline_marker( marker ):
                 if lastMarker: doAddLine( lastMarker, lastText )
                 lastMarker, lastText = marker, text
-            elif usfm_markers_py.isInternalMarker( marker ) \
-            or (marker and marker.endswith('*') and usfm_markers_py.isInternalMarker( marker[:-1] ) ): # the line begins with an internal marker -- append it to the previous line
+            elif usfm_markers_py.is_internal_marker( marker ) \
+            or (marker and marker.endswith('*') and usfm_markers_py.is_internal_marker( marker[:-1] ) ): # the line begins with an internal marker -- append it to the previous line
                 if text:
                     loadErrors.append( f"{self.BBB} {C}:{V} Found '\\{marker}' internal marker at beginning of line with text: {text!r}" )
                     logging.warning( f"Found '\\{marker}' internal marker after {self.BBB} {C}:{V} at beginning of line with text: {text!r}" )
@@ -496,8 +494,8 @@ class ESFMBibleBook( BibleBook ):
                 if not lastText.endswith(' '): lastText += ' ' # Not always good to add a space, but it's their fault!
                 lastText +=  '\\' + marker + ' ' + text
                 vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"{self.BBB} {C} {V} Appended {marker}:{lastMarker!r} to get combined line {text}:{lastText!r}" )
-            elif usfm_markers_py.isNoteMarker( marker ) \
-            or marker and marker.endswith('*') and usfm_markers_py.isNoteMarker( marker[:-1] ): # the line begins with a note marker -- append it to the previous line
+            elif usfm_markers_py.is_note_marker( marker ) \
+            or marker and marker.endswith('*') and usfm_markers_py.is_note_marker( marker[:-1] ): # the line begins with a note marker -- append it to the previous line
                 if text:
                     loadErrors.append( f"{self.BBB} {C}:{V} Found '\\{marker}' note marker at beginning of line with text: {text!r}" )
                     logging.warning( f"Found '\\{marker}' note marker after {self.BBB} {C}:{V} at beginning of line with text: {text!r}" )

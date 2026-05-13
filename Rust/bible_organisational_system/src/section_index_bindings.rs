@@ -9,6 +9,8 @@ use pyo3::prelude::*;
 use pyo3::types::PyBytes;
 
 use bos_internals::{ChapterVerse, InternalBibleBookSectionIndex, SectionIndexEntry, verbosity_println};
+use indexmap::IndexMap;
+use rayon::prelude::*;
 
 use crate::cv_index_bindings::PyInternalBibleEntryList;
 
@@ -296,7 +298,7 @@ impl PyInternalBibleBookSectionIndex {
     // === camelCase methods (Python backward compat) ===
 
     /// Build the section index from processed entries.
-    fn makeBookSectionIndex(&mut self, entries: &PyInternalBibleEntryList) -> PyResult<()> {
+    fn makeBookSectionIndex<'py>(&mut self, _py: Python<'py>, entries: &PyInternalBibleEntryList) -> PyResult<()> {
         verbosity_println!(3, "Building section index for {} {}…", self.inner.work_name(), self.inner.bos_book_code());
         self.inner
             .build(entries.inner.clone())
@@ -304,26 +306,25 @@ impl PyInternalBibleBookSectionIndex {
     }
 
     /// Get entries for a section by (C,V) key.
-    fn getSectionEntries(&self, key: (String, String)) -> PyResult<PyInternalBibleEntryList> {
+    fn getSectionEntries<'py>(&self, py: Python<'py>, key: (String, String)) -> PyResult<Bound<'py, PyInternalBibleEntryList>> {
         let cv = ChapterVerse::new(&key.0, &key.1);
-        self.inner
+        let entries = self.inner
             .get_section_entries(&cv)
-            .map(PyInternalBibleEntryList::from)
-            .map_err(|_| PyKeyError::new_err(format!("({:?}, {:?})", key.0, key.1)))
+            .map_err(|_| PyKeyError::new_err(format!("({:?}, {:?})", key.0, key.1)))?;
+        Bound::new(py, PyInternalBibleEntryList::from(entries))
     }
 
     /// Get section entries with context markers.
-    fn getSectionEntriesWithContext(&self, key: (String, String)) -> PyResult<(PyInternalBibleEntryList, Vec<String>)> {
+    fn getSectionEntriesWithContext<'py>(&self, py: Python<'py>, key: (String, String)) -> PyResult<(Bound<'py, PyInternalBibleEntryList>, Vec<String>)> {
         let cv = ChapterVerse::new(&key.0, &key.1);
-        self.inner
+        let (entries, context) = self.inner
             .get_section_entries_with_context(&cv)
-            .map(|(entries, context)| {
-                (
-                    PyInternalBibleEntryList::from(entries),
-                    context.into_iter().map(|s| s.to_string()).collect(),
-                )
-            })
-            .map_err(|_| PyKeyError::new_err(format!("({:?}, {:?})", key.0, key.1)))
+            .map_err(|_| PyKeyError::new_err(format!("({:?}, {:?})", key.0, key.1)))?;
+        
+        Ok((
+            Bound::new(py, PyInternalBibleEntryList::from(entries))?,
+            context.into_iter().map(|s| s.to_string()).collect(),
+        ))
     }
 
     fn __repr__(&self) -> String {
@@ -380,4 +381,35 @@ impl PySectionIndexIter {
         self.index += 1;
         Some(key)
     }
+}
+
+/// Build section indexes for all books in parallel.
+#[pyfunction]
+#[pyo3(name = "buildBibleSectionIndexes")]
+pub fn py_build_bible_section_indexes<'py>(
+    py: Python<'py>,
+    books_dict: &Bound<'py, pyo3::types::PyDict>,
+    work_name: &str,
+) -> PyResult<Bound<'py, pyo3::types::PyDict>> {
+    let mut books = IndexMap::new();
+    for (key, value) in books_dict.iter() {
+        let bbb: String = key.extract()?;
+        let py_list: PyRef<PyInternalBibleEntryList> = value.extract()?;
+        books.insert(bbb, py_list.inner.clone());
+    }
+
+    let results: IndexMap<String, InternalBibleBookSectionIndex> = books
+        .into_par_iter()
+        .map(|(bbb, entries)| {
+            let mut index = InternalBibleBookSectionIndex::new(work_name, &bbb);
+            let _ = index.build(entries);
+            (bbb, index)
+        })
+        .collect();
+
+    let dict = pyo3::types::PyDict::new(py);
+    for (bbb, index) in results {
+        dict.set_item(bbb, Bound::new(py, PyInternalBibleBookSectionIndex { inner: index })?)?;
+    }
+    Ok(dict)
 }

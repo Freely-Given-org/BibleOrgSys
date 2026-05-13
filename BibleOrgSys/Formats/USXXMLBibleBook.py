@@ -583,7 +583,7 @@ class USXXMLBibleBook( BibleBook ):
                     USFMMarker = element.attrib['style'] # Get the USFM code for the paragraph style
                     if usfm_markers_py.is_newline_marker( USFMMarker ):
                         loadParagraph( element, location )
-                    elif usfm_markers_py.isInternalMarker( USFMMarker ): # the line begins with an internal USFM Marker -- append it to the previous line
+                    elif usfm_markers_py.is_internal_marker( USFMMarker ): # the line begins with an internal USFM Marker -- append it to the previous line
                         text = element.text
                         if text is None: text = ''
                         if BibleOrgSysGlobals.debugFlag:

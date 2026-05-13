@@ -385,13 +385,12 @@ fn count_words(marker: &str, segment: &str, is_main: bool, results: &mut BookDis
 
         let mut word = raw_word.to_string();
         
-        // Remove internal markers (simplified version of Python logic)
+        // Remove internal markers
         if word.contains('\\') {
-            // Very basic marker removal: remove anything that looks like \+?marker*?
-            // This is a rough approximation of the Python logic
-            if let Ok(re) = regex::Regex::new(r"\\\+?[a-z1-4]+\*?") {
-                word = re.replace_all(&word, "").to_string();
-            }
+            static MARKER_RE: std::sync::LazyLock<regex::Regex> = std::sync::LazyLock::new(|| {
+                regex::Regex::new(r"\\\+?[a-z1-4]+\*?").unwrap()
+            });
+            word = MARKER_RE.replace_all(&word, "").to_string();
         }
         
         word = strip_word_ends_punctuation(&word);
@@ -624,10 +623,6 @@ fn aggregate_results(results: &mut BibleDiscoveryResults) {
         }
 
         agg.word_count += bk.word_count;
-        merge_word_counts(&mut agg.all_word_counts, &bk.all_word_counts);
-        merge_word_counts(&mut agg.all_case_insensitive_word_counts, &bk.all_case_insensitive_word_counts);
-        merge_word_counts(&mut agg.main_text_word_counts, &bk.main_text_word_counts);
-        merge_word_counts(&mut agg.main_text_case_insensitive_word_counts, &bk.main_text_case_insensitive_word_counts);
 
         if bk.section_references_parenthesis_ratio >= 0.0 {
             section_ref_ratios.push(bk.section_references_parenthesis_ratio);
@@ -639,6 +634,19 @@ fn aggregate_results(results: &mut BibleDiscoveryResults) {
             xref_ratios.push(bk.cross_references_period_ratio);
         }
     }
+
+    // Parallel aggregation of word counts
+    let all_word_counts_sources: Vec<&HashMap<String, u32>> = results.books.values().map(|bk| &bk.all_word_counts).collect();
+    agg.all_word_counts = parallel_merge_word_counts(all_word_counts_sources);
+
+    let all_ci_word_counts_sources: Vec<&HashMap<String, u32>> = results.books.values().map(|bk| &bk.all_case_insensitive_word_counts).collect();
+    agg.all_case_insensitive_word_counts = parallel_merge_word_counts(all_ci_word_counts_sources);
+
+    let main_text_word_counts_sources: Vec<&HashMap<String, u32>> = results.books.values().map(|bk| &bk.main_text_word_counts).collect();
+    agg.main_text_word_counts = parallel_merge_word_counts(main_text_word_counts_sources);
+
+    let main_text_ci_word_counts_sources: Vec<&HashMap<String, u32>> = results.books.values().map(|bk| &bk.main_text_case_insensitive_word_counts).collect();
+    agg.main_text_case_insensitive_word_counts = parallel_merge_word_counts(main_text_ci_word_counts_sources);
 
     let num_books = results.books.len() as f32;
     if num_books > 0.0 {
@@ -681,10 +689,20 @@ fn aggregate_results(results: &mut BibleDiscoveryResults) {
     }
 }
 
-fn merge_word_counts(target: &mut HashMap<String, u32>, source: &HashMap<String, u32>) {
-    for (word, count) in source {
-        *target.entry(word.clone()).or_insert(0) += count;
+/// Merge multiple word count maps in parallel using a reduction pattern.
+fn parallel_merge_word_counts(sources: Vec<&HashMap<String, u32>>) -> HashMap<String, u32> {
+    if sources.is_empty() {
+        return HashMap::new();
     }
+    
+    sources.into_par_iter()
+        .cloned()
+        .reduce(HashMap::new, |mut acc, map| {
+            for (word, count) in map {
+                *acc.entry(word).or_insert(0) += count;
+            }
+            acc
+        })
 }
 
 #[cfg(test)]

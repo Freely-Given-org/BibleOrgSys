@@ -420,7 +420,8 @@ impl InternalBibleBookCVIndex {
         self.index_data.insert(cv, CVIndexEntry::new(current_start, entry_count, current_context));
 
         self.indexed = true;
-        self.validate(); // This line can be removed in the future for a speed-up once fully debugged and tested
+        #[cfg(debug_assertions)]
+        self.validate(); 
         Ok(())
     }
 

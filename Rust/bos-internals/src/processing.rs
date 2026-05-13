@@ -5,6 +5,8 @@
 
 use regex::Regex;
 use std::sync::LazyLock;
+use indexmap::IndexMap;
+use rayon::prelude::*;
 
 use crate::entry::{InternalBibleEntry, InternalBibleExtra};
 use crate::entry_extras::{InternalBibleEntryList, InternalBibleExtraList};
@@ -355,6 +357,21 @@ pub fn process_lines(
     // v= markers are added before section headings
     let with_added =crate::nesting::add_verse_start_markers(processed);
     crate::nesting::add_nesting_markers(with_added, work_name, book_code)
+}
+
+/// Process all books in a Bible in parallel.
+pub fn process_bible(
+    raw_books: IndexMap<String, Vec<(String, String)>>,
+    work_name: &str,
+    options: &ProcessLinesOptions,
+) -> IndexMap<String, InternalBibleEntryList> {
+    raw_books
+        .into_par_iter()
+        .map(|(book_code, raw_lines)| {
+            let processed = process_lines(raw_lines, &book_code, work_name, options);
+            (book_code, processed)
+        })
+        .collect()
 }
 
 #[cfg(test)]
