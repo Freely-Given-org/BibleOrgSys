@@ -9,13 +9,20 @@ __all__ = [
     "set_rust_debug",
     "set_rust_strict_checking",
     "processLines",
+    "processBible",
     "discoverBook",
     "discoverBible",
     "parseWordAttributes",
     "validateMarkers",
+    "validateBibleMarkers",
     "getVersification",
+    "getBibleVersification",
     "getAddedUnits",
+    "getBibleAddedUnits",
     "checkBook",
+    "checkBible",
+    "buildBibleCVIndexes",
+    "buildBibleSectionIndexes",
     "DiscoveryFlags",
     "CheckOptions",
     "InternalBibleExtra",
@@ -54,6 +61,9 @@ def processLines(
     work_name: str,
     options: ProcessLinesOptions,
 ) -> InternalBibleEntryList: ...
+def processBible(
+    books_dict: dict, work_name: str, options: ProcessLinesOptions
+) -> dict: ...
 def discoverBook(entries: InternalBibleEntryList, bbb: str) -> BookDiscoveryResults: ...
 def discoverBible(books_dict: dict) -> BibleDiscoveryResults: ...
 def parseWordAttributes(*args, **_kwargs) -> dict:
@@ -68,10 +78,15 @@ def validateMarkers(
     work_name: str,
     strict_checking: bool,
 ) -> dict: ...
+def validateBibleMarkers(
+    books_dict: dict, work_name: str, strict_checking: bool
+) -> dict: ...
 def getVersification(
     entries: InternalBibleEntryList, book_code: str, work_name: str
 ) -> dict: ...
+def getBibleVersification(books_dict: dict, work_name: str) -> dict: ...
 def getAddedUnits(entries: InternalBibleEntryList, book_code: str) -> dict: ...
+def getBibleAddedUnits(books_dict: dict) -> dict: ...
 def checkBook(
     entries: InternalBibleEntryList,
     book_code: str,
@@ -79,6 +94,17 @@ def checkBook(
     options: CheckOptions,
     discovery: DiscoveryFlags,
 ) -> dict: ...
+def checkBible(
+    books_dict: dict,
+    work_name: str,
+    options: CheckOptions,
+    discovery_results: BibleDiscoveryResults,
+) -> dict: ...
+def buildBibleCVIndexes(books_dict: dict, work_name: str) -> dict:
+    """Build CV indexes for all books in parallel."""
+
+def buildBibleSectionIndexes(books_dict: dict, work_name: str) -> dict:
+    """Build section indexes for all books in parallel."""
 
 @t.final
 class DiscoveryFlags:
@@ -90,10 +116,138 @@ class DiscoveryFlags:
         have_main_headings: bool = False,
         have_introductory_text: bool = False,
     ) -> None: ...
+    @property
+    def partly_done(self) -> bool: ...
+    @partly_done.setter
+    def partly_done(self, value: bool) -> None: ...
+    @property
+    def partlyDone(self) -> bool: ...
+    @partlyDone.setter
+    def partlyDone(self, value: bool) -> None: ...
+    @property
+    def percentage_progress(self) -> float: ...
+    @percentage_progress.setter
+    def percentage_progress(self, value: float) -> None: ...
+    @property
+    def percentageProgress(self) -> float: ...
+    @percentageProgress.setter
+    def percentageProgress(self, value: float) -> None: ...
+    @property
+    def seems_finished(self) -> bool: ...
+    @seems_finished.setter
+    def seems_finished(self, value: bool) -> None: ...
+    @property
+    def seemsFinished(self) -> bool: ...
+    @seemsFinished.setter
+    def seemsFinished(self, value: bool) -> None: ...
+    @property
+    def have_main_headings(self) -> bool: ...
+    @have_main_headings.setter
+    def have_main_headings(self, value: bool) -> None: ...
+    @property
+    def haveMainHeadings(self) -> bool: ...
+    @haveMainHeadings.setter
+    def haveMainHeadings(self, value: bool) -> None: ...
+    @property
+    def have_introductory_text(self) -> bool: ...
+    @have_introductory_text.setter
+    def have_introductory_text(self, value: bool) -> None: ...
+    @property
+    def haveIntroductoryText(self) -> bool: ...
+    @haveIntroductoryText.setter
+    def haveIntroductoryText(self, value: bool) -> None: ...
 
 @t.final
 class CheckOptions:
     def __init__(self) -> None: ...
+    @property
+    def check_sfms(self) -> bool: ...
+    @check_sfms.setter
+    def check_sfms(self, value: bool) -> None: ...
+    @property
+    def checkSFMs(self) -> bool: ...
+    @checkSFMs.setter
+    def checkSFMs(self, value: bool) -> None: ...
+    @property
+    def check_words(self) -> bool: ...
+    @check_words.setter
+    def check_words(self, value: bool) -> None: ...
+    @property
+    def checkWords(self) -> bool: ...
+    @checkWords.setter
+    def checkWords(self, value: bool) -> None: ...
+    @property
+    def check_headings(self) -> bool: ...
+    @check_headings.setter
+    def check_headings(self, value: bool) -> None: ...
+    @property
+    def checkHeadings(self) -> bool: ...
+    @checkHeadings.setter
+    def checkHeadings(self, value: bool) -> None: ...
+    @property
+    def check_introduction(self) -> bool: ...
+    @check_introduction.setter
+    def check_introduction(self, value: bool) -> None: ...
+    @property
+    def checkIntroduction(self) -> bool: ...
+    @checkIntroduction.setter
+    def checkIntroduction(self, value: bool) -> None: ...
+    @property
+    def check_notes(self) -> bool: ...
+    @check_notes.setter
+    def check_notes(self, value: bool) -> None: ...
+    @property
+    def checkNotes(self) -> bool: ...
+    @checkNotes.setter
+    def checkNotes(self, value: bool) -> None: ...
+    @property
+    def check_speech_marks(self) -> bool: ...
+    @check_speech_marks.setter
+    def check_speech_marks(self, value: bool) -> None: ...
+    @property
+    def checkSpeechMarks(self) -> bool: ...
+    @checkSpeechMarks.setter
+    def checkSpeechMarks(self, value: bool) -> None: ...
+    @property
+    def check_added_units(self) -> bool: ...
+    @check_added_units.setter
+    def check_added_units(self, value: bool) -> None: ...
+    @property
+    def checkAddedUnits(self) -> bool: ...
+    @checkAddedUnits.setter
+    def checkAddedUnits(self, value: bool) -> None: ...
+    @property
+    def opening_chars(self) -> str: ...
+    @opening_chars.setter
+    def opening_chars(self, value: str) -> None: ...
+    @property
+    def openingChars(self) -> str: ...
+    @openingChars.setter
+    def openingChars(self, value: str) -> None: ...
+    @property
+    def closing_chars(self) -> str: ...
+    @closing_chars.setter
+    def closing_chars(self, value: str) -> None: ...
+    @property
+    def closingChars(self) -> str: ...
+    @closingChars.setter
+    def closingChars(self, value: str) -> None: ...
+    @property
+    def leading_punct(self) -> str: ...
+    @leading_punct.setter
+    def leading_punct(self, value: str) -> None: ...
+    @property
+    def leadingPunct(self) -> str: ...
+    @leadingPunct.setter
+    def leadingPunct(self, value: str) -> None: ...
+    @property
+    def trailing_punct(self) -> str: ...
+    @trailing_punct.setter
+    def trailing_punct(self, value: str) -> None: ...
+    @property
+    def trailingPunct(self) -> str: ...
+    @trailingPunct.setter
+    def trailingPunct(self, value: str) -> None: ...
 
 @t.final
 class InternalBibleExtra:
@@ -310,7 +464,7 @@ class InternalBibleEntry:
     Backward-compatible with the Python InternalBibleEntry class.
 
     Constructor accepts either:
-    - Full 6-arg form: (marker, originalMarker, adjustedText, cleanText, extras, originalText)
+    - Full 6-arg form: (marker, originalMarker, adjustedText, cleanText, extras, original_text)
     - Simple 2-arg form: (marker, cleanText) — creates entry with all text fields set to cleanText
 
     Supports both snake_case properties and camelCase getter methods.
@@ -328,9 +482,9 @@ class InternalBibleEntry:
         Create a new InternalBibleEntry.
 
         Matches the Python constructor signature:
-        InternalBibleEntry(marker, originalMarker, adjustedText, cleanText, extras, originalText)
+        InternalBibleEntry(marker, originalMarker, adjustedText, cleanText, extras, original_text)
 
-        For end markers / added nesting markers, originalMarker through originalText should be None.
+        For end markers / added nesting markers, originalMarker through original_text should be None.
         """
 
     def __getnewargs__(
@@ -364,7 +518,7 @@ class InternalBibleEntry:
         """Get the extras (footnotes, cross-refs, etc.)."""
 
     @property
-    def originalText(self) -> str | None:
+    def original_text(self) -> str | None:
         """Get the original text (full USFM)."""
 
     def getMarker(self) -> str:
@@ -389,7 +543,7 @@ class InternalBibleEntry:
         """Get the original text (Python compat)."""
 
     def getFullText(self) -> str | None:
-        """Get the full text — returns originalText (Python compat)."""
+        """Get the full text — returns original_text (Python compat)."""
 
     def setCleanText(self, new_value: str) -> None:
         """
@@ -598,7 +752,7 @@ class InternalBibleBookCVIndex:
     def __iter__(self) -> PyCVIndexIter:
         """Iterate over (C,V) tuples."""
 
-    def items(self) -> list[tuple[tuple[str, str], CVIndexEntry]]:
+    def items(self) -> list:
         """Iterate over ((C,V), CVIndexEntry) pairs."""
 
     def chapters(self) -> list[str]:
@@ -619,9 +773,6 @@ class InternalBibleBookCVIndex:
 
     def get_chapter_entries(self, chapter: str) -> InternalBibleEntryList:
         """Get all entries for a chapter (snake_case)."""
-
-    def get_index_entry(self, cv: ChapterVerse) -> CVIndexEntry | None:
-        """Get the CV index entry for a specific ChapterVerse reference."""
 
     def build(self, entries: InternalBibleEntryList) -> None:
         """Build the CV index from processed entries (snake_case)."""

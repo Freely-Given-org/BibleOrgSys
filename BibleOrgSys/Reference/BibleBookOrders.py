@@ -32,9 +32,10 @@ import logging
 
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
+import bos_books_codes_py
 
 
-LAST_MODIFIED_DATE = '2020-04-16' # by RJH
+LAST_MODIFIED_DATE = '2026-05-06' # by RJH
 SHORT_PROGRAM_NAME = "BibleBookOrders"
 PROGRAM_NAME = "Bible Book Order Systems handler"
 PROGRAM_VERSION = '0.91'
@@ -187,7 +188,7 @@ class BibleBookOrderSystems:
         assert len(self.__DataLists)
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, thisSystemName, bookOrderSchemeToCheck )
         for BBB in bookOrderSchemeToCheck:
-            if not BibleOrgSysGlobals.loadedBibleBooksCodes.isValidBBB( BBB ):
+            if not bos_books_codes_py.is_valid_bos_book_code( BBB ):
                 logging.error( f"Invalid '{BBB}' book code" )
 
         matchedBookOrderSystemCodes = []

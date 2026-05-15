@@ -48,6 +48,7 @@ from BibleOrgSys.Bible import Bible
 from BibleOrgSys.Formats.USFMBible import USFMBible
 from BibleOrgSys.Formats.PTX8Bible import PTX8Bible
 from BibleOrgSys.Formats.PickledBible import PickledBible, ZIPPED_PICKLE_FILENAME_END
+import bos_books_codes_py
 
 from Extras.BibleDropBoxHelpers import submitBDBFolder
 
@@ -200,9 +201,9 @@ def main() -> None:
             # Now validate and compare them
             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Now validating and comparing the reference and our exported {abbrev} USX (XML) files…" )
             for BBB in thisUsfmBible.books:
-                Uuu = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMAbbreviation( BBB )
+                Uuu = bos_books_codes_py.bos_book_code_to_usfm_abbrev( BBB )
                 UUU = Uuu.upper()
-                nnn = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSXNumStr( BBB )
+                nnn = bos_books_codes_py.get_usx_num_str( BBB )
                 if not nnn:
                     logging.critical( f"Ignoring validation of {BBB=} {Uuu=} {UUU=}-- enable to determine nnn" )
                 usx_filename = f'{nnn}{UUU}.usx'

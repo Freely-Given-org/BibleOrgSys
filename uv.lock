@@ -10,6 +10,10 @@ supported-markers = [
     "python_full_version == '3.14.*'",
 ]
 
+[options]
+exclude-newer = "2026-05-07T09:35:30.161719514Z"
+exclude-newer-span = "P7D"
+
 [manifest]
 members = [
     "bibleorgsys",
@@ -22,7 +26,9 @@ version = "0.1.1"
 source = { editable = "." }
 dependencies = [
     { name = "bibleorgsys-rust", marker = "python_full_version < '3.15'" },
+    { name = "bos-books-codes-py", marker = "python_full_version < '3.15'" },
     { name = "requests", marker = "python_full_version < '3.15'" },
+    { name = "usfm-markers-py", marker = "python_full_version < '3.15'" },
 ]
 
 [package.dev-dependencies]
@@ -33,7 +39,9 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "bibleorgsys-rust", editable = "Rust/bible_organisational_system" },
+    { name = "bos-books-codes-py", editable = "Rust/bos_books_codes_py" },
     { name = "requests", specifier = ">=2.33.1" },
+    { name = "usfm-markers-py", editable = "Rust/usfm_markers_py" },
 ]
 
 [package.metadata.requires-dev]
@@ -42,6 +50,10 @@ dev = [{ name = "ty", specifier = ">=0.0.18" }]
 [[package]]
 name = "bibleorgsys-rust"
 source = { editable = "Rust/bible_organisational_system" }
+
+[[package]]
+name = "bos-books-codes-py"
+source = { editable = "Rust/bos_books_codes_py" }
 
 [[package]]
 name = "certifi"
@@ -165,3 +177,7 @@ sdist = { url = "https://files.pythonhosted.org/packages/53/0c/06f8b233b8fd13b9e
 wheels = [
     { url = "https://files.pythonhosted.org/packages/7f/3e/5db95bcf282c52709639744ca2a8b149baccf648e39c8cc87553df9eae0c/urllib3-2.7.0-py3-none-any.whl", hash = "sha256:9fb4c81ebbb1ce9531cce37674bbc6f1360472bc18ca9a553ede278ef7276897", size = 131087, upload-time = "2026-05-07T16:13:17.151Z" },
 ]
+
+[[package]]
+name = "usfm-markers-py"
+source = { editable = "Rust/usfm_markers_py" }

@@ -247,26 +247,6 @@ def doAll( testType:str, failures:list[str], failureDetails:list[str],
         failureDetails.append( f"{moduleName}: {formatFailureDetails( err )}" )
 
 
-    moduleName = 'BibleBooksCodesConverter'
-    try:
-        from BibleOrgSys.Reference.Converters import BibleBooksCodesConverter
-        doTest( moduleName, BibleBooksCodesConverter )
-    except KeyboardInterrupt: interrupted=True; return
-    except (ImportError, SyntaxError) as err:
-        print( f"{moduleName} import failed!" )
-        failures.append( f"{moduleName} import" )
-        failureDetails.append( f"{moduleName}: {formatFailureDetails( err )}" )
-    moduleName = 'BibleBooksCodes'
-    try:
-        from BibleOrgSys.Reference import BibleBooksCodes
-        doTest( moduleName, BibleBooksCodes )
-    except KeyboardInterrupt: interrupted=True; return
-    except (ImportError, SyntaxError) as err:
-        print( f"{moduleName} import failed!" )
-        failures.append( f"{moduleName} import" )
-        failureDetails.append( f"{moduleName}: {formatFailureDetails( err )}" )
-
-
     moduleName = 'ISO_639_3_LanguagesConverter'
     try:
         from BibleOrgSys.Reference.Converters import ISO_639_3_LanguagesConverter

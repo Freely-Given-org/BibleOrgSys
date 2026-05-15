@@ -21,10 +21,13 @@ classifiers = [
 ]
 dependencies = [
     "bibleorgsys-rust>=0.1.1",
+    "bos_books_codes_py",
+    "usfm_markers_py",
     "requests>=2.33.1",
 ]
 
 [tool.uv]
+exclude-newer = "7 days"
 environments = [
     "python_version == '3.13'",
     "python_version == '3.14'"
@@ -56,6 +59,8 @@ members = [".", "Rust/bible_organisational_system"]
 
 [tool.uv.sources]
 bibleorgsys-rust = { workspace = true }
+bos_books_codes_py = { path = "../BibleOrgSys/Rust/bos_books_codes_py", editable = true }
+usfm_markers_py = { path = "Rust/usfm_markers_py", editable = true }
 
 [dependency-groups]
 dev = [

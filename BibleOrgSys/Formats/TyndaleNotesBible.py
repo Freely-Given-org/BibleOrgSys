@@ -44,6 +44,7 @@ from xml.etree.ElementTree import ElementTree, ParseError
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Bible import Bible, BibleBook
+import bos_books_codes_py
 
 
 LAST_MODIFIED_DATE = '2023-06-14' # by RJH
@@ -284,8 +285,8 @@ class TyndaleNotesBible( Bible ):
                             firstVs = '0'
                         if firstOSISBkCode.endswith('Thes'):
                             firstOSISBkCode += 's' # TODO: getBBBFromText should handle '1Thes'
-                        BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromEnglishText( firstOSISBkCode )
-                        # try: BBB2 = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromOSISAbbreviation( firstOSISBkCode )
+                        BBB = bos_books_codes_py.english_name_to_bos_book_code( firstOSISBkCode )
+                        # try: BBB2 = bos_books_codes_py.osis_book_code_to_bos_book_code( firstOSISBkCode )
                         # except KeyError: BBB2 = None
                         # assert BBB, f"{firstOSISBkCode=} {BBB=} {BBB2=}"
                         # if isinstance( BBB2, list ): BBB2 = BBB2[0] # Just take the first one (that's the best guess)
@@ -298,7 +299,7 @@ class TyndaleNotesBible( Bible ):
                             thisBook = BibleBook( self, BBB )
                             thisBook.objectNameString = 'Tyndale Study Notes Book object'
                             thisBook.objectTypeString = 'TyndaleStudyNotes'
-                            UUU = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMAbbreviation( BBB )
+                            UUU = bos_books_codes_py.bos_book_code_to_usfm_abbrev( BBB )
                             thisBook.addLine( 'id', UUU )
                             thisBook.addLine( 'usfm', '3.0' )
                             thisBook.addLine( 'ide', 'utf-8' )

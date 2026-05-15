@@ -18,9 +18,9 @@ pub const BOOKLIST_DC: &[&str] = &[
     "TOB", "JDT", "ESG", "WIS", "SIR", "BAR", "LJE", "S3Y", "SUS", "BEL", "1MA", "2MA", "3MA", "4MA", "1ES", "2ES", "MAN", "PS2", "ODA", "PSS", "EZA", "5EZ", "6EZ", "DAG", "PS3", "2BA", "LBA", "JUB", "ENO", "1MQ", "2MQ", "3MQ", "REP", "4BA", "LAO",
 ];
 
-pub fn is_ot(bbb: &str) -> bool { BOOKLIST_OT39.contains(&bbb) }
-pub fn is_nt(bbb: &str) -> bool { BOOKLIST_NT27.contains(&bbb) }
-pub fn is_dc(bbb: &str) -> bool { BOOKLIST_DC.contains(&bbb) }
+pub fn is_old_testament_nr(bbb: &str) -> bool { BOOKLIST_OT39.contains(&bbb) }
+pub fn is_new_testament_nr(bbb: &str) -> bool { BOOKLIST_NT27.contains(&bbb) }
+pub fn is_deuterocanon_nr(bbb: &str) -> bool { BOOKLIST_DC.contains(&bbb) }
 
 /// Discovery results for a single Bible book.
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
@@ -286,7 +286,7 @@ pub fn discover_book(entries: &InternalBibleEntryList, _bbb: &str) -> BookDiscov
             }
         } else if marker == "tr" {
             results.have_tables = true;
-        } else if marker == "li" || marker == "li1" {
+        } else if marker == "li1" {
             results.have_lists = true;
         }
 
@@ -385,13 +385,12 @@ fn count_words(marker: &str, segment: &str, is_main: bool, results: &mut BookDis
 
         let mut word = raw_word.to_string();
         
-        // Remove internal markers (simplified version of Python logic)
+        // Remove internal markers
         if word.contains('\\') {
-            // Very basic marker removal: remove anything that looks like \+?marker*?
-            // This is a rough approximation of the Python logic
-            if let Ok(re) = regex::Regex::new(r"\\\+?[a-z1-4]+\*?") {
-                word = re.replace_all(&word, "").to_string();
-            }
+            static MARKER_RE: std::sync::LazyLock<regex::Regex> = std::sync::LazyLock::new(|| {
+                regex::Regex::new(r"\\\+?[a-z1-4]+\*?").unwrap()
+            });
+            word = MARKER_RE.replace_all(&word, "").to_string();
         }
         
         word = strip_word_ends_punctuation(&word);
@@ -453,17 +452,17 @@ fn aggregate_results(results: &mut BibleDiscoveryResults) {
     let mut dc_progress_by_book: f32 = 0.0;
 
     for (bbb, bk) in &results.books {
-        let is_ot_book = is_ot(bbb);
-        let is_nt_book = is_nt(bbb);
-        let is_dc_book = is_dc(bbb);
+        let is_old_testament_book = is_old_testament_nr(bbb);
+        let is_new_testament_book = is_new_testament_nr(bbb);
+        let is_deuterocanon_book = is_deuterocanon_nr(bbb);
 
-        if is_ot_book {
+        if is_old_testament_book {
             agg.ot_book_count += 1;
             agg.ot_book_codes.push(bbb.clone());
-        } else if is_nt_book {
+        } else if is_new_testament_book {
             agg.nt_book_count += 1;
             agg.nt_book_codes.push(bbb.clone());
-        } else if is_dc_book {
+        } else if is_deuterocanon_book {
             agg.dc_book_count += 1;
             agg.dc_book_codes.push(bbb.clone());
         } else {
@@ -473,149 +472,149 @@ fn aggregate_results(results: &mut BibleDiscoveryResults) {
 
         if bk.not_started {
             agg.not_started_book_codes.push(bbb.clone());
-            if is_ot_book { agg.ot_not_started_book_codes.push(bbb.clone()); }
-            else if is_nt_book { agg.nt_not_started_book_codes.push(bbb.clone()); }
-            else if is_dc_book { agg.dc_not_started_book_codes.push(bbb.clone()); }
+            if is_old_testament_book { agg.ot_not_started_book_codes.push(bbb.clone()); }
+            else if is_new_testament_book { agg.nt_not_started_book_codes.push(bbb.clone()); }
+            else if is_deuterocanon_book { agg.dc_not_started_book_codes.push(bbb.clone()); }
             else { agg.other_not_started_book_codes.push(bbb.clone()); }
         }
         if bk.seems_finished.unwrap_or(false) {
             agg.seems_finished_book_codes.push(bbb.clone());
-            if is_ot_book { agg.ot_seems_finished_book_codes.push(bbb.clone()); }
-            else if is_nt_book { agg.nt_seems_finished_book_codes.push(bbb.clone()); }
-            else if is_dc_book { agg.dc_seems_finished_book_codes.push(bbb.clone()); }
+            if is_old_testament_book { agg.ot_seems_finished_book_codes.push(bbb.clone()); }
+            else if is_new_testament_book { agg.nt_seems_finished_book_codes.push(bbb.clone()); }
+            else if is_deuterocanon_book { agg.dc_seems_finished_book_codes.push(bbb.clone()); }
             else { agg.other_seems_finished_book_codes.push(bbb.clone()); }
         }
         if bk.partly_done {
             agg.partly_done_book_codes.push(bbb.clone());
-            if is_ot_book { agg.ot_partly_done_book_codes.push(bbb.clone()); }
-            else if is_nt_book { agg.nt_partly_done_book_codes.push(bbb.clone()); }
-            else if is_dc_book { agg.dc_partly_done_book_codes.push(bbb.clone()); }
+            if is_old_testament_book { agg.ot_partly_done_book_codes.push(bbb.clone()); }
+            else if is_new_testament_book { agg.nt_partly_done_book_codes.push(bbb.clone()); }
+            else if is_deuterocanon_book { agg.dc_partly_done_book_codes.push(bbb.clone()); }
             else { agg.other_partly_done_book_codes.push(bbb.clone()); }
         }
 
         // Manual expansion because macro concat_idents is unstable/tricky
         if bk.have_populated_cv_markers {
             agg.have_populated_cv_markers += 1;
-            if is_ot_book { agg.ot_have_populated_cv_markers += 1; }
-            else if is_nt_book { agg.nt_have_populated_cv_markers += 1; }
-            else if is_dc_book { agg.dc_have_populated_cv_markers += 1; }
+            if is_old_testament_book { agg.ot_have_populated_cv_markers += 1; }
+            else if is_new_testament_book { agg.nt_have_populated_cv_markers += 1; }
+            else if is_deuterocanon_book { agg.dc_have_populated_cv_markers += 1; }
             else { agg.other_have_populated_cv_markers += 1; }
         }
         if bk.have_paragraph_markers {
             agg.have_paragraph_markers += 1;
-            if is_ot_book { agg.ot_have_paragraph_markers += 1; }
-            else if is_nt_book { agg.nt_have_paragraph_markers += 1; }
-            else if is_dc_book { agg.dc_have_paragraph_markers += 1; }
+            if is_old_testament_book { agg.ot_have_paragraph_markers += 1; }
+            else if is_new_testament_book { agg.nt_have_paragraph_markers += 1; }
+            else if is_deuterocanon_book { agg.dc_have_paragraph_markers += 1; }
             else { agg.other_have_paragraph_markers += 1; }
         }
         if bk.have_introductory_markers {
             agg.have_introductory_markers += 1;
-            if is_ot_book { agg.ot_have_introductory_markers += 1; }
-            else if is_nt_book { agg.nt_have_introductory_markers += 1; }
-            else if is_dc_book { agg.dc_have_introductory_markers += 1; }
+            if is_old_testament_book { agg.ot_have_introductory_markers += 1; }
+            else if is_new_testament_book { agg.nt_have_introductory_markers += 1; }
+            else if is_deuterocanon_book { agg.dc_have_introductory_markers += 1; }
             else { agg.other_have_introductory_markers += 1; }
         }
         if bk.have_main_headings {
             agg.have_main_headings += 1;
-            if is_ot_book { agg.ot_have_main_headings += 1; }
-            else if is_nt_book { agg.nt_have_main_headings += 1; }
-            else if is_dc_book { agg.dc_have_main_headings += 1; }
+            if is_old_testament_book { agg.ot_have_main_headings += 1; }
+            else if is_new_testament_book { agg.nt_have_main_headings += 1; }
+            else if is_deuterocanon_book { agg.dc_have_main_headings += 1; }
             else { agg.other_have_main_headings += 1; }
         }
         if bk.have_section_headings {
             agg.have_section_headings += 1;
-            if is_ot_book { agg.ot_have_section_headings += 1; }
-            else if is_nt_book { agg.nt_have_section_headings += 1; }
-            else if is_dc_book { agg.dc_have_section_headings += 1; }
+            if is_old_testament_book { agg.ot_have_section_headings += 1; }
+            else if is_new_testament_book { agg.nt_have_section_headings += 1; }
+            else if is_deuterocanon_book { agg.dc_have_section_headings += 1; }
             else { agg.other_have_section_headings += 1; }
         }
         if bk.have_section_references {
             agg.have_section_references += 1;
-            if is_ot_book { agg.ot_have_section_references += 1; }
-            else if is_nt_book { agg.nt_have_section_references += 1; }
-            else if is_dc_book { agg.dc_have_section_references += 1; }
+            if is_old_testament_book { agg.ot_have_section_references += 1; }
+            else if is_new_testament_book { agg.nt_have_section_references += 1; }
+            else if is_deuterocanon_book { agg.dc_have_section_references += 1; }
             else { agg.other_have_section_references += 1; }
         }
         if bk.have_tables {
             agg.have_tables += 1;
-            if is_ot_book { agg.ot_have_tables += 1; }
-            else if is_nt_book { agg.nt_have_tables += 1; }
-            else if is_dc_book { agg.dc_have_tables += 1; }
+            if is_old_testament_book { agg.ot_have_tables += 1; }
+            else if is_new_testament_book { agg.nt_have_tables += 1; }
+            else if is_deuterocanon_book { agg.dc_have_tables += 1; }
             else { agg.other_have_tables += 1; }
         }
         if bk.have_lists {
             agg.have_lists += 1;
-            if is_ot_book { agg.ot_have_lists += 1; }
-            else if is_nt_book { agg.nt_have_lists += 1; }
-            else if is_dc_book { agg.dc_have_lists += 1; }
+            if is_old_testament_book { agg.ot_have_lists += 1; }
+            else if is_new_testament_book { agg.nt_have_lists += 1; }
+            else if is_deuterocanon_book { agg.dc_have_lists += 1; }
             else { agg.other_have_lists += 1; }
         }
         if bk.have_footnotes {
             agg.have_footnotes += 1;
-            if is_ot_book { agg.ot_have_footnotes += 1; }
-            else if is_nt_book { agg.nt_have_footnotes += 1; }
-            else if is_dc_book { agg.dc_have_footnotes += 1; }
+            if is_old_testament_book { agg.ot_have_footnotes += 1; }
+            else if is_new_testament_book { agg.nt_have_footnotes += 1; }
+            else if is_deuterocanon_book { agg.dc_have_footnotes += 1; }
             else { agg.other_have_footnotes += 1; }
         }
         if bk.have_footnote_origins {
             agg.have_footnote_origins += 1;
-            if is_ot_book { agg.ot_have_footnote_origins += 1; }
-            else if is_nt_book { agg.nt_have_footnote_origins += 1; }
-            else if is_dc_book { agg.dc_have_footnote_origins += 1; }
+            if is_old_testament_book { agg.ot_have_footnote_origins += 1; }
+            else if is_new_testament_book { agg.nt_have_footnote_origins += 1; }
+            else if is_deuterocanon_book { agg.dc_have_footnote_origins += 1; }
             else { agg.other_have_footnote_origins += 1; }
         }
         if bk.have_cross_references {
             agg.have_cross_references += 1;
-            if is_ot_book { agg.ot_have_cross_references += 1; }
-            else if is_nt_book { agg.nt_have_cross_references += 1; }
-            else if is_dc_book { agg.dc_have_cross_references += 1; }
+            if is_old_testament_book { agg.ot_have_cross_references += 1; }
+            else if is_new_testament_book { agg.nt_have_cross_references += 1; }
+            else if is_deuterocanon_book { agg.dc_have_cross_references += 1; }
             else { agg.other_have_cross_references += 1; }
         }
         if bk.have_cross_reference_origins {
             agg.have_cross_reference_origins += 1;
-            if is_ot_book { agg.ot_have_cross_reference_origins += 1; }
-            else if is_nt_book { agg.nt_have_cross_reference_origins += 1; }
-            else if is_dc_book { agg.dc_have_cross_reference_origins += 1; }
+            if is_old_testament_book { agg.ot_have_cross_reference_origins += 1; }
+            else if is_new_testament_book { agg.nt_have_cross_reference_origins += 1; }
+            else if is_deuterocanon_book { agg.dc_have_cross_reference_origins += 1; }
             else { agg.other_have_cross_reference_origins += 1; }
         }
         if bk.have_introductory_text {
             agg.have_introductory_text += 1;
-            if is_ot_book { agg.ot_have_introductory_text += 1; }
-            else if is_nt_book { agg.nt_have_introductory_text += 1; }
-            else if is_dc_book { agg.dc_have_introductory_text += 1; }
+            if is_old_testament_book { agg.ot_have_introductory_text += 1; }
+            else if is_new_testament_book { agg.nt_have_introductory_text += 1; }
+            else if is_deuterocanon_book { agg.dc_have_introductory_text += 1; }
             else { agg.other_have_introductory_text += 1; }
         }
         if bk.have_verse_text {
             agg.have_verse_text += 1;
-            if is_ot_book { agg.ot_have_verse_text += 1; }
-            else if is_nt_book { agg.nt_have_verse_text += 1; }
-            else if is_dc_book { agg.dc_have_verse_text += 1; }
+            if is_old_testament_book { agg.ot_have_verse_text += 1; }
+            else if is_new_testament_book { agg.nt_have_verse_text += 1; }
+            else if is_deuterocanon_book { agg.dc_have_verse_text += 1; }
             else { agg.other_have_verse_text += 1; }
         }
         if bk.have_nested_usf_markers {
             agg.have_nested_usf_markers += 1;
-            if is_ot_book { agg.ot_have_nested_usf_markers += 1; }
-            else if is_nt_book { agg.nt_have_nested_usf_markers += 1; }
-            else if is_dc_book { agg.dc_have_nested_usf_markers += 1; }
+            if is_old_testament_book { agg.ot_have_nested_usf_markers += 1; }
+            else if is_new_testament_book { agg.nt_have_nested_usf_markers += 1; }
+            else if is_deuterocanon_book { agg.dc_have_nested_usf_markers += 1; }
             else { agg.other_have_nested_usf_markers += 1; }
         }
 
         if let Some(p) = bk.percentage_progress {
             total_progress_by_book += p as f32;
-            if is_ot_book { ot_progress_by_book += p as f32; }
-            else if is_nt_book { nt_progress_by_book += p as f32; }
-            else if is_dc_book { dc_progress_by_book += p as f32; }
+            if is_old_testament_book { ot_progress_by_book += p as f32; }
+            else if is_new_testament_book { nt_progress_by_book += p as f32; }
+            else if is_deuterocanon_book { dc_progress_by_book += p as f32; }
         }
 
         agg.verse_count += bk.verse_count.unwrap_or(0) as u32;
         agg.completed_verse_count += bk.completed_verse_count as u32;
-        if is_ot_book {
+        if is_old_testament_book {
             agg.ot_verse_count += bk.verse_count.unwrap_or(0) as u32;
             agg.ot_completed_verse_count += bk.completed_verse_count as u32;
-        } else if is_nt_book {
+        } else if is_new_testament_book {
             agg.nt_verse_count += bk.verse_count.unwrap_or(0) as u32;
             agg.nt_completed_verse_count += bk.completed_verse_count as u32;
-        } else if is_dc_book {
+        } else if is_deuterocanon_book {
             agg.dc_verse_count += bk.verse_count.unwrap_or(0) as u32;
             agg.dc_completed_verse_count += bk.completed_verse_count as u32;
         } else {
@@ -624,10 +623,6 @@ fn aggregate_results(results: &mut BibleDiscoveryResults) {
         }
 
         agg.word_count += bk.word_count;
-        merge_word_counts(&mut agg.all_word_counts, &bk.all_word_counts);
-        merge_word_counts(&mut agg.all_case_insensitive_word_counts, &bk.all_case_insensitive_word_counts);
-        merge_word_counts(&mut agg.main_text_word_counts, &bk.main_text_word_counts);
-        merge_word_counts(&mut agg.main_text_case_insensitive_word_counts, &bk.main_text_case_insensitive_word_counts);
 
         if bk.section_references_parenthesis_ratio >= 0.0 {
             section_ref_ratios.push(bk.section_references_parenthesis_ratio);
@@ -639,6 +634,19 @@ fn aggregate_results(results: &mut BibleDiscoveryResults) {
             xref_ratios.push(bk.cross_references_period_ratio);
         }
     }
+
+    // Parallel aggregation of word counts
+    let all_word_counts_sources: Vec<&HashMap<String, u32>> = results.books.values().map(|bk| &bk.all_word_counts).collect();
+    agg.all_word_counts = parallel_merge_word_counts(all_word_counts_sources);
+
+    let all_ci_word_counts_sources: Vec<&HashMap<String, u32>> = results.books.values().map(|bk| &bk.all_case_insensitive_word_counts).collect();
+    agg.all_case_insensitive_word_counts = parallel_merge_word_counts(all_ci_word_counts_sources);
+
+    let main_text_word_counts_sources: Vec<&HashMap<String, u32>> = results.books.values().map(|bk| &bk.main_text_word_counts).collect();
+    agg.main_text_word_counts = parallel_merge_word_counts(main_text_word_counts_sources);
+
+    let main_text_ci_word_counts_sources: Vec<&HashMap<String, u32>> = results.books.values().map(|bk| &bk.main_text_case_insensitive_word_counts).collect();
+    agg.main_text_case_insensitive_word_counts = parallel_merge_word_counts(main_text_ci_word_counts_sources);
 
     let num_books = results.books.len() as f32;
     if num_books > 0.0 {
@@ -681,10 +689,20 @@ fn aggregate_results(results: &mut BibleDiscoveryResults) {
     }
 }
 
-fn merge_word_counts(target: &mut HashMap<String, u32>, source: &HashMap<String, u32>) {
-    for (word, count) in source {
-        *target.entry(word.clone()).or_insert(0) += count;
+/// Merge multiple word count maps in parallel using a reduction pattern.
+fn parallel_merge_word_counts(sources: Vec<&HashMap<String, u32>>) -> HashMap<String, u32> {
+    if sources.is_empty() {
+        return HashMap::new();
     }
+    
+    sources.into_par_iter()
+        .cloned()
+        .reduce(HashMap::new, |mut acc, map| {
+            for (word, count) in map {
+                *acc.entry(word).or_insert(0) += count;
+            }
+            acc
+        })
 }
 
 #[cfg(test)]
@@ -692,7 +710,7 @@ mod tests {
     use super::*;
     use std::fs;
     use crate::processing::{process_lines, ProcessLinesOptions};
-    use bos_books_codes::is_valid_reference_abbreviation;
+    use bos_books_codes::is_valid_bos_book_code;
 
     #[test]
     fn test_oet_lv_discovery() {
@@ -707,7 +725,7 @@ mod tests {
                 // OET-LV_HAG.ESFM -> HAG
                 let bos_book_code = filename.split('_').nth(1).unwrap().split('.').next().unwrap();
                 if bos_book_code != "DAG" && bos_book_code != "ES1" && bos_book_code != "ES2" { // Need to sort out these OET-LV filenames
-                    assert!(is_valid_reference_abbreviation(bos_book_code), "Invalid book code: {}", bos_book_code); // Not really required here, but a good test for bos_books_codes
+                    assert!(is_valid_bos_book_code(bos_book_code), "Invalid book code: {}", bos_book_code); // Not really required here, but a good test for bos_books_codes
                 }
                 
                 let content = fs::read_to_string(&path).expect("Could not read file");
@@ -758,7 +776,7 @@ mod tests {
                 // OET-RV_HAG.ESFM -> HAG
                 let bos_book_code = filename.split('_').nth(1).unwrap().split('.').next().unwrap();
                 if bos_book_code != "DAG" && bos_book_code != "ES1" && bos_book_code != "ES2" { // Need to sort out these OET-RV filenames
-                    assert!(is_valid_reference_abbreviation(bos_book_code), "Invalid book code: {}", bos_book_code); // Not really required here, but a good test for bos_books_codes
+                    assert!(is_valid_bos_book_code(bos_book_code), "Invalid book code: {}", bos_book_code); // Not really required here, but a good test for bos_books_codes
                 }
                 
                 let content = fs::read_to_string(&path).expect("Could not read file");

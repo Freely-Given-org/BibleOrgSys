@@ -43,6 +43,7 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Reference.ISO_639_3_Languages import ISO_639_3_Languages
 from BibleOrgSys.Bible import Bible, BibleBook
+import bos_books_codes_py
 
 
 LAST_MODIFIED_DATE = '2026-04-26' # by RJH
@@ -109,7 +110,7 @@ def LEBXMLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=
             if ignore: continue
             if not somethingUpperExt[1:] in EXTENSIONS_TO_IGNORE: # Compare without the first dot
                 foundFiles.append( something )
-                for osisBkCode in BibleOrgSysGlobals.loadedBibleBooksCodes.getAllOSISBooksCodes():
+                for osisBkCode in bos_books_codes_py.get_all_osis_books_codes():
                     # osisBkCodes are all UPPERCASE
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'obc', osisBkCode, upperFilename )
                     if osisBkCode in somethingUpper:
@@ -164,7 +165,7 @@ def LEBXMLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=
                     if ignore: continue
                     if not somethingUpperExt[1:] in EXTENSIONS_TO_IGNORE: # Compare without the first dot
                         foundSubfiles.append( something )
-                        for osisBkCode in BibleOrgSysGlobals.loadedBibleBooksCodes.getAllOSISBooksCodes():
+                        for osisBkCode in bos_books_codes_py.get_all_osis_books_codes():
                             # osisBkCodes are all UPPERCASE
                             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'obc', osisBkCode, upperFilename )
                             if osisBkCode in somethingUpper:
@@ -304,7 +305,7 @@ class LEBXMLBible( Bible ):
         #                 self.possibleFilenames.append( filename )
         #                 foundBBB = None
         #                 upperFilename = filename.upper()
-        #                 for osisBkCode in BibleOrgSysGlobals.loadedBibleBooksCodes.getAllOSISBooksCodes():
+        #                 for osisBkCode in bos_books_codes_py.get_all_osis_books_codes():
         #                     # osisBkCodes are all UPPERCASE
         #                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'obc', osisBkCode, upperFilename )
         #                     if osisBkCode in upperFilename:
@@ -312,17 +313,17 @@ class LEBXMLBible( Bible ):
         #                         if 'JONAH' in upperFilename and osisBkCode=='NAH': continue # Handle bad choice
         #                         if 'ZEPH' in upperFilename and osisBkCode=='EPH': continue # Handle bad choice
         #                         assert not foundBBB # Don't expect duplicates
-        #                         foundBBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromOSISAbbreviation( osisBkCode, strict=True )
+        #                         foundBBB = bos_books_codes_py.osis_book_code_to_bos_book_code( osisBkCode, strict=True )
         #                         # dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  FoundBBB1 = {foundBBB!r}" )
         #                 if not foundBBB: # Could try a USFM/Paratext book code -- what writer creates these???
-        #                     for bkCode in BibleOrgSysGlobals.loadedBibleBooksCodes.getAllUSFMBooksCodes( toUpper=True ):
+        #                     for bkCode in bos_books_codes_py.getAllUSFMBooksCodes( toUpper=True ):
         #                         # returned bkCodes are all UPPERCASE
         #                         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'bc', bkCode, upperFilename )
         #                         if bkCode in upperFilename:
         #                             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'LEBXMLBible.__init__ ' + f"found {bkCode!r} in {upperFilename!r}" )
         #                             if foundBBB: # already -- don't expect doubles
         #                                 logging.warning( 'LEBXMLBible.__init__: ' + f"Found a second possible book abbreviation for {foundBBB} in {filename}" )
-        #                             foundBBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromUSFMAbbreviation( bkCode, strict=True )
+        #                             foundBBB = bos_books_codes_py.usfm_abbrev_to_bos_book_code( bkCode, strict=True )
         #                             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  FoundBBB2 = {foundBBB!r}" )
         #                 if foundBBB:
         #                     if isinstance( foundBBB, list ): foundBBB = foundBBB[0] # Take the first option
@@ -336,7 +337,7 @@ class LEBXMLBible( Bible ):
         #     assert (len(BBBList)==0 and len(self.possibleFilenames)==1) \
         #             or len(BBBList) == len(self.possibleFilenames) # Might be no book files (if all in one file)
         #     newCorrectlyOrderedList = []
-        #     for BBB in BibleOrgSysGlobals.loadedBibleBooksCodes: # ordered by reference number
+        #     for BBB in bos_books_codes_py.get_all_bos_book_codes(): # ordered by reference number
         #         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB )
         #         if BBB in BBBList:
         #             ix = BBBList.index( BBB )
@@ -524,9 +525,19 @@ class LEBXMLBible( Bible ):
                 loadErrors.append( f"Unprocessed {attrib} attribute ({value}) in {location} (mf82)" )
                 if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
         # The book IDs seem to be OSIS (or SBL)
-        BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromShortAbbreviation( bookID )
-        USFMAbbreviation = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMAbbreviation( BBB )
-        USFMNumber = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMNumStr( BBB )
+        try: BBB = bos_books_codes_py.osis_book_code_to_bos_book_code( bookID )
+        except:
+            try: BBB = bos_books_codes_py.sbl_abbrev_to_bos_book_code( bookID )
+            except:
+                try: BBB = bos_books_codes_py.net_bible_abbrev_to_bos_book_code( bookID )
+                except:
+                    try: BBB = bos_books_codes_py.short_abbrev_to_bos_book_code( bookID )
+                    except:
+                        logging.critical( f"LEBXMLBible: Unable to determine book code for {bookID!r}" )
+                        BBB = None
+        # TODO: The above logic is a fallback similar to the original getBBBFromShortAbbreviation
+        USFMAbbreviation = bos_books_codes_py.bos_book_code_to_usfm_abbrev( BBB )
+        USFMNumber = bos_books_codes_py.bos_book_code_to_usfm_num_str( BBB )
         vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  It seems we have {BBB}" )
         thisBook = BibleBook( self, BBB )
         thisBook.objectNameString = 'OSIS XML Bible Book object'

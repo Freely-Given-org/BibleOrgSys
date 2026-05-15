@@ -1,0 +1,166 @@
+nameEnglish	marker	compulsory	level	highestNumberSuffix	nests	hasContent	printed	closed	occursIn	deprecated	description
+File identification	id	Yes	Newline	None	No	Always	No	No	Header	No	This is the initial USFM marker in any scripture text file.
+USFM version specification	usfm	Yes	Newline	None	No	Always	No	No	Header	No	Used to identify the USFM version which a USFM editor / processor will be required to support in order to manage all markup found within the file.
+An optional character encoding specification	ide	No	Newline	None	No	Always	No	No	Header	No	This marker should be used to specify the character encoding of the text within the file. For example: CP-1252, CP-1251, UTF-8, UTF-16, OR Custom <specify font name>. If the character encoding does not conform to a known standard, but is rather a customized solution for the project, a minimum of the name of the font used for the project should be included. For archive purposes, texts which rely upon a custom encoding solution should be converted to Unicode, if at all possible.
+Project status tracking	sts	No	Newline	None	No	Always	No	No	Header	No	The contents of the status marker can be defined by the downstream system being used to track project status.
+Remark/Comment	rem	No	Newline	None	No	Always	No	No	Header	No	Used for adding brief comments by a translator, consultant, or support person.
+Running header text	h	Yes	Newline	None	No	Always	Yes	No	Header	No	
+Long table of contents text	toc1	No	Newline	None	No	Always	Yes	No	Header	No	Not for use directly within the front matter (FRT) peripheral file.
+Short table of contents text	toc2	No	Newline	None	No	Always	Yes	No	Header	No	Not for use directly within the front matter (FRT) peripheral file.
+Book abbreviation	toc3	No	Newline	None	No	Always	Yes	No	Header	No	Commonly used for books names in a list of cross-reference.
+Psalm singular name	toc4	No	Newline	None	No	Always	Yes	No	Header	No	Not in USFM 2.4 but rather an addition used by Michael Kahunapule Johnson (Haiola/USFX).
+Alternative language long table of contents text	toca1	No	Newline	None	No	Always	Yes	No	Header	No	Used to specify an alternate set of table of contents texts (for example, in a language of wider communication).
+Alternative language short table of contents text	toca2	No	Newline	None	No	Always	Yes	No	Header	No	Used to specify an alternate set of table of contents texts (for example, in a language of wider communication).
+Alternative language book abbreviation	toca3	No	Newline	None	No	Always	Yes	No	Header	No	Used to specify an alternate set of table of contents texts (for example, in a language of wider communication).
+Introduction main title	imt	No	Newline	4	No	Always	Yes	No	Introduction	No	May be used for the introduction title or other major introduction division (rather than \is) when the introduction text contains numerous additional sub-divisions.
+Introduction section heading	is	No	Newline	4	No	Always	Yes	No	Introduction	No	
+Introduction paragraph	ip	No	Newline	None	No	Always	Yes	No	Introduction	No	
+Indented introduction paragraph	ipi	No	Newline	None	No	Always	Yes	No	Introduction	No	
+Introduction flush left (margin) paragraph	im	No	Newline	None	No	Always	Yes	No	Introduction	No	
+Introduction flush left (margin) indented paragraph	imi	No	Newline	None	No	Always	Yes	No	Introduction	No	
+Introduction quote from text paragraph	ipq	No	Newline	None	No	Always	Yes	No	Introduction	No	
+Introduction flush left (margin) quote from text paragraph	imq	No	Newline	None	No	Always	Yes	No	Introduction	No	
+Introduction right-aligned paragraph	ipr	No	Newline	None	No	Always	Yes	No	Introduction	No	Typically used for a quote from text reference.
+Introduction poetic line	iq	No	Newline	4	No	Always	Yes	No	Introduction	No	
+Introduction blank line	ib	No	Newline	None	No	Never	Yes	No	Introduction	No	May be used to explicitly indicate additional white space between paragraphs.
+Introduction list item	ili	No	Newline	4	No	Always	Yes	No	Introduction	No	
+Introduction outline title	iot	No	Newline	None	No	Always	Yes	No	Introduction	No	
+Introduction outline entry	io	No	Newline	4	No	Always	Yes	No	Introduction	No	The outline entry typically ends with a range of references in parentheses.
+Introduction outline reference range	ior	No	Internal	None	No	Always	Yes	Always	Introduction	No	An outline entry typically ends with a range of references in parentheses. This is an optional character style for marking (and potentially formatting) these references separately.
+Introduction explanatory or bridge text	iex	No	Newline	None	No	Always	Yes	No	Introduction	No	e.g. explanation of missing book in a short Old Testament.
+Introduction quoted text	iqt	No	Internal	None	No	Always	Yes	Always	Introduction	No	Scripture quotations, or other quoted text, appearing in the introduction.
+Introduction major title ending	imte	No	Newline	4	No	Always	Yes	No	Introduction	No	Used to mark a major title indicating the end of the introduction.
+Introduction end	ie	No	Newline	None	No	Always	Yes	No	Introduction	No	Optionally included to explicitly indicate the end of the introduction material.
+Major title	mt	No	Newline	4	No	Always	Yes	No	Header	No	The key components in the title of a biblical book.
+Major title at ending	mte	No	Newline	4	No	Always	Yes	No	Text	No	May be used in texts which repeat the main title at the end of the introduction, or to mark a major title indicating the end of the introduction. The content is not typically identical to \mt#.
+Major section heading	ms	No	Newline	4	No	Always	Yes	No	Text	No	"These are headings before larger text divisions than what is typically considered a ""section"" division (see \s#)."
+Major section reference range	mr	No	Newline	None	No	Always	Yes	No	Text	No	The text reference range listed under a major section heading. Perhaps it could be described as the verse range which the \ms major section heading above it applies to.
+Section heading	s	No	Newline	4	No	Always	Yes	No	Text	No	The typical (common) section division heading.
+Section reference range	sr	No	Newline	None	No	Always	Yes	No	Text	No	The text reference range listed under a section heading. \sr is not equivalent to \r which is used for marking parallel references. Perhaps it could be described as the verse range which the \s section heading above it applies to.
+Parallel passage reference(s)	r	No	Newline	None	No	Always	Yes	No	Text	No	A reference to a parallel passage usually located under a section heading \s#.
+Inline quotation reference(s)	rq	No	Internal	None	No	Always	Yes	Always	Text	No	A (cross) reference indicating the source text for the preceding quotation (usually an Old Testament quote). The reference(s) are intended to be formatted (typeset) within the scripture body text column, and not extracted from the text as are regular cross-references (\x…\x*). They are also typically separated from the main text of Scripture using a different type style and alignment.
+"Descriptive title (or ""Hebrew subtitle"")"	d	No	Newline	None	No	Sometimes	Yes	No	Text	No	"Sometimes used in Psalms under the section title (e.g. ""For the director of Music"")."
+Speaker Identification	sp	No	Newline	None	No	Always	No	No	Text	No	(e.g. Job and Song of Songs).
+Semantic division (semantic space)	sd	No	Newline	4	No	Never	No	No	Text	No	Vertical space used to divide the text into sections, in a manner similar to the structure added through the use of a sequence of heading texts (i.e. \ms# and \s#). The purpose of \sd# is distinct from \b which primarily denotes whitespace (and in particular at poetic stanza breaks) and not hierarchy or division. The variable # represents the level of division being marked.
+Chapter number	c	Yes	Newline	None	No	Always	Yes	No	Numbering	No	No text should follow this marker (i.e., after the chapter number? But some versions have footnotes here!.
+Alternate (second) chapter number	ca	No	Internal	None	No	Always	Yes	Always	Numbering	No	Used for marking the chapter number used in an alternate versification scheme. Required when different versification traditions need to be supported in the same translation text.
+Chapter label	cl	No	Newline	None	No	Always	Yes	No	Numbering	No	"Used when the chosen publishing presentation will render chapter divisions as headings, and not drop cap numerals. Usage note: If \cl is entered once before chapter 1 (\c 1) it represents the text for ""chapter"" to be used throughout the current book. If \cl is used after each individual chapter marker, it represents the particular text to be used for the display of the current chapter heading (usually done if numbers are being presented as words, not numerals)."
+Published chapter character	cp	No	Newline	None	No	Always	Yes	No	Numbering	No	This is a chapter marker (number, letter) which would be displayed in the published text (where the published marker is different than the \c # used within the translation editing environment).
+Chapter description	cd	No	Newline	None	No	Always	Yes	No	Text	No	A brief description of chapter content (similar to \d - descriptive heading, or \iex - ).
+Verse number	v	Yes	Newline	None	No	Always	Yes	No	Numbering	No	Marker is followed by the verse number #, and the text of the verse.
+Alternate (second) verse number	va	No	Internal	None	No	Always	Yes	Always	Numbering	No	Used for marking verse numbers used in an alternate versification scheme. Required when different versification traditions need to be supported in the same translation text.
+Published verse character	vp	No	Internal	None	No	Always	Yes	Always	Numbering	No	This is a verse marker (number, letter) which would be displayed in the published text (where the published marker is different than the \v # used within the translation editing environment).
+Normal paragraph	p	No	Newline	None	No	Sometimes	Yes	No	Canonical Text	No	Followed immediately by a space and paragraph text, or by a new line and a verse marker.
+Flush left (margin) paragraph	m	No	Newline	None	No	Sometimes	Yes	No	Canonical Text	No	No first line indent. Followed immediately by a space and paragraph text, or by a new line and a verse marker. Usually used to resume prose at the margin (without indent) after poetry or OT quotation (i.e. continuation of the previous paragraph).
+Opening of an epistle/letter	po	No	Newline	None	No	Always	Yes	No	Canonical Text	No	
+Embedded text opening	pmo	No	Newline	None	No	Always	Yes	No	Canonical Text	No	
+Embedded text paragraph	pm	No	Newline	None	No	Sometimes	Yes	No	Canonical Text	No	
+Embedded text closing	pmc	No	Newline	None	No	Always	Yes	No	Canonical Text	No	
+Embedded text refrain	pmr	No	Newline	None	No	Always	Yes	No	Canonical Text	No	
+Indented paragraph	pi	No	Newline	4	No	Sometimes	Yes	No	Canonical Text	No	"Used in some texts for discourse sections. The variable # represents the level of indent.
+        See also \pm."
+Indented flush left paragraph	mi	No	Newline	None	No	Sometimes	Yes	No	Canonical Text	No	No first line indent.
+No-break paragraph continuation	nb	No	Newline	None	No	Never	Yes	No	Canonical Text	No	"Indicates ""no-break"" with previous paragraph (regardless of previous paragraph type).
+        Commonly used in cases where the previous paragraph spans the chapter boundary.
+        No-break markup within poetry: Some translations have a publishing tradition of inserting a small
+            amount of additional white-space at chapter boundaries.
+        It is important in these texts to use the b marker within any specific poetic contexts where
+            no visible break in the flow of the the text is intended at a particular chapter boundary."
+Closure of an epistle/letter	cls	No	Newline	None	No	Always	Yes	No	Canonical Text	No	"Similar to ""With love,"" or ""Sincerely yours,""."
+List header	lh	No	Newline	None	No	Always	Yes	No	Canonical Text	No	Some lists include an introductory and concluding remark (\lf). They are an integral part of the list content, but are not list items. A list does not require either or both of these elements.
+List item	li	No	Newline	4	No	Sometimes	Yes	No	Canonical Text	No	An out-dented paragraph meant to highlight the items of a list. Lists may be used to markup the elements of a recurrent structure, such as the days within the creation account, or the Decalogue (10 commandments). The variable # represents the level of indent.
+List footer	lf	No	Newline	None	No	Always	Yes	No	Canonical Text	No	Some lists include an introductory (\lh) and concluding remark. They are an integral part of the list content, but are not list items. A list does not require either or both of these elements.
+Embedded list item	lim	No	Newline	4	No	Sometimes	Yes	No	Canonical Text	No	An out-dented paragraph meant to highlight the items of an embedded list. The variable # represents the level of indent.
+List entry total	litl	No	Internal	None	No	Always	Yes	Always	Canonical Text	No	Use in “accounting” lists for denoting the total component of the text within a list item (\li). An alternative to using tables for the same content.
+List entry “key” content	lik	No	Internal	None	No	Always	Yes	Always	Canonical Text	No	
+List entry “value” content	liv	No	Internal	2	No	Always	Yes	Always	Canonical Text	No	
+Centered paragraph	pc	No	Newline	None	No	Sometimes	Yes	No	Canonical Text	No	Recommended for inscriptions.
+Right-aligned paragraph	pr	No	Newline	None	No	Sometimes	Yes	No	Canonical Text	Yes	"""Deprecated"" (i.e. use is strongly discouraged). Recommended alternate: \pmr."
+Indented paragraph with hanging indent	ph	No	Newline	4	No	Sometimes	Yes	No	Canonical Text	Yes	"""Deprecated"" (i.e. use is strongly discouraged).
+        The variable # represents the level of overall paragraph indent."
+Blank line	b	No	Newline	None	No	Never	Yes	No	Text, Poetry	No	"May be used to explicitly indicate additional white space between paragraphs.
+        No text should follow this marker, and it should not be used before or after titles to indicate white-space.
+        Also use for stanza breaks in poetry, or between poetry and prose."
+Poetic line	q	No	Newline	4	No	Sometimes	Yes	No	Canonical Text	No	The variable # represents the level of indent (i.e. \q1, \q2, \q3 etc.).
+Right-aligned poetic line	qr	No	Newline	None	No	Always	Yes	No	Canonical Text	No	Common use: Poetic refrain.
+Centered poetic line	qc	No	Newline	None	No	Always	Yes	No	Canonical Text	No	
+Selah field	qs	No	Internal	None	No	Always	Yes	Always	Canonical Text	No	"Used for the expression ""Selah"" commonly found in Psalms and Habakkuk. This text is frequently right aligned, and rendered on the same line as the previous poetic text, if space allows."
+Acrostic heading	qa	No	Newline	None	No	Always	Yes	No	Canonical Text	No	For example, the Aleph, Beth, etc. headings in Lamentations or Psalm 119.
+Acrostic letter	qac	No	Internal	None	No	Always	Yes	Always	Acrostic verse	No	Marker to indicate the acrostic letter within a poetic line.
+Embedded text poetic line	qm	No	Newline	4	No	Always	Yes	No	Canonical Text	No	The variable # represents the level of indent (i.e. \qm1, \qm2 etc.).
+Hebrew note	qd	No	Newline	None	No	Always	Yes	No	Canonical Text	No	A Hebrew musical performance comment similar in content to many of the Hebrew Psalm titles (\d), but placed at the end of the poetic section.
+Table row start	tr	No	Newline	None	No	Always	Yes	No	Text	No	The first \tr initiates a new table. Rows contain column headings or cells.
+Table column heading	th	No	Internal	4	No	Always	Yes	No	Table row	No	The variable # represents the table column number.
+Right-aligned table column heading	thr	No	Internal	4	No	Always	Yes	No	Table row	No	The variable # represents the table column number.
+Table cell	tc	No	Internal	4	No	Always	Yes	No	Table row	No	The variable # represents the table column number. An empty table cell still requires a corresponding marker in the table text.
+Right-aligned table cell	tcr	No	Internal	4	No	Always	Yes	No	Table row	No	The variable # represents the table column number. An empty table cell still requires a corresponding marker in the table text.
+Footnote	f	No	Note	None	No	Always	Yes	Always	Text	No	Footnotes are entered inline within the main scripture body text. The boundaries of the footnote text are defined by an opening and closing marker.
+Endnote	e	No	Note	None	No	Always	Yes	Always	Text	No	Endnotes are entered inline within the main scripture body text. The boundaries of the endnote text are defined by an opening and closing marker.
+"Footnote ""origin"" reference"	fr	No	Note	None	No	Always	Yes	Optional	Footnote	No	This is the chapter and verse(s) that note refers to. Chapter and verse numbers must have a separator between them.
+Footnote keyword	fk	No	Note	None	No	Always	Yes	Optional	Footnote	No	The specific keyword/term from the text for which the footnote is being provided.
+Footnote translation quotation	fq	No	Note	None	No	Always	Yes	Optional	Footnote	No	"A quotation from the current scripture text translation for which the note is being provided. Longer quotations are sometimes shortened using an ellipsis (i.e. suspension dots ""…""). Many existing translation texts have marked both quotations from the existing translation text, as well as alternative translations, using \fq. An additional marker – \fqa – is provided for marking alternative translations, and can be used to distinguish between quotations and alternatives."
+Footnote alternate translation	fqa	No	Note	None	No	Always	Yes	Optional	Footnote	No	Used to distinguish between a quotation of the current scripture text translation, and an alternate translation.
+"Footnote ""label"" text"	fl	No	Note	None	No	Always	Yes	Optional	Footnote	No	"Can be used for marking or ""labeling"" a word or words which are used consistently across certain types of translation notes (such as the words ""Or"" in an alternative translation note, ""Others"", ""Heb."", ""LXX"" etc.)."
+Footnote witness list	fw	No	Note	None	No	Always	Yes	Optional	Footnote	No	For distinguishing a list of sigla representing witnesses in critical editions. (Apparatus entries of printed critical editions are densely packed with information. One key part is the list of witnesses supporting a specific reading. The witnesses are usually represented by sigla consisting of one character, an abbreviation, or a number. It can be very helpful to distinguish witness lists from other footnote text, which can make it simpler to introduce checking tools for these lists, and to create linking and reader helps in digital representations.)
+Footnote additional paragraph	fp	No	Note	None	No	Always	Yes	Optional	Footnote	No	Use this marker to if you need to indicate the start of a new paragraph within a footnote (uncommon in standard Bible notes).
+Footnote verse number	fv	No	Note	None	No	Always	Yes	Optional	Footnote	No	To mark the location of a verse number in the the text quotation or alternative translation.
+Footnote number	fn	No	Note	None	No	Always	Yes	Optional	Footnote	No	To mark the location of a sequential footnote number in the the text quotation or alternative translation.
+Footnote text	ft	No	Note	None	No	Always	Yes	Optional	Footnote	No	The essential (explanatory) text of the footnote.
+Deuterocanon footnote text	fdc	No	Note	None	No	Always	Yes	Always	Footnote	No	Text between these markers is material to be included only in published editions that contain the Deuterocanonical books.
+Footnote reference mark	fm	No	Note	None	No	Always	Yes	Always	Footnote	No	Used where two or more locations in the scripture text should ideally refer the reader to the same footnote text (as seen in identical footnote text which is referred to at Gen 2.9 and Gen 2.17 in some English translations). Because the nature of this marker is related directly to the published form of the text, it is not intended for use in scripture authoring. It may be used during the publishing process to connect two callers to the same footnote text.
+Cross-reference	x	No	Note	None	No	Always	Yes	Always	Text	No	Cross-references are entered inline within the main scripture body text. The boundaries of the cross-reference text are defined by an opening and closing marker.
+"Cross-reference ""origin"" reference"	xo	No	Note	None	No	Always	Yes	Optional	Cross-reference	No	This is the chapter and verse(s) that note refers to. Chapter and verse numbers must have a separator between them.
+Cross-reference keyword	xk	No	Note	None	No	Always	Yes	Optional	Cross-reference	No	A keyword from the scripture translation text which the target reference(s) also refer to.
+Cross-reference quotation	xq	No	Note	None	No	Always	Yes	Optional	Cross-reference	No	A quotation from the scripture text. Use of a quotation would be intended to help the reader to understand the portion of text (or concept) for which the target reference(s) are being supplied.
+Target reference(s)	xt	No	Note	None	No	Always	Yes	Optional	Cross-reference	No	The list of target scripture locations being provided as alternate references to the text (or concept) of the origin reference. This is a list of book name abbreviations and chapter + verse references, separated by semicolons (though there may be an alternate references format for this list in different areas and countries).
+Target reference(s) extra/added text	xta	No	Note	None	No	Always	Yes	Optional	Cross-reference	No	Used for marking text which should be ignored when identifying or linking to cross reference target references.
+Published cross reference origin text	xop	No	Internal	None	No	Always	Yes	Always	Cross-reference	No	In some texts, the content intended to be published in the position of the cross reference origin text \xo does not follow the typical chapter/separator/verse pattern. An origin reference following this pattern is required for validation of the cross reference location. \xop ...\xop* can be used in order to supply the content intended for publishing, similar to the use of \cp and vp …vp*.
+Old Testament reference(s)	xot	No	Internal	None	No	Always	Yes	Always	Cross-reference	No	References (or other text) between these markers is material to be included only in published editions that contain the Old Testament books. (optional).
+New Testament reference(s)	xnt	No	Internal	None	No	Always	Yes	Always	Cross-reference	No	References (or other text) between these markers is material to be included only in published editions that contain the New Testament books. (optional).
+Deuterocanon reference(s)	xdc	No	Internal	None	No	Always	Yes	Always	Cross-reference	No	References (or other text) between these markers is material to be included only in published editions that contain the Deuterocanonical books. (optional).
+Translator's addition	add	No	Internal	None	Yes	Always	Yes	Always	Text	No	A translator's explanation; words added by the translator for clarity – text which is not literally a part of the original language, but which was supplied to make the meaning of the original clear.
+Quoted book title	bk	No	Internal	None	Yes	Always	Yes	Always	Text	No	
+Deuterocanonical addition	dc	No	Internal	None	No	Always	Yes	Always	Text	No	Deuterocanonical/LXX additions or insertions in the Protocanonical text.
+Keyword/keyterm	k	No	Internal	None	No	Always	Yes	Always	Text	No	
+Liturgical note/comment	lit	No	Newline	None	No	Always	Yes	No	Text	No	e.g. a guide which tells the reader/worshipper that he should recite a prayer or recitation etc.
+Name of God/Deity	nd	No	Internal	None	Yes	Always	Yes	Always	Text	No	
+Ordinal number ending	ord	No	Internal	None	Yes	Always	Yes	Always	Text	No	"i.e. in ""1st""."
+Proper name	pn	No	Internal	None	Yes	Always	Yes	Always	Text	No	
+Geographic proper name	png	No	Internal	None	Yes	Always	Yes	Always	Text	No	Particularly in China, there are various groups which have the practice of distinguishing visually between proper names of people and proper names of geographic places in published texts. Published materials may use a single underline to present proper names of people, and double underline to present proper names of geographic places. Alternatively, dotted underlines have been used for geographic proper names. Special presentation for names can assist readers to know what the text means, especially readers who may struggle with reading skills and may be overloaded by the transliterated names.
+Quoted text	qt	No	Internal	None	Yes	Always	Yes	Always	Text	No	Old Testament quotations in the New Testament, or other quotations.
+Signature	sig	No	Internal	None	Yes	Always	Yes	Always	Text	No	of the author of an epistle/letter.
+Secondary language source	sls	No	Internal	None	No	Always	Yes	Always	Text	No	Passage of text based on a secondary language or alternate text source. E.g. The NBS02 has large sections of text in EZR and DAN in italics, to represent where the original text is in Aramaic, not Hebrew.
+Transliterated word(s)	tl	No	Internal	None	Yes	Always	Yes	Always	Text	No	Or foreign words.
+Words of Jesus	wj	No	Internal	None	Yes	Always	Yes	Always	Text	No	
+Emphasis text	em	No	Internal	None	Yes	Always	Yes	Always	Text	No	
+Bold text	bd	No	Internal	None	Yes	Always	Yes	Always	Text	No	
+Italic text	it	No	Internal	None	Yes	Always	Yes	Always	Text	No	
+Bold-italic text	bdit	No	Internal	None	No	Always	Yes	Always	Text	No	
+Normal text	no	No	Internal	None	Yes	Always	Yes	Always	Text	No	
+Small-caps text	sc	No	Internal	None	Yes	Always	Yes	Always	Text	No	
+Superscript text	sup	No	Internal	None	Yes	Always	Yes	Always	Text	No	Typically for use in critical edition footnotes.
+Page break	pb	No	Newline	None	No	Never	Yes	No	Text	No	
+Figure	fig	No	Note	None	No	Always	No	Always	Text	No	
+Subject index entry	ndx	No	Internal	None	No	Always	No	Always	Text	No	Surround word(s) with this markup to indicate that it should appear in the subject index.
+Ruby glossing	rb	No	Internal	None	No	Always	Yes	Always	Text	No	Used to mark the base text being annotated with ruby characters.
+Pronunciation information	pro	No	Internal	None	No	Always	No	Always	Text	No	Used for Chinese/Japanese/Korean texts.
+Wordlist/glossary/dictionary entry	w	No	Internal	None	No	Always	Yes	Always	Text	No	Surround word(s) with this markup to indicate that it should appear in the word list.
+Greek wordlist entry	wg	No	Internal	None	No	Always	No	Always	Text	No	Surround word(s) with this markup to indicate that it should appear in the Greek word list.
+Hebrew wordlist entry	wh	No	Internal	None	No	Always	No	Always	Text	No	Surround word(s) with this markup to indicate that it should appear in the Hebrew word list.
+Aramaic wordlist entry	wa	No	Internal	None	No	Always	No	Always	Text	No	Surround word(s) with this markup to indicate that it should appear in the Aramaic word list.
+Quotation start	qt-s	No	Internal	4	No	Always	Yes	Self	Text	No	Quotation start milestone. Typically used for indicating the speaker of the text. The (optional) number represents the level of nesting of the quotation being marked (i.e. a quote within a quote).
+Quotation end	qt-e	No	Internal	4	No	Always	Yes	Self	Text	No	Quotation end milestone. Typically used for indicating the speaker of the text. The (optional) number represents the level of nesting of the quotation being marked (i.e. a quote within a quote).
+Translator's section	ts	No	Newline	None	No	Never	No	No	Text	No	Translator’s section milestone. For identifying a section (chunk) of text suitable for translating at one time.
+Translator's section start	ts-s	No	Newline	None	No	Never	No	Self	Text	No	Translator’s section start milestone. For identifying a section (chunk) of text suitable for translating at one time.
+Translator's section end	ts-e	No	Newline	None	No	Never	No	Self	Text	No	Translator’s section end milestone. For identifying a section (chunk) of text suitable for translating at one time.
+Extended footnote	ef	No	Internal	None	No	Always	Yes	Always	Text	No	Extended footnotes (for study Bibles) are entered inline within the main scripture body text. The boundaries of the footnote text are defined by an opening and closing marker.
+Footnote summary	fs	No	Internal	None	No	Always	Yes	Optional	Footnote	Yes	"""Deprecated"" (i.e. use is strongly discouraged). A summary text for the concept/idea/quotation from the current Scripture text translation for which the note is being provided."
+Extended cross-reference	ex	No	Internal	None	No	Always	Yes	Always	Text	No	Extended cross-references (for study Bibles) are entered inline within the main scripture body text. The boundaries of the cross-reference text are defined by an opening and closing marker.
+Sidebar content	esb	No	Newline	None	No	Never	Yes	No	Text	No	In study Bibles. Finishes at next \esb marker or at end of chapter.
+Category tag	cat	No	Internal	None	No	Always	Yes	Always	Text	No	Categories can optionally be assigned to extended study notes or sidebars by supplying a category tag (name) inside of opening and closing \cat … \cat* markers. Category tags should be restricted to alpha-numeric characters. A list of category tags are defined individually and uniquely for each study Bible project.
+Peripheral content	periph	No	Newline	None	No	Always	Yes	No	Front and back matter	No	
+PDI	pdi	No	Newline	None	No	Always	Yes	No	Text	Yes	"""Deprecated"" (i.e. use is strongly discouraged) in 2004 for USFM 2.0. Substituted with embedded text markup."
+PDE	pde	No	Newline	None	No	Always	Yes	No	Text	Yes	"""Deprecated"" (i.e. use is strongly discouraged) in 2004 for USFM 2.0. Substituted with embedded text markup."
+WR	wr	No	Internal	None	Yes	Always	Yes	Always	Text	Yes	"""Deprecated"" (i.e. use is strongly discouraged) in 2004 for USFM 2.0. Was really a duplicate of \w … \w* used for marking words in the Scripture text which are included in the wordlist."
+Span paragraph	ps	No	Newline	None	No	Sometimes	Yes	No	Text	Yes	"""Deprecated"" (i.e. use is strongly discouraged) in 2004 for USFM 2.0. This was used in conjunction with \nb to indicate that the paragraph spans the chapter boundary. It should be sufficient to just start the new chapter with \nb and use the appropriate paragraph marker for the previous chapter (\p, \m, etc.)."
+Link text	jmp	No	Internal	None	No	Always	Yes	Always	Text	Yes	Available for associating linking attributes to a span of text when no other character level markup is already applied to the text at this location.

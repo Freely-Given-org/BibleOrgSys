@@ -59,10 +59,7 @@ import multiprocessing
 import struct, zlib
 
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
-
-#from BibleOrgSys.Misc.singleton import singleton
-from BibleOrgSys.Reference.BibleBooksCodes import BOOKLIST_OT39, BOOKLIST_NT27
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint, BOOKLIST_OT39, BOOKLIST_NT27
 from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
 from BibleOrgSys.Bible import Bible, BibleBook
 from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
@@ -1908,7 +1905,7 @@ class SwordBibleModule( SwordModule, Bible ):
                     thisBook.objectTypeString = self.objectTypeString
                     thisBook.sourceFilepath = self.dataFilepath
                     #thisBook.BBB = BBB
-                    thisBook.isSingleChapterBook = BibleOrgSysGlobals.loadedBibleBooksCodes.isSingleChapterBook( BBB )
+                    thisBook.isSingleChapterBook = bos_books_codes_py.is_single_chapter_book( BBB )
                     #thisBook.replaceAngleBracketsFlag = self.SwordModuleConfiguration.modCategory == 'Bible'
                     thisBook.replaceAngleBracketsFlag = False
                     bookVerseList = self.BibleOrgSystem.getNumVersesList( BBB, allowAlternatives=True )
@@ -1969,7 +1966,7 @@ class SwordBibleModule( SwordModule, Bible ):
                     thisBook.objectTypeString = self.objectTypeString
                     thisBook.sourceFilepath = self.dataFilepath
                     #thisBook.BBB = BBB
-                    thisBook.isSingleChapterBook = BibleOrgSysGlobals.loadedBibleBooksCodes.isSingleChapterBook( BBB )
+                    thisBook.isSingleChapterBook = bos_books_codes_py.is_single_chapter_book( BBB )
                     #thisBook.replaceAngleBracketsFlag = self.SwordModuleConfiguration.modCategory == 'Bible'
                     thisBook.replaceAngleBracketsFlag = False
                     bookVerseList = self.BibleOrgSystem.getNumVersesList( BBB, allowAlternatives=True )

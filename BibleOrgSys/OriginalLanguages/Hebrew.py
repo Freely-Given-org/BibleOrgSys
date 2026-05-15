@@ -290,7 +290,7 @@ class Hebrew():
         """
         Create an new Hebrew object.
         """
-        self.originalText = self.currentText = text
+        self.original_text = self.currentText = text
     # end of Hebrew.__init__
 
 
@@ -302,8 +302,8 @@ class Hebrew():
         @rtype: string
         """
         result = "Hebrew object"
-        result += ('\n' if result else '') + "  " + f"Original = {self.originalText!r}"
-        if self.currentText != self.originalText:
+        result += ('\n' if result else '') + "  " + f"Original = {self.original_text!r}"
+        if self.currentText != self.original_text:
             result += ('\n' if result else '') + "  " + f"Current  = {self.currentText!r}"
         return result
     # end of Hebrew.__str__

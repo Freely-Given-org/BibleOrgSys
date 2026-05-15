@@ -263,7 +263,7 @@ class ScriptureBurritoBible( Bible ):
                     loadErrors.append(f"ERROR: Unrecognised {someKey} SB '{someValue['mimeType']}' format")
                 if len(someValue['scope']) == 1: # We only expect one book per file
                     USFMBookCode = list(someValue['scope'].keys())[0]
-                    BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromUSFMAbbreviation( USFMBookCode )
+                    BBB = bos_books_codes_py.usfm_abbrev_to_bos_book_code( USFMBookCode )
                     self.givenBookList.append( BBB )
                     self.availableBBBs.add( BBB )
                     self.possibleFilenameDict[BBB] = someKey

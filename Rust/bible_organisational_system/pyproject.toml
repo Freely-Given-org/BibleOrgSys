@@ -4,13 +4,14 @@ build-backend = "maturin"
 
 [project]
 name = "bibleorgsys-rust"
+dynamic = ["version"]  # Tells Python to look elsewhere for the version
 requires-python = ">=3.13"
 classifiers = [
     "Programming Language :: Rust",
     "Programming Language :: Python :: Implementation :: CPython",
     "Programming Language :: Python :: Implementation :: PyPy",
 ]
-dynamic = ["version"]
+
 [tool.maturin]
 features = ["pyo3/extension-module"]
 
@@ -26,5 +27,6 @@ all_include_private = false
 strategy = "any"
 
 [tool.uv]
+exclude-newer = "7 days"
 # Rebuild the extension module if the rust code changes.
 cache-keys = [{file = "pyproject.toml"}, {file = "Cargo.toml"}, {file = "**/*.rs"}, {file = "../bos-internals/Cargo.toml"}, {file = "../bos-internals/**/*.rs"}]

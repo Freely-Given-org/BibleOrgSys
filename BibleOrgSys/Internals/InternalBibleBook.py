@@ -66,20 +66,20 @@ from pathlib import Path
 import logging
 import re
 import unicodedata
+import bos_books_codes_py
 
 # BibleOrgSys imports
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint, LARGE_DUMMY_VALUE
-from BibleOrgSys.Reference.USFM3Markers import USFM_ALL_BIBLE_PARAGRAPH_MARKERS, USFM_ALL_TITLE_MARKERS, USFM_ALL_INTRODUCTION_MARKERS, \
-                        USFM_ALL_SECTION_HEADING_MARKERS, USFM_BIBLE_PARAGRAPH_MARKERS # OFTEN_IGNORED_USFM_HEADER_MARKERS
 from bible_organisational_system import InternalBibleEntryList, InternalBibleEntry, InternalBibleExtra, InternalBibleExtraList, \
-    getSmallLeadingInt
+                                            getSmallLeadingInt
 from bible_organisational_system import InternalBibleBookCVIndex, InternalBibleBookSectionIndex
 from BibleOrgSys.Reference.BibleReferences import BibleAnchorReference
 from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
 
 # Rust imports
 from bible_organisational_system import processLines, ProcessLinesOptions, ObjectType
+import usfm_markers_py
 
 
 LAST_MODIFIED_DATE = '2026-04-29' # by RJH
@@ -97,7 +97,7 @@ MAX_NONCRITICAL_ERRORS_PER_BOOK_NORMAL = 3
 MAX_NONCRITICAL_ERRORS_PER_BOOK_VERBOSE = 5
 
 
-BOS_CUSTOM_CONTENT_MARKERS = ( 'c~', 'c#', 'v=', 'v~', 'p~', 'cl¤', 'vp#', )
+BOS_CUSTOM_CONTENT_MARKERS = [ 'c~', 'c#', 'v=', 'v~', 'p~', 'cl¤', 'vp#' ]
 """
     c~  anything after the chapter number on a \\c line is split off into here --
             note that it can be blank (but have extras) if the chapter number is footnoted
@@ -116,12 +116,12 @@ BOS_CUSTOM_CONTENT_MARKERS = ( 'c~', 'c#', 'v=', 'v~', 'p~', 'cl¤', 'vp#', )
 """
 
 # NOTE: Don't use any of the following symbols here: = ¬ or backslashes.
-BOS_PRINTABLE_MARKERS = USFM_ALL_TITLE_MARKERS + USFM_ALL_INTRODUCTION_MARKERS + USFM_ALL_SECTION_HEADING_MARKERS + ('v~', 'p~', ) # Should c~ and c# be in here???
+BOS_PRINTABLE_MARKERS = usfm_markers_py.USFM_ALL_TITLE_MARKERS + usfm_markers_py.USFM_ALL_INTRODUCTION_MARKERS + usfm_markers_py.USFM_ALL_SECTION_HEADING_MARKERS + ['v~', 'p~'] # Should c~ and c# be in here???
 
 # BOS_REGULAR_NESTING_MARKERS = USFM_ALL_SECTION_HEADING_MARKERS + ('c','v' ) # No need to nest s1 type markers (one line only expected)
-BOS_REGULAR_NESTING_MARKERS = ('c','v')
+BOS_REGULAR_NESTING_MARKERS = ['c','v']
 
-BOS_CUSTOM_NESTING_MARKERS = ( 'headers', 'intro', 'ilist', 'chapters', 'list' )
+BOS_CUSTOM_NESTING_MARKERS = [ 'headers', 'intro', 'ilist', 'chapters', 'list' ]
 """
     intro       Inserted at the start of book introductions
     ilist       Inserted at the start of introduction lists (before ili markers)
@@ -130,7 +130,7 @@ BOS_CUSTOM_NESTING_MARKERS = ( 'headers', 'intro', 'ilist', 'chapters', 'list' )
 """
 BOS_ALL_CUSTOM_MARKERS = BOS_CUSTOM_CONTENT_MARKERS + BOS_CUSTOM_NESTING_MARKERS
 
-BOS_ALL_CUSTOM_NESTING_MARKERS = BOS_CUSTOM_NESTING_MARKERS + ('iot',)
+BOS_ALL_CUSTOM_NESTING_MARKERS = BOS_CUSTOM_NESTING_MARKERS + ['iot']
 """
     intro       Inserted at the start of book introductions
     iot         Inserted before introduction outline (io markers) IF IT'S NOT ALREADY IN THE FILE
@@ -140,7 +140,7 @@ BOS_ALL_CUSTOM_NESTING_MARKERS = BOS_CUSTOM_NESTING_MARKERS + ('iot',)
 """
 
 BOS_NESTING_MARKERS = BOS_REGULAR_NESTING_MARKERS + BOS_ALL_CUSTOM_NESTING_MARKERS \
-                            + USFM_BIBLE_PARAGRAPH_MARKERS + ('ms1','ms2','ms3')
+                            + usfm_markers_py.USFM_BIBLE_PARAGRAPH_MARKERS + ['ms1','ms2','ms3']
 
 #BOS_END_MARKERS = ['¬intro', '¬iot', '¬ilist', '¬chapters', '¬c', '¬v', '¬list', ]
 #for marker in USFM_BIBLE_PARAGRAPH_MARKERS: BOS_END_MARKERS.append( '¬'+marker )
@@ -388,9 +388,9 @@ class InternalBibleBook:
             self.workName = self.containerBibleObject.getAName( abbrevFirst=True )
         assert isinstance( BBB, str ), f"InternalBibleBook.__init__ {type(BBB)=} {BBB=}"
         self.BBB = BBB
-        if self.doExtraChecking: assert self.BBB in BibleOrgSysGlobals.loadedBibleBooksCodes
+        if self.doExtraChecking: assert bos_books_codes_py.is_valid_bos_book_code( self.BBB )
+        self.isSingleChapterBook = bos_books_codes_py.is_single_chapter_book( self.BBB )
 
-        self.isSingleChapterBook = BibleOrgSysGlobals.loadedBibleBooksCodes.isSingleChapterBook( self.BBB )
 
         self._rawLines = [] # Contains 2-tuples (marker,text) which contain the actual Bible text -- see addLine below
         self._processedFlag = self._indexedCVFlag = self._indexedSectionsFlag = False
@@ -558,7 +558,7 @@ class InternalBibleBook:
                 assert isinstance( text, str )
                 assert '\n' not in text and '\r' not in text
 
-        if not ( marker in BibleOrgSysGlobals.loadedUSFMMarkers or marker in BOS_CUSTOM_CONTENT_MARKERS ):
+        if not ( marker in usfm_markers_py.get_newline_markers_list('Numbered') or marker in BOS_CUSTOM_CONTENT_MARKERS ):
             logging.critical( f"InternalBibleBook.addLine marker for {self.objectTypeString} not in USFM/BOS lists: {marker}={text!r}" )
             if marker in self.badMarkers:
                 ix = self.badMarkers.index( marker )
@@ -567,9 +567,9 @@ class InternalBibleBook:
             else:
                 self.badMarkers.append( marker )
                 self.badMarkerCounts.append( 1 )
-        if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag: assert marker in BibleOrgSysGlobals.loadedUSFMMarkers or marker in BOS_CUSTOM_CONTENT_MARKERS
+        if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag: assert marker in usfm_markers_py or marker in BOS_CUSTOM_CONTENT_MARKERS
 
-        if marker not in BOS_CUSTOM_CONTENT_MARKERS and not BibleOrgSysGlobals.loadedUSFMMarkers.isNewlineMarker( marker ):
+        if marker not in BOS_CUSTOM_CONTENT_MARKERS and not usfm_markers_py.is_newline_marker( marker ):
             logging.warning( f"IBB.addLine: Not a NL marker: {marker}={text!r}" )
             if 1 or marker != 'w': # This can happen with unfoldingWord aligned Bibles
                 dPrint( 'Quiet', DEBUGGING_THIS_MODULE, self, repr(marker), repr(text) )
@@ -592,8 +592,7 @@ class InternalBibleBook:
                         stripLogger( f'Additional "Possibly needed to strip whitespace" messages suppressed for {self.workName} {self.BBB}' )
                         self.pntsCount = -1 # So we don't do this again (for this book)
 
-        rawLineTuple = ( marker, text )
-        self._rawLines.append( rawLineTuple )
+        self._rawLines.append( (marker, text) )
     # end of InternalBibleBook.addLine
 
 
@@ -675,7 +674,7 @@ class InternalBibleBook:
             if ourText.endswith( '\\q4 \\NL**'): ourText = ourText[:-6] # Don't need nl and then space at end of ourText
             if ourText.endswith( '\\NL**' ): ourText = ourText[:-5] # Don't need nl at end of ourText
 
-            for marker in BibleOrgSysGlobals.loadedUSFMMarkers.getCharacterMarkersList( expandNumberableMarkers=True ):
+            for marker in usfm_markers_py.getCharacterMarkersList( expand_numberable_markers=True ):
                 if f'\\{marker}' in ourText:
                     ourText = ourText.replace( f'\\{marker} \\{marker} ',f'\\{marker} ' ) # Remove double start markers
                     ourText = ourText.replace( f'\\{marker} \\NL**', f'\\NL**\\{marker} ' ) # Put character start markers after NL
@@ -683,7 +682,7 @@ class InternalBibleBook:
                     ourText = ourText.replace( f'\\NL**\\{marker}*', f'\\{marker}*\\NL**' ) # Put character end markers before NL
                     ourText = ourText.replace( f'\\p\\{marker}*', f'\\{marker}*\\p' ) # Put character end markers before NL
 
-            for marker in BibleOrgSysGlobals.loadedUSFMMarkers.getNewlineMarkersList( 'Combined' ):
+            for marker in usfm_markers_py.get_newline_markers_list( 'Combined' ):
                 if f'\\{marker}' in ourText:
                     #ourText = ourText.replace( f' \\{marker}', f'\\{marker}' ) # Delete useless spaces at ends of lines
                     ourText = ourText.replace( f'\\{marker} \\p', '\\p' ) # Delete useless markers
@@ -717,7 +716,7 @@ class InternalBibleBook:
                     marker = bits[0][1:]
                     if len(bits) == 1:
                         #if bits[0] in ('\\p','\\b'):
-                        if BibleOrgSysGlobals.loadedUSFMMarkers.isNewlineMarker( marker ):
+                        if usfm_markers_py.is_newline_marker( marker ):
                             #if C==1 and V==1 and not appendedCFlag: self.addLine( 'c', str(C) ); appendedCFlag = True
                             self.addLine( marker, '' )
                         else:
@@ -737,7 +736,7 @@ class InternalBibleBook:
                             assert marker in ( 'id', 'toc1','toc2','toc3', 'mt1','mt2','mt3', 'ip', 'iot','io1','io2','io3','io4',
                                             's1','s2','s3','s4', 'qa', 'r','sr','sp','d', 'q1','q2','q3','q4', 'v', 'li1','li2','li3','li4', 'pc', ) \
                                 or marker in ( 'f','x', 'bk', 'wj', 'nd', 'add', 'k','tl','sig', 'bd','bdit','it','em','sc', 'str', ) # These ones are character markers which can start a new line
-                        if BibleOrgSysGlobals.loadedUSFMMarkers.isNewlineMarker( marker ):
+                        if usfm_markers_py.is_newline_marker( marker ):
                             self.addLine( marker, bits[1] )
                         elif not writtenV:
                             self.addLine( 'v', f'{V} {segment}' )
@@ -952,7 +951,9 @@ class InternalBibleBook:
         self._processedLines = processLines(self._rawLines, self.BBB, self.workName, options)
 
         # # Create files for tests for new Rust implementation
-        # if 'OET' in self.workName and self.BBB=='HAG':
+        # if 'OET' in self.workName:
+        #     with open( f'{self.workName}_summary.text', 'at', encoding='utf-8') as debugOutputFile:
+        #         debugOutputFile.write( f"{self.BBB} {len(self._rawLines)=} {len(self._processedLines)=}\n" )
         #     with open( f'{self.workName}_{self.BBB}_rawLines.txt', 'wt', encoding='utf-8' ) as debugOutputFile:
         #         debugOutputFile.write( f"{self.workName} {self.BBB} {len(self._rawLines)}\n" )
         #         for n, (marker,text) in enumerate( self._rawLines ):
@@ -1092,7 +1093,7 @@ class InternalBibleBook:
         if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE:
             assert self._processedLines
             assert fieldName and isinstance( fieldName, str )
-        adjFieldName = fieldName if fieldName in ('cl¤',) else BibleOrgSysGlobals.loadedUSFMMarkers.toStandardMarker( fieldName )
+        adjFieldName = fieldName if fieldName in ('cl¤',) else usfm_markers_py.to_standard_marker( fieldName )
 
         for entry in self._processedLines:
             if entry.getMarker() == adjFieldName:
@@ -1111,7 +1112,7 @@ class InternalBibleBook:
         if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE:
             assert self._processedLines
             assert fieldName and isinstance( fieldName, str )
-        adjFieldName = fieldName if fieldName in ('cl¤',) else BibleOrgSysGlobals.loadedUSFMMarkers.toStandardMarker( fieldName )
+        adjFieldName = fieldName if fieldName in ('cl¤',) else usfm_markers_py.to_standard_marker( fieldName )
 
         for entry in self._processedLines:
             assert isinstance( entry, InternalBibleEntry )
@@ -1194,7 +1195,7 @@ class InternalBibleBook:
             self.chapterLabel = clField
 
         if not results: # no helpful fields in file -- just use an English name
-            results.append( BibleOrgSysGlobals.loadedBibleBooksCodes.getEnglishName_NR( self.BBB ) )
+            results.append( bos_books_codes_py.get_english_name_nr( self.BBB ) )
         self.assumedBookName = results[0]
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Got assumedBookName of", repr(self.assumedBookName) )
 

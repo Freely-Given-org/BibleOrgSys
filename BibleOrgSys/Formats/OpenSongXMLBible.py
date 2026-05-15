@@ -234,8 +234,8 @@ def createOpenSongXML( BibleObject, outputFolder=None, controlDict=None, validat
 
     def writeOpenSongBook( writerObject, BBB:str, bkData ):
         """Writes a book to the OpenSong XML writerObject."""
-        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'BIBLEBOOK', [('bnumber',BibleOrgSysGlobals.loadedBibleBooksCodes.getReferenceNumber(BBB)), ('bname',BibleOrgSysGlobals.loadedBibleBooksCodes.getEnglishName_NR(BBB)), ('bsname',BibleOrgSysGlobals.loadedBibleBooksCodes.getOSISAbbreviation(BBB))] )
-        OSISAbbrev = BibleOrgSysGlobals.loadedBibleBooksCodes.getOSISAbbreviation( BBB )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'BIBLEBOOK', [('bnumber',bos_books_codes_py.get_reference_number(BBB)), ('bname',bos_books_codes_py.get_english_name_nr(BBB)), ('bsname',bos_books_codes_py.bos_to_osis_book_code(BBB))] )
+        OSISAbbrev = bos_books_codes_py.bos_to_osis_book_code( BBB )
         if not OSISAbbrev:
             logging.warning( f"toOpenSong: Can't write {BBB} OpenSong book because no OSIS code available" )
             unhandledBooks.append( BBB )
@@ -466,7 +466,7 @@ class OpenSongXMLBible( Bible ):
                 thisBook.objectNameString = 'OpenSong XML Bible Book object'
                 thisBook.objectTypeString = 'OpenSong'
                 #thisBook.sourceFilepath = self.sourceFilepath
-                USFMAbbreviation = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMAbbreviation( BBB )
+                USFMAbbreviation = bos_books_codes_py.bos_book_code_to_usfm_abbrev( BBB )
                 if not USFMAbbreviation:
                     logging.critical( f"Unable to find USFM abbreviation for '{BBB}'" )
                     if BibleOrgSysGlobals.strictCheckingFlag: halt

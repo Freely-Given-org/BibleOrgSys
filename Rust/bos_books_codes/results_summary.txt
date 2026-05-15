@@ -1,9 +1,15 @@
-bos_books_codes build_static_tables.py v0.1.10
+bos_books_codes build_static_tables.py v0.3.0
 Loaded 258 tsv lines.
 sorted_field_names_with_optional_values=['BibleWorksAbbreviation', 'BibleditNumber', 'ByzantineAbbreviation', 'CCELNumber', 'DrupalBibleAbbreviation', 'LogosAbbreviation', 'LogosNumber', 'NETBibleAbbreviation', 'OSISAbbreviation', 'SBLAbbreviation', 'SwordAbbreviation', 'USFMAbbreviation', 'USFMNumber', 'USXNumber', 'UnboundCode', 'consistsOfBooks', 'expectedChapters', 'possibleAlternativeAbbreviations', 'possibleAlternativeBooksCodes', 'shortAbbreviation', 'typicalSubsection']
 Wrote 257 full array entries to BIBLE_BOOKS_CODES_ARRAY
 Wrote 257 entries to REFERENCE_ABBREVIATION_ARRAY and/or REFERENCE_ABBREVIATION_MAP
 Wrote 137 entries to USFM_ABBREVIATION_MAP and UPPERCASE_USFM_ABBREVIATION_MAP
 Wrote 92 entries to OSIS_ABBREVIATION_MAP
+Wrote 66 entries to DRUPAL_BIBLE_ABBREVIATION_MAP
+Wrote 86 entries to UNBOUND_CODE_MAP
+Wrote 85 entries to SHORT_ABBREVIATION_MAP
+Wrote 87 entries to SBL_ABBREVIATION_MAP
+Wrote 66 entries to NET_BIBLE_ABBREVIATION_MAP
+Wrote 161 entries to SWORD_ABBREVIATION_MAP
 Wrote 4,920 entries to ENGLISH_NAME_MAP
-build_static_tables.py v0.1.10 SUCCESSFUL! $
+build_static_tables.py v0.3.0 SUCCESSFUL! $

@@ -34,7 +34,6 @@ import unittest
 
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
-from BibleOrgSys import BibleBooksCodesTests
 from BibleOrgSys import BibleBookOrdersTests
 import ISO_639_3_LanguagesTests, BiblePunctuationSystemsTests
 from BibleOrgSys import BibleBooksNamesTests, BibleVersificationSystemsTests, BibleOrganisationalSystemsTests
@@ -60,9 +59,6 @@ vPrint( 'Normal', DEBUGGING_THIS_MODULE, PROGRAM_NAME_VERSION )
 
 # Create the test suite
 suiteList = []
-
-suiteList.append( unittest.TestLoader().loadTestsFromTestCase( BibleBooksCodesTests.BibleBooksCodesConverterTests ) )
-suiteList.append( unittest.TestLoader().loadTestsFromTestCase( BibleBooksCodesTests.BibleBooksCodesTests ) )
 
 suiteList.append( unittest.TestLoader().loadTestsFromTestCase( ISO_639_3_LanguagesTests.ISO_639_3_LanguagesConverterTests ) )
 suiteList.append( unittest.TestLoader().loadTestsFromTestCase( ISO_639_3_LanguagesTests.ISO_639_3_LanguagesTests ) )

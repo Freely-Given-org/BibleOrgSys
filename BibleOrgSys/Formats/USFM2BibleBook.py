@@ -69,7 +69,7 @@ class USFM2BibleBook( BibleBook ):
 
         global sortedNLMarkers
         if sortedNLMarkers is None:
-            sortedNLMarkers = sorted( USFM2Markers.getNewlineMarkersList('Combined'), key=len, reverse=True )
+            sortedNLMarkers = sorted( USFM2Markers.get_newline_markers_list('Combined'), key=len, reverse=True )
     # end of USFM2BibleBook.__init__
 
 
@@ -86,23 +86,23 @@ class USFM2BibleBook( BibleBook ):
                 we don't need to worry about that here.
         """
 
-        def doaddLine( originalMarker, originalText ):
+        def doaddLine( originalMarker, original_text ):
             """
             Check for newLine markers within the line (if so, break the line) and save the information in our database.
 
             Also convert ~ to a proper non-break space.
             """
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"doaddLine( {originalMarker!r}, {originalText!r} )" )
-            marker, text = originalMarker, originalText.replace( '~', ' ' )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"doaddLine( {originalMarker!r}, {original_text!r} )" )
+            marker, text = originalMarker, original_text.replace( '~', ' ' )
             if '\\' in text: # Check markers inside the lines
-                markerList = USFM2Markers.getMarkerListFromText( text )
+                markerList = USFM2Markers.get_marker_list_from_text( text )
                 ix = 0
                 for insideMarker, iMIndex, nextSignificantChar, fullMarker, characterContext, endIndex, markerField in markerList: # check paragraph markers
                     if insideMarker == '\\': # it's a free-standing backspace
                         loadErrors.append( f"{self.BBB} {C}:{V} Improper free-standing backspace character within line in \\{marker}: {text!r}" )
                         logging.error( f"Improper free-standing backspace character within line after {self.BBB} {C}:{V} in \\{marker}: {text!r}" ) # Only log the first error in the line
                         self.addPriorityError( 100, C, V, "Improper free-standing backspace character inside a line" )
-                    elif USFM2Markers.isNewlineMarker(insideMarker): # Need to split the line for everything else to work properly
+                    elif USFM2Markers.is_newline_marker(insideMarker): # Need to split the line for everything else to work properly
                         if ix==0:
                             loadErrors.append( f"{self.BBB} {C}:{V} NewLine marker {marker!r} shouldn't appear within line in \\{insideMarker}: {text!r}" )
                             logging.error( f"NewLine marker {marker!r} shouldn't appear within line after {insideMarker} {self.BBB}:{C} in \\{V}: {text!r}" ) # Only log the first error in the line
@@ -110,7 +110,7 @@ class USFM2BibleBook( BibleBook ):
                         thisText = text[ix:iMIndex].rstrip()
                         self.addLine( marker, thisText )
                         ix = iMIndex + 1 + len(insideMarker) + len(nextSignificantChar) # Get the start of the next text -- the 1 is for the backslash
-                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Did a split from {originalMarker}:{originalText!r} to {marker}:{thisText!r} leaving {insideMarker}:{text[ix:]!r}" )
+                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Did a split from {originalMarker}:{original_text!r} to {marker}:{thisText!r} leaving {insideMarker}:{text[ix:]!r}" )
                         marker = insideMarker # setup for the next line
                 if ix != 0: # We must have separated multiple lines
                     text = text[ix:] # Get the final bit of the line
@@ -139,7 +139,7 @@ class USFM2BibleBook( BibleBook ):
 
         vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + f"Loading {filename}…" )
         #self.BBB = BBB
-        #self.isSingleChapterBook = BibleOrgSysGlobals.loadedBibleBooksCodes.isSingleChapterBook( BBB )
+        #self.isSingleChapterBook = bos_books_codes_py.is_single_chapter_book( BBB )
         originalBook = USFMFile()
         originalBook.read( self.sourceFilepath, encoding=encoding )
 
@@ -171,7 +171,7 @@ class USFM2BibleBook( BibleBook ):
             elif marker=='restore': continue # Ignore these lines completely
 
             # Now load the actual Bible book data
-            if USFM2Markers.isNewlineMarker( marker ):
+            if USFM2Markers.is_newline_marker( marker ):
                 if lastMarker: doaddLine( lastMarker, lastText )
                 lastMarker, lastText = marker, text
             elif USFM2Markers.isInternalMarker( marker ) \

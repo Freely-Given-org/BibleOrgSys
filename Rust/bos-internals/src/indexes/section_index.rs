@@ -15,8 +15,9 @@ use crate::error::LookupError;
 /// Markers that can define section boundaries.
 const SECTION_MARKERS: &[&str] = &[
     "is1", // Introductory sections
-    "ms1", "ms2", "ms3", // Major sections
+    "ms1", //"ms2", "ms3", // Major sections
     "s1",  // Section headings
+    "iex", // Chapter introductions, e.g., in KJB-1611
     "c",   // Chapters can also define section boundaries, especially for intro-to-content transitions
 ];
 
@@ -553,7 +554,7 @@ mod tests {
     use super::*;
     use crate::entry::InternalBibleEntry;
 
-    fn create_test_entries_1() -> InternalBibleEntryList {
+    fn create_gen_test_entries() -> InternalBibleEntryList {
         let mut entries = InternalBibleEntryList::new();
 
         // Section 1 (Headers)
@@ -617,9 +618,9 @@ mod tests {
     }
 
     #[test]
-    fn test_build_section_index_1() {
+    fn test_build_gen_section_index() {
         let mut index = InternalBibleBookSectionIndex::new("XSV", "GEN");
-        index.build(create_test_entries_1()).unwrap();
+        index.build(create_gen_test_entries()).unwrap();
         log::trace!("Index1:{}", index);
         assert!(index.is_indexed());
 
@@ -661,7 +662,7 @@ mod tests {
         assert!(index.len() == 5); // Headers, is1, s1 (Creation), s1 (Fall), s1 (Chapter Three)
     }
 
-    fn create_test_entries_2() -> InternalBibleEntryList {
+    fn create_mrk_test_entries() -> InternalBibleEntryList {
         let mut entries = InternalBibleEntryList::new();
 
         // Section 1 (Headers)
@@ -701,9 +702,9 @@ mod tests {
     }
 
     #[test]
-    fn test_build_section_index_2() {
+    fn test_build_mrk_section_index() {
         let mut index = InternalBibleBookSectionIndex::new("YSV", "MRK");
-        index.build(create_test_entries_2()).unwrap();
+        index.build(create_mrk_test_entries()).unwrap();
         log::trace!("Index2:{}", index);
         assert!(index.is_indexed());
 
@@ -854,7 +855,7 @@ mod tests {
     #[test]
     fn test_table_of_contents() {
         let mut index = InternalBibleBookSectionIndex::new("XSV", "GEN");
-        index.build(create_test_entries_1()).unwrap();
+        index.build(create_gen_test_entries()).unwrap();
 
         let toc = index.table_of_contents();
         assert!(!toc.is_empty());
@@ -871,7 +872,7 @@ mod tests {
     #[test]
     fn test_get_section_entries() {
         let mut index = InternalBibleBookSectionIndex::new("XSV", "GEN");
-        index.build(create_test_entries_1()).unwrap();
+        index.build(create_gen_test_entries()).unwrap();
 
         // Get first section
         if let Some((cv, _)) = index.iter().next() {

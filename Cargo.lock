@@ -97,6 +97,7 @@ dependencies = [
  "log",
  "pyo3",
  "pyo3-log",
+ "rayon",
  "rkyv",
  "thiserror",
 ]
@@ -125,15 +126,17 @@ dependencies = [
 name = "bos_books_codes"
 version = "0.2.0"
 dependencies = [
+ "compact_str",
  "criterion",
  "phf",
 ]
 
 [[package]]
 name = "bos_books_codes_py"
-version = "0.2.0"
+version = "0.6.1"
 dependencies = [
  "bos_books_codes",
+ "compact_str",
  "pyo3",
 ]
 
@@ -1028,6 +1031,23 @@ name = "unicode-ident"
 version = "1.0.24"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e6e4313cd5fcd3dad5cafa179702e2b244f760991f45397d14d4ebf38247da75"
+
+[[package]]
+name = "usfm_markers"
+version = "0.1.0"
+dependencies = [
+ "compact_str",
+ "phf",
+]
+
+[[package]]
+name = "usfm_markers_py"
+version = "0.1.0"
+dependencies = [
+ "compact_str",
+ "pyo3",
+ "usfm_markers",
+]
 
 [[package]]
 name = "utf8parse"

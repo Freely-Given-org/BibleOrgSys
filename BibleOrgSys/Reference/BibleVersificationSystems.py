@@ -76,9 +76,10 @@ import json
 #from BibleOrgSys.Misc.singleton import singleton
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
+import bos_books_codes_py
 
 
-LAST_MODIFIED_DATE = '2025-08-29' # by RJH
+LAST_MODIFIED_DATE = '2026-05-06' # by RJH
 SHORT_PROGRAM_NAME = "BibleVersificationSystems"
 PROGRAM_NAME = "Bible Versification Systems handler"
 PROGRAM_VERSION = '0.63'
@@ -582,7 +583,7 @@ class BibleVersificationSystems:
             with open( outputFilepath, 'wt', encoding='utf-8' ) as myFile:
                 for BBB in versificationSchemeToCheck:
                     myFile.write( "  <BibleBookVersification>\n" )
-                    myFile.write( f"    <nameEnglish>{BibleOrgSysGlobals.loadedBibleBooksCodes.getEnglishName_NR(BBB)}</nameEnglish>\n" ) # the English book name from the BibleBooksCodes.xml file
+                    myFile.write( f"    <nameEnglish>{bos_books_codes_py.get_english_name_nr(BBB)}</nameEnglish>\n" ) # the English book name from the BibleBooksCodes.xml file
                     myFile.write( f"    <referenceAbbreviation>{BBB}</referenceAbbreviation>\n" )
                     myFile.write( f"    <numChapters>{len(versificationSchemeToCheck[BBB])}</numChapters>\n" )
                     for c,numV in versificationSchemeToCheck[BBB]:
@@ -717,7 +718,7 @@ class BibleVersificationSystem:
         Returns None if we don't have any chapter information for this book.
         """
         assert len(BBB) == 3
-        if not BibleOrgSysGlobals.loadedBibleBooksCodes.isValidBBB( BBB ): raise KeyError
+        if not bos_books_codes_py.is_valid_bos_book_code( BBB ): raise KeyError
         if BBB in self.__chapterDataDict:
             return int( self.__chapterDataDict[BBB]['numChapters'] )
         # else return None
@@ -730,7 +731,7 @@ class BibleVersificationSystem:
         Returns None if we don't have any chapter information for this book.
         """
         assert len(BBB) == 3
-        if not BibleOrgSysGlobals.loadedBibleBooksCodes.isValidBBB( BBB ): raise KeyError
+        if not bos_books_codes_py.is_valid_bos_book_code( BBB ): raise KeyError
         if BBB in self.__chapterDataDict:
             return self.__chapterDataDict[BBB]['numChapters'] == '1'
         # else return None
@@ -747,7 +748,7 @@ class BibleVersificationSystem:
         if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert len(BBB) == 3
 
-        if not BibleOrgSysGlobals.loadedBibleBooksCodes.isValidBBB( BBB ): raise KeyError
+        if not bos_books_codes_py.is_valid_bos_book_code( BBB ): raise KeyError
         if isinstance( C, int ): # Just double-check the parameter
             logging.debug( f"BibleVersificationSystem.getNumVerses was passed an integer chapter instead of a string with {BBB} {C}" )
             C = str( C )

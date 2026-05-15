@@ -278,7 +278,7 @@ class MySwordBible( Bible ):
 
         verseList = self.BibleOrganisationalSystem.getNumVersesList( BBB )
         numC, numV = len(verseList), verseList[0]
-        nBBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getReferenceNumber( BBB )
+        nBBB = bos_books_codes_py.get_reference_number( BBB )
         C = V = 1
 
         bookCount = 0
@@ -336,7 +336,7 @@ class MySwordBible( Bible ):
 
                     verseList = self.BibleOrganisationalSystem.getNumVersesList( BBB )
                     numC, numV = len(verseList), verseList[0]
-                    nBBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getReferenceNumber( BBB )
+                    nBBB = bos_books_codes_py.get_reference_number( BBB )
                     C = V = 1
                     #thisBook.addLine( 'c', str(C) )
                 else: # next chapter only
@@ -390,7 +390,7 @@ class MySwordBible( Bible ):
 
         verseList = self.BibleOrganisationalSystem.getNumVersesList( BBB )
         numC, numV = len(verseList), verseList[0]
-        nBBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getReferenceNumber( BBB )
+        nBBB = bos_books_codes_py.get_reference_number( BBB )
         C = V = 1
 
         #bookCount = 0
@@ -469,7 +469,7 @@ def createMySwordModule( self, outputFolder, controlDict ):
         bkData = self.books[BBB] if BBB in self.books else None
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, bkData._processedLines )
         verseList = BOS.getNumVersesList( BBB )
-        nBBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getReferenceNumber( BBB )
+        nBBB = bos_books_codes_py.get_reference_number( BBB )
         numC, numV = len(verseList), verseList[0]
 
         ourGlobals['line'], ourGlobals['lastLine'] = '', None

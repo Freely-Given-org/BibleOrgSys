@@ -67,9 +67,10 @@ from BibleOrgSys.Reference.BiblePunctuationSystems import BiblePunctuationSystem
 from BibleOrgSys.Reference.BibleVersificationSystems import BibleVersificationSystem
 from BibleOrgSys.Reference.BibleBooksNames import BibleBooksNamesSystem
 from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
+import bos_books_codes_py
 
 
-LAST_MODIFIED_DATE = '2022-07-12' # by RJH
+LAST_MODIFIED_DATE = '2026-05-06' # by RJH
 SHORT_PROGRAM_NAME = "BibleOrganisationalSystems"
 PROGRAM_NAME = "Bible Organisation Systems handler"
 PROGRAM_VERSION = '0.35'
@@ -472,7 +473,7 @@ class BibleOrganisationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
         if self.containsBook( BBB ): return BBB
         # else
         # temp …. needs a try/except
-        return BibleOrgSysGlobals.loadedBibleBooksCodes.getPossibleAlternativeBooksCodes( BBB )[0]
+        return bos_books_codes_py.get_possible_alternative_books( BBB )[0]
     # end of BibleOrganisationalSystem.getAlternativeBBBIfNecessary
 
 
@@ -493,7 +494,7 @@ class BibleOrganisationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
         try: bookVersesList = BibleVersificationSystem.getNumVersesList( self, BBB )
         except KeyError: # BBB doesn't exist in this BOS -- try an alternative
             # Next line will raise an error if no alternatives (coz returns None)
-            for altBBB in BibleOrgSysGlobals.loadedBibleBooksCodes.getPossibleAlternativeBooksCodes( BBB ):
+            for altBBB in bos_books_codes_py.get_possible_alternative_books( BBB ):
                 try: bookVersesList = BibleVersificationSystem.getNumVersesList( self, altBBB ); break
                 except KeyError: continue # BBB doesn't exist in this BOS -- try an alternative
             if bookVersesList is not None:

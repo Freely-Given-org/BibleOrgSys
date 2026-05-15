@@ -1,8 +1,8 @@
+#!/usr/bin/env -S uv run
+
 import timeit
 import bos_books_codes_py  # This is the PyO3/Rust module you built
-import sys
 
-sys.path.insert( 0, '/srv/FreelyGiven/BibleOrgSys/' )
 from BibleOrgSys import BibleOrgSysGlobals
 
 LAST_MODIFIED_DATE = '2025-10-23' # by RJH
@@ -28,7 +28,7 @@ number = 1_000_000
 python_time = timeit.timeit(lambda: BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMAbbreviation(BBB), number=number)
 print(f"\nNative Python getUSFMAbbreviation function: {python_time:.4f} seconds (or {python_time*1_000_000_000/number:.1f} ns per run)")
 # Time Rust
-rust_time = timeit.timeit(lambda: bos_books_codes_py.reference_abbrev_to_usfm_abbrev_py(BBB), number=number)
+rust_time = timeit.timeit(lambda: bos_books_codes_py.reference_abbrev_to_usfm_abbrev(BBB), number=number)
 print(f"Rust PyO3 reference_abbrev_to_usfm_abbrev_py function: {rust_time:.4f} seconds (or {rust_time*1_000_000_000/number:.1f} ns per run)")
 # Compare
 if python_time < rust_time:
@@ -40,7 +40,7 @@ elif python_time > rust_time:
 python_time = timeit.timeit(lambda: BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromUSFMAbbreviation(USFM), number=number)
 print(f"\nNative Python getBBBFromUSFMAbbreviation function: {python_time:.4f} seconds (or {python_time*1_000_000_000/number:.1f} ns per run)")
 # Time Rust
-rust_time = timeit.timeit(lambda: bos_books_codes_py.usfm_abbrev_to_reference_abbrev_py(USFM), number=number)
+rust_time = timeit.timeit(lambda: bos_books_codes_py.usfm_abbrev_to_reference_abbrev(USFM), number=number)
 print(f"Rust PyO3 usfm_abbrev_to_reference_abbrev_py function: {rust_time:.4f} seconds (or {rust_time*1_000_000_000/number:.1f} ns per run)")
 # Compare
 if python_time < rust_time:
@@ -53,7 +53,7 @@ elif python_time > rust_time:
 python_time = timeit.timeit(lambda: BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromUSFMAbbreviation(BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMAbbreviation(BBB)), number=number)
 print(f"\nNative Python both functions: {python_time:.4f} seconds (or {python_time*1_000_000_000/number:.1f} ns per run)")
 # Time Rust
-rust_time = timeit.timeit(lambda: bos_books_codes_py.usfm_abbrev_to_reference_abbrev_py(bos_books_codes_py.reference_abbrev_to_usfm_abbrev_py(BBB)), number=number)
+rust_time = timeit.timeit(lambda: bos_books_codes_py.usfm_abbrev_to_reference_abbrev(bos_books_codes_py.reference_abbrev_to_usfm_abbrev(BBB)), number=number)
 print(f"Rust PyO3 both functions: {rust_time:.4f} seconds (or {rust_time*1_000_000_000/number:.1f} ns per run)")
 # Compare
 if python_time < rust_time:
@@ -65,7 +65,7 @@ elif python_time > rust_time:
 python_time = timeit.timeit(lambda: BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromOSISAbbreviation(OSIS), number=number)
 print(f"\nNative Python getBBBFromOSISAbbreviation function: {python_time:.4f} seconds (or {python_time*1_000_000_000/number:.1f} ns per run)")
 # Time Rust
-rust_time = timeit.timeit(lambda: bos_books_codes_py.osis_abbrev_to_reference_abbrev_py(OSIS), number=number)
+rust_time = timeit.timeit(lambda: bos_books_codes_py.osis_abbrev_to_reference_abbrev(OSIS), number=number)
 print(f"Rust PyO3 osis_abbrev_to_reference_abbrev_py function: {rust_time:.4f} seconds (or {rust_time*1_000_000_000/number:.1f} ns per run)")
 # Compare
 if python_time < rust_time:
@@ -77,7 +77,7 @@ elif python_time > rust_time:
 python_time = timeit.timeit(lambda: BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromEnglishText(text), number=number)
 print(f"\nNative Python getBBBFromEnglishText function: {python_time:.4f} seconds (or {python_time*1_000_000_000/number:.1f} ns per run)")
 # Time Rust
-rust_time = timeit.timeit(lambda: bos_books_codes_py.english_name_to_reference_abbrev_py(text), number=number)
+rust_time = timeit.timeit(lambda: bos_books_codes_py.english_name_to_reference_abbrev(text), number=number)
 print(f"Rust PyO3 english_name_to_reference_abbrev_py function: {rust_time:.4f} seconds (or {rust_time*1_000_000_000/number:.1f} ns per run)")
 # Compare
 if python_time < rust_time:

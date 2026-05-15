@@ -9,7 +9,7 @@
 #       and which in turn holds the Bible book objects
 #       (and acts as an intermediary to them).
 #
-# Copyright (C) 2010-2025 Robert Hunt
+# Copyright (C) 2010-2026 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -63,6 +63,7 @@ Note that this software does write some files to
 CHANGELOG:
     2024-01-24 add getContextVerseDataRange() function
     2025-02-13 Changed special characters in getVerseText() function and add includeNonCanonical parameter
+    2026-05-09 Upgraded to bos_books_codes_py
 """
 from __future__ import annotations # So we can use typing -> ClassName (before Python 3.10)
 import os
@@ -75,17 +76,17 @@ import multiprocessing
 import copy
 
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint, BOOKLIST_OT39, BOOKLIST_NT27
 from bible_organisational_system import InternalBibleEntryList, InternalBibleEntry
 from BibleOrgSys.Internals.InternalBibleBook import BCV_VERSION, BOS_EXTRA_TYPES, BOS_EXTRA_MARKERS
 from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
-from BibleOrgSys.Reference.BibleBooksCodes import BOOKLIST_OT39, BOOKLIST_NT27
+import bos_books_codes_py
 
 
-LAST_MODIFIED_DATE = '2026-04-29' # by RJH
+LAST_MODIFIED_DATE = '2026-05-09' # by RJH
 SHORT_PROGRAM_NAME = "InternalBible"
 PROGRAM_NAME = "Internal Bible handler"
-PROGRAM_VERSION = '0.92'
+PROGRAM_VERSION = '0.93'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -766,7 +767,10 @@ class InternalBible:
                     contentPath = bookDict['path']
                     assert contentPath == './content' # No need to save this here
                 else:
-                    BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromUSFMAbbreviation( USFMBookCode )
+                    try: BBB = bos_books_codes_py.usfm_abbrev_to_bos_book_code( USFMBookCode )
+                    except KeyError:
+                        print( f"applySuppliedMetadata for 'uW' {self.Workname} failed with {USFMBookCode=}")
+                        BBB = bos_books_codes_py.usfm_abbrev_to_bos_book_code( USFMBookCode.title() )
                     filename = bookDict['path']
                     if filename.startswith( './' ): filename = filename[2:]
                     self.possibleFilenameDict[BBB] = filename
@@ -893,7 +897,7 @@ class InternalBible:
 
         The assumedBookName defaults to the long book name from \toc1 field.
         """
-        if BibleOrgSysGlobals.debugFlag: assert BBB in BibleOrgSysGlobals.loadedBibleBooksCodes
+        if BibleOrgSysGlobals.debugFlag: assert bos_books_codes_py.is_valid_bos_book_code( BBB )
         #if BBB in self.BBBToNameDict: return self.BBBToNameDict[BBB] # What was this ???
         try: return self.books[BBB].assumedBookName
         except (KeyError, AttributeError): return None
@@ -904,7 +908,7 @@ class InternalBible:
         """
         Gets the long table of contents book name for the given book reference code.
         """
-        if BibleOrgSysGlobals.debugFlag: assert BBB in BibleOrgSysGlobals.loadedBibleBooksCodes
+        if BibleOrgSysGlobals.debugFlag: assert bos_books_codes_py.is_valid_bos_book_code( BBB )
         try: return self.books[BBB].longTOCName
         except (KeyError, AttributeError): return None
     # end of InternalBible.getLongTOCName
@@ -912,7 +916,7 @@ class InternalBible:
 
     def getShortTOCName( self, BBB:str ):
         """Gets the short table of contents book name for the given book reference code."""
-        if BibleOrgSysGlobals.debugFlag: assert BBB in BibleOrgSysGlobals.loadedBibleBooksCodes
+        if BibleOrgSysGlobals.debugFlag: assert bos_books_codes_py.is_valid_bos_book_code( BBB )
         try: return self.books[BBB].shortTOCName
         except (KeyError, AttributeError): return None
     # end of InternalBible.getShortTOCName
@@ -920,7 +924,7 @@ class InternalBible:
 
     def getBooknameAbbreviation( self, BBB:str ):
         """Gets the book abbreviation for the given book reference code."""
-        if BibleOrgSysGlobals.debugFlag: assert BBB in BibleOrgSysGlobals.loadedBibleBooksCodes
+        if BibleOrgSysGlobals.debugFlag: assert bos_books_codes_py.is_valid_bos_book_code( BBB )
         try: return self.books[BBB].booknameAbbreviation
         except (KeyError, AttributeError): return None
     # end of InternalBible.getBooknameAbbreviation
@@ -1021,7 +1025,7 @@ class InternalBible:
             Return None if unsuccessful.
         """
         if BibleOrgSysGlobals.debugFlag: assert referenceString and isinstance( referenceString, str )
-        result = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromEnglishText( referenceString )
+        result = bos_books_codes_py.english_name_to_bos_book_code( referenceString )
         if result is not None: return result # It's already a valid BBB
 
         adjRefString = referenceString.lower()
@@ -2220,7 +2224,7 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
         assert len(BBB) == 3
 
         #if 'KJV' not in self.sourceFolder and BBB in self.triedLoadingBook: halt
-        if not BibleOrgSysGlobals.loadedBibleBooksCodes.isValidBBB( BBB ): raise KeyError
+        if not bos_books_codes_py.is_valid_bos_book_code( BBB ): raise KeyError
         self.loadBookIfNecessary( BBB )
         if BBB in self:
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "getNumChapters", self, self.books[BBB].getNumChapters() )
@@ -2237,7 +2241,7 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
         fnPrint( DEBUGGING_THIS_MODULE, f"getNumVerses( {BBB}, {C=} )" )
         assert len(BBB) == 3
 
-        if not BibleOrgSysGlobals.loadedBibleBooksCodes.isValidBBB( BBB ): raise KeyError
+        if not bos_books_codes_py.is_valid_bos_book_code( BBB ): raise KeyError
         self.loadBookIfNecessary( BBB )
         if BBB in self:
             # NOTE: The next call will handle type conversion for the C parameter -- no need to do it here as well
@@ -2473,7 +2477,7 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
         ourMarkerList = []
         if optionsDict['markerList']:
             for marker in optionsDict['markerList']:
-                ourMarkerList.append( BibleOrgSysGlobals.loadedUSFMMarkers.toStandardMarker( marker ) )
+                ourMarkerList.append( usfm_markers_py.to_standard_marker( marker ) )
 
         ourFindText = optionsDict['findText']
         # Save the search history (with the 'regex:' text still prefixed if applicable)
@@ -2693,13 +2697,13 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
             dPrint( 'Info', DEBUGGING_THIS_MODULE, '  InternalBible.analyseAndExportUWoriginal', ref, origVerseText )
             if len(origVerseText) < 11: halt # Should be at least eleven characters (Jesus wept.)
 
-            if BibleOrgSysGlobals.loadedBibleBooksCodes.isOldTestament_NR( BBB ):
+            if bos_books_codes_py.is_old_testament_nr( BBB ):
                 analysedOTBookList.append( BBB )
                 lemmaDictSet, StrongsDictSet = OTLemmaDictSet, OTStrongsDictSet
-            elif BibleOrgSysGlobals.loadedBibleBooksCodes.isNewTestament_NR( BBB ):
+            elif bos_books_codes_py.is_new_testament_nr( BBB ):
                 analysedNTBookList.append( BBB )
                 lemmaDictSet, StrongsDictSet = NTLemmaDictSet, NTStrongsDictSet
-            elif BibleOrgSysGlobals.loadedBibleBooksCodes.isDeuterocanon_NR( BBB ):
+            elif bos_books_codes_py.is_deuterocanon_nr( BBB ):
                 analysedDCBookList.append( BBB )
                 lemmaDictSet, StrongsDictSet = None, None
             analysedBookCount += 1
@@ -2722,14 +2726,14 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
                 9 ww @ 109 = 'φίλους|lemma="φίλος" strong="G53840" x-morph="Gr,NS,,,,AMP,"'
                 10 ww @ 120 = 'κατ’|lemma="κατά" strong="G25960" x-morph="Gr,P,,,,,A,,,"'
                 11 ww @ 132 = 'ὄνομα|lemma="ὄνομα" strong="G36860" x-morph="Gr,N,,,,,ANS," x-tw="rc://*/tw/dict/bible/kt/name"'
-                originalText=\\w εἰρήνη|lemma="εἰρήνη" strong="G15150" x-morph="Gr,N,,,,,NFS," x-tw="rc://*/tw/dict/bible/other/peace"\\w* \\w σοι|lemma="σύ" strong="G47710" x-morph="Gr,RP,,,2D,S,"\\w*. \\w ἀσπάζονταί|lemma="ἀσπάζομαι" strong="G07820" x-morph="Gr,V,IPM3,,P,"\\w* \\w σε|lemma="σύ" strong="G47710" x-morph="Gr,RP,,,2A,S,"\\w* \\w οἱ|lemma="ὁ" strong="G35880" x-morph="Gr,EA,,,,NMP,"\\w* \\w φίλοι|lemma="φίλος" strong="G53840" x-morph="Gr,NS,,,,NMP,"\\w*. \\w ἀσπάζου|lemma="ἀσπάζομαι" strong="G07820" x-morph="Gr,V,MPM2,,S,"\\w* \\w τοὺς|lemma="ὁ" strong="G35880" x-morph="Gr,EA,,,,AMP,"\\w* \\w φίλους|lemma="φίλος" strong="G53840" x-morph="Gr,NS,,,,AMP,"\\w* \\w κατ’|lemma="κατά" strong="G25960" x-morph="Gr,P,,,,,A,,,"\\w* \\w ὄνομα|lemma="ὄνομα" strong="G36860" x-morph="Gr,N,,,,,ANS," x-tw="rc://*/tw/dict/bible/kt/name"\\w*.
+                original_text=\\w εἰρήνη|lemma="εἰρήνη" strong="G15150" x-morph="Gr,N,,,,,NFS," x-tw="rc://*/tw/dict/bible/other/peace"\\w* \\w σοι|lemma="σύ" strong="G47710" x-morph="Gr,RP,,,2D,S,"\\w*. \\w ἀσπάζονταί|lemma="ἀσπάζομαι" strong="G07820" x-morph="Gr,V,IPM3,,P,"\\w* \\w σε|lemma="σύ" strong="G47710" x-morph="Gr,RP,,,2A,S,"\\w* \\w οἱ|lemma="ὁ" strong="G35880" x-morph="Gr,EA,,,,NMP,"\\w* \\w φίλοι|lemma="φίλος" strong="G53840" x-morph="Gr,NS,,,,NMP,"\\w*. \\w ἀσπάζου|lemma="ἀσπάζομαι" strong="G07820" x-morph="Gr,V,MPM2,,S,"\\w* \\w τοὺς|lemma="ὁ" strong="G35880" x-morph="Gr,EA,,,,AMP,"\\w* \\w φίλους|lemma="φίλος" strong="G53840" x-morph="Gr,NS,,,,AMP,"\\w* \\w κατ’|lemma="κατά" strong="G25960" x-morph="Gr,P,,,,,A,,,"\\w* \\w ὄνομα|lemma="ὄνομα" strong="G36860" x-morph="Gr,N,,,,,ANS," x-tw="rc://*/tw/dict/bible/kt/name"\\w*.
             """
             lines:dict[tuple[str,str,list[str|tuple[str,str,str,str]]]] = defaultdict( list )
             C, V = -1, 0
             for entry in bookObject._processedLines:
                 pseudoMarker, adjText, cleanText, extras = entry.getMarker(), entry.getAdjustedText(), entry.getCleanText(), entry.getExtras()
                 originalMarker = entry.getOriginalMarker()
-                originalText = entry.getOriginalText()
+                original_text = entry.getOriginalText()
 
                 # See where we are
                 if pseudoMarker=='c': C, V = cleanText, '0'
@@ -2739,32 +2743,32 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
                     vPrint( 'Never', debuggingThisFunction, f"{pseudoMarker}({originalMarker})='{cleanText}'")
                     # if adjText != cleanText: vPrint( 'Quiet', debuggingThisFunction, f"   adjText={adjText}")
                     # if extras: vPrint( 'Quiet', debuggingThisFunction, f"   extras={extras}")
-                    if originalText != cleanText: vPrint( 'Never', debuggingThisFunction, f"   originalText={originalText}" )
+                    if original_text != cleanText: vPrint( 'Never', debuggingThisFunction, f"   original_text={original_text}" )
 
-                    if originalText:
-                        if '\\w ' in originalText:
+                    if original_text:
+                        if '\\w ' in original_text:
                             ix = 0
                             line:list[str|tuple[str,str,str,str]] = []
-                            while ix < len(originalText):
-                                if originalText[ix:].startswith( '\\w '):
-                                    ixEnd = ix + 4 + originalText[ix+4:].index( '\\w*' )
-                                    wField = originalText[ix+3:ixEnd]
+                            while ix < len(original_text):
+                                if original_text[ix:].startswith( '\\w '):
+                                    ixEnd = ix + 4 + original_text[ix+4:].index( '\\w*' )
+                                    wField = original_text[ix+3:ixEnd]
                                     dPrint( 'Never', debuggingThisFunction, f"Got w field='{wField}'" )
-                                    ixBar = ix + 4 + originalText[ix+4:].index( '|' )
-                                    word = originalText[ix+3:ixBar]
+                                    ixBar = ix + 4 + original_text[ix+4:].index( '|' )
+                                    word = original_text[ix+3:ixBar]
                                     dPrint( 'Verbose', debuggingThisFunction, f"Got word='{word}'")
-                                    assert originalText[ixBar+1:].startswith('lemma="')
-                                    ixQuote1 = ixBar + 8 + originalText[ixBar+8:].index( '"' )
-                                    lemma = originalText[ixBar+8:ixQuote1]
+                                    assert original_text[ixBar+1:].startswith('lemma="')
+                                    ixQuote1 = ixBar + 8 + original_text[ixBar+8:].index( '"' )
+                                    lemma = original_text[ixBar+8:ixQuote1]
                                     dPrint( 'Verbose', debuggingThisFunction, f"Got lemma='{lemma}'" )
-                                    assert originalText[ixQuote1+1:].startswith(' strong="')
-                                    ixQuote2 = ixQuote1 + 10 + originalText[ixQuote1+10:].index( '"' )
-                                    strongs = originalText[ixQuote1+10:ixQuote2]
+                                    assert original_text[ixQuote1+1:].startswith(' strong="')
+                                    ixQuote2 = ixQuote1 + 10 + original_text[ixQuote1+10:].index( '"' )
+                                    strongs = original_text[ixQuote1+10:ixQuote2]
                                     # assert strongs[0] in 'GH' # Fails on 'b:H7800' etc.
                                     dPrint( 'Verbose', debuggingThisFunction, f"Got strongs='{strongs}'")
-                                    if originalText[ixQuote2+1:].startswith(' x-morph="'):
-                                        ixQuote3 = ixQuote2 + 11 + originalText[ixQuote2+11:].index( '"' )
-                                        morph = originalText[ixQuote2+11:ixQuote3]
+                                    if original_text[ixQuote2+1:].startswith(' x-morph="'):
+                                        ixQuote3 = ixQuote2 + 11 + original_text[ixQuote2+11:].index( '"' )
+                                        morph = original_text[ixQuote2+11:ixQuote3]
                                         dPrint( 'Verbose', debuggingThisFunction, f"Got morph='{morph}'" )
                                         if morph.startswith( 'He,' ):
                                             assert morph.count( ',' ) == 1
@@ -2794,7 +2798,7 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
                                     StrongsDictSet[strongs].add( lemma )
                                     ix = ixEnd + 3
                                 else: # next part of line is NOT a \\w entry
-                                    char, charName = originalText[ix], 'unknown'
+                                    char, charName = original_text[ix], 'unknown'
                                     if char == ' ': charName = 'space'
                                     elif char in '1234567890': charName = 'digit'
                                     elif char in BibleOrgSysGlobals.ALL_WORD_PUNCT_CHARS: charName = 'punctuation'
@@ -2805,7 +2809,7 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
                                     else: line.append( char )
                                     ix += 1
                         else: # no word entries in line, e.g., for intro lines, section headings, etc.
-                            line = [originalText]
+                            line = [original_text]
                         dPrint( 'Verbose', debuggingThisFunction, f"Got {BBB} {C}:{V} line={line}" )
                         if len(line) > 1: # not just a single string
                             # assert (C,V) not in lines # Fails for 1 Tim 6:2 with \p in middle of verse
@@ -2918,9 +2922,9 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
             dPrint( 'Info', debuggingThisFunction, '  InternalBible.analyseAndExportUWalignments', ref, origVerseText )
             if len(origVerseText) < 11: SOMETHING_WRONG # Should be at least eleven characters (Jesus wept.)
 
-            isOT = BibleOrgSysGlobals.loadedBibleBooksCodes.isOldTestament_NR( BBB )
-            isNT = BibleOrgSysGlobals.loadedBibleBooksCodes.isNewTestament_NR( BBB )
-            isDC = BibleOrgSysGlobals.loadedBibleBooksCodes.isDeuterocanon_NR( BBB )
+            isOT = bos_books_codes_py.is_old_testament_nr( BBB )
+            isNT = bos_books_codes_py.is_new_testament_nr( BBB )
+            isDC = bos_books_codes_py.is_deuterocanon_nr( BBB )
 
             if 'uWalignments' in bookObject.__dict__:
                 vPrint( 'Never', debuggingThisFunction, f"Cleaning alignments for {BBB} and aggregating…" )
@@ -3036,9 +3040,9 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
             # maxOriginalWords = max( len(originalWordsList), maxOriginalWords )
             # maxTranslatedWords = max( len(translatedWordsList), maxTranslatedWords )
 
-            isOT = BibleOrgSysGlobals.loadedBibleBooksCodes.isOldTestament_NR( BBB )
-            isNT = BibleOrgSysGlobals.loadedBibleBooksCodes.isNewTestament_NR( BBB )
-            isDC = BibleOrgSysGlobals.loadedBibleBooksCodes.isDeuterocanon_NR( BBB )
+            isOT = bos_books_codes_py.is_old_testament_nr( BBB )
+            isNT = bos_books_codes_py.is_new_testament_nr( BBB )
+            isDC = bos_books_codes_py.is_deuterocanon_nr( BBB )
 
             # For counting occurrences (not alignments), remove ampersand (non-contiguous words joiner)
             cleanedTranslatedWordsString = translatedWordsString.replace( ' & ', ' ' )

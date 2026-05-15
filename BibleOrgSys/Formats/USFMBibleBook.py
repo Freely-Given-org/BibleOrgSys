@@ -40,6 +40,7 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.InputOutput.USFMFile import USFMFile
 from BibleOrgSys.Bible import Bible, BibleBook
+import usfm_markers_py
 
 
 LAST_MODIFIED_DATE = '2025-06-24' # by RJH
@@ -70,7 +71,7 @@ class USFMBibleBook( BibleBook ):
 
         global sortedNLMarkers
         if sortedNLMarkers is None:
-            sortedNLMarkers = sorted( BibleOrgSysGlobals.loadedUSFMMarkers.getNewlineMarkersList('Combined'), key=len, reverse=True )
+            sortedNLMarkers = sorted( usfm_markers_py.get_newline_markers_list('Combined'), key=len, reverse=True )
     # end of USFMBibleBook.__init__
 
 
@@ -111,14 +112,14 @@ class USFMBibleBook( BibleBook ):
                 text = text.replace( '{', '\\add ' ).replace( '}', '\\add*' )
 
             if '\\' in text: # Check markers inside the lines
-                markerList = BibleOrgSysGlobals.loadedUSFMMarkers.getMarkerListFromText( text )
+                markerList = usfm_markers_py.get_marker_list_from_text( text )
                 ix = 0
                 for insideMarker, iMIndex, nextSignificantChar, fullMarker, characterContext, endIndex, markerField in markerList: # check paragraph markers
                     if insideMarker == '\\': # it's a free-standing backspace
                         loadErrors.append( f"{self.BBB} {C}:{V} Improper free-standing backspace character within line in \\{marker}: {text!r}" )
                         logging.error( f"Improper free-standing backspace character within line after {self.BBB} {C}:{V} in \\{marker}: {text!r}" ) # Only log the first error in the line
                         self.addPriorityError( 100, C, V, "Improper free-standing backspace character inside a line" )
-                    elif BibleOrgSysGlobals.loadedUSFMMarkers.isNewlineMarker(insideMarker) \
+                    elif usfm_markers_py.is_newline_marker(insideMarker) \
                     or insideMarker == 'zaln-e': # Need to split the line for everything else to work properly
                         if ix==0:
                             loadErrors.append( f"{self.BBB} {C}:{V} NewLine marker {marker!r} shouldn't appear within line in \\{insideMarker}: {text!r}" )
@@ -397,7 +398,7 @@ class USFMBibleBook( BibleBook ):
 
         vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + f"Loading {filename}…" )
         #self.BBB = BBB
-        #self.isSingleChapterBook = BibleOrgSysGlobals.loadedBibleBooksCodes.isSingleChapterBook( BBB )
+        #self.isSingleChapterBook = bos_books_codes_py.is_single_chapter_book( BBB )
         self.sourceFilename = filename
         self.sourceFolder = folder
         self.sourceFilepath = os.path.join( folder, filename ) if folder else filename
@@ -518,15 +519,15 @@ class USFMBibleBook( BibleBook ):
             elif marker=='restore': continue # Ignore these lines completely
 
             # Now load the actual Bible book data
-            if BibleOrgSysGlobals.loadedUSFMMarkers.isNewlineMarker( marker ):
+            if usfm_markers_py.is_newline_marker( marker ):
                 if lastMarker:
                     #  dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Add1")
                     doaddLine( lastMarker, lastText )
                     lastMarker = lastText = None
                 if gotUWEncoding:
                     marker, text = handleUWEncoding( marker, text, alignmentVariables )
-            elif BibleOrgSysGlobals.loadedUSFMMarkers.isInternalMarker( marker ) \
-            or (marker and marker.endswith('*') and BibleOrgSysGlobals.loadedUSFMMarkers.isInternalMarker(marker[:-1]) ): # the line begins with an internal marker -- append it to the previous line
+            elif usfm_markers_py.is_internal_marker( marker ) \
+            or (marker and marker.endswith('*') and usfm_markers_py.is_internal_marker(marker[:-1]) ): # the line begins with an internal marker -- append it to the previous line
                 if issueLinePositioningErrors \
                 and (not gotUWEncoding or marker!='w'):
                     if text:
@@ -576,8 +577,8 @@ class USFMBibleBook( BibleBook ):
                     #dPrint( 'Never', debuggingThisFunction, 'USFM Para Markers', BibleOrgSysGlobals.USFMParagraphMarkers )
                     logging.critical( f"Programming error: USFMBibleBook.load() lost '{self.workName}' {self.BBB}_{C}:{V} text after {lastMarker}='{lastText}': {marker}='{text}'" )
                     if self.doExtraChecking or DEBUGGING_THIS_MODULE: halt
-            elif BibleOrgSysGlobals.loadedUSFMMarkers.isNoteMarker( marker ) \
-            or (marker and marker.endswith('*') and BibleOrgSysGlobals.loadedUSFMMarkers.isNoteMarker(marker[:-1]) ): # the line begins with a note marker -- append it to the previous line
+            elif usfm_markers_py.is_note_marker( marker ) \
+            or (marker and marker.endswith('*') and usfm_markers_py.is_note_marker(marker[:-1]) ): # the line begins with a note marker -- append it to the previous line
                 if text:
                     loadErrors.append( f"{self.BBB} {C}:{V} Found '\\{marker}' note marker at beginning of line with text: {text!r}" )
                     logging.warning( f"Found '\\{marker}' note marker after {self.BBB} {C}:{V} at beginning of line with text: {text!r}" )

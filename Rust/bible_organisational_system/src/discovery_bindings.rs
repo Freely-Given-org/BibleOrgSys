@@ -271,22 +271,29 @@ impl PyBibleDiscoveryResults {
 
 #[pyfunction]
 #[pyo3(name = "discoverBook")]
-pub fn py_discover_book(entries: &PyInternalBibleEntryList, bbb: &str) -> PyBookDiscoveryResults {
+pub fn py_discover_book<'py>(
+    py: Python<'py>,
+    entries: &PyInternalBibleEntryList,
+    bbb: &str,
+) -> PyResult<Bound<'py, PyBookDiscoveryResults>> {
     let results = discover_book(&entries.inner, bbb);
-    PyBookDiscoveryResults { inner: results }
+    Bound::new(py, PyBookDiscoveryResults { inner: results })
 }
 
 #[pyfunction]
 #[pyo3(name = "discoverBible")]
-pub fn py_discover_bible(books_dict: &Bound<'_, PyDict>) -> PyResult<PyBibleDiscoveryResults> {
+pub fn py_discover_bible<'py>(
+    py: Python<'py>,
+    books_dict: &Bound<'py, PyDict>,
+) -> PyResult<Bound<'py, PyBibleDiscoveryResults>> {
     let mut books = IndexMap::new();
-    
+
     for (key, value) in books_dict.iter() {
         let bbb: String = key.extract()?;
         let py_list: PyRef<PyInternalBibleEntryList> = value.extract()?;
         books.insert(bbb, py_list.inner.clone());
     }
-    
+
     let results = discover_bible(&books);
-    Ok(PyBibleDiscoveryResults { inner: results })
+    Bound::new(py, PyBibleDiscoveryResults { inner: results })
 }

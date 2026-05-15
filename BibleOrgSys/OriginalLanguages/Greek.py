@@ -211,7 +211,7 @@ class Greek():
         """
         Create an new Greek object.
         """
-        self.originalText = self.currentText = text
+        self.original_text = self.currentText = text
     # end of __init__
 
     def __str__( self ) -> str:
@@ -222,8 +222,8 @@ class Greek():
         @rtype: string
         """
         result = "Greek object"
-        result += ('\n' if result else '') + "  " + f"Original = {self.originalText!r}"
-        if self.currentText != self.originalText:
+        result += ('\n' if result else '') + "  " + f"Original = {self.original_text!r}"
+        if self.currentText != self.original_text:
             result += ('\n' if result else '') + "  " + f"Current  = {self.currentText!r}"
         return result
     # end of __str__

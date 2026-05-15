@@ -647,7 +647,7 @@ class HebrewWLCBibleAddon():
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "verseDataEntry", verseDataEntry )
                     assert isinstance( verseDataEntry, InternalBibleEntry )
                     marker, cleanText, extras = verseDataEntry.getMarker(), verseDataEntry.getCleanText(), verseDataEntry.getExtras()
-                    adjustedText, originalText = verseDataEntry.getAdjustedText(), verseDataEntry.getOriginalText()
+                    adjustedText, original_text = verseDataEntry.getAdjustedText(), verseDataEntry.getOriginalText()
                     if marker in ('v~','p~'):
                         verseDictList = self.getVerseDictList( verseDataEntry, currentVerseKey )
                         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, currentVerseKey.getShortText(), "verseDictList", verseDictList )

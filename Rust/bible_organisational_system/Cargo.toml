@@ -13,7 +13,8 @@ crate-type = ["rlib", "cdylib"]
 log.workspace = true
 pyo3-log.workspace = true
 bos-internals.workspace = true
-indexmap.workspace = true
+indexmap = { workspace = true, features = ["rayon"] }
+rayon.workspace = true
 pyo3.workspace = true
 rkyv.workspace = true
 thiserror.workspace = true

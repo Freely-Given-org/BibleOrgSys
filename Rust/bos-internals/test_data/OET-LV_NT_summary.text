@@ -1,0 +1,54 @@
+MAT len(self._rawLines)=1141 len(self._processedLines)=3339
+MRK len(self._rawLines)=724 len(self._processedLines)=2099
+LUK len(self._rawLines)=1213 len(self._processedLines)=3563
+JHN len(self._rawLines)=935 len(self._processedLines)=2726
+ACT len(self._rawLines)=1076 len(self._processedLines)=3144
+ROM len(self._rawLines)=479 len(self._processedLines)=1380
+CO1 len(self._rawLines)=483 len(self._processedLines)=1393
+CO2 len(self._rawLines)=296 len(self._processedLines)=838
+GAL len(self._rawLines)=175 len(self._processedLines)=489
+EPH len(self._rawLines)=181 len(self._processedLines)=507
+PHP len(self._rawLines)=126 len(self._processedLines)=346
+COL len(self._rawLines)=117 len(self._processedLines)=319
+TH1 len(self._rawLines)=113 len(self._processedLines)=305
+TH2 len(self._rawLines)=67 len(self._processedLines)=171
+TI1 len(self._rawLines)=139 len(self._processedLines)=381
+TI2 len(self._rawLines)=105 len(self._processedLines)=283
+TIT len(self._rawLines)=66 len(self._processedLines)=168
+PHM len(self._rawLines)=41 len(self._processedLines)=97
+HEB len(self._rawLines)=343 len(self._processedLines)=979
+JAM len(self._rawLines)=132 len(self._processedLines)=362
+PE1 len(self._rawLines)=129 len(self._processedLines)=353
+PE2 len(self._rawLines)=81 len(self._processedLines)=213
+JN1 len(self._rawLines)=129 len(self._processedLines)=353
+JN2 len(self._rawLines)=29 len(self._processedLines)=61
+JN3 len(self._rawLines)=31 len(self._processedLines)=67
+JDE len(self._rawLines)=41 len(self._processedLines)=97
+REV len(self._rawLines)=463 len(self._processedLines)=1321
+  MAT len(bookObject._CVIndex)=1116 len(bookObject._SectionIndex)=29
+  MRK len(bookObject._CVIndex)=711 len(bookObject._SectionIndex)=17
+  LUK len(bookObject._CVIndex)=1192 len(bookObject._SectionIndex)=25
+  JHN len(bookObject._CVIndex)=917 len(bookObject._SectionIndex)=22
+  ACT len(bookObject._CVIndex)=1051 len(bookObject._SectionIndex)=29
+  ROM len(bookObject._CVIndex)=466 len(bookObject._SectionIndex)=17
+  CO1 len(bookObject._CVIndex)=470 len(bookObject._SectionIndex)=17
+  CO2 len(bookObject._CVIndex)=286 len(bookObject._SectionIndex)=14
+  GAL len(bookObject._CVIndex)=172 len(bookObject._SectionIndex)=7
+  EPH len(bookObject._CVIndex)=178 len(bookObject._SectionIndex)=7
+  PHP len(bookObject._CVIndex)=125 len(bookObject._SectionIndex)=5
+  COL len(bookObject._CVIndex)=116 len(bookObject._SectionIndex)=5
+  TH1 len(bookObject._CVIndex)=111 len(bookObject._SectionIndex)=6
+  TH2 len(bookObject._CVIndex)=67 len(bookObject._SectionIndex)=4
+  TI1 len(bookObject._CVIndex)=136 len(bookObject._SectionIndex)=7
+  TI2 len(bookObject._CVIndex)=104 len(bookObject._SectionIndex)=5
+  TIT len(bookObject._CVIndex)=66 len(bookObject._SectionIndex)=4
+  PHM len(bookObject._CVIndex)=43 len(bookObject._SectionIndex)=2
+  HEB len(bookObject._CVIndex)=333 len(bookObject._SectionIndex)=14
+  JAM len(bookObject._CVIndex)=130 len(bookObject._SectionIndex)=6
+  PE1 len(bookObject._CVIndex)=127 len(bookObject._SectionIndex)=6
+  PE2 len(bookObject._CVIndex)=81 len(bookObject._SectionIndex)=4
+  JN1 len(bookObject._CVIndex)=127 len(bookObject._SectionIndex)=6
+  JN2 len(bookObject._CVIndex)=31 len(bookObject._SectionIndex)=2
+  JN3 len(bookObject._CVIndex)=33 len(bookObject._SectionIndex)=2
+  JDE len(bookObject._CVIndex)=43 len(bookObject._SectionIndex)=2
+  REV len(bookObject._CVIndex)=444 len(bookObject._SectionIndex)=23

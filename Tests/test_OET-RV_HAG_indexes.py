@@ -1278,7 +1278,7 @@ def load_OET_RV_Haggai() -> ESFMBible|None:
                 # This loop is used for several types of data
                 assert isinstance( verseDataEntry, InternalBibleEntry )
                 marker, cleanText, extras = verseDataEntry.getMarker(), verseDataEntry.getCleanText(), verseDataEntry.getExtras()
-                adjustedText, originalText = verseDataEntry.getAdjustedText(), verseDataEntry.getOriginalText()
+                adjustedText, original_text = verseDataEntry.getAdjustedText(), verseDataEntry.getOriginalText()
                 fullText = verseDataEntry.getFullText()
                 if BibleOrgSysGlobals.verbosityLevel > 0:
                     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "marker={} cleanText={!r}{}".format( marker, cleanText,
@@ -1287,8 +1287,8 @@ def load_OET_RV_Haggai() -> ESFMBible|None:
                         vPrint( 'Normal', DEBUGGING_THIS_MODULE, ' '*(len(marker)+4), f"adjustedText={adjustedText!r}" )
                     if fullText and fullText!=cleanText:
                         vPrint( 'Normal', DEBUGGING_THIS_MODULE, ' '*(len(marker)+4), f"fullText={fullText!r}" )
-                    if originalText and originalText!=cleanText:
-                        vPrint( 'Normal', DEBUGGING_THIS_MODULE, ' '*(len(marker)+4), f"originalText={originalText!r}" )
+                    if original_text and original_text!=cleanText:
+                        vPrint( 'Normal', DEBUGGING_THIS_MODULE, ' '*(len(marker)+4), f"original_text={original_text!r}" )
 
     bookObject = EsfmBib[BBB]
 

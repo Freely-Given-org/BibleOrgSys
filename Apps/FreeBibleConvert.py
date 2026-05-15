@@ -38,6 +38,7 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Misc.NoisyReplaceFunctions import noisyFind, noisyRegExFind, \
                                     noisyReplaceAll, noisyDeleteAll, noisyRegExReplaceAll
+import bos_books_codes_py
 
 
 LAST_MODIFIED_DATE = '2018-12-02' # by RJH
@@ -79,7 +80,7 @@ def splitAndWriteBooks( entireBibleText, folderpath ):
         assert splitText[3] == ' '
         bookID = splitText[:3]
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Got book id", repr(bookID) )
-        assert bookID in BibleOrgSysGlobals.loadedBibleBooksCodes.getAllUSFMBooksCodes( toUpper=True )
+        assert bookID in bos_books_codes_py.get_all_usfm_books_codes( toUpper=True )
         splitText = splitOnString + splitText
 
         # Last chance to fix things up (e.g., by bookID)
@@ -121,8 +122,8 @@ def main() -> None:
 
     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Loading {INPUT_FILEPATH}…" )
     with open( INPUT_FILEPATH, 'rt', encoding='utf-8' ) as textFile:
-        originalText = textFile.read()
-    vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  Loaded {len(originalText):,} characters ({originalText.count('
+        original_text = textFile.read()
+    vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  Loaded {len(original_text):,} characters ({original_text.count('
 '):,} lines)" )
 
     # Preparation by inserting some lines at the beginning
@@ -130,7 +131,7 @@ def main() -> None:
     entireText += f'\\rem Converted by {!r}\n'
     entireText += f'\\rem Converted from \'{INPUT_FILEPATH}\'\n'
     entireText += f'\\rem Converted {datetime.now()}\n' )
-    entireText += originalText
+    entireText += original_text
 
     # More preparation
     entireText = noisyReplaceAll( entireText, '\n\r', '\n' ) # Makes it easier later

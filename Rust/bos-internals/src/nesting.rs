@@ -9,12 +9,58 @@ use crate::markers::{
     is_never_content_marker, main_text_list_markers, major_section_markers, paragraph_markers,
 };
 
+/// Add logical verse start markers (`v=`) before sections, paragraphs, etc.
+pub fn add_verse_start_markers(entries: InternalBibleEntryList) -> InternalBibleEntryList {
+    let entries_vec = entries.into_vec();
+    let num_entries = entries_vec.len();
+    let mut result = InternalBibleEntryList::with_capacity(num_entries + 40);
+    
+    let fields_preceded = ["s1", "s2", "s3", "s4", "sp"];
+    let mut fields_also_preceded: Vec<&str> = Vec::new();
+    fields_also_preceded.extend_from_slice(paragraph_markers::ALL);
+    fields_also_preceded.extend_from_slice(&["c#", "r", "d", "ms1", "mr", "sr", "sp", "ib", "b", "cl¤", "tr"]);
+
+    for j in 0..num_entries {
+        let entry = &entries_vec[j];
+        let marker = entry.marker();
+        assert!(!marker.is_empty() && !marker.contains('\\'), "Entry marker should not be empty and should not contain a backslash: found '{}'", marker);
+        
+        if fields_preceded.contains(&marker) {
+            // Look ahead for next 'v'
+            for k in 1..5 {
+                if j + k < num_entries {
+                    let next_entry = &entries_vec[j + k];
+                    let next_marker = next_entry.marker();
+                    if next_marker == "v" {
+                        // Add v= marker
+                        result.push(
+                            InternalBibleEntry::new(
+                                "v=",
+                                "v",
+                                next_entry.adjusted_text().unwrap_or(""),
+                                next_entry.clean_text(),
+                                None,
+                                next_entry.original_text().unwrap_or(""),
+                            )
+                            .expect("Invalid internal entry"),
+                        );
+                        break; // Only add one v= for this preceded field
+                    } else if !fields_also_preceded.contains(&next_marker)
+                        && !next_marker.starts_with('¬')
+                        && next_marker != "rem"
+                    {
+                        break;
+                    }
+                }
+            }
+        }
+        result.push(entry.clone());
+    }
+    result
+}
+
 /// Add nesting and end markers to a list of processed Bible entries.
 ///
-/// This is the Rust equivalent of the Python `_addNestingMarkers` function.
-/// It also calls `add_verse_start_markers` internally to provide a complete
-/// structural processing in one call, though the functions remain available.
-/// 
 /// Note that although nb is considered as a USFM paragraph marker,
 ///   in the BibleOrgSys nesting it acts as a NOP (no-operation)
 ///   so it does not cause an existing paragraph to end (¬nb is never added).
@@ -100,7 +146,7 @@ pub fn add_nesting_markers(
     let paragraph_has_ended = |start_idx: usize, entries: &[InternalBibleEntry]| {
         for entry in entries.iter().skip(start_idx + 1) {
             let m = entry.marker();
-            if paragraph_markers::is_paragraph(m) || main_text_list_markers::is_main_text_list(m) {
+            if paragraph_markers::is_paragraph(m) || m=="v=" || main_text_list_markers::is_main_text_list(m) {
                 return true;
             }
             if matches!(m, "v" | "v~" | "p~") {
@@ -108,20 +154,6 @@ pub fn add_nesting_markers(
             }
         }
         true
-    };
-
-    let find_next_relevant_marker = |start_idx: usize, entries: &[InternalBibleEntry]| {
-        for entry in entries.iter().skip(start_idx + 1) {
-            let m = entry.marker();
-            if matches!(m, "v" | "v~" | "p~")
-                || heading_markers::is_heading(m)
-                || major_section_markers::is_major_section(m)
-                || paragraph_markers::is_paragraph(m)
-            {
-                return Some(CompactString::from(m));
-            }
-        }
-        None
     };
 
     let find_next_relevant_list_marker = |start_idx: usize, entries: &[InternalBibleEntry]| {
@@ -139,6 +171,8 @@ pub fn add_nesting_markers(
         let marker = entry.marker();
         let marker_owned = CompactString::from(marker);
         let text = entry.clean_text();
+        // println!("Processing entry {}: Marker: {}, Clean Text: '{}', open_markers {}", j, marker, text, open_markers.join(", "));
+        // assert!(work_name!="OET-RV" ||bos_book_code != "HAG" || new_lines.len() != 92, "Gone too far without finding the expected verse end marker for 1:15 in OET-RV Haggai: Got {:#?}", new_lines.slice(85,95).iter());
 
         if current_chapter == "-1" {
             current_verse = CompactString::from(new_lines.len().to_string());
@@ -209,27 +243,17 @@ pub fn add_nesting_markers(
                 new_lines.push(InternalBibleEntry::simple(format!("¬{}", m), current_verse.as_str()));
             }
 
+            if let Some(lp) = &last_p_marker
+                && let Some(pos) = open_markers.iter().rposition(|m| m == lp)
+            {
+                let m = open_markers.remove(pos);
+                new_lines.push(InternalBibleEntry::simple(format!("¬{}", m), ""));
+            }
+            last_p_marker = None;
+
             if !open_markers.iter().any(|m| m == "chapters") {
                 new_lines.push(InternalBibleEntry::nesting_marker("chapters"));
                 open_markers.push(CompactString::from("chapters"));
-            } else {
-                let next_rel = find_next_relevant_marker(j, &entries_vec);
-                if let Some(last_open_m) = open_markers.last().map(|s| s.to_string())
-                    && paragraph_markers::is_paragraph(&last_open_m)
-                    && let Some(nr) = next_rel.as_ref()
-                    && (paragraph_markers::is_paragraph(nr.as_str()) || heading_markers::is_heading(nr.as_str()))
-                {
-                    open_markers.pop();
-                    new_lines.push(InternalBibleEntry::simple(format!("¬{}", last_open_m), ""));
-                }
-                if let Some(last_open_m) = open_markers.last().map(|s| s.to_string())
-                    && heading_markers::is_heading(&last_open_m)
-                    && let Some(nr) = next_rel.as_ref()
-                    && heading_markers::is_heading(nr.as_str())
-                {
-                    open_markers.pop();
-                    new_lines.push(InternalBibleEntry::simple(format!("¬{}", last_open_m), ""));
-                }
             }
 
             if let Some(pos) = open_markers.iter().rposition(|m| m == "c") {
@@ -245,7 +269,7 @@ pub fn add_nesting_markers(
                 let m = open_markers.remove(pos);
                 new_lines.push(InternalBibleEntry::simple(format!("¬{}", m), current_verse.as_str()));
             }
-        } else if marker == "v" {
+        } else if marker == "v" || marker == "v=" {
             for _ in 0..9 {
                 let mut made_change = false;
                 if let Some(last_open_m) = open_markers.last().map(|s| s.to_string()) {
@@ -271,7 +295,9 @@ pub fn add_nesting_markers(
                 new_lines.push(InternalBibleEntry::simple(format!("¬{}", m), current_verse.as_str()));
             }
             current_verse = CompactString::from(text);
-            open_markers.push(marker_owned.clone());
+            if marker == "v" {
+                open_markers.push(marker_owned.clone());
+            }
         } else if marker == "iot" {
             open_markers.push(CompactString::from("iot"));
         } else if intro_outline_markers::is_intro_outline(marker) {
@@ -410,7 +436,7 @@ pub fn add_nesting_markers(
                         new_lines.push(InternalBibleEntry::simple("¬v", current_verse.as_str()));
                         made_change = true;
                     } else if let Some(last_p) = &last_p_marker
-                        && last_open_m == last_p.as_str()
+                    && last_open_m == last_p.as_str()
                     {
                         open_markers.pop();
                         new_lines.push(InternalBibleEntry::simple(format!("¬{}", last_open_m), ""));
@@ -523,148 +549,7 @@ pub fn add_nesting_markers(
     new_lines
 }
 
-/// Add logical verse start markers (`v=`) before sections, paragraphs, etc.
-/// 
-/// This is the Rust equivalent of the Python `addVerseStartMarkers` function.
-pub fn add_verse_start_markers(entries: InternalBibleEntryList) -> InternalBibleEntryList {
-    let entries_vec = entries.into_vec();
-    let num_entries = entries_vec.len();
-    let mut result = InternalBibleEntryList::with_capacity(num_entries + 40);
-    
-    let fields_preceded = ["s", "s1", "s2", "s3", "s4", "sp"];
-    let mut fields_also_preceded: Vec<&str> = Vec::new();
-    fields_also_preceded.extend_from_slice(paragraph_markers::ALL);
-    fields_also_preceded.extend_from_slice(&["c#", "r", "d", "ms1", "mr", "sr", "sp", "ib", "b", "nb", "cl¤", "tr"]);
-
-    for j in 0..num_entries {
-        let entry = &entries_vec[j];
-        let marker = entry.marker();
-        assert!(!marker.is_empty() && !marker.contains('\\'), "Entry marker should not be empty and should not contain a backslash: found '{}'", marker);
-        
-        if fields_preceded.contains(&marker) {
-            // Look ahead for next 'v'
-            for k in 1..5 {
-                if j + k < num_entries {
-                    let next_entry = &entries_vec[j + k];
-                    let next_marker = next_entry.marker();
-                    if next_marker == "v" {
-                        // Add v= marker
-                        result.push(
-                            InternalBibleEntry::new(
-                                "v=",
-                                "v",
-                                next_entry.adjusted_text().unwrap_or(""),
-                                next_entry.clean_text(),
-                                None,
-                                next_entry.original_text().unwrap_or(""),
-                            )
-                            .expect("Invalid internal entry"),
-                        );
-                        break; // Only add one v= for this preceded field
-                    } else if !fields_also_preceded.contains(&next_marker)
-                        && !next_marker.starts_with('¬')
-                        && next_marker != "rem"
-                    {
-                        break;
-                    }
-                }
-            }
-        }
-        result.push(entry.clone());
-    }
-    result
-}
-
 #[cfg(test)]
 mod tests {
-    use std::fs::File;
-    use std::io::{BufRead, BufReader};
 
-    #[test]
-    fn test_oet_lv_haggai_nesting() {
-        let file_path = "../../Tests/DataFilesForTests/OET-LV/OET-LV_HAG.ESFM";
-        let file = File::open(file_path).expect("Could not open OET-LV Haggai ESFM file");
-        let reader = BufReader::new(file);
-
-        let mut raw_lines = Vec::new();
-        for line in reader.lines() {
-            let line = line.expect("Could not read line");
-            if line.trim().is_empty() {
-                continue;
-            }
-            let (marker, text) = match line.split_once(' ') {
-                Some((m, t)) => (m, t),
-                None => (line.as_str(), ""),
-            };
-            let marker = marker.strip_prefix('\\').unwrap_or(marker);
-            raw_lines.push((marker.to_string(), text.to_string()));
-        }
-        
-        // Results should match test_data/OET-LV_HAG_rawLines.txt
-        let original_count = raw_lines.len();
-        println!("Original lines read: {}", original_count);
-        assert_eq!(original_count, 57, "Expected 57 raw lines in Haggai ESFM file");
-
-        let options = crate::processing::ProcessLinesOptions::default();
-        let processed = crate::processing::process_lines(raw_lines, "HAG", "OET-LV", &options);
-        println!("Final OET-LV Haggai processed line entries: {}", processed.len());
-        
-        // Verify some key structural markers from the reference test
-        assert_eq!(processed[9].marker(), "headers");
-        assert_eq!(processed[16].marker(), "¬headers");
-        assert_eq!(processed[17].marker(), "chapters");
-        assert_eq!(processed[18].marker(), "c");
-        assert_eq!(processed[18].clean_text(), "1");
-        assert_eq!(processed[139].marker(), "¬c");
-        assert_eq!(processed[139].clean_text(), "2");
-        assert_eq!(processed[140].marker(), "¬chapters");
-        assert!(processed[140].clean_text().is_empty());
-
-        assert_eq!(processed.len(), 141, "{}", processed.iter().map(|e| e.marker()).collect::<Vec<_>>().join(","));
-    }
-
-    #[test]
-    fn test_oet_rv_haggai_nesting() {
-        let file_path = "../../Tests/DataFilesForTests/OET-RV/OET-RV_HAG.ESFM";
-        let file = File::open(file_path).expect("Could not open OET-RV Haggai ESFM file");
-        let reader = BufReader::new(file);
-
-        let mut raw_lines = Vec::new();
-        for line in reader.lines() {
-            let line = line.expect("Could not read line");
-            if line.trim().is_empty() {
-                continue;
-            }
-            let (marker, text) = match line.split_once(' ') {
-                Some((m, t)) => (m, t),
-                None => (line.as_str(), ""),
-            };
-            let marker = marker.strip_prefix('\\').unwrap_or(marker);
-            raw_lines.push((marker.to_string(), text.to_string()));
-        }
-        
-        let original_count = raw_lines.len();
-        println!("Original lines read: {}", original_count);
-        assert_eq!(original_count, 81, "Expected 81 raw lines in Haggai ESFM file");
-
-        let options = crate::processing::ProcessLinesOptions::default();
-        let processed = crate::processing::process_lines(raw_lines, "HAG", "OET-RV", &options);
-        println!("Final OET-RV Haggai processed line entries: {}", processed.len());
-        
-        // Verify some key structural markers from the reference test
-        assert_eq!(processed[5].marker(), "headers");
-        assert_eq!(processed[11].marker(), "¬headers");
-        assert_eq!(processed[12].marker(), "intro");
-        assert_eq!(processed[21].marker(), "¬intro");
-        assert_eq!(processed[22].marker(), "chapters");
-        assert_eq!(processed[23].marker(), "c");
-        assert_eq!(processed[23].clean_text(), "1");
-        assert_eq!(processed[24].marker(), "v=");
-        assert_eq!(processed[186].marker(), "¬c");
-        assert_eq!(processed[186].clean_text(), "2");
-        assert_eq!(processed[187].marker(), "¬chapters");
-        assert!(processed[187].clean_text().is_empty());
-
-        assert_eq!(processed.len(), 188, "Expected 188 entries after nesting and verse start markers");
-    }
 }

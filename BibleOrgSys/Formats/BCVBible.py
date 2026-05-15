@@ -103,7 +103,7 @@ def BCVBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=Fal
         numFound += 1
         if strictCheck:
             for folderName in foundFolders:
-                if folderName not in BibleOrgSysGlobals.loadedBibleBooksCodes:
+                if folderName not in bos_books_codes_py.get_all_bos_book_codes():
                     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "BCVBibleFileCheck: Surprised to find folder:", folderName )
     if numFound:
         vPrint( 'Info', DEBUGGING_THIS_MODULE, f"BCVBibleFileCheck got {numFound} in {givenFolderName}" )
@@ -144,7 +144,7 @@ def BCVBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=Fal
             numFound += 1
             if strictCheck:
                 for folderName in foundSubfolders:
-                    if folderName not in BibleOrgSysGlobals.loadedBibleBooksCodes:
+                    if folderName not in bos_books_codes_py.get_all_bos_book_codes():
                         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "BCVBibleFileCheckSurprised to find folder:", folderName )
     if numFound:
         vPrint( 'Info', DEBUGGING_THIS_MODULE, f"BCVBibleFileCheck foundProjects {numFound} {foundProjects}" )
@@ -287,7 +287,7 @@ class BCVBible( Bible ):
                 #for something in bl[1:-1].split( ',' ):
                     #if something[0]==' ': something = something[1:]
                     #if something[0]=="'" and something[-1]=="'": something = something[1:-1]
-                    #if something in BibleOrgSysGlobals.loadedBibleBooksCodes:
+                    #if something in bos_books_codes_py.get_all_bos_book_codes():
                         #self.givenBookList.append( something )
                     #else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"ERROR: Unexpected {something!r} booklist entry in metadata file" )
                 #del self.suppliedMetadata['BCV']['BookList']
@@ -464,23 +464,23 @@ class BCVBibleBook( BibleBook ):
                 we don't need to worry about that here.
         """
 
-        def doaddLine( originalMarker, originalText ):
+        def doaddLine( originalMarker, original_text ):
             """
             Check for newLine markers within the line (if so, break the line) and save the information in our database.
 
             Also convert ~ to a proper non-break space.
             """
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"doaddLine( {repr(originalMarker)}, {repr(originalText)} )" )
-            marker, text = originalMarker, originalText.replace( '~', ' ' )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"doaddLine( {repr(originalMarker)}, {repr(original_text)} )" )
+            marker, text = originalMarker, original_text.replace( '~', ' ' )
             if '\\' in text: # Check markers inside the lines
-                markerList = BibleOrgSysGlobals.BCVMarkers.getMarkerListFromText( text )
+                markerList = BibleOrgSysGlobals.BCVMarkers.get_marker_list_from_text( text )
                 ix = 0
                 for insideMarker, iMIndex, nextSignificantChar, fullMarker, characterContext, endIndex, markerField in markerList: # check paragraph markers
                     if insideMarker == '\\': # it's a free-standing backspace
                         loadErrors.append( f"{self.BBB} {C}:{V} Improper free-standing backspace character within line in \\{marker}: {text!r}" )
                         logging.error( f"Improper free-standing backspace character within line after {self.BBB} {C}:{V} in \\{marker}: {text!r}" ) # Only log the first error in the line
                         self.addPriorityError( 100, C, V, "Improper free-standing backspace character inside a line" )
-                    elif BibleOrgSysGlobals.BCVMarkers.isNewlineMarker(insideMarker): # Need to split the line for everything else to work properly
+                    elif BibleOrgSysGlobals.BCVMarkers.is_newline_marker(insideMarker): # Need to split the line for everything else to work properly
                         if ix==0:
                             loadErrors.append( f"{self.BBB} {C}:{V} NewLine marker {insideMarker!r} shouldn't appear within line in \\{marker}: {text!r}" )
                             logging.error( f"NewLine marker {insideMarker!r} shouldn't appear within line after {self.BBB} {C}:{V} in \\{marker}: {text!r}" ) # Only log the first error in the line
@@ -488,7 +488,7 @@ class BCVBibleBook( BibleBook ):
                         thisText = text[ix:iMIndex].rstrip()
                         self.addLine( marker, thisText )
                         ix = iMIndex + 1 + len(insideMarker) + len(nextSignificantChar) # Get the start of the next text -- the 1 is for the backslash
-                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Did a split from {originalMarker}:{originalText!r} to {marker}:{thisText!r} leaving {insideMarker}:{text[ix:]!r}" )
+                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Did a split from {originalMarker}:{original_text!r} to {marker}:{thisText!r} leaving {insideMarker}:{text[ix:]!r}" )
                         marker = insideMarker # setup for the next line
                 if ix != 0: # We must have separated multiple lines
                     text = text[ix:] # Get the final bit of the line

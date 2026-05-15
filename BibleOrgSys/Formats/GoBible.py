@@ -42,6 +42,7 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Bible import Bible, BibleBook
 from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
+import bos_books_codes_py
 
 
 LAST_MODIFIED_DATE = '2020-04-29' # by RJH
@@ -250,7 +251,7 @@ class GoBible( Bible ):
                     numBookFolders += 1
                     bookCode = folderName[:-4]
                     # Code below doesn't work -- foldernames vary
-                    #BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromOSISAbbreviation( bookCode )
+                    #BBB = bos_books_codes_py.osis_book_code_to_bos_book_code( bookCode )
                     #self.discoveredBookList.append( BBB )
                     continue
                 unexpectedFolders.append( folderName )
@@ -352,16 +353,16 @@ class GoBible( Bible ):
 
         self.BibleOrgSystem = BibleOrganisationalSystem( 'GENERIC-KJV-66' )
         if numBooks == 66:
-            self.bookList = [BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromReferenceNumber(x) for x in range(1,66+1)]
+            self.bookList = [bos_books_codes_py.get_bos_book_code_from_reference_number(x) for x in range(1,66+1)]
         elif numBooks == 27:
-            self.bookList = [BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromReferenceNumber(x) for x in range(40,66+1)]
+            self.bookList = [bos_books_codes_py.get_bos_book_code_from_reference_number(x) for x in range(40,66+1)]
         else:
             logging.warning( f"GoBible.preload found {numBooks} books -- trying to figure out book codes" )
             self.bookList = []
             for n in range( numBooks ):
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{n+1}/{numBooks}: Got '{self.bookNames[n]}' and '{self.filenameBases[n]}'" )
-                BBB1 = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromEnglishText( self.bookNames[n] )
-                BBB2 = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromEnglishText( self.filenameBases[n] )
+                BBB1 = bos_books_codes_py.english_name_to_bos_book_code( self.bookNames[n] )
+                BBB2 = bos_books_codes_py.english_name_to_bos_book_code( self.filenameBases[n] )
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{n+1}/{numBooks}: Found {BBB1} and {BBB2}" )
                 if BBB1 and (BBB2==BBB1 or BBB2 is None): BBB = BBB1
                 elif BBB2 and BBB1 is None: BBB = BBB2
@@ -369,7 +370,7 @@ class GoBible( Bible ):
                     logging.error( f"GoBible.preload choosing '{self.bookNames[n]}'->{BBB1} over '{self.filenameBases[n]}'->{BBB2}" )
                     BBB = BBB1
                 else:
-                    BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromReferenceNumber(n)
+                    BBB = bos_books_codes_py.get_bos_book_code_from_reference_number(n)
                     logging.error( f"GoBible.preload unable to discover book code from '{self.bookNames[n]}'->{BBB1} or '{self.filenameBases[n]}'->{BBB2}: assuming {BBB}" )
                 self.bookList.append( BBB )
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"GoBible.preload: {numBooks} book details preloaded" )
@@ -483,7 +484,7 @@ class GoBibleBook( BibleBook ):
 
         #global sortedNLMarkers
         #if sortedNLMarkers is None:
-            #sortedNLMarkers = sorted( BibleOrgSysGlobals.GoBibleMarkers.getNewlineMarkersList('Combined'), key=len, reverse=True )
+            #sortedNLMarkers = sorted( BibleOrgSysGlobals.GoBibleMarkers.get_newline_markers_list('Combined'), key=len, reverse=True )
     # end of GoBibleBook.__init__
 
 

@@ -47,6 +47,7 @@ NOTE: We've started adding coding for the ESFM v0.6 spec,
 
 CHANGELOG:
     2026-04-12 Allow for an online folder to be used
+    2026-05-11 Switched to usfm_markers_py
 """
 import os
 from pathlib import Path
@@ -54,15 +55,15 @@ import logging
 
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
-from BibleOrgSys.Reference.USFM3Markers import OFTEN_IGNORED_USFM_HEADER_MARKERS
 from BibleOrgSys.InputOutput.ESFMFile import ESFMFile
 from BibleOrgSys.Bible import Bible, BibleBook
+import usfm_markers_py
 
 
-LAST_MODIFIED_DATE = '2026-04-12' # by RJH
+LAST_MODIFIED_DATE = '2026-05-11' # by RJH
 SHORT_PROGRAM_NAME = "ESFMBibleBook"
 PROGRAM_NAME = "ESFM Bible book handler"
-PROGRAM_VERSION = '0.52'
+PROGRAM_VERSION = '0.53'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -90,7 +91,7 @@ class ESFMBibleBook( BibleBook ):
 
         global sortedNLMarkers
         if sortedNLMarkers is None:
-            sortedNLMarkers = sorted( BibleOrgSysGlobals.loadedUSFMMarkers.getNewlineMarkersList('Combined'), key=len, reverse=True )
+            sortedNLMarkers = sorted( usfm_markers_py.get_newline_markers_list('Combined'), key=len, reverse=True )
 
         self.ESFMWorkDataFilename = self.ESFMFileDataFilename = self.ESFMWordTableFilename = None
     # end of __init__
@@ -111,16 +112,16 @@ class ESFMBibleBook( BibleBook ):
         fnPrint( DEBUGGING_THIS_MODULE, f"ESFMBibleBook.load( {filename}, {folder} )" )
 
 
-        def oldESFMPreprocessing( BBB:str, C:str, V:str, marker, originalText ):
+        def oldESFMPreprocessing( BBB:str, C:str, V:str, marker, original_text ):
             """
             Converts ESFM tagging to pseudo-USFM codes for easier handling later on.
 
             Parameters:
                 BBB, C, V parameters are just for use in error messages
-                originalText is the text line from the file
+                original_text is the text line from the file
 
             Returns:
-                A string replacement to use instead of originalText
+                A string replacement to use instead of original_text
 
             Converts:
                 XXX=PYYYY to \\dic PXXX=YYY\\dic*
@@ -131,8 +132,8 @@ class ESFMBibleBook( BibleBook ):
             Note: This DOESN'T remove the underline/underscore characters used to join translated words
                 which were one word in the original, e.g., went_down
             """
-            if len(originalText)>5: # Don't display for "blank" lines (like '\\v 10 ')
-                fnPrint( DEBUGGING_THIS_MODULE, f"ESFMBibleBook.oldESFMPreprocessing( {BBB} {C}:{V}, {marker}, '{originalText}' )" )
+            if len(original_text)>5: # Don't display for "blank" lines (like '\\v 10 ')
+                fnPrint( DEBUGGING_THIS_MODULE, f"ESFMBibleBook.oldESFMPreprocessing( {BBB} {C}:{V}, {marker}, '{original_text}' )" )
 
 
             def saveWord( BBB:str, C:str, V:str, word ):
@@ -237,18 +238,18 @@ class ESFMBibleBook( BibleBook ):
             # The tag is the bit starting with =, e.g., '=PJonah'
             hangingUnderlineCount = 0 # Count of unclosed '…_ ' sequences
             lastChar = ''
-            #textLen = len( originalText )
+            #textLen = len( original_text )
             resultText = ''
             firstWordFlag = True
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'oldESFMPreprocessing {BBB} {C}:{V}' )
-            for j, originalChar in enumerate( originalText ):
+            for j, originalChar in enumerate( original_text ):
                 char = originalChar
-                #nextChar = originalText[j+1] if j<textLen-1 else ''
+                #nextChar = original_text[j+1] if j<textLen-1 else ''
 
-                #if '{'  in originalText or '_' in originalText or '=' in originalText:
+                #if '{'  in original_text or '_' in original_text or '=' in original_text:
                 #if C=='4' and V=='11':
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  oldESFMPreprocessing {}={!r} lc={!r} uGF={} hUC={} uL={!r} bGF={} bG={!r} tg={!r} \n    oT={!r} \n    rT={!r}" \
-                    #.format( j, originalChar, lastChar, underlineGroupFlag, hangingUnderlineCount, underlineGroup, bracedGroupFlag, bracedGroup, tag, originalText, resultText ) )
+                    #.format( j, originalChar, lastChar, underlineGroupFlag, hangingUnderlineCount, underlineGroup, bracedGroupFlag, bracedGroup, tag, original_text, resultText ) )
 
                 # Handle hanging underlines, e.g., 'and_ ' or ' _then' or 'and_ they_ _were_ _not _ashamed'
                 if char == ' ':
@@ -310,8 +311,8 @@ class ESFMBibleBook( BibleBook ):
                                 word = bracedGroupText = tagText = ''
                                 if char!='}': resultText += char
                         else:
-                            loadErrors.append( f"{self.BBB} {C}:{V} unexpected short ESFM tag at {j}={originalChar!r} in {originalText!r}" )
-                            logging.error( f"ESFM tagging error in {BBB} {C}:{V}: unexpected short tag at {j}={originalChar!r} in {originalText!r}" )
+                            loadErrors.append( f"{self.BBB} {C}:{V} unexpected short ESFM tag at {j}={originalChar!r} in {original_text!r}" )
+                            logging.error( f"ESFM tagging error in {BBB} {C}:{V}: unexpected short tag at {j}={originalChar!r} in {original_text!r}" )
                             self.addPriorityError( 21, C, V, "Unexpected ESFM short tag" )
                     else: # still in tag
                         tagText += char
@@ -322,8 +323,8 @@ class ESFMBibleBook( BibleBook ):
                     else: # still not in tag
                         if char == '{':
                             if (lastChar and lastChar!=' ') or tagText or bracedGroupFlag or bracedGroupText:
-                                loadErrors.append( f"{self.BBB} {C}:{V} unexpected ESFM opening brace at {j}={originalChar!r} in {originalText!r}" )
-                                logging.error( f"ESFM tagging error in {BBB} {C}:{V}: unexpected opening brace at {j}={originalChar!r} in {originalText!r}" )
+                                loadErrors.append( f"{self.BBB} {C}:{V} unexpected ESFM opening brace at {j}={originalChar!r} in {original_text!r}" )
+                                logging.error( f"ESFM tagging error in {BBB} {C}:{V}: unexpected opening brace at {j}={originalChar!r} in {original_text!r}" )
                                 self.addPriorityError( 20, C, V, "Unexpected ESFM opening brace" )
                             bracedGroupFlag = True
                             char = '' # nothing to go into resultText
@@ -359,7 +360,7 @@ class ESFMBibleBook( BibleBook ):
 
             #else: # TEMP: just remove all ESFM tags and special characters
                 #inTag = False
-                #for char in originalText:
+                #for char in original_text:
                     #if inTag:
                         #if char in ' _' or char in BibleOrgSysGlobals.ALL_WORD_PUNCT_CHARS: # Note: A forward slash is permitted
                             #inTag = False
@@ -369,20 +370,20 @@ class ESFMBibleBook( BibleBook ):
                         #resultText += char
                 #resultText = resultText.replace('{','').replace('}','').replace('_(',' ').replace(')_',' ').replace('_',' ')
 
-            if DEBUGGING_THIS_MODULE and resultText != originalText:
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"from: {originalText!r}" )
+            if DEBUGGING_THIS_MODULE and resultText != original_text:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"from: {original_text!r}" )
                 vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f" got: {resultText!r}" )
-                #assert originalText.count('_') == resultText.count('_') Not necessarily true
+                #assert original_text.count('_') == resultText.count('_') Not necessarily true
             elif BibleOrgSysGlobals.strictCheckingFlag or (BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE) \
-            and ('{'  in originalText or '}' in originalText or '=' in originalText):
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "original:", repr(originalText) )
+            and ('{'  in original_text or '}' in original_text or '=' in original_text):
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "original:", repr(original_text) )
                 vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "returned:", repr(resultText) )
 
             return resultText
         # end of ESFMBibleBook.load.oldESFMPreprocessing
 
 
-        def doaddLine( originalMarker, originalText ):
+        def doAddLine( originalMarker, original_text ):
             """
             Check for newLine markers within the line (if so, break the line)
                 and save the information in our database.
@@ -392,25 +393,25 @@ class ESFMBibleBook( BibleBook ):
             Also convert ~ to a proper non-break space.
             """
             #if (DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.verbosityLevel > 1) \
-                #and (originalMarker not in ('c','v') or len(originalText)>5): # Don't display for "blank" lines (like '\v 10 ')
-                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"ESFM doaddLine( {originalMarker!r}, {originalText!r} )" )
+                #and (originalMarker not in ('c','v') or len(original_text)>5): # Don't display for "blank" lines (like '\v 10 ')
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"ESFM doAddLine( {originalMarker!r}, {original_text!r} )" )
+            # dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"ESFM doAddLine( {originalMarker=}, {original_text=} )" )
 
-            marker, text = originalMarker, originalText.replace( '~', ' ' )
-            marker = BibleOrgSysGlobals.loadedUSFMMarkers.toStandardMarker( originalMarker )
+            marker, text = usfm_markers_py.to_standard_marker( originalMarker ), original_text.replace( '~', ' ' )
             if marker != originalMarker:
-                loadErrors.append( f"{self.BBB} {C}:{V} ESFM doesn't allow unnumbered marker \\{originalMarker}: {originalText!r}" )
-                logging.error( f"ESFM doesn't allow the unnumbered marker after {self.BBB} {C}:{V} in \\{originalMarker}: {originalText!r}" )
+                loadErrors.append( f"{self.BBB} {C}:{V} ESFM doesn't allow unnumbered marker \\{originalMarker}: {original_text!r}" )
+                logging.error( f"ESFM doesn't allow the unnumbered marker after {self.BBB} {C}:{V} in \\{originalMarker}: {original_text!r}" )
                 self.addPriorityError( 90, C, V, "ESFM doesn't allow unnumbered markers" )
 
             if '\\' in text: # Check markers inside the lines
-                markerList = BibleOrgSysGlobals.loadedUSFMMarkers.getMarkerListFromText( text )
+                markerList = usfm_markers_py.get_marker_list_from_text( text )
                 ix = 0
                 for insideMarker, iMIndex, nextSignificantChar, fullMarker, characterContext, endIndex, markerField in markerList: # check paragraph markers
                     if insideMarker == '\\': # it's a free-standing backspace
                         loadErrors.append( f"{self.BBB} {C}:{V} Improper free-standing backspace character within line in \\{marker}: {text!r}" )
                         logging.error( f"Improper free-standing backspace character within line after {self.BBB} {C}:{V} in \\{marker}: {text!r}" ) # Only log the first error in the line
                         self.addPriorityError( 100, C, V, "Improper free-standing backspace character inside a line" )
-                    elif BibleOrgSysGlobals.loadedUSFMMarkers.isNewlineMarker(insideMarker): # Need to split the line for everything else to work properly
+                    elif usfm_markers_py.is_newline_marker(insideMarker): # Need to split the line for everything else to work properly
                         if ix==0:
                             loadErrors.append( f"{self.BBB} {C}:{V} NewLine marker {marker!r} shouldn't appear within line in \\{insideMarker}: {text!r}" )
                             logging.error( f"NewLine marker {marker!r} shouldn't appear within line after {insideMarker} {self.BBB}:{C} in \\{V}: {text!r}" ) # Only log the first error in the line
@@ -418,11 +419,11 @@ class ESFMBibleBook( BibleBook ):
                         thisText = text[ix:iMIndex].rstrip()
                         self.addLine( marker, thisText )
                         ix = iMIndex + 1 + len(insideMarker) + len(nextSignificantChar) # Get the start of the next text -- the 1 is for the backslash
-                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Did a split from {originalMarker}:{originalText!r} to {marker}:{thisText!r} leaving {insideMarker}:{text[ix:]!r}" )
-                        marker = BibleOrgSysGlobals.loadedUSFMMarkers.toStandardMarker( insideMarker ) # setup for the next line
+                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Did a split from {originalMarker}:{original_text!r} to {marker}:{thisText!r} leaving {insideMarker}:{text[ix:]!r}" )
+                        marker = usfm_markers_py.to_standard_marker( insideMarker ) # setup for the next line
                         if marker != insideMarker:
-                            loadErrors.append( f"{self.BBB} {C}:{V} ESFM doesn't allow unnumbered marker within line \\{insideMarker}: {originalText!r}" )
-                            logging.error( f"ESFM doesn't allow the unnumbered marker within line after {self.BBB} {C}:{V} in \\{insideMarker}: {originalText!r}" )
+                            loadErrors.append( f"{self.BBB} {C}:{V} ESFM doesn't allow unnumbered marker within line \\{insideMarker}: {original_text!r}" )
+                            logging.error( f"ESFM doesn't allow the unnumbered marker within line after {self.BBB} {C}:{V} in \\{insideMarker}: {original_text!r}" )
                             self.addPriorityError( 90, C, V, "ESFM doesn't allow unnumbered markers" )
 
                 if ix != 0: # We must have separated multiple lines
@@ -439,13 +440,13 @@ class ESFMBibleBook( BibleBook ):
                     logging.warning( f"Too many ' _' sequences in {marker} line after {self.BBB} {C}:{V} at beginning of line with text: {text!r}" )
 
             self.addLine( marker, text ) # Call the function in the base class to save the line (or the remainder of the line if we split it above)
-        # end of ESFMBibleBook.doaddLine
+        # end of ESFMBibleBook.doAddLine
 
 
         # Main code for ESFMBibleBook.load
         vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + f"Loading {filename}…" )
         #self.BBB = BBB
-        #self.isSingleChapterBook = BibleOrgSysGlobals.loadedBibleBooksCodes.isSingleChapterBook( BBB )
+        #self.isSingleChapterBook = bos_books_codes_py.is_single_chapter_book( BBB )
         self.sourceFilename = filename
         self.sourceFolder = folder
         self.sourceFilepath = os.path.join( folder, filename ) if folder else filename
@@ -456,33 +457,33 @@ class ESFMBibleBook( BibleBook ):
         C, V = '-1', '-1' # So first/id line starts at -1:0
         lastMarker = lastText = ''
         loadErrors:list[str] = []
-        for marker,originalText in originalBook.lines: # Always process a line behind in case we have to combine lines
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"After {self.BBB} {C}:{V} \\{marker} {originalText!r}" )
+        for marker,original_text in originalBook.lines: # Always process a line behind in case we have to combine lines
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"After {self.BBB} {C}:{V} \\{marker} {original_text!r}" )
             if not marker:
-                logging.critical( f"After {self.BBB} {C}:{V} \\{marker} {originalText!r}" )
+                logging.critical( f"After {self.BBB} {C}:{V} \\{marker} {original_text!r}" )
                 if DEBUGGING_THIS_MODULE: halt
                 continue
 
             # Keep track of where we are for more helpful error messages
-            if marker=='c' and originalText: C, V = originalText.split()[0], '0'
-            elif marker=='v' and originalText:
-                V = originalText.split()[0]
+            if marker=='c' and original_text: C, V = original_text.split()[0], '0'
+            elif marker=='v' and original_text:
+                V = original_text.split()[0]
                 if C == '-1': C = '1' # Some single chapter books don't have an explicit chapter 1 marker
             elif C == '-1' and marker not in ('headers','intro'): V = str( int(V) + 1 )
             elif marker=='restore': continue # Ignore these lines completely
 
             # Now load the actual Bible book data
-            text = originalText
+            text = original_text
             # Disabled 2023-03-13
             # if marker in OFTEN_IGNORED_USFM_HEADER_MARKERS:
-            #     text = originalText
+            #     text = original_text
             # else:
-            #     text = oldESFMPreprocessing( self.BBB, C, V, marker, originalText ) # Convert ESFM encoding to pseudo-USFM
-            if BibleOrgSysGlobals.loadedUSFMMarkers.isNewlineMarker( marker ):
-                if lastMarker: doaddLine( lastMarker, lastText )
+            #     text = oldESFMPreprocessing( self.BBB, C, V, marker, original_text ) # Convert ESFM encoding to pseudo-USFM
+            if usfm_markers_py.is_newline_marker( marker ):
+                if lastMarker: doAddLine( lastMarker, lastText )
                 lastMarker, lastText = marker, text
-            elif BibleOrgSysGlobals.loadedUSFMMarkers.isInternalMarker( marker ) \
-            or (marker and marker.endswith('*') and BibleOrgSysGlobals.loadedUSFMMarkers.isInternalMarker( marker[:-1] ) ): # the line begins with an internal marker -- append it to the previous line
+            elif usfm_markers_py.is_internal_marker( marker ) \
+            or (marker and marker.endswith('*') and usfm_markers_py.is_internal_marker( marker[:-1] ) ): # the line begins with an internal marker -- append it to the previous line
                 if text:
                     loadErrors.append( f"{self.BBB} {C}:{V} Found '\\{marker}' internal marker at beginning of line with text: {text!r}" )
                     logging.warning( f"Found '\\{marker}' internal marker after {self.BBB} {C}:{V} at beginning of line with text: {text!r}" )
@@ -493,8 +494,8 @@ class ESFMBibleBook( BibleBook ):
                 if not lastText.endswith(' '): lastText += ' ' # Not always good to add a space, but it's their fault!
                 lastText +=  '\\' + marker + ' ' + text
                 vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"{self.BBB} {C} {V} Appended {marker}:{lastMarker!r} to get combined line {text}:{lastText!r}" )
-            elif BibleOrgSysGlobals.loadedUSFMMarkers.isNoteMarker( marker ) \
-            or marker and marker.endswith('*') and BibleOrgSysGlobals.loadedUSFMMarkers.isNoteMarker( marker[:-1] ): # the line begins with a note marker -- append it to the previous line
+            elif usfm_markers_py.is_note_marker( marker ) \
+            or marker and marker.endswith('*') and usfm_markers_py.is_note_marker( marker[:-1] ): # the line begins with a note marker -- append it to the previous line
                 if text:
                     loadErrors.append( f"{self.BBB} {C}:{V} Found '\\{marker}' note marker at beginning of line with text: {text!r}" )
                     logging.warning( f"Found '\\{marker}' note marker after {self.BBB} {C}:{V} at beginning of line with text: {text!r}" )
@@ -515,13 +516,13 @@ class ESFMBibleBook( BibleBook ):
                 self.addPriorityError( 100, C, V, f"Found \\{marker} unknown marker on new line in file" )
                 for tryMarker in sortedNLMarkers: # Try to do something intelligent here -- it might be just a missing space
                     if marker.startswith( tryMarker ): # Let's try changing it
-                        if lastMarker: doaddLine( lastMarker, lastText )
+                        if lastMarker: doAddLine( lastMarker, lastText )
                         lastMarker, lastText = tryMarker, marker[len(tryMarker):] + ' ' + text
                         loadErrors.append( f"{self.BBB} {C}:{V} Changed '\\{marker}' unknown marker to {text!r} at beginning of line: {tryMarker}" )
                         logging.warning( f"Changed '\\{marker}' unknown marker to {text!r} after {tryMarker} {self.BBB}:{C} at beginning of line: {V}" )
                         break
                 # Otherwise, don't bother processing this line -- it'll just cause more problems later on
-        if lastMarker: doaddLine( lastMarker, lastText ) # Process the final line
+        if lastMarker: doAddLine( lastMarker, lastText ) # Process the final line
 
         if not originalBook.lines: # There were no lines!!!
             loadErrors.append( f"{self.BBB} This ESFM file was totally empty: {self.sourceFilename}" )

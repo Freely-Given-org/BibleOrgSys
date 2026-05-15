@@ -1,7 +1,9 @@
 //! Bible Org Sys Internals - Validation and checking logic.
 
 use crate::entry_extras::InternalBibleEntryList;
-use crate::markers::{self, MarkerSection, MarkerContentType, MarkerClosureType};
+use crate::markers::{self};
+use indexmap::IndexMap;
+use rayon::prelude::*;
 
 /// A single validation issue (error or warning).
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
@@ -945,12 +947,81 @@ pub fn check_book(
     results
 }
 
+/// Perform validation checks on all books in parallel.
+pub fn check_bible(
+    books: &IndexMap<String, InternalBibleEntryList>,
+    work_name: &str,
+    options: &CheckOptions,
+    discovery: &crate::discovery::BibleDiscoveryResults,
+) -> IndexMap<String, CheckResults> {
+    books
+        .par_iter()
+        .map(|(bbb, entries)| {
+            let disc = discovery
+                .books
+                .get(bbb)
+                .map(|r| DiscoveryFlags {
+                    partly_done: r.partly_done,
+                    percentage_progress: r.percentage_progress.unwrap_or(0) as f32,
+                    seems_finished: r.seems_finished.unwrap_or(false),
+                    have_main_headings: r.have_main_headings,
+                    have_introductory_text: r.have_introductory_text,
+                })
+                .unwrap_or_default();
+            let results = check_book(entries, bbb, work_name, options, &disc);
+            (bbb.clone(), results)
+        })
+        .collect()
+}
+
+/// Validate processed markers for all books in parallel.
+pub fn validate_bible_markers(
+    books: &IndexMap<String, InternalBibleEntryList>,
+    work_name: &str,
+    strict_checking: bool,
+) -> IndexMap<String, CheckResults> {
+    books
+        .par_iter()
+        .map(|(bbb, entries)| {
+            let results = validate_processed_markers(entries, bbb, work_name, strict_checking);
+            (bbb.clone(), results)
+        })
+        .collect()
+}
+
+/// Get versification info for all books in parallel.
+pub fn get_bible_versification(
+    books: &IndexMap<String, InternalBibleEntryList>,
+    work_name: &str,
+) -> IndexMap<String, VersificationInfo> {
+    books
+        .par_iter()
+        .map(|(bbb, entries)| {
+            let info = get_versification(entries, bbb, work_name);
+            (bbb.clone(), info)
+        })
+        .collect()
+}
+
+/// Get added units for all books in parallel.
+pub fn get_bible_added_units(
+    books: &IndexMap<String, InternalBibleEntryList>,
+) -> IndexMap<String, AddedUnitsInfo> {
+    books
+        .par_iter()
+        .map(|(bbb, entries)| {
+            let info = get_added_units(entries, bbb);
+            (bbb.clone(), info)
+        })
+        .collect()
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
     use std::fs;
     use crate::processing::{process_lines, ProcessLinesOptions};
-    use bos_books_codes::is_valid_reference_abbreviation;
+    use bos_books_codes::is_valid_bos_book_code;
 
     #[test]
     fn test_oet_lv_checking() {
@@ -964,7 +1035,7 @@ mod tests {
                 // OET-LV_HAG.ESFM -> HAG
                 let bos_book_code = filename.split('_').nth(1).unwrap().split('.').next().unwrap();
                 if bos_book_code != "DAG" && bos_book_code != "ES1" && bos_book_code != "ES2" { // Need to sort out these OET-LV filenames
-                    assert!(is_valid_reference_abbreviation(bos_book_code), "Invalid book code: {}", bos_book_code); // Not really required here, but a good test for bos_books_codes
+                    assert!(is_valid_bos_book_code(bos_book_code), "Invalid book code: {}", bos_book_code); // Not really required here, but a good test for bos_books_codes
                 }
                 
                 let content = fs::read_to_string(&path).expect("Could not read file");
@@ -1024,7 +1095,7 @@ mod tests {
                 // OET-RV_HAG.ESFM -> HAG
                 let bos_book_code = filename.split('_').nth(1).unwrap().split('.').next().unwrap();
                 if bos_book_code != "DAG" && bos_book_code != "ES1" && bos_book_code != "ES2" { // Need to sort out these OET-RV filenames
-                    assert!(is_valid_reference_abbreviation(bos_book_code), "Invalid book code: {}", bos_book_code); // Not really required here, but a good test for bos_books_codes
+                    assert!(is_valid_bos_book_code(bos_book_code), "Invalid book code: {}", bos_book_code); // Not really required here, but a good test for bos_books_codes
                 }
                 
                 let content = fs::read_to_string(&path).expect("Could not read file");

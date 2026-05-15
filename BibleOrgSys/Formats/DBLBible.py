@@ -1182,7 +1182,7 @@ class DBLBible( Bible ):
             if 'books' in self.suppliedMetadata['DBL']['contents'][bookListKey]:
                 for USFMBookCode in self.suppliedMetadata['DBL']['contents'][bookListKey]['books']:
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "USFMBookCode", USFMBookCode )
-                    BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromUSFMAbbreviation( USFMBookCode )
+                    BBB = bos_books_codes_py.usfm_abbrev_to_bos_book_code( USFMBookCode )
                     bookList.append( BBB )
                     self.availableBBBs.add( BBB )
             else: logging.error( f"loadDBLMetadata: No books in contents (maybe has divisions?) {self.sourceFilepath}" ) # need to add code if so
@@ -1192,7 +1192,7 @@ class DBLBible( Bible ):
                 if 'CanonicalContent' in pubDict:
                     for USFMBookCode in pubDict['CanonicalContent']:
                         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "USFMBookCode", USFMBookCode )
-                        BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromUSFMAbbreviation( USFMBookCode )
+                        BBB = bos_books_codes_py.usfm_abbrev_to_bos_book_code( USFMBookCode )
                         bookList.append( BBB )
                         self.availableBBBs.add( BBB )
                     if 'Structure' in pubDict:
@@ -1416,7 +1416,7 @@ class DBLBible( Bible ):
                 #if line.startswith( '#! -' ): # It's an excluded verse (or passage???)
                     #assert line[7] == ' '
                     #USFMBookCode = line[4:7]
-                    #BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromUSFMAbbreviation( USFMBookCode )
+                    #BBB = bos_books_codes_py.usfm_abbrev_to_bos_book_code( USFMBookCode )
                     #C,V = line[8:].split( ':', 1 )
                     ##dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "CV", repr(C), repr(V) )
                     #if BibleOrgSysGlobals.debugFlag: assert C.isdigit() and V.isdigit()
@@ -1428,8 +1428,8 @@ class DBLBible( Bible ):
                     #left, right = line.split( ' = ', 1 )
                     ##dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "left", repr(left), 'right', repr(right) )
                     #USFMBookCode1, USFMBookCode2 = left[:3], right[:3]
-                    #BBB1 = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromUSFMAbbreviation( USFMBookCode1 )
-                    #BBB2 = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromUSFMAbbreviation( USFMBookCode2 )
+                    #BBB1 = bos_books_codes_py.usfm_abbrev_to_bos_book_code( USFMBookCode1 )
+                    #BBB2 = bos_books_codes_py.usfm_abbrev_to_bos_book_code( USFMBookCode2 )
                     #DBLVersification['Mappings'][BBB1+left[3:]] = BBB2+right[3:]
                     ##dPrint( 'Quiet', DEBUGGING_THIS_MODULE, DBLVersification['Mappings'] )
                 #else: # It's a verse count line, e.g., LAM 1:22 2:22 3:66 4:22 5:22
@@ -1437,7 +1437,7 @@ class DBLBible( Bible ):
                     #USFMBookCode = line[:3]
                     ##if USFMBookCode == 'ODA': USFMBookCode = 'ODE'
                     #try:
-                        #BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromUSFMAbbreviation( USFMBookCode )
+                        #BBB = bos_books_codes_py.usfm_abbrev_to_bos_book_code( USFMBookCode )
                         #DBLVersification['VerseCounts'][BBB] = {}
                         #for CVBit in line[4:].split():
                             ##dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "CVBit", repr(CVBit) )
@@ -1554,7 +1554,7 @@ class DBLBible( Bible ):
         # Load the books one by one -- assuming that they have regular Paratext style filenames
         if 'OurBookList' in self.suppliedMetadata['DBL']:
             for BBB in self.suppliedMetadata['DBL']['OurBookList']:
-                filename = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMAbbreviation( BBB ).upper() + '.usx'
+                filename = bos_books_codes_py.bos_book_code_to_usfm_abbrev( BBB ).upper() + '.usx'
                 vPrint( 'Never', DEBUGGING_THIS_MODULE, f"About to load {BBB} from {filename} …" )
                 UBB = USXXMLBibleBook( self, BBB )
                 UBB.load( filename, self.USXFolderpath, self.encoding )
@@ -1573,7 +1573,7 @@ class DBLBible( Bible ):
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "bookListKey", bookListKey )
             for USFMBookCode in self.suppliedMetadata['DBL']['contents'][bookListKey]['books']:
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "USFMBookCode", USFMBookCode )
-                BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromUSFMAbbreviation( USFMBookCode )
+                BBB = bos_books_codes_py.usfm_abbrev_to_bos_book_code( USFMBookCode )
                 filename = USFMBookCode + '.usx'
                 UBB = USXXMLBibleBook( self, BBB )
                 UBB.load( filename, self.USXFolderpath, self.encoding )

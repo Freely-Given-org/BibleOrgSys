@@ -370,24 +370,24 @@ class uWOBSBibleBook( BibleBook ):
         contentFolder = os.path.join( self.sourceFolder, 'content/' )
 
 
-        def doAddLine( originalMarker:str, originalText:str ) -> None:
+        def doAddLine( originalMarker:str, original_text:str ) -> None:
             """
             Check for newLine markers within the line (if so, break the line) and save the information in our database.
 
             Also convert ~ to a proper non-break space.
             """
-            fnPrint( DEBUGGING_THIS_MODULE, f"doAddLine( {repr(originalMarker)}, {repr(originalText)} )" )
-            self.addLine( originalMarker, originalText ) # Call the function in the base class to save the line (or the remainder of the line if we split it above)
-            # marker, text = originalMarker, originalText.replace( '~', ' ' )
+            fnPrint( DEBUGGING_THIS_MODULE, f"doAddLine( {repr(originalMarker)}, {repr(original_text)} )" )
+            self.addLine( originalMarker, original_text ) # Call the function in the base class to save the line (or the remainder of the line if we split it above)
+            # marker, text = originalMarker, original_text.replace( '~', ' ' )
             # if '\\' in text: # Check markers inside the lines
-            #     markerList = BibleOrgSysGlobals.BCVMarkers.getMarkerListFromText( text )
+            #     markerList = BibleOrgSysGlobals.BCVMarkers.get_marker_list_from_text( text )
             #     ix = 0
             #     for insideMarker, iMIndex, nextSignificantChar, fullMarker, characterContext, endIndex, markerField in markerList: # check paragraph markers
             #         if insideMarker == '\\': # it's a free-standing backspace
             #             loadErrors.append( f"{self.BBB} {C}:{V} Improper free-standing backspace character within line in \\{marker}: {text!r}" )
             #             logging.error( f"Improper free-standing backspace character within line after {self.BBB} {C}:{V} in \\{marker}: {text!r}" ) # Only log the first error in the line
             #             self.addPriorityError( 100, C, V, "Improper free-standing backspace character inside a line" )
-            #         elif BibleOrgSysGlobals.BCVMarkers.isNewlineMarker(insideMarker): # Need to split the line for everything else to work properly
+            #         elif BibleOrgSysGlobals.BCVMarkers.is_newline_marker(insideMarker): # Need to split the line for everything else to work properly
             #             if ix==0:
             #                 loadErrors.append( f"{self.BBB} {C}:{V} NewLine marker {marker!r} shouldn't appear within line in \\{insideMarker}: {text!r}" )
             #                 logging.error( f"NewLine marker {marker!r} shouldn't appear within line after {insideMarker} {self.BBB}:{C} in \\{V}: {text!r}" ) # Only log the first error in the line
@@ -395,7 +395,7 @@ class uWOBSBibleBook( BibleBook ):
             #             thisText = text[ix:iMIndex].rstrip()
             #             self.addLine( marker, thisText )
             #             ix = iMIndex + 1 + len(insideMarker) + len(nextSignificantChar) # Get the start of the next text -- the 1 is for the backslash
-            #             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Did a split from {originalMarker}:{originalText!r} to {marker}:{thisText!r} leaving {insideMarker}:{text[ix:]!r}" )
+            #             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Did a split from {originalMarker}:{original_text!r} to {marker}:{thisText!r} leaving {insideMarker}:{text[ix:]!r}" )
             #             marker = insideMarker # setup for the next line
             #     if ix != 0: # We must have separated multiple lines
             #         text = text[ix:] # Get the final bit of the line

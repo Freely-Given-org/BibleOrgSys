@@ -298,7 +298,7 @@ def findReplaceText( self, optionsDict, confirmCallback ):
     #ourMarkerList = []
     #if optionsDict['markerList']:
         #for marker in optionsDict['markerList']:
-            #ourMarkerList.append( BibleOrgSysGlobals.loadedUSFMMarkers.toStandardMarker( marker ) )
+            #ourMarkerList.append( usfm_markers_py.to_standard_marker( marker ) )
 
     resultDict = { 'numFinds':0, 'numReplaces':0, 'searchedBookList':[], 'foundBookList':[], 'replacedBookList':[], 'aborted':False, }
 
@@ -776,7 +776,7 @@ def briefDemo() -> None:
                         # This loop is used for several types of data
                         assert isinstance( verseDataEntry, InternalBibleEntry )
                         marker, cleanText, extras = verseDataEntry.getMarker(), verseDataEntry.getCleanText(), verseDataEntry.getExtras()
-                        adjustedText, originalText = verseDataEntry.getAdjustedText(), verseDataEntry.getOriginalText()
+                        adjustedText, original_text = verseDataEntry.getAdjustedText(), verseDataEntry.getOriginalText()
                         fullText = verseDataEntry.getFullText()
                         if BibleOrgSysGlobals.verbosityLevel > 0:
                             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "marker={} cleanText={!r}{}".format( marker, cleanText,
@@ -785,8 +785,8 @@ def briefDemo() -> None:
                                 vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ' '*(len(marker)+4), f"adjustedText={adjustedText!r}" )
                             if fullText and fullText!=cleanText:
                                 vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ' '*(len(marker)+4), f"fullText={fullText!r}" )
-                            if originalText and originalText!=cleanText:
-                                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ' '*(len(marker)+4), f"originalText={originalText!r}" )
+                            if original_text and original_text!=cleanText:
+                                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ' '*(len(marker)+4), f"original_text={original_text!r}" )
         else:
             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nSorry, test folder '{testFolder}' is not readable on this computer." )
 
@@ -817,7 +817,7 @@ def briefDemo() -> None:
                     if line.startswith('<option value="'):
                         adjLine = line.replace('<option value="','').replace('</option>','')
                         USFM_BBB, name = adjLine[:3], adjLine[11:]
-                        BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromUSFMAbbreviation( USFM_BBB )
+                        BBB = bos_books_codes_py.usfm_abbrev_to_bos_book_code( USFM_BBB )
                         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, USFM_BBB, BBB, name )
                         nameDict[BBB] = name
             return title, nameDict
@@ -947,7 +947,7 @@ def fullDemo() -> None:
                             # This loop is used for several types of data
                             assert isinstance( verseDataEntry, InternalBibleEntry )
                             marker, cleanText, extras = verseDataEntry.getMarker(), verseDataEntry.getCleanText(), verseDataEntry.getExtras()
-                            adjustedText, originalText = verseDataEntry.getAdjustedText(), verseDataEntry.getOriginalText()
+                            adjustedText, original_text = verseDataEntry.getAdjustedText(), verseDataEntry.getOriginalText()
                             fullText = verseDataEntry.getFullText()
                             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "marker={} cleanText={!r}{}".format( marker, cleanText,
                                                     f" extras={extras}" if extras else '' ) )
@@ -955,8 +955,8 @@ def fullDemo() -> None:
                                 vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ' '*(len(marker)+4), f"adjustedText=({len(adjustedText)}) {adjustedText}" )
                             if fullText and fullText!=cleanText:
                                 vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ' '*(len(marker)+4), f"fullText=({len(fullText)}) {fullText}" )
-                            if originalText and originalText!=cleanText:
-                                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ' '*(len(marker)+4), f"originalText=({len(originalText)}) {originalText}" )
+                            if original_text and original_text!=cleanText:
+                                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ' '*(len(marker)+4), f"original_text=({len(original_text)}) {original_text}" )
             else:
                 vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nSorry, test folder '{testFolder}' is not readable on this computer." )
 
@@ -987,7 +987,7 @@ def fullDemo() -> None:
                     if line.startswith('<option value="'):
                         adjLine = line.replace('<option value="','').replace('</option>','')
                         USFM_BBB, name = adjLine[:3], adjLine[11:]
-                        BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromUSFMAbbreviation( USFM_BBB )
+                        BBB = bos_books_codes_py.usfm_abbrev_to_bos_book_code( USFM_BBB )
                         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, USFM_BBB, BBB, name )
                         nameDict[BBB] = name
             return title, nameDict

@@ -226,12 +226,11 @@ pub mod paragraph_markers {
     pub const LI4: &str = "li4";
 
     pub const NB: &str = "nb";
-    pub const SP: &str = "sp";
 
-    /// All paragraph markers.
+    /// All paragraph markers -- ones that should have the text placed into a p~ field when processed
     pub const ALL: &[&str] = &[
         P, PC, PR, M, MI, PM, PMO, PMC, PMR, CLS, PI, PI1, PI2, PI3, PI4, PH, PH1, PH2, PH3, PH4, Q, Q1, Q2, Q3, Q4,
-        QR, QM, QM1, QM2, QM3, QM4, LI, LI1, LI2, LI3, LI4, NB, SP,
+        QR, QM, QM1, QM2, QM3, QM4, LI, LI1, LI2, LI3, LI4, NB,
     ];
 
     /// Check if a marker is a paragraph marker.
@@ -289,7 +288,7 @@ pub mod intro_list_markers {
 
 /// USFM main text list markers.
 pub mod main_text_list_markers {
-    pub const ALL: &[&str] = &["li", "li1", "li2", "li3", "li4"];
+    pub const ALL: &[&str] = &["li1", "li2", "li3", "li4"];
 
     #[inline]
     pub fn is_main_text_list(marker: &str) -> bool {
@@ -299,13 +298,12 @@ pub mod main_text_list_markers {
 
 /// Major section markers.
 pub mod major_section_markers {
-    pub const MS: &str = "ms";
     pub const MS1: &str = "ms1";
     pub const MS2: &str = "ms2";
     pub const MS3: &str = "ms3";
     pub const MS4: &str = "ms4";
 
-    pub const ALL: &[&str] = &[MS, MS1, MS2, MS3, MS4];
+    pub const ALL: &[&str] = &[MS1, MS2, MS3, MS4];
 
     #[inline]
     pub fn is_major_section(marker: &str) -> bool {
@@ -493,7 +491,7 @@ pub fn get_processed_marker_content_type(marker: &str) -> MarkerContentType {
 pub fn get_marker_closure_type(marker: &str) -> MarkerClosureType {
     let raw = normalize_marker(marker);
     match raw {
-        "f" | "fe" | "x" | "fig" | "str" | "sem" | "ww" | "vp" => MarkerClosureType::Always,
+        "f" | "fe" | "x" | "fig" | "str" | "sem" | "ww" => MarkerClosureType::Always,
         "add" | "bk" | "dc" | "nd" | "ord" | "pn" | "qt" | "sig" | "sls" | "tl" | "wj" => MarkerClosureType::Always,
         "bd" | "it" | "bdit" | "no" | "sc" | "sup" => MarkerClosureType::Always,
         "ndx" | "pro" | "w" | "wg" | "wh" | "wa" => MarkerClosureType::Always,
@@ -512,9 +510,9 @@ pub fn marker_occurs_in(marker: &str) -> MarkerSection {
         MarkerSection::Introduction
     } else if matches!(raw, "c" | "v" | "cp" | "vp" | "ca" | "va") {
         MarkerSection::Numbering
-    } else if matches!(raw, "q" | "q1" | "q2" | "q3" | "q4" | "qr" | "qc" | "qa" | "qm" | "qm1" | "qm2" | "qm3" | "qm4") {
+    } else if matches!(raw, "q1" | "q2" | "q3" | "q4" | "qr" | "qc" | "qa" | "qm" | "qm1" | "qm2" | "qm3" | "qm4") {
         MarkerSection::Poetry
-    } else if matches!(raw, "li" | "li1" | "li2" | "li3" | "li4") {
+    } else if matches!(raw, "li1" | "li2" | "li3" | "li4") {
         MarkerSection::Text
     } else if matches!(raw, "tr" | "th" | "tc" | "thr" | "tcr") {
         MarkerSection::TableRow
