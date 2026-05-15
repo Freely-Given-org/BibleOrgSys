@@ -10,6 +10,10 @@ supported-markers = [
     "python_full_version == '3.14.*'",
 ]
 
+[options]
+exclude-newer = "2026-05-07T09:35:30.161719514Z"
+exclude-newer-span = "P7D"
+
 [manifest]
 members = [
     "bibleorgsys",

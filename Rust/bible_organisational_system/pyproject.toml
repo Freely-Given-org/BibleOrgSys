@@ -4,13 +4,14 @@ build-backend = "maturin"
 
 [project]
 name = "bibleorgsys-rust"
+dynamic = ["version"]  # Tells Python to look elsewhere for the version
 requires-python = ">=3.13"
 classifiers = [
     "Programming Language :: Rust",
     "Programming Language :: Python :: Implementation :: CPython",
     "Programming Language :: Python :: Implementation :: PyPy",
 ]
-dynamic = ["version"]
+
 [tool.maturin]
 features = ["pyo3/extension-module"]
 
