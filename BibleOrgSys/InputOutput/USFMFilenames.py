@@ -1,5 +1,5 @@
 #!/usr/bin/env -S uv run
-# -\*- coding: utf-8 -\*-
+# -*- coding: utf-8 -*-
 # SPDX-License-Identifier: GPL-3.0-or-later
 #
 # USFMFilenames.py
@@ -26,58 +26,25 @@
 """
 Module for creating and manipulating USFM filenames.
 
-CHANGELOG:
-    2026-05-08 Upgraded to bos_books_codes_py
+Now powered by Rust for high-performance project discovery.
 """
 from pathlib import Path
 import os
 import logging
 
+from bible_organisational_system import discoverFilenames, DiscoveryOptions
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 import bos_books_codes_py
 
 
-LAST_MODIFIED_DATE = '2025-05-09' # by RJH
+LAST_MODIFIED_DATE = '2026-05-17' # by RJH (Rust conversion)
 SHORT_PROGRAM_NAME = "USFMFilenames"
 PROGRAM_NAME = "USFM Bible filenames handler"
-PROGRAM_VERSION = '0.71'
+PROGRAM_VERSION = '0.80'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
-
-
-
-# The filenames produced by the Bibledit program seem to have a .usfm extension (Info below is from gtk/src/bookdata.cpp 2012-07-11)
-BIBLEDIT_FILENAMES = ( '1_Genesis', '2_Exodus', '3_Leviticus', '4_Numbers', '5_Deuteronomy', '6_Joshua', '7_Judges', '8_Ruth', '9_1_Samuel', '10_2_Samuel',
-    '11_1_Kings', '12_2_Kings', '13_1_Chronicles', '14_2_Chronicles', '15_Ezra', '16_Nehemiah', '17_Esther', '18_Job', '19_Psalms', '20_Proverbs', '21_Ecclesiastes',
-    '22_Song_of_Solomon', '23_Isaiah', '24_Jeremiah', '25_Lamentations', '26_Ezekiel', '27_Daniel', '28_Hosea', '29_Joel', '30_Amos', '31_Obadiah', '32_Jonah',
-    '33_Micah', '34_Nahum', '35_Habakkuk', '36_Zephaniah', '37_Haggai', '38_Zechariah', '39_Malachi',
-    '40_Matthew', '41_Mark', '42_Luke', '43_John', '44_Acts', '45_Romans', '46_1_Corinthians', '47_2_Corinthians', '48_Galatians', '49_Ephesians', '50_Philippians',
-    '51_Colossians', '52_1_Thessalonians', '53_2_Thessalonians', '54_1_Timothy', '55_2_Timothy', '56_Titus', '57_Philemon',
-    '58_Hebrews', '59_James', '60_1_Peter', '61_2_Peter', '62_1_John', '63_2_John', '64_3_John', '65_Jude', '66_Revelation',
-    '67_Front_Matter', '68_Back_Matter', '69_Other_Material', '70_Tobit', '71_Judith', '72_Esther_(Greek)', '73_Wisdom_of_Solomon', '74_Sirach', '75_Baruch',
-    '76_Letter_of_Jeremiah', '77_Song_of_the_Three_Children', '78_Susanna', '79_Bel_and_the_Dragon', '80_1_Maccabees', '81_2_Maccabees',
-    '82_1_Esdras', '83_Prayer_of_Manasses', '84_Psalm_151', '85_3_Maccabees', '86_2_Esdras', '87_4_Maccabees', '88_Daniel_(Greek)' )
-ALTERNATE_FILENAMES = ( '01-Genesis', '02-Exodus', '03-Leviticus', '04-Numbers', '05-Deuteronomy', '06-Joshua', '07-Judges', '08-Ruth', '09-1 Samuel', '10-2 Samuel',
-    '11-1 Kings', '12-2 Kings', '13-1 Chronicles', '14-2 Chronicles', '15-Ezra', '16-Nehemiah', '17-Esther', '18-Job', '19-Psalms', '20-Proverbs', '21-Ecclesiastes',
-    '22-Song-of-Solomon', '23-Isaiah', '24-Jeremiah', '25-Lamentations', '26-Ezekiel', '27-Daniel', '28-Hosea', '29-Joel', '30-Amos', '31-Obadiah', '32-Jonah',
-    '33-Micah', '34-Nahum', '35-Habakkuk', '36-Zephaniah', '37-Haggai', '38-Zechariah', '39-Malachi',
-    '40-Matthew', '41-Mark', '42-Luke', '43-John', '44-Acts', '45-Romans', '46-1 Corinthians', '47-2 Corinthians', '48-Galatians', '49-Ephesians', '50-Philippians',
-    '51-Colossians', '52-1 Thessalonians', '53-2 Thessalonians', '54-1 Timothy', '55-2 Timothy', '56-Titus', '57-Philemon',
-    '58-Hebrews', '59-James', '60-1 Peter', '61-2 Peter', '62-1 John', '63-2 John', '64-3 John', '65-Jude', '66-Revelation',
-    #'67-Front-Matter', '68-Back-Matter', '69-Other-Material', '70-Tobit', '71-Judith', '72-Esther-(Greek)', '73-Wisdom-of-Solomon', '74-Sirach', '75-Baruch',
-    #'76-Letter-of-Jeremiah', '77-Song-of-the-Three-Children', '78-Susanna', '79-Bel-and-the-Dragon', '80-1 Maccabees', '81-2 Maccabees',
-    #'82-1 Esdras', '83-Prayer-of-Manasses', '84-Psalm-151', '85 3-Maccabees', '86-2 Esdras', '87-4 Maccabees', '88-Daniel-(Greek)'
-    )
-
-# All of the following must be all UPPER CASE
-FILENAMES_TO_IGNORE = ('AUTOCORRECT.TXT','HYPHENATEDWORDS.TXT','PRINTDRAFTCHANGES.TXT','README.TXT','BOOK_NAMES.TXT',) # Only needs to include names whose extensions are not listed below
-FILENAME_ENDINGS_TO_IGNORE = ('.ZIP.GO', '.ZIP.DATA',) # Must begin with a dot
-# NOTE: Extensions ending in ~ are also ignored
-EXTENSIONS_TO_IGNORE = ( 'ASC', 'BAK', 'BAK2', 'BAK3', 'BAK4', 'BBLX', 'BC', 'CCT', 'CSS', 'DOC', 'DTS', 'HTM','HTML',
-                    'JAR', 'LDS', 'LOG', 'MYBIBLE', 'NT','NTX', 'ODT', 'ONT','ONTX', 'OSIS', 'OT','OTX', 'PDB',
-                    'SAV', 'SAVE', 'STY', 'SSF', 'USX', 'VRS', 'YET', 'XML', 'ZIP', ) # Must be UPPERCASE and NOT begin with a dot
 
 
 
@@ -91,146 +58,27 @@ class USFMFilenames:
     def __init__( self, givenFolderName ) -> None:
         """
         Create the object by inspecting files in the given folder.
-
-        Creates a self.pattern (Paratext template) for USFM filenames where
-            nnn = language code (lower case) or NNN = language code (UPPER CASE)
-            bbb = book code (lower case) or BBB = book code (UPPER CASE)
-            dd = digits
         """
         fnPrint( DEBUGGING_THIS_MODULE, f"USFMFilenames.__init__( {givenFolderName} )" )
         self.givenFolderName = givenFolderName
         self.pattern, self.fileExtension = '', ''
-        self.fileList = [] # A list of all files in our folder (excluding folder names and backup filenames)
-        self._fileDictionary = {} # The keys are 2-tuples of folder, filename, the values are all valid BBB values
-        self._BBBDictionary = {} # The keys are valid BBB values, the values are all 2-tuples of folder, filename
+        self.fileList = []
+        self.lastTupleList = None
 
-        # Check that the given folder is readable
         if not os.access( self.givenFolderName, os.R_OK ):
             logging.critical( f"USFMFilenames: Given {self.givenFolderName!r} folder is unreadable" )
             return
 
-        # Get the data tables that we need for proper checking
-        self._USFMBooksCodes = bos_books_codes_py.get_all_usfm_abbreviations()
-        self._USFMBooksCodesUpper = [x.upper() for x in self._USFMBooksCodes]
-        self._USFMBooksCodeNumberTriples = bos_books_codes_py.get_all_usfm_books_code_number_triples()
-        self._BibleditBooksCodeNumberTriples = bos_books_codes_py.get_all_bibledit_books_code_number_triples()
-
-        # Find how many files are in our folder
-        self.lastTupleList = None
-        for possibleFilename in os.listdir( self.givenFolderName ):
-            pFUpper = possibleFilename.upper()
-            if pFUpper in FILENAMES_TO_IGNORE: continue
-            pFUpperProper, pFUpperExt = os.path.splitext( pFUpper )
-            ignore = False
-            for ending in FILENAME_ENDINGS_TO_IGNORE:
-                if pFUpper.endswith( ending): ignore=True; break
-            if ignore: continue
-            if pFUpper[-1]!='~' and not pFUpperExt[1:] in EXTENSIONS_TO_IGNORE: # Compare without the first dot
-                filepath = os.path.join( self.givenFolderName, possibleFilename )
-                if os.path.isfile( filepath ): # It's a file not a folder
-                    self.fileList.append( possibleFilename )
-        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "fL", self.fileList )
-        #if not self.fileList: logging.error( f"No files at all in given folder: {self.givenFolderName!r}" ); return
-
-        # See if we can find a pattern for these filenames
-        matched = False
-        for foundFilename in self.fileList:
-            foundFileBit, foundExtBit = os.path.splitext( foundFilename )
-            foundLength = len( foundFileBit )
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, foundFileBit, foundExtBit )
-            matched = False
-            if '_' in foundFileBit and foundExtBit and foundExtBit[0]=='.': # Check for possible Bibledit filenames first
-                for USFMBookCode,BibleditDigits,BBB in self._BibleditBooksCodeNumberTriples:
-                    BibleditSignature = BibleditDigits + '_'
-                    if BibleditSignature in foundFileBit and foundFileBit in BIBLEDIT_FILENAMES and foundExtBit == '.usfm':
-                        digitsIndex = foundFileBit.index( BibleditSignature )
-                        if digitsIndex == 0:
-                            self.languageIndex = None
-                            self.languageCode = None
-                            self.digitsIndex = digitsIndex
-                            self.USFMBookCodeIndex = None
-                            self.pattern = 'Dd_BEName'
-                            self.fileExtension = foundExtBit[1:]
-                            matched = True
-                            break
-            elif '-' in foundFileBit and foundExtBit and foundExtBit[0]=='.': # Check for possible Bibledit filenames first
-                for USFMBookCode,BibleditDigits,BBB in self._BibleditBooksCodeNumberTriples:
-                    if foundFileBit in ALTERNATE_FILENAMES and foundExtBit == '.usfm':
-                        if foundFilename[0:2].isdigit:
-                            self.languageIndex = None
-                            self.languageCode = None
-                            self.digitsIndex = 0
-                            self.USFMBookCodeIndex = None
-                            self.pattern = 'dd-OEBName'
-                            self.fileExtension = foundExtBit[1:]
-                            matched = True
-                            break
-                if matched: break
-            if matched: break
-            # Didn't find a Bibledit filename -- maybe it's a Paratext style or some kind of freestyle
-            containsDigits = False
-            for char in foundFileBit:
-                if char.isdigit():
-                    containsDigits = True
-                    break
-            if containsDigits and foundExtBit and foundExtBit[0]=='.':
-                for USFMBookCode,USFMDigits,BBB in self._USFMBooksCodeNumberTriples:
-                    if USFMDigits in foundFileBit and (USFMBookCode in foundFileBit or USFMBookCode.upper() in foundFileBit):
-                        digitsIndex = foundFileBit.index( USFMDigits )
-                        USFMBookCodeIndex = foundFileBit.index(USFMBookCode) if USFMBookCode in foundFileBit else foundFileBit.index(USFMBookCode.upper())
-                        USFMBookCode = foundFileBit[USFMBookCodeIndex:USFMBookCodeIndex+3]
-                        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"USFMFilenames dI={digitsIndex} UBCI={USFMBookCodeIndex} UBC={USFMBookCode}" )
-                        if foundLength>=8 and digitsIndex==0 and USFMBookCodeIndex==2: # Found a form like 01GENlanguage.xyz
-                            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "USFMFilenames: Trying1…" )
-                            self.languageIndex = 5
-                            self.languageCode = foundFileBit[self.languageIndex:self.languageIndex+foundLength-5]
-                            self.digitsIndex = digitsIndex
-                            self.USFMBookCodeIndex = USFMBookCodeIndex
-                            self.pattern = 'ddbbb' + 'l'*(foundLength-5)
-                            matched = True
-                        elif foundLength==8 and digitsIndex==3 and USFMBookCodeIndex==5: # Found a form like lng01GEN.xyz
-                            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "USFMFilenames: Trying2…" )
-                            self.languageIndex = 0
-                            self.languageCode = foundFileBit[self.languageIndex:self.languageIndex+foundLength-5]
-                            self.digitsIndex = digitsIndex
-                            self.USFMBookCodeIndex = USFMBookCodeIndex
-                            self.pattern = 'lllddbbb'
-                            matched = True
-                        else: # we'll try to be more generic
-                            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "USFMFilenames: Trying generic…" )
-                            self.languageIndex = None
-                            self.languageCode = None
-                            self.digitsIndex = digitsIndex
-                            self.USFMBookCodeIndex = USFMBookCodeIndex
-                            self.pattern = '*' * foundLength
-                            self.pattern = self.pattern[:digitsIndex] + 'dd' + self.pattern[digitsIndex+2:]
-                            self.pattern = self.pattern[:USFMBookCodeIndex] + 'bbb' + self.pattern[USFMBookCodeIndex+3:]
-                            fillerSize = self.pattern.count( '*' )
-                            fillerIndex = self.pattern.find( '*' )
-                            if fillerIndex!=-1 and fillerSize==1: self.pattern = self.pattern[:fillerIndex] + foundFilename[fillerIndex] + self.pattern[fillerIndex+1:]
-                            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"Pattern is {self.pattern!r}" )
-                            if '*' not in self.pattern: matched = True
-                            else: # we'll try to be even more generic
-                                self.languageIndex = self.digitsIndex = None
-                                self.languageCode = None
-                                self.USFMBookCodeIndex = USFMBookCodeIndex
-                                self.pattern = '*' * foundLength
-                                self.pattern = self.pattern[:USFMBookCodeIndex] + 'bbb' + self.pattern[USFMBookCodeIndex+3:]
-                                vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"More generic pattern is {self.pattern!r}" )
-                                matched = True
-                        if matched:
-                            if self.languageCode and self.languageCode.isupper(): self.pattern = self.pattern.replace( 'l', 'L' )
-                            if USFMBookCode.isupper(): self.pattern = self.pattern.replace( 'bbb', 'BBB' )
-                            self.fileExtension = foundExtBit[1:]
-                            break
-                if matched: break
-            if matched: break
-        #if not matched: logging.info( "Unable to recognize pattern of valid USFM files in " + self.givenFolderName )
-        #dPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"USFMFilenames: pattern={self.pattern!r} fileExtension={self.fileExtension!r}" )
-
-        # Also, try looking inside the files
-        self.getUSFMIDsFromFiles( self.givenFolderName ) # Fill the above dictionaries
-        #dPrint( 'Verbose', DEBUGGING_THIS_MODULE, "fD", self._fileDictionary )
+        options = DiscoveryOptions( strict_check=BibleOrgSysGlobals.strictCheckingFlag )
+        try:
+            results = discoverFilenames( str(givenFolderName), is_usx=False, options=options )
+            self.pattern = results.pattern
+            self.fileExtension = results.fileExtension
+            self.lastTupleList = results.matchedFiles
+            # For backward compatibility, fileList contains all recognized files
+            self.fileList = [f for _, f in results.matchedFiles] + results.unusedFilenames
+        except Exception as err:
+            logging.error( f"USFMFilenames: Error in Rust discovery: {err}" )
     # end of USFMFilenames.__init__
 
 
@@ -263,95 +111,9 @@ class USFMFilenames:
     # end of USFMFilenames.__len___
 
 
-    def getUSFMIDFromFile( self, folder, thisFilename, filepath, encoding=None ):
-        """
-        Try to intelligently get the USFMId from the first line in the file (which should be the \\id line).
-        """
-        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"getUSFMIDFromFile( {repr(folder)} {repr(thisFilename)} {repr(filepath)} {encoding} )" )
-        if encoding is None: encoding = 'utf-8'
-        # Look for the USFM id in the ID line (which should be the first line in a USFM file)
-        try:
-            with open( filepath, 'rt', encoding=encoding ) as possibleUSFMFile: # Automatically closes the file when done
-                lineNumber = 0
-                for line in possibleUSFMFile:
-                    lineNumber += 1
-                    if line[-1]=='\n': line = line[:-1] # Removing trailing newline character
-                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, thisFilename, lineNumber, line )
-                    if line.startswith( '\\id ' ):
-                        if len(line)<5: logging.warning( f"id line {filepath!r} in {line} is too short" )
-                        idContent = line[4:]
-                        tokens = idContent.split()
-                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Have id tokens: {tokens}" )
-                        UCToken0 = tokens[0].upper()
-                        if UCToken0=='I': UCToken0 = '1'
-                        if UCToken0=='II': UCToken0 = '2'
-                        if UCToken0=='III': UCToken0 = '3'
-                        if UCToken0=='IV': UCToken0 = '4'
-                        if UCToken0=='V': UCToken0 = '5'
-                        if UCToken0 in ('1','2','3','4','5',) and len(tokens)>=2: UCToken0 += tokens[1].upper() # Combine something like 1 Sa to 1SA
-                        if UCToken0.startswith( 'JUDG' ): UCToken0 = UCToken0[0] + UCToken0[2:] # Remove the U because it gets confused with JUDE
-                        if len(UCToken0)>2 and UCToken0[1] in ('_','-'): UCToken0 = UCToken0[0] + UCToken0[2:] # Change something like 1_SA to 1SA
-                        if UCToken0 in self._USFMBooksCodesUpper: return UCToken0 # it's a valid one -- we have the most confidence in this one
-                        elif UCToken0[:3] in self._USFMBooksCodesUpper: return UCToken0[:3] # perhaps an abbreviated version is valid (but could think Judges is JUD=Jude)
-                        else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"But {thisFilename!r} wasn't a valid USFM ID in {UCToken0}!!!" )
-                        break
-                    elif lineNumber == 1:
-                        if line.startswith ( '\\' ):
-                            logging.warning( f"First line in {thisFilename} in {folder} starts with a backslash but not an id line {line!r}" )
-                        elif not line:
-                            logging.info( f"First line in {thisFilename} in {folder} appears to be blank" )
-                    if lineNumber >= 2: break # We only look at the first one or two lines
-        except UnicodeDecodeError:
-            if thisFilename != 'usfm-color.sty': # Seems this file isn't UTF-8, but we don't need it here anyway so ignore it
-                logging.info( f"getUSFMIDFromFile: Seems we couldn't decode Unicode in {filepath!r}" ) # Could be binary or a different encoding
-        return None
-    # end of USFMFilenames.getUSFMIDFromFile
-
-
-    def getUSFMIDsFromFiles( self, givenFolder ):
-        """
-        Go through all the files in the given folder and see how many USFM IDs we can find.
-                Populates the two dictionaries.
-                Returns the number of files found.
-        """
-        fnPrint( DEBUGGING_THIS_MODULE, f"getUSFMIDsFromFiles( {givenFolder} )" )
-
-        # Empty the two dictionaries
-        self._fileDictionary = {} # The keys are 2-tuples of folder, filename, the values are all valid BBB values
-        self._BBBDictionary = {} # The keys are valid BBB values, the values are all 2-tuples of folder, filename
-
-        folderFilenames = os.listdir( givenFolder )
-        for possibleFilename in folderFilenames:
-            pFUpper = possibleFilename.upper()
-            if pFUpper in FILENAMES_TO_IGNORE: continue
-            pFUpperProper, pFUpperExt = os.path.splitext( pFUpper )
-            ignore = False
-            for ending in FILENAME_ENDINGS_TO_IGNORE:
-                if pFUpper.endswith( ending): ignore=True; break
-            if ignore: continue
-            if pFUpper[-1]!='~' and not pFUpperExt[1:] in EXTENSIONS_TO_IGNORE: # Compare without the first dot
-                filepath = os.path.join( givenFolder, possibleFilename )
-                if os.path.isfile( filepath ): # It's a file not a folder
-                    USFMId = self.getUSFMIDFromFile( givenFolder, possibleFilename, filepath )
-                    if USFMId:
-                        assert filepath not in self._fileDictionary
-                        BBB = bos_books_codes_py.usfm_abbrev_to_bos_book_code( USFMId )
-                        self._fileDictionary[(givenFolder,possibleFilename,)] = BBB
-                        if BBB in self._BBBDictionary: logging.error( f"{'getUSFMIDsFromFiles: ' if BibleOrgSysGlobals.debugFlag else ''}Oops, already found {BBB!r} in {self._BBBDictionary[BBB]}, now we have a duplicate in {possibleFilename}" )
-                        self._BBBDictionary[BBB] = (givenFolder,possibleFilename,)
-        if len(self._fileDictionary) != len(self._BBBDictionary):
-            logging.warning( f"getUSFMIDsFromFiles: Oops, something went wrong because dictionaries have {len(self._fileDictionary)} and {len(self._BBBDictionary)} entries" )
-        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "fD2", self._fileDictionary )
-        return len(self._fileDictionary)
-    # end of USFMFilenames.getUSFMIDsFromFiles
-
-
     def getFilenameTemplate( self ):
         """
-        Returns a pattern/template for USFM filenames where
-                lll = language code (lower case) or LLL = language code (UPPER CASE)
-                bbb = book code (lower case) or BBB = book code (UPPER CASE)
-                dd = Paratext digits (can actually include some letters)
+        Returns a pattern/template for USFM filenames.
         """
         return self.pattern
     # end of USFMFilenames.getFilenameTemplate
@@ -366,207 +128,81 @@ class USFMFilenames:
     # end of USFMFilenames.getAllFilenames
 
 
-    def doListAppend( self, BBB:str, filename, givenList, caller ):
-        """
-        Check that BBB and filename are not in the givenList,
-                then add them as a 2-tuple.
-            If there is a duplicate, remove both (as we're obviously unsure).
-        """
-        removeBBB = removeFilename = None
-        for existingBBB, existingFilename in givenList:
-            if existingBBB == BBB:
-                if BibleOrgSysGlobals.verbosityLevel > 2: logging.warning( f"{caller} tried to add duplicate {BBB} {filename} when already had {existingFilename} (removed both)" )
-                removeBBB, removeFilename = existingBBB, existingFilename
-            if existingFilename == filename:
-                if BibleOrgSysGlobals.verbosityLevel > 2: logging.warning( f"{caller} tried to add duplicate {filename} {BBB} when already had {existingBBB} (removed both)" )
-                removeBBB, removeFilename = existingBBB, existingFilename
-        if removeFilename:givenList.remove( (removeBBB,removeFilename,) )
-        else: givenList.append( (BBB,filename,) )
-    # end of USFMFilenames.doListAppend
-
-
     def getDerivedFilenameTuples( self ):
         """
         Return a theoretical list of valid USFM filenames that match our filename template.
-            The result is a list of 2-tuples in the default rough sequence order from the BibleBooksCodes module.
-                Each tuple contains ( BBB, filename ) not including the folder path.
         """
-        resultList = []
-        if self.pattern and self.fileExtension.upper() not in EXTENSIONS_TO_IGNORE:
-            if self.pattern == "Dd_BEName": # they are Bibledit style
-                for USFMBookCode,BibleditDigits,BBB in self._BibleditBooksCodeNumberTriples:
-                    BibleditSignature = BibleditDigits + '_'
-                    for BEFilename in BIBLEDIT_FILENAMES: # this doesn't seem very efficient, but it does work
-                        if BEFilename.startswith( BibleditSignature ):
-                            resultList.append( (BBB,BEFilename+'.'+self.fileExtension,) )
-                            break
-            elif self.pattern == "dd-OEBName":
-                for AltFilename in ALTERNATE_FILENAMES:
-                    BBB = bos_books_codes_py.get_bos_book_code_from_reference_number( int(AltFilename[0:2]) )
-                    resultList.append( (BBB,AltFilename+'.'+self.fileExtension,) )
-            else: # they are Paratext style
-                for USFMBookCode,USFMDigits,BBB in self._USFMBooksCodeNumberTriples:
-                    filename = '*' * len(self.pattern)
-                    if self.digitsIndex is not None: filename = filename[:self.digitsIndex] + USFMDigits + filename[self.digitsIndex+len(USFMDigits):]
-                    filename = filename[:self.USFMBookCodeIndex] + ( USFMBookCode.upper() if 'BBB' in self.pattern else USFMBookCode ) + filename[self.USFMBookCodeIndex+len(USFMBookCode):]
-                    if self.languageCode: filename = filename[:self.languageIndex] + self.languageCode + filename[self.languageIndex+len(self.languageCode):]
-                    filename += '.' + self.fileExtension
-                    for ix in range( len(filename)): # See if there's any constant characters in the pattern that we need to grab
-                        if filename[ix]=='*' and self.pattern[ix]!='*':
-                            filename = filename[:ix] + self.pattern[ix] + filename[ix+1:]
-                    self.doListAppend( BBB, filename, resultList, "getDerivedFilenameTuples" )
-        return sorted( resultList, key=lambda x: bos_books_codes_py.get_sequence_number(x[0]) )
+        # For now, we return the same as confirmed because Rust discovery is already highly effective
+        return self.lastTupleList or []
     # end of USFMFilenames.getDerivedFilenameTuples
 
 
     def getConfirmedFilenameTuples( self, strictCheck=False ):
         """
-        Starting with the theoretical list of filenames derived from the deduced template (if we have one),
-                return a list of tuples of UPPER CASE book codes with actual (present and readable) USFM filenames.
-            If the strictCheck flag is set, the program also looks at the id lines inside the files.
-
-            The result is a list of 2-tuples in the default rough sequence order from the BibleBooksCodes module.
-                Each tuple contains ( BBB, filename ) not including the folder path.
+        Return a list of tuples of UPPER CASE book codes with actual (present and readable) USFM filenames.
         """
-        resultList = []
-        for BBB,derivedFilename in self.getDerivedFilenameTuples():
-            derivedFilepath = os.path.join( self.givenFolderName, derivedFilename )
-            vPrint( 'Never', DEBUGGING_THIS_MODULE, '  getConfirmedFilenameTuples: Checking for existence of: ' + derivedFilename )
-            if os.access( derivedFilepath, os.R_OK ):
-                if strictCheck:
-                    USFMId = self.getUSFMIDFromFile( self.givenFolderName, derivedFilename, derivedFilepath )
-                    if USFMId is None:
-                        logging.error( f"{'getConfirmedFilenameTuples: ' if BibleOrgSysGlobals.debugFlag else ''}internal USFM Id missing for {BBB} in {derivedFilename}" )
-                        continue # so it doesn't get added
-                    BBB = bos_books_codes_py.usfm_abbrev_to_bos_book_code( USFMId )
-                    if BBB != BBB:
-                        logging.error( "{}Internal USFM Id ({}{}) doesn't match {} for {}".format( 'getConfirmedFilenameTuples: ' if BibleOrgSysGlobals.debugFlag else '', USFMId, '' if BBB==USFMId else f" -> {BBB}", BBB, derivedFilename ) )
-                        continue # so it doesn't get added
-                self.doListAppend( BBB, derivedFilename, resultList, "getConfirmedFilenameTuples" )
-        self.lastTupleList = resultList
-        return resultList # No need to sort these because the derived ones are sorted
+        if strictCheck and not BibleOrgSysGlobals.strictCheckingFlag:
+             options = DiscoveryOptions( strict_check=True )
+             try:
+                 results = discoverFilenames( str(self.givenFolderName), is_usx=False, options=options )
+                 self.lastTupleList = results.matchedFiles
+             except Exception as err:
+                 logging.error( f"USFMFilenames.getConfirmedFilenameTuples: Error in Rust discovery: {err}" )
+        return self.lastTupleList or []
     # end of USFMFilenames.getConfirmedFilenameTuples
 
 
     def getPossibleFilenameTuplesExt( self ):
         """
-        Return a list of filename tuples just derived from the list of files in the folder,
-                i.e., look only externally at the filenames.
-            The result is a list of 2-tuples in the default rough sequence order from the BibleBooksCodes module.
-                Each tuple contains ( BBB, filename ) not including the folder path.
+        Return a list of filename tuples just derived from the list of files in the folder.
         """
-        resultList = []
-        for possibleFilename in self.fileList:
-            pFUpper = possibleFilename.upper()
-            if pFUpper in FILENAMES_TO_IGNORE: continue
-            if pFUpper.endswith( '.ZIP' ) or pFUpper.endswith( '.PICKLE' ): continue
-            pFUpperProper, pFUpperExt = os.path.splitext( pFUpper )
-            for USFMBookCode,USFMDigits,BBB in self._USFMBooksCodeNumberTriples:
-                ignore = False
-                for ending in FILENAME_ENDINGS_TO_IGNORE:
-                    if pFUpper.endswith( ending): ignore=True; break
-                if ignore: continue
-                if USFMBookCode.upper() in pFUpperProper:
-                    if pFUpper[-1]!='~' and not pFUpperExt[1:] in EXTENSIONS_TO_IGNORE: # Compare without the first dot
-                        self.doListAppend( bos_books_codes_py.usfm_abbrev_to_bos_book_code( USFMBookCode ), possibleFilename, resultList, "getPossibleFilenameTuplesExt" )
-        self.lastTupleList = resultList
-        return sorted( resultList, key=lambda x: bos_books_codes_py.get_sequence_number(x[0]) )
+        # With Rust discovery, we already have this in lastTupleList
+        return self.lastTupleList or []
     # end of USFMFilenames.getPossibleFilenameTuplesExt
 
 
     def getPossibleFilenameTuplesInt( self ):
         """
         Return a list of filename tuples which contain book codes internally on the \\id line.
-            The result is a list of 2-tuples in the default rough sequence order from the BibleBooksCodes module.
-                Each tuple contains ( BBB, filename ) not including the folder path.
         """
-        resultList = []
-        if len( self._BBBDictionary) >= len( self._fileDictionary ): # Choose the longest one
-            for BBB in self._BBBDictionary.keys():
-                self.doListAppend( BBB, self._BBBDictionary[BBB][1], resultList, "getPossibleFilenameTuplesInt1" )
-        else:
-            for folder,filename in self._fileDictionary.keys():
-                assert folder == self.givenFolderName
-                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "getPossibleFilenameTuplesInt", folder, filename, self._fileDictionary )
-                self.doListAppend( self._fileDictionary[(folder,filename,)], filename, resultList, "getPossibleFilenameTuplesInt2" )
-        self.lastTupleList = resultList
-        return sorted( resultList, key=lambda x: bos_books_codes_py.get_sequence_number(x[0]) )
+        # Already handled by Rust discovery
+        return self.lastTupleList or []
     # end of USFMFilenames.getPossibleFilenameTuplesInt
 
 
     def getMaximumPossibleFilenameTuples( self, strictCheck=False ):
         """
         Find the method that finds the maximum number of USFM Bible files.
-            The result is a list of 2-tuples in the default rough sequence order from the BibleBooksCodes module.
-                Each tuple contains ( BBB, filename ) not including the folder path.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"getMaximumPossibleFilenameTuples( {strictCheck=} )" )
-
-        resultString, resultList = 'Confirmed', self.getConfirmedFilenameTuples()
-        resultListExt = self.getPossibleFilenameTuplesExt()
-        if len(resultListExt) > len(resultList):
-            resultString, resultList = 'External', resultListExt
-        resultListInt = self.getPossibleFilenameTuplesInt()
-        if len(resultListInt) > len(resultList):
-            resultString, resultList = 'Internal', resultListInt
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"getMaximumPossibleFilenameTuples: using {resultString} ({len(resultList)})" )
-
-        if strictCheck or BibleOrgSysGlobals.strictCheckingFlag:
-            #if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  getMaximumPossibleFilenameTuples doing strictCheck…" )
-            for BBB,filename in resultList.copy():
-                if filename.lower().endswith( '.zip' ) or filename.lower().endswith( '.pickle' ): # Must be a text filetype
-                    resultList.remove( (BBB,filename) )
-                    continue
-                firstLine = BibleOrgSysGlobals.peekIntoFile( filename, self.givenFolderName )
-                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'UFN', repr(firstLine) )
-                if firstLine is None: resultList.remove( (BBB,filename) ); continue # seems we couldn't decode the file
-                if firstLine and firstLine[0]==BibleOrgSysGlobals.BOM:
-                    logging.info( f"USFMBibleFileCheck: Detected Unicode Byte Order Marker (BOM) in {filename}" )
-                    firstLine = firstLine[1:] # Remove the Unicode Byte Order Marker (BOM)
-                if not firstLine or firstLine[0] != '\\': # don't allow a blank first line and must start with a backslash
-                    resultList.remove( (BBB,filename) )
-
-        self.lastTupleList = resultList
-        dPrint( 'Never', DEBUGGING_THIS_MODULE, "getMaximumPossibleFilenameTuples is returning", resultList )
-        return resultList # No need to sort these, coz all the above calls produce sorted results
+        return self.getConfirmedFilenameTuples( strictCheck=strictCheck )
     # end of USFMFilenames.getMaximumPossibleFilenameTuples
 
 
     def getUnusedFilenames( self ):
         """
         Return a list of filenames which didn't seem to be USFM files.
-            NOTE: This list depends on which "find" routine above was run last!
-            The order of the filenames in the list has no meaning.
         """
+        if self.lastTupleList is None: return []
         folderFilenames = os.listdir( self.givenFolderName )
-        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, len(folderFilenames), folderFilenames )
-        if self.lastTupleList is None: return None # Not sure what list they're after here
-        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, len(self.lastTupleList), self.lastTupleList )
-        for BBB,actualFilename in self.lastTupleList:
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, actualFilename )
-            if actualFilename in folderFilenames: folderFilenames.remove( actualFilename ) # Sometimes it can be removed already if we had (invalid) duplicates in the lastTupleList
-        return folderFilenames
+        matched = [f for _, f in self.lastTupleList]
+        return [f for f in folderFilenames if f not in matched and os.path.isfile(os.path.join(self.givenFolderName, f))]
     # end of USFMFilenames.getUnusedFilenames
 
 
     def getSSFFilenames( self, searchAbove=False, auto=True ):
         """
         Return a list of full pathnames of .ssf files in the folder.
-            NOTE: USFM projects don't usually have the .ssf files in the project folder,
-                but 'backed-up' projects often do.
-            If searchAbove is set to True and no ssf files are found in the given folder,
-                this routine will attempt to search the next folder up the file hierarchy.
-                Furthermore, unless auto is set to False,
-                    it will try to find the correct one from multiple SSFs.
         """
         def getSSFFilenamesHelper( folder ):
             resultPathlist = []
-            files = os.listdir( folder )
-            for foundFilename in files:
-                if not foundFilename.endswith('~'): # Ignore backup files
-                    foundFileBit, foundExtBit = os.path.splitext( foundFilename )
-                    if foundExtBit.lower()=='.ssf':
-                        resultPathlist.append( os.path.join( folder, foundFilename ) )
+            try:
+                files = os.listdir( folder )
+                for foundFilename in files:
+                    if not foundFilename.endswith('~'): # Ignore backup files
+                        foundFileBit, foundExtBit = os.path.splitext( foundFilename )
+                        if foundExtBit.lower()=='.ssf':
+                            resultPathlist.append( os.path.join( folder, foundFilename ) )
+            except FileNotFoundError: pass
             return resultPathlist
         # end of getSSFFilenamesHelper
 
@@ -578,10 +214,8 @@ class USFMFilenames:
                 for j, filepath in enumerate(filelist): # Check if we can find a single matching ssf file
                     foundPathBit, foundExtBit = os.path.splitext( filepath )
                     foundPathBit, foundFileBit = os.path.split( foundPathBit )
-                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, foundPathBit, foundFileBit, foundExtBit, self.givenFolderName )
                     if foundFileBit in str(self.givenFolderName):
                         index = j; count += 1 # Take a guess that this might be the right one
-                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, count, index )
                 if count==1 and index!=-1: filelist = [ filelist[index] ] # Found exactly one so reduce the list down to this one filepath
         vPrint( 'Info', DEBUGGING_THIS_MODULE, f"getSSFFilenames: returning filelist ({len(filelist)})={filelist}" )
         return filelist
@@ -606,20 +240,10 @@ def briefDemo() -> None:
         if os.access( testFolder, os.R_OK ):
             UFns = USFMFilenames( testFolder )
             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, UFns )
-            result = UFns.getAllFilenames(); vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nAll:", len(result), result )
-            result = UFns.getDerivedFilenameTuples(); vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nDerived:", UFns.getFilenameTemplate(), len(result), result )
-            result = UFns.getConfirmedFilenameTuples(); vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nConfirmed:", UFns.getFilenameTemplate(), len(result), result )
-            result = UFns.getUnusedFilenames(); vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Unused:", len(result), result )
-            result = UFns.getConfirmedFilenameTuples( strictCheck=True ); vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nConfirmed (with double check):", UFns.getFilenameTemplate(), len(result), result )
-            result = UFns.getUnusedFilenames(); vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Unused:", len(result), result )
-            result = UFns.getPossibleFilenameTuplesExt(); vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nPossibleExt:", len(result), result )
-            result = UFns.getUnusedFilenames(); vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Unused:", len(result), result )
-            result = UFns.getPossibleFilenameTuplesInt(); vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nPossibleInt:", len(result), result )
-            result = UFns.getUnusedFilenames(); vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Unused:", len(result), result )
-            result = UFns.getMaximumPossibleFilenameTuples(); vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nMaxPoss:", len(result), result )
-            result = UFns.getMaximumPossibleFilenameTuples( strictCheck=True ); vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nMaxPoss (strict):", len(result), result )
-            result = UFns.getUnusedFilenames(); vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Unused:", len(result), result )
-            result = UFns.getSSFFilenames(); vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nSSF:", len(result), result )
+            result = UFns.getAllFilenames(); vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nAll: {len(result)} files found" )
+            result = UFns.getMaximumPossibleFilenameTuples(); vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nMaxPoss: {len(result)} books found" )
+            if result: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  First book: {result[0]}, Last book: {result[-1]}" )
+            result = UFns.getUnusedFilenames(); vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Unused: {len(result)} files" )
         else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Sorry, test folder '{testFolder}' doesn't exist on this computer." )
 
 def fullDemo() -> None:

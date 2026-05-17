@@ -1,5 +1,5 @@
 #!/usr/bin/env -S uv run
-# -\*- coding: utf-8 -\*-
+# -*- coding: utf-8 -*-
 # SPDX-License-Identifier: GPL-3.0-or-later
 #
 # USXFilenames.py
@@ -25,32 +25,27 @@
 
 """
 Module for creating and manipulating USX filenames.
+
+Now powered by Rust for high-performance project discovery.
 """
 
 import os
 import logging
 
+from bible_organisational_system import discoverFilenames, DiscoveryOptions
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 import bos_books_codes_py
 
 
-LAST_MODIFIED_DATE = '2022-06-05' # by RJH
+LAST_MODIFIED_DATE = '2026-05-17' # by RJH (Rust conversion)
 SHORT_PROGRAM_NAME = "USXBible"
 PROGRAM_NAME = "USX Bible filenames handler"
-PROGRAM_VERSION = '0.56'
+PROGRAM_VERSION = '0.60'
 PROGRAM_NAME_VERSION = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
 
-
-# All of the following must be all UPPER CASE
-filenamesToIgnore = ('AUTOCORRECT.TXT','HYPHENATEDWORDS.TXT','PRINTDRAFTCHANGES.TXT','README.TXT','BOOK_NAMES.TXT',) # Only needs to include names whose extensions are not listed below
-FILENAME_ENDINGS_TO_IGNORE = ('.ZIP.GO', '.ZIP.DATA',) # Must begin with a dot
-# NOTE: Extensions ending in ~ are also ignored
-EXTENSION_TO_IGNORE = ( 'ASC', 'BAK', 'BAK2', 'BAK3', 'BAK4', 'BBLX', 'BC', 'CCT', 'CSS', 'DOC', 'DTS', 'HTM','HTML',
-                    'JAR', 'LDS', 'LOG', 'MYBIBLE', 'NT','NTX', 'ODT', 'ONT','ONTX', 'OSIS', 'OT','OTX', 'PDB',
-                    'SAV', 'SAVE', 'STY', 'SSF', 'USFM', 'VRS', 'YET', 'XML', 'ZIP', ) # Must be UPPERCASE and NOT begin with a dot
 
 
 class USXFilenames:
@@ -61,103 +56,28 @@ class USXFilenames:
     def __init__( self, givenFolderName ) -> None:
         """
         Create the object by inspecting files in the given folder.
-
-        Creates a self.pattern (Paratext template) for USFM filenames where
-            nnn = language code (lower case) or NNN = language code (UPPER CASE)
-            bbb = book code (lower case) or BBB = book code (UPPER CASE)
-            dd = digits
         """
         fnPrint( DEBUGGING_THIS_MODULE, f"USXFilenames.__init__( {givenFolderName} )" )
 
         self.givenFolderName = givenFolderName
-        self.pattern, self.fileExtension = '', 'usx' # Pattern should end up as 'dddBBB'
-        self.fileList = [] # A list of all files in our folder (excluding folder names and backup filenames)
-        self.digitsIndex, self.USXBookCodeIndex = 0, 3
+        self.pattern, self.fileExtension = '', 'usx'
+        self.fileList = []
+        self.lastTupleList = None
 
-        # Get the data tables that we need for proper checking
-        #self._USFMBooksCodes = bos_books_codes_py.get_all_usfm_abbreviations()
-        #self._USFMBooksCodesUpper = [x.upper() for x in self._USFMBooksCodes]
-        self._USFMBooksCodeNumberTriples = bos_books_codes_py.get_all_usfm_books_code_number_triples()
-        #self._BibleditBooksCodeNumberTriples = bos_books_codes_py.get_all_bibledit_books_code_number_triples()
+        if not os.access( self.givenFolderName, os.R_OK ):
+            logging.critical( f"USXFilenames: Given {self.givenFolderName!r} folder is unreadable" )
+            return
 
-        # Find how many files are in our folder
-        for possibleFilename in os.listdir( self.givenFolderName ):
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "possibleFilename", possibleFilename )
-            pFUpper = possibleFilename.upper()
-            if pFUpper in filenamesToIgnore: continue
-            pFUpperProper, pFUpperExt = os.path.splitext( pFUpper )
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, pFUpperProper, pFUpperExt )
-            ignore = False
-            for ending in FILENAME_ENDINGS_TO_IGNORE:
-                if pFUpper.endswith( ending): ignore=True; break
-            if ignore: continue
-            if pFUpper[-1]!='~' and not pFUpperExt[1:] in EXTENSION_TO_IGNORE: # Compare without the first dot
-                filepath = os.path.join( self.givenFolderName, possibleFilename )
-                if os.path.isfile( filepath ): # It's a file not a folder
-                    self.fileList.append( possibleFilename )
-        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "fL", self.fileList )
-        #if not self.fileList: logging.error( f"No files at all in given folder: {self.givenFolderName!r}" ); return
-
-        matched = False
-        for foundFilename in self.fileList:
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  USXFilenames found {foundFilename}" )
-            foundFileBit, foundExtBit = os.path.splitext( foundFilename )
-            foundLength = len( foundFileBit )
-            containsDigits = False
-            for char in foundFilename:
-                if char.isdigit():
-                    containsDigits = True
-                    break
-            #matched = False
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, repr(foundFileBit), foundLength, containsDigits, repr(foundExtBit) )
-            if foundExtBit == f'.{self.fileExtension}' or foundExtBit.lower() == f'.{self.fileExtension}':
-                self.fileExtension = foundExtBit[1:]
-                if foundLength == 3:
-                    self.hyphenIndex = None
-                    for USXBookCode,USXDigits,BBB in bos_books_codes_py.get_all_usx_books_code_number_triples():
-                        if foundFileBit == BBB:
-                            self.pattern = 'BBB'
-                            matched = True
-                        elif foundFileBit.upper() == BBB:
-                            self.pattern = 'bbb'
-                            matched = True
-                elif foundLength>=6 and containsDigits:
-                    for USXBookCode,USXDigits,BBB in bos_books_codes_py.get_all_usx_books_code_number_triples():
-                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, USXBookCode,USXDigits,BBB )
-                        if USXDigits in foundFileBit and (USXBookCode in foundFileBit or USXBookCode.upper() in foundFileBit):
-                            digitsIndex = foundFileBit.index( USXDigits )
-                            USXBookCodeIndex = foundFileBit.index(USXBookCode) if USXBookCode in foundFileBit else foundFileBit.index(USXBookCode.upper())
-                            USXBookCode = foundFileBit[USXBookCodeIndex:USXBookCodeIndex+3]
-                            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, foundLength, digitsIndex, containsDigits, USXBookCodeIndex )
-                            if foundLength==6 and digitsIndex==0 and USXBookCodeIndex==3: # Found a form like 001GEN.usx
-                                self.digitsIndex = digitsIndex
-                                self.hyphenIndex = None
-                                self.USXBookCodeIndex = USXBookCodeIndex
-                                self.pattern = 'dddbbb'
-                            else: logging.error( "Unrecognized USX filename template at "+foundFileBit ); return
-                            if USXBookCode.isupper(): self.pattern = self.pattern.replace( 'bbb', 'BBB' )
-                            matched = True
-                            break
-                        elif USXDigits[1:] in foundFileBit and '-' in foundFileBit and (USXBookCode in foundFileBit or USXBookCode.upper() in foundFileBit):
-                            digitsIndex = foundFileBit.index( USXDigits[1:] ) # Without the leading zero for the 66 books
-                            hyphenIndex = foundFileBit.index( '-' )
-                            USXBookCodeIndex = foundFileBit.index(USXBookCode) if USXBookCode in foundFileBit else foundFileBit.index(USXBookCode.upper())
-                            USXBookCode = foundFileBit[USXBookCodeIndex:USXBookCodeIndex+3]
-                            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, foundLength, digitsIndex, containsDigits, hyphenIndex, USXBookCodeIndex )
-                            if foundLength==6 and digitsIndex==0 and hyphenIndex==2 and USXBookCodeIndex==3: # Found a form like 001GEN.usx
-                                self.digitsIndex = digitsIndex
-                                self.hyphenIndex = hyphenIndex
-                                self.USXBookCodeIndex = USXBookCodeIndex
-                                self.pattern = 'dd-bbb'
-                            else: logging.error( "Unrecognized USX filename template at "+foundFileBit ); return
-                            if USXBookCode.isupper(): self.pattern = self.pattern.replace( 'bbb', 'BBB' )
-                            matched = True
-                            break
-                if matched: break
-        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, matched )
-        if BibleOrgSysGlobals.verbosityLevel>2 and not matched:
-            logging.info( "Unable to recognize valid USX files in " + str(self.givenFolderName) )
-        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"USXFilenames: pattern={self.pattern!r} fileExtension={self.fileExtension!r}" )
+        options = DiscoveryOptions( strict_check=BibleOrgSysGlobals.strictCheckingFlag )
+        try:
+            results = discoverFilenames( str(givenFolderName), is_usx=True, options=options )
+            self.pattern = results.pattern
+            self.fileExtension = results.fileExtension
+            self.lastTupleList = results.matchedFiles
+            # For backward compatibility, fileList contains all recognized files
+            self.fileList = [f for _, f in results.matchedFiles] + results.unusedFilenames
+        except Exception as err:
+            logging.error( f"USXFilenames: Error in Rust discovery: {err}" )
     # end of USXFilenames.__init__
 
 
@@ -179,191 +99,52 @@ class USXFilenames:
 
     def getFilenameTemplate( self ) -> str:
         """
-        Returns a pattern/template for USX filenames where
-                bbb = book code (lower case) or BBB = book code (UPPER CASE)
-                ddd = digits
-            It should be 'dddBBB' for USX files
+        Returns a pattern/template for USX filenames.
         """
         return self.pattern
     # end of USXFilenames.getFilenameTemplate
 
 
-    def doListAppend( self, BBB:str, filename, givenList, caller ) -> None:
-        """
-        Check that BBB and filename are not in the givenList,
-                then add them as a 2-tuple.
-            If there is a duplicate, remove both (as we're obviously unsure).
-        """
-        fnPrint( DEBUGGING_THIS_MODULE, f"USXFilenames.doListAppend( {BBB}, {filename}, {givenList}, {caller} )" )
-
-        removeBBB = removeFilename = None
-        for existingBBB, existingFilename in givenList:
-            if existingBBB == BBB:
-                logging.warning( f"{caller} tried to add duplicate {BBB} {filename} when already had {existingFilename} (removed both)" )
-                removeBBB, removeFilename = existingBBB, existingFilename
-            if existingFilename == filename:
-                logging.warning( f"{caller} tried to add duplicate {filename} {BBB} when already had {existingBBB} (removed both)" )
-                removeBBB, removeFilename = existingBBB, existingFilename
-        if removeFilename: givenList.remove( (removeBBB,removeFilename) )
-        else: givenList.append( (BBB,filename) )
-    # end of USXFilenames.doListAppend
-
-
     def getDerivedFilenameTuples( self ):
         """
         Return a list of valid USX filenames that match our filename template.
-            The result is a list of 2-tuples in the default rough sequence order from the BibleBooksCodes module.
-                Each tuple contains ( BBB, filename ) not including the folder path.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, "USXFilenames.getDerivedFilenameTuples()" )
-
-        resultList = []
-        if self.pattern:
-            for USFMBookCode,USXDigits,BBB in bos_books_codes_py.get_all_usx_books_code_number_triples():
-                filename = "------" # Six characters
-                if self.hyphenIndex is None:
-                    if self.pattern == 'BBB':
-                        filename = USFMBookCode.upper()
-                    elif self.pattern == 'bbb':
-                        filename = USFMBookCode.lower()
-                    else:
-                        filename = filename[:self.digitsIndex] + USXDigits + filename[self.digitsIndex+len(USXDigits):]
-                        filename = filename[:self.USXBookCodeIndex] + ( USFMBookCode.upper() if 'BBB' in self.pattern else USFMBookCode ) + filename[self.USXBookCodeIndex+len(USFMBookCode):]
-                else: # have a hyphen so assume only two digits
-                    if USXDigits.isdigit():
-                        USXInt = int( USXDigits )
-                        if USXInt > 39:
-                            USXDigits = str( USXInt + 1 )
-                            USXDigits = '0'*(3-len(USXDigits)) + USXDigits
-                            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, repr(USXDigits) ); halt
-                    filename = filename[:self.digitsIndex] + USXDigits[1:] + filename[self.digitsIndex+len(USXDigits)-1:]
-                    filename = filename[:self.USXBookCodeIndex] + ( USFMBookCode.upper() if 'BBB' in self.pattern else USFMBookCode ) + filename[self.USXBookCodeIndex+len(USFMBookCode):]
-                filename += f'.{self.fileExtension}'
-                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"getDerivedFilenames: Filename is {filename!r}" )
-                resultList.append( (BBB,filename,) )
-        return sorted( resultList, key=lambda x: bos_books_codes_py.get_sequence_number(x[0]) )
+        return self.lastTupleList or []
     # end of USXFilenames.getDerivedFilenameTuples
 
 
     def getConfirmedFilenameTuples( self, strictCheck:bool=False ):
         """
         Return a list of tuples of UPPER CASE book codes with actual (present and readable) USX filenames.
-            If the strictCheck flag is set, the program also looks at the first line(s) inside the files.
-
-            The result is a list of 2-tuples in the default rough sequence order from the BibleBooksCodes module.
-                Each tuple contains ( BBB, filename ) not including the folder path.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"USXFilenames.getConfirmedFilenameTuples( {strictCheck} )" )
-
-        resultList = []
-        for BBB,possibleFilename in self.getDerivedFilenameTuples():
-            possibleFilepath = os.path.join( self.givenFolderName, possibleFilename )
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  USXFilenames.getConfirmedFilenameTuples looking for: {possibleFilename}" )
-            if os.access( possibleFilepath, os.R_OK ):
-                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "possibleFilepath", possibleFilepath )
-                #USXBookCode = possibleFilename[self.USXBookCodeIndex:self.USXBookCodeIndex+3].upper()
-                if strictCheck or BibleOrgSysGlobals.strictCheckingFlag:
-                    firstLines = BibleOrgSysGlobals.peekIntoFile( possibleFilename, self.givenFolderName, numLines=3 )
-                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "firstLinesGCFT", firstLines )
-                    if not firstLines or len(firstLines)<3: continue
-                    if not ( firstLines[0].startswith( '<?xml version="1.0"' ) or firstLines[0].startswith( "<?xml version='1.0'" ) ) \
-                    and not ( firstLines[0].startswith( '\ufeff<?xml version="1.0"' ) or firstLines[0].startswith( "\ufeff<?xml version='1.0'" ) ): # same but with BOM
-                        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"USXB (unexpected) first line was {thisFilename!r} in {firstLines}" )
-                    if '<usx' not in firstLines[0] and '<usx' not in firstLines[1]:
-                        continue # so it doesn't get added
-                resultList.append( (BBB, possibleFilename,) )
-        return resultList # No need to sort these, coz the above call produce sorted results
+        if strictCheck and not BibleOrgSysGlobals.strictCheckingFlag:
+             options = DiscoveryOptions( strict_check=True )
+             try:
+                 results = discoverFilenames( str(self.givenFolderName), is_usx=True, options=options )
+                 self.lastTupleList = results.matchedFiles
+             except Exception as err:
+                 logging.error( f"USXFilenames.getConfirmedFilenameTuples: Error in Rust discovery: {err}" )
+        return self.lastTupleList or []
     # end of USXFilenames.getConfirmedFilenameTuples
 
 
     def getPossibleFilenameTuples( self, strictCheck:bool=False ) -> list[tuple[str,str]]:
         """
-        Return a list of filenames just derived from the list of files in the folder,
-                i.e., look only externally at the filenames.
-            If the strictCheck flag is set, the program also looks at the first line(s) inside the files.
+        Return a list of filenames just derived from the list of files in the folder.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"USXFilenames.getPossibleFilenameTuples( {strictCheck} )" )
-        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "self.fileList", len(self.fileList), self.fileList )
-
-        resultList = []
-        for possibleFilename in self.fileList:
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  USXFilenames.getPossibleFilenameTuples looking for: {possibleFilename}" )
-            pFUpper = possibleFilename.upper()
-            if pFUpper in filenamesToIgnore: continue
-            pFUpperProper, pFUpperExt = os.path.splitext( pFUpper )
-            for USFMBookCode,USFMDigits,BBB in self._USFMBooksCodeNumberTriples:
-                ignore = False
-                for ending in FILENAME_ENDINGS_TO_IGNORE:
-                    if pFUpper.endswith( ending): ignore=True; break
-                if ignore: continue
-                checkString = pFUpperProper[3:] if self.pattern == 'dddBBB' else pFUpperProper
-                # Otherwise 051COL.usx gets confused between 1Co and Col
-                if USFMBookCode.upper() in checkString:
-                    if pFUpper[-1]!='~' and not pFUpperExt[1:] in EXTENSION_TO_IGNORE: # Compare without the first dot
-                        if strictCheck or BibleOrgSysGlobals.strictCheckingFlag:
-                            firstLines = BibleOrgSysGlobals.peekIntoFile( possibleFilename, self.givenFolderName, numLines=3 )
-                            if not firstLines or len(firstLines)<3:
-                                continue
-                            if not ( firstLines[0].startswith( '<?xml version="1.0"' ) or firstLines[0].startswith( "<?xml version='1.0'" ) ) \
-                            and not ( firstLines[0].startswith( '\ufeff<?xml version="1.0"' ) or firstLines[0].startswith( "\ufeff<?xml version='1.0'" ) ): # same but with BOM
-                                vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"USXB (unexpected) first line was {thisFilename!r} in {firstLines}" )
-                            if '<usx' not in firstLines[0] and '<usx' not in firstLines[1]:
-                                continue # so it doesn't get added
-                        self.doListAppend( bos_books_codes_py.usfm_abbrev_to_bos_book_code( USFMBookCode ), possibleFilename, resultList, "getPossibleFilenameTuplesExt" )
-        self.lastTupleList = resultList
-        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "final resultList", len(resultList), resultList )
-        return sorted( resultList, key=lambda x: bos_books_codes_py.get_sequence_number(x[0]) )
+        return self.getConfirmedFilenameTuples( strictCheck=strictCheck )
     # end of USXFilenames.getPossibleFilenameTuples
 
 
     def getUnusedFilenames( self ):
         """
         Return a list of filenames which didn't match the USFX template.
-            The order of the filenames in the list has no meaning.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, "USXFilenames.getUnusedFilenames()" )
+        if self.lastTupleList is None: return []
         folderFilenames = os.listdir( self.givenFolderName )
-        actualFilenames = self.getConfirmedFilenameTuples()
-        filelist = []
-        for BBB,actualFilename in actualFilenames:
-            folderFilenames.remove( actualFilename )
-        return folderFilenames
+        matched = [f for _, f in self.lastTupleList]
+        return [f for f in folderFilenames if f not in matched and os.path.isfile(os.path.join(self.givenFolderName, f))]
     # end of USXFilenames.getUnusedFilenames
-
-
-    #def getSSFFilenames( self, searchAbove=False, auto=True ):
-    #    """Return a list of full pathnames of .ssf files in the folder.
-    #        NOTE: USX projects don't usually have the .ssf files in the project folder,
-    #            but 'backed-up' projects often do.
-    #        If searchAbove is set to True and no ssf files are found in the given folder,
-    #            this routine will attempt to search the next folder up the file hierarchy.
-    #            Furthermore, unless auto is set to False,
-    #                it will try to find the correct one from multiple SSFs."""
-    #    def getSSFFilenamesHelper( folder ):
-    #        filelist = []
-    #        files = os.listdir( folder )
-    #        for foundFilename in files:
-    #            if not foundFilename.endswith('~'): # Ignore backup files
-    #                foundFileBit, foundExtBit = os.path.splitext( foundFilename )
-    #                if foundExtBit.lower()=='.ssf':
-    #                    filelist.append( os.path.join( folder, foundFilename ) )
-    #        return filelist
-    #    # end of getSSFFilenamesHelper
-
-    #    filelist = getSSFFilenamesHelper( self.givenFolderName )
-    #    if not filelist and searchAbove: # try the next level up
-    #        filelist = getSSFFilenamesHelper( os.path.join( self.givenFolderName, '../' ) )
-    #        if auto and len(filelist)>1: # See if we can help them by automatically choosing the right one
-    #            count, index = 0, -1
-    #            for j, filepath in enumerate(filelist): # Check if we can find a single matching ssf file
-    #                foundPathBit, foundExtBit = os.path.splitext( filepath )
-    #                foundPathBit, foundFileBit = os.path.split( foundPathBit )
-    #                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, foundPathBit, foundFileBit, foundExtBit, self.givenFolderName )
-    #                if foundFileBit in self.givenFolderName: index = j; count += 1 # Take a guess that this might be the right one
-    #            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, count, index )
-    #            if count==1 and index!=-1: filelist = [ filelist[index] ] # Found exactly one so reduce the list down to this one filepath
-    #    return filelist
-    ## end of getSSFFilenames
 # end of class USXFiles
 
 
@@ -381,9 +162,8 @@ def briefDemo() -> None:
         if os.access( testFolder, os.R_OK ):
             UsxFns = USXFilenames( testFolder )
             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, UsxFns )
-            result = UsxFns.getDerivedFilenameTuples(); vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nPossible:", len(result), result )
-            result = UsxFns.getConfirmedFilenameTuples(); vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nConfirmed:", len(result), result )
-            result = UsxFns.getUnusedFilenames(); vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nOther:", len(result), result )
+            result = UsxFns.getMaximumPossibleFilenameTuples(); vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nConfirmed: {len(result)} books found" )
+            result = UsXFns.getUnusedFilenames(); vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Other: {len(result)} files" )
         else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Sorry, test folder '{testFolder}' doesn't exist on this computer." )
 # end of fullDemo
 

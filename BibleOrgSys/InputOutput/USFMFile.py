@@ -1,5 +1,5 @@
 #!/usr/bin/env -S uv run
-# -\*- coding: utf-8 -\*-
+# -*- coding: utf-8 -*-
 # SPDX-License-Identifier: GPL-3.0-or-later
 #
 # USFMFile.py
@@ -30,70 +30,30 @@ Module for reading UTF-8 USFM (Unified Standard Format Marker) Bible file.
 
   The USFM and its data field are read into a 2-tuple and saved (in order) in the list.
 
+  Now powered by Rust for improved memory efficiency.
+
   Raises an IOError error if file doesn't exist.
 """
 
 import sys
 import logging
 
+from bible_organisational_system import splitUSFMMarkerFromText, readUSFMFile
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint, LARGE_DUMMY_VALUE
 
 
-LAST_MODIFIED_DATE = '2024-03-10' # by RJH
+LAST_MODIFIED_DATE = '2026-05-17' # by RJH (Rust conversion)
 SHORT_PROGRAM_NAME = "USFMFile"
 PROGRAM_NAME = "USFM File loader"
-PROGRAM_VERSION = '0.87'
+PROGRAM_VERSION = '0.90'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
 
 
 
-def splitUSFMMarkerFromText( line:str ) -> tuple[str|None,str]:
-    """
-    Given a line of text (may be empty),
-        returns a backslash marker and the text.
-
-    If the marker is self-closing and without any internal fields, e.g., \\ts\\*
-        the closure characters will be included with the marker.
-
-    Returns None for the backslash marker if there isn't one.
-    Returns an empty string for the text if there isn't any.
-    """
-    if not line: return None, ''
-    if line[0] != '\\': return None, line # Not a USFM line
-
-    # We have a line that starts with a backslash
-    # The marker can end with a space, asterisk, or another marker
-    lineAfterLeadingBackslash = line[1:]
-    ixSP = lineAfterLeadingBackslash.find( ' ' )
-    ixAS = lineAfterLeadingBackslash.find( '*' )
-    ixBS = lineAfterLeadingBackslash.find( '\\' )
-    if ixSP==-1: ixSP = LARGE_DUMMY_VALUE
-    if ixAS==-1: ixAS = LARGE_DUMMY_VALUE
-    if ixBS==-1: ixBS = LARGE_DUMMY_VALUE
-    ix = min( ixSP, ixAS, ixBS ) # Find the first terminating character (if any)
-
-    if ix == LARGE_DUMMY_VALUE: # The line is only the marker
-        return lineAfterLeadingBackslash, ''
-    else:
-        if ix == ixBS: # Marker stops before a backslash
-            if len(lineAfterLeadingBackslash) > ixBS+1 \
-            and lineAfterLeadingBackslash[ixBS+1] == '*': # seems to be a self-closed marker
-                marker = lineAfterLeadingBackslash[:ixBS+2]
-                text = lineAfterLeadingBackslash[ixBS+2:]
-            else: # Seems not self-closed
-                marker = lineAfterLeadingBackslash[:ixBS]
-                text = lineAfterLeadingBackslash[ixBS:]
-        elif ix == ixAS: # Marker stops at an asterisk
-            marker = lineAfterLeadingBackslash[:ixAS+1]
-            text = lineAfterLeadingBackslash[ixAS+1:]
-        elif ix == ixSP: # Marker stops before a space
-            marker = lineAfterLeadingBackslash[:ixSP]
-            text = lineAfterLeadingBackslash[ixSP+1:] # We drop the space completely
-    return marker, text
-# end if splitUSFMMarkerFromText
+# splitUSFMMarkerFromText is now imported from bible_organisational_system
 
 
 
@@ -123,14 +83,14 @@ class USFMFile:
     # end of USFMFile.__str__
 
 
-    def read( self, USFMFilepath:str, ignoreSFMs:bool|None=None, encoding:str|None=None ) -> None:
+    def read( self, USFMFilepath:str, ignoreSFMs:list|tuple|None=None, encoding:str|None=None ) -> None:
         """
         Read a simple USFM (Unified Standard Format Marker) file into a list of tuples.
 
-        @param USFMFilepath: The filename
+        @param USFMFilepath: The filename or URL
         @type USFMFilepath: string
-        @param key: The SFM record marker (not including the backslash)
-        @type encoding: string
+        @param ignoreSFMs: List of SFM markers to ignore
+        @type ignoreSFMs: list or tuple
         @rtype: list
 
         Puts the result into self.lines
@@ -138,53 +98,15 @@ class USFMFile:
         fnPrint( DEBUGGING_THIS_MODULE, f"USFMFile.read( {USFMFilepath=}, {ignoreSFMs=}, {encoding=} )" )
 
         # Check/handle parameters
-        if ignoreSFMs is None: ignoreSFMs = ()
-        if encoding is None: encoding = 'utf-8'
+        if ignoreSFMs is None: ignoreSFMs = []
+        if isinstance(ignoreSFMs, tuple): ignoreSFMs = list(ignoreSFMs)
 
-        lastLine, lineCount, result = '', 0, []
-
-        with open( USFMFilepath, encoding=encoding ) as ourFile: # Automatically closes the file when done
-            try:
-                for line in ourFile:
-                    lineCount += 1
-                    if lineCount==1 and encoding.lower()=='utf-8' and line[0]==BibleOrgSysGlobals.BOM:
-                        logging.info( f"USFMFile: Detected Unicode Byte Order Marker (BOM) in {USFMFilepath}" )
-                        line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
-                    if line and line[-1]=='\n': line=line[:-1] # Removing trailing newline character
-                    if not line: continue # Just discard blank lines
-                    lastLine = line
-                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'USFM file line is "' + line + '"' )
-                    #if line[0:2]=='\\_': continue # Just discard Toolbox header lines
-                    if line[0]=='#': continue # Just discard comment lines
-
-                    if line[0]!='\\': # Not a SFM line
-                        if len(result)==0: # We don't have any SFM data lines yet
-                            if BibleOrgSysGlobals.verbosityLevel > 2:
-                                logging.error( "Non-USFM line in " + USFMFilepath + " -- line ignored at #" + str(lineCount) )
-                            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "SFMFile.py: XXZXResult is", result, len(line) )
-                            #for x in range(0, min(6,len(line))):
-                                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, x, "'" + str(ord(line[x])) + "'" )
-                            #raise IOError('Oops: Line break on last line ??? not handled here "' + line + '"')
-                        else: # Append this continuation line
-                            if marker not in ignoreSFMs:
-                                oldmarker, oldtext = result.pop()
-                                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Popped",oldmarker,oldtext)
-                                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Adding", line, "to", oldmarker, oldtext)
-                                result.append( (oldmarker, oldtext+' '+line) )
-                            continue
-
-                    marker, text = splitUSFMMarkerFromText( line )
-                    if marker not in ignoreSFMs:
-                        result.append( (marker, text) )
-
-            except UnicodeError as err:
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "USFMFile Unicode error:", sys.exc_info()[0], err )
-                logging.critical( "Invalid line in " + USFMFilepath + " -- line ignored at #" + str(lineCount) )
-                if lineCount > 1: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'Previous line was: ', lastLine )
-                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, line )
-                #raise
-
-            self.lines = result
+        try:
+            self.lines = readUSFMFile( str(USFMFilepath), ignoreSFMs )
+        except Exception as err:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "USFMFile error:", sys.exc_info()[0], err )
+            logging.critical( f"Error reading {USFMFilepath}: {err}" )
+            # raise
     # end of USFMFile.read
 # end of class USFMFile
 

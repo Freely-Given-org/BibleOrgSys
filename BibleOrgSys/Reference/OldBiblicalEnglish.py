@@ -43,7 +43,7 @@ import BibleOrgSys.BibleOrgSysGlobals as BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2026-05-15' # by RJH
+LAST_MODIFIED_DATE = '2026-05-17' # by RJH
 SHORT_PROGRAM_NAME = "OldBiblicalEnglish"
 PROGRAM_NAME = "OpenBibleData English Language Handling functions"
 PROGRAM_VERSION = '0.97'
@@ -200,6 +200,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
     (('aforetime','afore time'),'aforetime/previously'), # Dan 6:10
     ((' a go,',' agoo,',' agoe,'),' ago,'),((' agoo:',),' ago:'), # Bshps 2Ki 19:25, Cvdl Lam 2:!7
     ((' a loofe ',),' aloof '), # Psa 38:11
+    ((' a nother ',),' another '), # TNT Mrk 9:10
     ((' a piece',),' apiece'), # KJB-1611 1Ki 7:15
     ((' asunder',' a sunder',' in sunder',' in sonder',' asundre',' asonder',' insunder'),' asunder/apart'), # Amos 6:11, Psa 46:9
     ((' all wayes',' allwayes',' alwayes',' alwaies',),' always'),
@@ -1176,7 +1177,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
                 ((' favourest',' fauouredst',' fauourest'),' favourest/favour'),((' favoureth',' fauoureth'),' favoureth/favours'),((' fauoured',),' favoured'),((' fauoure',' fauour',' favor',' fauor'),' favour'),
             ((' faun',),' fawn'),
         ((' feares',),' fears'), (('Feare ',),'Fear '),(('Feare,',),'Fear,'),((' feare ',),' fear '),((' feare,',),' fear,'),((' feare.',),' fear.'),((' feare?',),' fear?'),((' feare:',),' fear:'),
-                    (('Fearfullnesse ','Fearefulnesse ','Fearefulnes '),'Fearfulness '),(('fearefull ','fearfull ','ferdful '),'fearful '),(('feareful,','feerful,'),'fearful,'),(('fearefull?','fearfull?'),'fearful?'),(('fearefull:','fearfull:'),'fearful:'),
+                    (('Fearfullnesse ','Fearefulnesse ','Fearefulnes '),'Fearfulness '),(('fearefull ','fearfull ','ferdful '),'fearful '),(('feareful,','feerful,'),'fearful,'),(('fearfull.',),'fearful.'),(('fearefull?','fearfull?'),'fearful?'),(('fearefull:','fearfull:'),'fearful:'),
                 (('feastes',),'feasts'),((' feeste ',' feaste '),' feast '),((' feeste,',),' feast,'),((' feeste.',),' feast.'),
                 (('fetherid',),'feathered'),((' fetheris',),' feathers'),((' fether',),' feather'),
             ((' fedden ',' fedde '),' fed '),((' fedde:',),' fed:'),
@@ -1681,7 +1682,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
         (('Mee ',),'Me '),((' mee ',),' me '),((' mee,',),' me,'),((' mee.',),' me.'),((' mee?',),' me?'),((' mee:',),' me:'),((' mee;',),' me;'),
             ((' medowe',),' meadow'),
                 ((' meal ',' meale ',' mele ',' meel '),' meal/flour '),((' meal,',' meale,',' meel,',' mele,'),' meal/flour,'),((' meal.',' meale.',),' meal/flour.'),((' meale:',),' meal/flour:'),((' mele;',),' meal/flour;'),
-                    ((' meanynge',),' meaning'), ((' meanes',),' means'),((' meane ',),' mean '),
+                    ((' meanynge',),' meaning'), ((' meanes',),' means'),((' meane ',),' mean '),((' meane.',),' mean.'),((' meane?',),' mean?'),
                 ((' mesurable',),' measurable'), ((' mesure',),' measure'),
                 ((' meetis',' metis',' meates'),' meats'),((' meate ',),' meat '),((' meate,',),' meat,'),((' meate.',),' meat.'),((' meate:',),' meat:'),
             ((' meddlid',' medled'),' meddled'),((' meddleth',' medleth'),' meddleth/meddles'),((' medlyng',),' meddling'),((' medle ',),' meddle '),
@@ -1853,6 +1854,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
                     ((' overflowe ',),' overflow '),((' overflowe,',),' overflow,'),((' overflowe:',),' overflow:'),
                     ((' overlaide',' overlayde',' overlayed',' overlayd'),' overlaid'), # ouer is fixed just above
                     ((' overranne',),' overran'),
+                    (('overschadewynge',),'overshadowing'),
                     ((' overthrowen',),' overthrown'),((' overthrewe',),' overthrew'), ((' overthroweth',' overthrowth'),' overthroweth/overthrew'),((' overthrowe ',),' overthrow '), ((' overtooke',),' overtook'),
         ((' owid ',),' owed '),((' oweth',' owith'),' oweth/owes'), ((' owest',' owist'),' owest/owe'),
             (('Owle','Oule'),'Owl'),((' owle',),' owl'),
@@ -2106,7 +2108,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
             ((' rynde ',),' rind '), ((' rynges',),' rings'),((' rynge ',),' ring '),
             ((' rype',),' ripe'),
                 ((' rypte ',' ript '),' ripped '),((' ript.',),' ripped.'),
-            ((' riseth',' risith',' ryseth'),' riseth/rises'),((' rysinge',' risynge',' rysyng'),' rising'), (('Ryse',),'Rise'),((' ryse ',),' rise '),((' ryse,',),' rise,'),((' rysen',' risun'),' risen'),
+            ((' riseth',' risith',' ryseth'),' riseth/rises'),((' rysinge',' risynge',' rysyng',' rysing'),' rising'), (('Ryse',),'Rise'),((' ryse ',),' rise '),((' ryse,',),' rise,'),((' rysen',' risun'),' risen'),
             ((' ryueris',),' rivers'), (('Riuer','Ryuer'),'River'),((' ryuere',' ryuer',' riuer'),' river'),
         ((' rored',),' roared'),((' roaringe',),' roaring'),((' roare ',' rore '),' roar '),((' roare,',' rore,'),' roar,'),
                 ((' rostide',' rosted'),' roasted'),
@@ -2204,7 +2206,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
                 ((' seuententhe',),' seventeenth'),(('seuenteene','seuentene'),'seventeen'),(('seuenthe','seuenth'),'seventh'),((' seuentithe',),' seventieth'),((' seuentie',' seuenti',' seuentye'),' seventy'),
                     (('Seuene','Seuen',),'Seven'),(('Seue ',),'Seven '),((' seuene',' seuen',' seue'),' seven'),
             ((' sewe ',),' sew '),
-        ((' schadewi',' shadewi',' schadewe',' schadowe',' shadowe',' shadewe',' schadow'),' shadow'),
+        ((' shaddowed',),' shadowed'),((' shadowe ',),' shadow '),((' schadewi',' shadewi',' schadewe',' schadowe',' shadewe',' schadow'),' shadow'),
                 ((' schaft',),' shaft'),
                 ((' schakun',),' shaken'),((' schake ',),' shake '),
                 (('Shal ',),'Shall '),((' shulen ',' schall ',' schal ',' shal '),' shall '),((' shalt ',' schalt ',),' shalt/shall '),
@@ -2860,6 +2862,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
         ((' biforknowing',),' foreknowledge'), # # Wycl Deu 29:29
         ((' bihiyten',' bihiyte',' bihiyt',),' promised'), # Wycl Deu 25:19
         ((' birre ',),' force/impetus/wind '), # Wycl Mrk 5:13
+        ((' bischop',),' bishop/high-priest'), # Wycl Exo 28:38
         (('bischopriche','bishopricke'),'bishopric/diocese'), # Psa 108:8
         ((' bitakun',),' betaken/committed/entrusted'),((' bitake ',),' betake/give/grant '), # Wycl Jdg 15:12
         ((' bitook',),' betook/entrusted'), # Sng 8:11

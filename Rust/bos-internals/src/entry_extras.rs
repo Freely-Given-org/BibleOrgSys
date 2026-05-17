@@ -229,7 +229,7 @@ impl std::fmt::Display for InternalBibleExtraList {
         } else {
             for (j, entry) in self.data.iter().enumerate() {
                 if j >= MAX_PRINTED {
-                    writeln!(f, "  ... ({} total entries)", self.data.len())?;
+                    writeln!(f, "  … ({} total entries)", self.data.len())?;
                     break;
                 }
                 writeln!(
@@ -467,7 +467,7 @@ impl std::fmt::Display for InternalBibleEntryList {
         } else {
             for (j, entry) in self.data.iter().enumerate() {
                 if j >= MAX_PRINTED {
-                    writeln!(f, "  ... ({} total entries)", self.data.len())?;
+                    writeln!(f, "  … ({} total entries)", self.data.len())?;
                     break;
                 }
                 let text = entry.clean_text();

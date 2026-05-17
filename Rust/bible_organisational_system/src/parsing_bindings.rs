@@ -11,8 +11,8 @@ use crate::cv_index_bindings::{
     py_build_bible_cv_indexes,
 };
 use crate::discovery_bindings::{
-    py_discover_bible, py_discover_book, PyAggregateDiscoveryResults, PyBibleDiscoveryResults,
-    PyBookDiscoveryResults,
+    py_discover_bible, py_discover_book, py_discover_filenames, PyAggregateDiscoveryResults,
+    PyBibleDiscoveryResults, PyBookDiscoveryResults, PyDiscoveryOptions, PyDiscoveryResults,
 };
 use crate::extras_bindings::{PyInternalBibleExtra, PyInternalBibleExtraList, PyInternalBibleExtraListIter};
 use crate::processing_bindings::{PyObjectType, PyProcessLinesOptions, py_process_lines, py_process_bible};
@@ -26,6 +26,14 @@ use crate::checking_bindings::{
     py_check_book, py_check_bible,
     PyDiscoveryFlags, PyCheckOptions,
 };
+use crate::io_bindings::{
+    py_read_esfm_file, py_read_sfm_lines, py_read_sfm_records, py_read_usfm_file,
+    py_split_usfm_marker_from_text,
+};
+use crate::ml_writer_bindings::{
+    py_escape_characters, PyHumanReadable, PyMlOutputType, PyMlWriter, PySectionName,
+};
+use crate::xml_file_bindings::{py_validate_well_formedness, py_validate_with_lint};
 
 /// Python module for BibleOrgSys internals.
 #[pymodule]
@@ -42,6 +50,7 @@ fn bible_organisational_system(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(py_process_bible, m)?)?;
     m.add_function(wrap_pyfunction!(py_discover_book, m)?)?;
     m.add_function(wrap_pyfunction!(py_discover_bible, m)?)?;
+    m.add_function(wrap_pyfunction!(py_discover_filenames, m)?)?;
     m.add_function(wrap_pyfunction!(py_parse_word_attributes, m)?)?;
     m.add_function(wrap_pyfunction!(py_validate_processed_markers, m)?)?;
     m.add_function(wrap_pyfunction!(py_validate_bible_markers, m)?)?;
@@ -53,6 +62,15 @@ fn bible_organisational_system(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(py_check_bible, m)?)?;
     m.add_function(wrap_pyfunction!(py_build_bible_cv_indexes, m)?)?;
     m.add_function(wrap_pyfunction!(py_build_bible_section_indexes, m)?)?;
+
+    m.add_function(wrap_pyfunction!(py_split_usfm_marker_from_text, m)?)?;
+    m.add_function(wrap_pyfunction!(py_read_usfm_file, m)?)?;
+    m.add_function(wrap_pyfunction!(py_read_esfm_file, m)?)?;
+    m.add_function(wrap_pyfunction!(py_read_sfm_lines, m)?)?;
+    m.add_function(wrap_pyfunction!(py_read_sfm_records, m)?)?;
+    m.add_function(wrap_pyfunction!(py_escape_characters, m)?)?;
+    m.add_function(wrap_pyfunction!(py_validate_well_formedness, m)?)?;
+    m.add_function(wrap_pyfunction!(py_validate_with_lint, m)?)?;
 
     m.add_class::<PyDiscoveryFlags>()?;
     m.add_class::<PyCheckOptions>()?;
@@ -66,6 +84,8 @@ fn bible_organisational_system(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyBookDiscoveryResults>()?;
     m.add_class::<PyAggregateDiscoveryResults>()?;
     m.add_class::<PyBibleDiscoveryResults>()?;
+    m.add_class::<PyDiscoveryOptions>()?;
+    m.add_class::<PyDiscoveryResults>()?;
 
     // CV index types
     m.add_class::<PyChapterVerse>()?;
@@ -84,6 +104,11 @@ fn bible_organisational_system(m: &Bound<'_, PyModule>) -> PyResult<()> {
     // Processing types
     m.add_class::<PyObjectType>()?;
     m.add_class::<PyProcessLinesOptions>()?;
+
+    m.add_class::<PyMlWriter>()?;
+    m.add_class::<PyMlOutputType>()?;
+    m.add_class::<PyHumanReadable>()?;
+    m.add_class::<PySectionName>()?;
 
     Ok(())
 }

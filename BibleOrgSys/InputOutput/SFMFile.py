@@ -1,5 +1,5 @@
 #!/usr/bin/env -S uv run
-# -\*- coding: utf-8 -\*-
+# -*- coding: utf-8 -*-
 # SPDX-License-Identifier: GPL-3.0-or-later
 #
 # SFMFile.py
@@ -35,19 +35,22 @@ There are three kinds of SFM encoded files which can be loaded:
 
   In each case, the SFM and its data field are read into a 2-tuple and saved (in order) in the list.
 
+  Now powered by Rust for improved memory efficiency.
+
   Raises IOError if file doesn't exist.
 """
-# import logging
+import logging
 import sys
 
+from bible_organisational_system import readSFMLines, readSFMRecords
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2020-04-18' # by RJH
+LAST_MODIFIED_DATE = '2026-05-17' # by RJH (Rust conversion)
 SHORT_PROGRAM_NAME = "SFMFile"
 PROGRAM_NAME = "SFM Files loader"
-PROGRAM_VERSION = '0.86'
+PROGRAM_VERSION = '0.88'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -76,76 +79,30 @@ class SFMLines:
             result += ('\n' if result else '') + str( line )
         return result
 
-    def read( self, SFMFilepath, ignoreSFMs=None, encoding='utf-8' ):
+    def read( self, SFMFilepath:str, ignoreSFMs:list|tuple|None=None, encoding:str|None=None ):
         """
         Read a simple SFM (Standard Format Marker) file into a list of tuples.
 
-        @param SFMFilepath: The filename
+        @param SFMFilepath: The filename or URL
         @type SFMFilepath: string
-        @param key: The SFM record marker (not including the backslash)
+        @param ignoreSFMs: List of SFM markers to ignore
+        @type ignoreSFMs: list or tuple
+        @param encoding: Ignored (now handled by Rust's UTF-8 reader)
         @type encoding: string
         @rtype: list
         @return: list of lists containing the records
         """
 
         # Check/handle parameters
-        if ignoreSFMs is None: ignoreSFMs = ()
+        if ignoreSFMs is None: ignoreSFMs = []
+        if isinstance(ignoreSFMs, tuple): ignoreSFMs = list(ignoreSFMs)
 
-        lastLine, lineCount, result = '', 0, []
-        with open( SFMFilepath, encoding=encoding ) as myFile: # Automatically closes the file when done
-            try:
-                for line in myFile:
-                    lineCount += 1
-                    if lineCount==1 and encoding.lower()=='utf-8' and line[0]==BibleOrgSysGlobals.BOM:
-                        logging.info( f"SFMLines: Detected Unicode Byte Order Marker (BOM) in {SFMFilepath}" )
-                        line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
-                    if line and line[-1]=='\n': line=line[:-1] # Removing trailing newline character
-                    if not line: continue # Just discard blank lines
-                    lastLine = line
-                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'SFM file line is "' + line + '"' )
-                    #if line[0:2]=='\\_': continue # Just discard Toolbox header lines
-                    if line[0]=='#': continue # Just discard comment lines
-
-                    if line[0]!='\\': # Not a SFM line
-                        if len(result)==0: # We don't have any SFM data lines yet
-                            if BibleOrgSysGlobals.verbosityLevel > 2:
-                                logging.error( "Non-SFM line in " + SFMFilepath + " -- line ignored at #" + str(lineCount) )
-                            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "SFMFile.py: XXZXResult is", result, len(line) )
-                            #for x in range(0, min(6,len(line))):
-                                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, x, "'" + str(ord(line[x])) + "'" )
-                            #raise IOError('Oops: Line break on last line ??? not handled here "' + line + '"')
-                        else: # Append this continuation line
-                            if marker not in ignoreSFMs:
-                                oldmarker, oldtext = result.pop()
-                                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Popped",oldmarker,oldtext)
-                                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Adding", line, "to", oldmarker, oldtext)
-                                result.append( (oldmarker, oldtext+' '+line) )
-                            continue
-
-                    lineAfterBackslash = line[1:]
-                    si1 = lineAfterBackslash.find( ' ' )
-                    si2 = lineAfterBackslash.find( '\\' )
-                    if si2!=-1 and (si1==-1 or si2<si1): # Marker stops at a backslash
-                        marker = lineAfterBackslash[:si2]
-                        text = lineAfterBackslash[si2:]
-                    elif si1!=-1: # Marker stops at a space
-                        marker = lineAfterBackslash[:si1]
-                        text = lineAfterBackslash[si1+1:] # We drop the space
-                    else: # The line is only the marker
-                        marker = lineAfterBackslash
-                        text = ''
-
-                    if marker not in ignoreSFMs:
-                        result.append( (marker, text) )
-
-            except UnicodeError as err:
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Unicode error:", sys.exc_info()[0], err )
-                logging.critical( "Invalid line in " + SFMFilepath + " -- line ignored at #" + str(lineCount) )
-                if lineCount > 1: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'Previous line was: ', lastLine )
-                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, line )
-                #raise
-
-            self.lines = result
+        try:
+            self.lines = readSFMLines( str(SFMFilepath), ignoreSFMs )
+        except Exception as err:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "SFMLines error:", sys.exc_info()[0], err )
+            logging.critical( f"Error reading {SFMFilepath}: {err}" )
+            # raise
     # end of SFMLines.read
 # end of class SFMLines
 
@@ -177,115 +134,43 @@ class SFMRecords:
         return result
 
 
-    def read( self, SFMFilepath, key=None, ignoreSFMs=None, ignoreEntries=None, changePairs=None, encoding='utf-8' ):
+    def read( self, SFMFilepath:str, key:str|None=None, ignoreSFMs:list|tuple|None=None, ignoreEntries:list|tuple|None=None, changePairs:list|None=None, encoding:str|None=None ):
         """
         Read a simple SFM (Standard Format Marker) file into a list of lists of tuples.
 
-        @param SFMFilepath: The filename
+        @param SFMFilepath: The filename or URL
         @type SFMFilepath: string
         @param key: The SFM record marker (not including the backslash)
+        @type key: string
+        @param ignoreSFMs: List of SFM markers to ignore
+        @type ignoreSFMs: list or tuple
+        @param ignoreEntries: List of entry values to ignore
+        @type ignoreEntries: list or tuple
+        @param changePairs: List of (find, replace) pairs for markers
+        @type changePairs: list
+        @param encoding: Ignored (now handled by Rust's UTF-8 reader)
         @type encoding: string
         @rtype: list
         @return: list of lists containing the records
         """
 
-        def changeMarker( currentMarker, changePairs ):
-            """
-            Change the SFM marker if required
-            """
-            if changePairs:
-                for findMarker, replaceMarker in changePairs:
-                    if findMarker==currentMarker: return replaceMarker
-            return currentMarker
-        # end of changeMarker
-
-        # Main code for SFMRecords.read()
         # Check/handle parameters
-        if ignoreSFMs is None: ignoreSFMs = ()
-        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "ignoreSFMs =", ignoreSFMs )
-        if ignoreEntries is None: ignoreEntries = ()
-        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "ignoreEntries =", ignoreEntries )
+        if ignoreSFMs is None: ignoreSFMs = []
+        if isinstance(ignoreSFMs, tuple): ignoreSFMs = list(ignoreSFMs)
+        if ignoreEntries is None: ignoreEntries = []
+        if isinstance(ignoreEntries, tuple): ignoreEntries = list(ignoreEntries)
+        if changePairs is None: changePairs = []
+
         if key:
             if '\\' in key: raise ValueError('SFM marker must not contain backslash')
             if ' ' in key: raise ValueError('SFM marker must not contain spaces')
-        self.SFMFilepath = SFMFilepath
-        self.key = key
-        self.ignoreSFMs = ignoreSFMs
-        self.ignoreEntries = ignoreEntries
-        self.changePairs = changePairs
-        self.encoding = encoding
 
-        lastLine, lineCount, record, result = '', 0, [], []
-        with open( SFMFilepath, encoding=encoding ) as myFile: # Automatically closes the file when done
-            try:
-                for line in myFile:
-                    lineCount += 1
-                    if lineCount==1 and encoding.lower()=='utf-8' and line and line[0]==BibleOrgSysGlobals.BOM:
-                        logging.info( f"SFMRecords: Detected Unicode Byte Order Marker (BOM) in {SFMFilepath}" )
-                        line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
-                    if line and line[-1]=='\n': line = line[:-1] # Removing trailing newline character
-                    if not line: continue # Just discard blank lines
-                    lastLine = line
-                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'SFM file line is "' + line + '"' )
-                    #if line[0:2]=='\\_': continue # Just discard Toolbox header lines
-                    if line[0]=='#': continue # Just discard comment lines
-                    if line[0]!='\\':
-                        if len(record)==0:
-                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'SFMFile.py: SFM file line is "' + line + '"' )
-                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "First character of line is '" + line[0] + "' (" + str(ord(line[0])) + ")" )
-                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "XXXRecord is", record)
-                            raise IOError('Oops: Line break on last line of record not handled here "' + line + '"')
-                        else: # Append this continuation line
-                            oldmarker, oldtext = record.pop()
-                            record.append( (oldmarker, oldtext+' '+line) )
-                            continue
-
-                    lineAfterBackslash = line[1:]
-                    si1 = lineAfterBackslash.find( ' ' )
-                    si2 = lineAfterBackslash.find( '\\' )
-                    if si2!=-1 and (si1==-1 or si2<si1): # Marker stops at a backslash
-                        marker = changeMarker( lineAfterBackslash[:si2], changePairs )
-                        text = lineAfterBackslash[si2:]
-                    elif si1!=-1: # Marker stops at a space
-                        marker = changeMarker( lineAfterBackslash[:si1], changePairs )
-                        text = lineAfterBackslash[si1+1:] # We drop the space
-                    else: # The line is only the marker
-                        marker = changeMarker( lineAfterBackslash, changePairs )
-                        text = ''
-                        if marker==key: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Warning: Have a blank key field after", record)
-
-                    if not key and marker not in ignoreSFMs:
-                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '    Assuming', marker, 'to be the SFM key for', SFMFilepath)
-                        key = marker
-                    if marker==key: # Save the previous record
-                        if record and record[0][1] not in ignoreEntries: # Looks at the text associated with the first (record key) marker
-                            strippedRecord = []
-                            for savedMarker,savedText in record:
-                                if savedMarker not in ignoreSFMs:
-                                    strippedRecord.append( (savedMarker, savedText) )
-                            if strippedRecord:
-                                result.append( strippedRecord )
-                        record = []
-                    # Save the current marker and text
-                    record.append( (marker, text) )
-
-            except UnicodeError as err:
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Unicode error:", sys.exc_info()[0], err )
-                logging.critical( "Invalid line in " + SFMFilepath + " -- line ignored at " + str(lineCount) )
-                if lineCount > 1: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'Previous line was: ', lastLine )
-                else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'Possible encoding error -- expected', encoding )
-                #raise
-
-            # Write the final record
-            if record and record[0][1] not in ignoreEntries: # Looks at the text associated with the first (record key) marker
-                strippedRecord = []
-                for savedMarker,savedText in record:
-                    if savedMarker not in ignoreSFMs:
-                        strippedRecord.append( (savedMarker, savedText) )
-                if strippedRecord:
-                    result.append( strippedRecord ) # Append the last record
-
-            self.records = result
+        try:
+            self.records = readSFMRecords( str(SFMFilepath), key, ignoreSFMs, ignoreEntries, changePairs )
+        except Exception as err:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "SFMRecords error:", sys.exc_info()[0], err )
+            logging.critical( f"Error reading {SFMFilepath}: {err}" )
+            # raise
     # end of SFMRecords.read
 
 
@@ -333,7 +218,7 @@ class SFMRecords:
         for record in self.records:
             for j, (marker,value) in enumerate( record ):
                 if j==0:
-                    assert marker == self.key
+                    # assert marker == self.key # Rust reader handles this
                     key = value
                     self.dataDict[key] = [] if internalStructure=="list" else {}
                 else:

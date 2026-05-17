@@ -26,8 +26,10 @@ pretty_assertions = "1.4"
 log = "0.4"
 pyo3-log = "0.13"
 pyo3 = { version = "0.28.3", features = ["extension-module", "abi3-py38", "generate-import-lib"] }
+quick-xml = "0.37"
 regex = "1.12"
 rayon = "1.10"
+ureq = { version = "3.0", features = ["rustls"] }
 rkyv = { version = "0.8", features = ["indexmap-2"] }
 thiserror = "2.0"
 serde = { version = "1.0", features = ["derive"] }

@@ -44,28 +44,28 @@ DEBUGGING_THIS_MODULE = False
 
 
 
-def readListFile( folder, filename, outputList, debug=False ):
-    """
-    Read a simple list file into a list (checking only for duplicate lines)
-    """
-    if debug:
-        if not isinstance( outputList, list): raise ValueError('List expected here')
-        oldlen = len( outputList )
+# def readListFile( folder, filename, outputList, debug=False ):
+#     """
+#     Read a simple list file into a list (checking only for duplicate lines)
+#     """
+#     if debug:
+#         if not isinstance( outputList, list): raise ValueError('List expected here')
+#         oldlen = len( outputList )
 
-    if Controls['VerbosityLevel'] > 1: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '    Loading list file', filename + '…' )
-    lines = []
-    with open( os.path.join( folder, filename ), encoding='utf-8' ) as myFile: # Automatically closes the file when done
-        for line in myFile:
-            if line[-1]=='\n': line=line[:-1] # Removing trailing newline character
-            if not line: continue # Just discard blank lines
-            if line[0]=='#': continue # Just discard comment lines
-            if line in lines:
-                logging.warning( 'DUPLICATE LINE IGNORED in list file: ' + line )
-                continue
-            lines.append( line )
-            outputList.append( line )
-    if debug: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '      Had', oldlen, 'values, added', len(outputList)-oldlen, 'new list values, now have', len(outputList) )
-# end of readListFile
+#     if Controls['VerbosityLevel'] > 1: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '    Loading list file', filename + '…' )
+#     lines = []
+#     with open( os.path.join( folder, filename ), encoding='utf-8' ) as myFile: # Automatically closes the file when done
+#         for line in myFile:
+#             if line[-1]=='\n': line=line[:-1] # Removing trailing newline character
+#             if not line: continue # Just discard blank lines
+#             if line[0]=='#': continue # Just discard comment lines
+#             if line in lines:
+#                 logging.warning( 'DUPLICATE LINE IGNORED in list file: ' + line )
+#                 continue
+#             lines.append( line )
+#             outputList.append( line )
+#     if debug: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '      Had', oldlen, 'values, added', len(outputList)-oldlen, 'new list values, now have', len(outputList) )
+# # end of readListFile
 
 
 def readControlFile( folder, filename, controls, haveLog=True, debug=False ):
