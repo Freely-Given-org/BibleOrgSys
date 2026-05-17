@@ -12,6 +12,7 @@ __all__ = [
     "processBible",
     "discoverBook",
     "discoverBible",
+    "discoverFilenames",
     "parseWordAttributes",
     "validateMarkers",
     "validateBibleMarkers",
@@ -23,6 +24,14 @@ __all__ = [
     "checkBible",
     "buildBibleCVIndexes",
     "buildBibleSectionIndexes",
+    "splitUSFMMarkerFromText",
+    "readUSFMFile",
+    "readESFMFile",
+    "readSFMLines",
+    "readSFMRecords",
+    "escapeCharacters",
+    "validateWellFormedness",
+    "validateWithLint",
     "DiscoveryFlags",
     "CheckOptions",
     "InternalBibleExtra",
@@ -31,6 +40,8 @@ __all__ = [
     "BookDiscoveryResults",
     "AggregateDiscoveryResults",
     "BibleDiscoveryResults",
+    "DiscoveryOptions",
+    "DiscoveryResults",
     "ChapterVerse",
     "InternalBibleEntry",
     "InternalBibleEntryList",
@@ -43,6 +54,10 @@ __all__ = [
     "PySectionIndexIter",
     "ObjectType",
     "ProcessLinesOptions",
+    "MlWriter",
+    "MlOutputType",
+    "HumanReadable",
+    "SectionName",
 ]
 
 # Module: bible_organisational_system
@@ -66,6 +81,9 @@ def processBible(
 ) -> dict: ...
 def discoverBook(entries: InternalBibleEntryList, bbb: str) -> BookDiscoveryResults: ...
 def discoverBible(books_dict: dict) -> BibleDiscoveryResults: ...
+def discoverFilenames(
+    folder: str, is_usx: bool, options: DiscoveryOptions | None
+) -> DiscoveryResults: ...
 def parseWordAttributes(*args, **_kwargs) -> dict:
     """
     Parse word attributes from a USFM3 `\w` field.
@@ -105,6 +123,34 @@ def buildBibleCVIndexes(books_dict: dict, work_name: str) -> dict:
 
 def buildBibleSectionIndexes(books_dict: dict, work_name: str) -> dict:
     """Build section indexes for all books in parallel."""
+
+def splitUSFMMarkerFromText(line: str) -> t.Any:
+    """Python binding for split_usfm_marker_from_text."""
+
+def readUSFMFile(path: str, ignore_sfms: list[str]) -> t.Any:
+    """Python binding for USFMFile.read"""
+
+def readESFMFile(path: str, ignore_sfms: list[str]) -> t.Any:
+    """Python binding for ESFMFile.read"""
+
+def readSFMLines(path: str, ignore_sfms: list[str]) -> t.Any:
+    """Python binding for SFMLines.read"""
+
+def readSFMRecords(
+    path: str,
+    key: str | None,
+    ignore_sfms: list[str],
+    ignore_entries: list[str],
+    change_pairs: list[tuple[str, str]],
+) -> t.Any:
+    """Python binding for SFMRecords.read"""
+
+def escapeCharacters(s: str) -> str: ...
+def validateWellFormedness(path: str) -> bool:
+    """Check if XML is well-formed."""
+
+def validateWithLint(xml_path: str, schema_path: str | None) -> tuple:
+    """Validate XML with xmllint."""
 
 @t.final
 class DiscoveryFlags:
@@ -386,6 +432,28 @@ class BibleDiscoveryResults:
     @property
     def books_as_objects(self) -> dict: ...
     def get_book_results(self, bbb: str) -> BookDiscoveryResults | None: ...
+
+@t.final
+class DiscoveryOptions:
+    @property
+    def strict_check(self) -> bool: ...
+    @strict_check.setter
+    def strict_check(self, value: bool) -> None: ...
+    def __init__(self, strict_check: bool | None) -> None: ...
+
+@t.final
+class DiscoveryResults:
+    @property
+    def folder(self) -> str: ...
+    @property
+    def pattern(self) -> str: ...
+    @property
+    def fileExtension(self) -> str: ...
+    @property
+    def matchedFiles(self) -> list[tuple[str, str]]: ...
+    @property
+    def unusedFilenames(self) -> list[str]: ...
+    def to_dict(self) -> dict: ...
 
 @t.final
 class ChapterVerse:
@@ -972,3 +1040,38 @@ class ProcessLinesOptions:
         strict_checking: bool = False,
         object_type: ObjectType | None = None,
     ) -> None: ...
+
+@t.final
+class MlWriter:
+    def __init__(self, path: str, output_type: MlOutputType) -> None: ...
+    @space_before_selfclose_tag.setter
+    def space_before_selfclose_tag(self, value: bool) -> None: ...
+    @halt_on_errors.setter
+    def halt_on_errors(self, value: bool) -> None: ...
+    @property
+    def lines_written(self) -> int: ...
+    def set_human_readable(self, value: HumanReadable, indent_size: int) -> None: ...
+    def set_section_name(self, name: SectionName) -> None: ...
+    def start(self, line_endings: str, no_auto_xml: bool, write_bom: bool) -> None: ...
+    def write_line_text(self, text: str, no_nl: bool | None) -> int: ...
+    def write_line_open(
+        self, tag: str, attrib_info: list[tuple[str, str]] | None, no_nl: bool | None
+    ) -> None: ...
+    def write_line_close(self, tag: str) -> None: ...
+    def write_line_open_close(
+        self, tag: str, text: str, attrib_info: list[tuple[str, str]] | None
+    ) -> int: ...
+    def write_line_open_selfclose(
+        self, tag: str, attrib_info: list[tuple[str, str]] | None
+    ) -> int: ...
+    def close(self, write_final_nl: bool) -> None: ...
+    def get_file_position(self) -> int: ...
+
+@t.final
+class MlOutputType: ...
+
+@t.final
+class HumanReadable: ...
+
+@t.final
+class SectionName: ...

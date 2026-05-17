@@ -81,14 +81,18 @@
 pub mod chapter_verse;
 pub mod checking;
 pub mod discovery;
+pub mod discovery_filenames;
 pub mod entry;
 pub mod entry_extras;
 pub mod error;
 pub mod indexes;
+pub mod io;
 pub mod markers;
+pub mod ml_writer;
 pub mod nesting;
 pub mod parsing;
 pub mod processing;
+pub mod xml_file;
 
 // Re-export commonly used types at crate root
 pub use chapter_verse::ChapterVerse;

@@ -16,8 +16,10 @@ compact_str = { workspace = true, features = ["rkyv"] }
 indexmap = { workspace = true, features = ["rayon"] }
 num-format = "0.4.4"
 pyo3 = { workspace = true, optional = true }
+quick-xml = { workspace = true }
 rayon = { workspace = true }
 regex = { workspace = true }
+ureq = { workspace = true }
 
 rkyv.workspace = true
 serde = { workspace = true }

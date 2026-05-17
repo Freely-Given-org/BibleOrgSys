@@ -3,8 +3,81 @@
 use pyo3::prelude::*;
 use pyo3::types::PyDict;
 use bos_internals::discovery::{BookDiscoveryResults, AggregateDiscoveryResults, BibleDiscoveryResults, discover_book, discover_bible};
+use bos_internals::discovery_filenames::{self, DiscoveryOptions, DiscoveryResults};
 use crate::cv_index_bindings::PyInternalBibleEntryList;
 use indexmap::IndexMap;
+
+#[pyclass(name = "DiscoveryOptions", module = "bible_organisational_system", from_py_object)]
+#[derive(Clone, Default)]
+pub struct PyDiscoveryOptions {
+    #[pyo3(get, set)]
+    pub strict_check: bool,
+}
+
+#[pymethods]
+impl PyDiscoveryOptions {
+    #[new]
+    fn new(strict_check: Option<bool>) -> Self {
+        Self {
+            strict_check: strict_check.unwrap_or(false),
+        }
+    }
+}
+
+#[pyclass(name = "DiscoveryResults", module = "bible_organisational_system", from_py_object)]
+#[derive(Clone)]
+pub struct PyDiscoveryResults {
+    pub(crate) inner: DiscoveryResults,
+}
+
+#[pymethods]
+impl PyDiscoveryResults {
+    #[getter]
+    fn folder(&self) -> String { self.inner.folder.to_string_lossy().to_string() }
+    #[getter]
+    fn pattern(&self) -> String { self.inner.pattern.to_string() }
+    #[getter]
+    #[pyo3(name = "fileExtension")]
+    fn file_extension(&self) -> String { self.inner.file_extension.to_string() }
+    #[getter]
+    #[pyo3(name = "matchedFiles")]
+    fn matched_files(&self) -> Vec<(String, String)> { self.inner.matched_files.clone() }
+    #[getter]
+    #[pyo3(name = "unusedFilenames")]
+    fn unused_filenames(&self) -> Vec<String> { self.inner.unused_filenames.clone() }
+
+    fn to_dict(&self, py: Python) -> PyResult<Py<PyDict>> {
+        let dict = PyDict::new(py);
+        dict.set_item("folder", self.folder())?;
+        dict.set_item("pattern", self.pattern())?;
+        dict.set_item("fileExtension", self.file_extension())?;
+        dict.set_item("matchedFiles", self.matched_files())?;
+        dict.set_item("unusedFilenames", self.unused_filenames())?;
+        Ok(dict.into())
+    }
+}
+
+#[pyfunction]
+#[pyo3(name = "discoverFilenames")]
+pub fn py_discover_filenames<'py>(
+    py: Python<'py>,
+    folder: &str,
+    is_usx: bool,
+    options: Option<PyDiscoveryOptions>,
+) -> PyResult<Bound<'py, PyDiscoveryResults>> {
+    let options = options.unwrap_or_default().inner_options();
+    let results = discovery_filenames::discover_filenames(folder, is_usx, &options)
+        .map_err(|e| pyo3::exceptions::PyIOError::new_err(e.to_string()))?;
+    Bound::new(py, PyDiscoveryResults { inner: results })
+}
+
+impl PyDiscoveryOptions {
+    fn inner_options(&self) -> DiscoveryOptions {
+        DiscoveryOptions {
+            strict_check: self.strict_check,
+        }
+    }
+}
 
 #[pyclass(name = "BookDiscoveryResults", module = "bible_organisational_system", from_py_object)]
 #[derive(Clone)]

@@ -1,5 +1,5 @@
 #!/usr/bin/env -S uv run
-# -\*- coding: utf-8 -\*-
+# -*- coding: utf-8 -*-
 # SPDX-License-Identifier: GPL-3.0-or-later
 #
 # ESFMFile.py
@@ -30,26 +30,24 @@ Module for reading UTF-8 ESFM (Enhanced Standard Format Marker) Bible file.
 
   The ESFM and its data field are read into a 2-tuple and saved (in order) in the list.
 
-  Raises an IOError error if file doesn't exist.
+  Now powered by Rust for improved memory efficiency.
 
-CHANGELOG:
-    2026-04-12 Allow for an online folder to be used
+  Raises an IOError error if file doesn't exist.
 """
 
 
 import logging
 import sys
-import requests
 
+from bible_organisational_system import readESFMFile
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
-from BibleOrgSys.InputOutput.USFMFile import splitUSFMMarkerFromText
 
 
-LAST_MODIFIED_DATE = '2026-04-12' # by RJH
+LAST_MODIFIED_DATE = '2026-05-17' # by RJH (Rust conversion)
 SHORT_PROGRAM_NAME = "ESFMFile"
 PROGRAM_NAME = "ESFM File loader"
-PROGRAM_VERSION = '0.89'
+PROGRAM_VERSION = '0.90'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -82,78 +80,27 @@ class ESFMFile:
     # end of ESFMFile.__str__
 
 
-    def read( self, esfm_filepath, ignoreSFMs=None ):
+    def read( self, esfm_filepath:str, ignoreSFMs:list|tuple|None=None ):
         """Read a simple ESFM (Enhanced Standard Format Marker) file into a list of tuples.
 
-        @param esfm_filename: The filename
-        @type esfm_filename: string
-        @param key: The SFM record marker (not including the backslash)
-        @type encoding: string
+        @param esfm_filepath: The filename or URL
+        @type esfm_filepath: string
+        @param ignoreSFMs: List of SFM markers to ignore
+        @type ignoreSFMs: list or tuple
         @rtype: list
-        @return: list of lists containing the records
         """
-        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"ESFMFile.read( {repr(esfm_filename)}, {repr(ignoreSFMs)}, {repr(encoding)} )" )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"ESFMFile.read( {repr(esfm_filepath)}, {repr(ignoreSFMs)} )" )
 
         # Check/handle parameters
-        if ignoreSFMs is None: ignoreSFMs = ()
+        if ignoreSFMs is None: ignoreSFMs = []
+        if isinstance(ignoreSFMs, tuple): ignoreSFMs = list(ignoreSFMs)
 
-        if isinstance( esfm_filepath, str ) and esfm_filepath.startswith( 'https://' ):
-            # Fetch the content
-            response = requests.get( esfm_filepath )
-
-            # Check if the request was successful
-            if response.status_code == 200:
-                content = response.text
-                # print(content)
-                fileLines = content.split( '\n' )
-            else:
-                print( f"Failed to retrieve {esfm_filepath}. Status code: {response.status_code}")
-        else: # it's in the filesystem
-            try:
-                with open( esfm_filepath, encoding='utf-8' ) as ourFile: # Automatically closes the file when done
-                    fileLines = ourFile.readlines()
-            except UnicodeError as err:
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Unicode error:", sys.exc_info()[0], err )
-                logging.critical( "Invalid line in " + esfm_filepath + " -- line ignored at #" + str(lineCount) )
-                if lineCount > 1: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'Previous line was: ', lastLine )
-                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, line )
-                #raise
-
-        lastLine, lineCount, result = '', 0, []
-        for line in fileLines:
-            lineCount += 1
-            if lineCount==1 and line[0]==BibleOrgSysGlobals.BOM:
-                logging.info( f"ESFMFile: Detected Unicode Byte Order Marker (BOM) in {esfm_filepath}" )
-                line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
-            if line and line[-1]=='\n': line=line[:-1] # Removing trailing newline character
-            if not line: continue # Just discard blank lines
-            lastLine = line
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'ESFM file line is "' + line + '"' )
-            #if line[0:2]=='\\_': continue # Just discard Toolbox header lines
-            if line[0]=='#': continue # Just discard comment lines
-
-            while line and line[0]==' ': line = line[1:] # Remove leading spaces
-            if line and line[0]!='\\': # Not a SFM line
-                if len(result)==0: # We don't have any SFM data lines yet
-                    if BibleOrgSysGlobals.verbosityLevel > 2:
-                        logging.error( "Non-ESFM line in " + esfm_filepath + " -- line ignored at #" + str(lineCount) )
-                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "SFMFile.py: XXZXResult is", result, len(line) )
-                    #for x in range(0, min(6,len(line))):
-                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, x, "'" + str(ord(line[x])) + "'" )
-                    #raise IOError('Oops: Line break on last line ??? not handled here "' + line + '"')
-                else: # Append this continuation line
-                    if marker not in ignoreSFMs:
-                        oldmarker, oldtext = result.pop()
-                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Popped",oldmarker,oldtext)
-                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Adding", line, "to", oldmarker, oldtext)
-                        result.append( (oldmarker, oldtext+' '+line) )
-                    continue
-
-            marker, text = splitUSFMMarkerFromText( line )
-            if marker not in ignoreSFMs:
-                result.append( (marker, text) )
-
-        self.lines = result
+        try:
+            self.lines = readESFMFile( str(esfm_filepath), ignoreSFMs )
+        except Exception as err:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "ESFMFile error:", sys.exc_info()[0], err )
+            logging.critical( f"Error reading {esfm_filepath}: {err}" )
+            # raise
     # end of ESFMFile.read
 # end of class ESFMFile
 
