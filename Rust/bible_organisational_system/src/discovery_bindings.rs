@@ -1,9 +1,11 @@
 //! Python bindings for Bible discovery logic.
 
+use std::path::Path;
 use pyo3::prelude::*;
 use pyo3::types::PyDict;
 use bos_internals::discovery::{BookDiscoveryResults, AggregateDiscoveryResults, BibleDiscoveryResults, discover_book, discover_bible};
 use bos_internals::discovery_filenames::{self, DiscoveryOptions, DiscoveryResults};
+use bos_internals::format_discovery::{self, BibleFormat, DetectedBible};
 use crate::cv_index_bindings::PyInternalBibleEntryList;
 use indexmap::IndexMap;
 
@@ -22,6 +24,34 @@ impl PyDiscoveryOptions {
             strict_check: strict_check.unwrap_or(false),
         }
     }
+}
+
+#[pyclass(name = "DetectedBible", module = "bible_organisational_system")]
+pub struct PyDetectedBible {
+    pub inner: DetectedBible,
+}
+
+#[pymethods]
+impl PyDetectedBible {
+    #[getter]
+    fn format(&self) -> String { self.inner.format.name().to_string() }
+    #[getter]
+    fn path(&self) -> String { self.inner.path.to_string_lossy().to_string() }
+    #[getter]
+    fn name(&self) -> String { self.inner.name.clone() }
+    #[getter]
+    fn confidence(&self) -> u8 { self.inner.confidence }
+
+    fn __repr__(&self) -> String {
+        format!("DetectedBible(format='{}', name='{}', path='{}')", self.inner.format.name(), self.inner.name, self.inner.path.display())
+    }
+}
+
+#[pyfunction]
+#[pyo3(name = "detectBibles")]
+pub fn py_detect_bibles(py: Python, root: &str, strict: bool) -> PyResult<Vec<PyDetectedBible>> {
+    let results = format_discovery::detect_bibles(Path::new(root), strict);
+    Ok(results.into_iter().map(|b| PyDetectedBible { inner: b }).collect())
 }
 
 #[pyclass(name = "DiscoveryResults", module = "bible_organisational_system", from_py_object)]

@@ -82,6 +82,7 @@ pub mod chapter_verse;
 pub mod checking;
 pub mod discovery;
 pub mod discovery_filenames;
+pub mod format_discovery;
 pub mod entry;
 pub mod entry_extras;
 pub mod error;
@@ -100,6 +101,7 @@ pub use discovery::{
     AggregateDiscoveryResults, BibleDiscoveryResults, BookDiscoveryResults, discover_book,
     discover_bible,
 };
+pub use format_discovery::{detect_bibles, BibleFormat, DetectedBible};
 pub use entry::{InternalBibleEntry, InternalBibleExtra};
 pub use entry_extras::{InternalBibleEntryList, InternalBibleExtraList};
 pub use error::{BosError, IndexError, LookupError, ParseError, ValidationError};

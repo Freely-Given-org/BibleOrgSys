@@ -13,6 +13,7 @@ __all__ = [
     "discoverBook",
     "discoverBible",
     "discoverFilenames",
+    "detectBibles",
     "parseWordAttributes",
     "validateMarkers",
     "validateBibleMarkers",
@@ -42,6 +43,7 @@ __all__ = [
     "BibleDiscoveryResults",
     "DiscoveryOptions",
     "DiscoveryResults",
+    "DetectedBible",
     "ChapterVerse",
     "InternalBibleEntry",
     "InternalBibleEntryList",
@@ -84,6 +86,7 @@ def discoverBible(books_dict: dict) -> BibleDiscoveryResults: ...
 def discoverFilenames(
     folder: str, is_usx: bool, options: DiscoveryOptions | None
 ) -> DiscoveryResults: ...
+def detectBibles(root: str, strict: bool) -> list[DetectedBible]: ...
 def parseWordAttributes(*args, **_kwargs) -> dict:
     """
     Parse word attributes from a USFM3 `\w` field.
@@ -454,6 +457,18 @@ class DiscoveryResults:
     @property
     def unusedFilenames(self) -> list[str]: ...
     def to_dict(self) -> dict: ...
+
+@t.final
+class DetectedBible:
+    @property
+    def format(self) -> str: ...
+    @property
+    def path(self) -> str: ...
+    @property
+    def name(self) -> str: ...
+    @property
+    def confidence(self) -> int: ...
+    def __repr__(self) -> str: ...
 
 @t.final
 class ChapterVerse:

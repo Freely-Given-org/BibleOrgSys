@@ -77,7 +77,7 @@ from BibleOrgSys.Internals.InternalBibleBook import BOS_CUSTOM_NESTING_MARKERS
 from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
 from BibleOrgSys.Reference.BibleBooksNames import BibleBooksNamesSystems
 from BibleOrgSys.Bible import Bible, BibleBook
-from BibleOrgSys.Reference.USFM3Markers import OFTEN_IGNORED_USFM_HEADER_MARKERS, USFM_ALL_INTRODUCTION_MARKERS, \
+from usfm_markers_py import OFTEN_IGNORED_USFM_HEADER_MARKERS, USFM_ALL_INTRODUCTION_MARKERS, \
                             USFM_PRECHAPTER_MARKERS, USFM_BIBLE_PARAGRAPH_MARKERS
 from BibleOrgSys.InputOutput.MLWriter import MLWriter
 

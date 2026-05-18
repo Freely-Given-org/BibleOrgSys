@@ -43,7 +43,7 @@ import BibleOrgSys.BibleOrgSysGlobals as BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2026-05-17' # by RJH
+LAST_MODIFIED_DATE = '2026-05-18' # by RJH
 SHORT_PROGRAM_NAME = "EuropeanToEnglish"
 PROGRAM_NAME = "OpenBibleData European Language Handling functions"
 PROGRAM_VERSION = '0.96'
@@ -248,7 +248,8 @@ GERMAN_WORD_MAP = (
             ('Augapfel','eyeball'),
                 ('Augenblick','moment/instant'),('Augenbrauen','eyebrows'),('Augenlider','eyelids'), ('Augen','eyes'),('Auge','eye'),
             ('Aus ','Out_of '),(' aus ',' out_of '),(' aus,',' out,'),(' aus.',' out.'),(' aus!',' out!'),(' aus;',' out;'),(' aus-und',' out-and'),(' aus-',' out-'),
-                ('Ausbeute','yield/harvest(n)'),(' ausbluten',' bleed_out'),
+                ('Ausbeute','yield/harvest(n)'),
+                    (' ausbleiben',' fail_to_appear'), (' ausbluten',' bleed_out'),
                     (' ausbrechen',' break_out/erupt'),
                         ('ausbreiten','spread'),('ausbreiteten','spread'),('ausbreitete','spread'),('ausbreitet','spreads'),
                         ('ausbricht','breaks_out'),
@@ -820,6 +821,7 @@ GERMAN_WORD_MAP = (
                     ('Fahr','ride/run(n)'),
             (' falb',' fallow'),
             (' fällen',' fell'),(' fället',' falls'), # See the very top for more
+                    (' fällst',' fall'),
                     ('Fällt','Falls'),(' fällt',' falls'),
                 (' falschen',' wrong/fake'),(' falscher',' false/counterfeit'), ('Falsches','false_(one)'),(' falsches',' wrong'),(' falsche ',' false '),('fälschlich','falsely/untruthfully'),(' falsch',' false/incorrect'),
                 ('Falten','fold(n)'),(' falten',' fold(v)'),
@@ -996,6 +998,7 @@ GERMAN_WORD_MAP = (
                         (' gehören',' belong'),(' gehörest',' belong'),(' gehöret',' belongs/pertains'),(' gehörte',' belonged'), (' gehört',' heard'),
                         (' gehorsam',' obedient/submissive'),
                 (' geht',' goes'),
+                (' gehuret',' whore(v)'),
                 ('Geh','Go'),
             (' geißeln',' scourges'),
                 ('Geier','vulture'),
@@ -1690,10 +1693,10 @@ GERMAN_WORD_MAP = (
             ('Mehl','flour'),(' mehls',' flours'),
                 (' mehren',' increase'),(' mehreten',' multiply'),(' mehrete',' multiplied'),(' mehret',' more'), (' mehr',' more'),
             (' meidet',' avoids'),(' meide',' avoid'),
-                (' meinem ',' my '),
-                        (' meinen ',' my '),
+                (' meinem',' my'),
+                        (' meinen',' my'),
                         ('Meiner','Mine'),(' meiner',' mine'),
-                        ('Meinest','My'),(' meinest',' my'),(' meines ',' my '),
+                        ('Meinest','My'),(' meinest',' my'),(' meines',' my'),
                         (' meineten',' meant'),(' meinete',' meant'), ('meinetwegen','for_my_sake'),('meinetwillen','for_my_sake'), (' meinet',' meant'),
                         ('Meine ','My '),(' meine',' my'),
                     ('Meinung','opinion'),
@@ -1985,7 +1988,7 @@ GERMAN_WORD_MAP = (
                 ('Säcken','sackcloths'),('Säcke','sackcloth'),
             (' säen',' sow'),(' säete',' sowed'),(' säet',' sows'),
             (' saftig',' juicy/succulent'),
-            (' sagend',' saying'),(' sagen‘s',' say_it'), (' sagen',' say'),('(sagen','(say'), ('Saget','Say_to'),(' saget',' says'),
+            (' sagend',' saying'),(' sagen‘s',' say_it'), ('Sagen','Say'),(' sagen',' say'), ('(sagen','(say'), ('Saget','Say_to'),(' saget',' says'),
                     ('Sage ','Say_to '),(' sage',' said'),
                 (' sagst',' say'),
                 (' sagten',' said'),(' sagtet',' said'),(' sagte',' said'),(' sagt‘s',' says'),(' sagt',' says'),
@@ -2598,7 +2601,9 @@ GERMAN_WORD_MAP = (
                         ('verspotten','mock/deride'),('verspottet','mocked'),
                         ('versprachen','promised'),
                     ('verstanden','understood'),('Verstandes','intellect'),('Verstand','mind'), ('verständiger','more_reasonable'),('verständiges','sensible/understanding'),('verständig','sensible/understanding'),('verstarret','frozen'),
-                        ('verstecken','hide/conceal'),('versteckten','hidden'),('versteckt','hidden'),('verstehen‘s','understand'),('verstehen','understand'), ('Verstehet','Do_you_understand'),('verstehet','understands'), ('verstehe','understand'),
+                        ('verstecken','hide/conceal'),('versteckten','hidden'),('versteckt','hidden'),
+                            ('verstehen‘s','understand'),('verstehen','understand'), ('Verstehet','Do_you_understand'),('verstehet','understands'), ('verstehe','understand'),
+                            ('verstellen','adjust/obstruct'),
                         ('verstieben','scattered'),
                         ('verstocken','stubborn'),('verstocket','stubborn'),('Verstocke','Stubborn_(one)'),('verstockten','stubborn'),('verstocktes','stubborn'),('verstockte','stubborn'),('verstockt','stubborn'),
                             (' verstopft',' clogged'),
@@ -3834,7 +3839,7 @@ LATIN_WORD_MAP = (
                 ('contabescit','it_is_burning'),
                         (' contactu',' contact'),
                         ('contaminabitur','will_be_contaminated'),('contaminabit','will_contaminate'),('contaminare','to_contaminate'),('contaminari','to_be_contaminated'),('contaminaverit','contaminated'),
-                    ('contemnerent','they_would_despise'),(' contemnit',' despises'),(' contemnunt',' they_despise'),
+                    ('contemnatur','be_despised'),('contemnerent','they_would_despise'),(' contemnit',' despises'),(' contemnunt',' they_despise'),
                         ('contemplandam','to_contemplate'),('contemplantur','they_contemplate'),(' contemplare',' to_contemplate'),(' contemplata',' contemplated'),(' contemplatione',' contemplation'),('contemplationis','contemplation'),('contemplationi','contemplation'),(' contemplatio ',' contemplation '), (' contemplatus',' contemplated'),
                             (' contempsit',' despised'),
                             ('contemptibilem','contemptible'),('contemptibilia','contemptible'),('contemptum','contempt'),('contemptus','contempt'),
@@ -3872,7 +3877,7 @@ LATIN_WORD_MAP = (
                                 ('convertebantur','they_were_converting'),
                                     ('convertendo','by_converting'),('convertens','converting'),('convertentur','they_will_convert'),
                                     ('converterentur','they_would_convert'),('converterent','they_would_convert'),('Convertere','Convert'), ('converteris','you_are_converted'),
-                                    ('convertetur','will_be_converted'),
+                                    ('convertetur','will_be_converted'),(' convertet',' will_convert'),
                                     ('Converte','Turn_around'),('converte ','convert '),
                             ('Convertimini','You_are_converted'),('convertimini','conversion'),('convertissem','I_would_have_converted'),('convertit','he_turned'),('converti ','converted '),
                             ('convertuntur','are_converted'),
@@ -4079,7 +4084,7 @@ LATIN_WORD_MAP = (
                     (' desistit',' stops'),
                 (' desolabitur',' will_be_desolate'),(' desolatam',' desolate'),(' desolata',' desolate'), ('desolationem','desolation'),(' desolatione',' desolation'),(' desolati ',' desolate '),(' desolati.',' desolate.'),
                     (' desolatum',' desolate'),('desolaverunt','they_were_desolate'),
-                ('despectione','contempt'),(' despectio',' contempt'),(' despecti',' despised'),
+                ('despectione','contempt'),(' despectio',' contempt'),(' despecti',' despised'),('despectum','contempt'),
                         ('desperabiliter','hopelessly'),(' desperans',' desperate'),(' desperet',' despair'), ('despexeris','you_look_down'),
                     ('despiciat','let_him_look_down'),('despicientes','looking_down_on'),('despicies','you_will_look_down'),('despicitur','is_despised'),('despicit','looks_down'),(' despiciunt',' they_look_down_on'),
                     ('despondit','betrothed/engaged'),('desponsationis','betrothal/engagement'),
@@ -6823,7 +6828,7 @@ LATIN_WORD_MAP = (
                     (' stat ',' stands '),(' stat,',' stands,'),(' stat.',' stands.'),(' stat:',' stands:'),(' stat;',' stands;'),(' stat<',' stands<'), # Protect against 'stater_coins' above
             (' stella',' star'),(' stellæ',' stars'),
                 ('stercora','dung'),('stercore','dung'),
-                    ('sterilem','barren'),('sterilis','barren'),(' sterilitate',' sterility'),
+                    ('sterilem','barren'),('sterilis','barren'),('sterilitas','sterility/infertility'),('sterilitate','sterility/infertility'),
                     (' sternam',' will_lay'),
                     ('sterquilinium','dunghill'),
                 ('steterant','they_had_stood'),('steterit','stood'),('steteruntque','and_they_stood'),('steterunt','they_stood'), ('Stetitque','And_he_stood'),('Stetit','He_stood'),(' stetit',' he_stood'),

@@ -43,7 +43,7 @@ import BibleOrgSys.BibleOrgSysGlobals as BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2026-05-17' # by RJH
+LAST_MODIFIED_DATE = '2026-05-18' # by RJH
 SHORT_PROGRAM_NAME = "OldBiblicalEnglish"
 PROGRAM_NAME = "OpenBibleData English Language Handling functions"
 PROGRAM_VERSION = '0.97'
@@ -1756,7 +1756,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
                 (('murmureth',),'murmureth/murmurs'),(('murmuringe',),'murmuring'),((' murmoure ',' murmure '),' murmur '),((' murmure,',),' murmur,'),
             (('Musick',),'Music'),(('musicke','musick'),'music'), (('musicall ',),'musical '), (('musition',),'musician'),
                 ((' musynge',' musyng'),' musing'),
-                ((' mustarde',),' mustard'), (('Mustre ',),'Muster '),
+                ((' mustarde',),' mustard'), (('Mustre ',),'Muster '), ((' muste ',),' must '),
         (('Mi ',),'My '),#((' mi '),' my '),
             ((' mysterie ',' misterie '),' mystery '),((' misterie,',' mysterie,'),' mystery,'),((' mistery',),' mystery'),
     ((' nailide',' naled'),' nailed'),((' nailis',' nailes',' nayles',' nales'),' nails'),((' naile ',' nayle ',' nale '),' nail '),((' naile,',),' nail,'),

@@ -19,7 +19,7 @@ pub const FILENAME_ENDINGS_TO_IGNORE: &[&str] = &[".ZIP.GO", ".ZIP.DATA"];
 pub const EXTENSIONS_TO_IGNORE: &[&str] = &[
     "ASC", "BAK", "BAK2", "BAK3", "BAK4", "BBLX", "BC", "CCT", "CSS", "DOC", "DTS", "HTM", "HTML",
     "JAR", "LDS", "LOG", "MYBIBLE", "NT", "NTX", "ODT", "ONT", "ONTX", "OSIS", "OT", "OTX", "PDB",
-    "SAV", "SAVE", "STY", "SSF", "USX", "VRS", "YET", "XML", "ZIP",
+    "SAV", "SAVE", "STY", "SSF", "VRS", "YET", "XML", "ZIP",
 ];
 
 /// Bibledit standard filenames.
@@ -121,11 +121,15 @@ pub fn get_usx_id_from_file<P: AsRef<Path>>(path: P) -> Option<CompactString> {
     let reader = std::io::BufReader::new(file);
     use std::io::BufRead;
 
+    let mut found_usx = false;
     for (i, line_res) in reader.lines().enumerate() {
-        if i >= 5 { break; }
+        if i >= 10 { break; }
         let line = line_res.ok()?;
         if line.contains("<usx") {
-            // Find book code in attributes
+            found_usx = true;
+        }
+        if found_usx {
+            // Find book code in attributes (could be in <usx> or <book>)
             if let Some(pos) = line.find("code=\"") {
                 let start = pos + 6;
                 if let Some(end) = line[start..].find('"') {
@@ -230,14 +234,32 @@ pub fn discover_filenames<P: AsRef<Path>>(
                         
                         if let Some(d) = digits {
                             if let Some(pos_d) = upper_stem.find(d) {
-                                let mut pat = stem.chars().map(|_| '*').collect::<String>();
+                                let mut pat_chars: Vec<char> = stem.chars().map(|_| '*').collect();
                                 // Replace digits in pattern
-                                pat.replace_range(pos_d..pos_d+d.len(), "dd");
-                                if let Some(a) = abbrev {
-                                    if let Some(pos_a) = upper_stem.find(&a.to_uppercase()) {
-                                        pat.replace_range(pos_a..pos_a+a.len(), "bbb");
+                                // Note: digits and abbrev are expected to be ASCII, so byte indices match char indices
+                                for i in pos_d..pos_d + d.len() {
+                                    if i < pat_chars.len() {
+                                        pat_chars[i] = 'd';
                                     }
                                 }
+
+                                if let Some(a) = abbrev {
+                                    if let Some(pos_a) = upper_stem.find(&a.to_uppercase()) {
+                                        for i in pos_a..pos_a + a.len() {
+                                            if i < pat_chars.len() {
+                                                pat_chars[i] = 'b'; // We'll use 'b' for 'bbb'
+                                            }
+                                        }
+                                    }
+                                }
+                                
+                                // Convert back to string and refine (e.g. bbb instead of bbb, dd instead of dddd)
+                                let mut pat = pat_chars.into_iter().collect::<String>();
+                                while pat.contains("bb") { pat = pat.replace("bb", "b"); }
+                                pat = pat.replace('b', "bbb");
+                                while pat.contains("dd") { pat = pat.replace("dd", "d"); }
+                                pat = pat.replace('d', "dd");
+                                
                                 results.pattern = CompactString::from(pat);
                                 break;
                             }
