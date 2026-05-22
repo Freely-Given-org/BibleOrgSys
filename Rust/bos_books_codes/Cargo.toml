@@ -1,6 +1,6 @@
 [package]
 name = "bos_books_codes"
-version = "0.2.0"
+version = "0.6.3"
 edition = '2024'
 build = "build.rs"
 authors = ["Robert <Freely.Given.org+BOSBC@gmail.com>"]

@@ -10,7 +10,9 @@ __all__ = [
     "set_rust_strict_checking",
     "processLines",
     "processBible",
-    "discoverBook",
+    "parseOsis",
+    "saveBookFast",
+    "loadBookFast",
     "discoverBible",
     "discoverFilenames",
     "detectBibles",
@@ -81,7 +83,17 @@ def processLines(
 def processBible(
     books_dict: dict, work_name: str, options: ProcessLinesOptions
 ) -> dict: ...
-def discoverBook(entries: InternalBibleEntryList, bbb: str) -> BookDiscoveryResults: ...
+def parseOsis(path: str) -> dict: ...
+def saveBookFast(
+    path: str,
+    work_name: str,
+    book_code: str,
+    entries: InternalBibleEntryList,
+    cv_index: InternalBibleBookCVIndex | None,
+    section_index: InternalBibleBookSectionIndex | None,
+) -> None: ...
+def loadBookFast(path: str) -> dict: ...
+def discoverBible(books_dict: dict) -> BibleDiscoveryResults: ...
 def discoverBible(books_dict: dict) -> BibleDiscoveryResults: ...
 def discoverFilenames(
     folder: str, is_usx: bool, options: DiscoveryOptions | None

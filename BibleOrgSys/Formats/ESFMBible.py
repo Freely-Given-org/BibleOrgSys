@@ -287,7 +287,7 @@ class ESFMBible( Bible ):
             # if PTXSettingsDict:
             #     if 'PTX7' not in self.suppliedMetadata: self.suppliedMetadata['PTX7'] = {}
             #     self.suppliedMetadata['PTX7']['SSF'] = PTXSettingsDict
-            #     self.applySuppliedMetadata( 'SSF' ) # Copy some to BibleObject.settingsDict
+            #     self.applySuppliedMeta data( 'SSF' ) # Copy some to BibleObject.settingsDict
             # Attempt to load any books
             self.maximumPossibleFilenameTuples = []
             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Checking for available ESFM files at {self.sourceFolder}…" )

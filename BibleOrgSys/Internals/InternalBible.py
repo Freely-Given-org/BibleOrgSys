@@ -987,6 +987,10 @@ class InternalBible:
             filename = self.getAName( abbrevFirst=True )
         if filename is None:
             filename = self.objectTypeString
+            
+        if filename.endswith('.BOSBible'):
+            return self.pickleFast( folderpath )
+            
         if BibleOrgSysGlobals.debugFlag:
             assert filename
             # assert not filename.endswith( '.pickle' )
@@ -1015,6 +1019,123 @@ class InternalBible:
 
         return pResult
     # end of InternalBible.pickle
+
+
+    def pickleFast( self, folderpath=None ) -> bool:
+        """
+        Writes the object to a fast .BOSBible hybrid container using Rust and lightweight pickle.
+        """
+        fnPrint( DEBUGGING_THIS_MODULE, f"pickleFast( {folderpath!r} )" )
+        
+        from BibleOrgSys import BibleOrgSysGlobals
+        if folderpath is None:
+             folderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_CACHE_FOLDERPATH
+        
+        container_name = f"{BibleOrgSysGlobals.makeSafeFilename(self.getAName(abbrevFirst=True))}.BOSBible"
+        container_path = Path(folderpath, container_name)
+        
+        vPrint('Info', DEBUGGING_THIS_MODULE, f"pickleFast: Saving {self.objectNameString} to {container_path}…")
+        
+        if not container_path.exists():
+            container_path.mkdir(parents=True)
+            
+        # 1. Save books separately using fast Rust path
+        books_folder = container_path / "Books"
+        if not books_folder.exists():
+            books_folder.mkdir()
+            
+        for bbb, book in self.books.items():
+            book_file = books_folder / f"{bbb}.bin"
+            book.saveFast(str(book_file))
+            
+        # 2. Save the "shell" (metadata and class attributes)
+        metadata_file = container_path / "BibleInfo.pickle"
+        
+        # Create a light copy of __dict__, excluding books and large objects
+        metadata = self.__dict__.copy()
+        if 'books' in metadata: del metadata['books']
+        if 'XMLTree' in metadata: del metadata['XMLTree']
+        if 'genericBOS' in metadata: del metadata['genericBOS']
+        # Remove any _rawLines or _processedLines that might be in the main object (unlikely but safe)
+        for k in list(metadata.keys()):
+            if k.startswith('_'): del metadata[k]
+        
+        import pickle
+        try:
+            with open(metadata_file, 'wb') as f:
+                # We save the class so we can reconstruct the correct subclass (e.g. ESFMBible)
+                pickle.dump({'class': self.__class__, 'dict': metadata}, f, pickle.HIGHEST_PROTOCOL)
+            return True
+        except Exception as err:
+            logging.critical(f"InternalBible.pickleFast: Failed to save metadata: {err}")
+            return False
+    # end of InternalBible.pickleFast
+
+
+    @staticmethod
+    def unpickleFast( container_path ) -> InternalBible:
+        """
+        Reconstructs a Bible object from a .BOSBible hybrid container.
+        """
+        container_path = Path(container_path)
+        metadata_file = container_path / "BibleInfo.pickle"
+        
+        if not metadata_file.exists():
+            logging.error(f"InternalBible.unpickleFast: Metadata file not found at {metadata_file}")
+            return None
+            
+        import pickle
+        try:
+            with open(metadata_file, 'rb') as f:
+                data = pickle.load(f)
+        except Exception as err:
+            logging.error(f"InternalBible.unpickleFast: Failed to load metadata: {err}")
+            return None
+            
+        klass = data['class']
+        # Create a new instance without calling __init__
+        obj = klass.__new__(klass)
+        obj.__dict__.update(data['dict'])
+        obj.books = {}
+        obj.triedLoadingBook = {}
+        obj.bookNeedsReloading = {}
+        obj.availableBBBs = set()
+        
+        # Identify available books
+        books_folder = container_path / "Books"
+        if books_folder.exists():
+            for f in books_folder.glob("*.bin"):
+                bbb = f.stem
+                obj.availableBBBs.add(bbb)
+                obj.bookNeedsReloading[bbb] = True
+        
+        # Override loadBook to use the fast container
+        def fastLoadBook( self_obj, BBB:str, filename=None ):
+             if BBB in self_obj.books: return
+             from BibleOrgSys.Internals.InternalBibleBook import InternalBibleBook
+             bookObject = InternalBibleBook( 'NoneYet—StillUnpickling', BBB )
+             bookObject.containerBibleObject = self_obj
+             bookObject.objectNameString = 'Fast Loaded Bible Book object'
+             bookObject.objectTypeString = 'FastBook'
+             bookFile = container_path / "Books" / f"{BBB}.bin"
+             if bookFile.exists():
+                 bookObject.loadFast(str(bookFile))
+                 self_obj.books[BBB] = bookObject
+                 self_obj.triedLoadingBook[BBB] = True
+                 self_obj.bookNeedsReloading[BBB] = False
+             else:
+                 logging.error(f"Fast loader: book file not found at {bookFile}")
+
+        import types
+        obj.loadBook = types.MethodType(fastLoadBook, obj)
+        
+        # Store source info
+        obj.sourceFilepath = container_path
+        obj.sourceFolder = container_path.parent
+        obj.isFastFormat = True
+        
+        return obj
+    # end of InternalBible.unpickleFast
 
 
     def guessXRefBBB( self, referenceString:str ) -> str:

@@ -69,6 +69,29 @@ pub static USFM_PRECHAPTER_MARKERS: &[&str] = &[
     "iex","iqt", "ie"
 ];
 
+/// Markers that typically appear before the first chapter.
+pub static USFM_ALL_MARKERS: &[&str] = &[
+    "id","usfm","ide", "sts","h", "toc1","toc2","toc3", "cl¤", "rem",
+    "mt","mt1","mt2","mt3","mt4", "mte","mte1","mte2","mte3","mte4",
+    "imt","imt1","imt2","imt3","imt4", "imte","imte1","imte2","imte3","imte4",
+    "is","is1","is2","is3","is4", "ip","ipi", "im","imi", "ipq","imq","ipr",
+    "iq","iq1","iq2","iq3","iq4",
+    "iot", "io","io1","io2","io3","io4", "ili","ili1","ili2","ili3","ili4",
+    "iex","iqt", "ie",
+
+    "ms","ms1","ms2","ms3","ms4", "mr","sr",
+    "s","s1","s2","s3","s4","qa", "qc",
+    "r","d","sp",
+
+    "p","pc","pr", "m","mi", "pm","pmo","pmc","pmr", "cls",
+    "pi","pi1","pi2","pi3","pi4", "ph","ph1","ph2","ph3","ph4",
+    "q","q1","q2","q3","q4", "qr", "qm","qm1","qm2","qm3","qm4",
+    "li","li1","li2","li3","li4",
+
+    "c","ca","cl", "cp",
+    "v","rem",
+];
+
 /// Markers that contain printable Scripture text or related content.
 pub static USFM_PRINTABLE_MARKERS: &[&str] = &[
     "v","r","ms1",

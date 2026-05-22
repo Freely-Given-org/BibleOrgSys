@@ -110,7 +110,7 @@ def LEBXMLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=
             if ignore: continue
             if not somethingUpperExt[1:] in EXTENSIONS_TO_IGNORE: # Compare without the first dot
                 foundFiles.append( something )
-                for osisBkCode in bos_books_codes_py.get_all_osis_books_codes():
+                for osisBkCode in bos_books_codes_py.get_all_osis_book_codes():
                     # osisBkCodes are all UPPERCASE
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'obc', osisBkCode, upperFilename )
                     if osisBkCode in somethingUpper:
@@ -165,7 +165,7 @@ def LEBXMLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=
                     if ignore: continue
                     if not somethingUpperExt[1:] in EXTENSIONS_TO_IGNORE: # Compare without the first dot
                         foundSubfiles.append( something )
-                        for osisBkCode in bos_books_codes_py.get_all_osis_books_codes():
+                        for osisBkCode in bos_books_codes_py.get_all_osis_book_codes():
                             # osisBkCodes are all UPPERCASE
                             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'obc', osisBkCode, upperFilename )
                             if osisBkCode in somethingUpper:
@@ -305,7 +305,7 @@ class LEBXMLBible( Bible ):
         #                 self.possibleFilenames.append( filename )
         #                 foundBBB = None
         #                 upperFilename = filename.upper()
-        #                 for osisBkCode in bos_books_codes_py.get_all_osis_books_codes():
+        #                 for osisBkCode in bos_books_codes_py.get_all_osis_book_codes():
         #                     # osisBkCodes are all UPPERCASE
         #                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'obc', osisBkCode, upperFilename )
         #                     if osisBkCode in upperFilename:

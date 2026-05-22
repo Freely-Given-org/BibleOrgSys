@@ -91,8 +91,10 @@ pub mod io;
 pub mod markers;
 pub mod ml_writer;
 pub mod nesting;
+pub mod osis;
 pub mod parsing;
 pub mod processing;
+pub mod serialization;
 pub mod xml_file;
 
 // Re-export commonly used types at crate root

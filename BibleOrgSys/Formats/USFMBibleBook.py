@@ -128,7 +128,7 @@ class USFMBibleBook( BibleBook ):
                         thisText = text[ix:iMIndex].rstrip()
                         self.addLine( marker, thisText )
                         ix = iMIndex + 1 + len(insideMarker) + len(nextSignificantChar) # Get the start of the next text -- the 1 is for the backslash
-                        dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Did a split from {addMarker}:{addText!r} to {marker}:{thisText!r} leaving {insideMarker}:{text[ix:]!r}" )
+                        # dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Did a split from {addMarker}:{addText!r} to {marker}:{thisText!r} leaving {insideMarker}:{text[ix:]!r}" )
                         marker = insideMarker # setup for the next line
                 if ix != 0: # We must have separated multiple lines
                     text = text[ix:] # Get the final bit of the line

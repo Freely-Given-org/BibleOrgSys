@@ -269,6 +269,28 @@ impl InternalBibleBookSectionIndex {
         &self.entries
     }
 
+    /// Get direct access to the underlying index data.
+    #[inline]
+    pub fn index_data(&self) -> &IndexMap<ChapterVerse, SectionIndexEntry> {
+        &self.index_data
+    }
+
+    /// Reconstruct from serialized data.
+    pub fn from_serialized(
+        work_name: impl Into<CompactString>,
+        bos_book_code: impl Into<CompactString>,
+        index_data: IndexMap<ChapterVerse, SectionIndexEntry>,
+        entries: InternalBibleEntryList,
+    ) -> Self {
+        Self {
+            work_name: work_name.into(),
+            bos_book_code: bos_book_code.into(),
+            index_data,
+            entries,
+            indexed: true,
+        }
+    }
+
     /// Build the section index from processed entries.
     ///
     /// This analyzes the entry list and creates section boundaries

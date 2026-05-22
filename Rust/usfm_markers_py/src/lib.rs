@@ -13,7 +13,7 @@ use ::usfm_markers::{
     USFM_INTRODUCTION_PARAGRAPH_MARKERS, USFM_ALL_INTRODUCTION_MARKERS,
     USFM_ALL_SECTION_HEADING_MARKERS, USFM_BIBLE_PARAGRAPH_MARKERS,
     USFM_ALL_BIBLE_PARAGRAPH_MARKERS, USFM_PRECHAPTER_MARKERS,
-    USFM_PRINTABLE_MARKERS,
+    USFM_ALL_MARKERS, USFM_PRINTABLE_MARKERS,
 };
 
 /// Returns a list of all possible internal markers.
@@ -35,17 +35,17 @@ fn get_character_markers_list_py(
     Ok(get_character_markers_list(include_backslash, include_end_markers, include_nested_markers, expand_numberable_markers))
 }
 
-/// Backward compatibility alias for get_character_markers_list.
-#[pyfunction]
-#[pyo3(name = "getCharacterMarkersList", signature = (include_backslash=false, include_end_markers=false, include_nested_markers=false, expand_numberable_markers=false))]
-fn get_character_markers_list_compat(
-    include_backslash: bool,
-    include_end_markers: bool,
-    include_nested_markers: bool,
-    expand_numberable_markers: bool
-) -> PyResult<Vec<String>> {
-    Ok(get_character_markers_list(include_backslash, include_end_markers, include_nested_markers, expand_numberable_markers))
-}
+// /// Backward compatibility alias for get_character_markers_list.
+// #[pyfunction]
+// #[pyo3(name = "getCharacterMarkersList", signature = (include_backslash=false, include_end_markers=false, include_nested_markers=false, expand_numberable_markers=false))]
+// fn get_character_markers_list_compat(
+//     include_backslash: bool,
+//     include_end_markers: bool,
+//     include_nested_markers: bool,
+//     expand_numberable_markers: bool
+// ) -> PyResult<Vec<String>> {
+//     Ok(get_character_markers_list(include_backslash, include_end_markers, include_nested_markers, expand_numberable_markers))
+// }
 
 /// Returns a list of all possible note markers.
 #[pyfunction]
@@ -349,7 +349,7 @@ fn usfm_markers_py(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(get_marker_list_from_text_compat, m)?)?;
     m.add_function(wrap_pyfunction!(get_internal_markers_list_py, m)?)?;
     m.add_function(wrap_pyfunction!(get_character_markers_list_py, m)?)?;
-    m.add_function(wrap_pyfunction!(get_character_markers_list_compat, m)?)?;
+    // m.add_function(wrap_pyfunction!(get_character_markers_list_compat, m)?)?;
     m.add_function(wrap_pyfunction!(get_note_markers_list_py, m)?)?;
     m.add_function(wrap_pyfunction!(get_newline_markers_list_py, m)?)?;
     m.add_function(wrap_pyfunction!(get_typical_note_sets_py, m)?)?;
@@ -363,6 +363,7 @@ fn usfm_markers_py(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add("USFM_BIBLE_PARAGRAPH_MARKERS", PyList::new(m.py(), USFM_BIBLE_PARAGRAPH_MARKERS)?)?;
     m.add("USFM_ALL_BIBLE_PARAGRAPH_MARKERS", PyList::new(m.py(), USFM_ALL_BIBLE_PARAGRAPH_MARKERS)?)?;
     m.add("USFM_PRECHAPTER_MARKERS", PyList::new(m.py(), USFM_PRECHAPTER_MARKERS)?)?;
+    m.add("USFM_ALL_MARKERS", PyList::new(m.py(), USFM_ALL_MARKERS)?)?;
     m.add("USFM_PRINTABLE_MARKERS", PyList::new(m.py(), USFM_PRINTABLE_MARKERS)?)?;
 
     Ok(())

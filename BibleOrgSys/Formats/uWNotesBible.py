@@ -6,7 +6,7 @@
 #
 # Module handling unfoldingWord Bible Notes stored in TSV tables.
 #
-# Copyright (C) 2020-2025 Robert Hunt
+# Copyright (C) 2020-2026 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -42,6 +42,7 @@ CHANGELOG:
     2023-05-04 Handle comma-separated lists in ref column
     2025-01-06 Try to handle some common editing errors present in uW TN files
     2025-01-13 Try to handle some more editing errors and inconsistencies present in uW TN files
+    2026-05-20 Better handling of escaped square brackets
 """
 from typing import Any
 import os
@@ -55,10 +56,10 @@ from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Bible import Bible, BibleBook
 
 
-LAST_MODIFIED_DATE = '2025-01-13' # by RJH
+LAST_MODIFIED_DATE = '2026-05-20' # by RJH
 SHORT_PROGRAM_NAME = "uWNotesBible"
 PROGRAM_NAME = "unfoldingWord Bible Notes handler"
-PROGRAM_VERSION = '0.19'
+PROGRAM_VERSION = '0.20'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -85,9 +86,12 @@ def loadYAML( YAMLFilepath ) -> dict[str,Any]:
     debuggingThisFunction = DEBUGGING_THIS_MODULE or False
     fnPrint( debuggingThisFunction, f"uWNotesBible.loadYAML( {YAMLFilepath} )" )
 
-    # import yaml
-    # yamlDict = yaml.safe_load( YAMLFilepath )
-    #dPrint( 'Info', DEBUGGING_THIS_MODULE, f"yaml.load got ({len(yamlDict)}) {yamlDict!r}"); halt
+    import yaml
+    with open( YAMLFilepath, 'r' ) as yamlFile:
+        yamlDict = yaml.safe_load( yamlFile )
+    # dPrint( 'Info', DEBUGGING_THIS_MODULE, f"yaml.load got ({len(yamlDict)}) {yamlDict=}"); halt
+    return yamlDict
+
 
     dataDict = {}
     key1 = key2 = None
@@ -650,10 +654,16 @@ class uWNotesBibleBook( BibleBook ):
             """
             Check for newLine markers within the line (if so, break the line) and save the information in our database.
 
+            Also adjust escaped square brackets.
+
             Also convert ~ to a proper non-break space.
             """
-            fnPrint( DEBUGGING_THIS_MODULE, f"doAddLine( {repr(originalMarker)}, {repr(original_text)} )" )
-            self.addLine( originalMarker, original_text ) # Call the function in the base class to save the line (or the remainder of the line if we split it above)
+            fnPrint( DEBUGGING_THIS_MODULE, f"doAddLine( {originalMarker=}, {original_text=} )" )
+
+            adjusted_text = original_text.replace( '\\\\*', '*' ) \
+                                .replace( '\\\\[', '[' ).replace( '\\\\]', ']' ) \
+                                .replace( '\\[', '[' ).replace( '\\]', ']' ) # Handle bad encoding as well (uW files have MANY inconsistencies)
+
             # marker, text = originalMarker, original_text.replace( '~', ' ' )
             # if '\\' in text: # Check markers inside the lines
             #     markerList = BibleOrgSysGlobals.BCVMarkers.get_marker_list_from_text( text )
@@ -676,6 +686,8 @@ class uWNotesBibleBook( BibleBook ):
             #     if ix != 0: # We must have separated multiple lines
             #         text = text[ix:] # Get the final bit of the line
             # self.addLine( marker, text ) # Call the function in the base class to save the line (or the remainder of the line if we split it above)
+
+            self.addLine( originalMarker, adjusted_text ) # Call the function in the base class to save the line (or the remainder of the line if we split it above)
         # end of doAddLine
 
 

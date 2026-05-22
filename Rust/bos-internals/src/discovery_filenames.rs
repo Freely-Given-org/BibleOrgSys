@@ -101,12 +101,12 @@ pub fn get_usfm_id_from_file<P: AsRef<Path>>(path: P) -> Option<CompactString> {
             }
 
             // Check if valid abbreviation
-            if let Ok(bbb) = bos_books_codes::usfm_abbrev_to_bos_book_code(&token0) {
+            if let Ok(bbb) = bos_books_codes::usfm_abbrev_to_bos_book_code(&token0, false) {
                 return Some(CompactString::from(bbb));
             }
             // Try 3-char prefix
             if token0.len() >= 3 {
-                if let Ok(bbb) = bos_books_codes::usfm_abbrev_to_bos_book_code(&token0[..3]) {
+                if let Ok(bbb) = bos_books_codes::usfm_abbrev_to_bos_book_code(&token0[..3], false) {
                     return Some(CompactString::from(bbb));
                 }
             }
@@ -192,7 +192,7 @@ pub fn discover_filenames<P: AsRef<Path>>(
         let path = folder.as_ref().join(filename);
         let id_opt = if is_usx { get_usx_id_from_file(&path) } else { get_usfm_id_from_file(&path) };
         if let Some(id) = id_opt {
-            if let Ok(bbb) = bos_books_codes::usfm_abbrev_to_bos_book_code(&id) {
+            if let Ok(bbb) = bos_books_codes::usfm_abbrev_to_bos_book_code(&id, false) {
                 let bbb_str = bbb.to_string();
                 bbb_to_file.insert(bbb_str.clone(), filename.clone());
                 file_to_bbb.insert(filename.clone(), bbb_str);

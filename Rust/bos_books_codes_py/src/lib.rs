@@ -1,3 +1,7 @@
+// Python bindings for BibleOrgSys/BOS 3-character Bible Books Codes.
+// Originally converted from Python to Rust by RJH, updated May 2026 by Gemini for RJH.
+// LAST_MODIFIED_DATE: 2026-05-20
+
 use pyo3::prelude::*;
 // use std::error::Error;
 use ::bos_books_codes::{
@@ -82,17 +86,56 @@ fn is_deuterocanon_nr_py(bos_book_code: &str) -> PyResult<bool> {
 
 /// Converts a USFM book code to a BibleOrgSys (BOS) reference abbreviation book code.
 #[pyfunction]
-#[pyo3(name = "usfm_abbrev_to_bos_book_code")]
-fn usfm_abbrev_to_bos_book_code_py(usfm_abbreviation: &str) -> PyResult<String> {
-    Ok(usfm_abbrev_to_bos_book_code(usfm_abbreviation)
+#[pyo3(name = "usfm_abbrev_to_bos_book_code", signature = (usfm_abbreviation, strict=false))]
+// NOTE: This code doesn't exactly match the original Python code which always did to_uppercase() and better handled when the result was multiple abbreviations.
+fn usfm_abbrev_to_bos_book_code_py(usfm_abbreviation: &str, strict: bool) -> PyResult<String> {
+    Ok(usfm_abbrev_to_bos_book_code(usfm_abbreviation, strict)
         .map_err(|e| PyErr::new::<pyo3::exceptions::PyKeyError, _>(e.to_string()))?
         .to_string())
 }
+
+/// Backward compatibility alias for usfm_abbrev_to_bos_book_code.
+#[pyfunction]
+#[pyo3(name = "usfm_abbrev_to_bos_book_code", signature = (usfm_abbreviation, strict=false))]
+fn get_bbb_from_usfm_abbreviation_py(usfm_abbreviation: &str, strict: bool) -> PyResult<String> {
+    Ok(usfm_abbrev_to_bos_book_code(usfm_abbreviation, strict)
+        .map_err(|e| PyErr::new::<pyo3::exceptions::PyKeyError, _>(e.to_string()))?
+        .to_string())
+}
+
+
+/// Converts a short book abbreviation to a BibleOrgSys (BOS) reference abbreviation book code.
+#[pyfunction]
+#[pyo3(name = "short_abbrev_to_bos_book_code", signature = (short_abbreviation, strict=false))]
+fn short_abbrev_to_bos_book_code_py(short_abbreviation: &str, strict: bool) -> PyResult<String> {
+    Ok(short_abbrev_to_bos_book_code(short_abbreviation, strict)
+        .map_err(|e| PyErr::new::<pyo3::exceptions::PyKeyError, _>(e.to_string()))?
+        .to_string())
+}
+
+/// Backward compatibility alias for short_abbrev_to_bos_book_code.
+#[pyfunction]
+#[pyo3(name = "short_abbrev_to_bos_book_code", signature = (short_abbreviation, strict=false))]
+fn get_bbb_from_short_abbreviation_py(short_abbreviation: &str, strict: bool) -> PyResult<String> {
+    Ok(short_abbrev_to_bos_book_code(short_abbreviation, strict)
+        .map_err(|e| PyErr::new::<pyo3::exceptions::PyKeyError, _>(e.to_string()))?
+        .to_string())
+}
+
 
 /// Converts an OSIS book code to a BibleOrgSys (BOS) reference abbreviation book code.
 #[pyfunction]
 #[pyo3(name = "osis_book_code_to_bos_book_code", signature = (osis_book_code, strict=false))]
 fn osis_book_code_to_bos_book_code_py(osis_book_code: &str, strict: bool) -> PyResult<String> {
+    Ok(osis_book_code_to_bos_book_code(osis_book_code, strict)
+        .map_err(|e| PyErr::new::<pyo3::exceptions::PyKeyError, _>(e.to_string()))?
+        .to_string())
+}
+
+/// Backward compatibility alias for osis_book_code_to_bos_book_code.
+#[pyfunction]
+#[pyo3(name = "osis_book_code_to_bos_book_code", signature = (osis_book_code, strict=false))]
+fn get_bbb_from_osis_abbreviation_py(osis_book_code: &str, strict: bool) -> PyResult<String> {
     Ok(osis_book_code_to_bos_book_code(osis_book_code, strict)
         .map_err(|e| PyErr::new::<pyo3::exceptions::PyKeyError, _>(e.to_string()))?
         .to_string())
@@ -112,16 +155,6 @@ fn drupal_book_code_to_bos_book_code_py(drupal_book_code: &str) -> PyResult<Stri
 #[pyo3(name = "unbound_code_to_bos_book_code")]
 fn unbound_code_to_bos_book_code_py(unbound_code: &str) -> PyResult<String> {
     Ok(unbound_code_to_bos_book_code(unbound_code)
-        .map_err(|e| PyErr::new::<pyo3::exceptions::PyKeyError, _>(e.to_string()))?
-        .to_string())
-}
-
-/// Converts a short book code to a BibleOrgSys (BOS) reference abbreviation book code.
-/// NOTE: This tends to be more forgiving than more specific Bible code systems.
-#[pyfunction]
-#[pyo3(name = "short_abbrev_to_bos_book_code", signature = (short_abbreviation, strict=false))]
-fn short_abbrev_to_bos_book_code_py(short_abbreviation: &str, strict: bool) -> PyResult<String> {
-    Ok(short_abbrev_to_bos_book_code(short_abbreviation, strict)
         .map_err(|e| PyErr::new::<pyo3::exceptions::PyKeyError, _>(e.to_string()))?
         .to_string())
 }
@@ -183,6 +216,17 @@ fn get_all_osis_book_codes_py<'py>(py: Python<'py>) -> PyResult<Bound<'py, PyLis
 #[pyfunction]
 #[pyo3(name = "get_all_usfm_abbreviations", signature = (to_upper=false))]
 fn get_all_usfm_abbreviations_py<'py>(py: Python<'py>, to_upper: bool) -> PyResult<Bound<'py, PyList>> {
+    let list = PyList::empty(py);
+    for abbrev in ::bos_books_codes::get_all_usfm_abbreviations(to_upper) {
+        list.append(abbrev.as_str())?;
+    }
+    Ok(list)
+}
+
+/// Backward compatibility alias for get_all_usfm_abbreviations.
+#[pyfunction]
+#[pyo3(name = "get_all_usfm_books_codes", signature = (to_upper=false))]
+fn get_all_usfm_books_codes_py<'py>(py: Python<'py>, to_upper: bool) -> PyResult<Bound<'py, PyList>> {
     let list = PyList::empty(py);
     for abbrev in ::bos_books_codes::get_all_usfm_abbreviations(to_upper) {
         list.append(abbrev.as_str())?;
@@ -510,10 +554,13 @@ fn bos_books_codes_py(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(bos_book_code_to_usfm_abbrev_py, m)?)?;
     m.add_function(wrap_pyfunction!(is_valid_bos_book_code_py, m)?)?;
     m.add_function(wrap_pyfunction!(usfm_abbrev_to_bos_book_code_py, m)?)?;
+    m.add_function(wrap_pyfunction!(get_bbb_from_usfm_abbreviation_py, m)?)?;
     m.add_function(wrap_pyfunction!(osis_book_code_to_bos_book_code_py, m)?)?;
+    m.add_function(wrap_pyfunction!(get_bbb_from_osis_abbreviation_py, m)?)?;
     m.add_function(wrap_pyfunction!(drupal_book_code_to_bos_book_code_py, m)?)?;
     m.add_function(wrap_pyfunction!(unbound_code_to_bos_book_code_py, m)?)?;
     m.add_function(wrap_pyfunction!(short_abbrev_to_bos_book_code_py, m)?)?;
+    m.add_function(wrap_pyfunction!(get_bbb_from_short_abbreviation_py, m)?)?;
     m.add_function(wrap_pyfunction!(sbl_abbrev_to_bos_book_code_py, m)?)?;
     m.add_function(wrap_pyfunction!(net_bible_abbrev_to_bos_book_code_py, m)?)?;
     m.add_function(wrap_pyfunction!(english_name_to_bos_book_code_py, m)?)?;
@@ -526,6 +573,7 @@ fn bos_books_codes_py(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(get_all_bos_book_codes_py, m)?)?;
     m.add_function(wrap_pyfunction!(get_all_osis_book_codes_py, m)?)?;
     m.add_function(wrap_pyfunction!(get_all_usfm_abbreviations_py, m)?)?;
+    m.add_function(wrap_pyfunction!(get_all_usfm_books_codes_py, m)?)?;
     m.add_function(wrap_pyfunction!(get_all_usfm_books_code_number_triples_py, m)?)?;
     m.add_function(wrap_pyfunction!(get_all_usx_books_code_number_triples_py, m)?)?;
     m.add_function(wrap_pyfunction!(get_all_bibledit_books_code_number_triples_py, m)?)?;

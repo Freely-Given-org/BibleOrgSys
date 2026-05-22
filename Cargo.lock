@@ -138,7 +138,7 @@ dependencies = [
 
 [[package]]
 name = "bos_books_codes"
-version = "0.2.0"
+version = "0.6.3"
 dependencies = [
  "compact_str",
  "criterion",
@@ -147,7 +147,7 @@ dependencies = [
 
 [[package]]
 name = "bos_books_codes_py"
-version = "0.6.1"
+version = "0.6.3"
 dependencies = [
  "bos_books_codes",
  "compact_str",
@@ -1247,7 +1247,7 @@ dependencies = [
 
 [[package]]
 name = "usfm_markers"
-version = "0.1.0"
+version = "0.2.1"
 dependencies = [
  "compact_str",
  "phf",
@@ -1255,7 +1255,7 @@ dependencies = [
 
 [[package]]
 name = "usfm_markers_py"
-version = "0.1.0"
+version = "0.2.1"
 dependencies = [
  "compact_str",
  "pyo3",
