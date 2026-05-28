@@ -11,7 +11,7 @@ use rayon::prelude::*;
 use crate::entry::{InternalBibleEntry, InternalBibleExtra};
 use crate::entry_lists::InternalBibleEntryList;
 use crate::entry_extras::InternalBibleExtraList;
-use crate::markers::ExtraType;
+use crate::bos_markers::ExtraType;
 
 /// Options for processing lines.
 #[derive(Debug, Clone, Copy)]
@@ -219,7 +219,7 @@ pub fn process_lines(
     let mut errors = Vec::new();
 
     for (marker, text) in raw_lines {
-        let marker = crate::markers::normalize_marker(marker.as_str());
+        let marker = crate::bos_markers::normalize_marker(marker.as_str());
         log::info!("process_lines: Processing marker {} with text '{}'", marker, text);
         // println!("process_lines: Processing marker {} with text '{}'", marker, text);
         if marker == "v" { // Put the most common marker first for better performance
@@ -327,7 +327,7 @@ pub fn process_lines(
         let (adj, clean, extras) = line_fix_and_move_extras_out(&text, &chapter, &verse, book_code, marker, options, &mut errors);
         // println!("process_lines: After line_fix_and_move_extras_out for marker {}: adj='{}', clean='{}', extras={}", marker, adj, clean, extras.len());
 
-        if (marker == "b" || crate::markers::paragraph_markers::is_paragraph(marker))
+        if (marker == "b" || crate::bos_markers::paragraph_markers::is_paragraph(marker))
             && (!clean.is_empty() || !extras.is_empty())
         {
             processed.push(InternalBibleEntry::new_unchecked(marker, marker, "", "", None, ""));

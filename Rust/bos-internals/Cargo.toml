@@ -1,6 +1,6 @@
 [package]
 name = "bos-internals"
-version = "0.2.1"
+version = "0.2.2"
 edition.workspace = true
 license.workspace = true
 authors.workspace = true
@@ -14,6 +14,7 @@ log.workspace = true
 bos_books_codes = { workspace = true }
 compact_str = { workspace = true, features = ["rkyv"] }
 indexmap = { workspace = true, features = ["rayon"] }
+usfm_markers = { workspace = true }
 num-format = "0.4.4"
 pyo3 = { workspace = true, optional = true }
 quick-xml = { workspace = true }

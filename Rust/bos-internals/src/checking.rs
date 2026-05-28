@@ -1,7 +1,7 @@
 //! Bible Org Sys Internals - Validation and checking logic.
 
 use crate::entry_lists::InternalBibleEntryList;
-use crate::markers::{self};
+use crate::bos_markers::{self};
 use indexmap::IndexMap;
 use rayon::prelude::*;
 
@@ -167,20 +167,20 @@ pub fn validate_processed_markers(
             *results.functional_counts.entry("Section Cross-References".to_string()).or_insert(0) += 1;
         }
 
-        if !marker.starts_with('¬') && !markers::custom_nesting::is_custom_nesting(marker) && marker != "v=" {
+        if !marker.starts_with('¬') && !bos_markers::custom_nesting::is_custom_nesting(marker) && marker != "v=" {
             *results.newline_marker_counts.entry(marker.to_string()).or_insert(0) += 1;
         }
 
         if marker.starts_with('¬') {
         } else if !matches!(marker, "c#" | "cl¤" | "vp#" | "v=") 
-            && !markers::custom_nesting::is_custom_nesting(marker)
-            && !markers::is_newline_marker(marker) 
+            && !bos_markers::custom_nesting::is_custom_nesting(marker)
+            && !bos_markers::is_newline_marker(marker) 
         {
             results.validation_errors.push(format!("{} Unexpected {:?} newline marker in Bible book (Text is {:?})", line_location, marker, text));
             results.add_priority_error(80, book_code, &chapter, &verse, format!("Marker {:?} not expected at beginning of line", marker));
         }
 
-        if markers::is_deprecated_marker(marker) {
+        if bos_markers::is_deprecated_marker(marker) {
             results.validation_errors.push(format!("{} Deprecated {:?} newline marker in Bible book (Text is {:?})", line_location, marker, text));
             results.add_priority_error(90, book_code, &chapter, &verse, format!("Newline marker {:?} is deprecated in USFM standard", marker));
         }
@@ -192,11 +192,11 @@ pub fn validate_processed_markers(
 
             for cap in MARKER_RE.captures_iter(text) {
                 let inside_marker = cap.get(1).unwrap().as_str();
-                if markers::is_newline_marker(inside_marker) {
+                if bos_markers::is_newline_marker(inside_marker) {
                     results.validation_errors.push(format!("{} Marker {:?} must not appear within line in {}: {}", line_location, inside_marker, marker, text));
                     results.add_priority_error(90, book_code, &chapter, &verse, format!("Newline marker {:?} should be at start of line", inside_marker));
                 }
-                if markers::is_deprecated_marker(inside_marker) {
+                if bos_markers::is_deprecated_marker(inside_marker) {
                     results.validation_errors.push(format!("{} Deprecated {:?} internal marker in Bible book (Text is {:?})", line_location, inside_marker, text));
                     results.add_priority_error(89, book_code, &chapter, &verse, format!("Internal marker {:?} is deprecated in USFM standard", inside_marker));
                 }
@@ -405,7 +405,7 @@ pub fn do_check_sfms(
 
     let mut chapter = "-1".to_string();
     let mut verse = "-1".to_string();
-    let mut section = markers::MarkerSection::Other;
+    let mut section = bos_markers::MarkerSection::Other;
     let mut last_marker = "".to_string();
 
     for entry in entries.iter() {
@@ -433,8 +433,8 @@ pub fn do_check_sfms(
 
         let line_location = format!("{} {}:{}", book_code, chapter, verse);
 
-        let content_type = markers::get_processed_marker_content_type(marker);
-        if marker_text_empty && extras.is_none() && (content_type == markers::MarkerContentType::Always || matches!(marker, "v~" | "c~" | "c#")) {
+        let content_type = bos_markers::get_processed_marker_content_type(marker);
+        if marker_text_empty && extras.is_none() && (content_type == bos_markers::MarkerContentType::Always || matches!(marker, "v~" | "c~" | "c#")) {
             results.add_priority_error(empty_field_priority, book_code, &chapter, &verse, format!("Processed marker '{}' (from '{}') should always have text", marker, original_marker));
             if empty_field_priority >= high_empty_field_priority {
                 results.newline_marker_errors.push(format!("{} Processed marker {:?} has no content", line_location, marker));
@@ -443,17 +443,17 @@ pub fn do_check_sfms(
             }
         }
 
-        if marker.starts_with('¬') || markers::custom_nesting::is_custom_nesting(marker) || marker == "v=" {
+        if marker.starts_with('¬') || bos_markers::custom_nesting::is_custom_nesting(marker) || marker == "v=" {
             continue;
         }
 
-        let new_section = markers::marker_occurs_in(marker);
+        let new_section = bos_markers::marker_occurs_in(marker);
         if new_section != section {
-            if section == markers::MarkerSection::Other && new_section != markers::MarkerSection::Header {
+            if section == bos_markers::MarkerSection::Other && new_section != bos_markers::MarkerSection::Header {
                 if discovery.have_main_headings {
                     results.newline_marker_errors.push(format!("{} Missing Header section (went straight to {} section with {} marker)", line_location, new_section, marker));
                 }
-            } else if section != markers::MarkerSection::Other && new_section == markers::MarkerSection::Header {
+            } else if section != bos_markers::MarkerSection::Other && new_section == bos_markers::MarkerSection::Header {
                 results.newline_marker_errors.push(format!("{} Didn't expect Header section after {} section (with {} marker)", line_location, section, marker));
             }
             section = new_section;
@@ -474,8 +474,8 @@ pub fn do_check_sfms(
                 *results.internal_marker_counts.entry(int_marker.to_string()).or_insert(0) += 1;
                 if int_marker.ends_with('*') {
                     let closed_marker = &int_marker[..int_marker.len()-1];
-                    let closure = markers::get_marker_closure_type(closed_marker);
-                    if closure == markers::MarkerClosureType::Never {
+                    let closure = bos_markers::get_marker_closure_type(closed_marker);
+                    if closure == bos_markers::MarkerClosureType::Never {
                         results.internal_marker_errors.push(format!("{} Marker {} cannot be closed", line_location, closed_marker));
                     } else if hierarchy.last() == Some(&closed_marker) {
                         hierarchy.pop();
@@ -485,8 +485,8 @@ pub fn do_check_sfms(
                         results.internal_marker_errors.push(format!("{} Unexpected internal closing marker: {}", line_location, int_marker));
                     }
                 } else {
-                    let closure = markers::get_marker_closure_type(int_marker);
-                    if closure != markers::MarkerClosureType::Never {
+                    let closure = bos_markers::get_marker_closure_type(int_marker);
+                    if closure != bos_markers::MarkerClosureType::Never {
                         hierarchy.push(int_marker);
                     }
                 }
@@ -640,7 +640,7 @@ pub fn do_check_words(
 
         let line_location = format!("{} {}:{}", book_code, chapter, verse);
 
-        if !clean_text.is_empty() && (marker == "v~" || marker == "p~" || markers::is_newline_marker(marker)) {
+        if !clean_text.is_empty() && (marker == "v~" || marker == "p~" || bos_markers::is_newline_marker(marker)) {
             let words = clean_text.replace('—', " ").replace('–', " ");
             for (j, raw_word) in words.split_whitespace().enumerate() {
                 if (marker == "c" || marker == "v") && j == 0 && raw_word.chars().all(|c| c.is_ascii_digit()) {
@@ -867,12 +867,12 @@ pub fn do_check_notes(
                     *results.note_marker_counts.entry(int_marker.to_string()).or_insert(0) += 1;
                 }
 
-                if matches!(extra.extra_type(), crate::markers::ExtraType::Footnote | crate::markers::ExtraType::Endnote) {
+                if matches!(extra.extra_type(), crate::bos_markers::ExtraType::Footnote | crate::bos_markers::ExtraType::Endnote) {
                     if clean_extra_text.ends_with(' ') {
                         footnote_errors.push(format!("{} Footnote seems to have an extra space at end: {:?}", line_location, extra_text));
                         results.add_priority_error(32, book_code, &chapter, &verse, "Extra space at end of footnote".to_string());
                     }
-                } else if matches!(extra.extra_type(), crate::markers::ExtraType::CrossRef) {
+                } else if matches!(extra.extra_type(), crate::bos_markers::ExtraType::CrossRef) {
                     if clean_extra_text.ends_with(' ') {
                         xref_errors.push(format!("{} Cross-reference seems to have an extra space at end: {:?}", line_location, extra_text));
                         results.add_priority_error(30, book_code, &chapter, &verse, "Extra space at end of cross-reference".to_string());

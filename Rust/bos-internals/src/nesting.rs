@@ -6,9 +6,9 @@ use compact_str::CompactString;
 
 use crate::entry::InternalBibleEntry;
 use crate::entry_lists::InternalBibleEntryList;
-use crate::markers::{
+use crate::bos_markers::{
     heading_markers, intro_list_markers, intro_outline_markers, introduction_markers,
-    is_never_content_marker, main_text_list_markers, major_section_markers, paragraph_markers,
+    main_text_list_markers, major_section_markers, paragraph_markers,
 };
 
 /// Add logical verse start markers (`v=`) before sections, paragraphs, etc.
@@ -535,7 +535,7 @@ pub fn add_nesting_markers(
             }
             open_markers.push(marker_owned.clone());
             last_p_marker = Some(marker_owned.clone());
-        } else if is_never_content_marker(marker) {
+        } else if usfm_markers::get_marker_content_type(marker) == Some('N') {
             for _ in 0..999 {
                 let mut made_change = false;
                 if let Some(last_open_m) = open_markers.last().map(|s| s.to_string()) {

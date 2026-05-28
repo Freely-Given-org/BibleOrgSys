@@ -89,7 +89,7 @@ pub mod entry_extras;
 pub mod error;
 pub mod indexes;
 pub mod io;
-pub mod markers;
+pub mod bos_markers;
 pub mod ml_writer;
 pub mod nesting;
 pub mod osis;
@@ -110,7 +110,7 @@ pub use entry_lists::InternalBibleEntryList;
 pub use entry_extras::InternalBibleExtraList;
 pub use error::{BosError, IndexError, LookupError, ParseError, ValidationError};
 pub use indexes::{CVIndexEntry, InternalBibleBookCVIndex, InternalBibleBookSectionIndex, SectionIndexEntry};
-pub use markers::ExtraType;
+pub use bos_markers::ExtraType;
 pub use parsing::{
     UsfmFigureAttributes, WordWithAttributes, abbreviate, get_positive_leading_int,
     get_small_leading_int, parse_figure_attributes, parse_word_attributes,

@@ -1,6 +1,6 @@
 [package]
 name = "usfm_markers_py"
-version = "0.2.2"
+version = "0.2.4"
 edition.workspace = true
 
 [lib]

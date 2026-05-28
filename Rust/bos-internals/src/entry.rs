@@ -8,7 +8,7 @@ use compact_str::CompactString;
 
 use crate::entry_extras::InternalBibleExtraList;
 use crate::error::ValidationError;
-use crate::markers::{ExtraType, custom_content, custom_nesting, is_end_marker};
+use crate::bos_markers::{ExtraType, custom_content, custom_nesting, is_end_marker};
 
 /// Represents an "extra" element that was extracted from the main text flow.
 ///

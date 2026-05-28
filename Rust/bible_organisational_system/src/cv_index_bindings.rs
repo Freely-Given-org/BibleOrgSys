@@ -13,7 +13,7 @@ use pyo3::types::PyBytes;
 
 use bos_internals::{
     CVIndexEntry, ChapterVerse, InternalBibleBookCVIndex, InternalBibleEntry,
-    InternalBibleEntryList, abbreviate, markers::is_end_marker, verbosity_println
+    InternalBibleEntryList, abbreviate, bos_markers::is_end_marker, verbosity_println
 };
 use indexmap::IndexMap;
 use rayon::prelude::*;

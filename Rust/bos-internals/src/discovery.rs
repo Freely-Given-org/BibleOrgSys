@@ -1,9 +1,10 @@
 //! Bible discovery logic for calculating statistics and identifying features.
 
 use crate::entry_lists::InternalBibleEntryList;
-use crate::markers::{ExtraType, is_printable_marker};
+use crate::bos_markers::ExtraType;
 use crate::parsing::strip_word_ends_punctuation;
 use indexmap::IndexMap;
+use usfm_markers::is_printed;
 use rayon::prelude::*;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
@@ -274,7 +275,7 @@ pub fn discover_book(entries: &InternalBibleEntryList, _bbb: &str) -> BookDiscov
             if clean_text.starts_with('(') && clean_text.ends_with(')') {
                 section_ref_parenth_count += 1;
             }
-        } else if crate::markers::paragraph_markers::is_paragraph(marker) {
+        } else if crate::bos_markers::paragraph_markers::is_paragraph(marker) {
             results.have_paragraph_markers = true;
             if !clean_text.is_empty() {
                 results.have_verse_text = true;
@@ -299,7 +300,7 @@ pub fn discover_book(entries: &InternalBibleEntryList, _bbb: &str) -> BookDiscov
                 results.have_nested_usf_markers = true;
             }
             results.figures_count += clean_text.matches("\\fig ").count() as u16;
-            if is_printable_marker(marker) {
+            if is_printed(marker) || matches!(marker, "v~" | "p~") {
                 count_words(marker, clean_text, true, &mut results);
             }
         }

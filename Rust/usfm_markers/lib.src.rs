@@ -275,6 +275,36 @@ pub fn is_printed(marker: &str) -> bool {
     get_array_index(marker).map(|idx| USFM_MARKER_ARRAY[idx].printed).unwrap_or(false)
 }
 
+/// Normalize a marker to its standard numbered form if applicable.
+/// E.g., "mt" -> "mt1", "s" -> "s1".
+/// Returns the input marker if it's already normalized or not numberable.
+pub fn normalize_marker(marker: &str) -> &str {
+    match marker {
+        "imt" => "imt1",
+        "is" => "is1",
+        "iq" => "iq1",
+        "ili" => "ili1",
+        "io" => "io1",
+        "imte" => "imte1",
+        "mt" => "mt1",
+        "mte" => "mte1",
+        "ms" => "ms1",
+        "s" => "s1",
+        "pi" => "pi1",
+        "li" => "li1",
+        "ph" => "ph1",
+        "q" => "q1",
+        "qm" => "qm1",
+        "th" => "th1",
+        "thr" => "thr1",
+        "tc" => "tc1",
+        "tcr" => "tcr1",
+        "qt-s" => "qt1-s",
+        "qt-e" => "qt1-e",
+        _ => marker,
+    }
+}
+
 /// Return 'N', 'O', 'A', 'S' for marker closure type:
 /// "Never", "Optional", "Always", "Self".
 pub fn get_marker_closure_type(marker: &str) -> Option<char> {
@@ -620,7 +650,7 @@ pub fn replace_usfm_character_fields(replacements: &[(&[&str], &str, &str)], ori
 pub struct MarkerInfo<'a> {
     /// The marker (without backslash or space/asterisk), or None for initial text.
     pub marker: Option<&'a str>,
-    /// Index of the backslash character in the text.
+    /// Index of the backslash character in the text, measured in characters.
     pub index_of_backslash: usize,
     /// Next significant character after the marker name:
     /// ' ' for normal opening marker,
@@ -665,9 +695,15 @@ pub fn get_marker_list_from_text(text: &str, include_initial_text: bool, _verify
     let text_len = bytes.len();
     
     let mut ix_bs = 0;
+    let mut ix_char = 0;
+    let count_chars = |start: usize, end: usize, bytes: &[u8]| {
+        bytes[start..end].iter().filter(|&&b| b & 0xC0 != 0x80).count()
+    };
+    
     while ix_bs < text_len {
         if bytes[ix_bs] == b'\\' {
             let marker;
+            let marker_char_index = ix_char;
             let mut iy = ix_bs + 1;
             if iy < text_len {
                 let c1 = bytes[iy];
@@ -681,14 +717,14 @@ pub fn get_marker_list_from_text(text: &str, include_initial_text: bool, _verify
                         marker = &text[start..iy];
                         if iy < text_len {
                             if bytes[iy] == b' ' {
-                                first_result.push((marker, ix_bs, Some('+'), &text[ix_bs..iy+1]));
+                                first_result.push((marker, ix_bs, marker_char_index, Some('+'), &text[ix_bs..iy+1]));
                             } else if bytes[iy] == b'*' {
-                                first_result.push((marker, ix_bs, Some('-'), &text[ix_bs..iy+1]));
+                                first_result.push((marker, ix_bs, marker_char_index, Some('-'), &text[ix_bs..iy+1]));
                             } else {
-                                first_result.push((marker, ix_bs, Some('+'), &text[ix_bs..iy]));
+                                first_result.push((marker, ix_bs, marker_char_index, Some('+'), &text[ix_bs..iy]));
                             }
                         } else {
-                            first_result.push((marker, ix_bs, Some('+'), &text[ix_bs..iy]));
+                            first_result.push((marker, ix_bs, marker_char_index, Some('+'), &text[ix_bs..iy]));
                         }
                     }
                 } else if c1 != b' ' && c1 != b'*' && c1 != b'\\' {
@@ -699,26 +735,31 @@ pub fn get_marker_list_from_text(text: &str, include_initial_text: bool, _verify
                     marker = &text[start..iy];
                     if iy < text_len {
                         if bytes[iy] == b' ' {
-                            first_result.push((marker, ix_bs, Some(' '), &text[ix_bs..iy+1]));
+                            first_result.push((marker, ix_bs, marker_char_index, Some(' '), &text[ix_bs..iy+1]));
                         } else if bytes[iy] == b'*' {
-                            first_result.push((marker, ix_bs, Some('*'), &text[ix_bs..iy+1]));
+                            first_result.push((marker, ix_bs, marker_char_index, Some('*'), &text[ix_bs..iy+1]));
                         } else {
-                            first_result.push((marker, ix_bs, None, &text[ix_bs..iy]));
+                            first_result.push((marker, ix_bs, marker_char_index, None, &text[ix_bs..iy]));
                         }
                     } else {
-                        first_result.push((marker, ix_bs, None, &text[ix_bs..iy]));
+                        first_result.push((marker, ix_bs, marker_char_index, None, &text[ix_bs..iy]));
                     }
                 }
             }
+            ix_char += count_chars(ix_bs, iy, bytes);
             ix_bs = iy;
         } else {
+            let byte = bytes[ix_bs];
             ix_bs += 1;
+            if byte & 0xC0 != 0x80 {
+                ix_char += 1;
+            }
         }
     }
 
     let mut second_result = Vec::new();
     let mut cx: Vec<&str> = Vec::new();
-    for (j, &(m, ix, x, mx)) in first_result.iter().enumerate() {
+    for (j, &(m, ix, ix_char, x, mx)) in first_result.iter().enumerate() {
         if is_newline_marker(m) {
             cx.clear();
         } else {
@@ -744,17 +785,17 @@ pub fn get_marker_list_from_text(text: &str, include_initial_text: bool, _verify
         } else {
             &text[ix + mx.len()..first_result[j+1].1]
         };
-        second_result.push((m, ix, x, mx, cx.clone(), tx));
+        second_result.push((m, ix, ix_char, x, mx, cx.clone(), tx));
     }
 
     let mut final_result = Vec::new();
     let r_len = second_result.len();
-    for (j, &(m, ix, x, mx, ref context, tx)) in second_result.iter().enumerate() {
+    for (j, &(m, _ix, ix_char, x, mx, ref context, tx)) in second_result.iter().enumerate() {
         let mut end_idx = None;
         if (x == Some(' ') || x == Some('+')) && !context.is_empty() {
             let cxi = context.len() - 1;
             for k in j + 1..r_len {
-                let (_, _, _, _, ref context2, _) = second_result[k];
+                let (_, _, _, _, _, ref context2, _) = second_result[k];
                 if context2.len() <= cxi || context2[cxi] != m {
                     end_idx = Some(k);
                     break;
@@ -763,7 +804,7 @@ pub fn get_marker_list_from_text(text: &str, include_initial_text: bool, _verify
         }
         final_result.push(MarkerInfo {
             marker: Some(m),
-            index_of_backslash: ix,
+            index_of_backslash: ix_char,
             next_significant_char: x,
             full_marker_text: Some(mx),
             context: context.clone(),
@@ -892,6 +933,17 @@ mod tests {
         assert_eq!(markers[1].closing_marker_index, Some(2));
         assert_eq!(markers[2].marker, Some("it"));
         assert_eq!(markers[2].next_significant_char, Some('*'));
+    }
+
+    #[test]
+    fn test_marker_list_from_text_unicode_indexes() {
+        let text = "Aé \\v 1 This is \\it italic\\it*.";
+        let markers = get_marker_list_from_text(text, false, false);
+        assert_eq!(markers.len(), 3);
+        assert_eq!(markers[0].marker, Some("v"));
+        assert_eq!(markers[0].index_of_backslash, 3);
+        assert_eq!(markers[1].marker, Some("it"));
+        assert_eq!(markers[1].index_of_backslash, 16);
     }
 
     #[test]

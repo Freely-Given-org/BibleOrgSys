@@ -97,6 +97,8 @@ class USFMBibleBook( BibleBook ):
 
             Also convert ~ to a proper non-break space.
 
+            Uses C and V from the surrounding program context to make user messages more useful.
+
             Note: for uwAligned data, calls will look something like this:
                     doAddLine( 'p~', '\\w Simon|x-occurrence="1" x-occurrences="1"\\w*' )
                     doAddLine( 'p~', '\\w of|x-occurrence="1" x-occurrences="2"\\w* \\w Cyrene|x-occurrence="1" x-occurrences="1"\\w* (\\w the|x-occurrence="1" x-occurrences="2"\\w*' )
@@ -106,28 +108,37 @@ class USFMBibleBook( BibleBook ):
             # The below is a false assumption
             #   See: \w='480|x-occurrence="1" x-occurrences="1"\w*\w th|x-occurrence="1" x-occurrences="1"\w*' after ULT KI1 6:1
             # assert '\\w*\\w' not in addText
-            # if '\\v' in addText: print( f"doAddLine( '{addMarker}', '{addText}' )" )
+            # if '\\v' in addText:
+            # if self.workName=='ULT' and self.BBB=='JER' and C=='4':
+            # print( f"\n\ndoAddLine( '{addMarker}', '{addText}' ) for {self.workName} {self.BBB} {C}:{V}" )
 
             marker, text = addMarker, addText.replace( '~', ' ' ) # NBSP = Non-breaking space
-            if self.workName == 'UST': # UST uses braces to indicate added text
+            if self.workName in ('ULT','UST'): # unfoldingWord uses braces to indicate added text
                 text = text.replace( '{', '\\add ' ).replace( '}', '\\add*' )
 
-            if '\\' in text: # Check markers inside the lines
-                markerList = usfm_markers_py.get_marker_list_from_text( text )
+            if '\\' in text: # Check the markers inside the lines (in case they're newLine markers)
                 ix = 0
-                for insideMarker, iMIndex, nextSignificantChar, fullMarker, characterContext, endIndex, markerField in markerList: # check paragraph markers
-                    if insideMarker == '\\': # it's a free-standing backspace
-                        loadErrors.append( f"{self.BBB} {C}:{V} Improper free-standing backspace character within line in \\{marker}: {text!r}" )
-                        logging.error( f"Improper free-standing backspace character within line after {self.BBB} {C}:{V} in \\{marker}: {text!r}" ) # Only log the first error in the line
-                        self.addPriorityError( 100, C, V, "Improper free-standing backspace character inside a line" )
-                    elif usfm_markers_py.is_newline_marker(insideMarker) \
-                    or insideMarker == 'zaln-e': # Need to split the line for everything else to work properly
+                for insideMarker, iMIndex, nextSignificantChar, fullMarker, characterContext, endIndex, markerField in usfm_markers_py.get_marker_list_from_text( text ):
+                    # if self.workName=='ULT' and self.BBB=='JER' and C=='4' and V=='14':
+                    # print( f"\n{insideMarker=} {iMIndex=} {nextSignificantChar=} {fullMarker=} {characterContext=} {endIndex=} {markerField=}" )
+                    # print( f"   {text[:iMIndex]=}")
+                    # print( f"   {text[iMIndex:]=}")
+                    assert text[iMIndex:].startswith( fullMarker ) # The Rust code had a Unicode error that made this fail
+                    assert not insideMarker.startswith( 'zaln' )
+                    if insideMarker == '\\': # it's a free-standing backslash
+                        loadErrors.append( f"{self.BBB} {C}:{V} Improper free-standing backslash character within line in \\{marker}: {text!r}" )
+                        logging.critical( f"Improper free-standing backslash character within line after {self.workName} {self.BBB} {C}:{V} in \\{marker}: {text!r}" ) # Only log the first error in the line
+                        self.addPriorityError( 100, C, V, "Improper free-standing backslash character inside a line" )
+                    elif usfm_markers_py.is_newline_marker( insideMarker ): # Need to split the line for everything else to work properly
                         if ix==0:
-                            loadErrors.append( f"{self.BBB} {C}:{V} NewLine marker {marker!r} shouldn't appear within line in \\{insideMarker}: {text!r}" )
-                            logging.error( f"NewLine marker {marker!r} shouldn't appear within line after {insideMarker} {self.BBB}:{C} in \\{V}: {text!r}" ) # Only log the first error in the line
+                            loadErrors.append( f"{self.BBB} {C}:{V} NewLine marker {insideMarker!r} shouldn't appear within line in \\{marker}: {text!r}" )
+                            # (logging.critical if self.workName=='ULT' and self.BBB=='JER' and C=='4' else logging.warning)( f"NewLine marker {insideMarker!r} shouldn't appear within line after {marker} {self.workName} {self.BBB} {C}:{V}: {text!r}" ) # Only log the first error in the line
+                            logging.warning( f"NewLine marker {insideMarker!r} shouldn't appear within line after {marker} {self.workName} {self.BBB} {C}:{V}: {text!r}" ) # Only log the first error in the line
                             self.addPriorityError( 96, C, V, f"NewLine marker \\{insideMarker} shouldn't be inside a line" )
                         thisText = text[ix:iMIndex].rstrip()
                         self.addLine( marker, thisText )
+                        # if self.workName=='ULT' and self.BBB=='JER' and C=='4':
+                        #     print( f"Added split line: {marker}={thisText!r}" )
                         ix = iMIndex + 1 + len(insideMarker) + len(nextSignificantChar) # Get the start of the next text -- the 1 is for the backslash
                         # dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Did a split from {addMarker}:{addText!r} to {marker}:{thisText!r} leaving {insideMarker}:{text[ix:]!r}" )
                         marker = insideMarker # setup for the next line
@@ -136,6 +147,8 @@ class USFMBibleBook( BibleBook ):
 
             # assert '\\v' not in text
             # if '\\v' in text: print( f"doAddLine( '{addMarker}', '{addText}' ) -> {marker=} {text=}" ); halt
+            # if self.workName=='ULT' and self.BBB=='JER' and C=='4':
+            #     print( f"Added final line: {marker}={text!r}\n" )
             self.addLine( marker, text ) # Call the function in the base class to save the line (or the remainder of the line if we split it above)
         # end of doAddLine
 

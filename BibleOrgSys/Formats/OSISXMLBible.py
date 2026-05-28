@@ -32,7 +32,9 @@ Unfortunately, the OSIS specification (designed by committee for many different 
 This is a quickly updated version of an early module,
     and it's both ugly and fragile  :-(
 
-Updated Sept 2013 to also handle Kahunapule's "modified OSIS".
+CHANGELOG:
+    2013-09 Updated to also handle Kahunapule's "modified OSIS"
+    2026-05-20 Use the new, faster Rust parser
 """
 import logging
 import os
@@ -44,13 +46,13 @@ import multiprocessing
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Reference.ISO_639_3_Languages import ISO_639_3_Languages
-from usfm_markers_py import USFM_BIBLE_PARAGRAPH_MARKERS
 from BibleOrgSys.Bible import Bible, BibleBook
+from usfm_markers_py import USFM_BIBLE_PARAGRAPH_MARKERS
 import bos_books_codes_py
-import bible_organisational_system
+from bible_organisational_system import parseOsis
 
 
-LAST_MODIFIED_DATE = '2023-02-27' # by RJH
+LAST_MODIFIED_DATE = '2026-05-28' # by RJH
 SHORT_PROGRAM_NAME = "OSISXMLBible"
 PROGRAM_NAME = "OSIS XML Bible format handler"
 PROGRAM_VERSION = '0.67'
@@ -390,7 +392,7 @@ class OSISXMLBible( Bible ):
         elif os.path.isfile( self.sourceFilepath ): # most often we have all the Bible books in one file
             vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Using optimized Rust OSIS parser for {self.sourceFilepath}…" )
             try:
-                results = bible_organisational_system.parseOsis( self.sourceFilepath )
+                results = parseOsis( self.sourceFilepath )
                 for bbb, raw_lines in results['books'].items():
                     bBook = BibleBook( self, bbb )
                     bBook.objectNameString = 'OSIS XML Bible Book object'

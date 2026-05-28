@@ -2867,6 +2867,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
         ((' bethinking',' bithenkynge'),' bethinking/coming_to_think'),((' bethink ',' bethinke '),' bethink/come_to_think '), # Lam 3:21
         (('bethought','bithouyte'),'bethought/came_to_think'),
         (('betrothed','betrouthed'),'betrothed/engaged'), # Deu 20:7
+        ((' biclippid',),' took_hold_of'), # # Wycl Mrk 9:35
         ((' bifalle ',),' befall/happen_to '),((' bifelle ',),' befell/happened_to '),((' bifelde',),' befeld/happened_to'), # Lam 5:1, Tob 2:10
         ((' biforknowing',),' foreknowledge'), # # Wycl Deu 29:29
         ((' bihiyten',' bihiyte',' bihiyt',),' promised'), # Wycl Deu 25:19
