@@ -1,9 +1,11 @@
 //! USFM nesting and end marker logic.
-
+//
+// CHANGELOG:
+//   2026-50-27 Make 'nb' cause a close 'nb' to be added BEFORE the new 'c' marker, but the 'nb' itself is closed with the original paragraph marker
 use compact_str::CompactString;
 
 use crate::entry::InternalBibleEntry;
-use crate::entry_extras::InternalBibleEntryList;
+use crate::entry_lists::InternalBibleEntryList;
 use crate::markers::{
     heading_markers, intro_list_markers, intro_outline_markers, introduction_markers,
     is_never_content_marker, main_text_list_markers, major_section_markers, paragraph_markers,
@@ -59,11 +61,16 @@ pub fn add_verse_start_markers(entries: InternalBibleEntryList) -> InternalBible
     result
 }
 
-/// Add nesting and end markers to a list of processed Bible entries.
+/// Add nesting and end markers to a list of processed Internal
+/// Bible entries. (End markers start with the '¬' character.)
 ///
 /// Note that although nb is considered as a USFM paragraph marker,
-///   in the BibleOrgSys nesting it acts as a NOP (no-operation)
-///   so it does not cause an existing paragraph to end (¬nb is never added).
+///   it's a special case, and when encountered, it will cause a
+///   close 'nb' to be added before the '¬c' and the new 'c' marker
+///   (rather than the normal close paragraph marker),
+///   but the 'nb' itself is closed with that original paragraph marker,
+///   i.e., the '¬nb' will occur in the list BEFORE the 'nb', not after,
+///   and both of those will be inside the 'p'/'¬p' or similar block.
 pub fn add_nesting_markers(
     entries: InternalBibleEntryList,
     work_name: &str,
@@ -166,6 +173,20 @@ pub fn add_nesting_markers(
         None
     };
 
+    let has_nb_after_c = |start_idx: usize, entries: &[InternalBibleEntry]| {
+        for entry in entries.iter().skip(start_idx + 1) {
+            let m = entry.marker();
+            if m == "nb" {
+                return true;
+            }
+            // Stop looking if we hit another section or paragraph marker
+            if matches!(m, "c" | "s1" | "s2" | "s3" | "s4" | "p" | "q1" | "m") {
+                return false;
+            }
+        }
+        false
+    };
+
     for j in 0..num_entries {
         let entry = &entries_vec[j];
         let marker = entry.marker();
@@ -229,7 +250,7 @@ pub fn add_nesting_markers(
 
         // Chapter logic
         if marker == "nb" {
-            // nb is a NOP for nesting
+            // nb is a NOP for nesting - it's just a paragraph marker that extends across chapters
         } else if marker == "c" {
             if let Some(last_open) = open_markers.last().map(|s| s.to_string())
                 && (last_open == "headers" || last_open == "intro")
@@ -243,22 +264,37 @@ pub fn add_nesting_markers(
                 new_lines.push(InternalBibleEntry::simple(format!("¬{}", m), current_verse.as_str()));
             }
 
+            // Check if there's an nb marker after this chapter
+            let nb_follows = has_nb_after_c(j, &entries_vec);
+            
+            // Handle the paragraph with nb lookahead
             if let Some(lp) = &last_p_marker
                 && let Some(pos) = open_markers.iter().rposition(|m| m == lp)
             {
-                let m = open_markers.remove(pos);
-                new_lines.push(InternalBibleEntry::simple(format!("¬{}", m), ""));
+                if nb_follows {
+                    // nb extends this paragraph across chapters
+                    // Close with ¬nb instead of ¬p to indicate section break
+                    // BUT keep the paragraph on the stack so it can be closed later
+                    new_lines.push(InternalBibleEntry::simple("¬nb", ""));
+                    // Do NOT remove from open_markers - paragraph continues
+                    // Do NOT clear last_p_marker - it will be closed at the next paragraph
+                } else {
+                    // Paragraph is ending - close it BEFORE closing the previous chapter
+                    let m = open_markers.remove(pos);
+                    new_lines.push(InternalBibleEntry::simple(format!("¬{}", m), ""));
+                    last_p_marker = None;
+                }
             }
-            last_p_marker = None;
+
+            // Close the previous chapter
+            if let Some(pos) = open_markers.iter().rposition(|m| m == "c") {
+                let m = open_markers.remove(pos);
+                new_lines.push(InternalBibleEntry::simple(format!("¬{}", m), current_chapter.as_str()));
+            }
 
             if !open_markers.iter().any(|m| m == "chapters") {
                 new_lines.push(InternalBibleEntry::nesting_marker("chapters"));
                 open_markers.push(CompactString::from("chapters"));
-            }
-
-            if let Some(pos) = open_markers.iter().rposition(|m| m == "c") {
-                let m = open_markers.remove(pos);
-                new_lines.push(InternalBibleEntry::simple(format!("¬{}", m), current_chapter.as_str()));
             }
 
             current_chapter = CompactString::from(text);
@@ -551,5 +587,89 @@ pub fn add_nesting_markers(
 
 #[cfg(test)]
 mod tests {
+    use crate::entry::InternalBibleEntry;
+    use crate::entry_lists::InternalBibleEntryList;
+use crate::nesting::add_nesting_markers;
 
+    #[test]
+    fn test_add_nesting_markers_simple() {
+        let mut list = InternalBibleEntryList::new();
+        list.push(InternalBibleEntry::simple("c", "1"));
+        list.push(InternalBibleEntry::simple("p", ""));
+        list.push(InternalBibleEntry::simple("v", "1"));
+        list.push(InternalBibleEntry::simple("v~", "Verse one text."));
+
+        let list = add_nesting_markers(list, "Simple test entries", "XXA");
+
+        assert_eq!(list.iter().filter_map(|e| Some(e.marker())).collect::<Vec<_>>(), ["chapters", "c", "p", "v", "v~", "¬v", "¬p", "¬c", "¬chapters"]);
+    }
+
+    #[test]
+    fn test_add_nesting_markers_normal() {
+        let mut list = InternalBibleEntryList::new();
+        list.push(InternalBibleEntry::simple("id", "XXB"));
+        list.push(InternalBibleEntry::simple("mt1", "XXB Book"));
+        list.push(InternalBibleEntry::simple("ip", "Introduction paragraph."));
+        list.push(InternalBibleEntry::simple("ie", ""));
+        list.push(InternalBibleEntry::simple("c", "1"));
+        list.push(InternalBibleEntry::simple("p", ""));
+        list.push(InternalBibleEntry::simple("v", "1"));
+        list.push(InternalBibleEntry::simple("v~", "Chapter one Verse one text."));
+        list.push(InternalBibleEntry::simple("q1", ""));
+        list.push(InternalBibleEntry::simple("v", "2"));
+        list.push(InternalBibleEntry::simple("v~", "Chapter one Verse two text."));
+        list.push(InternalBibleEntry::simple("c", "2"));
+        list.push(InternalBibleEntry::simple("s1", "Chapter 2 heading"));
+        list.push(InternalBibleEntry::simple("m", ""));
+        list.push(InternalBibleEntry::simple("v", "1"));
+        list.push(InternalBibleEntry::simple("v~", "Chapter two Verse one text."));
+        list.push(InternalBibleEntry::simple("v", "2"));
+        list.push(InternalBibleEntry::simple("v~", "Chapter two Verse two text."));
+
+        let list = add_nesting_markers(list, "Normal test entries", "XXB");
+
+        assert_eq!(list.iter().filter_map(|e| Some(e.marker())).collect::<Vec<_>>(),
+            ["id", "mt1", "intro", "ip", "ie", "¬intro",
+                "chapters", "c", "p", "v", "v~", "¬v", "¬p", "q1", "v", "v~", "¬v", "¬q1", "¬c",
+                "c", "s1", "m", "v", "v~", "¬v", "v", "v~", "¬v", "¬m", "¬c", "¬chapters"]);
+    }
+
+    #[test]
+    fn test_add_nesting_markers_complex_nb() {
+        let mut list = InternalBibleEntryList::new();
+        list.push(InternalBibleEntry::simple("id", "XXC"));
+        list.push(InternalBibleEntry::simple("mt1", "XXC Book"));
+        list.push(InternalBibleEntry::simple("ip", "Introduction paragraph."));
+        list.push(InternalBibleEntry::simple("ie", ""));
+        list.push(InternalBibleEntry::simple("c", "1"));
+        list.push(InternalBibleEntry::simple("p", ""));
+        list.push(InternalBibleEntry::simple("v", "1"));
+        list.push(InternalBibleEntry::simple("v~", "Chapter one Verse one text."));
+        list.push(InternalBibleEntry::simple("v", "2"));
+        list.push(InternalBibleEntry::simple("v~", "Chapter one Verse two text."));
+        list.push(InternalBibleEntry::simple("c", "2"));
+        list.push(InternalBibleEntry::simple("nb", ""));
+        list.push(InternalBibleEntry::simple("v", "1"));
+        list.push(InternalBibleEntry::simple("v~", "Chapter two Verse one text."));
+        list.push(InternalBibleEntry::simple("v", "2"));
+        list.push(InternalBibleEntry::simple("v~", "Chapter two Verse two text."));
+        list.push(InternalBibleEntry::simple("c", "3"));
+        list.push(InternalBibleEntry::simple("s1", "Chapter 3 heading"));
+        list.push(InternalBibleEntry::simple("q1", ""));
+        list.push(InternalBibleEntry::simple("v", "1"));
+        list.push(InternalBibleEntry::simple("v~", "Chapter three Verse one text."));
+        list.push(InternalBibleEntry::simple("q2", ""));
+        list.push(InternalBibleEntry::simple("v", "2"));
+        list.push(InternalBibleEntry::simple("v~", "Chapter three Verse two text."));
+
+        // println!("Test InternalBibleEntryList = ({} entries) {}", list.len(), list);
+        let list = add_nesting_markers(list, "Complex test entries with nb", "XXC");
+        // println!("After add_nesting_markers: ({} entries) {}", list.len(), list);
+
+        assert_eq!(list.iter().filter_map(|e| Some(e.marker())).collect::<Vec<_>>(),
+            ["id", "mt1", "intro", "ip", "ie", "¬intro",
+                "chapters", "c", "p", "v", "v~", "¬v", "v", "v~", "¬v", "¬nb", "¬c",
+                "c", "nb", "v", "v~", "¬v", "v", "v~", "¬v", "¬p", "¬c",
+                "c", "s1", "q1", "v", "v~", "¬v", "¬q1", "q2", "v", "v~", "¬v", "¬q2", "¬c", "¬chapters"]);
+    }
 }

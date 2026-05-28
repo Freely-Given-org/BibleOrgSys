@@ -46,7 +46,7 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Bible import Bible
 from BibleOrgSys.Formats.USXXMLBibleBook import USXXMLBibleBook
-from BibleOrgSys.Formats.PTX7Bible import loadPTX7Languages, loadPTXVersifications
+# from BibleOrgSys.Formats.PTX7Bible import loadPTX7Languages, loadPTXVersifications
 from BibleOrgSys.Formats.PTX8Bible import getFlagFromAttribute
 
 
@@ -281,9 +281,9 @@ class DBLBible( Bible ):
         self.loadDBLMetadata() # into self.suppliedMetadata['DBL'] (still in DBL format)
         self.applySuppliedMetadata( 'DBL' ) # copy into self.settingsDict (standardised)
         self.loadDBLStyles()
-        result = loadPTXVersifications( self )
+        result = loadPTX8Versifications( self )
         if result: self.suppliedMetadata['DBL']['Versifications'] = result
-        result = loadPTX7Languages( self )
+        result = loadPTX8Languages( self )
         if result: self.suppliedMetadata['DBL']['Languages'] = result
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'DBLLicense', len(DBLLicense), DBLLicense )
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'DBLMetadata', len(self.suppliedMetadata), self.suppliedMetadata )

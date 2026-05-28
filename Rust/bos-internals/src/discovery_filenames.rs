@@ -2,7 +2,7 @@
 
 use std::fs;
 use std::path::{Path, PathBuf};
-use compact_str::{CompactString, ToCompactString};
+use compact_str::CompactString;
 use bos_books_codes::BIBLE_BOOKS_CODES_ARRAY;
 use std::collections::HashMap;
 use crate::io::BOM;
@@ -19,7 +19,7 @@ pub const FILENAME_ENDINGS_TO_IGNORE: &[&str] = &[".ZIP.GO", ".ZIP.DATA"];
 pub const EXTENSIONS_TO_IGNORE: &[&str] = &[
     "ASC", "BAK", "BAK2", "BAK3", "BAK4", "BBLX", "BC", "CCT", "CSS", "DOC", "DTS", "HTM", "HTML",
     "JAR", "LDS", "LOG", "MYBIBLE", "NT", "NTX", "ODT", "ONT", "ONTX", "OSIS", "OT", "OTX", "PDB",
-    "SAV", "SAVE", "STY", "SSF", "USX", "VRS", "YET", "XML", "ZIP",
+    "SAV", "SAVE", "STY", "SSF", "VRS", "YET", "XML", "ZIP",
 ];
 
 /// Bibledit standard filenames.
@@ -63,8 +63,8 @@ pub struct DiscoveryResults {
     pub unused_filenames: Vec<String>,
 }
 
-/// Try to get the USFM ID from the first two lines of a file.
-pub fn get_usfm_id_from_file<P: AsRef<Path>>(path: P) -> Option<CompactString> {
+/// Try to get the BOS book code from the USFM book code on one of the first two lines of a file (should actually be on the first line).
+pub fn get_code_from_usfm_id_line<P: AsRef<Path>>(path: P) -> Option<CompactString> {
     let file = fs::File::open(path).ok()?;
     let reader = std::io::BufReader::new(file);
     use std::io::BufRead;
@@ -100,13 +100,13 @@ pub fn get_usfm_id_from_file<P: AsRef<Path>>(path: P) -> Option<CompactString> {
                 token0 = format!("{}{}", &token0[0..1], &token0[2..]);
             }
 
-            // Check if valid abbreviation
-            if let Ok(bbb) = bos_books_codes::usfm_abbrev_to_bos_book_code(&token0) {
+            // Check if valid USFM abbreviation (ignoring case)
+            if let Ok(bbb) = bos_books_codes::usfm_abbrev_to_bos_book_code(&token0, false) {
                 return Some(CompactString::from(bbb));
             }
             // Try 3-char prefix
             if token0.len() >= 3 {
-                if let Ok(bbb) = bos_books_codes::usfm_abbrev_to_bos_book_code(&token0[..3]) {
+                if let Ok(bbb) = bos_books_codes::usfm_abbrev_to_bos_book_code(&token0[..3], false) {
                     return Some(CompactString::from(bbb));
                 }
             }
@@ -115,21 +115,29 @@ pub fn get_usfm_id_from_file<P: AsRef<Path>>(path: P) -> Option<CompactString> {
     None
 }
 
-/// Try to get USX ID from first few lines.
-pub fn get_usx_id_from_file<P: AsRef<Path>>(path: P) -> Option<CompactString> {
+/// Try to get the BOS book code from the USX book code on one of the first few lines of the XML file
+pub fn get_code_from_usx_xml<P: AsRef<Path>>(path: P) -> Option<CompactString> {
     let file = fs::File::open(path).ok()?;
     let reader = std::io::BufReader::new(file);
     use std::io::BufRead;
 
+    let mut found_usx = false;
     for (i, line_res) in reader.lines().enumerate() {
-        if i >= 5 { break; }
+        if i >= 10 { break; }
         let line = line_res.ok()?;
         if line.contains("<usx") {
-            // Find book code in attributes
+            found_usx = true;
+        }
+        if found_usx {
+            // Find book code in attributes (could be in <usx> or <book>)
             if let Some(pos) = line.find("code=\"") {
                 let start = pos + 6;
                 if let Some(end) = line[start..].find('"') {
-                    return Some(line[start..start+end].to_uppercase().to_compact_string());
+                    // return Some(line[start..start+end].to_uppercase().to_compact_string());
+                    // Check if valid USFM abbreviation (ignoring case)
+                    if let Ok(bbb) = bos_books_codes::usfm_abbrev_to_bos_book_code(&line[start..start+end], false) {
+                        return Some(CompactString::from(bbb));
+                    }
                 }
             }
         }
@@ -137,7 +145,7 @@ pub fn get_usx_id_from_file<P: AsRef<Path>>(path: P) -> Option<CompactString> {
     None
 }
 
-/// Unified discovery for USFM/USX files.
+/// Unified discovery for ESFM/USFM/USX files.
 pub fn discover_filenames<P: AsRef<Path>>(
     folder: P,
     is_usx: bool,
@@ -186,13 +194,14 @@ pub fn discover_filenames<P: AsRef<Path>>(
     // 1. Internal ID method (highest confidence)
     for filename in &file_list {
         let path = folder.as_ref().join(filename);
-        let id_opt = if is_usx { get_usx_id_from_file(&path) } else { get_usfm_id_from_file(&path) };
-        if let Some(id) = id_opt {
-            if let Ok(bbb) = bos_books_codes::usfm_abbrev_to_bos_book_code(&id) {
-                let bbb_str = bbb.to_string();
-                bbb_to_file.insert(bbb_str.clone(), filename.clone());
-                file_to_bbb.insert(filename.clone(), bbb_str);
-            }
+        let bbb_opt = if is_usx { get_code_from_usx_xml(&path) } else { get_code_from_usfm_id_line(&path) };
+        if let Some(bbb) = bbb_opt {
+            // if let Ok(bbb) = bos_books_codes::usfm_abbrev_to_bos_book_code(&id, false) {
+            // let bbb_str = bbb.to_string();
+            let bbb_str = bbb.to_string();
+            bbb_to_file.insert(bbb_str.clone(), filename.clone());
+            file_to_bbb.insert(filename.clone(), bbb_str);
+            // }
         }
     }
 
@@ -230,14 +239,32 @@ pub fn discover_filenames<P: AsRef<Path>>(
                         
                         if let Some(d) = digits {
                             if let Some(pos_d) = upper_stem.find(d) {
-                                let mut pat = stem.chars().map(|_| '*').collect::<String>();
+                                let mut pat_chars: Vec<char> = stem.chars().map(|_| '*').collect();
                                 // Replace digits in pattern
-                                pat.replace_range(pos_d..pos_d+d.len(), "dd");
-                                if let Some(a) = abbrev {
-                                    if let Some(pos_a) = upper_stem.find(&a.to_uppercase()) {
-                                        pat.replace_range(pos_a..pos_a+a.len(), "bbb");
+                                // Note: digits and abbrev are expected to be ASCII, so byte indices match char indices
+                                for i in pos_d..pos_d + d.len() {
+                                    if i < pat_chars.len() {
+                                        pat_chars[i] = 'd';
                                     }
                                 }
+
+                                if let Some(a) = abbrev {
+                                    if let Some(pos_a) = upper_stem.find(&a.to_uppercase()) {
+                                        for i in pos_a..pos_a + a.len() {
+                                            if i < pat_chars.len() {
+                                                pat_chars[i] = 'b'; // We'll use 'b' for 'bbb'
+                                            }
+                                        }
+                                    }
+                                }
+                                
+                                // Convert back to string and refine (e.g. bbb instead of bbb, dd instead of dddd)
+                                let mut pat = pat_chars.into_iter().collect::<String>();
+                                while pat.contains("bb") { pat = pat.replace("bb", "b"); }
+                                pat = pat.replace('b', "bbb");
+                                while pat.contains("dd") { pat = pat.replace("dd", "d"); }
+                                pat = pat.replace('d', "dd");
+                                
                                 results.pattern = CompactString::from(pat);
                                 break;
                             }

@@ -359,6 +359,7 @@ class ESFMBible( Bible ):
             # Find the filenames of all our books
             self.maximumPossibleFilenameTuples = self.USFMFilenamesObject.getMaximumPossibleFilenameTuples() # Returns (BBB,filename) 2-tuples
 
+        # print( f"({len(self.maximumPossibleFilenameTuples)}) {self.maximumPossibleFilenameTuples=}" )
         self.possibleFilenameDict = {}
         for BBB, filename in self.maximumPossibleFilenameTuples:
             self.availableBBBs.add( BBB )

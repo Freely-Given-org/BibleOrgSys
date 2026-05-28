@@ -34,6 +34,7 @@ from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 #from BibleOrgSys.Misc.singleton import singleton
 from BibleOrgSys.InputOutput import SFMFile
+from usfm_markers_py import USFM_ALL_MARKERS
 
 LAST_MODIFIED_DATE = '2022-03-06' # by RJH
 SHORT_PROGRAM_NAME = "BibleStylesheets"
@@ -302,7 +303,7 @@ class BibleStylesheet():
             if USFMMarker[0] == '*': USFMMarker = USFMMarker[1:] # Remove any leading asterisk for the check
             if USFMMarker[-1] == '#': USFMMarker = USFMMarker[:-1] # Remove any trailing hash for the check
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, USFMMarker )
-            assert USFMMarker in usfm_markers_py or USFMMarker in BOS_ALL_CUSTOM_MARKERS
+            assert USFMMarker in USFM_ALL_MARKERS or USFMMarker in BOS_ALL_CUSTOM_MARKERS, f"{USFMMarker=}"
     # end of BibleStylesheet.load
 
 
@@ -314,7 +315,7 @@ class BibleStylesheet():
         self.name = PTSS.name
         self.filepath = PTSS.filepath
         self.dataDict = {}
-        for marker in usfm_markers_py:
+        for marker in USFM_ALL_MARKERS:
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, marker )
             try: PTFormatting = PTSS.getDict( marker )
             except KeyError: PTFormatting = None # Just ignore the error
@@ -429,7 +430,7 @@ class ParatextStylesheet():
     def validate( self ):
         for USFMMarker in self.dataDict:
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, USFMMarker )
-            if USFMMarker not in usfm_markers_py:
+            if USFMMarker not in USFM_ALL_MARKERS:
                 logging.warning( f"ParatextStylesheet validate: found unexpected {USFMMarker!r} marker" )
     # end of ParatextStylesheet.load
 

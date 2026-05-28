@@ -41,13 +41,13 @@ import logging
 import os.path
 from pathlib import Path
 
+import bible_organisational_system
+
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Formats.ESFMBible import ESFMBibleFileCheck
 from BibleOrgSys.Formats.PTX8Bible import PTX8BibleFileCheck
-from BibleOrgSys.Formats.PTX7Bible import PTX7BibleFileCheck
 from BibleOrgSys.Formats.USFMBible import USFMBibleFileCheck
-from BibleOrgSys.Formats.USFM2Bible import USFM2BibleFileCheck
 from BibleOrgSys.Formats.ScriptureBurritoBible import ScriptureBurritoBibleFileCheck
 from BibleOrgSys.Formats.DBLBible import DBLBibleFileCheck
 from BibleOrgSys.Formats.USXXMLBible import USXXMLBibleFileCheck
@@ -129,736 +129,93 @@ class UnknownBible:
 
     def search( self, strictCheck=True, autoLoad=False, autoLoadAlways=False, autoLoadBooks=False ):
         """
-        Search our folder to found what if any Bible versions can be found.
-            These searches are best done in a certain order to avoid false detections.
-
-        If autoLoad is set and exactly one Bible is found, it will load it.
-        If autoLoadAlways is set and one or more Bibles are found, it will load one.
-
-        returns either a string:
-            'None found'
-            "Multiple found: {} Bibles"
-            'Many types found'
-        or
-            '{} Bible', e.g., 'USFM Bible'
-        or
-            a loaded Bible
+        Search our folder to find what if any Bible versions can be found.
+        Optimized version using Rust-based parallel detection.
         """
         fnPrint( DEBUGGING_THIS_MODULE, f"UnknownBible.search( {strictCheck}, {autoLoad}, {autoLoadAlways}, {autoLoadBooks} )" )
 
         if not self.folderReadable: return None
         if autoLoadAlways or autoLoadBooks: autoLoad = True
 
-        def recheckStrict( folderName, oppositeStrictFlag ):
-            """
-            If we didn't check with the strict flag the first time,
-                try it again with the strict mode set.
-            OR maybe vice versa!
+        # Use the optimized Rust detector
+        try:
+            detected = bible_organisational_system.detectBibles(str(self.givenFolderName), strictCheck)
+        except Exception as e:
+            logger.error(f"Error in Rust detectBibles: {e}")
+            return None
+        
+        # Handle retry logic similar to original Python version
+        if not detected and strictCheck and not BibleOrgSysGlobals.strictCheckingFlag:
+            vPrint('Info', DEBUGGING_THIS_MODULE, "UnknownBible.search: retrying without strict checking criteria")
+            detected = bible_organisational_system.detectBibles(str(self.givenFolderName), False)
+        elif len(detected) > 1 and not strictCheck:
+            vPrint('Info', DEBUGGING_THIS_MODULE, "UnknownBible.search: retrying with strict checking criteria")
+            detected = bible_organisational_system.detectBibles(str(self.givenFolderName), True)
 
-            Returns the three counters.
-            """
-            if BibleOrgSysGlobals.debugFlag or DEBUGGING_THIS_MODULE:
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"UnknownBible.recheckStrict( {folderName}, {oppositeStrictFlag} )" )
-
-            totalBibleStrictCount, totalBibleStrictTypes, typesStrictlyFound = 0, 0, []
-
-            # Search for pickled Bibles -- can be given a folder, or a zip file name
-            PickledBibleStrictCount = PickledBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
-            if PickledBibleStrictCount:
-                totalBibleStrictCount += PickledBibleStrictCount
-                totalBibleStrictTypes += 1
-                typesStrictlyFound.append( 'Pickled:' + str(PickledBibleStrictCount) )
-                vPrint( 'Info', DEBUGGING_THIS_MODULE, "PickledBible.recheckStrict: PickledBibleStrictCount", PickledBibleStrictCount )
-
-            if os.path.isdir( self.givenFolderName ):
-                # Search for theWord Bibles
-                theWordBibleStrictCount = theWordBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
-                if theWordBibleStrictCount:
-                    totalBibleStrictCount += theWordBibleStrictCount
-                    totalBibleStrictTypes += 1
-                    typesStrictlyFound.append( 'theWord:' + str(theWordBibleStrictCount) )
-                    vPrint( 'Info', DEBUGGING_THIS_MODULE, "theWordBible.recheckStrict: theWordBibleStrictCount", theWordBibleStrictCount )
-
-                # Search for MySword Bibles
-                MySwordBibleStrictCount = MySwordBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
-                if MySwordBibleStrictCount:
-                    totalBibleStrictCount += MySwordBibleStrictCount
-                    totalBibleStrictTypes += 1
-                    typesStrictlyFound.append( 'MySword:' + str(MySwordBibleStrictCount) )
-                    vPrint( 'Info', DEBUGGING_THIS_MODULE, "MySwordBible.recheckStrict: MySwordBibleStrictCount", MySwordBibleStrictCount )
-
-                # Search for e-Sword Bibles and commentaries
-                ESwordBibleStrictCount = ESwordBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
-                if ESwordBibleStrictCount:
-                    totalBibleStrictCount += ESwordBibleStrictCount
-                    totalBibleStrictTypes += 1
-                    typesStrictlyFound.append( 'e-Sword-Bible:' + str(ESwordBibleStrictCount) )
-                    vPrint( 'Info', DEBUGGING_THIS_MODULE, "ESwordBible.recheckStrict: ESwordBibleStrictCount", ESwordBibleStrictCount )
-                ESwordCommentaryStrictCount = ESwordCommentaryFileCheck( folderName, strictCheck=oppositeStrictFlag )
-                if ESwordCommentaryStrictCount:
-                    totalBibleStrictCount += ESwordCommentaryStrictCount
-                    totalBibleStrictTypes += 1
-                    typesStrictlyFound.append( 'e-Sword-Commentary:' + str(ESwordCommentaryStrictCount) )
-                    vPrint( 'Info', DEBUGGING_THIS_MODULE, "ESwordCommentary.recheckStrict: ESwordCommentaryStrictCount", ESwordCommentaryStrictCount )
-
-                # Search for MyBible Bibles
-                MyBibleBibleStrictCount = MyBibleBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
-                if MyBibleBibleStrictCount:
-                    totalBibleStrictCount += MyBibleBibleStrictCount
-                    totalBibleStrictTypes += 1
-                    typesStrictlyFound.append( 'MyBible:' + str(MyBibleBibleStrictCount) )
-                    vPrint( 'Info', DEBUGGING_THIS_MODULE, "MyBibleBible.recheckStrict: MyBibleBibleStrictCount", MyBibleBibleStrictCount )
-
-                # Search for PalmDB Bibles
-                PDBBibleStrictCount = PalmDBBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
-                if PDBBibleStrictCount:
-                    totalBibleStrictCount += PDBBibleStrictCount
-                    totalBibleStrictTypes += 1
-                    typesStrictlyFound.append( 'PalmDB:' + str(PDBBibleStrictCount) )
-                    vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.recheckStrict: PDBBibleStrictCount", PDBBibleStrictCount )
-
-                # Search for GoBibles
-                GoBibleStrictCount = GoBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
-                if GoBibleStrictCount:
-                    totalBibleStrictCount += GoBibleStrictCount
-                    totalBibleStrictTypes += 1
-                    typesStrictlyFound.append( 'GoBible:' + str(GoBibleStrictCount) )
-                    vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.recheckStrict: GoBibleStrictCount", GoBibleStrictCount )
-
-                # Search for Online Bibles
-                PierceOnlineBibleStrictCount = PierceOnlineBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
-                if PierceOnlineBibleStrictCount:
-                    totalBibleStrictCount += PierceOnlineBibleStrictCount
-                    totalBibleStrictTypes += 1
-                    typesStrictlyFound.append( 'PierceOnline:' + str(PierceOnlineBibleStrictCount) )
-                    vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.recheckStrict: PierceOnlineBibleStrictCount", PierceOnlineBibleStrictCount )
-
-                # Search for EasyWorship Bibles
-                EasyWorshipBibleStrictCount = EasyWorshipBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
-                if EasyWorshipBibleStrictCount:
-                    totalBibleStrictCount += EasyWorshipBibleStrictCount
-                    totalBibleStrictTypes += 1
-                    typesStrictlyFound.append( 'EasyWorship:' + str(EasyWorshipBibleStrictCount) )
-                    vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.recheckStrict: EasyWorshipBibleStrictCount", EasyWorshipBibleStrictCount )
-
-                # Search for Sword Bibles
-                SwordBibleStrictCount = SwordBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
-                if SwordBibleStrictCount:
-                    totalBibleStrictCount += SwordBibleStrictCount
-                    totalBibleStrictTypes += 1
-                    typesStrictlyFound.append( 'Sword:' + str(SwordBibleStrictCount) )
-                    vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.recheckStrict: SwordBibleStrictCount", SwordBibleStrictCount )
-
-                # Search for Unbound Bibles
-                UnboundBibleStrictCount = UnboundBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
-                if UnboundBibleStrictCount:
-                    totalBibleStrictCount += UnboundBibleStrictCount
-                    totalBibleStrictTypes += 1
-                    typesStrictlyFound.append( 'Unbound:' + str(UnboundBibleStrictCount) )
-                    vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.recheckStrict: UnboundBibleStrictCount", UnboundBibleStrictCount )
-
-                # Search for Drupal Bibles
-                DrupalBibleStrictCount = DrupalBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
-                if DrupalBibleStrictCount:
-                    totalBibleStrictCount += DrupalBibleStrictCount
-                    totalBibleStrictTypes += 1
-                    typesStrictlyFound.append( 'Drupal:' + str(DrupalBibleStrictCount) )
-                    vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.recheckStrict: DrupalBibleStrictCount", DrupalBibleStrictCount )
-
-                # Search for YET Bibles
-                YETBibleStrictCount = YETBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
-                if YETBibleStrictCount:
-                    totalBibleStrictCount += YETBibleStrictCount
-                    totalBibleStrictTypes += 1
-                    typesStrictlyFound.append( 'YET:' + str(YETBibleStrictCount) )
-                    vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.recheckStrict: YETBibleStrictCount", YETBibleStrictCount )
-
-                # Search for ESFM Bibles -- put BEFORE USFM
-                ESFMBibleStrictCount = ESFMBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
-                if ESFMBibleStrictCount:
-                    totalBibleStrictCount += ESFMBibleStrictCount
-                    totalBibleStrictTypes += 1
-                    typesStrictlyFound.append( 'ESFM:' + str(ESFMBibleStrictCount) )
-                    vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.recheckStrict: ESFMBibleStrictCount", ESFMBibleStrictCount )
-
-                # Search for Paratext (PTX) Bibles -- put BEFORE USFM
-                PTX8BibleStrictCount = PTX8BibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
-                if PTX8BibleStrictCount:
-                    totalBibleStrictCount += PTX8BibleStrictCount
-                    totalBibleStrictTypes += 1
-                    typesStrictlyFound.append( 'PTX8:' + str(PTX8BibleStrictCount) )
-                    vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.recheckStrict: PTX8BibleStrictCount", PTX8BibleStrictCount )
-                PTX7BibleStrictCount = PTX7BibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
-                if PTX7BibleStrictCount:
-                    totalBibleStrictCount += PTX7BibleStrictCount
-                    totalBibleStrictTypes += 1
-                    typesStrictlyFound.append( 'PTX7:' + str(PTX7BibleStrictCount) )
-                    vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.recheckStrict: PTX7BibleStrictCount", PTX7BibleStrictCount )
-
-                # Search for SB Bibles -- put BEFORE USFM and USX
-                SBBibleStrictCount = ScriptureBurritoBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
-                if SBBibleStrictCount:
-                    totalBibleStrictCount += SBBibleStrictCount
-                    totalBibleStrictTypes += 1
-                    typesStrictlyFound.append( 'SB:' + str(SBBibleStrictCount) )
-                    vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.recheckStrict: SBBibleStrictCount", SBBibleStrictCount )
-
-                # Search for USFM Bibles
-                USFM2BibleStrictCount = USFM2BibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
-                if USFM2BibleStrictCount:
-                    totalBibleStrictCount += USFM2BibleStrictCount
-                    totalBibleStrictTypes += 1
-                    typesStrictlyFound.append( 'USFM:' + str(USFM2BibleStrictCount) )
-                    vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.recheckStrict: USFM2BibleStrictCount", USFM2BibleStrictCount )
-                USFMBibleStrictCount = USFMBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
-                if USFMBibleStrictCount:
-                    totalBibleStrictCount += USFMBibleStrictCount
-                    totalBibleStrictTypes += 1
-                    typesStrictlyFound.append( 'USFM:' + str(USFMBibleStrictCount) )
-                    vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.recheckStrict: USFMBibleStrictCount", USFMBibleStrictCount )
-
-                # Search for DBL Bibles -- put BEFORE USX
-                DBLBibleStrictCount = DBLBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
-                if DBLBibleStrictCount:
-                    totalBibleStrictCount += DBLBibleStrictCount
-                    totalBibleStrictTypes += 1
-                    typesStrictlyFound.append( 'DBL:' + str(DBLBibleStrictCount) )
-                    vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.recheckStrict: DBLBibleStrictCount", DBLBibleStrictCount )
-
-                # Search for USX XML Bibles
-                USXBibleStrictCount = USXXMLBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
-                if USXBibleStrictCount:
-                    totalBibleStrictCount += USXBibleStrictCount
-                    totalBibleStrictTypes += 1
-                    typesStrictlyFound.append( 'USX:' + str(USXBibleStrictCount) )
-                    vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.recheckStrict: USXBibleStrictCount", USXBibleStrictCount )
-
-                # Search for USFX XML Bibles
-                USFXBibleStrictCount = USFXXMLBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
-                if USFXBibleStrictCount:
-                    totalBibleStrictCount += USFXBibleStrictCount
-                    totalBibleStrictTypes += 1
-                    typesStrictlyFound.append( 'USFX:' + str(USFXBibleStrictCount) )
-                    vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.recheckStrict: USFXBibleStrictCount", USFXBibleStrictCount )
-
-                # Search for OSIS XML Bibles
-                OSISBibleStrictCount = OSISXMLBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
-                if OSISBibleStrictCount:
-                    totalBibleStrictCount += OSISBibleStrictCount
-                    totalBibleStrictTypes += 1
-                    typesStrictlyFound.append( 'OSIS:' + str(OSISBibleStrictCount) )
-                    vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.recheckStrict: OSISBibleStrictCount", OSISBibleStrictCount )
-
-                # Search for OpenSong XML Bibles
-                OpenSongBibleStrictCount = OpenSongXMLBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
-                if OpenSongBibleStrictCount:
-                    totalBibleStrictCount += OpenSongBibleStrictCount
-                    totalBibleStrictTypes += 1
-                    typesStrictlyFound.append( 'OpenSong:' + str(OpenSongBibleStrictCount) )
-                    vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.recheckStrict: OpenSongBibleStrictCount", OpenSongBibleStrictCount )
-
-                # Search for Zefania XML Bibles
-                ZefaniaBibleStrictCount = ZefaniaXMLBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
-                if ZefaniaBibleStrictCount:
-                    totalBibleStrictCount += ZefaniaBibleStrictCount
-                    totalBibleStrictTypes += 1
-                    typesStrictlyFound.append( 'Zefania:' + str(ZefaniaBibleStrictCount) )
-                    vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.recheckStrict: ZefaniaBibleStrictCount", ZefaniaBibleStrictCount )
-
-                # Search for Haggai XML Bibles
-                HaggaiBibleStrictCount = HaggaiXMLBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
-                if HaggaiBibleStrictCount:
-                    totalBibleStrictCount += HaggaiBibleStrictCount
-                    totalBibleStrictTypes += 1
-                    typesStrictlyFound.append( 'Haggai:' + str(HaggaiBibleStrictCount) )
-                    vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.recheckStrict: HaggaiBibleStrictCount", HaggaiBibleStrictCount )
-
-                # Search for VerseView XML Bibles
-                VerseViewBibleStrictCount = VerseViewXMLBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
-                if VerseViewBibleStrictCount:
-                    totalBibleStrictCount += VerseViewBibleStrictCount
-                    totalBibleStrictTypes += 1
-                    typesStrictlyFound.append( 'VerseView:' + str(VerseViewBibleStrictCount) )
-                    vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.recheckStrict: VerseViewBibleStrictCount", VerseViewBibleStrictCount )
-
-                # Search for CSV text Bibles
-                CSVBibleStrictCount = CSVBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
-                if CSVBibleStrictCount:
-                    totalBibleStrictCount += CSVBibleStrictCount
-                    totalBibleStrictTypes += 1
-                    typesStrictlyFound.append( 'CSV:' + str(CSVBibleStrictCount) )
-                    vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.recheckStrict: CSVBibleStrictCount", CSVBibleStrictCount )
-
-                # Search for Forge for SwordSearcher VPL text Bibles
-                F4SSBibleStrictCount = ForgeForSwordSearcherBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
-                if F4SSBibleStrictCount:
-                    totalBibleStrictCount += F4SSBibleStrictCount
-                    totalBibleStrictTypes += 1
-                    typesStrictlyFound.append( 'Forge:' + str(F4SSBibleStrictCount) )
-                    vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.recheckStrict: F4SSBibleStrictCount", F4SSBibleStrictCount )
-
-                # Search for VPL text Bibles
-                VPLBibleStrictCount = VPLBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
-                if VPLBibleStrictCount:
-                    totalBibleStrictCount += VPLBibleStrictCount
-                    totalBibleStrictTypes += 1
-                    typesStrictlyFound.append( 'VPL:' + str(VPLBibleStrictCount) )
-                    vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.recheckStrict: VPLBibleStrictCount", VPLBibleStrictCount )
-            else:
-                theWordBibleStrictCount = MySwordBibleStrictCount = ESwordBibleStrictCount = ESwordCommentaryStrictCount = 0
-                MyBibleBibleStrictCount = PDBBibleStrictCount = PierceOnlineBibleStrictCount = EasyWorshipBibleStrictCount = 0
-                SwordBibleStrictCount = UnboundBibleStrictCount = DrupalBibleStrictCount = YETBibleStrictCount = 0
-                ESFMBibleStrictCount = PTX8BibleStrictCount = PTX7BibleStrictCount = USFM2BibleStrictCount = USFMBibleStrictCount = 0
-                SBBibleStrictCount = DBLBibleStrictCount = USXBibleStrictCount = USFXBibleStrictCount = OSISBibleStrictCount = 0
-                OpenSongBibleStrictCount = ZefaniaBibleStrictCount = HaggaiBibleStrictCount = VerseViewBibleStrictCount = 0
-                GoBibleStrictCount = CSVBibleStrictCount = F4SSBibleStrictCount = VPLBibleStrictCount = 0
-
-            return totalBibleStrictCount, totalBibleStrictTypes, typesStrictlyFound
-        # end of recheckStrict
-
-
-        # Main code for UnknownBible.search()
-        # We first do a normal (non-strict) check (unless strict was requested by the caller)
-        totalBibleCount, totalBibleTypes, typesFound = 0, 0, []
-
-        # Search for pickled Bibles -- can be given a folder, or a zip file name
-        PickledBibleCount = PickledBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
-        if PickledBibleCount:
-            totalBibleCount += PickledBibleCount
-            totalBibleTypes += 1
-            typesFound.append( 'Pickled:' + str(PickledBibleCount) )
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, "PickledBible.search: PickledBibleCount", PickledBibleCount )
-
-        if os.path.isdir( self.givenFolderName ):
-            # Search for theWord Bibles
-            theWordBibleCount = theWordBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
-            if theWordBibleCount:
-                totalBibleCount += theWordBibleCount
-                totalBibleTypes += 1
-                typesFound.append( 'theWord:' + str(theWordBibleCount) )
-                vPrint( 'Info', DEBUGGING_THIS_MODULE, "theWordBible.search: theWordBibleCount", theWordBibleCount )
-
-            # Search for MySword Bibles
-            MySwordBibleCount = MySwordBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
-            if MySwordBibleCount:
-                totalBibleCount += MySwordBibleCount
-                totalBibleTypes += 1
-                typesFound.append( 'MySword:' + str(MySwordBibleCount) )
-                vPrint( 'Info', DEBUGGING_THIS_MODULE, "MySwordBible.search: MySwordBibleCount", MySwordBibleCount )
-
-            # Search for e-Sword Bibles and Commentaries
-            ESwordBibleCount = ESwordBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
-            if ESwordBibleCount:
-                totalBibleCount += ESwordBibleCount
-                totalBibleTypes += 1
-                typesFound.append( 'e-Sword-Bible:' + str(ESwordBibleCount) )
-                vPrint( 'Info', DEBUGGING_THIS_MODULE, "ESwordBible.search: ESwordBibleCount", ESwordBibleCount )
-            ESwordCommentaryCount = ESwordCommentaryFileCheck( self.givenFolderName, strictCheck=strictCheck )
-            if ESwordCommentaryCount:
-                totalBibleCount += ESwordCommentaryCount
-                totalBibleTypes += 1
-                typesFound.append( 'e-Sword-Commentary:' + str(ESwordCommentaryCount) )
-                vPrint( 'Info', DEBUGGING_THIS_MODULE, "ESwordCommentary.search: ESwordCommentaryCount", ESwordCommentaryCount )
-
-            # Search for MyBible Bibles
-            MyBibleBibleCount = MyBibleBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
-            if MyBibleBibleCount:
-                totalBibleCount += MyBibleBibleCount
-                totalBibleTypes += 1
-                typesFound.append( 'MyBible:' + str(MyBibleBibleCount) )
-                vPrint( 'Info', DEBUGGING_THIS_MODULE, "MyBibleBible.search: MyBibleBibleCount", MyBibleBibleCount )
-
-            # Search for PalmDB Bibles
-            PDBBibleCount = PalmDBBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
-            if PDBBibleCount:
-                totalBibleCount += PDBBibleCount
-                totalBibleTypes += 1
-                typesFound.append( 'PalmDB:' + str(PDBBibleCount) )
-                vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.search: PDBBibleCount", PDBBibleCount )
-
-            # Search for GoBibles
-            GoBibleCount = GoBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
-            if GoBibleCount:
-                totalBibleCount += GoBibleCount
-                totalBibleTypes += 1
-                typesFound.append( 'GoBible:' + str(GoBibleCount) )
-                vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.search: GoBibleCount", GoBibleCount )
-
-            # Search for Online Bibles
-            PierceOnlineBibleCount = PierceOnlineBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
-            if PierceOnlineBibleCount:
-                totalBibleCount += PierceOnlineBibleCount
-                totalBibleTypes += 1
-                typesFound.append( 'PierceOnline:' + str(PierceOnlineBibleCount) )
-                vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.search: PierceOnlineBibleCount", PierceOnlineBibleCount )
-
-            # Search for EasyWorship Bibles
-            EasyWorshipBibleCount = EasyWorshipBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
-            if EasyWorshipBibleCount:
-                totalBibleCount += EasyWorshipBibleCount
-                totalBibleTypes += 1
-                typesFound.append( 'EasyWorship:' + str(EasyWorshipBibleCount) )
-                vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.search: EasyWorshipBibleCount", EasyWorshipBibleCount )
-
-            # Search for Sword Bibles
-            SwordBibleCount = SwordBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
-            if SwordBibleCount:
-                totalBibleCount += SwordBibleCount
-                totalBibleTypes += 1
-                typesFound.append( 'Sword:' + str(SwordBibleCount) )
-                vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.search: SwordBibleCount", SwordBibleCount )
-
-            # Search for Unbound Bibles
-            UnboundBibleCount = UnboundBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
-            if UnboundBibleCount:
-                totalBibleCount += UnboundBibleCount
-                totalBibleTypes += 1
-                typesFound.append( 'Unbound:' + str(UnboundBibleCount) )
-                vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.search: UnboundBibleCount", UnboundBibleCount )
-
-            # Search for Drupal Bibles
-            DrupalBibleCount = DrupalBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
-            if DrupalBibleCount:
-                totalBibleCount += DrupalBibleCount
-                totalBibleTypes += 1
-                typesFound.append( 'Drupal:' + str(DrupalBibleCount) )
-                vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.search: DrupalBibleCount", DrupalBibleCount )
-
-            # Search for YET Bibles
-            YETBibleCount = YETBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
-            if YETBibleCount:
-                totalBibleCount += YETBibleCount
-                totalBibleTypes += 1
-                typesFound.append( 'YET:' + str(YETBibleCount) )
-                vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.search: YETBibleCount", YETBibleCount )
-
-            # Search for ESFM Bibles -- put BEFORE USFM
-            ESFMBibleCount = ESFMBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
-            if ESFMBibleCount:
-                totalBibleCount += ESFMBibleCount
-                totalBibleTypes += 1
-                typesFound.append( 'ESFM:' + str(ESFMBibleCount) )
-                vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.search: ESFMBibleCount", ESFMBibleCount )
-
-            # Search for Paratext (PTX) Bibles -- put BEFORE USFM
-            PTX8BibleCount = PTX8BibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
-            if PTX8BibleCount:
-                totalBibleCount += PTX8BibleCount
-                totalBibleTypes += 1
-                typesFound.append( 'PTX8:' + str(PTX8BibleCount) )
-                vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.search: PTX8BibleCount", PTX8BibleCount )
-            PTX7BibleCount = PTX7BibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
-            if PTX7BibleCount:
-                totalBibleCount += PTX7BibleCount
-                totalBibleTypes += 1
-                typesFound.append( 'PTX7:' + str(PTX7BibleCount) )
-                vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.search: PTX7BibleCount", PTX7BibleCount )
-
-            # Search for SB Bibles -- put BEFORE USFM and USX
-            SBBibleCount = ScriptureBurritoBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
-            if SBBibleCount:
-                totalBibleCount += SBBibleCount
-                totalBibleTypes += 1
-                typesFound.append( 'SB:' + str(SBBibleCount) )
-                vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.search: SBBibleCount", SBBibleCount )
-
-            # Search for USFM Bibles
-            USFM2BibleCount = USFM2BibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
-            if USFM2BibleCount:
-                totalBibleCount += USFM2BibleCount
-                totalBibleTypes += 1
-                typesFound.append( 'USFM2:' + str(USFM2BibleCount) )
-                vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.search: USFM2BibleCount", USFM2BibleCount )
-            USFMBibleCount = USFMBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
-            if USFMBibleCount:
-                totalBibleCount += USFMBibleCount
-                totalBibleTypes += 1
-                typesFound.append( 'USFM:' + str(USFMBibleCount) )
-                vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.search: USFMBibleCount", USFMBibleCount )
-
-            # Search for DBL Bibles -- put BEFORE USX
-            DBLBibleCount = DBLBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
-            if DBLBibleCount:
-                totalBibleCount += DBLBibleCount
-                totalBibleTypes += 1
-                typesFound.append( 'DBL:' + str(DBLBibleCount) )
-                vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.search: DBLBibleCount", DBLBibleCount )
-
-            # Search for USX XML Bibles
-            USXBibleCount = USXXMLBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
-            if USXBibleCount:
-                totalBibleCount += USXBibleCount
-                totalBibleTypes += 1
-                typesFound.append( 'USX:' + str(USXBibleCount) )
-                vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.search: USXBibleCount", USXBibleCount )
-
-            # Search for USFX XML Bibles
-            USFXBibleCount = USFXXMLBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
-            if USFXBibleCount:
-                totalBibleCount += USFXBibleCount
-                totalBibleTypes += 1
-                typesFound.append( 'USFX:' + str(USFXBibleCount) )
-                vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.search: USFXBibleCount", USFXBibleCount )
-
-            # Search for OSIS XML Bibles
-            OSISBibleCount = OSISXMLBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
-            if OSISBibleCount:
-                totalBibleCount += OSISBibleCount
-                totalBibleTypes += 1
-                typesFound.append( 'OSIS:' + str(OSISBibleCount) )
-                vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.search: OSISBibleCount", OSISBibleCount )
-
-            # Search for OpenSong XML Bibles
-            OpenSongBibleCount = OpenSongXMLBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
-            if OpenSongBibleCount:
-                totalBibleCount += OpenSongBibleCount
-                totalBibleTypes += 1
-                typesFound.append( 'OpenSong:' + str(OpenSongBibleCount) )
-                vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.search: OpenSongBibleCount", OpenSongBibleCount )
-
-            # Search for Zefania XML Bibles
-            ZefaniaBibleCount = ZefaniaXMLBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
-            if ZefaniaBibleCount:
-                totalBibleCount += ZefaniaBibleCount
-                totalBibleTypes += 1
-                typesFound.append( 'Zefania:' + str(ZefaniaBibleCount) )
-                vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.search: ZefaniaBibleCount", ZefaniaBibleCount )
-
-            # Search for Haggai XML Bibles
-            HaggaiBibleCount = HaggaiXMLBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
-            if HaggaiBibleCount:
-                totalBibleCount += HaggaiBibleCount
-                totalBibleTypes += 1
-                typesFound.append( 'Haggai:' + str(HaggaiBibleCount) )
-                vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.search: HaggaiBibleCount", HaggaiBibleCount )
-
-            # Search for VerseView XML Bibles
-            VerseViewBibleCount = VerseViewXMLBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
-            if VerseViewBibleCount:
-                totalBibleCount += VerseViewBibleCount
-                totalBibleTypes += 1
-                typesFound.append( 'VerseView:' + str(VerseViewBibleCount) )
-                vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.search: VerseViewBibleCount", VerseViewBibleCount )
-
-            # Search for CSV text Bibles
-            CSVBibleCount = CSVBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
-            if CSVBibleCount:
-                totalBibleCount += CSVBibleCount
-                totalBibleTypes += 1
-                typesFound.append( 'CSV:' + str(CSVBibleCount) )
-                vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.search: CSVBibleCount", CSVBibleCount )
-
-            # Search for Forge for SwordSearcher text Bibles
-            F4SSBibleCount = ForgeForSwordSearcherBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
-            if F4SSBibleCount:
-                totalBibleCount += F4SSBibleCount
-                totalBibleTypes += 1
-                typesFound.append( 'Forge:' + str(F4SSBibleCount) )
-                vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.search: F4SSBibleCount", F4SSBibleCount )
-
-            # Search for VPL text Bibles
-            VPLBibleCount = VPLBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
-            if VPLBibleCount:
-                totalBibleCount += VPLBibleCount
-                totalBibleTypes += 1
-                typesFound.append( 'VPL:' + str(VPLBibleCount) )
-                vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.search: VPLBibleCount", VPLBibleCount )
-        else: # we weren't given a folder to look in
-            theWordBibleCount = MySwordBibleCount = ESwordBibleCount = ESwordCommentaryCount = 0
-            MyBibleBibleCount = PDBBibleCount = PierceOnlineBibleCount = EasyWorshipBibleCount = 0
-            SwordBibleCount = UnboundBibleCount = DrupalBibleCount = YETBibleCount = 0
-            ESFMBibleCount = PTX8BibleCount = PTX7BibleCount = USFM2BibleCount = USFMBibleCount = 0
-            SBBibleCount = DBLBibleCount = USXBibleCount = USFXBibleCount = OSISBibleCount = 0
-            OpenSongBibleCount = ZefaniaBibleCount = HaggaiBibleCount = VerseViewBibleCount = 0
-            GoBibleCount = CSVBibleCount = F4SSBibleCount = VPLBibleCount = 0
-
-        assert len(typesFound) == totalBibleTypes
+        totalBibleCount = len(detected)
         if totalBibleCount == 0:
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "UnknownBible.search: No Bibles found" )
             self.foundType = 'None found'
-            if strictCheck and not BibleOrgSysGlobals.strictCheckingFlag:
-                # We did a strict check the first time, but strict checking wasn't specified on the command line
-                #   so let's try again without the strict check
-                vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.search: retrying without strict checking criteria" )
-                totalBibleUnstrictCount, totalBibleStrictTypes, typesUnstrictlyFound = recheckStrict( self.givenFolderName, oppositeStrictFlag=False )
-                vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"UnknownBible.recheck: After {totalBibleCount} {totalBibleTypes} {typesFound}" )
-                vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"UnknownBible.recheck: Found {totalBibleUnstrictCount} {totalBibleStrictTypes} {typesUnstrictlyFound}" )
-                totalBibleCount, totalBibleTypes, typesFound = totalBibleUnstrictCount, totalBibleStrictTypes, typesUnstrictlyFound
-        elif totalBibleCount > 1:
+            return 'None found'
+
+        # Group by format to match original logic expectations
+        formats_found = {}
+        for b in detected:
+            formats_found[b.format] = formats_found.get(b.format, 0) + 1
+        
+        totalBibleTypes = len(formats_found)
+        if totalBibleCount > 1:
             if totalBibleTypes == 1:
-                if BibleOrgSysGlobals.verbosityLevel > 1:
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"UnknownBible.search: Multiple ({totalBibleCount}) {typesFound[0]} Bibles found in {self.givenFolderName}" )
-                else:
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"UnknownBible.search: Multiple ({totalBibleCount}) {typesFound[0]} Bibles found" )
-                self.foundType = f"Multiple found: {typesFound[0]} Bibles"
+                format_name = list(formats_found.keys())[0]
+                vPrint('Quiet', DEBUGGING_THIS_MODULE, f"UnknownBible.search: Multiple ({totalBibleCount}) {format_name} Bibles found")
+                self.foundType = f"Multiple found: {format_name} Bibles"
             else:
-                if BibleOrgSysGlobals.verbosityLevel > 1:
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"UnknownBible.search: Multiple ({totalBibleCount}) Bibles found: {typesFound} in {self.givenFolderName}" )
-                else:
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"UnknownBible.search: Multiple ({totalBibleCount}) Bibles found: {typesFound}" )
+                vPrint('Quiet', DEBUGGING_THIS_MODULE, f"UnknownBible.search: Multiple ({totalBibleCount}) Bibles found: {list(formats_found.keys())}")
                 self.foundType = 'Many types found'
-                if not strictCheck:
-                    # We didn't do a strict check the first time, so let's try that to try to reduce our found Bibles
-                    vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.search: retrying with strict checking criteria" )
-                    totalBibleStrictCount, totalBibleStrictTypes, typesStrictlyFound = recheckStrict( self.givenFolderName, oppositeStrictFlag=True )
-                    vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"UnknownBible.recheck: After {totalBibleCount} {totalBibleTypes} {typesFound}" )
-                    vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"UnknownBible.recheck: Found {totalBibleStrictCount} {totalBibleStrictTypes} {typesStrictlyFound}" )
-                    totalBibleCount, totalBibleTypes, typesFound = totalBibleStrictCount, totalBibleStrictTypes, typesStrictlyFound
-            if autoLoadAlways and BibleOrgSysGlobals.verbosityLevel > 0:
-                # If there's only one of a particular type, we'll go for that one
-                haveSingle = False
-                for entry in typesFound:
-                    if entry.endswith( ':1' ): haveSingle = True; break
-                if haveSingle and BibleOrgSysGlobals.verbosityLevel > 0:
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "UnknownBible.search: Will try to find one Bible to autoload anyway!" )
+            
+            if not autoLoadAlways:
+                return self.foundType
 
-        #if 1 or DEBUGGING_THIS_MODULE:
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'pB={} tW={} MSw={} ESw={} EswC={} MyB={} PDB={} Onl={} EW={} Sw={}' \
-                #.format( PickledBibleCount, theWordBibleCount, MySwordBibleCount, ESwordBibleCount, ESwordCommentaryCount, MyBibleBibleCount, PDBBibleCount, PierceOnlineBibleCount, EasyWorshipBibleCount, SwordBibleCount ) )
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, '  Unb={} Dr={} YET={} ESFM={} PTX8={} PTX7={} USFM2={} USFM={}' \
-                #.format( UnboundBibleCount, DrupalBibleCount, YETBibleCount, ESFMBibleCount, PTX8BibleCount, PTX7BibleCount, SBBibleCount, DBLBibleCount ) )
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, '  GB={} CSV={} F4SS={} VPL={}' \
-                #.format( GoBibleCount, CSVBibleCount, F4SSBibleCount, VPLBibleCount ) )
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, '  USX={} USFX={} OSIS={} OSng={} Zef={} Hag={} VsVw={}' \
-                #.format( USXBibleCount, USFXBibleCount, OSISBibleCount, OpenSongBibleCount, ZefaniaBibleCount, HaggaiBibleCount, VerseViewBibleCount ) )
-        #if 0 and DEBUGGING_THIS_MODULE:
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'pB={} tW={} MSw={} ESw={} EswC={} MyB={} PDB={} Onl={} EW={} Sw={}' \
-                #.format( PickledBibleStrictCount, theWordBibleStrictCount, MySwordBibleStrictCount, ESwordBibleStrictCount, ESwordCommentaryStrictCount, MyBibleBibleStrictCount, PDBBibleStrictCount, PierceOnlineBibleStrictCount, EasyWorshipBibleStrictCount, SwordBibleStrictCount ) )
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, '  Unb={} Dr={} YET={} ESFM={} PTX8={} PTX7={} USFM2={} USFM={}' \
-                #.format( UnboundBibleStrictCount, DrupalBibleStrictCount, YETBibleStrictCount, ESFMBibleStrictCount, PTX8BibleStrictCount, PTX7BibleStrictCount, SBBibleStrictCount, DBLBibleStrictCount ) )
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, '  GB={} CSV={} F4SS={} VPL={}' \
-                #.format( GoBibleStrictCount, CSVBibleStrictCount, F4SSBibleStrictCount, VPLBibleStrictCount ) )
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, '  USX={} USFX={} OSIS={} OSng={} Zef={} Hag={} VsVw={}' \
-                #.format( USXBibleStrictCount, USFXBibleStrictCount, OSISBibleStrictCount, OpenSongBibleStrictCount, ZefaniaBibleStrictCount, HaggaiBibleStrictCount, VerseViewBibleStrictCount ) )
+        # If exactly one found (or autoLoadAlways is set), identify the one to load
+        best_match = detected[0] # Just pick the first one if multiple
+        self.foundType = best_match.format
+        
+        # Mapping to actual Python file checkers for loading
+        CHECKERS = {
+            'pickled Bible': PickledBibleFileCheck,
+            'theWord Bible': theWordBibleFileCheck,
+            'MySword Bible': MySwordBibleFileCheck,
+            'e-Sword Bible': ESwordBibleFileCheck,
+            'e-Sword Commentary': ESwordCommentaryFileCheck,
+            'MyBible Bible': MyBibleBibleFileCheck,
+            'PalmDB Bible': PalmDBBibleFileCheck,
+            'GoBible Bible': GoBibleFileCheck,
+            'Sword Bible': SwordBibleFileCheck,
+            'Unbound Bible': UnboundBibleFileCheck,
+            'Drupal Bible': DrupalBibleFileCheck,
+            'YET Bible': YETBibleFileCheck,
+            'ESFM Bible': ESFMBibleFileCheck,
+            'PTX8 Bible': PTX8BibleFileCheck,
+            'SB Bible': ScriptureBurritoBibleFileCheck,
+            'USFM Bible': USFMBibleFileCheck,
+            'DBL Bible': DBLBibleFileCheck,
+            'USX XML Bible': USXXMLBibleFileCheck,
+            'USFX XML Bible': USFXXMLBibleFileCheck,
+            'OSIS XML Bible': OSISXMLBibleFileCheck,
+            'OpenSong XML Bible': OpenSongXMLBibleFileCheck,
+            'Zefania XML Bible': ZefaniaXMLBibleFileCheck,
+            'Haggai XML Bible': HaggaiXMLBibleFileCheck,
+            'VerseView XML Bible': VerseViewXMLBibleFileCheck,
+            'CSV Bible': CSVBibleFileCheck,
+            'Forge Bible': ForgeForSwordSearcherBibleFileCheck,
+            'VPL Bible': VPLBibleFileCheck,
+        }
 
-        if autoLoadAlways or totalBibleCount == 1:
-            # Put the binary formats first here because they can be detected more reliably
-            if PickledBibleCount == 1:
-                self.foundType = 'pickled Bible'
-                if autoLoad: return PickledBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
-                else: return self.foundType
-            elif theWordBibleCount == 1:
-                self.foundType = 'theWord Bible'
-                if autoLoad: return theWordBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
-                else: return self.foundType
-            elif MySwordBibleCount == 1:
-                self.foundType = 'MySword Bible'
-                if autoLoad: return MySwordBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
-                else: return self.foundType
-            elif ESwordBibleCount == 1:
-                self.foundType = 'e-Sword Bible'
-                if autoLoad: return ESwordBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
-                else: return self.foundType
-            elif ESwordCommentaryCount == 1:
-                self.foundType = 'e-Sword Commentary'
-                if autoLoad: return ESwordCommentaryFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
-                else: return self.foundType
-            elif MyBibleBibleCount == 1:
-                self.foundType = 'MyBible Bible'
-                if autoLoad: return MyBibleBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
-                else: return self.foundType
-            elif PDBBibleCount == 1:
-                self.foundType = 'PalmDB Bible'
-                if autoLoad: return PalmDBBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
-                else: return self.foundType
-            elif GoBibleCount == 1:
-                self.foundType = 'GoBible Bible'
-                if autoLoad: return GoBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
-                else: return self.foundType
-            elif PierceOnlineBibleCount == 1:
-                self.foundType = 'Pierce Online Bible'
-                if autoLoad: return PierceOnlineBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
-                else: return self.foundType
-            elif EasyWorshipBibleCount == 1:
-                self.foundType = 'EasyWorship Bible'
-                if autoLoad: return EasyWorshipBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
-                else: return self.foundType
-            elif SwordBibleCount == 1:
-                self.foundType = 'Sword Bible'
-                if autoLoad: return SwordBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
-                else: return self.foundType
-            # And now plain text formats
-            elif UnboundBibleCount == 1:
-                self.foundType = 'Unbound Bible'
-                if autoLoad: return UnboundBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
-                else: return self.foundType
-            elif DrupalBibleCount == 1:
-                self.foundType = 'Drupal Bible'
-                if autoLoad: return DrupalBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
-                else: return self.foundType
-            elif YETBibleCount == 1:
-                self.foundType = 'YET Bible'
-                if autoLoad: return YETBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
-                else: return self.foundType
-            elif ESFMBibleCount == 1: # Must be ahead of USFM
-                self.foundType = 'ESFM Bible'
-                if autoLoad: return ESFMBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
-                else: return self.foundType
-            elif PTX8BibleCount == 1: # Must be ahead of USFM
-                self.foundType = 'PTX8 Bible'
-                if autoLoad: return PTX8BibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
-                else: return self.foundType
-            elif PTX7BibleCount == 1: # Must be ahead of USFM
-                self.foundType = 'PTX7 Bible'
-                if autoLoad: return PTX7BibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
-                else: return self.foundType
-            elif SBBibleCount == 1: # Must be ahead of USFM and USX
-                self.foundType = 'SB Bible'
-                if autoLoad: return ScriptureBurritoBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
-                else: return self.foundType
-            elif USFM2BibleCount == 1:
-                self.foundType = 'USFM2 Bible'
-                if autoLoad: return USFM2BibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
-                else: return self.foundType
-            elif USFMBibleCount == 1:
-                self.foundType = 'USFM Bible'
-                if autoLoad: return USFMBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
-                else: return self.foundType
-            elif DBLBibleCount == 1: # Must be ahead of USX
-                self.foundType = 'DBL Bible'
-                if autoLoad: return DBLBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
-                else: return self.foundType
-            elif CSVBibleCount == 1:
-                self.foundType = 'CSV Bible'
-                if autoLoad: return CSVBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
-                else: return self.foundType
-            elif F4SSBibleCount == 1:
-                self.foundType = 'Forge Bible'
-                if autoLoad: return ForgeForSwordSearcherBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
-                else: return self.foundType
-            elif VPLBibleCount == 1:
-                self.foundType = 'VPL Bible'
-                if autoLoad: return VPLBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
-                else: return self.foundType
-            # And now XML text formats
-            elif USXBibleCount == 1:
-                self.foundType = 'USX XML Bible'
-                if autoLoad: return USXXMLBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
-                else: return self.foundType
-            elif USFXBibleCount == 1:
-                self.foundType = 'USFX XML Bible'
-                if autoLoad: return USFXXMLBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
-                else: return self.foundType
-            elif OSISBibleCount == 1:
-                self.foundType = 'OSIS XML Bible'
-                if autoLoad: return OSISXMLBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
-                else: return self.foundType
-            elif OpenSongBibleCount == 1:
-                self.foundType = 'OpenSong XML Bible'
-                if autoLoad: return OpenSongXMLBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
-                else: return self.foundType
-            elif ZefaniaBibleCount == 1:
-                self.foundType = 'Zefania XML Bible'
-                if autoLoad: return ZefaniaXMLBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
-                else: return self.foundType
-            elif HaggaiBibleCount == 1:
-                self.foundType = 'Haggai XML Bible'
-                if autoLoad: return HaggaiXMLBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
-                else: return self.foundType
-            elif VerseViewBibleCount == 1:
-                self.foundType = 'VerseView XML Bible'
-                if autoLoad: return VerseViewXMLBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
-                else: return self.foundType
+        checker = CHECKERS.get(best_match.format)
+        if checker:
+            # We call the Python checker but it's only for the actual loading/init now
+            # since we've already done the detection.
+            return checker(best_match.path, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks)
+        
         return self.foundType
     # end of UnknownBible.search
 # end of class UnknownBible

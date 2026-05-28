@@ -44,9 +44,10 @@ import multiprocessing
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Reference.ISO_639_3_Languages import ISO_639_3_Languages
-from BibleOrgSys.Reference.USFM3Markers import USFM_BIBLE_PARAGRAPH_MARKERS
+from usfm_markers_py import USFM_BIBLE_PARAGRAPH_MARKERS
 from BibleOrgSys.Bible import Bible, BibleBook
 import bos_books_codes_py
+import bible_organisational_system
 
 
 LAST_MODIFIED_DATE = '2023-02-27' # by RJH
@@ -113,7 +114,7 @@ def OSISXMLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool
             if ignore: continue
             if not somethingUpperExt[1:] in EXTENSIONS_TO_IGNORE: # Compare without the first dot
                 foundFiles.append( something )
-                for osisBkCode in bos_books_codes_py.get_all_osis_books_codes():
+                for osisBkCode in bos_books_codes_py.get_all_osis_book_codes():
                     # osisBkCodes are all UPPERCASE
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'obc', osisBkCode, upperFilename )
                     if osisBkCode in somethingUpper:
@@ -168,7 +169,7 @@ def OSISXMLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool
                     if ignore: continue
                     if not somethingUpperExt[1:] in EXTENSIONS_TO_IGNORE: # Compare without the first dot
                         foundSubfiles.append( something )
-                        for osisBkCode in bos_books_codes_py.get_all_osis_books_codes():
+                        for osisBkCode in bos_books_codes_py.get_all_osis_book_codes():
                             # osisBkCodes are all UPPERCASE
                             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'obc', osisBkCode, upperFilename )
                             if osisBkCode in somethingUpper:
@@ -305,7 +306,7 @@ class OSISXMLBible( Bible ):
                         self.possibleFilenames.append( filename )
                         foundBBB = None
                         upperFilename = filename.upper()
-                        for osisBkCode in bos_books_codes_py.get_all_osis_books_codes():
+                        for osisBkCode in bos_books_codes_py.get_all_osis_book_codes():
                             # osisBkCodes are all UPPERCASE
                             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'obc', osisBkCode, upperFilename )
                             if osisBkCode in upperFilename:
@@ -316,14 +317,14 @@ class OSISXMLBible( Bible ):
                                 BBB = bos_books_codes_py.osis_book_code_to_bos_book_code( osisBkCode, strict=True )
                                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  FoundBBB1 = {foundBBB!r}" )
                         if not foundBBB: # Could try a USFM/Paratext book code -- what writer creates these???
-                            for bkCode in bos_books_codes_py.get_all_usfm_abbreviations( toUpper=True ):
+                            for bkCode in bos_books_codes_py.get_all_usfm_abbreviations( to_upper=True ):
                                 # returned bkCodes are all UPPERCASE
                                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'bc', bkCode, upperFilename )
                                 if bkCode in upperFilename:
-                                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'OSISXMLBible.__init__ ' + f"found {bkCode!r} in {upperFilename!r}" )
+                                    dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'OSISXMLBible.__init__ ' + f"found {bkCode!r} in {upperFilename!r}" )
                                     if foundBBB: # already -- don't expect doubles
                                         logging.warning( 'OSISXMLBible.__init__: ' + f"Found a second possible book abbreviation for {foundBBB} in {filename}" )
-                                    foundBBB = bos_books_codes_py.usfm_abbrev_to_bos_book_code( bkCode, strict=True )
+                                    foundBBB = bos_books_codes_py.usfm_abbrev_to_bos_book_code( bkCode, strict=False )
                                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  FoundBBB2 = {foundBBB!r}" )
                         if foundBBB:
                             if isinstance( foundBBB, list ): foundBBB = foundBBB[0] # Take the first option
@@ -387,10 +388,23 @@ class OSISXMLBible( Bible ):
                         self.stashBook( loadedBook )
                         loadErrors += bookLoadErrors
         elif os.path.isfile( self.sourceFilepath ): # most often we have all the Bible books in one file
-            loadedBooks = self.__loadFile( self.sourceFilepath )
-            for loadedBook,bookLoadErrors in loadedBooks:
-                self.stashBook( loadedBook )
-                loadErrors += bookLoadErrors
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Using optimized Rust OSIS parser for {self.sourceFilepath}…" )
+            try:
+                results = bible_organisational_system.parseOsis( self.sourceFilepath )
+                for bbb, raw_lines in results['books'].items():
+                    bBook = BibleBook( self, bbb )
+                    bBook.objectNameString = 'OSIS XML Bible Book object'
+                    bBook.objectTypeString = 'OSIS'
+                    bBook._rawLines = raw_lines
+                    self.stashBook( bBook )
+                if 'metadata' in results:
+                    self.suppliedMetadata['OSIS'].update( results['metadata'] )
+            except Exception as err:
+                logging.warning( f"Rust OSIS parser failed: {err}. Falling back to Python parser." )
+                loadedBooks = self.__loadFile( self.sourceFilepath )
+                for loadedBook,bookLoadErrors in loadedBooks:
+                    self.stashBook( loadedBook )
+                    loadErrors += bookLoadErrors
         else:
             logging.critical( f"OSISXMLBible: Didn't find anything to load at {self.sourceFilepath}" )
             loadErrors.append( f"OSISXMLBible: Didn't find anything to load at {self.sourceFilepath}" )

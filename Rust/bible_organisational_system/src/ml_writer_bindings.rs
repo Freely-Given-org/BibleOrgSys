@@ -3,14 +3,14 @@
 use pyo3::prelude::*;
 use bos_internals::ml_writer::{self, MlWriter, MlOutputType, HumanReadable, SectionName};
 
-#[pyclass(name = "MlOutputType", module = "bible_organisational_system")]
+#[pyclass(name = "MlOutputType", module = "bible_organisational_system", from_py_object)]
 #[derive(Clone, Copy)]
 pub enum PyMlOutputType {
     Xml,
     Html,
 }
 
-#[pyclass(name = "HumanReadable", module = "bible_organisational_system")]
+#[pyclass(name = "HumanReadable", module = "bible_organisational_system", from_py_object)]
 #[derive(Clone, Copy)]
 pub enum PyHumanReadable {
     All,
@@ -19,7 +19,7 @@ pub enum PyHumanReadable {
     NlSpace,
 }
 
-#[pyclass(name = "SectionName", module = "bible_organisational_system")]
+#[pyclass(name = "SectionName", module = "bible_organisational_system", from_py_object)]
 #[derive(Clone, Copy)]
 pub enum PySectionName {
     NoSection,

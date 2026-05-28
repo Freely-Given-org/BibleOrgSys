@@ -8,7 +8,7 @@ use compact_str::CompactString;
 use indexmap::IndexMap;
 
 use crate::chapter_verse::ChapterVerse;
-use crate::entry_extras::InternalBibleEntryList;
+use crate::entry_lists::InternalBibleEntryList;
 use crate::error::{IndexError, LookupError};
 use crate::markers::{custom_nesting, is_end_marker, regular_nesting};
 
@@ -310,6 +310,28 @@ impl InternalBibleBookCVIndex {
     #[inline]
     pub fn entries(&self) -> &InternalBibleEntryList {
         &self.entries
+    }
+
+    /// Get direct access to the underlying index data.
+    #[inline]
+    pub fn index_data(&self) -> &IndexMap<ChapterVerse, CVIndexEntry> {
+        &self.index_data
+    }
+
+    /// Reconstruct from serialized data.
+    pub fn from_serialized(
+        work_name: impl Into<CompactString>,
+        bos_book_code: impl Into<CompactString>,
+        index_data: IndexMap<ChapterVerse, CVIndexEntry>,
+        entries: InternalBibleEntryList,
+    ) -> Self {
+        Self {
+            work_name: work_name.into(),
+            bos_book_code: bos_book_code.into(),
+            index_data,
+            entries,
+            indexed: true,
+        }
     }
 
     /// Build the CV index from processed entries.

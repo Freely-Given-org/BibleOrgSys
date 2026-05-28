@@ -49,6 +49,9 @@ pub enum ParseError {
     #[error("Invalid word attribute format: {0}")]
     InvalidWordAttribute(String),
 
+    #[error("Parse error: {0}")]
+    Generic(String),
+
     #[error("Invalid figure attribute format: {0}")]
     InvalidFigureAttribute(String),
 
@@ -110,8 +113,11 @@ pub enum IndexError {
 pub type Result<T> = std::result::Result<T, BosError>;
 
 /// Top-level error enum that encompasses all error types.
-#[derive(Error, Debug, Clone, PartialEq, Eq)]
+#[derive(Error, Debug)]
 pub enum BosError {
+    #[error("I/O error: {0}")]
+    Io(#[from] std::io::Error),
+
     #[error(transparent)]
     Validation(#[from] ValidationError),
 

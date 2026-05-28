@@ -490,7 +490,7 @@ def createUSXXMLBible( self, outputFolderpath:Path|str, controlDict, validationS
     import tarfile
 
     from BibleOrgSys.Internals.InternalBibleBook import BOS_CUSTOM_NESTING_MARKERS
-    from BibleOrgSys.Reference.USFM3Markers import USFM_PRECHAPTER_MARKERS
+    from usfm_markers_py import USFM_PRECHAPTER_MARKERS
     from BibleOrgSys.InputOutput.MLWriter import MLWriter
     from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
     from BibleOrgSys.Reference.BibleReferences import BibleReferenceList

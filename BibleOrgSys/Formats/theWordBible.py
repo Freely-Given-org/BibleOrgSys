@@ -58,7 +58,7 @@ import multiprocessing
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint, BOOKLIST_OT39, BOOKLIST_NT27
 from BibleOrgSys.Internals.InternalBibleBook import BOS_CUSTOM_NESTING_MARKERS
-from BibleOrgSys.Reference.USFM3Markers import OFTEN_IGNORED_USFM_HEADER_MARKERS, removeUSFMCharacterField, replaceUSFMCharacterFields
+from usfm_markers_py import OFTEN_IGNORED_USFM_HEADER_MARKERS, removeUSFMCharacterField, replaceUSFMCharacterFields
 from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
 from BibleOrgSys.Bible import Bible, BibleBook
 
@@ -331,10 +331,10 @@ def theWordFileCompare( filename1, filename2, folder1=None, folder2=None, printF
 
 
 # These next three functions are used both by theWord and MySword exports
-theWordIgnoredIntroMarkers = OFTEN_IGNORED_USFM_HEADER_MARKERS + (
+theWordIgnoredIntroMarkers = OFTEN_IGNORED_USFM_HEADER_MARKERS + [
     'imt1','imt2','imt3','imt4', 'imte1','imte2','imte3','imte4', 'is1','is2','is3','is4',
     'ip','ipi','im','imi','ipq','imq','ipr', 'iq1','iq2','iq3','iq4', 'ib', 'ili1','ili2','ili3','ili4',
-    'iot','io1','io2','io3','io4', 'ir','iex','iqt', 'ie', )
+    'iot','io1','io2','io3','io4', 'ir','iex','iqt', 'ie', ]
 
 def theWordHandleIntroduction( BBB:str, bookData, ourGlobals ):
     """

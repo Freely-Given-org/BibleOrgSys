@@ -11,8 +11,9 @@ use crate::cv_index_bindings::{
     py_build_bible_cv_indexes,
 };
 use crate::discovery_bindings::{
-    py_discover_bible, py_discover_book, py_discover_filenames, PyAggregateDiscoveryResults,
-    PyBibleDiscoveryResults, PyBookDiscoveryResults, PyDiscoveryOptions, PyDiscoveryResults,
+    py_discover_bible, py_discover_filenames, py_detect_bibles,
+    PyAggregateDiscoveryResults, PyBibleDiscoveryResults, PyBookDiscoveryResults,
+    PyDiscoveryOptions, PyDiscoveryResults, PyDetectedBible,
 };
 use crate::extras_bindings::{PyInternalBibleExtra, PyInternalBibleExtraList, PyInternalBibleExtraListIter};
 use crate::processing_bindings::{PyObjectType, PyProcessLinesOptions, py_process_lines, py_process_bible};
@@ -33,6 +34,8 @@ use crate::io_bindings::{
 use crate::ml_writer_bindings::{
     py_escape_characters, PyHumanReadable, PyMlOutputType, PyMlWriter, PySectionName,
 };
+use crate::osis_bindings::py_parse_osis;
+use crate::serialization_bindings::{py_load_book_fast, py_save_book_fast};
 use crate::xml_file_bindings::{py_validate_well_formedness, py_validate_with_lint};
 
 /// Python module for BibleOrgSys internals.
@@ -48,9 +51,14 @@ fn bible_organisational_system(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(set_rust_strict_checking, m)?)?;
     m.add_function(wrap_pyfunction!(py_process_lines, m)?)?;
     m.add_function(wrap_pyfunction!(py_process_bible, m)?)?;
-    m.add_function(wrap_pyfunction!(py_discover_book, m)?)?;
+    m.add_function(wrap_pyfunction!(py_parse_osis, m)?)?;
+    m.add_function(wrap_pyfunction!(py_save_book_fast, m)?)?;
+    m.add_function(wrap_pyfunction!(py_load_book_fast, m)?)?;
+    m.add_function(wrap_pyfunction!(py_discover_bible, m)?)?;
+
     m.add_function(wrap_pyfunction!(py_discover_bible, m)?)?;
     m.add_function(wrap_pyfunction!(py_discover_filenames, m)?)?;
+    m.add_function(wrap_pyfunction!(py_detect_bibles, m)?)?;
     m.add_function(wrap_pyfunction!(py_parse_word_attributes, m)?)?;
     m.add_function(wrap_pyfunction!(py_validate_processed_markers, m)?)?;
     m.add_function(wrap_pyfunction!(py_validate_bible_markers, m)?)?;
@@ -86,6 +94,7 @@ fn bible_organisational_system(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyBibleDiscoveryResults>()?;
     m.add_class::<PyDiscoveryOptions>()?;
     m.add_class::<PyDiscoveryResults>()?;
+    m.add_class::<PyDetectedBible>()?;
 
     // CV index types
     m.add_class::<PyChapterVerse>()?;

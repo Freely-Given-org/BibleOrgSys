@@ -146,6 +146,11 @@ def PickledBibleFileCheck( givenPathname:Path, strictCheck:bool=True, autoLoad:b
     numFound = 0
     foundProjects = []
     for thisFolderName in sorted( foundFolders ):
+        if thisFolderName.endswith('.BOSBible'):
+            foundProjects.append( os.path.join( givenFolderName, thisFolderName ) )
+            numFound += 1
+            continue
+
         tryFolderName = os.path.join( givenFolderName, thisFolderName+'/' )
         if not os.access( tryFolderName, os.R_OK ): # The subfolder is not readable
             logging.warning( f"PickledBibleFileCheck: {tryFolderName!r} subfolder is unreadable" )
@@ -505,7 +510,22 @@ class PickledBible( Bible ):
         # end of PickledBible.__init_ loadVersionStuff
 
         # Now we load the version info file
-        if str(sourceFileOrFolder).endswith( ZIPPED_PICKLE_FILENAME_END ):
+        if str(sourceFileOrFolder).endswith( '.BOSBible' ):
+            self.pickleSourceFolder = sourceFileOrFolder
+            self.pickleIsZipped = False
+            self.isFastFormat = True
+            # Load metadata using the new fast path
+            fastObj = InternalBible.unpickleFast( self.pickleSourceFolder )
+            if fastObj:
+                self.__dict__.update( fastObj.__dict__ )
+                self.pickleVersionData = {
+                    'workName': self.name,
+                    'bookList': sorted(list(self.availableBBBs)),
+                    'WrittenDateTime': 'Fast Format',
+                }
+                self.preloadDone = True
+            else: logging.critical( f"PickledBible: Unable to load .BOSBible at {self.pickleSourceFolder}" )
+        elif str(sourceFileOrFolder).endswith( ZIPPED_PICKLE_FILENAME_END ):
             assert os.path.isfile( sourceFileOrFolder )
             self.pickleFilepath = sourceFileOrFolder
             self.pickleSourceFolder = os.path.dirname( sourceFileOrFolder )
@@ -649,7 +669,14 @@ class PickledBible( Bible ):
         bookObject = InternalBibleBook( 'NoneYet—StillUnpickling', BBB )
         bookObject.objectNameString = 'Pickled Bible book object'
         bookObject.objectTypeString = 'PickledBibleBook'
-        if self.pickleIsZipped:
+        
+        if getattr( self, 'isFastFormat', False ):
+            bookFile = os.path.join( self.pickleSourceFolder, 'Books', f"{BBB}.bin" )
+            if os.path.exists( bookFile ):
+                bookObject.loadFast( bookFile )
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Loaded {BBB} from fast binary blob" )
+            else: logging.error( f"PickledBible: Fast binary blob for {BBB} not found at {bookFile}" )
+        elif self.pickleIsZipped:
             with zipfile.ZipFile( self.pickleFilepath ) as thisZip:
                 with thisZip.open( BOOK_FILENAME.format( BBB ) ) as pickleInputFile:
                     loadedCount = _loadObjectAttributes( pickleInputFile, bookObject )

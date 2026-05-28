@@ -9,7 +9,7 @@ use indexmap::IndexMap;
 use num_format::{Locale, ToFormattedString};
 
 use crate::chapter_verse::ChapterVerse;
-use crate::entry_extras::InternalBibleEntryList;
+use crate::entry_lists::InternalBibleEntryList;
 use crate::error::LookupError;
 
 /// Markers that can define section boundaries.
@@ -267,6 +267,28 @@ impl InternalBibleBookSectionIndex {
     #[inline]
     pub fn entries(&self) -> &InternalBibleEntryList {
         &self.entries
+    }
+
+    /// Get direct access to the underlying index data.
+    #[inline]
+    pub fn index_data(&self) -> &IndexMap<ChapterVerse, SectionIndexEntry> {
+        &self.index_data
+    }
+
+    /// Reconstruct from serialized data.
+    pub fn from_serialized(
+        work_name: impl Into<CompactString>,
+        bos_book_code: impl Into<CompactString>,
+        index_data: IndexMap<ChapterVerse, SectionIndexEntry>,
+        entries: InternalBibleEntryList,
+    ) -> Self {
+        Self {
+            work_name: work_name.into(),
+            bos_book_code: bos_book_code.into(),
+            index_data,
+            entries,
+            indexed: true,
+        }
     }
 
     /// Build the section index from processed entries.

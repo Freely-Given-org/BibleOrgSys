@@ -69,6 +69,31 @@ pub static USFM_PRECHAPTER_MARKERS: &[&str] = &[
     "iex","iqt", "ie"
 ];
 
+pub static USFM_ALL_MARKERS: &[&str] = &[
+    "id","usfm","ide", "sts","h", "toc1","toc2","toc3", "cl¤", "rem",
+    "mt","mt1","mt2","mt3","mt4", "mte","mte1","mte2","mte3","mte4",
+    "imt","imt1","imt2","imt3","imt4", "imte","imte1","imte2","imte3","imte4",
+    "is","is1","is2","is3","is4", "ip","ipi", "im","imi", "ipq","imq","ipr",
+    "iq","iq1","iq2","iq3","iq4",
+    "iot", "io","io1","io2","io3","io4", "ili","ili1","ili2","ili3","ili4",
+    "iex","iqt", "ie",
+
+    "ms","ms1","ms2","ms3","ms4", "mr","sr",
+    "s","s1","s2","s3","s4","qa", "qc",
+    "r","d","sp",
+
+    "p","pc","pr", "m","mi", "pm","pmo","pmc","pmr", "cls",
+    "pi","pi1","pi2","pi3","pi4", "ph","ph1","ph2","ph3","ph4",
+    "q","q1","q2","q3","q4", "qr", "qm","qm1","qm2","qm3","qm4",
+    "li","li1","li2","li3","li4",
+    "b","nb",
+
+    "c","ca","cl", "cp",
+    "v","rem",
+
+    "periph",
+];
+
 /// Markers that contain printable Scripture text or related content.
 pub static USFM_PRINTABLE_MARKERS: &[&str] = &[
     "v","r","ms1",
@@ -3013,15 +3038,23 @@ mod tests {
         assert!(is_valid_marker("id"));
         assert!(is_valid_marker("p"));
         assert!(is_valid_marker("v"));
+        assert!(is_valid_marker("q"));
         assert!(is_valid_marker("q1"));
+        assert!(is_valid_marker("add"));
         assert!(!is_valid_marker("xyz"));
     }
 
     #[test]
     fn test_newline_markers() {
-        assert!(is_newline_marker("p"));
+        assert!(is_newline_marker("id"));
+        assert!(is_newline_marker("rem"));
+        assert!(is_newline_marker("c"));
+        assert!(is_newline_marker("v"));
+        assert!(is_newline_marker("q"));
         assert!(is_newline_marker("q1"));
         assert!(!is_newline_marker("it"));
+        assert!(!is_newline_marker("f"));
+        assert!(!is_newline_marker("fig"));
     }
 
     #[test]

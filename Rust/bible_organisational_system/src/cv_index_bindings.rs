@@ -814,8 +814,9 @@ fn extract_chapter_verse(obj: &Bound<'_, PyAny>) -> PyResult<ChapterVerse> {
 /// - Verse suffixes: e.g., `17a`, `17b`
 #[pyclass(name = "InternalBibleBookCVIndex", module = "bible_organisational_system")]
 pub struct PyInternalBibleBookCVIndex {
-    inner: InternalBibleBookCVIndex,
+    pub(crate) inner: InternalBibleBookCVIndex,
 }
+
 
 #[pymethods]
 #[allow(non_snake_case)]

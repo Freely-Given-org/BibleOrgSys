@@ -1,6 +1,6 @@
 [package]
 name = "usfm_markers"
-version = "0.1.0"
+version = "0.2.2"
 edition.workspace = true
 build = "build.rs"
 

@@ -174,7 +174,18 @@ class USFMFilenames:
         """
         Find the method that finds the maximum number of USFM Bible files.
         """
-        return self.getConfirmedFilenameTuples( strictCheck=strictCheck )
+        confirmed = self.getConfirmedFilenameTuples( strictCheck=strictCheck )
+        possibleExt = self.getPossibleFilenameTuplesExt()
+        possibleInt = self.getPossibleFilenameTuplesInt()
+        # print( f"({len(confirmed)}) {confirmed=}")
+        # print( f"({len(possibleExt)}) {possibleExt=}")
+        # print( f"({len(possibleInt)}) {possibleInt=}")
+
+        if len(possibleExt) >= len(confirmed) and len(possibleExt) >= len(possibleInt):
+            return possibleExt
+        if len(possibleInt) >= len(confirmed):
+            return possibleInt
+        return confirmed
     # end of USFMFilenames.getMaximumPossibleFilenameTuples
 
 

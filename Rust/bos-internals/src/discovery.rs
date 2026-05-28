@@ -1,6 +1,6 @@
 //! Bible discovery logic for calculating statistics and identifying features.
 
-use crate::entry_extras::InternalBibleEntryList;
+use crate::entry_lists::InternalBibleEntryList;
 use crate::markers::{ExtraType, is_printable_marker};
 use crate::parsing::strip_word_ends_punctuation;
 use indexmap::IndexMap;

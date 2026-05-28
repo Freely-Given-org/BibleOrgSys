@@ -82,7 +82,9 @@ pub mod chapter_verse;
 pub mod checking;
 pub mod discovery;
 pub mod discovery_filenames;
+pub mod format_discovery;
 pub mod entry;
+pub mod entry_lists;
 pub mod entry_extras;
 pub mod error;
 pub mod indexes;
@@ -90,8 +92,10 @@ pub mod io;
 pub mod markers;
 pub mod ml_writer;
 pub mod nesting;
+pub mod osis;
 pub mod parsing;
 pub mod processing;
+pub mod serialization;
 pub mod xml_file;
 
 // Re-export commonly used types at crate root
@@ -100,8 +104,10 @@ pub use discovery::{
     AggregateDiscoveryResults, BibleDiscoveryResults, BookDiscoveryResults, discover_book,
     discover_bible,
 };
+pub use format_discovery::{detect_bibles, BibleFormat, DetectedBible};
 pub use entry::{InternalBibleEntry, InternalBibleExtra};
-pub use entry_extras::{InternalBibleEntryList, InternalBibleExtraList};
+pub use entry_lists::InternalBibleEntryList;
+pub use entry_extras::InternalBibleExtraList;
 pub use error::{BosError, IndexError, LookupError, ParseError, ValidationError};
 pub use indexes::{CVIndexEntry, InternalBibleBookCVIndex, InternalBibleBookSectionIndex, SectionIndexEntry};
 pub use markers::ExtraType;

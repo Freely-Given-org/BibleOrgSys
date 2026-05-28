@@ -211,8 +211,9 @@ impl From<&SectionIndexEntry> for PySectionIndexEntry {
 /// Accepts (str, str) tuples for keys.
 #[pyclass(name = "InternalBibleBookSectionIndex", module = "bible_organisational_system")]
 pub struct PyInternalBibleBookSectionIndex {
-    inner: InternalBibleBookSectionIndex,
+    pub(crate) inner: InternalBibleBookSectionIndex,
 }
+
 
 #[pymethods]
 #[allow(non_snake_case)]

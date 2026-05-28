@@ -7,6 +7,8 @@
 //! (e.g., 2 Corinthians is 'CO2', not '2Co').
 //! This was because early versions of HTML ID fields needed to start with a letter (not a digit),
 //! and most identifiers in computer languages still require that.
+// Converted from Python to Rust by Gemini AI, May 2026 by Gemini for RJH.
+// LAST_MODIFIED_DATE: 2026-05-19
 
 #![allow(non_snake_case)]
 // #![allow(unused)]
@@ -453,13 +455,19 @@ pub fn bos_book_code_to_usfm_abbrev<'a>(
 }
 
 #[inline]
+// NOTE: This code doesn't exactly match the original Python code which always did to_uppercase() and better handled when the result was multiple abbreviations.
 pub fn usfm_abbrev_to_bos_book_code<'a>(
     usfm_abbreviation: &'a str,
+    strict: bool,
 ) -> Result<&'static str, LookupError<'a>> {
     if let Some(&array_index) = USFM_ABBREVIATION_MAP.get(usfm_abbreviation) {
         Ok(BIBLE_BOOKS_CODES_ARRAY[array_index].BOS_book_code)
-    } else if let Some(&array_index) = UPPERCASE_USFM_ABBREVIATION_MAP.get(usfm_abbreviation.to_uppercase().as_str()) {
-        Ok(BIBLE_BOOKS_CODES_ARRAY[array_index].BOS_book_code)
+    } else if !strict {
+        if let Some(&array_index) = UPPERCASE_USFM_ABBREVIATION_MAP.get(usfm_abbreviation.to_uppercase().as_str()) {
+            Ok(BIBLE_BOOKS_CODES_ARRAY[array_index].BOS_book_code)
+        } else {
+            Err(LookupError::AbbrevNotFound("USFM", usfm_abbreviation))
+        }
     } else {
         Err(LookupError::AbbrevNotFound("USFM", usfm_abbreviation))
     }
@@ -651,13 +659,17 @@ mod tests {
 
     #[test]
     fn test_usfm_to_bos_book_code() {
-        assert_eq!(usfm_abbrev_to_bos_book_code("Exo"), Ok("EXO"));
-        assert_eq!(usfm_abbrev_to_bos_book_code("exo"), Ok("EXO"));
-        assert_eq!(usfm_abbrev_to_bos_book_code("1Ki"), Ok("KI1"));
-        assert_eq!(usfm_abbrev_to_bos_book_code("MAT"), Ok("MAT"));
-        assert_eq!(usfm_abbrev_to_bos_book_code("1PE"), Ok("PE1"));
-        assert!(usfm_abbrev_to_bos_book_code("XyZ").is_err());
-        assert!(matches!(usfm_abbrev_to_bos_book_code("XyZ"), Err(LookupError::AbbrevNotFound("USFM","XyZ"))));
+        assert_eq!(usfm_abbrev_to_bos_book_code("Exo", false), Ok("EXO"));
+        assert_eq!(usfm_abbrev_to_bos_book_code("exo", false), Ok("EXO"));
+        assert_eq!(usfm_abbrev_to_bos_book_code("1Ki", false), Ok("KI1"));
+        assert_eq!(usfm_abbrev_to_bos_book_code("MAT", false), Ok("MAT"));
+        assert_eq!(usfm_abbrev_to_bos_book_code("1PE", false), Ok("PE1"));
+        assert!(usfm_abbrev_to_bos_book_code("XyZ", false).is_err());
+        assert!(matches!(usfm_abbrev_to_bos_book_code("XyZ", false), Err(LookupError::AbbrevNotFound("USFM","XyZ"))));
+        
+        // Test strict=true (no fallback)
+        assert_eq!(usfm_abbrev_to_bos_book_code("Exo", true), Ok("EXO"));
+        assert!(usfm_abbrev_to_bos_book_code("exo", true).is_err());
     }
 
     #[test]

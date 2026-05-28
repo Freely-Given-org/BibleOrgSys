@@ -6,7 +6,7 @@
 #
 # Module handling the importation of USFM Bible books
 #
-# Copyright (C) 2010-2025 Robert Hunt
+# Copyright (C) 2010-2026 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -43,7 +43,7 @@ from BibleOrgSys.Bible import Bible, BibleBook
 import usfm_markers_py
 
 
-LAST_MODIFIED_DATE = '2025-06-24' # by RJH
+LAST_MODIFIED_DATE = '2025-06-27' # by RJH
 SHORT_PROGRAM_NAME = "USFMBibleBook"
 PROGRAM_NAME = "USFM Bible book handler"
 PROGRAM_VERSION = '0.66'
@@ -91,21 +91,22 @@ class USFMBibleBook( BibleBook ):
         fnPrint( DEBUGGING_THIS_MODULE, f"USFMBibleBook.load( filename={filename}, folder={folder}, encoding={encoding} )…" )
 
 
-        def doaddLine( addMarker:str, addText:str ) -> None:
+        def doAddLine( addMarker:str, addText:str ) -> None:
             """
             Check for newLine markers within the line (if so, break the line) and save the information in our database.
 
             Also convert ~ to a proper non-break space.
 
             Note: for uwAligned data, calls will look something like this:
-                    doaddLine( 'p~', '\\w Simon|x-occurrence="1" x-occurrences="1"\\w*' )
-                    doaddLine( 'p~', '\\w of|x-occurrence="1" x-occurrences="2"\\w* \\w Cyrene|x-occurrence="1" x-occurrences="1"\\w* (\\w the|x-occurrence="1" x-occurrences="2"\\w*' )
+                    doAddLine( 'p~', '\\w Simon|x-occurrence="1" x-occurrences="1"\\w*' )
+                    doAddLine( 'p~', '\\w of|x-occurrence="1" x-occurrences="2"\\w* \\w Cyrene|x-occurrence="1" x-occurrences="1"\\w* (\\w the|x-occurrence="1" x-occurrences="2"\\w*' )
             """
-            fnPrint( DEBUGGING_THIS_MODULE, f"doaddLine( '{addMarker}', '{addText}' )" )
+            fnPrint( DEBUGGING_THIS_MODULE, f"doAddLine( '{addMarker}', '{addText}' )" )
             # assert addText.count('\\w ') == addText.count('\\w*') # Logged around line 445
             # The below is a false assumption
             #   See: \w='480|x-occurrence="1" x-occurrences="1"\w*\w th|x-occurrence="1" x-occurrences="1"\w*' after ULT KI1 6:1
             # assert '\\w*\\w' not in addText
+            # if '\\v' in addText: print( f"doAddLine( '{addMarker}', '{addText}' )" )
 
             marker, text = addMarker, addText.replace( '~', ' ' ) # NBSP = Non-breaking space
             if self.workName == 'UST': # UST uses braces to indicate added text
@@ -128,13 +129,15 @@ class USFMBibleBook( BibleBook ):
                         thisText = text[ix:iMIndex].rstrip()
                         self.addLine( marker, thisText )
                         ix = iMIndex + 1 + len(insideMarker) + len(nextSignificantChar) # Get the start of the next text -- the 1 is for the backslash
-                        dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Did a split from {addMarker}:{addText!r} to {marker}:{thisText!r} leaving {insideMarker}:{text[ix:]!r}" )
+                        # dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Did a split from {addMarker}:{addText!r} to {marker}:{thisText!r} leaving {insideMarker}:{text[ix:]!r}" )
                         marker = insideMarker # setup for the next line
                 if ix != 0: # We must have separated multiple lines
                     text = text[ix:] # Get the final bit of the line
 
+            # assert '\\v' not in text
+            # if '\\v' in text: print( f"doAddLine( '{addMarker}', '{addText}' ) -> {marker=} {text=}" ); halt
             self.addLine( marker, text ) # Call the function in the base class to save the line (or the remainder of the line if we split it above)
-        # end of doaddLine
+        # end of doAddLine
 
 
         MAX_EXPECTED_NESTING_LEVELS = 25 # Don't allow unlimited nesting -- 22 in UST Rom 9:21-22
@@ -522,7 +525,7 @@ class USFMBibleBook( BibleBook ):
             if usfm_markers_py.is_newline_marker( marker ):
                 if lastMarker:
                     #  dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Add1")
-                    doaddLine( lastMarker, lastText )
+                    doAddLine( lastMarker, lastText )
                     lastMarker = lastText = None
                 if gotUWEncoding:
                     marker, text = handleUWEncoding( marker, text, alignmentVariables )
@@ -591,7 +594,7 @@ class USFMBibleBook( BibleBook ):
             else: # the line begins with an unknown marker
                 # if lastMarker:
                 #     dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Add2", marker)
-                #     doaddLine( lastMarker, lastText )
+                #     doAddLine( lastMarker, lastText )
                 #     lastMarker = lastText = None
                 if marker in ('zaln-s','zaln-e'): # it's a Door43 translation alignment marker (should be self-closed)
                     gotUWEncoding = True
@@ -630,7 +633,7 @@ class USFMBibleBook( BibleBook ):
                         if marker and marker.startswith( tryMarker ): # Let's try changing it
                             if lastMarker:
                                 #  dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Add3")
-                                doaddLine( lastMarker, lastText )
+                                doAddLine( lastMarker, lastText )
                                 lastMarker = lastText = None
                             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"TM={tryMarker} LM={lastMarker!r} LT={lastText!r} M={marker!r} T={text!r}")
                             # Move the extra appendage to the marker into the actual text
@@ -656,8 +659,8 @@ class USFMBibleBook( BibleBook ):
             logging.error( f"USFM file for {self.BBB} was totally empty: {self.sourceFilename}" )
             marker, text = 'rem', 'This (USFM) file was completely empty' # Save something since we had a file at least
 
-        if lastMarker: doaddLine( lastMarker, lastText ) # Process the final line
-        # if marker: print("2", marker, text);doaddLine( marker, text ) # Process the final line
+        if lastMarker: doAddLine( lastMarker, lastText ) # Process the final line
+        # if marker: print("2", marker, text);doAddLine( marker, text ) # Process the final line
 
         if gotUWEncoding or alignmentVariables['saved']:
             assert alignmentVariables['level'] == 0 # no left-overs
