@@ -84,6 +84,7 @@ pub mod discovery;
 pub mod discovery_filenames;
 pub mod format_discovery;
 pub mod entry;
+pub mod entry_lists;
 pub mod entry_extras;
 pub mod error;
 pub mod indexes;
@@ -105,7 +106,8 @@ pub use discovery::{
 };
 pub use format_discovery::{detect_bibles, BibleFormat, DetectedBible};
 pub use entry::{InternalBibleEntry, InternalBibleExtra};
-pub use entry_extras::{InternalBibleEntryList, InternalBibleExtraList};
+pub use entry_lists::InternalBibleEntryList;
+pub use entry_extras::InternalBibleExtraList;
 pub use error::{BosError, IndexError, LookupError, ParseError, ValidationError};
 pub use indexes::{CVIndexEntry, InternalBibleBookCVIndex, InternalBibleBookSectionIndex, SectionIndexEntry};
 pub use markers::ExtraType;

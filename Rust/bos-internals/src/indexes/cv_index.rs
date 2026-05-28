@@ -8,7 +8,7 @@ use compact_str::CompactString;
 use indexmap::IndexMap;
 
 use crate::chapter_verse::ChapterVerse;
-use crate::entry_extras::InternalBibleEntryList;
+use crate::entry_lists::InternalBibleEntryList;
 use crate::error::{IndexError, LookupError};
 use crate::markers::{custom_nesting, is_end_marker, regular_nesting};
 

@@ -4,7 +4,7 @@ use std::fs::File;
 use std::io::{Write, Read, BufWriter};
 use std::path::Path;
 use rkyv::{Archive, Serialize, Deserialize};
-use crate::entry_extras::InternalBibleEntryList;
+use crate::entry_lists::InternalBibleEntryList;
 use crate::indexes::cv_index::{CVIndexEntry, InternalBibleBookCVIndex};
 use crate::indexes::section_index::{SectionIndexEntry, InternalBibleBookSectionIndex};
 use crate::chapter_verse::ChapterVerse;

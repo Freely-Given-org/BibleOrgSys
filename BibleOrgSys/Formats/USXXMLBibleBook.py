@@ -6,7 +6,7 @@
 #
 # Module handling USX Bible Book xml
 #
-# Copyright (C) 2012-2024 Robert Hunt
+# Copyright (C) 2012-2026 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -28,6 +28,7 @@ Module handling USX Bible book xml to parse and load as an internal Bible book.
 
 CHANGELOG:
     2024-06-11 Fix bug with XML tail duplication after <char> field inside <note>
+    2026-05-26 Handle Rust libraries
 """
 import logging
 import os
@@ -39,12 +40,13 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Bible import Bible, BibleBook
 import bos_books_codes_py
+import usfm_markers_py
 
 
-LAST_MODIFIED_DATE = '2024-06-11' # by RJH
+LAST_MODIFIED_DATE = '2026-05-26' # by RJH
 SHORT_PROGRAM_NAME = "USXXMLBibleBookHandler"
 PROGRAM_NAME = "USX XML Bible book handler"
-PROGRAM_VERSION = '0.28'
+PROGRAM_VERSION = '0.29'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False

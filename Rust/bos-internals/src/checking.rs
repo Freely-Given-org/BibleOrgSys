@@ -1,6 +1,6 @@
 //! Bible Org Sys Internals - Validation and checking logic.
 
-use crate::entry_extras::InternalBibleEntryList;
+use crate::entry_lists::InternalBibleEntryList;
 use crate::markers::{self};
 use indexmap::IndexMap;
 use rayon::prelude::*;

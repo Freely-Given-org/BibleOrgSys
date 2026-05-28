@@ -2,7 +2,7 @@
 
 use std::fs;
 use std::path::{Path, PathBuf};
-use compact_str::{CompactString, ToCompactString};
+use compact_str::CompactString;
 use bos_books_codes::BIBLE_BOOKS_CODES_ARRAY;
 use std::collections::HashMap;
 use crate::io::BOM;
@@ -63,8 +63,8 @@ pub struct DiscoveryResults {
     pub unused_filenames: Vec<String>,
 }
 
-/// Try to get the USFM ID from the first two lines of a file.
-pub fn get_usfm_id_from_file<P: AsRef<Path>>(path: P) -> Option<CompactString> {
+/// Try to get the BOS book code from the USFM book code on one of the first two lines of a file (should actually be on the first line).
+pub fn get_code_from_usfm_id_line<P: AsRef<Path>>(path: P) -> Option<CompactString> {
     let file = fs::File::open(path).ok()?;
     let reader = std::io::BufReader::new(file);
     use std::io::BufRead;
@@ -100,7 +100,7 @@ pub fn get_usfm_id_from_file<P: AsRef<Path>>(path: P) -> Option<CompactString> {
                 token0 = format!("{}{}", &token0[0..1], &token0[2..]);
             }
 
-            // Check if valid abbreviation
+            // Check if valid USFM abbreviation (ignoring case)
             if let Ok(bbb) = bos_books_codes::usfm_abbrev_to_bos_book_code(&token0, false) {
                 return Some(CompactString::from(bbb));
             }
@@ -115,8 +115,8 @@ pub fn get_usfm_id_from_file<P: AsRef<Path>>(path: P) -> Option<CompactString> {
     None
 }
 
-/// Try to get USX ID from first few lines.
-pub fn get_usx_id_from_file<P: AsRef<Path>>(path: P) -> Option<CompactString> {
+/// Try to get the BOS book code from the USX book code on one of the first few lines of the XML file
+pub fn get_code_from_usx_xml<P: AsRef<Path>>(path: P) -> Option<CompactString> {
     let file = fs::File::open(path).ok()?;
     let reader = std::io::BufReader::new(file);
     use std::io::BufRead;
@@ -133,7 +133,11 @@ pub fn get_usx_id_from_file<P: AsRef<Path>>(path: P) -> Option<CompactString> {
             if let Some(pos) = line.find("code=\"") {
                 let start = pos + 6;
                 if let Some(end) = line[start..].find('"') {
-                    return Some(line[start..start+end].to_uppercase().to_compact_string());
+                    // return Some(line[start..start+end].to_uppercase().to_compact_string());
+                    // Check if valid USFM abbreviation (ignoring case)
+                    if let Ok(bbb) = bos_books_codes::usfm_abbrev_to_bos_book_code(&line[start..start+end], false) {
+                        return Some(CompactString::from(bbb));
+                    }
                 }
             }
         }
@@ -141,7 +145,7 @@ pub fn get_usx_id_from_file<P: AsRef<Path>>(path: P) -> Option<CompactString> {
     None
 }
 
-/// Unified discovery for USFM/USX files.
+/// Unified discovery for ESFM/USFM/USX files.
 pub fn discover_filenames<P: AsRef<Path>>(
     folder: P,
     is_usx: bool,
@@ -190,13 +194,14 @@ pub fn discover_filenames<P: AsRef<Path>>(
     // 1. Internal ID method (highest confidence)
     for filename in &file_list {
         let path = folder.as_ref().join(filename);
-        let id_opt = if is_usx { get_usx_id_from_file(&path) } else { get_usfm_id_from_file(&path) };
-        if let Some(id) = id_opt {
-            if let Ok(bbb) = bos_books_codes::usfm_abbrev_to_bos_book_code(&id, false) {
-                let bbb_str = bbb.to_string();
-                bbb_to_file.insert(bbb_str.clone(), filename.clone());
-                file_to_bbb.insert(filename.clone(), bbb_str);
-            }
+        let bbb_opt = if is_usx { get_code_from_usx_xml(&path) } else { get_code_from_usfm_id_line(&path) };
+        if let Some(bbb) = bbb_opt {
+            // if let Ok(bbb) = bos_books_codes::usfm_abbrev_to_bos_book_code(&id, false) {
+            // let bbb_str = bbb.to_string();
+            let bbb_str = bbb.to_string();
+            bbb_to_file.insert(bbb_str.clone(), filename.clone());
+            file_to_bbb.insert(filename.clone(), bbb_str);
+            // }
         }
     }
 

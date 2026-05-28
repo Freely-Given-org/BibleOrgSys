@@ -83,10 +83,10 @@ from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
 import bos_books_codes_py
 
 
-LAST_MODIFIED_DATE = '2026-05-09' # by RJH
+LAST_MODIFIED_DATE = '2026-05-25' # by RJH
 SHORT_PROGRAM_NAME = "InternalBible"
 PROGRAM_NAME = "Internal Bible handler"
-PROGRAM_VERSION = '0.93'
+PROGRAM_VERSION = '0.94'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -2400,6 +2400,7 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
             return self.books[BBB].getContextVerseData( BCVReference, strict, complete )
         else:
             logging.warning( f"InternalBible.getContextVerseData( {BCVReference} ): {self.name} doesn't have {BBB}" )
+        # return self.books[BBB].getContextVerseData( BCVReference, strict, complete )
     # end of InternalBible.getContextVerseData
 
 

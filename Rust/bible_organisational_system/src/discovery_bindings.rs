@@ -5,7 +5,7 @@ use pyo3::prelude::*;
 use pyo3::types::PyDict;
 use bos_internals::discovery::{BookDiscoveryResults, AggregateDiscoveryResults, BibleDiscoveryResults, discover_book, discover_bible};
 use bos_internals::discovery_filenames::{self, DiscoveryOptions, DiscoveryResults};
-use bos_internals::format_discovery::{self, BibleFormat, DetectedBible};
+use bos_internals::format_discovery::{self, DetectedBible};
 use crate::cv_index_bindings::PyInternalBibleEntryList;
 use indexmap::IndexMap;
 
@@ -49,7 +49,7 @@ impl PyDetectedBible {
 
 #[pyfunction]
 #[pyo3(name = "detectBibles")]
-pub fn py_detect_bibles(py: Python, root: &str, strict: bool) -> PyResult<Vec<PyDetectedBible>> {
+pub fn py_detect_bibles(_py: Python, root: &str, strict: bool) -> PyResult<Vec<PyDetectedBible>> {
     let results = format_discovery::detect_bibles(Path::new(root), strict);
     Ok(results.into_iter().map(|b| PyDetectedBible { inner: b }).collect())
 }

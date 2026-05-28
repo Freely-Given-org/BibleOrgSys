@@ -194,7 +194,7 @@ fn check_usfm(scan: &DirectoryScan, _strict: bool) -> Option<DetectedBible> {
         if is_ignored_extension(&upper) { continue; }
         if upper.ends_with(".USFM") || upper.ends_with(".SFM") || upper.ends_with(".SCP") || upper.ends_with(".TXT") {
             let path = scan.path.join(f);
-            if let Some(id) = crate::discovery_filenames::get_usfm_id_from_file(&path) {
+            if let Some(id) = crate::discovery_filenames::get_code_from_usfm_id_line(&path) {
                 if let Ok(file) = fs::File::open(&path) {
                     let reader = BufReader::new(file);
                     for line_res in reader.lines().take(5) {
@@ -221,7 +221,7 @@ fn check_usx(scan: &DirectoryScan, _strict: bool) -> Option<DetectedBible> {
     for f in &scan.files {
         if f.to_uppercase().ends_with(".USX") {
             let path = scan.path.join(f);
-            if let Some(id) = crate::discovery_filenames::get_usx_id_from_file(&path) {
+            if let Some(id) = crate::discovery_filenames::get_code_from_usx_xml(&path) {
                 return Some(DetectedBible {
                     format: BibleFormat::USX,
                     path: scan.path.clone(),

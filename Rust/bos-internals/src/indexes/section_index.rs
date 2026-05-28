@@ -9,7 +9,7 @@ use indexmap::IndexMap;
 use num_format::{Locale, ToFormattedString};
 
 use crate::chapter_verse::ChapterVerse;
-use crate::entry_extras::InternalBibleEntryList;
+use crate::entry_lists::InternalBibleEntryList;
 use crate::error::LookupError;
 
 /// Markers that can define section boundaries.

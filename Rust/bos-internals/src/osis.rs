@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use quick_xml::Reader;
 use quick_xml::events::Event;
 use quick_xml::events::attributes::Attributes;
-use crate::markers::{ExtraType, normalize_marker};
+use crate::markers::normalize_marker;
 use crate::error::BosError;
 use rayon::prelude::*;
 
@@ -22,8 +22,6 @@ struct ParserState {
     current_bbb: Option<String>,
     current_c: Option<String>,
     current_v: Option<String>,
-    in_header: bool,
-    header_metadata: HashMap<String, String>,
     raw_lines: Vec<(String, String)>,
     current_marker: Option<String>,
     current_text: String,

@@ -11,7 +11,7 @@ use crate::cv_index_bindings::{
     py_build_bible_cv_indexes,
 };
 use crate::discovery_bindings::{
-    py_discover_bible, py_discover_book, py_discover_filenames, py_detect_bibles,
+    py_discover_bible, py_discover_filenames, py_detect_bibles,
     PyAggregateDiscoveryResults, PyBibleDiscoveryResults, PyBookDiscoveryResults,
     PyDiscoveryOptions, PyDiscoveryResults, PyDetectedBible,
 };
