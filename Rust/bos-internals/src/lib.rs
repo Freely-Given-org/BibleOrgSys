@@ -97,6 +97,7 @@ pub mod parsing;
 pub mod processing;
 pub mod serialization;
 pub mod xml_file;
+pub mod export;
 
 // Re-export commonly used types at crate root
 pub use chapter_verse::ChapterVerse;
@@ -117,6 +118,7 @@ pub use parsing::{
     strip_word_ends_punctuation,
 };
 pub use processing::{ObjectType, ProcessLinesOptions, process_lines};
+pub use export::{export_to_text, export_to_html5};
 
 
 use std::sync::atomic::{AtomicU8, AtomicBool, Ordering};

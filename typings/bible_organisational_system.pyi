@@ -3,6 +3,8 @@
 import typing as t
 
 __all__ = [
+    "exportToText",
+    "exportToHtml5",
     "getSmallLeadingInt",
     "getPositiveLeadingInt",
     "set_rust_verbosity",
@@ -65,6 +67,17 @@ __all__ = [
 ]
 
 # Module: bible_organisational_system
+def exportToText(books_dict: dict, output_path_str: str, column_width: int) -> set:
+    """
+    Python-accessible wrapper for `export_to_text`.
+
+    Iterates over Python book objects in self.books, extracts their underlying
+    Rust `InternalBibleEntryList` from `_processedLines`, and runs the parallel export engine.
+    """
+
+def exportToHtml5(books_dict: dict, output_path_str: str, column_width: int) -> set:
+    """Python-accessible wrapper for `export_to_html5`."""
+
 def getSmallLeadingInt(s: str) -> int:
     """Extract leading integer from a string (e.g., "17a" -> 17)."""
 
