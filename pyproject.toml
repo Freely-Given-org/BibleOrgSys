@@ -20,10 +20,10 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 dependencies = [
-    "bibleorgsys-rust>=0.1.1",
+    "bibleorgsys-rust>=0.2.2",
     "bos_books_codes_py>=0.6.3",
-    "usfm_markers_py>=0.2.0",
-    "requests>=2.33.1",
+    "usfm_markers_py>=0.2.4",
+    "requests>=2.34.2",
     "pyyaml>=6.0.3",
 ]
 
