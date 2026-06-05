@@ -89,7 +89,7 @@ pub mod entry_extras;
 pub mod error;
 pub mod indexes;
 pub mod io;
-pub mod markers;
+pub mod bos_markers;
 pub mod ml_writer;
 pub mod nesting;
 pub mod osis;
@@ -97,6 +97,7 @@ pub mod parsing;
 pub mod processing;
 pub mod serialization;
 pub mod xml_file;
+pub mod export;
 
 // Re-export commonly used types at crate root
 pub use chapter_verse::ChapterVerse;
@@ -110,13 +111,14 @@ pub use entry_lists::InternalBibleEntryList;
 pub use entry_extras::InternalBibleExtraList;
 pub use error::{BosError, IndexError, LookupError, ParseError, ValidationError};
 pub use indexes::{CVIndexEntry, InternalBibleBookCVIndex, InternalBibleBookSectionIndex, SectionIndexEntry};
-pub use markers::ExtraType;
+pub use bos_markers::ExtraType;
 pub use parsing::{
     UsfmFigureAttributes, WordWithAttributes, abbreviate, get_positive_leading_int,
     get_small_leading_int, parse_figure_attributes, parse_word_attributes,
     strip_word_ends_punctuation,
 };
 pub use processing::{ObjectType, ProcessLinesOptions, process_lines};
+pub use export::{export_to_text, export_to_html5};
 
 
 use std::sync::atomic::{AtomicU8, AtomicBool, Ordering};

@@ -134,14 +134,14 @@ BOOKLIST_88 = BOOKLIST_OT39 + BOOKLIST_DC22 + BOOKLIST_NT27
 assert len( BOOKLIST_88 ) == 88
 
 
-LAST_MODIFIED_DATE = '2026-05-07' # by RJH
+LAST_MODIFIED_DATE = '2026-06-04' # by RJH
 SHORT_PROGRAM_NAME = "BibleOrgSysGlobals"
 PROGRAM_NAME = "BibleOrgSys (BOS) Globals"
 PROGRAM_VERSION = '0.96'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
-errorOnXMLWarning = False # Used for XML debugging
+errorOnXMLWarning = True # Used for XML debugging
 
 
 # Global variables
@@ -1181,25 +1181,29 @@ def getFlattenedXML( element, locationString, idString=None, level=0 ) -> str:
     Strips the tail (which often contains excess nl characters).
     """
     result = ''
+
     # Get attributes
     attributes = ''
     for attribName,attribValue in element.items():
         attributes = f'''{attributes+' ' if attributes else ''}{attribName}="{attribValue}"'''
     if level: # For lower levels (other than the called one) need to add the tags
-        result = f"{result}<{element.tag}{' '+attributes if attributes else ''}>"
+        result = f"{result}<{element.tag}{f' {attributes}' if attributes else ''}>"
     elif attributes:
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "We are losing attributes here:", attributes ); halt
         result = f'{result}<{attributes}>'
+
     if element.text: result = f'{result}{element.text}'
     for subelement in element:
-        result += getFlattenedXML( subelement, subelement.tag + ' in ' + locationString, idString, level+1 ) # Recursive call
+        result = f"{result}{getFlattenedXML( subelement, f'{subelement.tag} in {locationString}', idString, level+1 )}" # Recursive call
     if level:
         result = f'{result}</{element.tag}>'
+
     if element.tail:
         # Remove linefeeds and multiple spaces
         tail = element.tail.replace( '\n', '' ).replace( '    ', ' ' ).replace( '   ', ' ' ).replace( '  ', ' ' )
         while '  ' in tail: tail = tail.replace( '  ', ' ' )
         result = f'{result}{tail}'
+
     # dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"getFlattenedXML: Result is '{result}'" )
     return result
 # end of BibleOrgSysGlobals.getFlattenedXML
@@ -1208,7 +1212,7 @@ def getFlattenedXML( element, locationString, idString=None, level=0 ) -> str:
 def isBlank( elementText ):
     """
     Given some text from an XML element text or tail field (which might be None)
-        return a stripped value and with internal CRLF characters replaced by spaces.
+        return True if it contains nothing but spaces, newlines, or tabs, etc..
 
     If the text is None, returns None
     """

@@ -248,7 +248,7 @@ impl std::fmt::Display for InternalBibleExtraList {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::markers::ExtraType;
+    use crate::bos_markers::ExtraType;
 
     #[test]
     fn test_extra_list_basic() {

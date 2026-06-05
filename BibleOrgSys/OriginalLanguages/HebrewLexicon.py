@@ -6,7 +6,7 @@
 #
 # Module handling the Hebrew lexicon
 #
-# Copyright (C) 2011-2025 Robert Hunt
+# Copyright (C) 2011-2026 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -29,19 +29,22 @@ Module handling the OpenScriptures Hebrew lexicon.
     The classes are the ones for users to
         access the Strongs and Brown,Driver,Briggs lexical entries
         via various keys and in various formats.
+
+CHANGELOG:
+    2026-06-05 Handling BrDrBr passing the full XML entry
 """
-import os.path
 from pathlib import Path
+import logging
 import re
 
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2025-03-17' # by RJH
+LAST_MODIFIED_DATE = '2026-06-05' # by RJH
 SHORT_PROGRAM_NAME = "HebrewLexicon"
 PROGRAM_NAME = "Hebrew Lexicon handler"
-PROGRAM_VERSION = '0.21'
+PROGRAM_VERSION = '0.22'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -213,7 +216,7 @@ class HebrewLexiconSimple:
         """
         fnPrint( DEBUGGING_THIS_MODULE, f"HebrewLexiconSimple.__init__( {XMLFolder} )" )
         self.XMLFolder = XMLFolder
-        self.StrongsEntries = self.BrownDriverBriggsEntries = None
+        self.StrongsEntries = self.BrownDriverBriggsXMLEntries = self.BrownDriverBriggsEntries = None
         if preload: self.load()
     # end of HebrewLexiconSimple.__init__
 
@@ -233,7 +236,7 @@ class HebrewLexiconSimple:
 
         hBrDrBr = BrownDriverBriggsFileConverter() # Create the empty object
         hBrDrBr.loadAndValidate( self.XMLFolder ) # Load the XML
-        self.BrownDriverBriggsEntries = hBrDrBr.importDataToPython()
+        self.BrownDriverBriggsXMLEntries, self.BrownDriverBriggsEntries = hBrDrBr.importDataToPython()
     # end of HebrewLexiconSimple.load
 
 
@@ -361,7 +364,7 @@ class HebrewLexiconSimple:
     # end of HebrewLexiconSimple.getStrongsEntryHTML
 
 
-    def getBrDrBrEntryData( self, key ):
+    def getBrDrBrEntryData( self, key, getXML:bool=False ):
         """
         The key is a BrDrBr number (string) like 'a.ca.ab'.
 
@@ -375,8 +378,8 @@ class HebrewLexiconSimple:
             assert key and key.count('.')==2
         if self.BrownDriverBriggsEntries is None: self.load()
 
-        if key in self.BrownDriverBriggsEntries['heb']: return self.BrownDriverBriggsEntries['heb'][key]
-        if key in self.BrownDriverBriggsEntries['arc']: return self.BrownDriverBriggsEntries['arc'][key]
+        if key in self.BrownDriverBriggsEntries['heb']: return self.BrownDriverBriggsXMLEntries['heb'][key] if getXML else self.BrownDriverBriggsEntries['heb'][key]
+        if key in self.BrownDriverBriggsEntries['arc']: return self.BrownDriverBriggsXMLEntries['arc'][key] if getXML else self.BrownDriverBriggsEntries['arc'][key]
     # end of HebrewLexiconSimple.getBrDrBrEntryData
 
 
@@ -397,11 +400,11 @@ class HebrewLexiconSimple:
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"HebrewLexiconSimple.getBrDrBrEntryField entry: {entry}" )
         if entry:
             if fieldName == 'status': return entry[2]
-            return entry[0] # What are these fields?
+            return entry[0] # Return the name entry
     # end of HebrewLexiconSimple.getBrDrBrEntryField
 
 
-    def getBrDrBrEntryHTML( self, key ):
+    def getBrDrBrEntryHTML( self, key, getFull=False ):
         """
         The key is a BrDrBr number (string) like 'ah.ba.aa'.
 
@@ -413,30 +416,108 @@ class HebrewLexiconSimple:
             assert key and key.count('.')==2
         if self.BrownDriverBriggsEntries is None: self.load()
 
-        entry =  self.getBrDrBrEntryData( key )
+        entry =  self.getBrDrBrEntryData( key, getXML=getFull )
         vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"  HebrewLexiconSimple.getBrDrBrEntryHTML got entry: {entry}" )
-        if entry:
-            mainEntry = entry[0] \
-                .replace( '<sense>', '<span class="Sense">' ).replace( '</sense>', '</span>' ) \
-                .replace( '<w>', '<span class="HebrewWord">' ).replace( '</w>', '</span>' ) \
-                .replace( '<pos>', '<span class="POS">' ).replace( '</pos>', '</span>' ) \
-                .replace( '<ref>', '<span class="Ref">' ).replace( '</ref>', '</span>' ) \
-                .replace( '<def>', '<span class="Def">' ).replace( '</def>', '</span>' )
-            match = re.search( '<type="(.+?)" id="(.+?)">', mainEntry )
-            if match:
-                #logging.warning( "Removed {} status field {} from {}" \
-                    #.format( entryID, repr(mainEntry[match.start():match.end()]), repr(mainEntry) ) )
-                hType, hId = match.group(1), match.group(2)
-                mainEntry = mainEntry[:match.start()] + f'<b>Type:</b> {hType}<br>' + mainEntry[match.end():]
-            match = re.search( '<id="(.+?)" type="(.+?)">', mainEntry )
-            if match:
-                #logging.warning( "Removed {} status field {} from {}" \
-                    #.format( entryID, repr(mainEntry[match.start():match.end()]), repr(mainEntry) ) )
-                hId, hType = match.group(1), match.group(2)
-                mainEntry = mainEntry[:match.start()] + f'<b>Type:</b> {hType}<br>' + mainEntry[match.end():]
-            html = f'{mainEntry} <span class="Status">{{{entry[1]}}}</span>'
-            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"  HebrewLexiconSimple.getBrDrBrEntryHTML about to return: {html}" )
-            return html
+        # print( f"  HebrewLexiconSimple.getBrDrBrEntryHTML {key=} got entry: {entry}" )
+        if getFull: # We have the full XML entry to format
+            namespace = '{http://openscriptures.github.com/morphhb/namespace}'
+
+            # See if there's more than one definition
+            defCount = 0
+            for subEntry in entry: # 'w','pos' (can be multiple),'def' (can be multiple),'status'
+                if subEntry.tag == f'{namespace}def':
+                    defCount += 1
+
+            html = f'<p class="Key">{key}</p>\n'
+            haveOpenP = haveOpenL = 0
+            for subEntry in entry: # 'w','pos' (can be multiple),'def' (can be multiple),'status'
+                subEntryTag = subEntry.tag.replace( namespace, '' )
+                if subEntryTag == 'status': continue # Not interested here
+                print( f"{key=} {defCount=} {subEntryTag=} {[f'{attribName}={attribValue}' for attribName,attribValue in subEntry.items()]} {len(subEntry)} {subEntry.text=} {subEntry.tail=}" )
+                if subEntryTag == 'w':
+                    BibleOrgSysGlobals.checkXMLNoAttributes( subEntry, subEntryTag )
+                    BibleOrgSysGlobals.checkXMLNoSubelements( subEntry, subEntryTag )
+                    html = f'{html}<p><span class="word" dir="rtl">{subEntry.text}</span> {subEntry.tail}{"occurrences" if subEntry.tail and subEntry.tail.strip().isdigit() else ''}'
+                    haveOpenP += 1
+                elif subEntryTag == 'pos':
+                    assert haveOpenP == 1
+                    BibleOrgSysGlobals.checkXMLNoAttributes( subEntry, subEntryTag )
+                    BibleOrgSysGlobals.checkXMLNoSubelements( subEntry, subEntryTag )
+                    html = f'{html} <span class="POS">{subEntry.text}</span>{subEntry.tail}'
+                elif subEntryTag == 'stem':
+                    assert haveOpenP == 1
+                    BibleOrgSysGlobals.checkXMLNoAttributes( subEntry, subEntryTag )
+                    BibleOrgSysGlobals.checkXMLNoSubelements( subEntry, subEntryTag )
+                    html = f'{html} <span class="Stem">{subEntry.text}</span>{subEntry.tail}'
+                elif subEntryTag == 'def':
+                    if haveOpenP:
+                        html = f'{html}</p>'
+                        haveOpenP -= 1
+                    if haveOpenL == 2:
+                        html = f'{html}</ol>'
+                        haveOpenL -= 1
+                    BibleOrgSysGlobals.checkXMLNoAttributes( subEntry, subEntryTag )
+                    BibleOrgSysGlobals.checkXMLNoSubelements( subEntry, subEntryTag )
+                    if defCount > 1 and not haveOpenL:
+                        html = f'{html}\n<ol>'
+                        haveOpenL += 1
+                    html = f'{html}\n<{"li" if haveOpenL else "p"} class="Def"><b>{subEntry.text}</b>{'' if BibleOrgSysGlobals.isBlank(subEntry.tail) else subEntry.tail}</{"li" if haveOpenL else "p"}>'
+                elif subEntryTag == 'sense':
+                    BibleOrgSysGlobals.checkXMLNoAttributes( subEntry, subEntryTag )
+                    assert haveOpenP == 0
+                    if haveOpenL == 1:
+                        html = f'{html}\n<ol>'
+                        haveOpenL += 1
+                    insertHtml = ''
+                    for sub2Entry in subEntry:
+                        sub2EntryTag = sub2Entry.tag.replace( namespace, '' )
+                        print( f"      {sub2EntryTag=} {[f'{attribName}={attribValue}' for attribName,attribValue in sub2Entry.items()]} {len(sub2Entry)} {sub2Entry.text=} {sub2Entry.tail=}" )
+                        BibleOrgSysGlobals.checkXMLNoAttributes( sub2Entry, subEntryTag )
+                        BibleOrgSysGlobals.checkXMLNoSubelements( sub2Entry, subEntryTag )
+                        assert sub2EntryTag == 'def', f"{key=} {sub2EntryTag=} {sub2Entry.text}"
+                        insertHtml = f'{insertHtml} <b>{sub2Entry.text}</b>{'' if BibleOrgSysGlobals.isBlank(sub2Entry.tail) else sub2Entry.tail}'
+                    html = f'{html}\n<li class="Sense">{subEntry.text if subEntry.text else ''}{insertHtml}{'' if BibleOrgSysGlobals.isBlank(subEntry.tail) else subEntry.tail}</li>'
+                else:
+                    logging.critical( f"    Unprocessed {subEntryTag=} {[f'{attribName}={attribValue}' for attribName,attribValue in subEntry.items()]} {len(subEntry)=} {subEntry.text=} {subEntry.tail=}" )
+                    if haveOpenP:
+                        html = f'{html}</p>'
+                        haveOpenP -= 1
+                    if haveOpenL:
+                        html = f'{html}</ol>'
+                        haveOpenL -= 1
+                    html = f'{html}\n{BibleOrgSysGlobals.getFlattenedXML( subEntry, 'subEntry' )}'
+            if haveOpenP:
+                html = f'{html}</p>'
+                haveOpenP -= 1
+                assert haveOpenP == 0
+            while haveOpenL:
+                html = f'{html}</ol>'
+                haveOpenL-= 1
+            assert haveOpenL == 0
+            return html.replace( namespace, '' )
+        else: # the older code
+            if entry:
+                mainEntry = entry[0] \
+                    .replace( '<sense>', '<span class="Sense">' ).replace( '</sense>', '</span>' ) \
+                    .replace( '<w>', '<span class="HebrewWord">' ).replace( '</w>', '</span>' ) \
+                    .replace( '<pos>', '<span class="POS">' ).replace( '</pos>', '</span>' ) \
+                    .replace( '<ref>', '<span class="Ref">' ).replace( '</ref>', '</span>' ) \
+                    .replace( '<def>', '<span class="Def">' ).replace( '</def>', '</span>' )
+                match = re.search( '<type="(.+?)" id="(.+?)">', mainEntry )
+                if match:
+                    #logging.warning( "Removed {} status field {} from {}" \
+                        #.format( entryID, repr(mainEntry[match.start():match.end()]), repr(mainEntry) ) )
+                    hType, hId = match.group(1), match.group(2)
+                    mainEntry = mainEntry[:match.start()] + f'<b>Type:</b> {hType}<br>' + mainEntry[match.end():]
+                match = re.search( '<id="(.+?)" type="(.+?)">', mainEntry )
+                if match:
+                    #logging.warning( "Removed {} status field {} from {}" \
+                        #.format( entryID, repr(mainEntry[match.start():match.end()]), repr(mainEntry) ) )
+                    hId, hType = match.group(1), match.group(2)
+                    mainEntry = mainEntry[:match.start()] + f'<b>Type:</b> {hType}<br>' + mainEntry[match.end():]
+                html = f'{mainEntry} <span class="Status">{{{entry[1]}}}</span>'
+                vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"  HebrewLexiconSimple.getBrDrBrEntryHTML about to return: {html}" )
+                return html
     # end of HebrewLexiconSimple.getBrDrBrEntryHTML
 # end of HebrewLexiconSimple class
 
@@ -516,7 +597,7 @@ class HebrewLexicon( HebrewLexiconSimple ):
     # end of HebrewLexicon.__str__
 
 
-    def getBrDrBrEntryData( self, key:str ):
+    def getBrDrBrEntryData( self, key:str, getXML:bool=False ):
         """
         The key is a BrDrBr number (string) like 'a.ca.ab'.
             but can also be a Strong's number (with or without the leading H)
@@ -531,7 +612,7 @@ class HebrewLexicon( HebrewLexiconSimple ):
             if self.hlix is None: self.load()
             key = self.hlix.getBrDrBrCodeFromStrongsNumber( key )
         if key:
-            return HebrewLexiconSimple.getBrDrBrEntryData( self, key )
+            return HebrewLexiconSimple.getBrDrBrEntryData( self, key, getXML )
     # end of HebrewLexicon.getBrDrBrEntryData
 
 
@@ -569,7 +650,7 @@ class HebrewLexicon( HebrewLexiconSimple ):
             if self.hlix is None: self.load()
             key = self.hlix.getBrDrBrCodeFromStrongsNumber( key )
         if key:
-            html = HebrewLexiconSimple.getBrDrBrEntryHTML( self, key )
+            html = HebrewLexiconSimple.getBrDrBrEntryHTML( self, key, getFull=True )
             vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"  HebrewLexicon.getBrDrBrEntryHTML about to return: {html}" )
             return html
     # end of HebrewLexicon.getBrDrBrEntryHTML

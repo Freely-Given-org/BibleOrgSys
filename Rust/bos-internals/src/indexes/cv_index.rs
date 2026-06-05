@@ -10,7 +10,7 @@ use indexmap::IndexMap;
 use crate::chapter_verse::ChapterVerse;
 use crate::entry_lists::InternalBibleEntryList;
 use crate::error::{IndexError, LookupError};
-use crate::markers::{custom_nesting, is_end_marker, regular_nesting};
+use crate::bos_markers::{custom_nesting, is_end_marker, regular_nesting};
 
 /// An entry in the CV index, representing a single Chapter:Verse reference.
 ///
@@ -374,9 +374,9 @@ impl InternalBibleBookCVIndex {
             } else if current_chapter == "-1" {
                 next_verse = CompactString::from(i.to_string());
                 is_cv_start = true;
-            } else if crate::markers::paragraph_markers::is_paragraph(marker)
-                || crate::markers::heading_markers::is_heading(marker)
-                || crate::markers::major_section_markers::is_major_section(marker)
+            } else if crate::bos_markers::paragraph_markers::is_paragraph(marker)
+                || crate::bos_markers::heading_markers::is_heading(marker)
+                || crate::bos_markers::major_section_markers::is_major_section(marker)
             {
                 // Look ahead for next verse to see if this structural marker starts it
                 for j in (i + 1)..self.entries.len() {
@@ -420,15 +420,15 @@ impl InternalBibleBookCVIndex {
 
             // 2. Handle nesting markers - push onto context
             if is_nesting_marker(marker) && !is_end_marker(marker) && marker != "nb" {
-                if crate::markers::paragraph_markers::is_paragraph(marker) {
-                    context.retain(|m| !crate::markers::paragraph_markers::is_paragraph(m));
+                if crate::bos_markers::paragraph_markers::is_paragraph(marker) {
+                    context.retain(|m| !crate::bos_markers::paragraph_markers::is_paragraph(m));
                 }
                 context.push(CompactString::from(marker));
             }
 
             // 3. Handle end markers - pop from context
             if is_end_marker(marker) {
-                if let Some(base) = crate::markers::base_marker(marker)
+                if let Some(base) = crate::bos_markers::base_marker(marker)
                     && let Some(pos) = context.iter().rposition(|m| m == base)
                 {
                     context.remove(pos);
@@ -508,8 +508,8 @@ impl InternalBibleBookCVIndex {
 fn is_nesting_marker(marker: &str) -> bool {
     regular_nesting::ALL.contains(&marker)
         || custom_nesting::is_custom_nesting(marker)
-        || crate::markers::paragraph_markers::is_paragraph(marker)
-        || crate::markers::major_section_markers::ALL.contains(&marker)
+        || crate::bos_markers::paragraph_markers::is_paragraph(marker)
+        || crate::bos_markers::major_section_markers::ALL.contains(&marker)
 }
 
 impl std::fmt::Display for InternalBibleBookCVIndex {

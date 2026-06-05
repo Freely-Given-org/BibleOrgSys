@@ -37,6 +37,7 @@ use crate::ml_writer_bindings::{
 use crate::osis_bindings::py_parse_osis;
 use crate::serialization_bindings::{py_load_book_fast, py_save_book_fast};
 use crate::xml_file_bindings::{py_validate_well_formedness, py_validate_with_lint};
+use crate::export_bindings::{py_export_to_text, py_export_to_html5};
 
 /// Python module for BibleOrgSys internals.
 #[pymodule]
@@ -44,6 +45,8 @@ fn bible_organisational_system(m: &Bound<'_, PyModule>) -> PyResult<()> {
     // Forward Rust logs to Python logging
     let _ = pyo3_log::try_init();
 
+    m.add_function(wrap_pyfunction!(py_export_to_text, m)?)?;
+    m.add_function(wrap_pyfunction!(py_export_to_html5, m)?)?;
     m.add_function(wrap_pyfunction!(get_small_leading_int, m)?)?;
     m.add_function(wrap_pyfunction!(get_positive_leading_int, m)?)?;
     m.add_function(wrap_pyfunction!(set_rust_verbosity, m)?)?;

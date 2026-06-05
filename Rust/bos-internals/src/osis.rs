@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use quick_xml::Reader;
 use quick_xml::events::Event;
 use quick_xml::events::attributes::Attributes;
-use crate::markers::normalize_marker;
+use crate::bos_markers::normalize_marker;
 use crate::error::BosError;
 use rayon::prelude::*;
 

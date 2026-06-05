@@ -35,18 +35,6 @@ fn get_character_markers_list_py(
     Ok(get_character_markers_list(include_backslash, include_end_markers, include_nested_markers, expand_numberable_markers))
 }
 
-// /// Backward compatibility alias for get_character_markers_list.
-// #[pyfunction]
-// #[pyo3(name = "getCharacterMarkersList", signature = (include_backslash=false, include_end_markers=false, include_nested_markers=false, expand_numberable_markers=false))]
-// fn get_character_markers_list_compat(
-//     include_backslash: bool,
-//     include_end_markers: bool,
-//     include_nested_markers: bool,
-//     expand_numberable_markers: bool
-// ) -> PyResult<Vec<String>> {
-//     Ok(get_character_markers_list(include_backslash, include_end_markers, include_nested_markers, expand_numberable_markers))
-// }
-
 /// Returns a list of all possible note markers.
 #[pyfunction]
 #[pyo3(name = "get_note_markers_list")]
@@ -200,36 +188,11 @@ fn remove_usfm_character_field_py(marker: &str, original_text: &str, closed_flag
     Ok(remove_usfm_character_field(marker, original_text, closed_flag).to_string())
 }
 
-/// Backward compatibility alias for remove_usfm_character_field.
-#[pyfunction]
-#[pyo3(name = "removeUSFMCharacterField", signature = (marker, original_text, closed_flag=None))]
-fn remove_usfm_character_field_compat(marker: &str, original_text: &str, closed_flag: Option<bool>) -> PyResult<String> {
-    Ok(remove_usfm_character_field(marker, original_text, closed_flag).to_string())
-}
-
 /// Makes a series of replacements to a line of USFM text.
 /// Designed for explicitly closed character formatting fields.
 #[pyfunction]
 #[pyo3(name = "replace_usfm_character_fields")]
 fn replace_usfm_character_fields_py(replacements: Vec<(Vec<String>, String, String)>, original_text: &str) -> PyResult<String> {
-    let mut rust_reps = Vec::with_capacity(replacements.len());
-    for (markers, open, close) in &replacements {
-        let m_refs: Vec<&str> = markers.iter().map(|s| s.as_str()).collect();
-        rust_reps.push((m_refs, open.as_str(), close.as_str()));
-    }
-    
-    let mut final_reps: Vec<(&[&str], &str, &str)> = Vec::with_capacity(rust_reps.len());
-    for (m, o, c) in &rust_reps {
-        final_reps.push((m.as_slice(), *o, *c));
-    }
-        
-    Ok(replace_usfm_character_fields(&final_reps, original_text).to_string())
-}
-
-/// Backward compatibility alias for replace_usfm_character_fields.
-#[pyfunction]
-#[pyo3(name = "replaceUSFMCharacterFields")]
-fn replace_usfm_character_fields_compat(replacements: Vec<(Vec<String>, String, String)>, original_text: &str) -> PyResult<String> {
     let mut rust_reps = Vec::with_capacity(replacements.len());
     for (markers, open, close) in &replacements {
         let m_refs: Vec<&str> = markers.iter().map(|s| s.as_str()).collect();
@@ -288,40 +251,6 @@ fn get_marker_list_from_text_py<'py>(py: Python<'py>, text: &str, include_initia
     Ok(list)
 }
 
-/// Backward compatibility alias for get_marker_list_from_text.
-#[pyfunction]
-#[pyo3(name = "getMarkerListFromText", signature = (text, include_initial_text=false, verify_markers=false))]
-fn get_marker_list_from_text_compat<'py>(py: Python<'py>, text: &str, include_initial_text: bool, verify_markers: bool) -> PyResult<Bound<'py, PyList>> {
-    let result = get_marker_list_from_text(text, include_initial_text, verify_markers);
-    let list = PyList::empty(py);
-    for info in result {
-        let context = PyList::empty(py);
-        for c in info.context {
-            context.append(c)?;
-        }
-        
-        let sig_char = match info.next_significant_char {
-            Some(' ') => " ",
-            Some('+') => "+",
-            Some('-') => "-",
-            Some('*') => "*",
-            _ => "",
-        };
-
-        let tuple = (
-            info.marker,
-            info.index_of_backslash,
-            sig_char,
-            info.full_marker_text,
-            context,
-            info.closing_marker_index,
-            info.text,
-        ).into_pyobject(py)?;
-        list.append(tuple)?;
-    }
-    Ok(list)
-}
-
 #[pymodule]
 fn usfm_markers_py(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(is_valid_marker_py, m)?)?;
@@ -342,14 +271,10 @@ fn usfm_markers_py(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(get_marker_description_py, m)?)?;
     m.add_function(wrap_pyfunction!(get_occurs_in_list_py, m)?)?;
     m.add_function(wrap_pyfunction!(remove_usfm_character_field_py, m)?)?;
-    m.add_function(wrap_pyfunction!(remove_usfm_character_field_compat, m)?)?;
     m.add_function(wrap_pyfunction!(replace_usfm_character_fields_py, m)?)?;
-    m.add_function(wrap_pyfunction!(replace_usfm_character_fields_compat, m)?)?;
     m.add_function(wrap_pyfunction!(get_marker_list_from_text_py, m)?)?;
-    m.add_function(wrap_pyfunction!(get_marker_list_from_text_compat, m)?)?;
     m.add_function(wrap_pyfunction!(get_internal_markers_list_py, m)?)?;
     m.add_function(wrap_pyfunction!(get_character_markers_list_py, m)?)?;
-    // m.add_function(wrap_pyfunction!(get_character_markers_list_compat, m)?)?;
     m.add_function(wrap_pyfunction!(get_note_markers_list_py, m)?)?;
     m.add_function(wrap_pyfunction!(get_newline_markers_list_py, m)?)?;
     m.add_function(wrap_pyfunction!(get_typical_note_sets_py, m)?)?;

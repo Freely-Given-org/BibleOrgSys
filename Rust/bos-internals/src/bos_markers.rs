@@ -4,6 +4,7 @@
 //! based on the USFM3 standard and BibleOrgSys custom extensions.
 
 use compact_str::CompactString;
+pub use ::usfm_markers::{is_newline_marker, is_deprecated_marker, is_printed, normalize_marker};
 
 /// Types of "extra" content (footnotes, cross-references, etc.)
 /// that are extracted from the main text flow.
@@ -316,55 +317,6 @@ pub mod title_markers {
     pub const ALL: &[&str] = &["mt", "mt1", "mt2", "mt3", "mt4", "mte", "mte1", "mte2", "toc1", "toc2", "toc3", "h"];
 }
 
-/// All markers that are considered to contain printable Bible text for word counting.
-pub const BOS_PRINTABLE_MARKERS: &[&str] = &[
-    "mt", "mt1", "mt2", "mt3", "mt4", "mte", "mte1", "mte2",
-    "imt", "imt1", "imt2", "imt3", "imt4", "is", "is1", "is2", "is3", "is4", "ip", "ipi", "im", "imi", "ipq", "imq", "ipr", "iq", "iq1", "iq2", "iq3", "io", "io1", "io2", "io3", "io4", "iot", "ior", "ili", "ili1", "ili2", "ili3", "ili4", "iex",
-    "s", "s1", "s2", "s3", "s4", "sr", "mr", "qa", "qc",
-    "v~", "p~",
-];
-
-/// Check if a marker is a printable marker.
-#[inline]
-pub fn is_printable_marker(marker: &str) -> bool {
-    BOS_PRINTABLE_MARKERS.contains(&marker)
-}
-
-/// Check if a marker has "Never" content type (like \b, \ib, \nb).
-#[inline]
-pub fn is_never_content_marker(marker: &str) -> bool {
-    matches!(marker, "b" | "ib" | "nb" | "ts")
-}
-
-/// Normalize a marker to its standard numbered form if applicable.
-/// E.g., "mt" -> "mt1", "s" -> "s1".
-pub fn normalize_marker(marker: &str) -> &str {
-    match marker {
-        "imt" => "imt1",
-        "is" => "is1",
-        "iq" => "iq1",
-        "ili" => "ili1",
-        "io" => "io1",
-        "imte" => "imte1",
-        "mt" => "mt1",
-        "mte" => "mte1",
-        "ms" => "ms1",
-        "s" => "s1",
-        "pi" => "pi1",
-        "li" => "li1",
-        "ph" => "ph1",
-        "q" => "q1",
-        "qm" => "qm1",
-        "th" => "th1",
-        "thr" => "thr1",
-        "tc" => "tc1",
-        "tcr" => "tcr1",
-        "qt-s" => "qt1-s",
-        "qt-e" => "qt1-e",
-        _ => marker,
-    }
-}
-
 /// Generate an end marker for a given marker.
 ///
 /// End markers are prefixed with `¬` ('not' sign).
@@ -525,24 +477,9 @@ pub fn marker_occurs_in(marker: &str) -> MarkerSection {
     }
 }
 
-/// Check if a marker is a newline marker.
-pub fn is_newline_marker(marker: &str) -> bool {
-    let raw = normalize_marker(marker);
-    paragraph_markers::is_paragraph(raw)
-        || heading_markers::is_heading(raw)
-        || introduction_markers::is_introduction(raw)
-        || title_markers::ALL.contains(&raw)
-        || matches!(raw, "c" | "v" | "id" | "ide" | "usfm" | "sts" | "rem" | "cp" | "cl")
-}
-
 /// Check if a marker is a character marker (inline).
 pub fn is_internal_marker(marker: &str) -> bool {
     !is_newline_marker(marker) && !is_end_marker(marker)
-}
-
-/// Check if a marker is a deprecated USFM marker.
-pub fn is_deprecated_marker(marker: &str) -> bool {
-    matches!(marker, "h1" | "h2" | "h3" | "mt" | "mte" | "imt" | "imte" | "s" | "ms" | "is" | "li" | "pi" | "ph" | "q" | "qm" | "th" | "thr" | "tc" | "tcr")
 }
 
 #[cfg(test)]

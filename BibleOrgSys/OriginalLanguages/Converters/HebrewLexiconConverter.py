@@ -6,7 +6,7 @@
 #
 # Module handling the Hebrew lexicon
 #
-# Copyright (C) 2011-2023 Robert Hunt
+# Copyright (C) 2011-2026 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -27,6 +27,9 @@
 Module handling the OpenScriptures Hebrew lexicon.
 
     The classes are the ones that read and parse the XML source files.
+
+CHANGELOG:
+    2026-06-05 Added XML entries as well as adjusted/flattened entries
 """
 import logging
 from pathlib import Path
@@ -39,17 +42,18 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2023-03-10' # by RJH
-SHORT_PROGRAM_NAME = "HebrewLexicon"
-PROGRAM_NAME = "Hebrew Lexicon format handler"
-PROGRAM_VERSION = '0.20'
+LAST_MODIFIED_DATE = '2026-06-05' # by RJH
+SHORT_PROGRAM_NAME = "HebrewLexiconConverter"
+PROGRAM_NAME = "Hebrew Lexicon XML format handler"
+PROGRAM_VERSION = '0.30'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
 
 
 # Hebrew lexicon folder
-DEFAULT_LEXICON_FOLDERPATH = Path( '/srv/Programming/WebDevelopment/OpenScriptures/HebrewLexicon/' )
+DEFAULT_LEXICON_FOLDERPATH = BibleOrgSysGlobals.BOS_SOURCE_BASE_FOLDERPATH.joinpath( '../../Forked/OS-HebrewLexicon/' )
+assert DEFAULT_LEXICON_FOLDERPATH.is_dir(), f"{BibleOrgSysGlobals.BOS_SOURCE_BASE_FOLDERPATH=} -> {DEFAULT_LEXICON_FOLDERPATH=}"
 
 
 
@@ -668,7 +672,8 @@ class BrownDriverBriggsFileConverter:
         """
         fnPrint( DEBUGGING_THIS_MODULE, "BrownDriverBriggsFileConverter.__init__()" )
         self.title = self.version = self.date = None
-        self.XMLTree = self.header = self.entries = None
+        self.XMLTree = self.header = None
+        self.XMLEntries = self.adjustedEntries = None
     # end of BrownDriverBriggsFileConverter.__init__
 
 
@@ -684,9 +689,9 @@ class BrownDriverBriggsFileConverter:
         if self.version: result += ('\n' if result else '') + "  " + f"Version: {self.version} "
         if self.date: result += ('\n' if result else '') + "  " + f"Date: {self.date}"
         if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
-            assert len(self.entries) ==  2
-        result += ('\n' if result else '') + "  " + f"Number of Hebrew entries = {len(self.entries['heb']):,}"
-        result += ('\n' if result else '') + "  " + f"Number of Aramaic entries = {len(self.entries['arc']):,}"
+            assert len(self.adjustedEntries) ==  2
+        result += ('\n' if result else '') + "  " + f"Number of Hebrew entries = {len(self.adjustedEntries['heb']):,}"
+        result += ('\n' if result else '') + "  " + f"Number of Aramaic entries = {len(self.adjustedEntries['arc']):,}"
         return result
     # end of BrownDriverBriggsFileConverter.__str__
 
@@ -706,10 +711,10 @@ class BrownDriverBriggsFileConverter:
         if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert self.XMLTree # Fail here if we didn't load anything at all
 
-        self.entries = {}
+        self.XMLEntries, self.adjustedEntries = {}, {}
         if self.XMLTree.tag == BrownDriverBriggsFileConverter.treeTag:
-            for entry in self.XMLTree:
-                self.validatePart( entry )
+            for xmlPart in self.XMLTree:
+                self.validatePart( xmlPart )
         else: logging.error( f"Expected to load {BrownDriverBriggsFileConverter.treeTag!r} but got {self.XMLTree.tag!r}" )
         if self.XMLTree.tail is not None and self.XMLTree.tail.strip(): logging.error( f"Unexpected {self.XMLTree.tag!r} tail data after {self.XMLTree.tail} element" )
     # end of BrownDriverBriggsFileConverter.loadAndValidate
@@ -718,6 +723,8 @@ class BrownDriverBriggsFileConverter:
     def validatePart( self, part ):
         """
         Check/validate the given lexical index part.
+
+        Each of the 46 parts contains the entries starting with the same Hebrew or Aramaic letter.
         """
         if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert part.tag == BrownDriverBriggsFileConverter.HebLexNameSpace+"part"
@@ -736,8 +743,9 @@ class BrownDriverBriggsFileConverter:
                 lang = value
             else: logging.warning( f"scd2 Unprocessed {value!r} attribute ({attrib}) in index part element" )
         if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
-            assert lang in ('heb','arc',)
-        if lang not in self.entries: self.entries[lang] = {}
+            assert lang in ('heb','arc',) # Hebrew then Aramaic
+        if lang not in self.XMLEntries: self.XMLEntries[lang] = {}
+        if lang not in self.adjustedEntries: self.adjustedEntries[lang] = {}
 
         for section in part:
             self.validateSection( section, partID, title, lang )
@@ -772,7 +780,7 @@ class BrownDriverBriggsFileConverter:
 
     def validateEntry( self, entry, partID, sectionID, title, lang ):
         """
-        Check/validate the given OSIS div record.
+        Check/validate the given BDB entry.
         """
         if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert entry.tag == BrownDriverBriggsFileConverter.HebLexNameSpace+"entry"
@@ -789,7 +797,12 @@ class BrownDriverBriggsFileConverter:
             elif attrib == 'mod': entryMod = value
             elif attrib == 'cite': entryCite = value
             elif attrib == 'form': entryForm = value
-            else: logging.warning( f"ngs9 Unprocessed {value!r} attribute ({attrib}) in main entry element" )
+            else: logging.warning( f"ngs9 Unprocessed {value!r} attribute ({attrib}) in main entry element" ); halt
+
+        self.XMLEntries[lang][entryID] = entry
+
+        # for something in entry:
+        #     print( f"Entry has {entry.tag}" )
 
         flattenedXML = BibleOrgSysGlobals.getFlattenedXML( entry, entryID ) \
                             .replace( BrownDriverBriggsFileConverter.HebLexNameSpace, '' ) \
@@ -811,7 +824,7 @@ class BrownDriverBriggsFileConverter:
 
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, repr(partID), repr(sectionID), repr(title), repr(lang) )
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, entryID, status, repr(resultXML) )
-        self.entries[lang][entryID] = (resultXML,statusP,status,)
+        self.adjustedEntries[lang][entryID] = (resultXML,statusP,status,)
     # end of BrownDriverBriggsFileConverter.validateEntry
 
 
@@ -822,8 +835,8 @@ class BrownDriverBriggsFileConverter:
         """
         if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert self.XMLTree
-            assert self.entries
-        return self.entries # temp…… XXXXXXXXXXXXXXXXXXXXXXXXXXXXX…
+            assert self.adjustedEntries
+        return self.XMLEntries, self.adjustedEntries # temp…… XXXXXXXXXXXXXXXXXXXXXXXXXXXXX…
     # end of BrownDriverBriggsFileConverter.importDataToPython
 
 
@@ -835,7 +848,7 @@ class BrownDriverBriggsFileConverter:
 
         if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag:
             assert self.XMLTree
-            assert self.entries
+            assert self.adjustedEntries
 
         if not filepath:
             folderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH
@@ -843,7 +856,7 @@ class BrownDriverBriggsFileConverter:
             filepath = os.path.join( folderpath, 'HebrewLexicon_BDB_Table.pickle' )
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Exporting to {filepath}…" )
         with open( filepath, 'wb' ) as myFile:
-            pickle.dump( self.entries, myFile )
+            pickle.dump( self.adjustedEntries, myFile )
     # end of GreekStrongsFileConverter.pickle
 # end of BrownDriverBriggsFileConverter class
 
@@ -932,7 +945,7 @@ def fullDemo() -> None:
                 pickle.dump( asixfc.entries2, myFile )
                 pickle.dump( lixfc.entries, myFile )
                 pickle.dump( hsfc.entries, myFile )
-                pickle.dump( bdbfc.entries, myFile )
+                pickle.dump( bdbfc.adjustedEntries, myFile )
             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Other exports aren't written yet!" )
             #hsfc.exportDataToPython() # Produce the .py tables
             #hsfc.exportDataToC() # Produce the .h tables

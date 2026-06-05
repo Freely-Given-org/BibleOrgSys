@@ -17,6 +17,7 @@ pub mod processing_bindings;
 pub mod section_index_bindings;
 pub mod serialization_bindings;
 pub mod xml_file_bindings;
+pub mod export_bindings;
 
 // Re-export everything from bos-internals for convenience
 pub use bos_internals::*;
