@@ -866,9 +866,9 @@ def analyzeWordsInSegment( reference, segmentAList, segmentBList, dictAB, result
                     if ix+iy >= seglenA: matched = False; break # Too near the end
                     if segmentAList[ix+iy] != lWords[iy]: matched = False; break
                 if matched:
-                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "lMatched" ); halt
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "lMatched" ); assert False, "We want to stop here"
                     lCount += 1
-                    #if lCount > 1: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "multiple lMatches" ); halt
+                    #if lCount > 1: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "multiple lMatches" ); assert False, "We want to stop here"
                 #else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "not lMatched" )
             if lCount: foundLPhrases.extend( lWords )
         else: # lEntry is a single word -- easy
@@ -898,9 +898,9 @@ def analyzeWordsInSegment( reference, segmentAList, segmentBList, dictAB, result
                             if ix+iy >= seglenB: matched = False; break # Too near the end
                             if segmentBList[ix+iy] != rWords[iy]: matched = False; break
                         if matched:
-                            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "rMatched" ); halt
+                            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "rMatched" ); assert False, "We want to stop here"
                             rCount += 1
-                            #if rCount > 1: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "multiple rMatches", lEntry ); halt
+                            #if rCount > 1: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "multiple rMatches", lEntry ); assert False, "We want to stop here"
                         #else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "not rMatched" )
                 else: # rEntry is a single word -- easy
                     rCount += segmentBList.count( rEntry )
@@ -909,7 +909,7 @@ def analyzeWordsInSegment( reference, segmentAList, segmentBList, dictAB, result
             # Now check the results
             if lCount > rCount:
                 if ' ' not in lEntry and lEntry in foundLPhrases:
-                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, lEntry, foundLPhrases ); halt
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, lEntry, foundLPhrases ); assert False, "We want to stop here"
                       vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  analyzeWordsInSegment: Skipping {foundLPhrases!r} because already found in {lEntry}" )
                 else:
                     resultsList.append( (reference,f"{segmentBList!r} from {lEntry}\n   not enough ({segmentAList}/{lCount}) in {rCount}") )
@@ -958,7 +958,7 @@ def analyzeWords( segmentList, dict12=None, dict21=None ):
                             break
         #if j > 5: break
     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, len(wordDict1), wordDict1 )
-    halt
+    assert False, "We want to stop here"
 # end of CompareBibles.analyzeWords
 
 

@@ -203,10 +203,10 @@ class HebrewWLCBibleAddon():
                         if isinstance( something2, InternalBibleExtra ):
                             result = handleExtra( something2 )
                             if result: wwDict = result
-                        else: halt # Programming error -- what's this???
+                        else: assert False, "We want to stop here" # Programming error -- what's this???
                 elif something is not None:
                     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "HERE", something )
-                    halt # Programming error -- what's this???
+                    assert False, "We want to stop here" # Programming error -- what's this???
                 resultList.append( wwDict if wwDict else {'word':token} )
                 if punctuation:
                     ix += len( punctuation )
@@ -262,7 +262,7 @@ class HebrewWLCBibleAddon():
                         break
             if remainder:
                 resultString += ' <<<' + remainder + '>>>'
-                if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.strictCheckingFlag: halt
+                if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.strictCheckingFlag: assert False, "We want to stop here"
             return resultString
         # end of expandMorphologyAbbreviations.handleRemainder
 

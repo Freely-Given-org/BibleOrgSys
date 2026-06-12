@@ -378,7 +378,7 @@ class BibleReferencesLinksConverter:
             myRefLinkList.append( (sourceReference,sourceComponent,parsedSourceReference,actualLinksList,) )
 
         vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  {len(rawRefLinkList):,} links processed (with {actualLinkCount:,} actual link entries)" )
-        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, myRefLinkList ); halt
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, myRefLinkList ); assert False, "We want to stop here"
         self.__DataList = myRefLinkList
 
         # Now put it into my dictionaries for easy access
@@ -394,10 +394,10 @@ class BibleReferencesLinksConverter:
                 assert isinstance( verseRef, SimpleVerseKey )
                 if verseRef not in myRefLinkDict: myRefLinkDict[verseRef] = []
                 myRefLinkDict[verseRef].append( (sourceReference,sourceComponent,parsedSourceReference,actualLinksList,) )
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, myRefLinkDict ); halt
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, myRefLinkDict ); assert False, "We want to stop here"
         originalLinks = len( myRefLinkDict )
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  {originalLinks:,} verse links added to dictionary (includes filling out spans)" )
-        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, myRefLinkDict ); halt
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, myRefLinkDict ); assert False, "We want to stop here"
 
         # Create a reversed link dictionary (by verse key)
         for sourceReference,sourceComponent,parsedSourceReference,actualLinksList in myRefLinkList:
@@ -412,14 +412,14 @@ class BibleReferencesLinksConverter:
                         elif linkType == 'QuotedOTReference': reverseLinkType = 'OTReferenceQuoted'
                         elif linkType == 'AlludedOTReference': reverseLinkType = 'OTReferenceAlluded'
                         elif linkType == 'PossibleOTReference': reverseLinkType = 'OTReferencePossible'
-                        else: halt # Have a new linkType!
+                        else: assert False, "We want to stop here" # Have a new linkType!
                         if verseRef not in myRefLinkDict: myRefLinkDict[verseRef] = []
                         myRefLinkDict[verseRef].append( (targetReference,targetComponent,parsedTargetReference,[(sourceReference,sourceComponent,parsedSourceReference,reverseLinkType)]) )
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, myRefLinkDict ); halt
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, myRefLinkDict ); assert False, "We want to stop here"
         totalLinks = len( myRefLinkDict )
         reverseLinks = totalLinks - originalLinks
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  {reverseLinks:,} reverse links added to dictionary to give {totalLinks:,} total" )
-        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, myRefLinkDict ); halt
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, myRefLinkDict ); assert False, "We want to stop here"
 
         self.__DataDict = myRefLinkDict
 
@@ -517,7 +517,7 @@ class BibleReferencesLinksConverter:
         assert self.__DataDict
 
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Export to Python not written yet!" )
-        halt
+        assert False, "We want to stop here"
 
         if not filepath:
             folder = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH
@@ -638,7 +638,7 @@ class BibleReferencesLinksConverter:
         assert self.__DataList
 
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Export to C not written yet!" )
-        halt
+        assert False, "We want to stop here"
 
         if not filepath:
             folder = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH

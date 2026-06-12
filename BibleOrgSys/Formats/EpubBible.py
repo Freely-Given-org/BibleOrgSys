@@ -790,7 +790,7 @@ def fullDemo() -> None:
                         and not blockName.startswith( 'bookExtra-' ):
                             # Shouldn't get here
                             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, blockName, index, len(result), hexlify(result), result, moduleFilename, )
-                            if DEBUGGING_THIS_MODULE: halt
+                            if DEBUGGING_THIS_MODULE: assert False, "We want to stop here"
 
 
     if 0: # all discovered modules in the test folder

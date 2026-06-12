@@ -85,7 +85,7 @@ pub fn add_nesting_markers(
 
     let entries_vec = entries.into_vec();
     let num_entries = entries_vec.len();
-    let mut new_lines = InternalBibleEntryList::with_capacity(num_entries + 100);
+    let mut new_lines = InternalBibleEntryList::with_capacity(num_entries * 1.1 as usize);
     let mut open_markers: Vec<CompactString> = Vec::new();
 
     // Context tracking
@@ -153,6 +153,7 @@ pub fn add_nesting_markers(
     let paragraph_has_ended = |start_idx: usize, entries: &[InternalBibleEntry]| {
         for entry in entries.iter().skip(start_idx + 1) {
             let m = entry.marker();
+            // "v=" comes before section headings and some other list markers
             if paragraph_markers::is_paragraph(m) || m=="v=" || main_text_list_markers::is_main_text_list(m) {
                 return true;
             }
@@ -273,7 +274,7 @@ pub fn add_nesting_markers(
             {
                 if nb_follows {
                     // nb extends this paragraph across chapters
-                    // Close with ¬nb instead of ¬p to indicate section break
+                    // Close with ¬nb instead of ¬p or whatever to indicate section break
                     // BUT keep the paragraph on the stack so it can be closed later
                     new_lines.push(InternalBibleEntry::simple("¬nb", ""));
                     // Do NOT remove from open_markers - paragraph continues
@@ -568,12 +569,19 @@ pub fn add_nesting_markers(
     }
 
     // Close any left-over open markers
+    // println!("add_nesting_markers() finished processing entries, now closing any remaining open markers: {}", open_markers.join(", "));
     while let Some(marker) = open_markers.pop() {
         let mut end_marker_str = CompactString::from("¬");
         end_marker_str.push_str(&marker);
         let with_text = if marker == "v" {
             current_verse.as_str()
         } else if marker == "c" {
+            // However, if there's a paragraph marker still open, we should probably close that first
+            // (Is that logic correct as this problem only occurs with nb which spans the chapter!!! ???)
+            if paragraph_markers::ALL.contains(&open_markers.last().unwrap().as_str()) {
+                let m = open_markers.pop().unwrap();
+                new_lines.push(InternalBibleEntry::simple(format!("¬{}", m), ""));
+            }
             current_chapter.as_str()
         } else { "" };
         new_lines.push(InternalBibleEntry::end_marker(end_marker_str, with_text).unwrap());
@@ -589,7 +597,80 @@ pub fn add_nesting_markers(
 mod tests {
     use crate::entry::InternalBibleEntry;
     use crate::entry_lists::InternalBibleEntryList;
-use crate::nesting::add_nesting_markers;
+use crate::nesting::{add_verse_start_markers, add_nesting_markers};
+
+    #[test]
+    fn test_add_verse_start_markers_no_change() {
+        let mut list = InternalBibleEntryList::new();
+        list.push(InternalBibleEntry::simple("c", "1"));
+        list.push(InternalBibleEntry::simple("p", ""));
+        list.push(InternalBibleEntry::simple("v", "1"));
+        list.push(InternalBibleEntry::simple("v~", "Verse one text."));
+
+        let list = add_verse_start_markers(list); // This is always done first
+
+        assert_eq!(list.iter().filter_map(|e| Some(e.marker())).collect::<Vec<_>>(),
+            ["c", "p", "v", "v~"]);
+    }
+
+    #[test]
+    fn test_add_verse_start_markers_simple() {
+        let mut list = InternalBibleEntryList::new();
+        list.push(InternalBibleEntry::simple("c", "1"));
+        list.push(InternalBibleEntry::simple("p", ""));
+        list.push(InternalBibleEntry::simple("v", "1"));
+        list.push(InternalBibleEntry::simple("v~", "Chapter one Verse one text."));
+        list.push(InternalBibleEntry::simple("s1", "Heading one"));
+        list.push(InternalBibleEntry::simple("p", ""));
+        list.push(InternalBibleEntry::simple("v", "2"));
+        list.push(InternalBibleEntry::simple("v~", "Verse two text."));
+        list.push(InternalBibleEntry::simple("c", "2"));
+        list.push(InternalBibleEntry::simple("s1", "Heading two"));
+        list.push(InternalBibleEntry::simple("q1", ""));
+        list.push(InternalBibleEntry::simple("v", "1"));
+        list.push(InternalBibleEntry::simple("v~", "Chapter two Verse one text."));
+
+        let list = add_verse_start_markers(list); // This is always done first
+
+        assert_eq!(list.iter().filter_map(|e| Some(e.marker())).collect::<Vec<_>>(),
+            ["c", "p", "v", "v~", "v=", "s1", "p", "v", "v~", "c", "v=", "s1", "q1", "v", "v~"]);
+        assert_eq!(list[4].adjusted_text(), Some("2")); // 'v=' should have the verse number of the following 'v'
+        assert_eq!(list[10].adjusted_text(), Some("1")); // 'v=' should have the verse number of the following 'v'
+    }
+
+    #[test]
+    fn test_add_verse_start_markers_complex() {
+        let mut list = InternalBibleEntryList::new();
+        list.push(InternalBibleEntry::simple("c", "1"));
+        list.push(InternalBibleEntry::simple("p", ""));
+        list.push(InternalBibleEntry::simple("v", "1"));
+        list.push(InternalBibleEntry::simple("v~", "Chapter one Verse one text."));
+        list.push(InternalBibleEntry::simple("v", "2"));
+        list.push(InternalBibleEntry::simple("v~", "Chapter one Verse two initial text."));
+        list.push(InternalBibleEntry::simple("s1", "Heading one"));
+        list.push(InternalBibleEntry::simple("p", ""));
+        list.push(InternalBibleEntry::simple("v~", "Chapter one Verse two more text."));
+        list.push(InternalBibleEntry::simple("v", "3"));
+        list.push(InternalBibleEntry::simple("v~", "Verse three text."));
+        list.push(InternalBibleEntry::simple("c", "2"));
+        list.push(InternalBibleEntry::simple("s1", "Heading two"));
+        list.push(InternalBibleEntry::simple("p", ""));
+        list.push(InternalBibleEntry::simple("v", "1"));
+        list.push(InternalBibleEntry::simple("v~", "Chapter two Verse one text."));
+        list.push(InternalBibleEntry::simple("c", "3"));
+        list.push(InternalBibleEntry::simple("nb", ""));
+        list.push(InternalBibleEntry::simple("v", "1"));
+        list.push(InternalBibleEntry::simple("v~", "Chapter three Verse one text in same paragraph."));
+
+        let list = add_verse_start_markers(list); // This is always done first
+
+        assert_eq!(list.iter().filter_map(|e| Some(e.marker())).collect::<Vec<_>>(),
+            ["c", "p", "v", "v~", "v", "v~", "v=", "s1", "p", "v~", "v", "v~",
+             "c", "v=", "s1", "p", "v", "v~",
+             "c", "nb", "v", "v~"]);
+        assert_eq!(list[6].adjusted_text(), Some("2")); // This is still in v2
+        assert_eq!(list[13].adjusted_text(), Some("1")); // 'v=' should have the verse number of the following 'v'
+    }
 
     #[test]
     fn test_add_nesting_markers_simple() {
@@ -599,9 +680,13 @@ use crate::nesting::add_nesting_markers;
         list.push(InternalBibleEntry::simple("v", "1"));
         list.push(InternalBibleEntry::simple("v~", "Verse one text."));
 
+        let list = add_verse_start_markers(list); // This is always done first
         let list = add_nesting_markers(list, "Simple test entries", "XXA");
 
-        assert_eq!(list.iter().filter_map(|e| Some(e.marker())).collect::<Vec<_>>(), ["chapters", "c", "p", "v", "v~", "¬v", "¬p", "¬c", "¬chapters"]);
+        assert_eq!(list.iter().filter_map(|e| Some(e.marker())).collect::<Vec<_>>(),
+            ["chapters",
+                "c", "p", "v", "v~", "¬v", "¬p", "¬c",
+                "¬chapters"]);
     }
 
     #[test]
@@ -626,12 +711,15 @@ use crate::nesting::add_nesting_markers;
         list.push(InternalBibleEntry::simple("v", "2"));
         list.push(InternalBibleEntry::simple("v~", "Chapter two Verse two text."));
 
+        let list = add_verse_start_markers(list); // This is always done first
         let list = add_nesting_markers(list, "Normal test entries", "XXB");
 
         assert_eq!(list.iter().filter_map(|e| Some(e.marker())).collect::<Vec<_>>(),
             ["id", "mt1", "intro", "ip", "ie", "¬intro",
-                "chapters", "c", "p", "v", "v~", "¬v", "¬p", "q1", "v", "v~", "¬v", "¬q1", "¬c",
-                "c", "s1", "m", "v", "v~", "¬v", "v", "v~", "¬v", "¬m", "¬c", "¬chapters"]);
+                "chapters",
+                "c", "p", "v", "v~", "¬v", "¬p", "q1", "v", "v~", "¬v", "¬q1", "¬c",
+                "c", "v=", "s1", "m", "v", "v~", "¬v", "v", "v~", "¬v", "¬m", "¬c",
+                "¬chapters"]);
     }
 
     #[test]
@@ -661,15 +749,55 @@ use crate::nesting::add_nesting_markers;
         list.push(InternalBibleEntry::simple("q2", ""));
         list.push(InternalBibleEntry::simple("v", "2"));
         list.push(InternalBibleEntry::simple("v~", "Chapter three Verse two text."));
+        list.push(InternalBibleEntry::simple("c", "4"));
+        list.push(InternalBibleEntry::simple("p", ""));
+        list.push(InternalBibleEntry::simple("v", "1"));
+        list.push(InternalBibleEntry::simple("v~", "Chapter four Verse one text."));
+        list.push(InternalBibleEntry::simple("m", ""));
+        list.push(InternalBibleEntry::simple("v", "2"));
+        list.push(InternalBibleEntry::simple("v~", "Chapter four Verse two text."));
+        list.push(InternalBibleEntry::simple("c", "5"));
+        list.push(InternalBibleEntry::simple("nb", ""));
+        list.push(InternalBibleEntry::simple("v", "1"));
+        list.push(InternalBibleEntry::simple("v~", "Chapter five Verse one text."));
+        list.push(InternalBibleEntry::simple("v", "2"));
+        list.push(InternalBibleEntry::simple("v~", "Chapter five Verse two text."));
 
         // println!("Test InternalBibleEntryList = ({} entries) {}", list.len(), list);
+        let list = add_verse_start_markers(list); // This is always done first
         let list = add_nesting_markers(list, "Complex test entries with nb", "XXC");
         // println!("After add_nesting_markers: ({} entries) {}", list.len(), list);
 
         assert_eq!(list.iter().filter_map(|e| Some(e.marker())).collect::<Vec<_>>(),
             ["id", "mt1", "intro", "ip", "ie", "¬intro",
-                "chapters", "c", "p", "v", "v~", "¬v", "v", "v~", "¬v", "¬nb", "¬c",
+                "chapters",
+                "c", "p", "v", "v~", "¬v", "v", "v~", "¬v", "¬nb", "¬c",
                 "c", "nb", "v", "v~", "¬v", "v", "v~", "¬v", "¬p", "¬c",
-                "c", "s1", "q1", "v", "v~", "¬v", "¬q1", "q2", "v", "v~", "¬v", "¬q2", "¬c", "¬chapters"]);
+                "c", "v=", "s1", "q1", "v", "v~", "¬v", "¬q1", "q2", "v", "v~", "¬v", "¬q2", "¬c",
+                "c", "p", "v", "v~", "¬v", "¬p", "m", "v", "v~", "¬v", "¬nb", "¬c",
+                "c", "nb", "v", "v~", "¬v", "v", "v~", "¬v", "¬m", "¬c",
+                "¬chapters"]);
     }
 }
+
+/* Need to fix '¬list' etc being added in the wrong place in some cases - need to look ahead to see the next list marker and only close if it's not a list marker (or if there isn't one at all) - otherwise we end up with '¬list' before the next list starts instead of after it ends. This is especially important for nb which can span across chapters and sections and should only be closed when we hit the next nb or the end of the chapter, not when we hit the next section or chapter.
+
+Have nb: OET-RV book basicOnly=False ('DAN',) 11:0 inSection='section' inRightDiv=False inParagraph='p'
+markerList=['id', 'usfm', 'ide', 'rem', 'rem', 'headers', 'h', 'toc1', 'toc2', 'toc3', 'mt1', 'mt3', '¬headers',
+'intro', 'is1', 'ip', 'ip', 'ip', 'ip', 'iot', 'io1', 'io1', 'io2', 'io2', 'io2', 'io2', '¬iot', 'rem', 'ie', '¬intro',
+'chapters',
+'c', 'ms1', 'v=', '¬ms1', 's1', 'rem', 'p', 'c#', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬p', 'p', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬p', 'p', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬p', 'p', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬p', 'p', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬p', 'p', 'v', 'v~', '¬v', '¬p', 'p', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬p', '¬c',
+'c', 'v=', 's1', 'rem', 'p', 'c#', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬p', 'p', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬p', 'p', 'v', 'v~', '¬v', '¬p', 'p', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬p', 'p', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬p', 'p', 'v', 'v~', 'rem', '¬v', 'v', 'v~', '¬v', '¬p', 'p', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬p', 'p', 'rem', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬p', 'v=', 's1', 'rem', 'p', 'v', 'v~', '¬v', '¬p', 'p', 'v', 'v~', '¬v', '¬p', 'p', 'v', 'v~', '¬v', '¬p', 'p', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬p', 'p', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬p', 'p', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬p', 'v=', 's1', 'rem', 'p', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬p', '¬c',
+'c', 'v=', 's1', 'rem', 'p', 'c#', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬p', 'v=', 's1', 'rem', 'p', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬p', 'p', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬p', 'p', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬p', 'v=', 's1', 'rem', 'p', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬p', 'p', 'v', 'v~', '¬p', 'p', 'p~', '¬p', '¬v', 'p', 'v', 'v~', 'rem', '¬v', '¬p', 'p', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬p', 'p', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬p', 'p', 'v', 'v~', '¬v', '¬p', '¬c',
+'c', 'v=', 's1', 'rem', 'p', 'c#', 'v', 'v~', '¬p', 'p', 'p~', '¬v', 'v', 'v~', '¬v', '¬p', 'q1', 'v', 'v~', '¬q1', 'q1', 'p~', '¬q1', 'q1', 'p~', '¬q1', 'q1', 'p~', '¬q1', '¬v', 'p', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬p', 'p', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬p', 'p', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬p', 'p', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬p', 'p', 'v', 'v~', '¬v', '¬p', 'v=', 's1', 'rem', 'p', 'v', 'v~', '¬p', 'p', 'p~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬p', 'p', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', 'rem', '¬v', '¬p', 'p', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬p', 'p', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬p', 'p', 'v', 'v~', '¬v', '¬p', 'v=', 's1', 'rem', 'p', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬p', 'p', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬p', '¬c',
+'c', 'v=', 's1', 'rem', 'p', 'c#', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', 'rem', '¬v', '¬p', 'p', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬p', 'p', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', 'rem', '¬v', '¬p', 'p', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬p', 'p', 'v', 'v~', '¬v', '¬p', 'p', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬p', 'p', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬p', 'p', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬p', 'list', 'li1', 'p~', '¬li1', '¬v', 'li1', 'v', 'v~', '¬v', '¬li1', 'li1', 'v', 'v~', '¬v', '¬li1', 'p', 'v', 'v~', '¬v', '¬p', 'p', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬p', '¬c',
+'c', 'v=', 's1', 'rem', 'p', 'c#', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬p', 'p', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', 'rem', '¬v', 'v', 'v~', '¬v', '¬p', 'p', 'v', 'v~', '¬v', 'v', 'v~', '¬p', 'p', 'p~', '¬p', '¬v', 'p', 'v', 'v~', '¬v', '¬p', 'p', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬p', 'p', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬p', 'v=', 's2', 'rem', 'p', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬p', 'p', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬p', 'p', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬p', 'p', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬p', 'p', 'v', 'v~', '¬v', '¬p', '¬c',
+'c', 'v=', 's1', 'rem', 'p', 'c#', 'v', 'v~', '¬v', 'v', 'v~', '¬p', 'p', 'p~', '¬v', 'v', 'v~', '¬v', '¬p', 'li1', 'v', 'v~', '¬v', '¬li1', 'li1', 'v', 'v~', '¬v', '¬li1', 'li1', 'v', 'v~', '¬v', '¬li1', 'li1', 'v', 'v~', '¬v', '¬li1', 'p', 'v', 'v~', 'rem', 'rem', '¬v', '¬p', 'q1', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬q1', 'p', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬p', 'p', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬p', 'v=', 's1', 'rem', 'p', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬p', 'mi', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬mi', 'p', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬p', 'p', 'v', 'v~', '¬p', 'mi', 'p~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬mi', 'p', 'v', 'v~', '¬v', '¬p', '¬c',
+'c', 'v=', 's1', 'rem', 'p', 'c#', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬p', 'p', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬p', 'p', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬p', 'p', 'v', 'v~', '¬v', '¬p', 'p', 'v', 'v~', '¬v', '¬p', 'v=', 's1', 'rem', 'p', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬p', 'p', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬p', 'p', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬p', 'p', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬p', 'p', 'v', 'v~', '¬v', '¬p', '¬c',
+'c', 'v=', 's1', 'rem', 'p', 'c#', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬p', 'p', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬p', 'p', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬p', 'p', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬p', 'v=', 's1', 'rem', 'p', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬p', 'p', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬p', '¬c',
+'c', 'v=', 's1', 'rem', 'p', 'c#', 'v', 'v~', '¬v', '¬p', 'p', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬p', 'p', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬p', 'p', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬p', 'p', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬p', 'p', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬p', 'p', 'v', 'v~', '¬v', 'v', 'v~', '¬p', 'p', 'p~', '¬p', '¬v', 'p', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬nb', '¬c',
+'c', 'nb', 'c#', 'v', 'v~', '¬v', 'v=', '¬p', 's1', 'rem', 'p', 'v', 'v~', 'rem', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬p', 'p', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬p', 'p', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬p', 'p', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬p', 'p', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬p', 'p', 'v', 'v~', '¬v', '¬p', 'v=', 's1', 'rem', 'p', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬p', 'p', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬p', 'p', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', 'rem', '¬v', '¬p', 'p', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', 'rem', '¬v', '¬p', 'p', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬p', '¬c',
+'c', 'v=', 's1', 'rem', 'p', 'c#', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬p', 'p', 'v', 'v~', '¬v', '¬p', 'p', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬p', 'p', 'v', 'v~', '¬v', '¬p', 'p', 'v', 'v~', '¬v', '¬p', 'p', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬p', 'p', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬p', 'p', 'v', 'v~', '¬v', '¬p', '¬c', '¬list',
+'¬chapters']
+
+*/

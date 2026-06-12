@@ -89,7 +89,7 @@ def loadYAML( YAMLFilepath ) -> dict[str,Any]:
     import yaml
     with open( YAMLFilepath, 'r' ) as yamlFile:
         yamlDict = yaml.safe_load( yamlFile )
-    # dPrint( 'Info', DEBUGGING_THIS_MODULE, f"yaml.load got ({len(yamlDict)}) {yamlDict=}"); halt
+    # dPrint( 'Info', DEBUGGING_THIS_MODULE, f"yaml.load got ({len(yamlDict)}) {yamlDict=}"); assert False, "We want to stop here"
     return yamlDict
 
 
@@ -748,7 +748,7 @@ class uWNotesBibleBook( BibleBook ):
 
                 lastC, lastV = C, V
             #if loadErrors: self.checkResultsDictionary['Load Errors'] = loadErrors
-            #if debugging: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, self._rawLines ); halt
+            #if debugging: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, self._rawLines ); assert False, "We want to stop here"
         if fixErrors: self.checkResultsDictionary['Fix Text Errors'] = fixErrors
     # end of load
 # end of class uWNotesBibleBook

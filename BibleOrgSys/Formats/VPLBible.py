@@ -275,7 +275,7 @@ def VPLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=Fal
                             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"First line got type #{vplType} {match.group(0)!r} match from {firstLines!r}" )
                     else:
                         vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"VPLBibleFileCheck: (unexpected) first line was {thisFilename!r} in {firstLines}" )
-                        if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: halt
+                        if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: assert False, "We want to stop here"
                         continue
                 foundProjects.append( (tryFolderName, thisFilename,) )
                 lastFilenameFound = thisFilename
@@ -405,7 +405,7 @@ class VPLBible( Bible ):
                         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"First line got type #{vplType} {match.group(0)!r} match from {line!r}" )
                     else:
                         vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"VPLBible.load: (unexpected) first line was {self.sourceFilepath!r} in {line}" )
-                        if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: halt
+                        if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: assert False, "We want to stop here"
                 if line == 'Chapter 1':
                     vplType = 5
                     break
@@ -539,7 +539,7 @@ class VPLBible( Bible ):
                             if not BBB: BBB = bos_books_codes_py.english_name_to_bos_book_code( bookCodeText )  # Try to guess
                         if not BBB:
                             logging.critical( f"VPL Bible: Unable to determine book code from text {lastBookCodeText!r} after {lastBBB!r}={bookCodeText}" )
-                            halt
+                            assert False, "We want to stop here"
 
                     # Handle special formatting
                     #   [square-brackets] are for Italicized words
@@ -714,7 +714,7 @@ class VPLBible( Bible ):
                             # might be a continuation line
                             logging.warning( f"{self.workName}: Assuming a continuation line at {BBB} {lineNumber:,}: '{line}'" )
                             thisBook.appendToLastLine( f' {line}' )
-                        else: halt
+                        else: assert False, "We want to stop here"
                     elif line:
                         blankLineCount = 0
                         if thisBook is not None and lastChapterNumber and lastVerseNumber:
@@ -757,7 +757,7 @@ class VPLBible( Bible ):
                         if not newBBB: newBBB = bos_books_codes_py.english_name_to_bos_book_code( refB )  # Try to guess
                         if not newBBB:
                             logging.critical( f"VPL6 Bible: Unable to determine book code from text '{refB}' after '{lastBBB}'" )
-                            halt
+                            assert False, "We want to stop here"
                         if newBBB != lastBBB:
                             if lastBBB is not None:
                                 vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Saving {BBB} book…" )
@@ -790,7 +790,7 @@ class VPLBible( Bible ):
 
                 else:
                     logging.critical( f"Unknown VPL type {vplType} while processing line {lineNumber}: '{line}'" )
-                    if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: halt
+                    if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: assert False, "We want to stop here"
 
                 # TODO: Blank lines now get thru (and this might mess things up a little)
                 #if not line: continue # Just discard blank lines # Might want to enable this line ????
@@ -815,7 +815,7 @@ class VPLBible( Bible ):
                             lastChapterNumber = lastVerseNumber = -1
                         else:
                             logging.critical( f"VPLBible{vplType} could not figure out {bookCodeText!r} book code" )
-                            if BibleOrgSysGlobals.debugFlag: halt
+                            if BibleOrgSysGlobals.debugFlag: assert False, "We want to stop here"
 
                     if BBB:
                         if chapterNumber != lastChapterNumber: # We've started a new chapter

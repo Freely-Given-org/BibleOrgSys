@@ -236,7 +236,7 @@ class PierceOnlineBible( Bible ):
             #"""
             ##if BibleOrgSysGlobals.debugFlag:
                 ##dPrint( 'Quiet', DEBUGGING_THIS_MODULE, t("getBinaryString( {}, {} )").format( binary, numBytes ) )
-            #if len(binary) < numBytes: halt # Too few bytes provided
+            #if len(binary) < numBytes: assert False, "We want to stop here" # Too few bytes provided
             #result = ''
             #for j, value in enumerate( binary ):
                 #if j>=numBytes or value==0: break
@@ -468,7 +468,7 @@ class PierceOnlineBible( Bible ):
             if BibleOrgSysGlobals.debugFlag:
                 if self.characterBitSize == 8: assert tokenBytes[1] == 32 # Space
                 elif self.characterBitSize == 16: assert tokenBytes[1] == 0
-                else: halt
+                else: assert False, "We want to stop here"
 
             index = 0
             #self.tokenBytes = []
@@ -549,7 +549,7 @@ class PierceOnlineBible( Bible ):
                         if nibbleIndex == 0: n1, n2 = nibbles & 0x0F, (nibbles & 0xF0) >> 4; nibbleIndex = 2
                         elif nibbleIndex == 1: n2, n3 = nibbles & 0x0F, (nibbles & 0xF0) >> 4; nibbleIndex = 3
                         elif nibbleIndex == 2: n3, n4 = nibbles & 0x0F, (nibbles & 0xF0) >> 4; nibbleIndex = 4
-                        else: halt
+                        else: assert False, "We want to stop here"
                         if nibbleIndex >= 3:
                             something = (n3<<8) + (n2<<4) + n1
                             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"nibbles1 {nibbleIndex} {n1:02x} {n2:02x} {n3:02x} {n4:02x} {something:04x}" )
@@ -566,7 +566,7 @@ class PierceOnlineBible( Bible ):
                                 lastPointer = pointer
                             #else:
                                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Skipped zero entry at {pointer}" )
-                else: halt
+                else: assert False, "We want to stop here"
                 lastIE = iE
                 count += 1
             assert index == numTextIndexBytes
@@ -652,7 +652,7 @@ class PierceOnlineBible( Bible ):
                 if lastPointer == -1: firstPointer = pointer
                 index += 4
                 self.optStuff1.append( pointer )
-                if len(self.optStuff1) > 1000: halt
+                if len(self.optStuff1) > 1000: assert False, "We want to stop here"
                 lastPointer = pointer
             if BibleOrgSysGlobals.debugFlag:
                 vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"    {len(self.optStuff1)}={len(self.optStuff1):04x} (seems to match number of words below) increasing 16-bit pointers (or are they bigger?) {firstPointer}={firstPointer:04x}..{lastPointer}={lastPointer:04x} loaded from {startIndex:04x} onwards" )
@@ -793,7 +793,7 @@ class PierceOnlineBible( Bible ):
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'b1={b1:02x}={b1} w2={w2:04x}={w2}' )
                     total += w2
                     self.xrefIndex.append( (b1,diskPointer2+w2) )
-                #if len(self.xrefIndex) > 10: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' ); halt
+                #if len(self.xrefIndex) > 10: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' ); assert False, "We want to stop here"
                 count += 1
             assert index == numXrefIndexBytes
             numXrefIndexEntries = len(self.xrefIndex)
@@ -873,7 +873,7 @@ class PierceOnlineBible( Bible ):
                     if w2 == 0 and len(self.StrongsIndex)>8849: break
                     total += w2
                     self.StrongsIndex.append( (total) )
-                #if len(self.xrefIndex) > 10: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' ); halt
+                #if len(self.xrefIndex) > 10: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' ); assert False, "We want to stop here"
                 count += 1
             assert index == numXrefIndexBytes
             numStrongsIndexEntries = len(self.StrongsIndex)
@@ -1063,7 +1063,7 @@ class PierceOnlineBible( Bible ):
                 assert not headingFlag # Should be off at the end of the verse
 
             # Now scan for open and close fields
-            #if reference==('SA2','23','8'): vPrint( 'Quiet', DEBUGGING_THIS_MODULE, reference, repr(resultString) ); halt
+            #if reference==('SA2','23','8'): vPrint( 'Quiet', DEBUGGING_THIS_MODULE, reference, repr(resultString) ); assert False, "We want to stop here"
             for openCode,newOpenCode,closeCode,newCloseCode in ( ('\x1c','STARTC','\x1c','ENDC'),
                                                                 ('\x1e','STARTE','\x1e','ENDE'),
                                                                 ('\x1f','STARTF','\x1f','ENDF'),
@@ -1082,7 +1082,7 @@ class PierceOnlineBible( Bible ):
                         resultString = resultString.replace( closeCode, newCloseCode, 1 )
                     ix = resultString.find( openCode, ix )
                 if resultString.find( closeCode, ix ) != -1:
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'Unexpected {closeCode!r} close code'  ); halt
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'Unexpected {closeCode!r} close code'  ); assert False, "We want to stop here"
             #if BibleOrgSysGlobals.debugFlag: # final check
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, reference, repr(resultString), resultString )
                 #assert '\\x' not in repr(resultString)  Makes no sense for special characters
@@ -1198,9 +1198,9 @@ class PierceOnlineBible( Bible ):
                             if something in verseString: printFlag = True
                         if printFlag or DEBUGGING_THIS_MODULE:
                             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n{self.abbreviation} {n} {BCVRef} = {verseString!r}" )
-                            if '<<020' in verseString: halt
-                            #if '<<62' in verseString: halt
-                        #if BCVRef == ('GEN','20','2'): halt
+                            if '<<020' in verseString: assert False, "We want to stop here"
+                            #if '<<62' in verseString: assert False, "We want to stop here"
+                        #if BCVRef == ('GEN','20','2'): assert False, "We want to stop here"
                     except IndexError:
                         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"No such verse: {self.abbreviation} {n} {BCVRef}" )
 
@@ -1213,7 +1213,7 @@ class PierceOnlineBible( Bible ):
                     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"         {strongs} = {getBibleText( xrefStuff )!r}" )
 
             #if self.missingWordNumbers:
-                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'missingWordNumbers', sorted(self.missingWordNumbers) ); halt
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'missingWordNumbers', sorted(self.missingWordNumbers) ); assert False, "We want to stop here"
         # end of load.test
 
 
@@ -1245,7 +1245,7 @@ class PierceOnlineBible( Bible ):
             for vbh in VBH1s: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'{vbh:10} = {len(VBH1s[vbh])} {VBH1s[vbh]}' )
             for vbh in VBH2s: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'{vbh:10} = {len(VBH2s[vbh])} {VBH2s[vbh]}' )
             for vbh in VBH3s: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'{vbh:10} = {len(VBH3s[vbh])} {VBH3s[vbh]}' )
-            halt
+            assert False, "We want to stop here"
 
         self.doPostLoadProcessing()
     # end of PierceOnlineBible.load

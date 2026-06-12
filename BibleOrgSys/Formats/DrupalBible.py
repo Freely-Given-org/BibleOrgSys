@@ -184,7 +184,7 @@ def DrupalBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=
                     firstLine = BibleOrgSysGlobals.peekIntoFile( thisFilename, tryFolderName )
                     if firstLine is None: continue # seems we couldn't decode the file
                     if ( not firstLine.startswith( '\ufeff*Bible' ) ) and ( not firstLine.startswith( "*Bible" ) ):
-                        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"DrupalBible (unexpected) first line was {thisFilename!r} in {firstLine}" ); halt
+                        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"DrupalBible (unexpected) first line was {thisFilename!r} in {firstLine}" ); assert False, "We want to stop here"
                         continue
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "BFC_here", repr(tryFolderName), repr(thisFilename) )
                 foundProjects.append( (tryFolderName, thisFilename,) )
@@ -284,7 +284,7 @@ class DrupalBible( Bible ):
                     bits = line.split( '|' )
                     bookCode, chapterNumberString, verseNumberString, lineMark, verseText = bits
                     #chapterNumber, verseNumber = int( chapterNumberString ), int( verseNumberString )
-                    if lineMark: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, repr(lineMark) ); halt
+                    if lineMark: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, repr(lineMark) ); assert False, "We want to stop here"
                     BBBresult = bos_books_codes_py.drupal_book_code_to_bos_book_code( bookCode )
                     BBB = BBBresult if isinstance( BBBresult, str ) else BBBresult[0] # Result can be string or list of strings (best guess first)
                     if BBB != lastBBB:
@@ -301,7 +301,7 @@ class DrupalBible( Bible ):
                     verseText = verseText.replace( '<', '\\it ' ).replace( '>', '\\it*' )
                     thisBook.addLine( 'v', verseNumberString + ' ' + verseText )
 
-                else: halt
+                else: assert False, "We want to stop here"
 
         # Save the final book
         self.stashBook( thisBook )

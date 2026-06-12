@@ -1072,7 +1072,7 @@ def main() -> None:
     if not os.path.exists( WRITEABLE_DISTRIBUTABLE_RESOURCES_FOLDERPATH ):
         #vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Creating folder {WRITEABLE_DISTRIBUTABLE_RESOURCES_FOLDERPATH}…" )
         os.makedirs( WRITEABLE_DISTRIBUTABLE_RESOURCES_FOLDERPATH )
-        # halt # This folder should already exist
+        # assert False, "We want to stop here" # This folder should already exist
 
     runCreateAll( WRITEABLE_DISTRIBUTABLE_RESOURCES_FOLDERPATH, submit2BDB=BibleOrgSysGlobals.commandLineArguments.export )
 # end of CreateDistributableResources.main

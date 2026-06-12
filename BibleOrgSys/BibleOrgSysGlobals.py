@@ -89,11 +89,12 @@ Contains functions:
 
 CHANGELOG:
     2023-09-28 Fixed preloadCommonData() to not create new variables
-    2023-10-11 Raised XMLError on XML errors (rather than halt)
+    2023-10-11 Raised XMLError on XML errors (rather than assert False, "We want to stop here")
     2024-06-14 Print more info for failed pickles
     2025-05-31 Add useful rreplace function
     2025-11-19 Add mission critical flag to global parameters
     2025-05-07 Remove loadedBibleBooksCodes (because we now use the Rust functions)
+    2026-06-06 Changed CheckXML.. functions to return True/False so can be preceded by 'assert' (then completely ignored with -OO flag)
 """
 import sys
 import logging
@@ -134,14 +135,14 @@ BOOKLIST_88 = BOOKLIST_OT39 + BOOKLIST_DC22 + BOOKLIST_NT27
 assert len( BOOKLIST_88 ) == 88
 
 
-LAST_MODIFIED_DATE = '2026-06-04' # by RJH
+LAST_MODIFIED_DATE = '2026-06-06' # by RJH
 SHORT_PROGRAM_NAME = "BibleOrgSysGlobals"
 PROGRAM_NAME = "BibleOrgSys (BOS) Globals"
-PROGRAM_VERSION = '0.96'
+PROGRAM_VERSION = '0.97'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
-errorOnXMLWarning = True # Used for XML debugging
+errorOnXMLWarning = False # Used for XML debugging
 
 
 # Global variables
@@ -561,7 +562,7 @@ def getLatestPythonModificationDate() -> str:
                                 latestDD = DD
                                 #collectedFilepaths.append( (filepath,lineBit) )
                             break
-    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, latestYYYY, latestMM, latestDD ); halt
+    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, latestYYYY, latestMM, latestDD ); assert False, "We want to stop here"
     return f'{latestYYYY}-{latestMM:02}-{latestDD:02}'
 # end of BibleOrgSysGlobals.getLatestPythonModificationDate
 
@@ -1107,7 +1108,7 @@ def elementStr( element, level:int=0 ) -> str:
 # end of BibleOrgSysGlobals.elementStr
 
 
-def checkXMLNoAttributes( element, locationString, idString=None, loadErrorsDict=None ):
+def checkXMLNoAttributes( element, locationString, idString=None, loadErrorsDict=None ) -> bool:
     """
     Give a warning if the element contains any attributes.
     """
@@ -1117,10 +1118,12 @@ def checkXMLNoAttributes( element, locationString, idString=None, loadErrorsDict
         if loadErrorsDict is not None: loadErrorsDict.append( warningString )
         if strictCheckingFlag or debugFlag and errorOnXMLWarning:
             raise XMLError( f"Unexpected '{attrib}' attribute = '{value}' @ '{locationString}'{' id='+idString if idString else ''}" )
+        return False
+    return True
 # end of BibleOrgSysGlobals.checkXMLNoAttributes
 
 
-def checkXMLNoText( element, locationString, idString=None, loadErrorsDict=None ):
+def checkXMLNoText( element, locationString, idString=None, loadErrorsDict=None ) -> bool:
     """
     Give an error if the element text contains anything other than whitespace.
     """
@@ -1130,9 +1133,11 @@ def checkXMLNoText( element, locationString, idString=None, loadErrorsDict=None 
         if loadErrorsDict is not None: loadErrorsDict.append( errorString )
         if strictCheckingFlag or debugFlag and errorOnXMLWarning:
             raise XMLError( f"Unexpected text = '{element.text}' @ '{locationString}'{' id='+idString if idString else ''}" )
+        return False
+    return True
 # end of BibleOrgSysGlobals.checkXMLNoText
 
-def checkXMLNoTail( element, locationString, idString=None, loadErrorsDict=None ):
+def checkXMLNoTail( element, locationString, idString=None, loadErrorsDict=None ) -> bool:
     """
     Give a warning if the element tail contains anything other than whitespace.
     """
@@ -1142,10 +1147,12 @@ def checkXMLNoTail( element, locationString, idString=None, loadErrorsDict=None 
         if loadErrorsDict is not None: loadErrorsDict.append( warningString )
         if strictCheckingFlag or debugFlag and errorOnXMLWarning:
             raise XMLError( f"Unexpected tail = '{element.tail}' @ '{locationString}'{' id='+idString if idString else ''}" )
+        return False
+    return True
 # end of BibleOrgSysGlobals.checkXMLNoTail
 
 
-def checkXMLNoSubelements( element, locationString, idString=None, loadErrorsDict=None ):
+def checkXMLNoSubelements( element, locationString, idString=None, loadErrorsDict=None ) -> bool:
     """
     Give an error if the element contains any sub-elements.
     """
@@ -1155,9 +1162,11 @@ def checkXMLNoSubelements( element, locationString, idString=None, loadErrorsDic
         if loadErrorsDict is not None: loadErrorsDict.append( errorString )
         if strictCheckingFlag or debugFlag and errorOnXMLWarning:
             raise XMLError( f"Unexpected '{subelement.tag}' subelement @ '{locationString}'{' id='+idString if idString else ''}" )
+        return False
+    return True
 # end of BibleOrgSysGlobals.checkXMLNoSubelements
 
-def checkXMLNoSubelementsWithText( element, locationString, idString=None, loadErrorsDict=None ):
+def checkXMLNoSubelementsWithText( element, locationString, idString=None, loadErrorsDict=None ) -> bool:
     """
     Checks that the element doesn't have text AND subelements
     """
@@ -1169,6 +1178,8 @@ def checkXMLNoSubelementsWithText( element, locationString, idString=None, loadE
             if loadErrorsDict is not None: loadErrorsDict.append( warningString )
             if strictCheckingFlag or debugFlag and errorOnXMLWarning:
                 raise XMLError( f"Unexpected text '{element.text}' or tail '{element.tail}' with '{subelement.tag}' subelement @ '{locationString}'{' id='+idString if idString else ''}" )
+            return False
+    return True
 # end of BibleOrgSysGlobals.checkXMLNoSubelementsWithText
 
 
@@ -1189,7 +1200,7 @@ def getFlattenedXML( element, locationString, idString=None, level=0 ) -> str:
     if level: # For lower levels (other than the called one) need to add the tags
         result = f"{result}<{element.tag}{f' {attributes}' if attributes else ''}>"
     elif attributes:
-        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "We are losing attributes here:", attributes ); halt
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "We are losing attributes here:", attributes ); assert False, "We want to stop here"
         result = f'{result}<{attributes}>'
 
     if element.text: result = f'{result}{element.text}'
@@ -1704,7 +1715,7 @@ setVerbosity( verbosityString )
     ## now 34 ['cls', 'li1', 'li2', 'li3', 'li4', 'm', 'mi', 'nb', 'p', 'pc', 'ph1', 'ph2', 'ph3', 'ph4',
     ##    'pi1', 'pi2', 'pi3', 'pi4', 'pm', 'pmc', 'pmo', 'pmr', 'pr', 'q1', 'q2', 'q3', 'q4', 'qa', 'qc',
     ##    'qm1', 'qm2', 'qm3', 'qm4', 'qr']
-    ##dPrint( 'Quiet', DEBUGGING_THIS_MODULE, len(USFMParagraphMarkers), sorted(USFMParagraphMarkers) ); halt
+    ##dPrint( 'Quiet', DEBUGGING_THIS_MODULE, len(USFMParagraphMarkers), sorted(USFMParagraphMarkers) ); assert False, "We want to stop here"
 
 
 

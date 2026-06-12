@@ -442,7 +442,7 @@ class SimpleVersesKey():
         # return resultStr
         #if self.keyType=='2V': return f"{self.BBB} {self.C}:{self.V1}(?:!{self.S1})?,{self.V2}(?:!{self.S2})?"
         #if self.keyType=='2CV': return f"{self.BBB} {self.C1}:{self.V1}(?:!{self.S1})?;{self.C2}:{self.V2}(?:!{self.S2})?"
-        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, self.keyType ); halt
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, self.keyType ); assert False, "We want to stop here"
 
     def getVerseKeyText( self ):
         resultStr = ''
@@ -827,7 +827,7 @@ class VerseRangeKey():
         #if self.keyType=='V-V': return f"{self.BBB} {self.C}:{self.V1}(?:!{self.S1})?-{self.V2}(?:!{self.S2})?"
         #if self.keyType=='CV-CV': return f"{self.BBB} {self.C}:{self.V1}(?:!{self.S1})?-{self.C2}:{self.V2}(?:!{self.S2})?"
         #if self.keyType=='C': return f"{self.BBB} {self.C}"
-        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, self.keyType ); halt
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, self.keyType ); assert False, "We want to stop here"
 
 
     def getVerseKeyText( self ):
@@ -1062,7 +1062,7 @@ class FlexibleVersesKey():
         #if self.keyType=='RESULT': return self.result.getShortText()
         #if self.keyType=='V-V,V': return f'{self.BBB} {self.C}:{self.V1}(?:!{self.S1})?-{self.V2}(?:!{self.S2})?,{self.V3}(?:!{self.S3})?'
         #if self.keyType=='V,V-V': return f'{self.BBB} {self.C}:{self.V1}(?:!{self.S1})?,{self.V2}(?:!{self.S2})?-{self.V3}(?:!{self.S3})?'
-        #halt
+        #assert False, "We want to stop here"
 
 
     def getVerseKeyText( self ):

@@ -105,7 +105,7 @@ class UnknownBible:
         # Check that the given folder is readable
         if not os.access( givenPathname, os.R_OK ):
             logger.critical( f"Given {givenPathname!r} pathname is unreadable" )
-            if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: halt
+            if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: assert False, "We want to stop here"
             self.folderReadable = False
         else: self.folderReadable = True
 

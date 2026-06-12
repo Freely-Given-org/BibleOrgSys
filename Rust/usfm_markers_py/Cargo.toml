@@ -8,6 +8,6 @@ name = "usfm_markers_py"
 crate-type = ["cdylib"]
 
 [dependencies]
-pyo3 = { workspace = true, features = ["extension-module", "abi3-py38"] }
+pyo3 = { workspace = true, features = ["extension-module", "abi3-py312"] }
 usfm_markers = { path = "../usfm_markers", editable = true }  # Local dependency
 compact_str.workspace = true

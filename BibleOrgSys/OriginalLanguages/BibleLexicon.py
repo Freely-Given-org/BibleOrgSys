@@ -330,6 +330,7 @@ class BibleLexicon:
         Returns None if the key is not found.
         """
         fnPrint( DEBUGGING_THIS_MODULE, f"BibleLexicon.getBrDrBrEntryHTML( {repr(key)} )" )
+        # print( f"\nBibleLexicon.getBrDrBrEntryHTML({key})" )
         return self.hLexicon.getBrDrBrEntryHTML( key )
     # end of BibleLexicon.getBrDrBrEntryHTML
 

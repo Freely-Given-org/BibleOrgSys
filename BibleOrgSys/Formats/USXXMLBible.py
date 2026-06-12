@@ -599,7 +599,7 @@ def createUSXXMLBible( self, outputFolderpath:Path|str, controlDict, validationS
                 adjText = adjText.replace( '</char></char>', f"</char>{BibleOrgSysGlobals.NL}{' '*4}</char>", 1 )
                 dPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Now '{adjText}'" )
             # if BBB=='PSA' and int(C)>4:
-            #     halt
+            #     assert False, "We want to stop here"
             return adjText
         # end of toUSXXML._handleInternalTextMarkersForUSX
 
@@ -864,7 +864,7 @@ def createUSXXMLBible( self, outputFolderpath:Path|str, controlDict, validationS
                     elif extraType == 'ww':
                         # NOTE: The insert point for \ww fields is at the end of the previous \w field (immediately before the \w*)
                         #       However, if it's only a Strongs number, the \w field was removed completely
-                        # if BBB == 'RUT': print( f"{BBB} {C} {V} ww is {extra} with '{adjText}'"); halt
+                        # if BBB == 'RUT': print( f"{BBB} {C} {V} ww is {extra} with '{adjText}'"); assert False, "We want to stop here"
                         ixPipe = extraText.find('|')
                         assert ixPipe != -1
                         if extraText.count('=')==1 and '|strong="' in extraText: # e.g., 'And|strong="H1121"'

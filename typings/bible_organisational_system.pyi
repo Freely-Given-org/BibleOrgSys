@@ -68,14 +68,21 @@ __all__ = [
 
 # Module: bible_organisational_system
 def exportToText(books_dict: dict, output_path_str: str, column_width: int) -> set:
-    """
-    Python-accessible wrapper for `export_to_text`.
+    """Python-accessible wrapper for `export_to_text`."""
 
-    Iterates over Python book objects in self.books, extracts their underlying
-    Rust `InternalBibleEntryList` from `_processedLines`, and runs the parallel export engine.
-    """
-
-def exportToHtml5(books_dict: dict, output_path_str: str, column_width: int) -> set:
+def exportToHtml5(
+    books_dict: dict,
+    output_path_str: str,
+    bible_name: str,
+    book_order: list[str],
+    book_names_dict: dict,
+    filename_dict_py: dict,
+    control_dict_py: dict,
+    program_name: str,
+    program_version: str,
+    today_str: str,
+    xref_callback: t.Any | None,
+) -> tuple[set, set]:
     """Python-accessible wrapper for `export_to_html5`."""
 
 def getSmallLeadingInt(s: str) -> int:

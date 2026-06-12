@@ -217,7 +217,7 @@ class BibleOrganisationalSystems:
         assert systemName and isinstance( systemName, str )
         assert valueName and isinstance( valueName, str )
         thisSystem = self.getOrganisationalSystem( systemName, suppressErrors )
-        #if systemName=='KJV-1611': vPrint( 'Quiet', DEBUGGING_THIS_MODULE, thisSystem ); halt
+        #if systemName=='KJV-1611': vPrint( 'Quiet', DEBUGGING_THIS_MODULE, thisSystem ); assert False, "We want to stop here"
         if thisSystem is not None:
             assert thisSystem
             if valueName in thisSystem: return thisSystem[valueName]
@@ -236,7 +236,7 @@ class BibleOrganisationalSystems:
                         if trySystemName == systemName: # Avoid infinite recursion
                             trySystemName += '_' + possibleType
                         result = self.getOrganisationalSystemValue( trySystemName, valueName, suppressErrors=True )
-                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"trySystemName result is {repr(result)}" ); halt
+                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"trySystemName result is {repr(result)}" ); assert False, "We want to stop here"
                         if result is not None: return result
             # else we couldn't find it anywhere
             logging.error( f"{systemName} Bible Organisational System has no {valueName} specified (a)" )

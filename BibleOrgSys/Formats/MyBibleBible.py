@@ -391,7 +391,7 @@ class MyBibleBible( Bible ):
             if value == 'false': value = False
             elif value == 'true': value = True
             self.suppliedMetadata['MyBible'][name] = value
-        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, self.suppliedMetadata['MyBible'] ); halt
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, self.suppliedMetadata['MyBible'] ); assert False, "We want to stop here"
 
         if self.getSetting('language') in ('ru','rus',) \
         or self.getSetting('Language') in ('ru','rus',) \
@@ -434,7 +434,7 @@ class MyBibleBible( Bible ):
                         except AssertionError as err:
                             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Failed assertion: {err}")
                             if attempt == 1: pass
-                            else: halt
+                            else: assert False, "We want to stop here"
                 else:
                     raise ValueError( f"Unexpected number of columns in MyBible BOOKS_ALL table row: {len(row)}" )
                 if BibleOrgSysGlobals.debugFlag: assert bookNumber in BOOKNUMBER_TABLE
@@ -483,7 +483,7 @@ class MyBibleBible( Bible ):
         else: # no book info loaded
             if '.commentaries.' not in self.sourceFilename:
                 logging.critical( f"MyBibleBible.preload for {self.sourceFilename} had no books table" )
-        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, self.suppliedMetadata['MyBible'] ); halt
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, self.suppliedMetadata['MyBible'] ); assert False, "We want to stop here"
         self.preloadDone = True
     # end of MyBibleBible.preload
 
@@ -577,7 +577,7 @@ class MyBibleBible( Bible ):
             # Check for left-overs
             if '<' in line or '>' in line: # or '{' in line or '}' in line: RSTI has braces
                 vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"importVerseLine( {V!r} failed at {name} {BBB}:{C} {line!r} from {originalLine!r} )" )
-                if DEBUGGING_THIS_MODULE: halt
+                if DEBUGGING_THIS_MODULE: assert False, "We want to stop here"
 
             # Ok, use the adjusted info
             if C!=lastC:
@@ -613,7 +613,7 @@ class MyBibleBible( Bible ):
                 #C, V, line = row
             #except TypeError: # This reference is missing (row is None)
                 ##dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "something wrong at", BBB, C, V )
-                ##if BibleOrgSysGlobals.debugFlag: halt
+                ##if BibleOrgSysGlobals.debugFlag: assert False, "We want to stop here"
                 ##dPrint( 'Quiet', DEBUGGING_THIS_MODULE, row )
                 #line = None
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, mbBookNumber, BBB, C, V, "MyBib file line is", repr(line) )
@@ -680,7 +680,7 @@ class MyBibleBible( Bible ):
                 if '<a ' not in line:
                     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"importCommentaryLine( {V!r} failed at {name} {BBB}:{C} {line!r} from {originalLine!r} )" )
                     if DEBUGGING_THIS_MODULE:
-                        halt
+                        assert False, "We want to stop here"
 
             # Ok, use the adjusted info
             if C!=lastC:
@@ -724,13 +724,13 @@ class MyBibleBible( Bible ):
                 if C2 is None or C2==C:
                     assert V2 > V
                     V = f'{V}-{V2}' # Make a verse bridge
-                else: halt # it's across a chapter boundary -- not finished
+                else: assert False, "We want to stop here" # it's across a chapter boundary -- not finished
             #try:
                 #row = self.cursor.fetchone()
                 #C, V, line = row
             #except TypeError: # This reference is missing (row is None)
                 ##dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "something wrong at", BBB, C, V )
-                ##if BibleOrgSysGlobals.debugFlag: halt
+                ##if BibleOrgSysGlobals.debugFlag: assert False, "We want to stop here"
                 ##dPrint( 'Quiet', DEBUGGING_THIS_MODULE, row )
                 #line = None
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, mbBookNumber, BBB, C, V, "MyBib file line is", repr(line) )
@@ -815,7 +815,7 @@ def createMyBibleModule( self, outputFolder, controlDict ) -> bool:
                         else:
                             logging.error( f"MyBible adjustLine: {self.abbreviation if self.abbreviation else self.name} {noteBit[:3]!r} footnote field not handled properly yet." )
                             newNote += '[[' + noteBit[3:] + ']]'
-                            if BibleOrgSysGlobals.DEBUGGING_THIS_MODULE and DEBUGGING_THIS_MODULE: halt
+                            if BibleOrgSysGlobals.DEBUGGING_THIS_MODULE and DEBUGGING_THIS_MODULE: assert False, "We want to stop here"
                 else: newNote = adjNote # No backslash fields inside note
                 line = line[:match.start()] + '<n>' + newNote + '</n>' + line[match.end():]
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "line2", repr(line) )
@@ -844,7 +844,7 @@ def createMyBibleModule( self, outputFolder, controlDict ) -> bool:
             ###if '\\f' in originalLine:
                 ###dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "o", originalLine )
                 ###dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "n", line )
-                ###halt
+                ###assert False, "We want to stop here"
 
         if '\\' in line: # Handle character formatting fields
             line = removeUSFMCharacterField( 'fig', line, closed_flag=True ) # Remove figures
@@ -884,7 +884,7 @@ def createMyBibleModule( self, outputFolder, controlDict ) -> bool:
         if '\\' in line:
             logging.warning( f"toMyBible.adjustLine: Doesn't handle formatted line yet: {BBB} {C}:{V} {line!r}" )
             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"toMyBible.adjustLine: Doesn't handle formatted line yet: {BBB} {C}:{V} {line!r}" )
-            if DEBUGGING_THIS_MODULE: halt
+            if DEBUGGING_THIS_MODULE: assert False, "We want to stop here"
         return line
     # end of toMyBible.adjustLine
 
@@ -920,7 +920,7 @@ def createMyBibleModule( self, outputFolder, controlDict ) -> bool:
                     #logging.warning( f"toMyBible.handleIntroduction: doesn't handle {BBB} {marker!r} yet" )
                     #if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE:
                         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"toMyBible.handleIntroduction: doesn't handle {BBB} {marker!r} yet" )
-                        #halt
+                        #assert False, "We want to stop here"
                     #ourGlobals['unhandledMarkers'].add( marker + ' (in intro)' )
             #V += 1 # Step to the next introductory section "verse"
 
@@ -929,7 +929,7 @@ def createMyBibleModule( self, outputFolder, controlDict ) -> bool:
             #logging.warning( f"toMyBible.handleIntroduction: Doesn't handle formatted line yet: {BBB} {composedLine!r}" )
             #if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE:
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"toMyBible.handleIntroduction: Doesn't handle formatted line yet: {BBB} {composedLine!r}" )
-                #halt
+                #assert False, "We want to stop here"
         #return composedLine.replace( '~^~', '\\' )
     ## end of toMyBible.handleIntroduction
 
@@ -1066,13 +1066,13 @@ def createMyBibleModule( self, outputFolder, controlDict ) -> bool:
                 elif lastMarker != 'v':
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, C, V, marker, lastMarker, verseData )
                     composedLine += adjustLine(BBB,C,V, text )
-                    if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: halt # This should never happen -- probably a b marker with text
+                    if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: assert False, "We want to stop here" # This should never happen -- probably a b marker with text
                 composedLine += adjustLine(BBB,C,V, text )
             else:
                 logging.warning( f"toMyBible.composeVerseLine: doesn't handle {marker!r} yet" )
                 if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE:
                     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"toMyBible.composeVerseLine: doesn't handle {marker!r} yet" )
-                    halt
+                    assert False, "We want to stop here"
                 ourGlobals['unhandledMarkers'].add( marker )
             lastMarker = marker
 
@@ -1084,7 +1084,7 @@ def createMyBibleModule( self, outputFolder, controlDict ) -> bool:
         if '\\' in composedLine:
             logging.warning( f"toMyBible.composeVerseLine: Doesn't handle formatted line yet: {BBB} {C}:{V} {composedLine!r}" )
             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"toMyBible.composeVerseLine: Doesn't handle formatted line yet: {BBB} {C}:{V} {composedLine!r}" )
-            if DEBUGGING_THIS_MODULE: halt
+            if DEBUGGING_THIS_MODULE: assert False, "We want to stop here"
         return composedLine.replace( '~^~', '\\' ).rstrip()
     # end of toMyBible.composeVerseLine
 
@@ -1368,7 +1368,7 @@ def testMyBB( indexString:str, MyBBfolder, MyBBfilename:str ) -> None:
                 vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nComparing original and re-exported MyBible files…" )
                 result = BibleOrgSysGlobals.fileCompare( MyBBfilename, MyBBfilename, MyBBfolder, outputFolder )
                 if BibleOrgSysGlobals.debugFlag:
-                    if not result: halt
+                    if not result: assert False, "We want to stop here"
 # end of testMyBB
 
 

@@ -111,6 +111,7 @@ from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisational
 from BibleOrgSys.Reference.BibleReferences import BibleReferenceList
 from BibleOrgSys.Misc.NoisyReplaceFunctions import noisyRegExDeleteAll
 import usfm_markers_py
+from usfm_markers_py import OFTEN_IGNORED_USFM_HEADER_MARKERS, USFM_ALL_INTRODUCTION_MARKERS
 
 
 LAST_MODIFIED_DATE = '2026-04-29' # by RJH
@@ -547,7 +548,7 @@ class BibleWriter( InternalBible ):
             try: rawUSFMData = bookObject._rawLines
             except AttributeError: rawUSFMData = None # it's been deleted  :-(
             if rawUSFMData:
-                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\ninternalBibleBookData", internalBibleBookData[:50] ); halt
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\ninternalBibleBookData", internalBibleBookData[:50] ); assert False, "We want to stop here"
                 #USFMAbbreviation = bos_books_codes_py.bos_book_code_to_usfm_abbrev( BBB )
                 #USFMNumber = bos_books_codes_py.bos_book_code_to_usfm_num_str( BBB )
 
@@ -561,7 +562,7 @@ class BibleWriter( InternalBible ):
                         myFile.write( f"{marker}: {text!r}\n" )
 
             internalBibleBookData = bookObject._processedLines
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\ninternalBibleBookData", internalBibleBookData[:50] ); halt
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\ninternalBibleBookData", internalBibleBookData[:50] ); assert False, "We want to stop here"
             USFMAbbreviation = bos_books_codes_py.bos_book_code_to_usfm_abbrev( BBB )
             USFMNumber = bos_books_codes_py.bos_book_code_to_usfm_num_str( BBB )
 
@@ -633,7 +634,7 @@ class BibleWriter( InternalBible ):
         # Adjust the extracted outputs
         for BBB,bookObject in self.books.items():
             internalBibleBookData = bookObject._processedLines
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\ninternalBibleBookData", internalBibleBookData[:50] ); halt
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\ninternalBibleBookData", internalBibleBookData[:50] ); assert False, "We want to stop here"
             USFMAbbreviation = bos_books_codes_py.bos_book_code_to_usfm_abbrev( BBB )
             USFMNumber = bos_books_codes_py.bos_book_code_to_usfm_num_str( BBB )
 
@@ -799,7 +800,7 @@ class BibleWriter( InternalBible ):
         # Adjust the extracted outputs
         for BBB,bookObject in self.books.items():
             internalBibleBookData = bookObject._processedLines
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\ninternalBibleBookData", internalBibleBookData[:50] ); halt
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\ninternalBibleBookData", internalBibleBookData[:50] ); assert False, "We want to stop here"
             USFMAbbreviation = bos_books_codes_py.bos_book_code_to_usfm_abbrev( BBB )
             USFMNumber = bos_books_codes_py.bos_book_code_to_usfm_num_str( BBB )
 
@@ -968,7 +969,7 @@ class BibleWriter( InternalBible ):
         # Adjust the extracted outputs
         for BBB,bookObject in self.books.items():
             internalBibleBookData = bookObject._processedLines
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\ninternalBibleBookData", internalBibleBookData[:50] ); halt
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\ninternalBibleBookData", internalBibleBookData[:50] ); assert False, "We want to stop here"
             USFMAbbreviation = bos_books_codes_py.bos_book_code_to_usfm_abbrev( BBB )
             USFMNumber = bos_books_codes_py.bos_book_code_to_usfm_num_str( BBB )
 
@@ -1017,7 +1018,7 @@ class BibleWriter( InternalBible ):
                                 logger.error( f"toESFM: Indent level can't go negative at {BBB} {j} {pseudoMarker} {value!r}" )
                                 if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE:
                                     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"toESFM: Indent level can't go negative at {BBB} {j} {pseudoMarker} {value!r}" )
-                                    if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag: halt
+                                    if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag: assert False, "We want to stop here"
                         ESFMLine = ' ' * indentLevel * indentSize
 
                         if pseudoMarker in ('c#','vp#',):
@@ -1075,14 +1076,14 @@ class BibleWriter( InternalBible ):
                             else: ESFMLine += f'\\{pseudoMarker} {adjValue}'
 
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, pseudoMarker, repr(ESFMLine) )
-                    #if BBB=='GEN' and j > 20: halt
+                    #if BBB=='GEN' and j > 20: assert False, "We want to stop here"
                     if ESFMLine: myFile.write( f'{ESFMLine}\n' )
                     if pseudoMarker in BOS_NESTING_MARKERS: # or pseudoMarker in ('ms','ms1','ms2','ms3','ms4'):
                         indentLevel += 1
                         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, pseudoMarker, indentLevel )
             if indentLevel !=  0:
                 logger.error( f"toESFM: Ended with wrong indent level of {indentLevel} for {BBB}" )
-                if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: halt
+                if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: assert False, "We want to stop here"
 
         if ignoredMarkers:
             logger.info( f"toESFM: Ignored markers were {ignoredMarkers}" )
@@ -1125,6 +1126,31 @@ class BibleWriter( InternalBible ):
         columnWidth = 80
         #verseByVerse = True
 
+        try:
+            import bible_organisational_system
+            if hasattr(bible_organisational_system, 'exportToText'):
+                vPrint('Normal', DEBUGGING_THIS_MODULE, "  toText: Using Rust bible_organisational_system for parallel plain text export...")
+                ignoredMarkers = bible_organisational_system.exportToText(self.books, str(outputFolderpath), columnWidth)
+                
+                # Zip the output folders to match Python's expectations
+                for folder in (outputFolderpath, outputFolderpath2):
+                    vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Zipping text files in {folder}…" )
+                    zf = zipfile.ZipFile( os.path.join( folder, 'AllTextFiles.zip' ), 'w', compression=zipfile.ZIP_DEFLATED )
+                    for filename in os.listdir( folder ):
+                        filepath = os.path.join( folder, filename )
+                        if not filename.endswith( '.zip' ) and os.path.isfile( filepath ):
+                            zf.write( filepath, filename ) # Save in the archive without the path
+                    zf.close()
+                
+                if ignoredMarkers:
+                    logger.info( f"toText: Ignored markers were {ignoredMarkers}" )
+                    vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  WARNING: Ignored toText markers were {ignoredMarkers}" )
+
+                if BibleOrgSysGlobals.maxProcesses > 1:
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  BibleWriter.toText finished successfully." )
+                return True
+        except ImportError:
+            pass
 
         def writeTextFile( BBB:str, internalBibleBookData, columnWidth, wtfOutputFolder, withBOMFlag ):
             """
@@ -1371,7 +1397,7 @@ class BibleWriter( InternalBible ):
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, " returns", result )
                     if result.count('C')>1 or result.count('V')>1:
                         logger.critical( f"toMarkdown.liveCV created a bad link: {V!r} at {result} {BBB}:{C}" )
-                        if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: halt
+                        if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: assert False, "We want to stop here"
                     return '#' + result
                 # end of liveCV
 
@@ -1458,7 +1484,7 @@ class BibleWriter( InternalBible ):
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "noteMD", BBB, noteMD )
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "endMD", endMD )
                     ourGlobals['footnoteMD' if noteType=='footnote' else 'endnoteMD'].append( endMD )
-                    #if fnIndex > 2: halt
+                    #if fnIndex > 2: assert False, "We want to stop here"
 
                     return noteMD
                 # end of __formatMarkdownVerseText.processNote
@@ -1519,7 +1545,7 @@ class BibleWriter( InternalBible ):
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "xrefMD", BBB, xrefMD )
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "endMD", endMD )
                     ourGlobals['xrefMD'].append( endMD )
-                    #if xrefIndex > 2: halt
+                    #if xrefIndex > 2: assert False, "We want to stop here"
 
                     return xrefMD
                 # end of __formatMarkdownVerseText.processXRef
@@ -1546,7 +1572,7 @@ class BibleWriter( InternalBible ):
                     ##dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "footnoteMD", BBB, footnoteMD )
                     ##dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "endMD", endMD )
                     #ourGlobals['footnoteMD'].append( endMD )
-                    ##if fnIndex > 2: halt
+                    ##if fnIndex > 2: assert False, "We want to stop here"
 
                     return figureMD
                 # end of __formatMarkdownVerseText.processFigure
@@ -1633,7 +1659,7 @@ class BibleWriter( InternalBible ):
             if '\\' in text or '<' in text or '>' in text:
                 logger.error( f"formatMarkdownVerseText programming error: unprocessed code in {C!r} from {V!r} at {text} {givenText}:{BBB}" )
                 vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"formatMarkdownVerseText: unprocessed code in {C!r} from {V!r} at {text} {givenText}:{BBB}" )
-                if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: halt
+                if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: assert False, "We want to stop here"
             return text
         # end of __formatMarkdownVerseText
 
@@ -1839,7 +1865,7 @@ class BibleWriter( InternalBible ):
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "noteHTML5", BBB, noteHTML5 )
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "endHTML5", endHTML5 )
                 ourGlobals['footnoteHTML5' if noteType=='footnote' else 'endnoteHTML5'].append( endHTML5 )
-                #if fnIndex > 2: halt
+                #if fnIndex > 2: assert False, "We want to stop here"
 
                 return noteHTML5
             # end of __formatHTMLVerseText.processNote
@@ -1900,7 +1926,7 @@ class BibleWriter( InternalBible ):
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "xrefHTML5", BBB, xrefHTML5 )
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "endHTML5", endHTML5 )
                 ourGlobals['xrefHTML5'].append( endHTML5 )
-                #if xrefIndex > 2: halt
+                #if xrefIndex > 2: assert False, "We want to stop here"
 
                 return xrefHTML5
             # end of __formatHTMLVerseText.processXRef
@@ -1927,7 +1953,7 @@ class BibleWriter( InternalBible ):
                 ##dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "footnoteHTML5", BBB, footnoteHTML5 )
                 ##dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "endHTML5", endHTML5 )
                 #ourGlobals['footnoteHTML5'].append( endHTML5 )
-                ##if fnIndex > 2: halt
+                ##if fnIndex > 2: assert False, "We want to stop here"
 
                 return figureHTML5
             # end of __formatHTMLVerseText.processFigure
@@ -2022,7 +2048,7 @@ class BibleWriter( InternalBible ):
         if '\\' in text:
             logger.error( f"formatHTMLVerseText programming error: unprocessed code in {C!r} from {V!r} at {text} {givenText}:{BBB}" )
             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"formatHTMLVerseText: unprocessed backslash code in {C!r} from {V!r} at {text} {givenText}:{BBB}" )
-            if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: halt
+            if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: assert False, "We want to stop here"
         return text
     # end of __formatHTMLVerseText
 
@@ -2423,7 +2449,7 @@ class BibleWriter( InternalBible ):
                     if haveOpenVerse: writerObject.writeLineClose( 'span' ); haveOpenVerse = False
                     if haveOpenParagraph: writerObject.writeLineClose( 'p' ); haveOpenParagraph = False
                     writerObject.writeLineOpen( 'p', ('class',pqHTMLClassDict[marker]) ); haveOpenParagraph = True
-                    if text and BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: halt
+                    if text and BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: assert False, "We want to stop here"
                 elif marker in ('li1','li2','li3','li4','ili1','ili2','ili3','ili4',):
                     if marker.startswith('li'): m, pClass, iClass = marker[2], 'list'+marker[2], 'listItem'+marker[2]
                     else: m, pClass, iClass = marker[3], 'introductionList'+marker[3], 'introductionListItem'+marker[3]
@@ -2456,14 +2482,14 @@ class BibleWriter( InternalBible ):
                 else:
                     if text:
                         logger.critical( f"toHTML5: {self.abbreviation} lost text in {marker} field in {BBB} {C}:{V} {text!r}" )
-                        if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: halt
+                        if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: assert False, "We want to stop here"
                     if extras:
                         logger.critical( f"toHTML5: {self.abbreviation} lost extras in {marker} field in {BBB} {C}:{V}" )
-                        if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: halt
+                        if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: assert False, "We want to stop here"
                     unhandledMarkers.add( marker )
                 if extras and marker not in ('v~','p~','s1','s2','s3','s4','d', 'ip','ipi','ipq','ipr', 'im','imi','imq', 'iq1','iq2','iq3','iq4', 'iex',):
                     logger.critical( f"toHTML5: extras not handled for {marker} at {BBB} {C}:{V}" )
-                    if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: halt
+                    if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: assert False, "We want to stop here"
 
             if haveOpenListItem: writerObject.writeLineClose( 'span' ); haveOpenListItem = False
             if haveOpenList:
@@ -2493,6 +2519,53 @@ class BibleWriter( InternalBible ):
             except KeyError: filename = BBB + '.html'
             filenameDict[BBB] = BibleOrgSysGlobals.makeSafeFilename( filename.replace( ' ', '_' ) )
 
+        try:
+            import bible_organisational_system
+            if hasattr(bible_organisational_system, 'exportToHtml5'):
+                vPrint('Normal', DEBUGGING_THIS_MODULE, "  toHTML5: Using Rust bible_organisational_system for parallel HTML5 export...")
+                book_names_dict = {bkData.BBB: bkData.getAssumedBookNames()[0] for bkData in self}
+                today_str = datetime.today().strftime("%d-%b-%Y")
+                ignored, unhandled = bible_organisational_system.exportToHtml5(
+                    self.books,
+                    str(WEBoutputFolder),
+                    self.name if self.name else 'Unknown',
+                    self.getBookList(),
+                    book_names_dict,
+                    filenameDict,
+                    controlDict,
+                    PROGRAM_NAME,
+                    PROGRAM_VERSION,
+                    today_str,
+                    createSectionCrossReference
+                )
+                ignoredMarkers.update(ignored)
+                unhandledMarkers.update(unhandled)
+                writeHomePage()
+                writeAboutPage()
+                if ignoredMarkers:
+                    logger.info( f"toHTML5: Ignored markers were {ignoredMarkers}" )
+                    vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + f"WARNING: Ignored toHTML5 markers were {ignoredMarkers}" )
+                if unhandledMarkers:
+                    logger.warning( f"toHTML5: Unhandled markers were {unhandledMarkers}" )
+                    vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  " + f"WARNING: Unhandled toHTML5 markers were {unhandledMarkers}" )
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Zipping HTML5 files…" )
+                zf = zipfile.ZipFile( os.path.join( outputFolderpath, 'AllWebFiles.zip' ), 'w', compression=zipfile.ZIP_DEFLATED )
+                for filename in os.listdir( WEBoutputFolder ):
+                    if not filename.endswith( '.zip' ):
+                        filepath = os.path.join( WEBoutputFolder, filename )
+                        zf.write( filepath, filename ) # Save in the archive without the path
+                zf.close()
+                if validationSchema:
+                    last_bbb = list(self.books.keys())[-1]
+                    xw = MLWriter( filenameDict[last_bbb], WEBoutputFolder, 'HTML' )
+                    validationResult = xw.validate( validationSchema )
+                if BibleOrgSysGlobals.maxProcesses > 1:
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  BibleWriter.toHTML5 finished successfully." )
+                if validationSchema: return validationResult
+                return True
+        except ImportError:
+            pass
+
         html5Globals = {}
         if 'HTML5Files' not in controlDict or controlDict['HTML5Files']=='byBook':
             for BBB,bookData in self.books.items(): # Now export the books
@@ -2513,7 +2586,7 @@ class BibleWriter( InternalBible ):
                 xw.close()
             writeHomePage()
             writeAboutPage()
-        elif BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: halt # not done yet
+        elif BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: assert False, "We want to stop here" # not done yet
 
         if ignoredMarkers:
             logger.info( f"toHTML5: Ignored markers were {ignoredMarkers}" )
@@ -2644,7 +2717,7 @@ class BibleWriter( InternalBible ):
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{BBB} needToSaveByChapter={needToSaveByChapter} haveSectionHeadingsForBook={haveSectionHeadingsForBook} continuesThroughChapters={bos_books_codes_py.continues_through_chapters(BBB)}" )
 
             internalBibleBookData = bookObject._processedLines
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\ninternalBibleBookData", internalBibleBookData[:50] ); halt
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\ninternalBibleBookData", internalBibleBookData[:50] ); assert False, "We want to stop here"
 
             # TODO: This code is HORRIFIC — rewrite!!!
             bookText, bookIndexDict, bookIndexList = '', {}, []
@@ -2689,7 +2762,7 @@ class BibleWriter( InternalBible ):
                                 if C=='I': vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Saving at first chapter after intro" )
                                 elif needToSaveByChapter: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Saving by chapter" )
                                 elif BBB=='PRO': vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Saving PROVERBS chapter" )
-                                else: halt
+                                else: assert False, "We want to stop here"
                             assert cleanText.isdigit() # Chapter number only
                             C = cleanText
                             V = '1' # Catch up on the chapter number
@@ -2944,12 +3017,12 @@ class BibleWriter( InternalBible ):
             if shortString in codeSet: # check for duplicates
                 logger.critical( f"Duplicate {shortString!r} in compression dict" )
                 dPrint( 'Quiet', DEBUGGING_THIS_MODULE, shortString, codeSet )
-                halt
+                assert False, "We want to stop here"
             codeSet.append( shortString )
             if longString in dataSet: # check for duplicates
                 logger.critical( f"Duplicate {longString!r} in compression dict" )
                 dPrint( 'Quiet', DEBUGGING_THIS_MODULE, longString, dataSet )
-                halt
+                assert False, "We want to stop here"
             dataSet.append( longString )
             if longString != '@':
                 reversedCompressions.append( (longString,shortString,) )
@@ -2981,7 +3054,7 @@ class BibleWriter( InternalBible ):
             """
             nonlocal bytesRaw, bytesCompressed
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, '\nBDCompress', repr(entry) )
-            #if C=='4': halt
+            #if C=='4': assert False, "We want to stop here"
             bytesRaw += len( entry.encode('UTF8') )
             result = entry
             if '@' in result:
@@ -2990,7 +3063,7 @@ class BibleWriter( InternalBible ):
                 usageCount['~~'] += 1
             if '^' in result:
                 dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'have^', entry )
-                halt # Bible Door compression will fail!
+                assert False, "We want to stop here" # Bible Door compression will fail!
             for longString, shortString in reversedCompressions:
                 if longString in result:
                     result = result.replace( longString, shortString )
@@ -3201,13 +3274,13 @@ class BibleWriter( InternalBible ):
 
                 sectionBBB, sectionC, sectionV = BCV
                 numBDSections += 1
-                #if BBB == 'GLS': vPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, sectionHTML ); halt
+                #if BBB == 'GLS': vPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, sectionHTML ); assert False, "We want to stop here"
                 if '\\' in sectionHTML: # shouldn't happen
                     ix = sectionHTML.index( '\\' )
                     segment = sectionHTML[ix-10 if ix>10 else 0 : ix+30]
                     logger.error( f"_toBibleDoorJSONCHTML programming error: unprocessed backslash code in {sectionBBB} {sectionC}:{sectionV} section: …{segment!r}…" )
                     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"_toBibleDoorJSONCHTML: unprocessed backslash code in {sectionBBB} {sectionC}:{sectionV} section: …{segment!r}…" )
-                    if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: halt
+                    if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: assert False, "We want to stop here"
                 HTMLSections.append( sectionHTML )
                 indexEntry1 = sectionBCV[0],sectionBCV[1],sectionBCV[2],lastC,lastV,uncompressedFileOffset,len(sectionHTML)
                 currentUncompressedIndex.append( indexEntry1 )
@@ -3230,7 +3303,7 @@ class BibleWriter( InternalBible ):
                             if checkHTML[ix] != sectionHTML[ix]:
                                 if ix > 10: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '\n', repr(sectionHTML[ix-10:ix+2]), '\n', repr(checkHTML[ix-10:ix+2]) )
                                 vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ix, repr(sectionHTML[ix]), repr(checkHTML[ix]) ); break
-                        halt
+                        assert False, "We want to stop here"
                     #compressedHTML = sectionHTML # Leave it uncompressed so we can easily look at it
                     compressedHTML += '\n'
                 bytesToWrite = compressedHTML.encode('UTF8')
@@ -3314,7 +3387,7 @@ class BibleWriter( InternalBible ):
                         thisHTML += '<section class="introSection">'
                         sOpen = sJustOpened = True
                         sectionBCV = (BBB,C,V)
-                    #if not text and not extras: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{marker} at {BBB} {C}:{V} has nothing!" );halt
+                    #if not text and not extras: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{marker} at {BBB} {C}:{V} has nothing!" );assert False, "We want to stop here"
                     if text or extras:
                         thisHTML += f'<p class="{ipHTMLClassDict[marker]}">{BibleWriter.__formatHTMLVerseText( BBB, C, V, text, extras, BDGlobals )}</p>'
                 elif marker == 'iot':
@@ -3361,7 +3434,7 @@ class BibleWriter( InternalBible ):
                 # Now markers in the main text
                 elif marker == 'c':
                     if vOpen: lastHTML += '</span>'; vOpen = False
-                    #if extras: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "have extras at c at",BBB,C); halt
+                    #if extras: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "have extras at c at",BBB,C); assert False, "We want to stop here"
                     C, V = text, '0'
                     chapterLabel = None
                     if not haveAnySectionHeadings: # Treat each chapter as a new section
@@ -3393,7 +3466,7 @@ class BibleWriter( InternalBible ):
                     chapterLabel = text
                     thisHTML += f'<p class="chapterLabel" id="CS{C}">{chapterLabel}</p>'
                 elif marker == 'c#':
-                    #if extras: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "have extras at c# at",BBB,C); halt
+                    #if extras: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "have extras at c# at",BBB,C); assert False, "We want to stop here"
                     if chapterLabel is None and overallChapterLabel is None: # must be an ordinary chapter number
                         thisHTML += f'<span class="chapterNumber" id="CS{C}">{text}</span>'
                         #thisHTML += f'<span class="chapterNumber">{text}</span>'
@@ -3548,14 +3621,14 @@ class BibleWriter( InternalBible ):
                 else:
                     if text:
                         logger.critical( f"_toBibleDoorJSONCHTML: {self.abbreviation} lost text in '{marker}' field in {BBB} {C}:{V} '{text}'" )
-                        if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: halt
+                        if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: assert False, "We want to stop here"
                     if extras:
                         logger.critical( f"_toBibleDoorJSONCHTML: {self.abbreviation} lost extras in {marker} field in {BBB} {C}:{V}" )
-                        if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: halt
+                        if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: assert False, "We want to stop here"
                     unhandledMarkers.add( marker )
                 if extras and marker not in ('v~','p~','s1','s2','s3','s4','d', 'ip','ipi','ipq','ipr', 'im','imi','imq', 'iq1','iq2','iq3','iq4', 'iex',):
                     logger.critical( f"_toBibleDoorJSONCHTML: extras not handled for {marker} at {BBB} {C}:{V}" )
-                    if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: halt
+                    if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: assert False, "We want to stop here"
 
                 sectionHTML += lastHTML
                 lastMarker, lastHTML = marker, thisHTML
@@ -3597,7 +3670,7 @@ class BibleWriter( InternalBible ):
                     #if BibleOrgSysGlobals.verbosityLevel > 2:
                         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"    {BBB} raw bytes: {bytesRaw}" )
                         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"    {BBB} compressed bytes: {bytesCompressed}" )
-            #if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Finished", BBB ); halt
+            #if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Finished", BBB ); assert False, "We want to stop here"
         # end of _toBibleDoorJSONCHTML.writeBDBookAsHTML
 
 
@@ -3843,7 +3916,7 @@ class BibleWriter( InternalBible ):
                     logger.info( f"toUSX2XML: Had to close automatically in {BBB} {C}:{V} {marker}:{original_text!r} now {adjText!r}" )
                 if '\\' in adjText:
                     logger.critical( f"toUSX2XML: Didn't handle a backslash in {BBB} {C}:{V} {marker}:{original_text!r} now {adjText!r}" )
-                    if self.doExtraChecking: halt
+                    if self.doExtraChecking: assert False, "We want to stop here"
                 if 'CLOSED_BIT' in adjText:
                     logger.critical( f"toUSX2XML: Didn't handle a character style correctly in {BBB} {C}:{V} {marker}:{original_text!r} now {adjText!r}" )
                 return adjText
@@ -4042,7 +4115,7 @@ class BibleWriter( InternalBible ):
                                     else:
                                         logger.critical( f"toUSX2XML: Unprocessed {V!r} token in {firstToken} {BBB}:{C} footnote {USXfootnote!r}" )
                                         dPrint( 'Never', DEBUGGING_THIS_MODULE, "toUSX2XML USFMAllExpandedCharacterMarkers", BibleOrgSysGlobals.USFMAllExpandedCharacterMarkers )
-                                        if self.doExtraChecking: halt
+                                        if self.doExtraChecking: assert False, "We want to stop here"
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  ", frOpen, fCharOpen, fTextOpen )
                     if frOpen:
                         logger.warning( f"toUSX2XML: Unclosed 'fr' token in {BBB} {C}:{V} footnote {USXfootnote!r}" )
@@ -4147,10 +4220,10 @@ class BibleWriter( InternalBible ):
                     adjTxLen = len( adjText )
                     if adjTxLen<3 or (adjTxLen>3 and adjText[3]!=' '): # Doesn't seem to have a standard BBB at the beginning of the ID line
                         logger.warning( f"toUSX2XML: Book {BBB}{f' ({USXAbbrev})' if USXAbbrev!=BBB else ''} has a non-standard id line: {adjText!r}" )
-                        #halt
+                        #assert False, "We want to stop here"
                     if adjText[0:3] != USXAbbrev:
                         logger.error( f"toUSX2XML: Book {BBB}{f' ({USXAbbrev})' if USXAbbrev!=BBB else ''} might have incorrect code on id line — we got: {adjText[0:3]!r}" )
-                        #halt
+                        #assert False, "We want to stop here"
                     adjText = adjText[4:] # Remove the book code from the ID line because it's put in as an attribute
                     if adjText: xw.writeLineOpenClose( 'book', handleInternalTextMarkersForUSX2(adjText)+xtra, [('code',USXAbbrev),('style',marker)] )
                     else: xw.writeLineOpenSelfclose( 'book', [('code',USXAbbrev),('style',marker)] )
@@ -4560,7 +4633,7 @@ class BibleWriter( InternalBible ):
                                     else:
                                         logger.critical( f"toUSFXXML: Unprocessed {V!r} token in {firstToken} {BBB}:{C} footnote {USFXfootnote!r}" )
                                         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, BibleOrgSysGlobals.USFMAllExpandedCharacterMarkers )
-                                        #halt
+                                        #assert False, "We want to stop here"
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  ", frOpen, fCharOpen, fTextOpen )
                     if frOpen:
                         logger.warning( f"toUSFXXML: Unclosed 'fr' token in {BBB} {C}:{V} footnote {USFXfootnote!r}" )
@@ -5124,7 +5197,7 @@ class BibleWriter( InternalBible ):
                             logger.critical( f"toOSIS: Unprocessed {token!r} token in {toOSISGlobals['verseRef']} footnote {USFMfootnote!r}" )
                     OSISfootnote += '</note>'
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, '', OSISfootnote )
-                    #if currentChapterNumberString=='5' and verseNumberString=='29': halt
+                    #if currentChapterNumberString=='5' and verseNumberString=='29': assert False, "We want to stop here"
                     return OSISfootnote
                 # end of toOSISXML.processFootnote
 
@@ -5494,16 +5567,16 @@ class BibleWriter( InternalBible ):
                     # Doesn't seem that OSIS has a way to encode this presentation element
                     writerObject.writeNewLine() # We'll do this for now
                 elif marker=='nb': # No-break
-                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'nb', BBB, C, V ); halt
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'nb', BBB, C, V ); assert False, "We want to stop here"
                     if self.doExtraChecking: assert not text and not extras
                     ignoredMarkers.add( marker )
                 else:
                     if text:
                         logger.critical( f"toOSIS: {self.abbreviation} lost text in {marker} field in {BBB} {C}:{V} {text!r}" )
-                        #if BibleOrgSysGlobals.debugFlag: halt
+                        #if BibleOrgSysGlobals.debugFlag: assert False, "We want to stop here"
                     if extras:
                         logger.critical( f"toOSIS: {self.abbreviation} lost extras in {marker} field in {BBB} {C}:{V}" )
-                        #if BibleOrgSysGlobals.debugFlag: halt
+                        #if BibleOrgSysGlobals.debugFlag: assert False, "We want to stop here"
                     unhandledMarkers.add( marker )
                 if marker not in ('v','v~','p','p~','q1','q2','q3','q4','s1','s2','s3','s4','d',) and extras:
                     logger.critical( f"toOSIS: Programming note: Didn't handle {extras!r} extras: {marker}" )
@@ -5911,7 +5984,7 @@ class BibleWriter( InternalBible ):
                             ZefFootnote += token # put it in (including the markers)
                     ZefFootnote += '</NOTE>'
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, ' ZefFootnote', repr(ZefFootnote) )
-                    #if currentChapterNumberString=='5' and verseNumberString=='29': halt
+                    #if currentChapterNumberString=='5' and verseNumberString=='29': assert False, "We want to stop here"
                     if self.doExtraChecking:
                         assert '<NOTE' in ZefFootnote
                     return ZefFootnote
@@ -6043,10 +6116,10 @@ class BibleWriter( InternalBible ):
                 else:
                     if text:
                         logger.error( f"toZefania: {self.abbreviation} lost text in {marker} field in {BBB} {C}:{V} {text!r}" )
-                        #if BibleOrgSysGlobals.debugFlag: halt
+                        #if BibleOrgSysGlobals.debugFlag: assert False, "We want to stop here"
                     if extras:
                         logger.error( f"toZefania: {self.abbreviation} lost extras in {marker} field in {BBB} {C}:{V}" )
-                        #if BibleOrgSysGlobals.debugFlag: halt
+                        #if BibleOrgSysGlobals.debugFlag: assert False, "We want to stop here"
                     unhandledMarkers.add( marker )
                 if extras and marker not in ('v~','p~',) and marker not in ignoredMarkers:
                     logger.critical( f"toZefania: extras not handled for {marker} at {BBB} {C}:{V}" )
@@ -6233,10 +6306,10 @@ class BibleWriter( InternalBible ):
                 else:
                     if text:
                         logger.error( f"toHaggai: {self.abbreviation} lost text in {marker} field in {BBB} {C}:{V} {text!r}" )
-                        #if BibleOrgSysGlobals.debugFlag: halt
+                        #if BibleOrgSysGlobals.debugFlag: assert False, "We want to stop here"
                     if extras:
                         logger.error( f"toHaggai: {self.abbreviation} lost extras in {marker} field in {BBB} {C}:{V}" )
-                        #if BibleOrgSysGlobals.debugFlag: halt
+                        #if BibleOrgSysGlobals.debugFlag: assert False, "We want to stop here"
                     unhandledMarkers.add( marker )
                 if extras and marker not in ('v~','p~',) and marker not in ignoredMarkers:
                     logger.critical( f"toHaggai: extras not handled for {marker} at {BBB} {C}:{V}" )
@@ -6974,16 +7047,16 @@ class BibleWriter( InternalBible ):
                     # Doesn't seem that OSIS has a way to encode this presentation element
                     writerObject.writeNewLine() # We'll do this for now
                 elif marker=='nb': # No-break
-                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'nb', BBB, C, V ); halt
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'nb', BBB, C, V ); assert False, "We want to stop here"
                     if self.doExtraChecking: assert not text and not extras
                     ignoredMarkers.add( marker )
                 else:
                     if text:
                         logger.critical( f"toSwordModule: {self.abbreviation} lost text in {marker} field in {BBB} {C}:{V} {text!r}" )
-                        #if BibleOrgSysGlobals.debugFlag: halt
+                        #if BibleOrgSysGlobals.debugFlag: assert False, "We want to stop here"
                     if extras:
                         logger.critical( f"toSwordModule: {self.abbreviation} lost extras in {marker} field in {BBB} {C}:{V}" )
-                        #if BibleOrgSysGlobals.debugFlag: halt
+                        #if BibleOrgSysGlobals.debugFlag: assert False, "We want to stop here"
                     unhandledMarkers.add( marker )
                 if extras and marker not in ('v~','p~','s1','s2','s3','s4', 'd', ): logger.critical( f"toSwordModule: extras not handled for {marker} at {BBB} {C}:{V}" )
                 lastMarker = marker
@@ -7257,7 +7330,7 @@ class BibleWriter( InternalBible ):
                 else:
                     if text:
                         logger.error( f"toSwordSearcher: {self.abbreviation} lost text in {marker} field in {BBB} {C}:{V} {text!r}" )
-                        #if BibleOrgSysGlobals.debugFlag: halt
+                        #if BibleOrgSysGlobals.debugFlag: assert False, "We want to stop here"
                     unhandledMarkers.add( marker )
                 #if extras and marker not in ('v~','p~',): logger.critical( f"toSwordSearcher: extras not handled for {marker} at {BBB} {C}:{V}" )
             if accumulator: writer.write( f"{accumulator}\n" )
@@ -7371,7 +7444,7 @@ class BibleWriter( InternalBible ):
             textField = re.sub( r'(\\\+?[a-z][a-z0-9]{0,3}[ \*])', '', textField ) # Remove any remaining character end fields, e.g., '\+add*'
             if '\\' in textField: # Catch any left-overs
                 vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"toDrupalBible.doDrupalTextFormat: unprocessed code in {textField!r} from {givenTextField!r}" )
-                if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: halt
+                if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: assert False, "We want to stop here"
             return textField
         # end of doDrupalTextFormat
 
@@ -7440,7 +7513,7 @@ class BibleWriter( InternalBible ):
                 else:
                     if text:
                         logger.warning( f"toDrupalBible: {self.abbreviation} lost text in {marker} field in {BBB} {C}:{V} {text!r}" )
-                        #if BibleOrgSysGlobals.debugFlag: halt
+                        #if BibleOrgSysGlobals.debugFlag: assert False, "We want to stop here"
                     unhandledMarkers.add( marker )
                 #if extras and marker not in ('v~','p~',): logger.critical( f"toDrupalBible: extras not handled for {marker} at {BBB} {C}:{V}" )
             if accumulator: writer.write( f"{bookCode}|{C}|{V}|{linemark}|{doDrupalTextFormat( accumulator )}\n" )
@@ -7520,7 +7593,7 @@ class BibleWriter( InternalBible ):
             blankFilepath = os.path.join( defaultControlFolderpath, "yblank-240x320.jpg" )
         else:
             logger.critical( f"toPhotoBible needs a blank jpg file for {pixelWidth}x{pixelHeight} image" )
-            if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: halt
+            if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: assert False, "We want to stop here"
             return False
         leftPadding = 1
         defaultFontSize, defaultLeadingRatio = 20, 1.2
@@ -7863,7 +7936,7 @@ class BibleWriter( InternalBible ):
                         chapterFoldernameTemplate, filenameTemplate = '{:03}-{:03}-{}/', '{:03}-{:03}-{:02}-{}.jpg'
                 chapterFolderName = chapterFoldernameTemplate.format( bos_books_codes_py.get_reference_number( BBB ), intC, BBB )
                 if numVerses > 80: filenameTemplate = filenameTemplate.replace( '{:02}-{}', '{:03}-{}' )
-            else: halt
+            else: assert False, "We want to stop here"
 
             chapterFolderpath = os.path.join( bookFolderName, chapterFolderName )
             if not os.access( chapterFolderpath, os.F_OK ): os.makedirs( chapterFolderpath ) # Make the empty folder if there wasn't already one there
@@ -7877,7 +7950,7 @@ class BibleWriter( InternalBible ):
                     jpegOutputFilepath = os.path.join( chapterFolderpath, filenameTemplate.format( BBBnum, intC, pagesWritten, BBB ) )
                 leftoverText = renderPage( BBB, C, bookName, leftoverText, jpegOutputFilepath )
                 pagesWritten += 1
-            if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE and BBB not in ('FRT','GLS',) and pagesWritten>99 and numVerses<65: halt # Template is probably bad
+            if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE and BBB not in ('FRT','GLS',) and pagesWritten>99 and numVerses<65: assert False, "We want to stop here" # Template is probably bad
 
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "pagesWritten were", pagesWritten )
             return pagesWritten
@@ -7999,11 +8072,11 @@ class BibleWriter( InternalBible ):
                 else:
                     if cleanText:
                         logger.error( f"toPhotoBible: {self.abbreviation} lost text in {marker} field in {BBB} {C}:{V} {cleanText!r}" )
-                        if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: halt
+                        if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: assert False, "We want to stop here"
                     unhandledMarkers.add( marker )
                 #if extras and marker not in ('v~','p~',):
                     #logger.critical( f"toPhotoBible: extras not handled for {marker} at {BBB} {C}:{V}" )
-                    #if BibleOrgSysGlobals.debugFlag: halt
+                    #if BibleOrgSysGlobals.debugFlag: assert False, "We want to stop here"
                 lastMarker = marker
             if textBuffer: renderChapterText( BBB, BBBnum, bookName, bookAbbrev, C, intC, maxChapters, numVerses, textBuffer, bookFolderpath ) # Write the last bit
 
@@ -8868,7 +8941,7 @@ class BibleWriter( InternalBible ):
                         ix = result.find( bridgeChar )
                         if ix != -1: result = result[:ix] # Remove verse bridges
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, " returns", result )
-                    if BibleOrgSysGlobals.debugFlag and (result.count('C')>1 or result.count('V')>1): halt
+                    if BibleOrgSysGlobals.debugFlag and (result.count('C')>1 or result.count('V')>1): assert False, "We want to stop here"
                     return '#' + result
                 # end of insertFormattedODFText.liveCV
 
@@ -8982,7 +9055,7 @@ class BibleWriter( InternalBible ):
                 ##dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "footnoteMD", BBB, footnoteMD )
                 ##dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "endMD", endMD )
                 #ourGlobals['footnoteMD'].append( endMD )
-                ##if fnIndex > 2: halt
+                ##if fnIndex > 2: assert False, "We want to stop here"
             # end of insertFormattedODFText.processFigure
 
 
@@ -9026,7 +9099,7 @@ class BibleWriter( InternalBible ):
                         else:
                             logger.critical( f"toODF: {self.abbreviation} lost text in {marker} field in {BBB} {C}:{V} {textSegment!r}" )
                             unhandledMarkers.add( f"{marker} (char)" )
-                            if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: halt
+                            if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: assert False, "We want to stop here"
                 elif textSegment: # No character formatting here
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "BibleWriter.toODF: 3dc5", BBB, C, V, repr(textSegment) )
                     document.Text.insertString( textCursor, textSegment, 0 )
@@ -9273,10 +9346,10 @@ class BibleWriter( InternalBible ):
                 else:
                     if adjText:
                         logger.error( f"toODF: {self.abbreviation} lost text in {marker} field in {BBB} {C}:{V} {adjText!r}" )
-                        #if BibleOrgSysGlobals.debugFlag: halt
+                        #if BibleOrgSysGlobals.debugFlag: assert False, "We want to stop here"
                     if extras:
                         logger.error( f"toODF: {self.abbreviation} lost extras in {marker} field in {BBB} {C}:{V}" )
-                        #if BibleOrgSysGlobals.debugFlag: halt
+                        #if BibleOrgSysGlobals.debugFlag: assert False, "We want to stop here"
                     unhandledMarkers.add( marker )
                 lastMarker = marker
 
@@ -9517,7 +9590,7 @@ class BibleWriter( InternalBible ):
 
             if '\\' in text: # Catch any left-overs
                 vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"toTeX.texText: unprocessed code in {text!r} from {givenText!r}" )
-                if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: halt
+                if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: assert False, "We want to stop here"
             return text.replace( '~^~', '\\' )
         # end of toTeX:texText
 
@@ -9668,7 +9741,7 @@ class BibleWriter( InternalBible ):
                         else:
                             if text:
                                 logger.error( f"toTeX: {self.abbreviation} lost text in {marker} field in {BBB} {C}:{V} {text!r}" )
-                                #if BibleOrgSysGlobals.debugFlag: halt
+                                #if BibleOrgSysGlobals.debugFlag: assert False, "We want to stop here"
                             unhandledMarkers.add( marker )
                         #if extras and marker not in ('v~','p~',): logger.critical( f"toTeX: extras not handled for {marker} at {BBB} {C}:{V}" )
                     allFile.write( "\\BibleBookEnd\n" )
@@ -9725,7 +9798,7 @@ class BibleWriter( InternalBible ):
             # exc_type, exc_obj, exc_traceback = sys.exc_info()
             # print( f"{exc_type=}\n  {exc_obj=}\n  {traceback=}" )
                 # exc_type=<class 'NameError'>
-                # exc_obj=NameError("name 'halt' is not defined")
+                # exc_obj=NameError("name 'assert False, "We want to stop here"' is not defined")
                 # exc_traceback=<traceback object at 0x7effe4ce4840>
             # frame, lineno = exc_traceback.tb_frame, exc_traceback.tb_lineno
             # filename = frame.f_code.co_filename
@@ -10202,7 +10275,7 @@ def briefDemo() -> None:
                 vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ' ', UB )
                 if BibleOrgSysGlobals.strictCheckingFlag: UB.check()
                 if UB.books:
-                    #result = UB.toBibleDoor(); vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{result[0]} {result[1]!r}\n{result[2]}" ); halt
+                    #result = UB.toBibleDoor(); vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{result[0]} {result[1]!r}\n{result[2]}" ); assert False, "We want to stop here"
                     doaResults = UB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
                     if BibleOrgSysGlobals.strictCheckingFlag: # Now compare the original and the exported USFM files
                         outputFolderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_USFM2_Reexport/' )
@@ -10224,7 +10297,7 @@ def briefDemo() -> None:
                                 if result and BibleOrgSysGlobals.verbosityLevel > 2: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Matched." )
                                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  result", result )
                                 #if BibleOrgSysGlobals.debugFlag:
-                                    #if not result: halt
+                                    #if not result: assert False, "We want to stop here"
                             else:
                                 if filename1 not in folderContents1: logger.warning( f"  1/ Couldn't find {filename1} ({BBB}) in {folderContents1}" )
                                 if filename2 not in folderContents2: logger.warning( f"  2/ Couldn't find {filename2} ({UUU}) in {folderContents2}" )
@@ -10248,7 +10321,7 @@ def briefDemo() -> None:
                 if BibleOrgSysGlobals.strictCheckingFlag: UB.check()
                 if UB.books:
                     if DEBUGGING_THIS_MODULE:
-                        result = UB.toBibleDoor(); vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"result={result}" ); halt
+                        result = UB.toBibleDoor(); vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"result={result}" ); assert False, "We want to stop here"
                     myFlag = DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.verbosityLevel > 3
                     doaResults = UB.doAllExports( wantPhotoBible=myFlag, wantODFs=myFlag, wantPDFs=myFlag )
                     if BibleOrgSysGlobals.strictCheckingFlag: # Now compare the original and the exported USFM files
@@ -10271,7 +10344,7 @@ def briefDemo() -> None:
                                 if result and BibleOrgSysGlobals.verbosityLevel > 2: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Matched." )
                                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  result", result )
                                 #if BibleOrgSysGlobals.debugFlag:
-                                    #if not result: halt
+                                    #if not result: assert False, "We want to stop here"
                             else:
                                 if filename1 not in folderContents1: logger.warning( f"  1/Couldn't find {filename1} ({BBB}) in {folderContents1}" )
                                 if filename2 not in folderContents2: logger.warning( f"  2/Couldn't find {filename2} ({UUU}) in {folderContents2}" )
@@ -10297,7 +10370,7 @@ def briefDemo() -> None:
                     thisBible = result
                     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ' ', thisBible )
                     if BibleOrgSysGlobals.strictCheckingFlag: thisBible.check()
-                    thisBible.toBibleDoor(); halt
+                    thisBible.toBibleDoor(); assert False, "We want to stop here"
                     myFlag = DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.verbosityLevel > 3
                     doaResults = thisBible.doAllExports( wantPhotoBible=myFlag, wantODFs=myFlag, wantPDFs=myFlag )
                     if BibleOrgSysGlobals.strictCheckingFlag: # Now compare the original and the exported USFM files
@@ -10320,7 +10393,7 @@ def briefDemo() -> None:
                                 if result and BibleOrgSysGlobals.verbosityLevel > 2: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Matched." )
                                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  result", result )
                                 #if BibleOrgSysGlobals.debugFlag:
-                                    #if not result: halt
+                                    #if not result: assert False, "We want to stop here"
                             else:
                                 if filename1 not in folderContents1: logger.warning( f"  1/ Couldn't find {filename1} ({BBB}) in {folderContents1}" )
                                 if filename2 not in folderContents2: logger.warning( f"  2/ Couldn't find {filename2} ({UUU}) in {folderContents2}" )
@@ -10357,7 +10430,7 @@ def briefDemo() -> None:
                             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n{jj+1}: {BBB} {filename}" )
                             result = BibleOrgSysGlobals.fileCompareXML( filename, filename, testFolder, outputFolderpath )
                             if BibleOrgSysGlobals.debugFlag:
-                                if not result: halt
+                                if not result: assert False, "We want to stop here"
                 break
             else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Sorry, test folder '{testFolder}' is not readable on this computer." )
 
@@ -10383,14 +10456,14 @@ def briefDemo() -> None:
                     if os.path.exists( mainFolderpath.joinpath( name + '.nt' ) ): ext = '.nt'
                     elif os.path.exists( mainFolderpath.joinpath( name + '.ont' ) ): ext = '.ont'
                     elif os.path.exists( mainFolderpath.joinpath( name + '.ot' ) ): ext = '.ot'
-                    else: halt
+                    else: assert False, "We want to stop here"
                     fn1 = name + ext # Supplied
                     fn2 = name + ext # Created
                     vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nComparing supplied and exported theWord files…" )
                     result = theWordFileCompare( fn1, fn2, mainFolderpath, outputFolderpath, exitCount=10 )
                     if not result:
                         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "theWord modules did NOT match" )
-                        #if BibleOrgSysGlobals.debugFlag: halt
+                        #if BibleOrgSysGlobals.debugFlag: assert False, "We want to stop here"
                 break
             else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Sorry, test folder '{testFolder}' is not readable on this computer." )
 # end of BibleWriter.briefDemo
@@ -10430,7 +10503,7 @@ def fullDemo() -> None:
                 vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ' ', UB )
                 if BibleOrgSysGlobals.strictCheckingFlag: UB.check()
                 if UB.books:
-                    #result = UB.toBibleDoor(); vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{result[0]} {result[1]!r}\n{result[2]}" ); halt
+                    #result = UB.toBibleDoor(); vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{result[0]} {result[1]!r}\n{result[2]}" ); assert False, "We want to stop here"
                     doaResults = UB.doAllExports( wantPhotoBible=True, wantODFs=True, wantPDFs=True )
                     if BibleOrgSysGlobals.strictCheckingFlag: # Now compare the original and the exported USFM files
                         outputFolderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_USFM2_Reexport/' )
@@ -10452,7 +10525,7 @@ def fullDemo() -> None:
                                 if result and BibleOrgSysGlobals.verbosityLevel > 2: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Matched." )
                                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  result", result )
                                 #if BibleOrgSysGlobals.debugFlag:
-                                    #if not result: halt
+                                    #if not result: assert False, "We want to stop here"
                             else:
                                 if filename1 not in folderContents1: logger.warning( f"  1/ Couldn't find {filename1} ({BBB}) in {folderContents1}" )
                                 if filename2 not in folderContents2: logger.warning( f"  2/ Couldn't find {filename2} ({UUU}) in {folderContents2}" )
@@ -10495,8 +10568,8 @@ def fullDemo() -> None:
                 if BibleOrgSysGlobals.strictCheckingFlag: UB.check()
                 if UB.books:
                     if DEBUGGING_THIS_MODULE:
-                        # result = UB.toUSXXML(); vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"result={result}" ); halt
-                        result = UB.makeLists(); vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"result={result}" ); halt
+                        # result = UB.toUSXXML(); vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"result={result}" ); assert False, "We want to stop here"
+                        result = UB.makeLists(); vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"result={result}" ); assert False, "We want to stop here"
                     myFlag = DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.verbosityLevel > 3
                     doaResults = UB.doAllExports( wantPhotoBible=myFlag, wantODFs=myFlag, wantPDFs=myFlag )
                     if BibleOrgSysGlobals.strictCheckingFlag: # Now compare the original and the exported USFM files
@@ -10519,7 +10592,7 @@ def fullDemo() -> None:
                                 if result and BibleOrgSysGlobals.verbosityLevel > 2: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Matched." )
                                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  result", result )
                                 #if BibleOrgSysGlobals.debugFlag:
-                                    #if not result: halt
+                                    #if not result: assert False, "We want to stop here"
                             else:
                                 if filename1 not in folderContents1: logger.warning( f"  1/Couldn't find {filename1} ({BBB}) in {folderContents1}" )
                                 if filename2 not in folderContents2: logger.warning( f"  2/Couldn't find {filename2} ({UUU}) in {folderContents2}" )
@@ -10560,7 +10633,7 @@ def fullDemo() -> None:
                     thisBible = result
                     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ' ', thisBible )
                     if BibleOrgSysGlobals.strictCheckingFlag: thisBible.check()
-                    thisBible.toBibleDoor(); halt
+                    thisBible.toBibleDoor(); assert False, "We want to stop here"
                     myFlag = DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.verbosityLevel > 3
                     doaResults = thisBible.doAllExports( wantPhotoBible=myFlag, wantODFs=myFlag, wantPDFs=myFlag )
                     if BibleOrgSysGlobals.strictCheckingFlag: # Now compare the original and the exported USFM files
@@ -10583,7 +10656,7 @@ def fullDemo() -> None:
                                 if result and BibleOrgSysGlobals.verbosityLevel > 2: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Matched." )
                                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  result", result )
                                 #if BibleOrgSysGlobals.debugFlag:
-                                    #if not result: halt
+                                    #if not result: assert False, "We want to stop here"
                             else:
                                 if filename1 not in folderContents1: logger.warning( f"  1/ Couldn't find {filename1} ({BBB}) in {folderContents1}" )
                                 if filename2 not in folderContents2: logger.warning( f"  2/ Couldn't find {filename2} ({UUU}) in {folderContents2}" )
@@ -10619,7 +10692,7 @@ def fullDemo() -> None:
                             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n{jj+1}: {BBB} {filename}" )
                             result = BibleOrgSysGlobals.fileCompareXML( filename, filename, testFolder, outputFolderpath )
                             if BibleOrgSysGlobals.debugFlag:
-                                if not result: halt
+                                if not result: assert False, "We want to stop here"
             else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Sorry, test folder '{testFolder}' is not readable on this computer." )
 
 
@@ -10657,14 +10730,14 @@ def fullDemo() -> None:
                     if os.path.exists( mainFolderpath.joinpath( name + '.nt' ) ): ext = '.nt'
                     elif os.path.exists( mainFolderpath.joinpath( name + '.ont' ) ): ext = '.ont'
                     elif os.path.exists( mainFolderpath.joinpath( name + '.ot' ) ): ext = '.ot'
-                    else: halt
+                    else: assert False, "We want to stop here"
                     fn1 = name + ext # Supplied
                     fn2 = name + ext # Created
                     vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nComparing supplied and exported theWord files…" )
                     result = theWordFileCompare( fn1, fn2, mainFolderpath, outputFolderpath, exitCount=10 )
                     if not result:
                         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "theWord modules did NOT match" )
-                        #if BibleOrgSysGlobals.debugFlag: halt
+                        #if BibleOrgSysGlobals.debugFlag: assert False, "We want to stop here"
             else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Sorry, test folder '{testFolder}' is not readable on this computer." )
 # end of BibleWriter.fullDemo
 

@@ -188,7 +188,7 @@ def CSVBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=Fal
                     and not firstLine.startswith( 'Book,Chapter,Verse,' ) and not firstLine.startswith( '1,1,1,') \
                     and not firstLine.startswith( 'Book|Chapter|Verse|' ):
                         vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"CSVBibleFileCheck: (unexpected) first line was {thisFilename!r} in {firstLine}" )
-                        if DEBUGGING_THIS_MODULE: halt
+                        if DEBUGGING_THIS_MODULE: assert False, "We want to stop here"
                         continue
                 foundProjects.append( (tryFolderName, thisFilename,) )
                 lastFilenameFound = thisFilename
@@ -401,7 +401,7 @@ class CSVBible( Bible ):
                         dPrint( 'Info', DEBUGGING_THIS_MODULE, f"Got {bookNumber=}" )
                     else:
                         dPrint( 'Info', DEBUGGING_THIS_MODULE, f"Got {filename=} {booknameString=} {BBB=} {bookNumber=}" )
-                        halt
+                        assert False, "We want to stop here"
 
                 if lastBookNumber==-1 and not BBB:
                     dPrint( 'Never', DEBUGGING_THIS_MODULE, f"Skipping the rest of (introductory?) line because no BBB yet: {lineCount}: '{line}'" )
@@ -593,7 +593,7 @@ class CSVBible( Bible ):
                 BCVref = wordRef.split( 'w', 1 )[0] # Something like 'MAT_1:1'
                 if BCVref != lastBCVref:
                     if lastBCVref is not None:
-                        # print( f"   Adding {lastBCVref} = ({startIx},{n-1})" ); halt
+                        # print( f"   Adding {lastBCVref} = ({startIx},{n-1})" ); assert False, "We want to stop here"
                         word_table_indexes[wordTableFilename][lastBCVref] = (startIx,n-1)
                     startIx = n
                     lastBCVref = BCVref
@@ -626,7 +626,7 @@ class CSVBible( Bible ):
             lastMarker, lastText = marker, text
             if marker=='v' and text.rstrip().isdigit(): # no text
                 lastText = None # To force appendToLastLine() to do an lstrip()
-            # if ref.startswith( 'MAT_1:3' ): halt
+            # if ref.startswith( 'MAT_1:3' ): assert False, "We want to stop here"
         # end of addLine
             
         def appendToLastLine( extraText:str, ref:str, bookObject):
@@ -784,7 +784,7 @@ class CSVBible( Bible ):
                         break
             # logger = logging.critical if fgWRef.startswith('MRK') else logging.error
             logging.error( f"appendWordNumber() {self.abbreviation} failed to match {fgWRef=} {originalLanguageWord=} {text=}" )
-            # if fgWRef.startswith('MRK_1:5'): halt
+            # if fgWRef.startswith('MRK_1:5'): assert False, "We want to stop here"
             return text
         # end of appendWordNumber
 
@@ -799,7 +799,7 @@ class CSVBible( Bible ):
         for n, row in enumerate( dict_reader, start=1 ):
             # if fgRef and fgRef.startswith( 'GEN_1:' ):
             # print( f"\n{n}: {row}" )
-            # if fgRef == 'GEN_1:2': halt
+            # if fgRef == 'GEN_1:2': assert False, "We want to stop here"
 
             try: # BSB
                 if row['WLC / Nestle Base TR RP WH NE NA SBL']:
@@ -828,7 +828,7 @@ class CSVBible( Bible ):
                 if thisVerseText: # Write the last verse text
                     # thisBook.appendToLastLine( cleanAndCheckVerseText( thisVerseText ) )
                     appendToLastLine( cleanAndCheckVerseText( thisVerseText ), fgRef, thisBook )
-                # if fgRef == 'JHN_3:13': halt
+                # if fgRef == 'JHN_3:13': assert False, "We want to stop here"
                 thisVerseText = ''
 
                 bits = row[verseIdColumnName].split( ' ' )
@@ -1075,7 +1075,7 @@ class CSVBible( Bible ):
                 # print( f"From {thisSortNumber=} ({wordBSBOffset=}) got {wordNumberInVerse=} for {originalLanguageWord=} {original_text=}" )
                 assert original_text.count( '[' ) == original_text.count( ']' ), f"    {n} {BBB} {C}:{V} {original_text=}"
                 assert original_text.count( '<i>' ) == original_text.count( '</i>' ), f"    {n} {BBB} {C}:{V} {original_text=}"
-                # print( f"    {n} {BBB} {C}:{V}w{wordNumberInVerse} {original_text=}" ); halt
+                # print( f"    {n} {BBB} {C}:{V}w{wordNumberInVerse} {original_text=}" ); assert False, "We want to stop here"
                 fgWRef = f'{fgRef}w{wordNumberInVerse}'
                 if '<' in original_text: # e.g., a q2 in the middle of a verse
                     for tt, textBit in enumerate( original_text.split( '<' ) ):
@@ -1163,7 +1163,7 @@ class CSVBible( Bible ):
                 # print( f"    {n} {BBB} {C}:{V} {original_text=}" )
                 fgWRef = f'{fgRef}w{wordNumberInVerse}'
                 if '<' in original_text: # e.g., a q2 in the middle of a verse
-                    halt
+                    assert False, "We want to stop here"
                     for tt, textBit in enumerate( original_text.split( '<' ) ):
                         # print( f"      {n} {BBB} {C}:{V} {tt} {textBit=}" )
                         text = textBit.rstrip()

@@ -289,7 +289,7 @@ class LEBXMLBible( Bible ):
         # self.possibleFilenames = []
         # self.possibleFilenameDict = {}
         # if os.path.isdir( self.sourceFileOrFolder ): # We've been given a folder -- see if we can find the files
-        #     halt
+        #     assert False, "We want to stop here"
         #     self.sourceFolder = self.sourceFilepath
         #     # There's no standard for LEB XML file naming
         #     fileList = os.listdir( self.sourceFilepath )
@@ -343,7 +343,7 @@ class LEBXMLBible( Bible ):
         #             ix = BBBList.index( BBB )
         #             newCorrectlyOrderedList.append( self.possibleFilenames[ix] )
         #     self.possibleFilenames = newCorrectlyOrderedList
-        #     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Now", self.possibleFilenames ); halt
+        #     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Now", self.possibleFilenames ); assert False, "We want to stop here"
         # else: # it's presumably a file name
         if not os.access( self.sourceFilepath, os.R_OK ):
             logging.critical( 'LEBXMLBible: ' + f"File {self.sourceFilepath!r} is unreadable" )
@@ -397,7 +397,7 @@ class LEBXMLBible( Bible ):
             loadErrors.append( f"LEBXMLBible: Didn't find anything to load at {self.sourceFilepath}" )
         if loadErrors:
             self.checkResultsDictionary['Load Errors'] = loadErrors
-            #if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "loadErrors", len(loadErrors), loadErrors ); halt
+            #if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "loadErrors", len(loadErrors), loadErrors ); assert False, "We want to stop here"
         # TEMP: commented out
         # self.applySuppliedMetadata( 'LEB' ) # Copy some to self.settingsDict
         self.doPostLoadProcessing()
@@ -446,7 +446,7 @@ class LEBXMLBible( Bible ):
                 else:
                     logging.error( f"v4g7 Unprocessed {location!r} element ({element.tag}) in {element.text}" )
                     loadErrors.append( f"Unprocessed {location!r} element ({element.tag}) in {element.text}(v4g7)" )
-                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
 
         if len( bookList ) == 1:
             vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"    _loadFile({OSISFilepath}) is returning {bookList[0][0].BBB} with {len(bookList[0][1])} loadErrors" )
@@ -523,7 +523,7 @@ class LEBXMLBible( Bible ):
             else:
                 logging.warning( f"mf82 Unprocessed {attrib} attribute ({value}) in {location}" )
                 loadErrors.append( f"Unprocessed {attrib} attribute ({value}) in {location} (mf82)" )
-                if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
         # The book IDs seem to be OSIS (or SBL)
         try: BBB = bos_books_codes_py.osis_book_code_to_bos_book_code( bookID )
         except:
@@ -557,7 +557,7 @@ class LEBXMLBible( Bible ):
                 BibleOrgSysGlobals.checkXMLNoText( subelement, location, 'jf21', loadErrors )
                 self.processChapter( subelement, thisBook, loadErrors )
                 doneChapter = True
-                # if BBB=='PRO' and self.state['C']=='2': halt
+                # if BBB=='PRO' and self.state['C']=='2': assert False, "We want to stop here"
             elif subelement.tag == 'pericope': # Some single-chapter books (not OBA but PHM, JDE)
                 BibleOrgSysGlobals.checkXMLNoAttributes( subelement, location, 'jf21', loadErrors )
                 BibleOrgSysGlobals.checkXMLNoSubelements( subelement, location, 'jf21', loadErrors )
@@ -574,8 +574,8 @@ class LEBXMLBible( Bible ):
             else:
                 logging.error( f"kg63 Unprocessed {location!r} subelement ({subelement.tag}) in {subelement.text}" )
                 loadErrors.append( f"Unprocessed {location!r} subelement ({subelement.tag}) in {subelement.text}(kg63)" )
-                if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
-                halt
+                if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
+                assert False, "We want to stop here"
     # end of processBook
 
 
@@ -597,7 +597,7 @@ class LEBXMLBible( Bible ):
             else:
                 logging.warning( f"sw34 Unprocessed {attrib} attribute ({value}) in {location}" )
                 loadErrors.append( f"Unprocessed {attrib} attribute ({value}) in {location} (sw34)" )
-                if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
         bits = chapterID.split( ' ' )
         assert len(bits) == 3 if chapterID[1]==' ' else 2 # e.g., '2 Sa 1'
         self.state['C'] = bits[-1]
@@ -619,7 +619,7 @@ class LEBXMLBible( Bible ):
                     else:
                         logging.error( f"jk42 Unprocessed {location!r} sub2element ({sub2element.tag}) in {sub2element.text}" )
                         loadErrors.append( f"Unprocessed {location!r} sub2element ({sub2element.tag}) in {sub2element.text}(jk42)" )
-                        if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                        if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
             elif subelement.tag == 'p':
                 self.processParagraph( subelement, thisBook, loadErrors )
             elif subelement.tag == 'ul':
@@ -630,8 +630,8 @@ class LEBXMLBible( Bible ):
             else:
                 logging.error( f"mas9 Unprocessed {location!r} subelement ({subelement.tag}) in {subelement.text}" )
                 loadErrors.append( f"Unprocessed {location!r} subelement ({subelement.tag}) in {subelement.text}(mas9)" )
-                if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
-                halt
+                if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
+                assert False, "We want to stop here"
     # end of processChapter
 
 
@@ -653,7 +653,7 @@ class LEBXMLBible( Bible ):
             self.addLEBLine( 'b', '', thisBook )
             if element.tail:
                 tail = clean( element.tail, loadErrors, location )
-                if tail.strip(): print( f"{tail=}"); halt
+                if tail.strip(): print( f"{tail=}"); assert False, "We want to stop here"
             return
 
         haveOutstandingSpace = False
@@ -675,7 +675,7 @@ class LEBXMLBible( Bible ):
                     else:
                         logging.warning( f"kq73 Unprocessed {attrib} attribute ({value}) in {location}" )
                         loadErrors.append( f"Unprocessed {attrib} attribute ({value}) in {location} (kq73)" )
-                        if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                        if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                 bits = verseID.split( ' ' )
                 assert len(bits) == 3 if verseID[1]==' ' else 2 # e.g., '2 Sa 1:1'
                 try: C,V = bits[-1].split( ':' )
@@ -762,8 +762,8 @@ class LEBXMLBible( Bible ):
             else:
                 logging.error( f"bvd3 Unprocessed {location!r} subelement ({subelement.tag}) in {subelement.text}" )
                 loadErrors.append( f"Unprocessed {location!r} subelement ({subelement.tag}) in {subelement.text}(bvd3)" )
-                if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
-                halt
+                if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
+                assert False, "We want to stop here"
     # end of processParagraph
 
 
@@ -805,7 +805,7 @@ class LEBXMLBible( Bible ):
                             else:
                                 logging.warning( f"kq73 Unprocessed {attrib} attribute ({value}) in {location}" )
                                 loadErrors.append( f"Unprocessed {attrib} attribute ({value}) in {location} (kq73)" )
-                                if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                                if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                         bits = verseID.split( ' ' )
                         assert len(bits) == 3 if verseID[1]==' ' else 2 # e.g., '2 Sa 1:1'
                         try: C,V = bits[-1].split( ':' )
@@ -901,7 +901,7 @@ class LEBXMLBible( Bible ):
                         #     else:
                         #         logging.error( f"d3fg Unprocessed {location!r} sub3element ({sub3element.tag}) in {sub3element.text}" )
                         #         loadErrors.append( f"Unprocessed {location!r} sub3element ({sub3element.tag}) in {sub3element.text}(d3fg)" )
-                        #         if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                        #         if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                         # # Why fails ??? assert not haveOutstandingSpace
                         # self.appendToLastLine( '\\f*', thisBook )
                         # if tail := clean( sub2element.tail, loadErrors, location ):
@@ -949,8 +949,8 @@ class LEBXMLBible( Bible ):
                     else:
                         logging.error( f"hsg3 Unprocessed {location!r} sub2element ({sub2element.tag}) in {sub2element.text}" )
                         loadErrors.append( f"Unprocessed {location!r} sub2element ({sub2element.tag}) in {sub2element.text}(hsg3)" )
-                        if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
-                        halt
+                        if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
+                        assert False, "We want to stop here"
                     if sub2element.tail and sub2element.tag != 'note': # coz processNote handles tails
                         if sub2element.tail:
                             tail = clean( sub2element.tail, loadErrors, location )
@@ -963,8 +963,8 @@ class LEBXMLBible( Bible ):
             else:
                 logging.error( f"lfg3 Unprocessed {location!r} subelement ({subelement.tag}) in {subelement.text}" )
                 loadErrors.append( f"Unprocessed {location!r} subelement ({subelement.tag}) in {subelement.text}(lfg3)" )
-                if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
-                halt
+                if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
+                assert False, "We want to stop here"
     # end of processList
 
     def processNote( self, noteElement, thisBook, loadErrors ):
@@ -1016,8 +1016,8 @@ class LEBXMLBible( Bible ):
                     else:
                         logging.error( f"nfg4 Unprocessed {location!r} sub3element ({sub2element.tag}) in {sub2element.text}" )
                         loadErrors.append( f"Unprocessed {location!r} sub3element ({sub2element.tag}) in {sub2element.text}(nfg4)" )
-                        if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
-                        halt
+                        if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
+                        assert False, "We want to stop here"
                 if subelement.tail:
                     tail = clean( subelement.tail, loadErrors, location )
                     hadOutstandingSpace = haveOutstandingSpace # Remember
@@ -1036,7 +1036,7 @@ class LEBXMLBible( Bible ):
                     else:
                         logging.warning( f"h6k8 Unprocessed {attrib} attribute ({value}) in {location}" )
                         loadErrors.append( f"Unprocessed {attrib} attribute ({value}) in {location} (h6k8)" )
-                        if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                        if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                 logging.warning( f"Not using cite {reference=}" ) # Because it's just a different format of the actual cite text field
                 text = subelement.text # also a reference, but possibly only the verse number
                 # assert text[-2:] == reference[-2:] or reference.endswith(text), f"CITE {text=} {reference=}"
@@ -1082,16 +1082,16 @@ class LEBXMLBible( Bible ):
                             else:
                                 logging.warning( f"b4s6 Unprocessed {attrib} attribute ({value}) in {location}" )
                                 loadErrors.append( f"Unprocessed {attrib} attribute ({value}) in {location} (b4s6)" )
-                                if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
-                                halt
+                                if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
+                                assert False, "We want to stop here"
                         # print( f"{ref=} {title=} {sub2element.text=}")
                         #assert title == sub2element.text # ref=None title='1 Ch 2:9' sub2element.text='1 Chr 2:9'
                         self.appendToLastLEBLine( f'\\+jmp {sub2element.text}|link-href="{ref}"\\+jmp*', thisBook )
                     else:
                         logging.error( f"nfg4 Unprocessed {location!r} sub3element ({sub2element.tag}) in {sub2element.text}" )
                         loadErrors.append( f"Unprocessed {location!r} sub3element ({sub2element.tag}) in {sub2element.text}(nfg4)" )
-                        if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
-                        halt
+                        if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
+                        assert False, "We want to stop here"
                 if subelement.tail:
                     tail = clean( subelement.tail, loadErrors, location )
                     hadOutstandingSpace = haveOutstandingSpace # Remember
@@ -1133,8 +1133,8 @@ class LEBXMLBible( Bible ):
             else:
                 logging.error( f"fvc3 Unprocessed {location!r} sub2element ({subelement.tag}) in {subelement.text}" )
                 loadErrors.append( f"Unprocessed {location!r} sub2element ({subelement.tag}) in {subelement.text}(fvc3)" )
-                if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
-                halt
+                if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
+                assert False, "We want to stop here"
         # Why fails ??? assert not haveOutstandingSpace
         self.appendToLastLEBLine( '\\f*', thisBook )
         if noteElement.tail:
@@ -1146,7 +1146,7 @@ class LEBXMLBible( Bible ):
             if tail: # still
                 self.appendToLastLEBLine( f"{' ' if hadOutstandingSpace else ''}{tail}", thisBook )
 
-        # if DEBUGGING_THIS_FUNCTION: halt
+        # if DEBUGGING_THIS_FUNCTION: assert False, "We want to stop here"
     # end of processNote
 
     def processSpan( self, spanElement, thisBook, loadErrors ):
@@ -1167,7 +1167,7 @@ class LEBXMLBible( Bible ):
             else:
                 logging.warning( f"c45g Unprocessed {attrib} attribute ({value}) in {location}" )
                 loadErrors.append( f"Unprocessed {attrib} attribute ({value}) in {location} (c45g)" )
-                if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
         assert spanStyle
         spanMarker = 'it' # TODO: Could maybe adjust this according to the style ???
         dPrint( 'Info', DEBUGGING_THIS_MODULE, f"processSpan {spanElement.text=} {spanStyle=} {spanMarker=}" )
@@ -1180,8 +1180,8 @@ class LEBXMLBible( Bible ):
             else:
                 logging.error( f"kj21 Unprocessed {location!r} subelement ({subelement.tag}) in {subelement.text}" )
                 loadErrors.append( f"Unprocessed {location!r} subelement ({subelement.tag}) in {subelement.text}(kj21)" )
-                if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
-                halt
+                if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
+                assert False, "We want to stop here"
         self.appendToLastLEBLine( f'\\{spanMarker}*', thisBook )
         if spanElement.tail:
             tail = clean( spanElement.tail, loadErrors, location )
@@ -1258,7 +1258,7 @@ def briefDemo() -> None:
             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag:
                 oB.check()
             if BibleOrgSysGlobals.commandLineArguments.export:
-                #oB.toODF(); halt
+                #oB.toODF(); assert False, "We want to stop here"
                 oB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
             break
 # end of LEBXMLBible.briefDemo
@@ -1312,7 +1312,7 @@ def fullDemo() -> None:
     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag:
         oB.check()
     if BibleOrgSysGlobals.commandLineArguments.export:
-        #oB.toODF(); halt
+        #oB.toODF(); assert False, "We want to stop here"
         oB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
 # end of LEBXMLBible.fullDemo
 

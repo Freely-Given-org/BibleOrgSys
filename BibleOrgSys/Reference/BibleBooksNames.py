@@ -385,7 +385,7 @@ class BibleBooksNamesSystems:
                         if possibility.upper().startswith( upperCaseBookNameOrAbbreviation ):
                             return BBB
 
-            if self.__ExpandedDicts: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, self.__ExpandedDicts[systemName] ); halt # nothing written here yet
+            if self.__ExpandedDicts: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, self.__ExpandedDicts[systemName] ); assert False, "We want to stop here" # nothing written here yet
     # end of BibleBooksNamesSystems.getBBBFromText
 
 

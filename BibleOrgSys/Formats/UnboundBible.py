@@ -210,7 +210,7 @@ def UnboundBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool
                     firstLine = BibleOrgSysGlobals.peekIntoFile( thisFilename, tryFolderName )
                     if firstLine is None: continue # seems we couldn't decode the file
                     if firstLine != "#THE UNBOUND BIBLE (www.unboundbible.org)":
-                        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"UnB (unexpected) first line was {thisFilename!r} in {firstLine}" ); halt
+                        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"UnB (unexpected) first line was {thisFilename!r} in {firstLine}" ); assert False, "We want to stop here"
                         continue
                 foundProjects.append( (tryFolderName, thisFilename,) )
                 lastFilenameFound = thisFilename
@@ -304,7 +304,7 @@ class UnboundBible( Bible ):
                 elif len(bits) == 1 and self.givenName.startswith( 'lxx_a_parsing_' ):
                     logging.warning( f"Skipping bad {verseNumberString!r} line in {line} {self.givenName} {BBB} {bookCode}:{chapterNumberString}" )
                     continue
-                else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Unexpected number of Unbound bits", self.givenName, BBB, bookCode, chapterNumberString, verseNumberString, len(bits), bits ); halt
+                else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Unexpected number of Unbound bits", self.givenName, BBB, bookCode, chapterNumberString, verseNumberString, len(bits), bits ); assert False, "We want to stop here"
 
                 if NRSVA_bookCode: assert len(NRSVA_bookCode) == 3
                 if NRSVA_chapterNumberString: assert NRSVA_chapterNumberString.isdigit()

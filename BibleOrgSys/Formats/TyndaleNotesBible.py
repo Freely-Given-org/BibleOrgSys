@@ -230,7 +230,7 @@ class TyndaleNotesBible( Bible ):
                 else:
                     logging.warning( f"fv6g Unprocessed {attrib} attribute ({value}) in {topLocation}" )
                     loadErrors.append( f"Unprocessed {attrib} attribute ({value}) in {topLocation} (fv6g)" )
-                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
             assert self.releaseVersion == '1.25'
 
             for element in self.XMLTree:
@@ -251,7 +251,7 @@ class TyndaleNotesBible( Bible ):
                     else:
                         logging.warning( f"fv6g Unprocessed {attrib} attribute ({value}) in {topLocation}" )
                         loadErrors.append( f"Unprocessed {attrib} attribute ({value}) in {topLocation} (fv6g)" )
-                        if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                        if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                 assert name
                 if self.abbreviation in ('TSN','TOSN'):
                     ref = name
@@ -336,21 +336,21 @@ class TyndaleNotesBible( Bible ):
                                         assert pClass in ('sn-text','sn-list-1','sn-list-2','sn-list-3'), f"{refs} {pClass=} {bodyLocation}"
                                     elif self.abbreviation == 'TTN':
                                         assert pClass in ('theme-title','theme-body','theme-body-fl','theme-body-sp','theme-body-fl-sp','theme-refs-title','theme-refs','theme-list-sp','theme-list','theme-h2'), f"{refs} {pClass=} {bodyLocation}"
-                                    else: halt
+                                    else: assert False, "We want to stop here"
                                 elif attrib == 'ts': # Not exactly sure what this is
                                     ts = value # Things like 'sn-text -1v -5'
                                     # TODO: We're losing this whatever it is
                                 else:
                                     logging.warning( f"fv6g Unprocessed {attrib} attribute ({value}) in {bodyLocation}" )
                                     loadErrors.append( f"Unprocessed {attrib} attribute ({value}) in {bodyLocation} (fv6g)" )
-                                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                             # So we want to extract this as an HTML paragraph
                             htmlSegment = BibleOrgSysGlobals.getFlattenedXML( bodyelement, bodyLocation )
                             # NOTE: the above doesn't have the <p class="sn-text">...</p> around it -- only the guts of the p
                             # if '<a' in htmlSegment:
                             # if BBB=='RUT' and C=='1' and V=='4':
                             #     print( f"{BBB} {C}:{V} {htmlSegment=}")
-                            #     halt
+                            #     assert False, "We want to stop here"
                             assert '\\' not in htmlSegment
                             if self.abbreviation in ('TSN','TOSN'):
                                 if pClass == 'sn-text':
@@ -359,7 +359,7 @@ class TyndaleNotesBible( Bible ):
                                 elif pClass.startswith( 'sn-list-' ):
                                     # TODO: We're losing the list number here
                                     thisBook.addLine( 'li', htmlSegment )
-                                else: halt
+                                else: assert False, "We want to stop here"
                             elif self.abbreviation == 'TTN':
                                 if pClass == 'theme-title':
                                     assert pCount == 0
@@ -387,12 +387,12 @@ class TyndaleNotesBible( Bible ):
                                     thisBook.addLine( 'li', htmlSegment )
                                 else:
                                     print( f"{pClass=} {htmlSegment=}" )
-                                    halt
-                            else: halt
+                                    assert False, "We want to stop here"
+                            else: assert False, "We want to stop here"
                             pCount += 1
                             # assert pCount == 1
                         stateCounter += 1
-                    else: halt
+                    else: assert False, "We want to stop here"
 
         if lastBBB is not None: # We need to save the previous book
             dPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"  Saving {lastBBB} book…")

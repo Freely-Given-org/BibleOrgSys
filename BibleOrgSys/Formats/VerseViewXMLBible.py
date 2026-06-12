@@ -355,7 +355,7 @@ class VerseViewXMLBible( Bible ):
             if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
                 vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Assuming that book {bookNumber} {BBB!r} is {bookName} (not {BBB2})" )
             BBB = BBB2
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB ); halt
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB ); assert False, "We want to stop here"
 
         if BBB:
             vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Validating {BBB} {bookName}…" )
@@ -464,13 +464,13 @@ class VerseViewXMLBible( Bible ):
                         #if fs == 'italic': SFM = '\\it'
                         #elif fs == 'super': SFM = '\\bdit'
                         #elif fs == 'emphasis': SFM = '\\em'
-                        #else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "fs is", fs, "css is", css, "idStyle is", idStyle ); halt
+                        #else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "fs is", fs, "css is", css, "idStyle is", idStyle ); assert False, "We want to stop here"
                         ##if css == "font-style:italic": SFM = '\\it'
                         ##elif css == "font-style:italic;font-weight:bold": SFM = '\\bdit'
                         ##elif css == "color:#FF0000": SFM = '\\em'
                         ##elif css == "font-size: x-small; color:#8B8378": SFM = '\\add'
                         ##elif css is None and idStyle=='cl:divineName': SFM = '\\nd'
-                        ##else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "css is", css, "idStyle is", idStyle ); halt
+                        ##else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "css is", css, "idStyle is", idStyle ); assert False, "We want to stop here"
                         #sText, sTail = sub2element.text.strip(), sub2element.tail
                         #if BibleOrgSysGlobals.debugFlag: assert sText
                         #if SFM: vText += SFM+' ' + sText + SFM+'*'
@@ -491,13 +491,13 @@ class VerseViewXMLBible( Bible ):
                 #SFM = None
                 #if fs == 'super': SFM = '\\bdit'
                 #elif fs == 'emphasis': SFM = '\\em'
-                #else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "fs is", fs, "css is", css, "idStyle is", idStyle ); halt
+                #else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "fs is", fs, "css is", css, "idStyle is", idStyle ); assert False, "We want to stop here"
                 ##if css == "font-style:italic": SFM = '\\it'
                 ##elif css == "font-style:italic;font-weight:bold": SFM = '\\bdit'
                 ##elif css == "color:#FF0000": SFM = '\\em'
                 ##elif css == "font-size: x-small; color:#8B8378": SFM = '\\add'
                 ##elif css is None and idStyle=='cl:divineName': SFM = '\\nd'
-                ##else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "css is", css, "idStyle is", idStyle ); halt
+                ##else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "css is", css, "idStyle is", idStyle ); assert False, "We want to stop here"
                 #sText, sTail = subelement.text.strip(), subelement.tail
                 #if BibleOrgSysGlobals.debugFlag: assert sText
                 ##dPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, chapterNumber, sublocation )

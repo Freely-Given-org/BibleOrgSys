@@ -108,7 +108,7 @@ class USXXMLBibleBook( BibleBook ):
                         assert chapterEndId[4:] == C
                     else:
                         logging.error( f"MG53 Unprocessed {attrib} attribute ({value}) in {chapterNumberLocation}" )
-                        if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                        if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
 
             else: # it's a chapter start marker
                 V = '0'
@@ -125,11 +125,11 @@ class USXXMLBibleBook( BibleBook ):
                         assert chapterStartId[4:] == C
                     else:
                         logging.error( f"MG52 Unprocessed {attrib} attribute ({value}) in {chapterNumberLocation}" )
-                        if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                        if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                 if chapterStyle != 'c':
                     logging.warning( f"Unexpected style attribute ({chapterStyle}) in {chapterNumberLocation}" )
-                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
-                #if pubNumber: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, self.BBB, C, repr(pubNumber) ); halt
+                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
+                #if pubNumber: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, self.BBB, C, repr(pubNumber) ); assert False, "We want to stop here"
                 self.addLine( 'c', C )
                 if pubNumber: self.addLine( 'cp', pubNumber )
         # end of load.loadChapterNumberField
@@ -167,7 +167,7 @@ class USXXMLBibleBook( BibleBook ):
                         assert verseEndId[colonIx+1:] == V
                     else:
                         logging.error( f"KR61 Unprocessed {attrib} attribute ({value}) in {verseNumberLocation}" )
-                        if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                        if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
 
             else: # it's a verse start marker
                 # Process the attributes first
@@ -186,13 +186,13 @@ class USXXMLBibleBook( BibleBook ):
                         assert verseStartId[colonIx+1:] == V
                     else:
                         logging.error( f"KR60 Unprocessed {attrib} attribute ({value}) in {verseNumberLocation}" )
-                        if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                        if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                 if verseStyle != 'v':
                     vLogger = logging.error if verseStyle else logging.critical
                     vLogger( f"Unexpected style attribute ({verseStyle}) in {verseNumberLocation}" )
                     if not verseStyle or BibleOrgSysGlobals.strictCheckingFlag \
-                    or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt # Bad verse style
-                #if altNumber: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, repr(verseStyle), repr(altNumber) ); halt
+                    or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here" # Bad verse style
+                #if altNumber: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, repr(verseStyle), repr(altNumber) ); assert False, "We want to stop here"
                 altStuff = f' \\va {altNumber}\\va*' if altNumber else ''
                 self.addLine( verseStyle, V + altStuff + ' ' )
                 # Now process the tail (if there's one) which is the verse text
@@ -228,7 +228,7 @@ class USXXMLBibleBook( BibleBook ):
                     charClosed = False
                 else:
                     logging.error( f"QU52 Unprocessed {attrib} attribute ({value}) in {location}" )
-                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
             charLine = f"\\{charStyle} {'' if BibleOrgSysGlobals.isBlank( charElement.text) else charElement.text}"
             assert '\n' not in charLine
 
@@ -248,7 +248,7 @@ class USXXMLBibleBook( BibleBook ):
                         if attrib=='loc': refLoc = value
                         else:
                             logging.error( f"KF24 Unprocessed {attrib} attribute ({value}) in {location}" )
-                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "ref", refLoc, repr(charElement.text), repr(charElement.tail), repr(charElement.text + (charElement.tail if element.tail else '')) )
                     charLine += (subelement.text if not BibleOrgSysGlobals.isBlank(subelement.text) else '') \
                                 + (subelement.tail if not BibleOrgSysGlobals.isBlank(subelement.tail) else '')
@@ -263,7 +263,7 @@ class USXXMLBibleBook( BibleBook ):
                 else:
                     logging.error( f"BD23 Unprocessed {subelement.tag} subelement ({subelement.text.strip() if subelement.text else subelement.text}) after {self.BBB} {C}:{V} in {sublocation}" )
                     self.addPriorityError( 1, C, V, f"Unprocessed {subelement.tag} subelement" )
-                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                 if BibleOrgSysGlobals.strictCheckingFlag:
                     assert '\n' not in charLine
                     assert '\t' not in charLine
@@ -312,7 +312,7 @@ class USXXMLBibleBook( BibleBook ):
                     noteCaller = value # Usually hyphen or plus or a symbol to be used for the note
                 else:
                     logging.error( f"CY38 Unprocessed {attrib} attribute ({value}) in {noteLocation}" )
-                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
             #if noteCaller=='' and self.BBB=='NUM' and C=='10' and V=='36': noteCaller = '+' # Hack
             if BibleOrgSysGlobals.strictCheckingFlag: assert noteStyle and noteCaller # both compulsory
             if not noteCaller:
@@ -342,13 +342,13 @@ class USXXMLBibleBook( BibleBook ):
                             unmmatchedMarker = value
                         else:
                             logging.error( f"NV21 Unprocessed {attrib} attribute ({value}) in {sublocation}" )
-                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                     self.addPriorityError( 2, C, V, f"Unmatched subelement for {repr(unmmatchedMarker)} in {sublocation}" if unmmatchedMarker else f"Unmatched subelement in {sublocation}" )
                     if not BibleOrgSysGlobals.isBlank( subelement.tail ): noteField += subelement.tail
                 else:
                     logging.error( f"Unprocessed {subelement.tag} subelement after {self.BBB} {C}:{V} in {sublocation}" )
                     self.addPriorityError( 1, C, V, f"Unprocessed {subelement.tag} subelement" )
-                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                     if not BibleOrgSysGlobals.isBlank( subelement.tail ): noteField += subelement.tail
                 # dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Note subelement {self.BBB}_{C}:{V} {BibleOrgSysGlobals.isBlank( subelement.tail )=} {subelement.tail=} {noteField=}" )
                 if self.doExtraChecking: assert '\n' not in noteField
@@ -356,12 +356,12 @@ class USXXMLBibleBook( BibleBook ):
 
             if not noteElement.text and len(noteElement) == 0: # no subelements either
                 logging.error( f"Note ({noteStyle}) has no text at {self.BBB} {C}:{V} {noteLocation} -- note will be ignored" )
-                if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning and DEBUGGING_THIS_MODULE: halt
+                if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning and DEBUGGING_THIS_MODULE: assert False, "We want to stop here"
             if self.doExtraChecking: assert '\n' not in noteField
 
             # Now process the left-overs (tail)
             if noteElement.tail:
-                #if '\n' in noteElement.tail: halt
+                #if '\n' in noteElement.tail: assert False, "We want to stop here"
                 noteTail = noteElement.tail
                 if noteTail[0] in ('\n','\t'): noteTail = noteTail.lstrip() # Paratext puts multiple cross-references on new lines
                 if noteTail and noteTail[-1] in ('\n','\t'): noteTail = noteTail.rstrip()
@@ -398,7 +398,7 @@ class USXXMLBibleBook( BibleBook ):
                     assert paragraphVerseId[colonIx+1:] == V
                 else:
                     logging.error( f"CH46 Unprocessed {attrib} attribute ({value}) in {paragraphlocation}" )
-                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
 
             # Now process the paragraph text (or write a paragraph marker anyway)
             paragraphText = paragraphXML.text if paragraphXML.text and paragraphXML.text.strip() else ''
@@ -423,11 +423,11 @@ class USXXMLBibleBook( BibleBook ):
                         #elif attrib=='pubnumber': pubNumber = value # TODO: not used anywhere!
                         #else:
                             #logging.error( f"KR60 Unprocessed {attrib} attribute ({value}) in {location}" )
-                            #if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                            #if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                     #if verseStyle != 'v':
                         #logging.error( f"Unexpected style attribute ({verseStyle}) in {location}" )
-                        #if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
-                    ##if altNumber: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, repr(verseStyle), repr(altNumber) ); halt
+                        #if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
+                    ##if altNumber: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, repr(verseStyle), repr(altNumber) ); assert False, "We want to stop here"
                     #altStuff = f' \\va {altNumber}\\va*' if altNumber else ''
                     #self.addLine( verseStyle, V + altStuff + ' ' )
                     ## Now process the tail (if there's one) which is the verse text
@@ -461,7 +461,7 @@ class USXXMLBibleBook( BibleBook ):
                             linkTarget = value # e.g., some reference
                         else:
                             logging.error( f"KW54 Unprocessed {attrib} attribute ({value}) in {location}" )
-                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                     self.addPriorityError( 3, C, V, f"Unprocessed {repr(linkDisplay)} link to {repr(linkTarget)} in {location}" )
                 elif element.tag == 'unmatched': # Used to denote errors in the source text
                     BibleOrgSysGlobals.checkXMLNoText( element, location )
@@ -482,7 +482,7 @@ class USXXMLBibleBook( BibleBook ):
                         if attrib=='loc': refLoc = value
                         else:
                             logging.error( f"KW74 Unprocessed {attrib} attribute ({value}) in {location}" )
-                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "ref", refLoc, repr(element.text), repr(element.tail), repr(element.text + (element.tail if element.tail else '')) )
                     self.appendToLastLine( element.text + (element.tail if element.tail else '') )
                     # TODO: How do we save reference in USFM???
@@ -500,7 +500,7 @@ class USXXMLBibleBook( BibleBook ):
                         elif attrib=='ref': figRef = value
                         else:
                             logging.error( f"KW84 Unprocessed {attrib} attribute ({value}) in {location}" )
-                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                     figCaption = element.text
                     figLine = f'\\fig {figDesc}|{figFile}|{figSize}|{figLoc}|{figCopy}|{figCaption}|{figRef}\\fig*'
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "figLine", figLine )
@@ -510,7 +510,7 @@ class USXXMLBibleBook( BibleBook ):
                     logging.error( f"SW22 Unprocessed {element.tag} element after {self.BBB} {C}:{V} in {location}" )
                     self.addPriorityError( 1, C, V, f"Unprocessed {element.tag} element" )
                     for x in range(max(0,len(self)-10),len(self)): vPrint( 'Quiet', DEBUGGING_THIS_MODULE, x, self._rawLines[x] )
-                    if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag: halt
+                    if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag: assert False, "We want to stop here"
         # end of load.loadParagraph
 
 
@@ -545,10 +545,10 @@ class USXXMLBibleBook( BibleBook ):
                 if attrib=='version': version = value
                 else:
                     logging.error( f"DG84 Unprocessed {attrib} attribute ({value}) in {treeLocation}" )
-                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
             if version not in ( None, '2.0','2.5','2.6','3.0' ):
                 logging.critical( f"Not sure if we can handle v{version} USX files" )
-                if DEBUGGING_THIS_MODULE: halt
+                if DEBUGGING_THIS_MODULE: assert False, "We want to stop here"
             vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Parsing USX v{version} file for {self.workName} {self.BBB}…" )
 
             # Now process the data
@@ -568,10 +568,10 @@ class USXXMLBibleBook( BibleBook ):
                             bookStyle = value
                         else:
                             logging.error( f"MD12 Unprocessed {attrib} attribute ({value}) in {location}" )
-                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                     if bookStyle != 'id':
                         logging.warning( f"Unexpected style attribute ({bookStyle}) in {location}" )
-                        if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                        if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                     idLine = idField
                     if element.text and element.text.strip(): idLine += ' ' + element.text
                     self.addLine( 'id', idLine )
@@ -590,7 +590,7 @@ class USXXMLBibleBook( BibleBook ):
                         if text is None: text = ''
                         if BibleOrgSysGlobals.debugFlag:
                             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{self.BBB} {C}:{V} Found '\\{USFMMarker}' internal USFM marker at beginning of line with text: {text!r}" )
-                            #halt # Not checked yet
+                            #assert False, "We want to stop here" # Not checked yet
                         if text:
                             loadErrors.append( f"{self.BBB} {C}:{V} Found '\\{USFMMarker}' internal USFM marker at beginning of line with text: {text!r}" )
                             logging.critical( f"Found '\\{USFMMarker}' internal USFM Marker after {self.BBB} {C}:{V} at beginning of line with text: {text!r}" )
@@ -649,7 +649,7 @@ class USXXMLBibleBook( BibleBook ):
                             if attrib=='style': rowStyle = value
                             else:
                                 logging.error( f"LK46 Unprocessed {attrib} attribute ({value}) in {sublocation}" )
-                                if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                                if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                         assert rowStyle == 'tr'
                         tableCode = ''
                         for sub2element in subelement:
@@ -666,7 +666,7 @@ class USXXMLBibleBook( BibleBook ):
                                     elif attrib=='align': alignMode = value
                                     else:
                                         logging.error( f"LP16 Unprocessed {attrib} attribute ({value}) in {sub2location}" )
-                                        if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                                        if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "cS", cellStyle, "aM", alignMode )
                                 if BibleOrgSysGlobals.strictCheckingFlag:
                                     assert cellStyle in ('th1','th2','th3','th4', 'thr1','thr2','thr3','thr4', 'tc1','tc2','tc3','tc4', 'tcr1','tcr2','tcr3','tcr4')
@@ -691,7 +691,7 @@ class USXXMLBibleBook( BibleBook ):
                                             #else:
                                                 #logging.error( f"KA28 Unprocessed {sub3element.tag} sub4element after {self.BBB} {C}:{V} in {sub4location}" )
                                                 #self.addPriorityError( 1, C, V, f"Unprocessed {sub4element.tag} sub4element" )
-                                                #if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                                                #if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                                         #if not BibleOrgSysGlobals.isBlank( sub3element.tail ):
                                             #tableCode += sub3element.tail
                                     elif sub3element.tag == 'verse': # Have a verse number inside a table
@@ -703,21 +703,21 @@ class USXXMLBibleBook( BibleBook ):
                                     else:
                                         logging.error( f"KA29 Unprocessed {sub3element.tag} sub3element after {self.BBB} {C}:{V} in {sub3location}" )
                                         self.addPriorityError( 1, C, V, f"Unprocessed {sub3element.tag} sub3element" )
-                                        if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                                        if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                                     assert '\n' not in tableCode
                             elif sub2element.tag == 'verse':
                                 loadVerseNumberField( sub2element, sub2location )
                             else:
                                 logging.error( f"VA81 Unprocessed {sub2element.tag} sub2element after {self.BBB} {C}:{V} in {sub2location}" )
                                 self.addPriorityError( 1, C, V, f"Unprocessed {sub3element.tag} sub2element" )
-                                if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                                if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                         assert '\n' not in tableCode
                         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"tableCode: {tableCode}" )
                         self.addLine( 'tr', tableCode )
                 else:
                     logging.error( f"DV60 Unprocessed {element.tag} element after {self.BBB} {C}:{V} in {location}" )
                     self.addPriorityError( 1, C, V, f"Unprocessed {element.tag} element" )
-                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
 
         if loadErrors: self.checkResultsDictionary['Load Errors'] = loadErrors
     # end of USXXMLBibleBook.load

@@ -366,7 +366,7 @@ class SwordBible( Bible ):
             #if encoding == ENC_LATIN1: self.encoding = 'latin-1'
             #elif encoding == ENC_UTF8: self.encoding = 'utf-8'
             #elif encoding == ENC_UTF16: self.encoding = 'utf-16'
-            #elif BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: halt
+            #elif BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: assert False, "We want to stop here"
 
             #if BibleOrgSysGlobals.verbosityLevel > 3:
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'Description: {module.getDescription()!r}' )
@@ -391,7 +391,7 @@ class SwordBible( Bible ):
                 ## Find where we're at
                 #verseKey = module.getKey()
                 #verseKeyText = verseKey.getShortText()
-                ##if '2' in verseKeyText: halt # for debugging first verses
+                ##if '2' in verseKeyText: assert False, "We want to stop here" # for debugging first verses
                 ##if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE:
                     ##dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'\nvkst={verseKeyText!r} vkix={verseKey.getIndex()}' )
 
@@ -448,7 +448,7 @@ class SwordBible( Bible ):
 
                 #if C != currentC:
                     #thisBook.addLine( 'c', C )
-                    ##if C == '2': halt
+                    ##if C == '2': assert False, "We want to stop here"
                     #currentC = C
 
                 #if nativeVerseText:
@@ -458,7 +458,7 @@ class SwordBible( Bible ):
                     #elif markupCode == FMT_THML: importTHMLVerseLine( nativeVerseText, thisBook, self.moduleName, BBB, C, V )
                     #else:
                         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'markupCode', repr(markupCode) )
-                        #if BibleOrgSysGlobals.debugFlag: halt
+                        #if BibleOrgSysGlobals.debugFlag: assert False, "We want to stop here"
                         #return
 
             #if currentBBB is not None and haveText: # Save the very last book

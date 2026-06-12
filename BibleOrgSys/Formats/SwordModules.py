@@ -169,7 +169,7 @@ class SwordModuleConfiguration:
         else:
             logging.critical( f"Missing 'ModDrv=' line in {self.abbreviation} conf file" )
         if 'Encoding' in self.confDict:
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, self.confDict['Encoding']); halt
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, self.confDict['Encoding']); assert False, "We want to stop here"
             assert self.confDict['Encoding'] in ('UTF-8',)
             #self.encoding = 'utf-8' # override the default
             if self.abbreviation in ('ab','barnes','navelinked','dandettebiblen',): self.encoding = 'iso-8859-15' # Not sure how/why they got this wrong!
@@ -179,7 +179,7 @@ class SwordModuleConfiguration:
             if key not in ALL_SWORD_CONF_FIELD_NAMES:
                 if BibleOrgSysGlobals.verbosityLevel > 0:
                     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"SwordModuleConfiguration.loadConf: Unexpected {self.abbreviation} {key!r} Sword conf key ({self.confDict[key]})" )
-                if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: halt
+                if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: assert False, "We want to stop here"
 
         # See if we have to inform the user about anything
         if 'Font' in self.confDict and BibleOrgSysGlobals.debugFlag: logging.warning( f"This program does not load {self.confDict['Font']!r} font yet." )
@@ -223,7 +223,7 @@ class SwordModuleConfiguration:
                         result += ('\n' if result else '') + f"        {version}: {historyDescription}"
                     else:
                         logging.error( f"SwordModuleConfiguration: Got a malformed History string: {something!r}" )
-                        if DEBUGGING_THIS_MODULE and BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag: halt
+                        if DEBUGGING_THIS_MODULE and BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag: assert False, "We want to stop here"
             elif key not in TECHNICAL_SWORD_CONF_FIELD_NAMES or BibleOrgSysGlobals.verbosityLevel > 2: # Don't bother printing some of the technical keys
                 result += ('\n' if result else '') + f"      {adjKey}: {value}"
         return result
@@ -392,7 +392,7 @@ class SwordModule():
             # For random keys, lengths of from 4 to 16 bytes are recommended, depending on how secure you want this to be.
             if not key: hashInit(); return # If we have been given no key, assume the default hash setup
             cards = bytearray( range( 256 ) ) # Start with cards all in order -- one of each
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, len(cards), cards ); halt
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, len(cards), cards ); assert False, "We want to stop here"
             # Swap the card at each position with some other card
             keyPos = rsum = 0
             for j in range( 255, -1, -1 ):
@@ -462,7 +462,7 @@ class SwordModule():
             vPrint( 'Info', DEBUGGING_THIS_MODULE, f"    {len(idxData)} {self.SwordModuleConfiguration.modCategory} index pointer entries read" )
         else:
             logging.critical( f"Oops, cannot find {filepath} for {self.SwordModuleConfiguration.name} module" )
-            if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: halt
+            if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: assert False, "We want to stop here"
             return
         if idxData:
             blankCount, LDIndex = 0, {}
@@ -484,7 +484,7 @@ class SwordModule():
                         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "'"+indexString+"'", blockNumber, blockChunkNumber )
                         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "chunk is", "'"+chunk+"'" )
                         #if blockNumber==2: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, blockNumber, blockChunkNumber )
-                        #if j>50: halt
+                        #if j>50: assert False, "We want to stop here"
                         if indexString in LDIndex:
                             try: LDIndex[indexString].append( (blockNumber,blockChunkNumber,) ) # it's already a list
                             except AttributeError: LDIndex[indexString] = [LDIndex[indexString], (blockNumber,blockChunkNumber,)] # Start a new list with two entries
@@ -559,7 +559,7 @@ class SwordModule():
                             adjKey = f'{key} ({j+1})' if key in self.swordData else key
                             if adjKey in self.swordData:
                                 logging.critical( f"About to overwrite data in {self.SwordModuleConfiguration.name} for {adjKey}" )
-                                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, j, key, adjKey, '\n', self.swordData[key] if key in self.swordData else None, '\n', self.swordData[adjKey], '\n', chunk ); halt
+                                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, j, key, adjKey, '\n', self.swordData[key] if key in self.swordData else None, '\n', self.swordData[adjKey], '\n', chunk ); assert False, "We want to stop here"
                             assert isinstance( chunk, str )
                             self.swordData[adjKey] = chunk
                             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "   ", adjKey, "->", chunk )
@@ -575,7 +575,7 @@ class SwordModule():
                             adjKey = f'{key} ({j+1})' if key in self.swordData else key
                             if adjKey in self.swordData:
                                 logging.critical( f"About to overwrite data in {self.SwordModuleConfiguration.name} for {adjKey}" )
-                                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, j, key, adjKey, '\n', self.swordData[key] if key in self.swordData else None, '\n', self.swordData[adjKey], '\n', chunk ); halt
+                                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, j, key, adjKey, '\n', self.swordData[key] if key in self.swordData else None, '\n', self.swordData[adjKey], '\n', chunk ); assert False, "We want to stop here"
                             self.swordData[adjKey] = chunk.strip()
                             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "   ", adjKey, "->", chunk )
                         except IndexError:
@@ -596,7 +596,7 @@ class SwordModule():
                                 adjKey = f"{key} ({k+1})" if key in self.swordIndex else key
                                 if adjKey in self.swordIndex:
                                     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"About to overwrite data in {self.SwordModuleConfiguration.name} for {key}" )
-                                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, j, key, adjKey, '\n', self.swordData[key] if key in self.swordData else None, '\n', self.swordData[adjKey], '\n', chunk ); halt
+                                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, j, key, adjKey, '\n', self.swordData[key] if key in self.swordData else None, '\n', self.swordData[adjKey], '\n', chunk ); assert False, "We want to stop here"
                                 self.swordIndex[adjKey] = entry
                             except IndexError:
                                 logging.error( f"YYCompressed {self.SwordModuleConfiguration.name} {self.SwordModuleConfiguration.modCategory} skipped non-existing entry {blockNumber} / {blockChunkNumber} for {key!r}" )
@@ -609,7 +609,7 @@ class SwordModule():
                             adjKey = f'{key} ({j+1})' if key in self.swordData else key
                             if adjKey in self.swordIndex:
                                 logging.critical( f"About to overwrite data in {self.SwordModuleConfiguration.name} for {adjKey}" )
-                                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, j, key, adjKey, '\n', self.swordData[key] if key in self.swordData else None, '\n', self.swordData[adjKey], '\n', chunk ); halt
+                                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, j, key, adjKey, '\n', self.swordData[key] if key in self.swordData else None, '\n', self.swordData[adjKey], '\n', chunk ); assert False, "We want to stop here"
                             self.swordIndex[adjKey] = entry
                         except IndexError:
                             logging.error( f"Compressed {self.SwordModuleConfiguration.name} {self.SwordModuleConfiguration.modCategory} skipped non-existing chunk {blockNumber} / {blockChunkNumber} for {key!r}" )
@@ -737,7 +737,7 @@ class SwordModule():
                                 vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "What does num4==0 mean?" )
                             offset = length = None
                         else:
-                            if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: halt
+                            if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: assert False, "We want to stop here"
                         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, j, "num4 =", num4, "offset = ", offset, "length =", length )
                     else: indexString = ''
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, j, chunk, ix, endbit )
@@ -828,7 +828,7 @@ class SwordModule():
         elif versificationString == 'LXX': BOSname = 'LXX'
         else:
             logging.critical( f"Unknown {self.SwordModuleConfiguration.abbreviation!r} versification scheme for {versificationString}" )
-            if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: halt
+            if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: assert False, "We want to stop here"
         self.BibleOrgSystem = BibleOrganisationalSystem( BOSname )
 
         # Setup containers that we will fill
@@ -957,7 +957,7 @@ class SwordModule():
                 unit, letter = 'chapter', 'c'
                 if self.SwordModuleConfiguration.abbreviation in ('byz','tr','whnu',): letter = 'b' # Seems like a module bug
             else:
-                if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: halt
+                if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: assert False, "We want to stop here"
 
             totalIdxCount = 0
             for testament,Testament in processTestaments: # load OT then NT files
@@ -1058,7 +1058,7 @@ class SwordModule():
                                         except KeyError:
                                             logging.warning( f"Unable to properly decode {self.SwordModuleConfiguration.encoding} {self.SwordModuleConfiguration.name} {Testament} {self.SwordModuleConfiguration.modCategory} {unit} chunk #{j} {compressedLength}->{uncompressedLength}" )
                                             dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  ", uncompressedChunk[:40] )
-                                            if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: halt
+                                            if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: assert False, "We want to stop here"
                                             chunk = uncompressedChunk.decode( self.SwordModuleConfiguration.encoding, 'replace' )
                                             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, self.SwordModuleConfiguration.name, self.SwordModuleConfiguration.encoding, chunk )
                                     else:
@@ -1261,7 +1261,7 @@ class SwordModule():
 
         else:
             logging.critical( f"Unknown {self.SwordModuleConfiguration.modType!r} module type" )
-            if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: halt
+            if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: assert False, "We want to stop here"
 
         vPrint( 'Never', DEBUGGING_THIS_MODULE, self )
         vPrint( 'Never', DEBUGGING_THIS_MODULE, f"      Index size: {BibleOrgSysGlobals.totalSize( self.swordIndex )}" )
@@ -1341,7 +1341,7 @@ class SwordModule():
 
         else:
             logging.critical( f"Unknown {self.SwordModuleConfiguration.modType!r} module type" )
-            if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: halt
+            if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: assert False, "We want to stop here"
 
         vPrint( 'Never', DEBUGGING_THIS_MODULE, self )
         vPrint( 'Never', DEBUGGING_THIS_MODULE, f"      Index size: {BibleOrgSysGlobals.totalSize( self.swordIndex )}" )
@@ -1450,7 +1450,7 @@ class SwordModule():
             try: filepath,indexData = self.swordIndex[BBB]
             except KeyError:
                 logging.warning( f"Book {BBB} doesn't seem to be included in {self.SwordModuleConfiguration.name} {self.SwordModuleConfiguration.modCategory}" )
-                if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: halt
+                if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: assert False, "We want to stop here"
                 return None # if the book isn't included in this module
             try: indexInfo = indexData[(c,v,)]
             except KeyError:
@@ -1462,7 +1462,7 @@ class SwordModule():
                 elif self.SwordModuleConfiguration.confDict['BlockType'] == 'CHAPTER':
                     unit = "chapter"
                 else:
-                    if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: halt
+                    if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: assert False, "We want to stop here"
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, indexInfo )
                 fileOffset, compressedLength, uncompressedLength, verseOffset, verseLength = indexInfo
                 if compressedLength and verseLength:
@@ -1478,14 +1478,14 @@ class SwordModule():
                         #except:
                         #    logging.error( f"Unable to decompress {self.SwordModuleConfiguration.name} {self.SwordModuleConfiguration.modCategory} chunk {compressedLength}->{uncompressedLength}" )
                         #    uncompressedLength, uncompressedChunk = 0, b''
-                        #    halt
+                        #    assert False, "We want to stop here"
                     assert len(uncompressedChunk) == uncompressedLength
                     try:
                         textChunk = uncompressedChunk.decode( self.SwordModuleConfiguration.encoding )
                     except UnicodeDecodeError:
                         logging.warning( f"Unable to properly decode {self.SwordModuleConfiguration.encoding} {self.SwordModuleConfiguration.name} {self.SwordModuleConfiguration.modCategory} {unit} book chunk #{fileOffset} {compressedLength}->{uncompressedLength}" )
                         dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  ", uncompressedChunk[:40] )
-                        if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: halt
+                        if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: assert False, "We want to stop here"
                         textChunk = uncompressedChunk.decode( self.SwordModuleConfiguration.encoding, 'replace' )
                     verseText = textChunk[verseOffset:verseOffset+verseLength]
                     if len(verseText)!=verseLength:
@@ -1575,7 +1575,7 @@ class SwordModule():
                             if self.SwordModuleConfiguration.abbreviation=='zhhanzi': # my bug here somewhere??? XXXX
                                 chunk = ''
                             else:
-                                if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: halt
+                                if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: assert False, "We want to stop here"
                         assert isinstance( chunk, str )
                         return chunk.strip()
                     else: return ''
@@ -1583,7 +1583,7 @@ class SwordModule():
 
 
     #def XXXpreprocessRawGenBookEntry( self, key, rawEntry ):
-        #halt # Not used coz should be part of filtering
+        #assert False, "We want to stop here" # Not used coz should be part of filtering
         #def preprocessRawGenBookEntryHelper( key, rawEntry ):
             #entry = rawEntry
             #if entry.startswith( key ): entry = entry[len(key):] # Remove the key since we've already got that
@@ -1600,7 +1600,7 @@ class SwordModule():
             #if entry!=rawEntry or filepath is not None:
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nRaw entry in {self.SwordModuleConfiguration.abbreviation} for {key}: {rawEntry}" )
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, filepath, entry )
-                #halt
+                #assert False, "We want to stop here"
             #return entry, filepath
         ## end of SwordModule.preprocessRawGenBookEntryHelper
 
@@ -1652,7 +1652,7 @@ class SwordModule():
 
         else:
             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "filterToHTML rawData is ", rawData ) # unexpected data type
-            if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: halt
+            if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: assert False, "We want to stop here"
     # end of SwordModule.filterToHTML
 
 
@@ -1685,7 +1685,7 @@ class SwordModule():
                 elif self.SwordModuleConfiguration.confDict['SourceType'] == 'GBF':
                     #if data: data = data.replace('<FI>','\\add ').replace('<Fi>','\\add*')
                     #if data: data = data.replace('<CM>','') # What is this?
-                    ##if '<' in data: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{rawData!r} is now {data!r}" ); halt
+                    ##if '<' in data: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{rawData!r} is now {data!r}" ); assert False, "We want to stop here"
                     #return data
                     return filterGBFVerseLine( data, self.SwordModuleConfiguration.abbreviation, BBB, C, V )
                 elif self.SwordModuleConfiguration.confDict['SourceType'] == 'ThML':
@@ -1706,7 +1706,7 @@ class SwordModule():
 
         else:
             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "filterToUSFM rawData is ", rawData ) # unexpected data type
-            if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: halt
+            if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: assert False, "We want to stop here"
     # end of SwordModule.filterToUSFM
 
 
@@ -1752,7 +1752,7 @@ class SwordModule():
                 logging.warning( f"Couldn't find any relevant information in the {self.SwordModuleConfiguration.name} {self.SwordModuleConfiguration.modCategory}" )
                 if self.SwordModuleConfiguration.abbreviation in ('personal',): pass # Personal module can be empty
                 else:
-                    if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: halt
+                    if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: assert False, "We want to stop here"
         elif self.SwordModuleConfiguration.modType in ('RawLD','RawLD4','zLD','RawGenBook',):
             EnglishTestWords = ('ADAM','BAPTISM','BETHLEHEM','CAMEL','CONSUL','DAY','FAITH','GARDEN OF EDEN','GOLD','INSPIRE', \
                                 'MAGGI','MOSES','NOAH','PALESTINE','REPENT','SABBATH','TARSHISH','UR','WOLF','ZUZIM', )
@@ -1797,7 +1797,7 @@ class SwordModule():
                     foundAny = True
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, word, entry )
                     if isinstance( entry, list ):
-                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, word, stuff ); halt
+                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, word, stuff ); assert False, "We want to stop here"
                         if BibleOrgSysGlobals.verbosityLevel > 1:
                             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n{self.SwordModuleConfiguration.name} {word}:" )
                             for j,string in enumerate( entry ):
@@ -1825,7 +1825,7 @@ class SwordModule():
                         foundAny = True
                         #if self.SwordModuleConfiguration.modType=='RawGenBook': entry = self.preprocessRawGenBookEntry( word, entry )
                         if isinstance( entry, list ):
-                            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, word, stuff ); halt
+                            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, word, stuff ); assert False, "We want to stop here"
                             if BibleOrgSysGlobals.verbosityLevel > 1:
                                 vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n{self.SwordModuleConfiguration.name} {word}:" )
                                 for j,string in enumerate( entry ):
@@ -1845,9 +1845,9 @@ class SwordModule():
             if not foundAny:
                 vPrint( 'Info', DEBUGGING_THIS_MODULE, len(self.store), sorted(self.store.keys()) )
                 logging.warning( f"Couldn't find any relevant information in the {self.SwordModuleConfiguration.name} {self.SwordModuleConfiguration.modCategory}" )
-                #halt
+                #assert False, "We want to stop here"
         else:
-            logging.error( f"Don't know how to test {self.SwordModuleConfiguration.modType!r} module type" ); halt
+            logging.error( f"Don't know how to test {self.SwordModuleConfiguration.modType!r} module type" ); assert False, "We want to stop here"
         if testArray is None: return ourTestArray
     # end of SwordModule.test
 # end of class SwordModule
@@ -1898,7 +1898,7 @@ class SwordBibleModule( SwordModule, Bible ):
                     result = ourFilter( self.getRawVersifiedData( ('FRT','0','0') ), 'FRT', '0', '0' )
                     if result:
                         logging.warning( "Didn't process FRT: "+"'"+result+"'" )
-                        #halt # Need to process this
+                        #assert False, "We want to stop here" # Need to process this
                 else:
                     thisBook = BibleBook( self, BBB )
                     thisBook.objectNameString = 'SwordBibleModule book object'
@@ -1959,7 +1959,7 @@ class SwordBibleModule( SwordModule, Bible ):
                     result = ourFilter( self.getRawVersifiedData( ('FRT','0','0') ), 'FRT', '0', '0' )
                     if result:
                         logging.warning( "Didn't process FRT: "+"'"+result+"'" )
-                        #halt # Need to process this
+                        #assert False, "We want to stop here" # Need to process this
                 else:
                     thisBook = BibleBook( self, BBB )
                     thisBook.objectNameString = 'SwordBibleModule book object'
@@ -2067,7 +2067,7 @@ class SwordBibleModule( SwordModule, Bible ):
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, len(self.store), sorted(self.store.keys()) )
             logging.warning( f"Couldn't find any relevant information in the {self.SwordModuleConfiguration.name} {self.SwordModuleConfiguration.modCategory}" )
             if self.SwordModuleConfiguration.abbreviation in ('personal',): pass # Personal module can be empty
-            elif BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: halt # Why didn't we find any info in the module???
+            elif BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: assert False, "We want to stop here" # Why didn't we find any info in the module???
     # end of SwordBibleModule:test
 # end of SwordBibleModule
 
@@ -2144,7 +2144,7 @@ class SwordModules:
                     self.folders.append( (folder,loadCount,) )
                     totalCount += loadCount
                     totalFolders += 1
-        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, len(self.confs) ); halt
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, len(self.confs) ); assert False, "We want to stop here"
         vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Loaded {totalCount} Sword .conf files from {totalFolders} different folders" )
     # end of SwordModules.__loadAllConfs
 
@@ -2245,7 +2245,7 @@ class SwordModules:
         fnPrint( DEBUGGING_THIS_MODULE, "SwordModules.getModules()" )
 
         if self.modules:
-            halt # not written yet
+            assert False, "We want to stop here" # not written yet
         elif self.confs:
             result = []
             for moduleRoughName in sorted(self.confs.keys(), key=str.lower):

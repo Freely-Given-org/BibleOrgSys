@@ -239,7 +239,7 @@ class MySwordBible( Bible ):
         row = self.cursor.fetchone()
         for key in row.keys():
             self.suppliedMetadata['MySword'][key] = row[key]
-        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, self.suppliedMetadata['MySword'] ); halt
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, self.suppliedMetadata['MySword'] ); assert False, "We want to stop here"
         #if 'Description' in self.settingsDict and len(self.settingsDict['Description'])<40: self.name = self.settingsDict['Description']
         #if 'Abbreviation' in self.settingsDict: self.abbreviation = self.settingsDict['Abbreviation']
         if 'encryption' in self.suppliedMetadata['MySword']:
@@ -292,7 +292,7 @@ class MySwordBible( Bible ):
                 line = row[0]
             except TypeError: # This reference is missing (row is None)
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "something wrong at", BBB, C, V )
-                #if BibleOrgSysGlobals.debugFlag: halt
+                #if BibleOrgSysGlobals.debugFlag: assert False, "We want to stop here"
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, row )
                 line = None
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, nBBB, BBB, C, V, 'MySw file line is "' + line + '"' )
@@ -404,7 +404,7 @@ class MySwordBible( Bible ):
                 line = row[0]
             except TypeError: # This reference is missing (row is None)
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "something wrong at", BBB, C, V )
-                #if BibleOrgSysGlobals.debugFlag: halt
+                #if BibleOrgSysGlobals.debugFlag: assert False, "We want to stop here"
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, row )
                 line = None
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, nBBB, BBB, C, V, 'MySw file line is "' + line + '"' )
@@ -693,7 +693,7 @@ def testMySwB( indexString, MySwBfolder, MySwBfilename ):
                 vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nComparing original and re-exported MySword files…" )
                 result = BibleOrgSysGlobals.fileCompare( MySwBfilename, MySwBfilename, MySwBfolder, outputFolder )
                 if BibleOrgSysGlobals.debugFlag:
-                    if not result: halt
+                    if not result: assert False, "We want to stop here"
 # end of testMySwB
 
 

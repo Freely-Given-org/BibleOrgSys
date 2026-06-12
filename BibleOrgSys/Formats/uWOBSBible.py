@@ -445,9 +445,9 @@ class uWOBSBibleBook( BibleBook ):
                         doAddLine( 'p', line)
                         state = 1
                     else:
-                        halt
+                        assert False, "We want to stop here"
             #if loadErrors: self.checkResultsDictionary['Load Errors'] = loadErrors
-            #if debugging: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, self._rawLines ); halt
+            #if debugging: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, self._rawLines ); assert False, "We want to stop here"
         if fixErrors: self.checkResultsDictionary['Fix Text Errors'] = fixErrors
     # end of load
 # end of class uWOBSBibleBook
