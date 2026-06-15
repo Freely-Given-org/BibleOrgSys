@@ -2769,14 +2769,14 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
             internalBibleBookData = copy.copy( bookObject._processedLines )
             bookObject._processedLines = InternalBibleEntryList() # Contains more-processed tuples which contain the actual Bible text -- see below
             for processedBibleEntry in internalBibleBookData:
-                fullText = processedBibleEntry[5] # toUSFM3() only uses marker and fullText
+                fullText = processedBibleEntry[2] # toUSFM3() only uses marker and fullText
                 if fullText:
                     while True: # replace \\w …\\w* fields with the actual word they contain (losing the attributes)
                         match = re.search( '\\\\w (.+?)\\|.+?\\\\w\\*', fullText )
                         if not match: break
                         fullText = f'{fullText[:match.start()]}{match.group(1)}{fullText[match.end():]}'
-                bookObject._processedLines.append( InternalBibleEntry( processedBibleEntry[0], processedBibleEntry[1], processedBibleEntry[2],
-                    processedBibleEntry[3], processedBibleEntry[4], fullText ) )
+                bookObject._processedLines.append( InternalBibleEntry( processedBibleEntry[0], processedBibleEntry[1], fullText,
+                                                    processedBibleEntry[3], processedBibleEntry[4], processedBibleEntry[5] ) )
         return copiedSelf
     # end of InternalBible._getBibleWithoutWFields
 

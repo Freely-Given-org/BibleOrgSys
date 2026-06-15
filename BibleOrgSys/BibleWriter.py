@@ -111,7 +111,7 @@ from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisational
 from BibleOrgSys.Reference.BibleReferences import BibleReferenceList
 from BibleOrgSys.Misc.NoisyReplaceFunctions import noisyRegExDeleteAll
 import usfm_markers_py
-from usfm_markers_py import OFTEN_IGNORED_USFM_HEADER_MARKERS, USFM_ALL_INTRODUCTION_MARKERS
+from usfm_markers_py import OFTEN_IGNORED_USFM_HEADER_MARKERS, USFM_ALL_INTRODUCTION_MARKERS, USFM_PRECHAPTER_MARKERS
 
 
 LAST_MODIFIED_DATE = '2026-04-29' # by RJH

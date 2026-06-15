@@ -383,7 +383,7 @@ class InternalBibleExtra:
     def getIndex(self) -> int:
         """Get the index (Python compat)."""
 
-    def getText(self) -> str:
+    def getFullText(self) -> str:
         """Get the note text (Python compat)."""
 
     def getCleanText(self) -> str:
@@ -524,11 +524,11 @@ class ChapterVerse:
 
     def __getnewargs__(self) -> tuple[str, str]: ...
     @staticmethod
-    def intro(verse_line: int) -> t.Self:
+    def intro(verse_line: int) -> ChapterVerse:
         """Create an introduction reference (chapter -1)."""
 
     @staticmethod
-    def chapter_intro(chapter: str) -> t.Self:
+    def chapter_intro(chapter: str) -> ChapterVerse:
         """Create a chapter introduction reference (verse 0)."""
 
     @property
@@ -587,41 +587,34 @@ class InternalBibleEntry:
     def __init__(
         self,
         marker: str,
-        original_marker: str | None,
-        adjusted_text: str | None = None,
-        clean_text: str | None = None,
+        original_marker: str,
+        original_text: str = "",
+        adjusted_text: str = "",
         extras: InternalBibleExtraList | None = None,
-        original_text: str | None = None,
+        clean_text: str = "",
     ) -> None:
         """
         Create a new InternalBibleEntry.
 
         Matches the Python constructor signature:
-        InternalBibleEntry(marker, originalMarker, adjustedText, cleanText, extras, original_text)
+        InternalBibleEntry(marker, originalMarker, original_text, adjusted_text, extras, clean_text)
 
         For end markers / added nesting markers, originalMarker through original_text should be None.
         """
 
     def __getnewargs__(
         self,
-    ) -> tuple[
-        str,
-        str | None,
-        str | None,
-        str | None,
-        InternalBibleExtraList | None,
-        str | None,
-    ]: ...
+    ) -> tuple[str, str, str, str, InternalBibleExtraList | None, str]: ...
     @property
     def marker(self) -> str:
         """Get the (adjusted) marker."""
 
     @property
-    def originalMarker(self) -> str | None:
+    def originalMarker(self) -> str:
         """Get the original marker before adjustment."""
 
     @property
-    def adjustedText(self) -> str | None:
+    def adjustedText(self) -> str:
         """Get the adjusted text (notes removed, formatting retained)."""
 
     @property
@@ -633,38 +626,29 @@ class InternalBibleEntry:
         """Get the extras (footnotes, cross-refs, etc.)."""
 
     @property
-    def original_text(self) -> str | None:
+    def original_text(self) -> str:
         """Get the original text (full USFM)."""
 
     def getMarker(self) -> str:
-        """Get the marker (Python compat)."""
+        """Get the marker"""
 
-    def getOriginalMarker(self) -> str | None:
-        """Get the original marker (Python compat)."""
+    def getOriginalMarker(self) -> str:
+        """Get the original marker"""
 
-    def getAdjustedText(self) -> str | None:
-        """Get the adjusted text (Python compat)."""
-
-    def getText(self) -> str | None:
-        """Get the adjusted text — alias (Python compat)."""
+    def getAdjustedText(self) -> str:
+        """Get the adjusted text"""
 
     def getCleanText(self, remove_esfm_underlines: bool = False) -> str:
-        """Get the clean text, optionally removing ESFM underlines (Python compat)."""
+        """Get the clean text, optionally removing ESFM underlines"""
 
     def getExtras(self) -> InternalBibleExtraList | None:
-        """Get the extras (Python compat)."""
+        """Get the extras"""
 
-    def getOriginalText(self) -> str | None:
-        """Get the original text (Python compat)."""
+    def getOriginalText(self) -> str:
+        """Get the original text (should be identical to the line read from the original file)"""
 
-    def getFullText(self) -> str | None:
-        """Get the full text — returns original_text (Python compat)."""
-
-    def setCleanText(self, new_value: str) -> None:
-        """
-        Set the clean text (also sets adjusted and original text).
-        Only works when extras is None.
-        """
+    def getFullText(self) -> str:
+        """Get the full text — returns TRIMMED original_text"""
 
     def is_end_marker(self) -> bool:
         """Check if this is an end marker."""
@@ -713,7 +697,7 @@ class InternalBibleEntryList:
         """Extend with another entry list."""
 
     def __add__(self, other: InternalBibleEntryList) -> t.Self:
-        """Support the + operator to combine lists (Python compat)."""
+        """Support the + operator to combine lists"""
 
     def contains(self, search_marker: str, max_lines: int | None = None) -> int | None:
         """Search for the first entry with the given marker (Python compat: `contains`)."""
@@ -779,16 +763,16 @@ class CVIndexEntry:
         """Get the context markers."""
 
     def getEntryIndex(self) -> int:
-        """Get the entry index (Python compat)."""
+        """Get the entry index"""
 
     def getNextEntryIndex(self) -> int:
-        """Get the next entry index (Python compat)."""
+        """Get the next entry index"""
 
     def getEntryCount(self) -> int:
-        """Get the entry count (Python compat)."""
+        """Get the entry count"""
 
     def getContextList(self) -> list[str]:
-        """Get the context list (Python compat)."""
+        """Get the context list"""
 
     def __len__(self) -> int: ...
     def __getitem__(self, key_index: int) -> t.Any: ...
@@ -838,7 +822,7 @@ class InternalBibleBookCVIndex:
 
     @property
     def workName(self) -> str:
-        """Get the work name (Python compat)."""
+        """Get the work name"""
 
     @property
     def BBB(self) -> str:
@@ -896,10 +880,10 @@ class InternalBibleBookCVIndex:
         """Validate the index structure."""
 
     def makeBookCVIndex(self, entries: InternalBibleEntryList) -> None:
-        """Build the CV index from processed entries (Python compat)."""
+        """Build the CV index from processed entries"""
 
     def discover(self) -> BookDiscoveryResults:
-        """Perform discovery on this book (Python compat)."""
+        """Perform discovery on this book"""
 
     def getVerseEntries(
         self, cv_key: tuple[str, str], strict: bool = True
@@ -912,12 +896,12 @@ class InternalBibleBookCVIndex:
         """Get verse entries with context for a (C,V) tuple key."""
 
     def getChapterEntries(self, chapter: str) -> InternalBibleEntryList:
-        """Get all entries for a chapter (Python compat)."""
+        """Get all entries for a chapter"""
 
     def getChapterEntriesWithContext(
         self, chapter: str
     ) -> tuple[InternalBibleEntryList, list[str]]:
-        """Get chapter entries with context markers (Python compat)."""
+        """Get chapter entries with context markers"""
 
     def getEntries(self) -> InternalBibleEntryList:
         """Get all entries (Python compat alias for entries property)."""

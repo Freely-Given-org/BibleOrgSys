@@ -85,10 +85,10 @@ from usfm_markers_py import to_standard_marker, get_newline_markers_list, is_new
                             USFM_BIBLE_PARAGRAPH_MARKERS, USFM_ALL_BIBLE_PARAGRAPH_MARKERS, USFM_ALL_MARKERS
 
 
-LAST_MODIFIED_DATE = '2026-05-20' # by RJH
+LAST_MODIFIED_DATE = '2026-06-14' # by RJH
 SHORT_PROGRAM_NAME = "InternalBibleBook"
 PROGRAM_NAME = "Internal Bible book handler"
-PROGRAM_VERSION = '1.00'
+PROGRAM_VERSION = '1.0.1'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -1129,7 +1129,7 @@ class InternalBibleBook:
         for entry in self._processedLines:
             if entry.getMarker() == adjFieldName:
                 if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: assert not entry.getExtras() # We're maybe losing some info here
-                return entry.getText()
+                return entry.getOriginalText()
     # end of InternalBibleBook.getField
 
 
@@ -1753,13 +1753,17 @@ class InternalBibleBook:
         assert isinstance( verseEntryList, InternalBibleEntryList )
 
         # # Check that we don't have any duplicated verses in the section that we're about to return
-        # lastV = None
-        # for entry in verseEntryList:
-        #     marker, text = entry.getMarker(), entry.getFullText()
-        #     print( f"InternalBibleBook.getContextVerseData {BCVReference} {marker}={text}" )
-        #     if marker == 'v':
-        #         assert text != lastV
-        #         lastV = text
+        # and that we have no text from the previous verse
+        lastV = None
+        for entry in verseEntryList:
+            marker = entry.getMarker()
+            if marker == 'v':
+                text = entry.getOriginalText()
+                assert text != lastV, f"Repeated verse {BCVReference=} {marker} {text=}\nfrom {verseEntryList}"
+                lastV = text
+            elif marker in ('v~','p~'):
+                text = entry.getOriginalText()
+                assert lastV, f"Unwanted preceding verse text {BCVReference=} {marker} {text=}\nfrom {verseEntryList}"
     
         return verseEntryList, contextList
         # NOTE: The following (and more) is now done by the index get function

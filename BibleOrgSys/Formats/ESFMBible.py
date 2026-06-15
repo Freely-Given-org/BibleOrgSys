@@ -773,7 +773,7 @@ class ESFMBible( Bible ):
                 # adjText, cleanText, extras = _processLineFix( self, C:str,V:str, originalMarker:str, text:str, fixErrors:list[str] )
                 # newEntry = InternalBibleEntry( entry.getMarker(), entry.getOriginalMarker(), entry.getAdjustedText(), entry.getCleanText(), entry.getExtras(), original_text )
                 # Since we messed up many of the fields, set them to blank/null entries so that the old/wrong/outdated values can't be accidentally used
-                newEntry = InternalBibleEntry( entry.getMarker(), entry.getOriginalMarker(), '', '', None, original_text )
+                newEntry = InternalBibleEntry( entry.getMarker(), entry.getOriginalMarker(), original_text, '', None, '' )
                 updatedVerseList.append( newEntry )
             else:
                 logging.critical( f"ESFMBible.livenESFMWordLinks unable to find wordlink in '{original_text}'" )

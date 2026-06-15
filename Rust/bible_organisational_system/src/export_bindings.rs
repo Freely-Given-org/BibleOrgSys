@@ -25,8 +25,10 @@ pub fn py_export_to_text<'py>(
     }
 
     let output_path = Path::new(output_path_str);
-    let ignored_markers = export_to_text(&books, output_path, column_width)
-        .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
+    let ignored_markers = py.detach(move || {
+        export_to_text(&books, output_path, column_width)
+    })
+    .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
 
     let py_set = PySet::new(py, &ignored_markers)?;
     Ok(py_set)
@@ -95,20 +97,22 @@ pub fn py_export_to_html5<'py>(
     });
     let xref_cb_ref = xref_cb.as_ref().map(|cb| &**cb as &(dyn Fn(&str) -> String + Sync));
 
-    let (ignored, unhandled) = export_to_html5(
-        &books,
-        output_path,
-        bible_name,
-        &book_order,
-        &book_names,
-        &filename_dict,
-        &control_dict,
-        program_name,
-        program_version,
-        today_str,
-        xref_cb_ref,
-    )
-    .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
+    let res = py.detach(move || {
+        export_to_html5(
+            &books,
+            output_path,
+            bible_name,
+            &book_order,
+            &book_names,
+            &filename_dict,
+            &control_dict,
+            program_name,
+            program_version,
+            today_str,
+            xref_cb_ref,
+        )
+    });
+    let (ignored, unhandled) = res.map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
 
     let py_ignored = PySet::new(py, &ignored)?;
     let py_unhandled = PySet::new(py, &unhandled)?;

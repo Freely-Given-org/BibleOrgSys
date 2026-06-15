@@ -547,7 +547,7 @@ class BCVBibleBook( BibleBook ):
                         if originalMarker is None: originalMarker = marker
                         if text is None: text = ''
                         adjText, cleanText, extras = self.processLineFix( C, V, originalMarker, text, fixErrors ) # separate out the notes (footnotes and cross-references)
-                    self._processedLines.append( InternalBibleEntry(marker, originalMarker, adjText, cleanText, extras, text) )
+                    self._processedLines.append( InternalBibleEntry(marker, originalMarker, text, adjText, extras, cleanText) )
 
             #if loadErrors: self.checkResultsDictionary['Load Errors'] = loadErrors
             #if debugging: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, self._rawLines ); assert False, "We want to stop here"

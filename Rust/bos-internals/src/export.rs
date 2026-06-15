@@ -691,7 +691,7 @@ pub fn export_to_html5(
             let mut writer = crate::ml_writer::MlWriter::new(&filepath, crate::ml_writer::MlOutputType::Html);
             writer.set_human_readable(crate::ml_writer::HumanReadable::All, 2);
             
-            if let Err(e) = writer.start('\n', true, false) {
+            if let Err(e) = writer.start('l', true, false) {
                 println!("Error starting MlWriter for book {}: {:?}", bbb, e);
                 return (local_ignored, local_unhandled);
             }
@@ -731,7 +731,7 @@ pub fn export_to_html5(
 
             for entry in entry_list.iter() {
                 let marker = entry.marker();
-                let text = entry.adjusted_text().unwrap_or("");
+                let text = entry.adjusted_text();
                 let extras = entry.extras();
                 let has_extras = entry.has_extras();
 

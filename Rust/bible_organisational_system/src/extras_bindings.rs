@@ -97,7 +97,7 @@ impl PyInternalBibleExtra {
     }
 
     /// Get the note text (Python compat).
-    fn getText(&self) -> &str {
+    fn getFullText(&self) -> &str {
         self.inner.note_text()
     }
 

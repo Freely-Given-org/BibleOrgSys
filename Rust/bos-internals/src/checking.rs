@@ -123,7 +123,7 @@ pub fn validate_processed_markers(
 
     for (j, entry) in entries.iter().enumerate() {
         let marker = entry.marker();
-        let text = entry.text().unwrap_or("");
+        let text = entry.adjusted_text();
 
         // Keep track of location
         if marker == "c" {
@@ -221,7 +221,7 @@ pub fn get_versification(
 
     for (j, entry) in entries.iter().enumerate() {
         let marker = entry.marker();
-        let text = entry.text().unwrap_or("");
+        let text = entry.adjusted_text();
 
         if marker == "c" {
             if chapter_number == -1 {
@@ -315,7 +315,7 @@ pub fn get_added_units(
 
     for entry in entries.iter() {
         let marker = entry.marker();
-        let text = entry.text().unwrap_or("");
+        let text = entry.adjusted_text();
 
         if marker == "c" {
             chapter = text.split_whitespace().next().unwrap_or(text).to_string();
@@ -380,7 +380,7 @@ pub fn get_added_units(
             let wj_count = text.matches("wj").count() as i32 / 2;
             let wj_first = text.starts_with("\\wj ");
             let wj_last = text.ends_with("\\wj*");
-            info.words_of_jesus.push(((chapter.clone(), verse.clone()), (entry.original_marker().unwrap_or("").to_string(), wj_count, wj_first, wj_last)));
+            info.words_of_jesus.push(((chapter.clone(), verse.clone()), (entry.original_marker().to_string(), wj_count, wj_first, wj_last)));
         }
     }
 
@@ -411,8 +411,8 @@ pub fn do_check_sfms(
     for entry in entries.iter() {
         let marker = entry.marker();
         assert!(!marker.is_empty(), "Entry marker should never be empty");
-        let original_marker = entry.original_marker().unwrap_or("");
-        let text = entry.text().unwrap_or("");
+        let original_marker = entry.original_marker();
+        let text = entry.adjusted_text();
         let extras = entry.extras();
         let marker_text_empty = text.is_empty();
 
@@ -518,7 +518,7 @@ pub fn do_check_speech_marks(
 
     for entry in entries.iter() {
         let marker = entry.marker();
-        let text = entry.text().unwrap_or("");
+        let text = entry.adjusted_text();
         let clean_text = entry.clean_text();
 
         if marker == "c" {
@@ -624,7 +624,7 @@ pub fn do_check_words(
 
     for entry in entries.iter() {
         let marker = entry.marker();
-        let text = entry.text().unwrap_or("");
+        let text = entry.adjusted_text();
         let clean_text = entry.clean_text();
 
         if marker == "c" {
@@ -717,7 +717,7 @@ pub fn do_check_headings(
 
     for entry in entries.iter() {
         let marker = entry.marker();
-        let text = entry.text().unwrap_or("");
+        let text = entry.adjusted_text();
 
         if marker == "c" {
             if !text.is_empty() {
@@ -776,7 +776,7 @@ pub fn do_check_introduction(
 
     for entry in entries.iter() {
         let marker = entry.marker();
-        let text = entry.text().unwrap_or("");
+        let text = entry.adjusted_text();
         let clean_text = entry.clean_text();
 
         if marker == "c" {
@@ -838,7 +838,7 @@ pub fn do_check_notes(
 
     for entry in entries.iter() {
         let marker = entry.marker();
-        let text = entry.text().unwrap_or("");
+        let text = entry.adjusted_text();
 
         if marker == "c" {
             if !text.is_empty() {

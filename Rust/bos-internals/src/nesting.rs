@@ -16,47 +16,91 @@ pub fn add_verse_start_markers(entries: InternalBibleEntryList) -> InternalBible
     let entries_vec = entries.into_vec();
     let num_entries = entries_vec.len();
     let mut result = InternalBibleEntryList::with_capacity(num_entries + 40);
-    
+
     let fields_preceded = ["s1", "s2", "s3", "s4", "sp"];
     let mut fields_also_preceded: Vec<&str> = Vec::new();
     fields_also_preceded.extend_from_slice(paragraph_markers::ALL);
     fields_also_preceded.extend_from_slice(&["c#", "r", "d", "ms1", "mr", "sr", "sp", "ib", "b", "cl¤", "tr"]);
 
+    let mut current_verse_number: Option<CompactString> = None;
+    // let mut current_verse_clean_text: Option<CompactString> = None;
+    // let mut current_verse_original_text: Option<CompactString> = None;
+    let mut current_verse_part_index: usize = 0;
+
     for j in 0..num_entries {
         let entry = &entries_vec[j];
         let marker = entry.marker();
         assert!(!marker.is_empty() && !marker.contains('\\'), "Entry marker should not be empty and should not contain a backslash: found '{}'", marker);
-        
+
         if fields_preceded.contains(&marker) {
-            // Look ahead for next 'v'
-            for k in 1..5 {
-                if j + k < num_entries {
-                    let next_entry = &entries_vec[j + k];
-                    let next_marker = next_entry.marker();
-                    if next_marker == "v" {
-                        // Add v= marker
-                        result.push(
-                            InternalBibleEntry::new(
-                                "v=",
-                                "v",
-                                next_entry.adjusted_text().unwrap_or(""),
-                                next_entry.clean_text(),
-                                None,
-                                next_entry.original_text().unwrap_or(""),
-                            )
-                            .expect("Invalid internal entry"),
-                        );
-                        break; // Only add one v= for this preceded field
-                    } else if !fields_also_preceded.contains(&next_marker)
-                        && !next_marker.starts_with('¬')
-                        && next_marker != "rem"
-                    {
-                        break;
+            let mut saw_continuation_after_field = false;
+            let mut inserted_verse_text = String::new();
+
+            // Look ahead for the next verse text, skipping over any continuation markers or other fields, but stopping if we hit a non-field marker that isn't a continuation
+            for k in (j + 1)..num_entries {
+                let next_entry = &entries_vec[k];
+                let next_marker = next_entry.marker();
+                if next_marker == "v" {
+                    if saw_continuation_after_field && current_verse_number.is_some() {
+                        if let Some(current_verse) = current_verse_number.as_deref() {
+                            let verse_text = if current_verse_part_index > 0 {
+                                format!("{current_verse}b")
+                            } else {
+                                current_verse.to_string()
+                            };
+                            inserted_verse_text = verse_text;
+                        }
+                    } else {
+                        inserted_verse_text = next_entry.adjusted_text().to_string();
                     }
+                    break;
+                } else if next_marker == "v~" || next_marker == "p~" {
+                    saw_continuation_after_field = true;
+                    continue;
+                // } else if !fields_also_preceded.contains(&next_marker)
+                //     && !next_marker.starts_with('¬')
+                // {
+                //     break;
                 }
             }
+
+            if !inserted_verse_text.is_empty() {
+                result.push(
+                    InternalBibleEntry::new(
+                        "v=",
+                        "v",
+                        &inserted_verse_text,
+                        &inserted_verse_text,
+                        None,
+                        &inserted_verse_text,
+                    )
+                    .expect("Invalid internal entry"),
+                );
+            }
         }
+
         result.push(entry.clone());
+
+        match marker {
+            "c" => {
+                current_verse_number = None;
+                // current_verse_clean_text = None;
+                // current_verse_original_text = None;
+                current_verse_part_index = 0;
+            }
+            "v" => {
+                current_verse_number = Some(CompactString::from(entry.adjusted_text()));
+                // current_verse_clean_text = Some(CompactString::from(entry.clean_text()));
+                // current_verse_original_text = Some(CompactString::from(entry.original_text().unwrap_or("")));
+                current_verse_part_index = 0;
+            }
+            "v~" | "p~" => {
+                if current_verse_number.is_some() {
+                    current_verse_part_index += 1;
+                }
+            }
+            _ => {}
+        }
     }
     result
 }
@@ -634,8 +678,8 @@ use crate::nesting::{add_verse_start_markers, add_nesting_markers};
 
         assert_eq!(list.iter().filter_map(|e| Some(e.marker())).collect::<Vec<_>>(),
             ["c", "p", "v", "v~", "v=", "s1", "p", "v", "v~", "c", "v=", "s1", "q1", "v", "v~"]);
-        assert_eq!(list[4].adjusted_text(), Some("2")); // 'v=' should have the verse number of the following 'v'
-        assert_eq!(list[10].adjusted_text(), Some("1")); // 'v=' should have the verse number of the following 'v'
+        assert_eq!(list[4].adjusted_text(), "2"); // 'v=' should have the verse number of the following 'v'
+        assert_eq!(list[10].adjusted_text(), "1"); // 'v=' should have the verse number of the following 'v'
     }
 
     #[test]
@@ -668,8 +712,8 @@ use crate::nesting::{add_verse_start_markers, add_nesting_markers};
             ["c", "p", "v", "v~", "v", "v~", "v=", "s1", "p", "v~", "v", "v~",
              "c", "v=", "s1", "p", "v", "v~",
              "c", "nb", "v", "v~"]);
-        assert_eq!(list[6].adjusted_text(), Some("2")); // This is still in v2
-        assert_eq!(list[13].adjusted_text(), Some("1")); // 'v=' should have the verse number of the following 'v'
+        assert_eq!(list[6].adjusted_text(), "2b"); // This s1 is still in v2 -- the 'b' says it's the second part of the verse
+        assert_eq!(list[13].adjusted_text(), "1"); // 'v=' should have the verse number of the following 'v'
     }
 
     #[test]
