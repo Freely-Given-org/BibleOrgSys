@@ -43,7 +43,7 @@ import BibleOrgSys.BibleOrgSysGlobals as BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2026-06-15' # by RJH
+LAST_MODIFIED_DATE = '2026-06-16' # by RJH
 SHORT_PROGRAM_NAME = "OldBiblicalEnglish"
 PROGRAM_NAME = "OpenBibleData English Language Handling functions"
 PROGRAM_VERSION = '0.97'
@@ -164,6 +164,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
         (('shall yet prophecie,',),'shall yet prophesy,'), # Zec 13:3
     ((' touche hem',),' touch them'), # Wycl Mrk 10:13
     (('vnleuended bred',),'unleavened bread'), # 2Chr 35:17
+    ((' we axen',' we axe',),' we ask'), # Mrk 10:35
     (('we han ',),'we have '),
     (('wheate flowre',),'wheat flour'), # Psa 81:16
     (('whiche breede','which breede'),'which breed'), # Bshps/Gnva 1Tim 1:4
@@ -515,7 +516,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
                 ((' apte ',),' apt '),
         (('archaungel',),'archangel'), ((' archeris',),' archers'),
             (('Aryse',),'Arise'),((' aryse',),' arise'),
-            (('Ark ','Arcke ','Arke ',),'Ark/Box '),(('Ark,','Arke,'),'Ark/Box,'),(('Ark.','Arke.'),'Ark/Box.'),((' ark ',' arcke ',' arke '),' ark/box '),
+            (('Ark ','Arcke ','Arke ',),'Ark/Box '),(('Ark,','Arke,'),'Ark/Box,'),(('Ark.','Arke.'),'Ark/Box.'),((' ark ',' arcke ',' arke '),' ark/box '),((' arke,',),' ark/box,'),((' arke:',),' ark/box:'),
             ((' arme ',),' arm '),((' arme,',),' arm,'),((' arme.',),' arm.'),((' arme?',),' arm?'),((' arme:',),' arm:'),((' arme;',),' arm;'),((' arme)',),' arm)'),
                 ((' armorie,',),' armoury,'), ((' armuris',),' armours'),
                 ((' armes',),' arms'), ((' armie ',' armye '),' army '),((' armie,',),' army,'),((' armie.',),' army.'),((' armie?',),' army?'),((' armie:',),' army:'),
@@ -2893,7 +2894,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
         ((' birre ',),' force/impetus/wind '), # Wycl Mrk 5:13
         ((' bischop',),' bishop/high-priest'), # Wycl Exo 28:38
         (('bischopriche','bishopricke'),'bishopric/diocese'), # Psa 108:8
-        ((' bispete',),' will_spit'), # # Wycl Mrk 10:34
+        ((' bispete',),' will_spit_at'), # # Wycl Mrk 10:34
         ((' bitakun',),' betaken/committed/entrusted'),((' bitake ',),' betake/give/grant '), # Wycl Jdg 15:12
         ((' bitook',),' betook/entrusted'), # Sng 8:11
         ((' betwixte',' bitwixe',' bitwix',),' between'), # Whcl Deu 1:1
@@ -3082,6 +3083,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
         ((' thankyngis',),' thankings'), # Wycl Tob 2:14
         ((' therf ',),' unleavened '), # Wycl 2Chr 35:17
         (('to-breke',),'break'),(('tobrokun',),'broken_to_pieces'), # Wycl Isa 43:17, Eze 13:21
+        ((' toon ',),' toe '), # Wycl Mrk 10:37
         ((' tother',),' other'), # Lev 23:15
         ((' be as towe',' be as tow'),' be as wick/kindling'),((' like as towe',),' like as wick/kindling'),((' quenched as towe',' quenched as tow'),' quenched as wick/kindling'), # Isa 43:17
         ((' tretiden',),' argued'), # Wycl Mrk 9:32

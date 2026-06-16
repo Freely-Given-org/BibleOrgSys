@@ -3,15 +3,16 @@
 //! This module handles the initial processing of raw lines into structured entries,
 //! including note extraction, character fix-ups, and structural marker insertion.
 
-use regex::Regex;
-use std::sync::LazyLock;
+use compact_str::CompactString;
 use indexmap::IndexMap;
 use rayon::prelude::*;
+use regex::Regex;
+use std::sync::LazyLock;
 
+use crate::bos_markers::{ExtraType, is_end_marker};
 use crate::entry::{InternalBibleEntry, InternalBibleExtra};
-use crate::entry_lists::InternalBibleEntryList;
 use crate::entry_extras::InternalBibleExtraList;
-use crate::bos_markers::ExtraType;
+use crate::entry_lists::InternalBibleEntryList;
 
 /// Options for processing lines.
 #[derive(Debug, Clone, Copy)]
@@ -47,7 +48,7 @@ impl Default for ProcessLinesOptions {
 ///
 /// Does character fixes on a specific line and moves the following out of the main text:
 /// footnotes, cross-references, and figures, Strongs numbers.
-/// 
+///
 /// Returns the adjusted text, the clean text (with all markers removed), and a list of extras.
 pub fn line_fix_and_move_extras_out(
     text: &str,
@@ -177,13 +178,9 @@ pub fn line_fix_and_move_extras_out(
             continue;
         };
 
-        let clean_note = content
-            .replace(r"\ft ", "")
-            .replace(r"\xt ", "")
-            .replace(r"\fqa ", "");
+        let clean_note = content.replace(r"\ft ", "").replace(r"\xt ", "").replace(r"\fqa ", "");
 
-        let extra =
-            InternalBibleExtra::new_unchecked(extra_type, final_adj.len(), content, clean_note);
+        let extra = InternalBibleExtra::new_unchecked(extra_type, final_adj.len(), content, clean_note);
         extras.push(extra);
 
         last_pos = full_match.end();
@@ -194,18 +191,27 @@ pub fn line_fix_and_move_extras_out(
     let mut final_clean = final_adj.trim_start().to_string();
     static MARKER_RE: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"\\\+?[a-z0-9]{1,6}(?:\*| )?").unwrap());
     final_clean = MARKER_RE.replace_all(&final_clean, "").to_string();
-    assert!(!final_clean.contains('\\'), "line_fix_and_move_extras_out {}: Clean text should not contain backslashes after marker removal: '{}' from '{}'", line_location, final_clean, text);
+    assert!(
+        !final_clean.contains('\\'),
+        "line_fix_and_move_extras_out {}: Clean text should not contain backslashes after marker removal: '{}' from '{}'",
+        line_location,
+        final_clean,
+        text
+    );
 
     (final_adj, final_clean, extras)
 }
 
 /// Main entry point for porting Python `processLines`.
-//         Move notes out of the text into a separate area.
-//     Also, splits lines if a paragraph marker appears within a line.
+///    Accepts the raw (USFM/ESFM) lines with (marker,text) entries, and processes them to:
+///
+//     Splits lines if a paragraph marker appears within a line.
+//     Move notes out of the text into extras.
 //
-//     Uses self._rawLines and fills self._processedLines.
+//     Returns the list of processedLines.
 //
-// Also creates the CV index (but NOT the section index)
+// NOTE: the Python function calls this and then calls makeBookCVIndex() immediately afterwards
+//
 pub fn process_lines(
     raw_lines: Vec<(String, String)>,
     book_code: &str,
@@ -222,7 +228,8 @@ pub fn process_lines(
         let marker = crate::bos_markers::normalize_marker(marker.as_str());
         log::info!("process_lines: Processing marker {} with text '{}'", marker, text);
         // println!("process_lines: Processing marker {} with text '{}'", marker, text);
-        if marker == "v" { // Put the most common marker first for better performance
+        if marker == "v" {
+            // Put the most common marker first for better performance
             let mut parts = text.splitn(2, ' ');
             let v_num_str = parts.next().unwrap_or(&text).to_string();
             verse = v_num_str.clone();
@@ -288,7 +295,11 @@ pub fn process_lines(
                 ));
             } else {
                 // println!("process_lines: Found chapter marker with no extra text: ch='{}' txt='{}'", chapter, text);
-                assert_eq!(text.trim(), chapter, "Chapter marker text should match chapter number when no extra text is present");
+                assert_eq!(
+                    text.trim(),
+                    chapter,
+                    "Chapter marker text should match chapter number when no extra text is present"
+                );
                 processed.push(InternalBibleEntry::new_unchecked(
                     "c",
                     "c",
@@ -326,7 +337,8 @@ pub fn process_lines(
             continue;
         }
 
-        let (adj, clean, extras) = line_fix_and_move_extras_out(&text, &chapter, &verse, book_code, marker, options, &mut errors);
+        let (adj, clean, extras) =
+            line_fix_and_move_extras_out(&text, &chapter, &verse, book_code, marker, options, &mut errors);
         // println!("process_lines: After line_fix_and_move_extras_out for marker {}: adj='{}', clean='{}', extras={}", marker, adj, clean, extras.len());
 
         if (marker == "b" || crate::bos_markers::paragraph_markers::is_paragraph(marker))
@@ -358,8 +370,71 @@ pub fn process_lines(
 
     // First add verse start markers (v=) and then they can be used to help add nesting markers correctly
     // v= markers are added before section headings
-    let with_added =crate::nesting::add_verse_start_markers(processed);
-    crate::nesting::add_nesting_markers(with_added, work_name, book_code)
+    let with_added = crate::nesting::add_verse_start_markers(processed);
+    let processed_lines = crate::nesting::add_nesting_markers(with_added, work_name, book_code);
+
+    debug_assert!(
+        validate(&processed_lines).is_empty(),
+        "process_lines failed with issues: {:?}",
+        validate(&processed_lines)
+    ); // TODO: Fix doubled validation calls here
+    processed_lines
+}
+
+/// (Debug) Validate the processed lines for common issues and return a list of error messages.
+pub fn validate(processed_lines: &InternalBibleEntryList) -> Vec<String> {
+    let mut issues = Vec::new();
+
+    if processed_lines.is_empty() {
+        issues.push("No processed_lines entries to validate".to_string());
+        return issues;
+    }
+
+    // let mut previous_marker = CompactString::new("");
+    let mut next_marker = CompactString::new("");
+    let mut marker_counts: IndexMap<CompactString, usize> = IndexMap::new();
+    for (n, entry) in processed_lines.iter().enumerate() {
+        let current_marker: CompactString = entry.marker().into();
+        *marker_counts.entry(current_marker.clone()).or_insert(0) += 1;
+        if n < processed_lines.len() - 1 {
+            next_marker = processed_lines[n + 1].marker().into();
+        } else {
+            next_marker = CompactString::new("");
+        }
+
+        if current_marker == "v=" {
+            if is_end_marker(&next_marker) {
+                issues.push(format!(
+                    "Special verse number marker 'v=' at index {} is followed by an end marker '{}'",
+                    n, next_marker
+                ));
+            } else if !["s1", "s2", "s3", "s4", "ms1", "ms2"].contains(&next_marker.as_str()) {
+                issues.push(format!(
+                    "Special verse number marker 'v=' at index {} is not followed by a verse or section marker (found '{}')",
+                    n, next_marker
+                ));
+            }
+        }
+
+        // previous_marker = current_marker;
+    }
+
+    // Check that all end markers have a corresponding start marker with the same count
+    for (marker, count) in &marker_counts {
+        if is_end_marker(&marker) {
+            let start_marker: CompactString = marker.chars().skip(1).collect();
+            if count != marker_counts.get(&start_marker).unwrap_or(&0) {
+                issues.push(format!(
+                    "End marker '{}' has {} entries but its corresponding start marker has {}",
+                    marker,
+                    count,
+                    marker_counts.get(&start_marker).unwrap_or(&0)
+                ));
+            }
+        }
+    }
+
+    issues
 }
 
 /// Process all books in a Bible in parallel.
@@ -380,7 +455,7 @@ pub fn process_bible(
 #[cfg(test)]
 mod tests {
 
-    use bos_books_codes::{is_old_testament_nr, is_new_testament_nr};
+    use bos_books_codes::{is_new_testament_nr, is_old_testament_nr};
 
     use super::*;
     use std::fs::File;
@@ -428,9 +503,15 @@ mod tests {
         assert_eq!(clean_text, "");
         assert!(extras.len() == 1); // Should have one figure
         assert_eq!(extras[0].extra_type(), ExtraType::Figure);
-        assert_eq!(extras[0].clean_note_text(), "|/srv/Websites/Freely-Given.org/Logo/FG_with_text_below.png|span||||");
-        assert_eq!(extras[0].clean_text(), "|/srv/Websites/Freely-Given.org/Logo/FG_with_text_below.png|span||||");
-        
+        assert_eq!(
+            extras[0].clean_note_text(),
+            "|/srv/Websites/Freely-Given.org/Logo/FG_with_text_below.png|span||||"
+        );
+        assert_eq!(
+            extras[0].clean_text(),
+            "|/srv/Websites/Freely-Given.org/Logo/FG_with_text_below.png|span||||"
+        );
+
         let (adj_text, clean_text, extras) = line_fix_and_move_extras_out(
             r" Praise Yah.\f + \fr 150:? \ft Hebrew \+it hallelujah\+it*\f* ",
             "150",
@@ -444,9 +525,12 @@ mod tests {
         assert_eq!(clean_text, "Praise Yah.");
         assert!(extras.len() == 1); // Should have one footnote
         assert_eq!(extras[0].extra_type(), ExtraType::Footnote);
-        assert_eq!(extras[0].clean_note_text(), "+ \\fr 150:? Hebrew \\+it hallelujah\\+it*");
+        assert_eq!(
+            extras[0].clean_note_text(),
+            "+ \\fr 150:? Hebrew \\+it hallelujah\\+it*"
+        );
         assert_eq!(extras[0].clean_text(), "+ \\fr 150:? Hebrew \\+it hallelujah\\+it*");
-        
+
         let (_adj_text, clean_text, extras) = line_fix_and_move_extras_out(
             r"\f + \fr 8:28 \ft Note: KJB: Exod.8.32\f* and¦29089= Parˊoh¦29090 =he¦29089_made¦29089_unresponsive¦29089 \untr DOM¦29091\untr* his/its¦29093=heart¦29093 also¦29094 at¦29095÷time¦29095 (the)¦29096÷this¦29096 and¦29097=not¦29097 he¦29098_let¦29098_go¦29098 \untr DOM¦29099\untr* the¦29101÷people¦29101.",
             "8",
@@ -457,12 +541,15 @@ mod tests {
             &mut Vec::new(),
         );
         // println!("Adj text: {:?}", adj_text);
-        assert_eq!(clean_text, "and¦29089= Parˊoh¦29090 =he¦29089_made¦29089_unresponsive¦29089 DOM¦29091 his/its¦29093=heart¦29093 also¦29094 at¦29095÷time¦29095 (the)¦29096÷this¦29096 and¦29097=not¦29097 he¦29098_let¦29098_go¦29098 DOM¦29099 the¦29101÷people¦29101.");
+        assert_eq!(
+            clean_text,
+            "and¦29089= Parˊoh¦29090 =he¦29089_made¦29089_unresponsive¦29089 DOM¦29091 his/its¦29093=heart¦29093 also¦29094 at¦29095÷time¦29095 (the)¦29096÷this¦29096 and¦29097=not¦29097 he¦29098_let¦29098_go¦29098 DOM¦29099 the¦29101÷people¦29101."
+        );
         assert!(extras.len() == 1); // Should have one footnote
         assert_eq!(extras[0].extra_type(), ExtraType::Footnote);
         assert_eq!(extras[0].clean_note_text(), "+ \\fr 8:28 Note: KJB: Exod.8.32");
         assert_eq!(extras[0].clean_text(), "+ \\fr 8:28 Note: KJB: Exod.8.32");
-        
+
         let (_adj_text, clean_text, extras) = line_fix_and_move_extras_out(
             r"The¦283645_vision¦283645_of¦283645 Yəshaˊ\sup yāh\sup*¦283646 the¦283647_son¦283647_of¦283647 ʼĀmōʦ¦283649 which¦283650 he¦283651_saw¦283651 on¦283652 Yəhūdāh/(Judah)¦283654 and¦283655÷Yərūshālam/(Jerusalem)¦283655 in¦283656÷the¦283656_days¦283656_of¦283656 ˊUzziy\sup yāh\sup*¦283657 Yōtām/(Jotham)¦283658 ʼĀḩāz¦283659 Ḩizqiy\sup yāh\sup*¦283660 the¦283661_kings¦283661_of¦283661 Yəhūdāh¦283662.",
             "1",
@@ -473,9 +560,11 @@ mod tests {
             &mut Vec::new(),
         );
         // println!("Adj text: {:?}", adj_text);
-        assert_eq!(clean_text, "The¦283645_vision¦283645_of¦283645 Yəshaˊyāh¦283646 the¦283647_son¦283647_of¦283647 ʼĀmōʦ¦283649 which¦283650 he¦283651_saw¦283651 on¦283652 Yəhūdāh/(Judah)¦283654 and¦283655÷Yərūshālam/(Jerusalem)¦283655 in¦283656÷the¦283656_days¦283656_of¦283656 ˊUzziyyāh¦283657 Yōtām/(Jotham)¦283658 ʼĀḩāz¦283659 Ḩizqiyyāh¦283660 the¦283661_kings¦283661_of¦283661 Yəhūdāh¦283662.");
+        assert_eq!(
+            clean_text,
+            "The¦283645_vision¦283645_of¦283645 Yəshaˊyāh¦283646 the¦283647_son¦283647_of¦283647 ʼĀmōʦ¦283649 which¦283650 he¦283651_saw¦283651 on¦283652 Yəhūdāh/(Judah)¦283654 and¦283655÷Yərūshālam/(Jerusalem)¦283655 in¦283656÷the¦283656_days¦283656_of¦283656 ˊUzziyyāh¦283657 Yōtām/(Jotham)¦283658 ʼĀḩāz¦283659 Ḩizqiyyāh¦283660 the¦283661_kings¦283661_of¦283661 Yəhūdāh¦283662."
+        );
         assert!(extras.is_empty());
-
 
         let (_adj_text, clean_text, extras) = line_fix_and_move_extras_out(
             r"Hear¦283664 Oh¦283665_heavens¦283665 and¦283666÷give¦283666_ear¦283666 Oh¦283667_earth¦283667 if/because¦283668 \nd YHWH¦283669\nd* he¦283670_has¦283670_spoken¦283670 children¦283671 I¦283672_have¦283672_brought¦283672_up¦283672 and¦283673÷I¦283673_have¦283673_raised¦283673 and¦283674÷they¦283674 they¦283675_have¦283675_rebelled¦283675 against¦283676÷me¦283676.",
@@ -487,7 +576,10 @@ mod tests {
             &mut Vec::new(),
         );
         // println!("Adj text: {:?}", adj_text);
-        assert_eq!(clean_text, "Hear¦283664 Oh¦283665_heavens¦283665 and¦283666÷give¦283666_ear¦283666 Oh¦283667_earth¦283667 if/because¦283668 YHWH¦283669 he¦283670_has¦283670_spoken¦283670 children¦283671 I¦283672_have¦283672_brought¦283672_up¦283672 and¦283673÷I¦283673_have¦283673_raised¦283673 and¦283674÷they¦283674 they¦283675_have¦283675_rebelled¦283675 against¦283676÷me¦283676.");
+        assert_eq!(
+            clean_text,
+            "Hear¦283664 Oh¦283665_heavens¦283665 and¦283666÷give¦283666_ear¦283666 Oh¦283667_earth¦283667 if/because¦283668 YHWH¦283669 he¦283670_has¦283670_spoken¦283670 children¦283671 I¦283672_have¦283672_brought¦283672_up¦283672 and¦283673÷I¦283673_have¦283673_raised¦283673 and¦283674÷they¦283674 they¦283675_have¦283675_rebelled¦283675 against¦283676÷me¦283676."
+        );
         assert!(extras.is_empty());
     }
 
@@ -510,7 +602,10 @@ mod tests {
         assert_eq!(processed[pc_idx + 1].marker(), "p~");
         assert!(processed[pc_idx + 1].has_extras());
         assert_eq!(processed[pc_idx + 1].extras().unwrap().len(), 1);
-        assert_eq!(processed[pc_idx + 1].extras().unwrap()[0].extra_type(), ExtraType::Figure);
+        assert_eq!(
+            processed[pc_idx + 1].extras().unwrap()[0].extra_type(),
+            ExtraType::Figure
+        );
     }
 
     #[test]
@@ -560,7 +655,10 @@ mod tests {
         assert!(markers.contains(&"¬p"), "{:?}", markers);
 
         // Find "Καὶ" at start of verse 24
-        let kai = processed.iter().find(|e| e.clean_text().starts_with("Καὶ")).expect("Should find Καὶ at beginning of verse 24");
+        let kai = processed
+            .iter()
+            .find(|e| e.clean_text().starts_with("Καὶ"))
+            .expect("Should find Καὶ at beginning of verse 24");
         assert!(kai.has_extras());
         let extra = &kai.extras().unwrap()[0];
         assert_eq!(extra.extra_type(), ExtraType::WordWithAttributes);
@@ -586,7 +684,7 @@ mod tests {
             let marker = marker.strip_prefix('\\').unwrap_or(marker);
             raw_lines.push((marker.to_string(), text.to_string()));
         }
-        
+
         // Results should match test_data/OET-LV_HAG_rawLines.txt
         let original_count = raw_lines.len();
         println!("Original lines read: {}", original_count);
@@ -595,13 +693,152 @@ mod tests {
         let options = crate::processing::ProcessLinesOptions::default();
         let processed = crate::processing::process_lines(raw_lines, "HAG", "OET-LV", &options);
         println!("Final OET-LV Haggai processed line entries: {}", processed.len());
-        assert_eq!(processed.iter().filter_map(|e| Some(e.marker())).collect::<Vec<_>>(),
-            ["id", "usfm", "ide", "rem", "rem", "rem", "rem", "rem", "rem",
-            "headers", "h", "toc1", "toc2", "toc3", "mt1", "ie", "¬headers",
-            "chapters",
-            "c", "nb", "c#", "v", "v~", "¬v", "v", "v~", "¬v", "v", "v~", "¬v", "v", "v~", "¬v", "v", "v~", "¬v", "v", "v~", "¬v", "v", "v~", "¬v", "v", "v~", "¬v", "v", "v~", "¬v", "v", "v~", "¬v", "v", "v~", "¬v", "v", "v~", "¬v", "v", "v~", "¬v", "v", "v~", "¬v", "v", "v~", "¬v", "¬c",
-            "c", "nb", "c#", "v", "v~", "¬v", "v", "v~", "¬v", "v", "v~", "¬v", "v", "v~", "¬v", "v", "v~", "¬v", "v", "v~", "¬v", "v", "v~", "¬v", "v", "v~", "¬v", "v", "v~", "¬v", "v", "v~", "¬v", "v", "v~", "¬v", "v", "v~", "¬v", "v", "v~", "¬v", "v", "v~", "¬v", "v", "v~", "¬v", "v", "v~", "¬v", "v", "v~", "¬v", "v", "v~", "¬v", "v", "v~", "¬v", "v", "v~", "¬v", "v", "v~", "¬v", "v", "v~", "¬v", "v", "v~", "¬v", "¬c",
-            "¬chapters"]);
+        assert_eq!(
+            processed.iter().filter_map(|e| Some(e.marker())).collect::<Vec<_>>(),
+            [
+                "id",
+                "usfm",
+                "ide",
+                "rem",
+                "rem",
+                "rem",
+                "rem",
+                "rem",
+                "rem",
+                "headers",
+                "h",
+                "toc1",
+                "toc2",
+                "toc3",
+                "mt1",
+                "ie",
+                "¬headers",
+                "chapters",
+                "c",
+                "nb",
+                "c#",
+                "v",
+                "v~",
+                "¬v",
+                "v",
+                "v~",
+                "¬v",
+                "v",
+                "v~",
+                "¬v",
+                "v",
+                "v~",
+                "¬v",
+                "v",
+                "v~",
+                "¬v",
+                "v",
+                "v~",
+                "¬v",
+                "v",
+                "v~",
+                "¬v",
+                "v",
+                "v~",
+                "¬v",
+                "v",
+                "v~",
+                "¬v",
+                "v",
+                "v~",
+                "¬v",
+                "v",
+                "v~",
+                "¬v",
+                "v",
+                "v~",
+                "¬v",
+                "v",
+                "v~",
+                "¬v",
+                "v",
+                "v~",
+                "¬v",
+                "v",
+                "v~",
+                "¬v",
+                "¬c",
+                "c",
+                "nb",
+                "c#",
+                "v",
+                "v~",
+                "¬v",
+                "v",
+                "v~",
+                "¬v",
+                "v",
+                "v~",
+                "¬v",
+                "v",
+                "v~",
+                "¬v",
+                "v",
+                "v~",
+                "¬v",
+                "v",
+                "v~",
+                "¬v",
+                "v",
+                "v~",
+                "¬v",
+                "v",
+                "v~",
+                "¬v",
+                "v",
+                "v~",
+                "¬v",
+                "v",
+                "v~",
+                "¬v",
+                "v",
+                "v~",
+                "¬v",
+                "v",
+                "v~",
+                "¬v",
+                "v",
+                "v~",
+                "¬v",
+                "v",
+                "v~",
+                "¬v",
+                "v",
+                "v~",
+                "¬v",
+                "v",
+                "v~",
+                "¬v",
+                "v",
+                "v~",
+                "¬v",
+                "v",
+                "v~",
+                "¬v",
+                "v",
+                "v~",
+                "¬v",
+                "v",
+                "v~",
+                "¬v",
+                "v",
+                "v~",
+                "¬v",
+                "v",
+                "v~",
+                "¬v",
+                "v",
+                "v~",
+                "¬v",
+                "¬c",
+                "¬chapters"
+            ]
+        );
         // panic!("Final OET-LV Haggai processed line entries: {:?}", processed.iter().filter_map(|e| Some(e.marker())).collect::<Vec<_>>());
 
         // Check some specific entries
@@ -620,10 +857,22 @@ mod tests {
         assert_eq!(processed[21].marker(), "v");
         assert_eq!(processed[21].adjusted_text(), "1");
         assert_eq!(processed[22].marker(), "v~");
-        assert_eq!(processed[22].original_text(), "In¦375561=year¦375561 two¦375562 of¦375563÷Dārəyāvesh¦375563 the¦375564=king¦375564 in¦375565÷month¦375565 the¦375566=sixth¦375566 in/on¦375567=day¦375567 one¦375568 of¦375569÷month¦375569 the¦375571_message¦375571_of¦375571 it¦375570_came¦375570 of¦375573_\\nd YHWH¦375573\\nd* by¦375574÷the¦375574_hand¦375574_of¦375574 Ḩaggay¦375576 the¦375577÷prophet¦375577 to¦375578 Zərubāⱱel¦375580 the¦375581_son¦375581_of¦375581 Shəʼaltiy\\sup ʼēl\\sup*¦375583 the¦375584_governor¦375584_of¦375584 Yəhūdāh/(Judah)¦375585 and¦375586=near/to¦375586 Yəhōshūˊa/(Joshua)¦375588 the¦375589_son¦375589_of¦375589 Yəhōʦādāq/(Jehozadak)¦375591 the¦375592=priest/officer¦375592 (the)¦375593÷great¦375593 to¦375594=say¦375594.");
-        assert_eq!(processed[22].adjusted_text(), "In¦375561=year¦375561 two¦375562 of¦375563÷Dārəyāvesh¦375563 the¦375564=king¦375564 in¦375565÷month¦375565 the¦375566=sixth¦375566 in/on¦375567=day¦375567 one¦375568 of¦375569÷month¦375569 the¦375571_message¦375571_of¦375571 it¦375570_came¦375570 of¦375573_\\nd YHWH¦375573\\nd* by¦375574÷the¦375574_hand¦375574_of¦375574 Ḩaggay¦375576 the¦375577÷prophet¦375577 to¦375578 Zərubāⱱel¦375580 the¦375581_son¦375581_of¦375581 Shəʼaltiy\\sup ʼēl\\sup*¦375583 the¦375584_governor¦375584_of¦375584 Yəhūdāh/(Judah)¦375585 and¦375586=near/to¦375586 Yəhōshūˊa/(Joshua)¦375588 the¦375589_son¦375589_of¦375589 Yəhōʦādāq/(Jehozadak)¦375591 the¦375592=priest/officer¦375592 (the)¦375593÷great¦375593 to¦375594=say¦375594.");
-        assert!(processed[22].extras().unwrap().is_empty(), "Expected no extras for verse 1 line");
-        assert_eq!(processed[22].clean_text(), "In¦375561=year¦375561 two¦375562 of¦375563÷Dārəyāvesh¦375563 the¦375564=king¦375564 in¦375565÷month¦375565 the¦375566=sixth¦375566 in/on¦375567=day¦375567 one¦375568 of¦375569÷month¦375569 the¦375571_message¦375571_of¦375571 it¦375570_came¦375570 of¦375573_YHWH¦375573 by¦375574÷the¦375574_hand¦375574_of¦375574 Ḩaggay¦375576 the¦375577÷prophet¦375577 to¦375578 Zərubāⱱel¦375580 the¦375581_son¦375581_of¦375581 Shəʼaltiyʼēl¦375583 the¦375584_governor¦375584_of¦375584 Yəhūdāh/(Judah)¦375585 and¦375586=near/to¦375586 Yəhōshūˊa/(Joshua)¦375588 the¦375589_son¦375589_of¦375589 Yəhōʦādāq/(Jehozadak)¦375591 the¦375592=priest/officer¦375592 (the)¦375593÷great¦375593 to¦375594=say¦375594.");
+        assert_eq!(
+            processed[22].original_text(),
+            "In¦375561=year¦375561 two¦375562 of¦375563÷Dārəyāvesh¦375563 the¦375564=king¦375564 in¦375565÷month¦375565 the¦375566=sixth¦375566 in/on¦375567=day¦375567 one¦375568 of¦375569÷month¦375569 the¦375571_message¦375571_of¦375571 it¦375570_came¦375570 of¦375573_\\nd YHWH¦375573\\nd* by¦375574÷the¦375574_hand¦375574_of¦375574 Ḩaggay¦375576 the¦375577÷prophet¦375577 to¦375578 Zərubāⱱel¦375580 the¦375581_son¦375581_of¦375581 Shəʼaltiy\\sup ʼēl\\sup*¦375583 the¦375584_governor¦375584_of¦375584 Yəhūdāh/(Judah)¦375585 and¦375586=near/to¦375586 Yəhōshūˊa/(Joshua)¦375588 the¦375589_son¦375589_of¦375589 Yəhōʦādāq/(Jehozadak)¦375591 the¦375592=priest/officer¦375592 (the)¦375593÷great¦375593 to¦375594=say¦375594."
+        );
+        assert_eq!(
+            processed[22].adjusted_text(),
+            "In¦375561=year¦375561 two¦375562 of¦375563÷Dārəyāvesh¦375563 the¦375564=king¦375564 in¦375565÷month¦375565 the¦375566=sixth¦375566 in/on¦375567=day¦375567 one¦375568 of¦375569÷month¦375569 the¦375571_message¦375571_of¦375571 it¦375570_came¦375570 of¦375573_\\nd YHWH¦375573\\nd* by¦375574÷the¦375574_hand¦375574_of¦375574 Ḩaggay¦375576 the¦375577÷prophet¦375577 to¦375578 Zərubāⱱel¦375580 the¦375581_son¦375581_of¦375581 Shəʼaltiy\\sup ʼēl\\sup*¦375583 the¦375584_governor¦375584_of¦375584 Yəhūdāh/(Judah)¦375585 and¦375586=near/to¦375586 Yəhōshūˊa/(Joshua)¦375588 the¦375589_son¦375589_of¦375589 Yəhōʦādāq/(Jehozadak)¦375591 the¦375592=priest/officer¦375592 (the)¦375593÷great¦375593 to¦375594=say¦375594."
+        );
+        assert!(
+            processed[22].extras().unwrap().is_empty(),
+            "Expected no extras for verse 1 line"
+        );
+        assert_eq!(
+            processed[22].clean_text(),
+            "In¦375561=year¦375561 two¦375562 of¦375563÷Dārəyāvesh¦375563 the¦375564=king¦375564 in¦375565÷month¦375565 the¦375566=sixth¦375566 in/on¦375567=day¦375567 one¦375568 of¦375569÷month¦375569 the¦375571_message¦375571_of¦375571 it¦375570_came¦375570 of¦375573_YHWH¦375573 by¦375574÷the¦375574_hand¦375574_of¦375574 Ḩaggay¦375576 the¦375577÷prophet¦375577 to¦375578 Zərubāⱱel¦375580 the¦375581_son¦375581_of¦375581 Shəʼaltiyʼēl¦375583 the¦375584_governor¦375584_of¦375584 Yəhūdāh/(Judah)¦375585 and¦375586=near/to¦375586 Yəhōshūˊa/(Joshua)¦375588 the¦375589_son¦375589_of¦375589 Yəhōʦādāq/(Jehozadak)¦375591 the¦375592=priest/officer¦375592 (the)¦375593÷great¦375593 to¦375594=say¦375594."
+        );
         assert_eq!(processed[23].marker(), "¬v");
         assert_eq!(processed[23].adjusted_text(), "1");
         assert_eq!(processed[139].marker(), "¬c");
@@ -631,11 +880,17 @@ mod tests {
         assert_eq!(processed[140].marker(), "¬chapters");
         assert!(processed[140].clean_text().is_empty());
 
-        assert_eq!(processed.len(), 141, "{}", processed.iter().map(|e| e.marker()).collect::<Vec<_>>().join(","));
+        assert_eq!(
+            processed.len(),
+            141,
+            "{}",
+            processed.iter().map(|e| e.marker()).collect::<Vec<_>>().join(",")
+        );
     }
 
     #[test]
-    fn test_oet_rv_haggai_processing() { // A simple 2-chapter book
+    fn test_oet_rv_haggai_processing() {
+        // A simple 2-chapter book
         let file_path = "../../Tests/DataFilesForTests/OET-RV/OET-RV_HAG.ESFM";
         let file = File::open(file_path).expect("Could not open OET-RV Haggai ESFM file");
         let reader = BufReader::new(file);
@@ -653,7 +908,7 @@ mod tests {
             let marker = marker.strip_prefix('\\').unwrap_or(marker);
             raw_lines.push((marker.to_string(), text.to_string()));
         }
-        
+
         let original_count = raw_lines.len();
         // println!("Original lines read: {}", original_count);
         assert_eq!(original_count, 81, "Expected 81 raw lines in Haggai ESFM file");
@@ -661,9 +916,14 @@ mod tests {
         let options = crate::processing::ProcessLinesOptions::default();
         let processed = crate::processing::process_lines(raw_lines, "HAG", "OET-RV", &options);
         println!("Final OET-RV Haggai processed line entries: {}", processed.len());
-        for (n,entry) in processed.clone().into_iter().enumerate() {
+        for (n, entry) in processed.clone().into_iter().enumerate() {
             // println!("  {}: Marker: {}, Clean Text: '{}', Extras: {:?}", n, entry.marker(), entry.clean_text(), entry.extras());
-            assert!(entry.marker() != "¬v=", "Unexpected end verse= marker in OET-RV Haggai at entry {}: {:?}", n, entry);
+            assert!(
+                entry.marker() != "¬v=",
+                "Unexpected end verse= marker in OET-RV Haggai at entry {}: {:?}",
+                n,
+                entry
+            );
         }
 
         // println!("HAG markers 20..40: {:?}", (20..40).map(|i| (i, processed[i].marker(), processed[i].clean_text())).collect::<Vec<_>>());
@@ -674,26 +934,53 @@ mod tests {
         assert_eq!(processed[12].marker(), "intro");
         assert_eq!(processed[21].marker(), "¬intro");
         assert_eq!(processed[22].marker(), "chapters");
-        assert_eq!(processed[23].marker(), "c"); assert_eq!(processed[23].clean_text(), "1");
-        assert_eq!(processed[24].marker(), "v="); assert_eq!(processed[24].clean_text(), "1");
-        assert_eq!(processed[29].marker(), "v"); assert_eq!(processed[29].adjusted_text(), "1");
+        assert_eq!(processed[23].marker(), "c");
+        assert_eq!(processed[23].clean_text(), "1");
+        assert_eq!(processed[24].marker(), "v=");
+        assert_eq!(processed[24].clean_text(), "1");
+        assert_eq!(processed[29].marker(), "v");
+        assert_eq!(processed[29].adjusted_text(), "1");
         assert_eq!(processed[30].marker(), "v~");
-        assert_eq!(processed[30].original_text(), "In Dareyavesh's \\add (Darius's¦375563)\\add* second year¦375561 as king¦375564 \\add of Persia\\add*, on¦375565 the 1st of the sixth¦375566 month, the prophet¦375577 Haggai¦375576 brought Yahweh's¦375573 message¦375571 to the governor¦375584 of Yehudah¦375585, Zerubavel¦375580 (Shealtiyel's¦375583 son), and to the high¦375593 priest¦375592, Yehoshua (Yehotsadak's¦375591 son), telling \\add them that\\add*\\x + \\xo 1:1: \\xt Ezr 4:24–5:2; 6:14.\\x*");
-        assert_eq!(processed[30].adjusted_text(), "In Dareyavesh's \\add (Darius's¦375563)\\add* second year¦375561 as king¦375564 \\add of Persia\\add*, on¦375565 the 1st of the sixth¦375566 month, the prophet¦375577 Haggai¦375576 brought Yahweh's¦375573 message¦375571 to the governor¦375584 of Yehudah¦375585, Zerubavel¦375580 (Shealtiyel's¦375583 son), and to the high¦375593 priest¦375592, Yehoshua (Yehotsadak's¦375591 son), telling \\add them that\\add*");
-        assert_eq!(processed[30].extras().unwrap().len(), 1, "Expected one extra for verse 1 xref");
-        assert_eq!(processed[30].clean_text(), "In Dareyavesh's (Darius's¦375563) second year¦375561 as king¦375564 of Persia, on¦375565 the 1st of the sixth¦375566 month, the prophet¦375577 Haggai¦375576 brought Yahweh's¦375573 message¦375571 to the governor¦375584 of Yehudah¦375585, Zerubavel¦375580 (Shealtiyel's¦375583 son), and to the high¦375593 priest¦375592, Yehoshua (Yehotsadak's¦375591 son), telling them that");
-        assert_eq!(processed[86].marker(), "¬v"); assert_eq!(processed[86].clean_text(), "15");
-        assert_eq!(processed[87].marker(), "¬p"); assert_eq!(processed[87].clean_text(), "");
-        assert_eq!(processed[88].marker(), "¬c"); assert_eq!(processed[88].clean_text(), "1");
-        assert_eq!(processed[89].marker(), "c"); assert_eq!(processed[89].clean_text(), "2");
-        assert_eq!(processed[186].marker(), "¬c"); assert_eq!(processed[186].clean_text(), "2");
-        assert_eq!(processed[187].marker(), "¬chapters"); assert!(processed[187].clean_text().is_empty());
+        assert_eq!(
+            processed[30].original_text(),
+            "In Dareyavesh's \\add (Darius's¦375563)\\add* second year¦375561 as king¦375564 \\add of Persia\\add*, on¦375565 the 1st of the sixth¦375566 month, the prophet¦375577 Haggai¦375576 brought Yahweh's¦375573 message¦375571 to the governor¦375584 of Yehudah¦375585, Zerubavel¦375580 (Shealtiyel's¦375583 son), and to the high¦375593 priest¦375592, Yehoshua (Yehotsadak's¦375591 son), telling \\add them that\\add*\\x + \\xo 1:1: \\xt Ezr 4:24–5:2; 6:14.\\x*"
+        );
+        assert_eq!(
+            processed[30].adjusted_text(),
+            "In Dareyavesh's \\add (Darius's¦375563)\\add* second year¦375561 as king¦375564 \\add of Persia\\add*, on¦375565 the 1st of the sixth¦375566 month, the prophet¦375577 Haggai¦375576 brought Yahweh's¦375573 message¦375571 to the governor¦375584 of Yehudah¦375585, Zerubavel¦375580 (Shealtiyel's¦375583 son), and to the high¦375593 priest¦375592, Yehoshua (Yehotsadak's¦375591 son), telling \\add them that\\add*"
+        );
+        assert_eq!(
+            processed[30].extras().unwrap().len(),
+            1,
+            "Expected one extra for verse 1 xref"
+        );
+        assert_eq!(
+            processed[30].clean_text(),
+            "In Dareyavesh's (Darius's¦375563) second year¦375561 as king¦375564 of Persia, on¦375565 the 1st of the sixth¦375566 month, the prophet¦375577 Haggai¦375576 brought Yahweh's¦375573 message¦375571 to the governor¦375584 of Yehudah¦375585, Zerubavel¦375580 (Shealtiyel's¦375583 son), and to the high¦375593 priest¦375592, Yehoshua (Yehotsadak's¦375591 son), telling them that"
+        );
+        assert_eq!(processed[86].marker(), "¬v");
+        assert_eq!(processed[86].clean_text(), "15");
+        assert_eq!(processed[87].marker(), "¬p");
+        assert_eq!(processed[87].clean_text(), "");
+        assert_eq!(processed[88].marker(), "¬c");
+        assert_eq!(processed[88].clean_text(), "1");
+        assert_eq!(processed[89].marker(), "c");
+        assert_eq!(processed[89].clean_text(), "2");
+        assert_eq!(processed[186].marker(), "¬c");
+        assert_eq!(processed[186].clean_text(), "2");
+        assert_eq!(processed[187].marker(), "¬chapters");
+        assert!(processed[187].clean_text().is_empty());
 
-        assert_eq!(processed.len(), 188, "Expected 188 entries after verse start markers and nesting markers added");
+        assert_eq!(
+            processed.len(),
+            188,
+            "Expected 188 entries after verse start markers and nesting markers added"
+        );
     }
 
     #[test]
-    fn test_oet_rv_genesis_processing() { // More complex because the first section crosses the chapter boundary
+    fn test_oet_rv_genesis_processing() {
+        // More complex because the first section crosses the chapter boundary
         let file_path = "../../Tests/DataFilesForTests/OET-RV/OET-RV_GEN.ESFM";
         let file = File::open(file_path).expect("Could not open OET-RV Genesis ESFM file");
         let reader = BufReader::new(file);
@@ -711,7 +998,7 @@ mod tests {
             let marker = marker.strip_prefix('\\').unwrap_or(marker);
             raw_lines.push((marker.to_string(), text.to_string()));
         }
-        
+
         let original_count = raw_lines.len();
         // println!("Original lines read: {}", original_count);
         assert_eq!(original_count, 2568, "Expected 2568 raw lines in Genesis ESFM file");
@@ -719,9 +1006,14 @@ mod tests {
         let options = crate::processing::ProcessLinesOptions::default();
         let processed = crate::processing::process_lines(raw_lines, "GEN", "OET-RV", &options);
         println!("Final OET-RV Genesis processed line entries: {}", processed.len());
-        for (n,entry) in processed.clone().into_iter().enumerate() {
+        for (n, entry) in processed.clone().into_iter().enumerate() {
             // println!("  {}: Marker: {}, Clean Text: '{}', Extras: {:?}", n, entry.marker(), entry.clean_text(), entry.extras());
-            assert!(entry.marker() != "¬v=", "Unexpected end verse= marker in OET-RV Genesis at entry {}: {:?}", n, entry);
+            assert!(
+                entry.marker() != "¬v=",
+                "Unexpected end verse= marker in OET-RV Genesis at entry {}: {:?}",
+                n,
+                entry
+            );
         }
 
         // for j in 50..=200 {
@@ -736,23 +1028,35 @@ mod tests {
         assert_eq!(processed[35].marker(), "¬intro");
         assert_eq!(processed[36].marker(), "chapters");
 
-        let chapter_1_idx = processed.iter().position(|entry| entry.marker() == "c" && entry.clean_text() == "1").expect("Should find chapter 1");
+        let chapter_1_idx = processed
+            .iter()
+            .position(|entry| entry.marker() == "c" && entry.clean_text() == "1")
+            .expect("Should find chapter 1");
         assert_eq!(processed[chapter_1_idx + 1].marker(), "v=");
         assert_eq!(processed[chapter_1_idx + 1].clean_text(), "1");
 
-        let verse_13_end_idx = processed.iter().position(|entry| entry.marker() == "¬v" && entry.clean_text() == "13").expect("Should find verse 13 end marker");
+        let verse_13_end_idx = processed
+            .iter()
+            .position(|entry| entry.marker() == "¬v" && entry.clean_text() == "13")
+            .expect("Should find verse 13 end marker");
         assert_eq!(processed[verse_13_end_idx].marker(), "¬v");
         assert_eq!(processed[verse_13_end_idx].clean_text(), "13");
         assert_eq!(processed[verse_13_end_idx + 1].marker(), "¬p");
         assert_eq!(processed[verse_13_end_idx + 1].clean_text(), "");
 
-        let verse_31_end_idx = processed.iter().position(|entry| entry.marker() == "¬v" && entry.clean_text() == "31").expect("Should find verse 31 end marker");
+        let verse_31_end_idx = processed
+            .iter()
+            .position(|entry| entry.marker() == "¬v" && entry.clean_text() == "31")
+            .expect("Should find verse 31 end marker");
         assert_eq!(processed[verse_31_end_idx].marker(), "¬v");
         assert_eq!(processed[verse_31_end_idx].clean_text(), "31");
         assert_eq!(processed[verse_31_end_idx + 1].marker(), "¬p");
         assert_eq!(processed[verse_31_end_idx + 1].clean_text(), "");
 
-        let chapter_2_idx = processed.iter().position(|entry| entry.marker() == "c" && entry.clean_text() == "2").expect("Should find chapter 2");
+        let chapter_2_idx = processed
+            .iter()
+            .position(|entry| entry.marker() == "c" && entry.clean_text() == "2")
+            .expect("Should find chapter 2");
         assert_eq!(processed[chapter_2_idx].marker(), "c");
         assert_eq!(processed[chapter_2_idx].clean_text(), "2");
         assert_eq!(processed[chapter_2_idx + 1].marker(), "p");
@@ -760,13 +1064,20 @@ mod tests {
         assert_eq!(processed[chapter_2_idx + 2].marker(), "c#");
         assert_eq!(processed[chapter_2_idx + 2].clean_text(), "2");
 
-        let final_chapter_end_idx = processed.iter().rposition(|entry| entry.marker() == "¬c" && entry.clean_text() == "50").expect("Should find the closing chapter 50 marker");
+        let final_chapter_end_idx = processed
+            .iter()
+            .rposition(|entry| entry.marker() == "¬c" && entry.clean_text() == "50")
+            .expect("Should find the closing chapter 50 marker");
         assert_eq!(processed[final_chapter_end_idx].marker(), "¬c");
         assert_eq!(processed[final_chapter_end_idx].clean_text(), "50");
         assert_eq!(processed[final_chapter_end_idx + 1].marker(), "¬chapters");
         assert!(processed[final_chapter_end_idx + 1].clean_text().is_empty());
 
-        assert_eq!(processed.len(), 6743, "Expected 6743 entries after nesting and verse start markers");
+        assert_eq!(
+            processed.len(),
+            6743,
+            "Expected 6743 entries after nesting and verse start markers"
+        );
     }
 
     #[test]
@@ -782,7 +1093,7 @@ mod tests {
             if let Some(file_name) = path.file_name().and_then(|s| s.to_str()) {
                 if file_name.starts_with("OET-LV_") && file_name.ends_with(".ESFM") {
                     let book_code = &file_name[7..file_name.len() - 5];
-                    if book_code.len() == 3 && is_old_testament_nr(book_code){
+                    if book_code.len() == 3 && is_old_testament_nr(book_code) {
                         books_to_verify.push((book_code.to_string(), path.to_str().unwrap().to_string()));
                     }
                 }
@@ -793,13 +1104,29 @@ mod tests {
         let options = ProcessLinesOptions::default();
 
         for (book_code, file_path) in books_to_verify {
-            let summary_line = summary_content.lines().find(|l| l.trim().starts_with(&book_code))
+            let summary_line = summary_content
+                .lines()
+                .find(|l| l.trim().starts_with(&book_code))
                 .unwrap_or_else(|| panic!("Book {} not found in summary", book_code));
 
-            let expected_raw = summary_line.split("len(self._rawLines)=").nth(1).unwrap()
-                .split_whitespace().next().unwrap().parse::<usize>().unwrap();
-            let expected_proc = summary_line.split("len(self._processedLines)=").nth(1).unwrap()
-                .split_whitespace().next().unwrap().parse::<usize>().unwrap();
+            let expected_raw = summary_line
+                .split("len(self._rawLines)=")
+                .nth(1)
+                .unwrap()
+                .split_whitespace()
+                .next()
+                .unwrap()
+                .parse::<usize>()
+                .unwrap();
+            let expected_proc = summary_line
+                .split("len(self._processedLines)=")
+                .nth(1)
+                .unwrap()
+                .split_whitespace()
+                .next()
+                .unwrap()
+                .parse::<usize>()
+                .unwrap();
             // println!("Verifying {}: expected raw lines = {}, expected processed lines = {}", book_code, expected_raw, expected_proc);
 
             let file = File::open(&file_path).expect(&format!("Could not open ESFM file: {}", file_path));
@@ -819,10 +1146,20 @@ mod tests {
                 raw_lines.push((marker.to_string(), text.to_string()));
             }
 
-            assert_eq!(raw_lines.len(), expected_raw, "Raw lines count mismatch for {}", book_code);
+            assert_eq!(
+                raw_lines.len(),
+                expected_raw,
+                "Raw lines count mismatch for {}",
+                book_code
+            );
 
             let processed = process_lines(raw_lines, &book_code, "OET-LV_OT", &options);
-            assert_eq!(processed.len(), expected_proc, "Processed lines count mismatch for {}", book_code);
+            assert_eq!(
+                processed.len(),
+                expected_proc,
+                "Processed lines count mismatch for {}",
+                book_code
+            );
         }
     }
 
@@ -839,7 +1176,7 @@ mod tests {
             if let Some(file_name) = path.file_name().and_then(|s| s.to_str()) {
                 if file_name.starts_with("OET-LV_") && file_name.ends_with(".ESFM") {
                     let book_code = &file_name[7..file_name.len() - 5];
-                    if book_code.len() == 3 && is_new_testament_nr(book_code){
+                    if book_code.len() == 3 && is_new_testament_nr(book_code) {
                         books_to_verify.push((book_code.to_string(), path.to_str().unwrap().to_string()));
                     }
                 }
@@ -850,13 +1187,29 @@ mod tests {
         let options = ProcessLinesOptions::default();
 
         for (book_code, file_path) in books_to_verify {
-            let summary_line = summary_content.lines().find(|l| l.trim().starts_with(&book_code))
+            let summary_line = summary_content
+                .lines()
+                .find(|l| l.trim().starts_with(&book_code))
                 .unwrap_or_else(|| panic!("Book {} not found in summary", book_code));
 
-            let expected_raw = summary_line.split("len(self._rawLines)=").nth(1).unwrap()
-                .split_whitespace().next().unwrap().parse::<usize>().unwrap();
-            let expected_proc = summary_line.split("len(self._processedLines)=").nth(1).unwrap()
-                .split_whitespace().next().unwrap().parse::<usize>().unwrap();
+            let expected_raw = summary_line
+                .split("len(self._rawLines)=")
+                .nth(1)
+                .unwrap()
+                .split_whitespace()
+                .next()
+                .unwrap()
+                .parse::<usize>()
+                .unwrap();
+            let expected_proc = summary_line
+                .split("len(self._processedLines)=")
+                .nth(1)
+                .unwrap()
+                .split_whitespace()
+                .next()
+                .unwrap()
+                .parse::<usize>()
+                .unwrap();
             // println!("Verifying {}: expected raw lines = {}, expected processed lines = {}", book_code, expected_raw, expected_proc);
 
             let file = File::open(&file_path).expect(&format!("Could not open ESFM file: {}", file_path));
@@ -876,10 +1229,20 @@ mod tests {
                 raw_lines.push((marker.to_string(), text.to_string()));
             }
 
-            assert_eq!(raw_lines.len(), expected_raw, "Raw lines count mismatch for {}", book_code);
+            assert_eq!(
+                raw_lines.len(),
+                expected_raw,
+                "Raw lines count mismatch for {}",
+                book_code
+            );
 
             let processed = process_lines(raw_lines, &book_code, "OET-LV_NT", &options);
-            assert_eq!(processed.len(), expected_proc, "Processed lines count mismatch for {}", book_code);
+            assert_eq!(
+                processed.len(),
+                expected_proc,
+                "Processed lines count mismatch for {}",
+                book_code
+            );
         }
     }
 
@@ -899,7 +1262,7 @@ mod tests {
             if let Some(file_name) = path.file_name().and_then(|s| s.to_str()) {
                 if file_name.starts_with("OET-RV_") && file_name.ends_with(".ESFM") {
                     let book_code = &file_name[7..file_name.len() - 5];
-                    if book_code.len() == 3 && (is_old_testament_nr(book_code) || is_new_testament_nr(book_code)){
+                    if book_code.len() == 3 && (is_old_testament_nr(book_code) || is_new_testament_nr(book_code)) {
                         books_to_verify.push((book_code.to_string(), path.to_str().unwrap().to_string()));
                     }
                 }
@@ -910,13 +1273,29 @@ mod tests {
         let options = ProcessLinesOptions::default();
 
         for (book_code, file_path) in books_to_verify {
-            let summary_line = summary_content.lines().find(|l| l.trim().starts_with(&book_code))
+            let summary_line = summary_content
+                .lines()
+                .find(|l| l.trim().starts_with(&book_code))
                 .unwrap_or_else(|| panic!("Book {} not found in summary", book_code));
 
-            let expected_raw = summary_line.split("len(self._rawLines)=").nth(1).unwrap()
-                .split_whitespace().next().unwrap().parse::<usize>().unwrap();
-            let expected_proc = summary_line.split("len(self._processedLines)=").nth(1).unwrap()
-                .split_whitespace().next().unwrap().parse::<usize>().unwrap();
+            let expected_raw = summary_line
+                .split("len(self._rawLines)=")
+                .nth(1)
+                .unwrap()
+                .split_whitespace()
+                .next()
+                .unwrap()
+                .parse::<usize>()
+                .unwrap();
+            let expected_proc = summary_line
+                .split("len(self._processedLines)=")
+                .nth(1)
+                .unwrap()
+                .split_whitespace()
+                .next()
+                .unwrap()
+                .parse::<usize>()
+                .unwrap();
             // println!("Verifying {}: expected raw lines = {}, expected processed lines = {}", book_code, expected_raw, expected_proc);
 
             let file = File::open(&file_path).expect(&format!("Could not open ESFM file: {}", file_path));
@@ -937,109 +1316,407 @@ mod tests {
             }
 
             if book_code == "ISA" {
-                println!("WIP: ISA raw lines count: {}, expected: {}", raw_lines.len(), expected_raw);
-                assert_eq!(raw_lines.len(), expected_raw-307, "Raw lines count mismatch for {}", book_code);
+                println!(
+                    "WIP: ISA raw lines count: {}, expected: {}",
+                    raw_lines.len(),
+                    expected_raw
+                );
+                assert_eq!(
+                    raw_lines.len(),
+                    expected_raw - 307,
+                    "Raw lines count mismatch for {}",
+                    book_code
+                );
             } else {
-                assert_eq!(raw_lines.len(), expected_raw, "Raw lines count mismatch for {}", book_code);
+                assert_eq!(
+                    raw_lines.len(),
+                    expected_raw,
+                    "Raw lines count mismatch for {}",
+                    book_code
+                );
             }
 
             let processed = process_lines(raw_lines, &book_code, "OET-RV", &options);
             // NOTE: We now have more 'v=' entries (for better or for worse???)
             if book_code == "ACT" {
-                println!("NEED TO CHECK: ACT processed lines count: {}, expected: {}", processed.len(), expected_proc);
-                assert_eq!(processed.len(), expected_proc + 4, "Processed lines count mismatch for {}", book_code);
+                println!(
+                    "NEED TO CHECK: ACT processed lines count: {}, expected: {}",
+                    processed.len(),
+                    expected_proc
+                );
+                assert_eq!(
+                    processed.len(),
+                    expected_proc + 4,
+                    "Processed lines count mismatch for {}",
+                    book_code
+                );
             } else if book_code == "AMO" {
-                println!("NEED TO CHECK: AMO processed lines count: {}, expected: {}", processed.len(), expected_proc);
-                assert_eq!(processed.len(), expected_proc + 17, "Processed lines count mismatch for {}", book_code);
+                println!(
+                    "NEED TO CHECK: AMO processed lines count: {}, expected: {}",
+                    processed.len(),
+                    expected_proc
+                );
+                assert_eq!(
+                    processed.len(),
+                    expected_proc + 17,
+                    "Processed lines count mismatch for {}",
+                    book_code
+                );
             } else if book_code == "CH1" {
-                println!("NEED TO CHECK: CH1 processed lines count: {}, expected: {}", processed.len(), expected_proc);
-                assert_eq!(processed.len(), expected_proc + 38, "Processed lines count mismatch for {}", book_code);
+                println!(
+                    "NEED TO CHECK: CH1 processed lines count: {}, expected: {}",
+                    processed.len(),
+                    expected_proc
+                );
+                assert_eq!(
+                    processed.len(),
+                    expected_proc + 38,
+                    "Processed lines count mismatch for {}",
+                    book_code
+                );
             } else if book_code == "CH2" {
-                println!("NEED TO CHECK: CH2 processed lines count: {}, expected: {}", processed.len(), expected_proc);
-                assert_eq!(processed.len(), expected_proc + 69, "Processed lines count mismatch for {}", book_code);
+                println!(
+                    "NEED TO CHECK: CH2 processed lines count: {}, expected: {}",
+                    processed.len(),
+                    expected_proc
+                );
+                assert_eq!(
+                    processed.len(),
+                    expected_proc + 69,
+                    "Processed lines count mismatch for {}",
+                    book_code
+                );
             } else if book_code == "CO1" {
-                println!("NEED TO CHECK: CO1 processed lines count: {}, expected: {}", processed.len(), expected_proc);
-                assert_eq!(processed.len(), expected_proc + 2, "Processed lines count mismatch for {}", book_code);
+                println!(
+                    "NEED TO CHECK: CO1 processed lines count: {}, expected: {}",
+                    processed.len(),
+                    expected_proc
+                );
+                assert_eq!(
+                    processed.len(),
+                    expected_proc + 2,
+                    "Processed lines count mismatch for {}",
+                    book_code
+                );
             } else if book_code == "DAN" {
-                println!("NEED TO CHECK: DAN processed lines count: {}, expected: {}", processed.len(), expected_proc);
-                assert_eq!(processed.len(), expected_proc + 1, "Processed lines count mismatch for {}", book_code);
+                println!(
+                    "NEED TO CHECK: DAN processed lines count: {}, expected: {}",
+                    processed.len(),
+                    expected_proc
+                );
+                assert_eq!(
+                    processed.len(),
+                    expected_proc + 1,
+                    "Processed lines count mismatch for {}",
+                    book_code
+                );
             } else if book_code == "DEU" {
-                println!("NEED TO CHECK: DEU processed lines count: {}, expected: {}", processed.len(), expected_proc);
-                assert_eq!(processed.len(), expected_proc + 2, "Processed lines count mismatch for {}", book_code);
+                println!(
+                    "NEED TO CHECK: DEU processed lines count: {}, expected: {}",
+                    processed.len(),
+                    expected_proc
+                );
+                assert_eq!(
+                    processed.len(),
+                    expected_proc + 2,
+                    "Processed lines count mismatch for {}",
+                    book_code
+                );
             } else if book_code == "EXO" {
-                println!("NEED TO CHECK: EXO processed lines count: {}, expected: {}", processed.len(), expected_proc);
-                assert_eq!(processed.len(), expected_proc + 4, "Processed lines count mismatch for {}", book_code);
+                println!(
+                    "NEED TO CHECK: EXO processed lines count: {}, expected: {}",
+                    processed.len(),
+                    expected_proc
+                );
+                assert_eq!(
+                    processed.len(),
+                    expected_proc + 4,
+                    "Processed lines count mismatch for {}",
+                    book_code
+                );
             } else if book_code == "EZE" {
-                println!("NEED TO CHECK: EZE processed lines count: {}, expected: {}", processed.len(), expected_proc);
-                assert_eq!(processed.len(), expected_proc + 1, "Processed lines count mismatch for {}", book_code);
+                println!(
+                    "NEED TO CHECK: EZE processed lines count: {}, expected: {}",
+                    processed.len(),
+                    expected_proc
+                );
+                assert_eq!(
+                    processed.len(),
+                    expected_proc + 1,
+                    "Processed lines count mismatch for {}",
+                    book_code
+                );
             } else if book_code == "GEN" {
-                println!("NEED TO CHECK: GEN processed lines count: {}, expected: {}", processed.len(), expected_proc);
-                assert_eq!(processed.len(), expected_proc + 2, "Processed lines count mismatch for {}", book_code);
+                println!(
+                    "NEED TO CHECK: GEN processed lines count: {}, expected: {}",
+                    processed.len(),
+                    expected_proc
+                );
+                assert_eq!(
+                    processed.len(),
+                    expected_proc + 2,
+                    "Processed lines count mismatch for {}",
+                    book_code
+                );
             } else if book_code == "HAB" {
-                println!("NEED TO CHECK: HAB processed lines count: {}, expected: {}", processed.len(), expected_proc);
-                assert_eq!(processed.len(), expected_proc + 6, "Processed lines count mismatch for {}", book_code);
+                println!(
+                    "NEED TO CHECK: HAB processed lines count: {}, expected: {}",
+                    processed.len(),
+                    expected_proc
+                );
+                assert_eq!(
+                    processed.len(),
+                    expected_proc + 6,
+                    "Processed lines count mismatch for {}",
+                    book_code
+                );
             } else if book_code == "HOS" {
-                println!("NEED TO CHECK: HOS processed lines count: {}, expected: {}", processed.len(), expected_proc);
-                assert_eq!(processed.len(), expected_proc + 24, "Processed lines count mismatch for {}", book_code);
+                println!(
+                    "NEED TO CHECK: HOS processed lines count: {}, expected: {}",
+                    processed.len(),
+                    expected_proc
+                );
+                assert_eq!(
+                    processed.len(),
+                    expected_proc + 24,
+                    "Processed lines count mismatch for {}",
+                    book_code
+                );
             } else if book_code == "ISA" {
-                println!("WIP: ISA processed lines count: {}, expected: {}", processed.len(), expected_proc);
-                assert_eq!(processed.len(), 13688, "Processed lines count mismatch for {}", book_code);
+                println!(
+                    "WIP: ISA processed lines count: {}, expected: {}",
+                    processed.len(),
+                    expected_proc
+                );
+                assert_eq!(
+                    processed.len(),
+                    13688,
+                    "Processed lines count mismatch for {}",
+                    book_code
+                );
             } else if book_code == "JHN" {
-                println!("NEED TO CHECK: JHN processed lines count: {}, expected: {}", processed.len(), expected_proc);
-                assert_eq!(processed.len(), expected_proc + 3, "Processed lines count mismatch for {}", book_code);
+                println!(
+                    "NEED TO CHECK: JHN processed lines count: {}, expected: {}",
+                    processed.len(),
+                    expected_proc
+                );
+                assert_eq!(
+                    processed.len(),
+                    expected_proc + 3,
+                    "Processed lines count mismatch for {}",
+                    book_code
+                );
             } else if book_code == "JNA" {
-                println!("NEED TO CHECK: JNA processed lines count: {}, expected: {}", processed.len(), expected_proc);
-                assert_eq!(processed.len(), expected_proc + 1, "Processed lines count mismatch for {}", book_code);
+                println!(
+                    "NEED TO CHECK: JNA processed lines count: {}, expected: {}",
+                    processed.len(),
+                    expected_proc
+                );
+                assert_eq!(
+                    processed.len(),
+                    expected_proc + 1,
+                    "Processed lines count mismatch for {}",
+                    book_code
+                );
             } else if book_code == "JOL" {
-                println!("NEED TO CHECK: JOL processed lines count: {}, expected: {}", processed.len(), expected_proc);
-                assert_eq!(processed.len(), expected_proc + 5, "Processed lines count mismatch for {}", book_code);
+                println!(
+                    "NEED TO CHECK: JOL processed lines count: {}, expected: {}",
+                    processed.len(),
+                    expected_proc
+                );
+                assert_eq!(
+                    processed.len(),
+                    expected_proc + 5,
+                    "Processed lines count mismatch for {}",
+                    book_code
+                );
             } else if book_code == "KI1" {
-                println!("NEED TO CHECK: KI1 processed lines count: {}, expected: {}", processed.len(), expected_proc);
-                assert_eq!(processed.len(), expected_proc + 1, "Processed lines count mismatch for {}", book_code);
+                println!(
+                    "NEED TO CHECK: KI1 processed lines count: {}, expected: {}",
+                    processed.len(),
+                    expected_proc
+                );
+                assert_eq!(
+                    processed.len(),
+                    expected_proc + 1,
+                    "Processed lines count mismatch for {}",
+                    book_code
+                );
             } else if book_code == "KI2" {
-                println!("NEED TO CHECK: KI2 processed lines count: {}, expected: {}", processed.len(), expected_proc);
-                assert_eq!(processed.len(), expected_proc + 2, "Processed lines count mismatch for {}", book_code);
+                println!(
+                    "NEED TO CHECK: KI2 processed lines count: {}, expected: {}",
+                    processed.len(),
+                    expected_proc
+                );
+                assert_eq!(
+                    processed.len(),
+                    expected_proc + 2,
+                    "Processed lines count mismatch for {}",
+                    book_code
+                );
             } else if book_code == "LUK" {
-                println!("NEED TO CHECK: LUK processed lines count: {}, expected: {}", processed.len(), expected_proc);
-                assert_eq!(processed.len(), expected_proc + 2, "Processed lines count mismatch for {}", book_code);
+                println!(
+                    "NEED TO CHECK: LUK processed lines count: {}, expected: {}",
+                    processed.len(),
+                    expected_proc
+                );
+                assert_eq!(
+                    processed.len(),
+                    expected_proc + 2,
+                    "Processed lines count mismatch for {}",
+                    book_code
+                );
             } else if book_code == "MAT" {
-                println!("NEED TO CHECK: MAT processed lines count: {}, expected: {}", processed.len(), expected_proc);
-                assert_eq!(processed.len(), expected_proc + 2, "Processed lines count mismatch for {}", book_code);
+                println!(
+                    "NEED TO CHECK: MAT processed lines count: {}, expected: {}",
+                    processed.len(),
+                    expected_proc
+                );
+                assert_eq!(
+                    processed.len(),
+                    expected_proc + 2,
+                    "Processed lines count mismatch for {}",
+                    book_code
+                );
             } else if book_code == "NEH" {
-                println!("NEED TO CHECK: NEH processed lines count: {}, expected: {}", processed.len(), expected_proc);
-                assert_eq!(processed.len(), expected_proc + 1, "Processed lines count mismatch for {}", book_code);
+                println!(
+                    "NEED TO CHECK: NEH processed lines count: {}, expected: {}",
+                    processed.len(),
+                    expected_proc
+                );
+                assert_eq!(
+                    processed.len(),
+                    expected_proc + 1,
+                    "Processed lines count mismatch for {}",
+                    book_code
+                );
             } else if book_code == "OBA" {
-                println!("NEED TO CHECK: OBA processed lines count: {}, expected: {}", processed.len(), expected_proc);
-                assert_eq!(processed.len(), expected_proc + 1, "Processed lines count mismatch for {}", book_code);
+                println!(
+                    "NEED TO CHECK: OBA processed lines count: {}, expected: {}",
+                    processed.len(),
+                    expected_proc
+                );
+                assert_eq!(
+                    processed.len(),
+                    expected_proc + 1,
+                    "Processed lines count mismatch for {}",
+                    book_code
+                );
             } else if book_code == "PSA" {
-                println!("NEED TO CHECK: PSA processed lines count: {}, expected: {}", processed.len(), expected_proc);
-                assert_eq!(processed.len(), expected_proc + 112, "Processed lines count mismatch for {}", book_code);
+                println!(
+                    "NEED TO CHECK: PSA processed lines count: {}, expected: {}",
+                    processed.len(),
+                    expected_proc
+                );
+                assert_eq!(
+                    processed.len(),
+                    expected_proc + 112,
+                    "Processed lines count mismatch for {}",
+                    book_code
+                );
             } else if book_code == "REV" {
-                println!("NEED TO CHECK: REV processed lines count: {}, expected: {}", processed.len(), expected_proc);
-                assert_eq!(processed.len(), expected_proc + 1, "Processed lines count mismatch for {}", book_code);
+                println!(
+                    "NEED TO CHECK: REV processed lines count: {}, expected: {}",
+                    processed.len(),
+                    expected_proc
+                );
+                assert_eq!(
+                    processed.len(),
+                    expected_proc + 1,
+                    "Processed lines count mismatch for {}",
+                    book_code
+                );
             } else if book_code == "ROM" {
-                println!("NEED TO CHECK: ROM processed lines count: {}, expected: {}", processed.len(), expected_proc);
-                assert_eq!(processed.len(), expected_proc + 1, "Processed lines count mismatch for {}", book_code);
+                println!(
+                    "NEED TO CHECK: ROM processed lines count: {}, expected: {}",
+                    processed.len(),
+                    expected_proc
+                );
+                assert_eq!(
+                    processed.len(),
+                    expected_proc + 1,
+                    "Processed lines count mismatch for {}",
+                    book_code
+                );
             } else if book_code == "RUT" {
-                println!("NEED TO CHECK: RUT processed lines count: {}, expected: {}", processed.len(), expected_proc);
-                assert_eq!(processed.len(), expected_proc + 1, "Processed lines count mismatch for {}", book_code);
+                println!(
+                    "NEED TO CHECK: RUT processed lines count: {}, expected: {}",
+                    processed.len(),
+                    expected_proc
+                );
+                assert_eq!(
+                    processed.len(),
+                    expected_proc + 1,
+                    "Processed lines count mismatch for {}",
+                    book_code
+                );
             } else if book_code == "SA1" {
-                println!("NEED TO CHECK: SA1 processed lines count: {}, expected: {}", processed.len(), expected_proc);
-                assert_eq!(processed.len(), expected_proc + 3, "Processed lines count mismatch for {}", book_code);
+                println!(
+                    "NEED TO CHECK: SA1 processed lines count: {}, expected: {}",
+                    processed.len(),
+                    expected_proc
+                );
+                assert_eq!(
+                    processed.len(),
+                    expected_proc + 3,
+                    "Processed lines count mismatch for {}",
+                    book_code
+                );
             } else if book_code == "SA2" {
-                println!("NEED TO CHECK: SA2 processed lines count: {}, expected: {}", processed.len(), expected_proc);
-                assert_eq!(processed.len(), expected_proc + 4, "Processed lines count mismatch for {}", book_code);
+                println!(
+                    "NEED TO CHECK: SA2 processed lines count: {}, expected: {}",
+                    processed.len(),
+                    expected_proc
+                );
+                assert_eq!(
+                    processed.len(),
+                    expected_proc + 4,
+                    "Processed lines count mismatch for {}",
+                    book_code
+                );
             } else if book_code == "SNG" {
-                println!("NEED TO CHECK: SNG processed lines count: {}, expected: {}", processed.len(), expected_proc);
-                assert_eq!(processed.len(), expected_proc + 22, "Processed lines count mismatch for {}", book_code);
+                println!(
+                    "NEED TO CHECK: SNG processed lines count: {}, expected: {}",
+                    processed.len(),
+                    expected_proc
+                );
+                assert_eq!(
+                    processed.len(),
+                    expected_proc + 22,
+                    "Processed lines count mismatch for {}",
+                    book_code
+                );
             } else if book_code == "TI1" {
-                println!("NEED TO CHECK: TI1 processed lines count: {}, expected: {}", processed.len(), expected_proc);
-                assert_eq!(processed.len(), expected_proc + 1, "Processed lines count mismatch for {}", book_code);
+                println!(
+                    "NEED TO CHECK: TI1 processed lines count: {}, expected: {}",
+                    processed.len(),
+                    expected_proc
+                );
+                assert_eq!(
+                    processed.len(),
+                    expected_proc + 1,
+                    "Processed lines count mismatch for {}",
+                    book_code
+                );
             } else if book_code == "ZEC" {
-                println!("NEED TO CHECK: ZEC processed lines count: {}, expected: {}", processed.len(), expected_proc);
-                assert_eq!(processed.len(), expected_proc + 1, "Processed lines count mismatch for {}", book_code);
+                println!(
+                    "NEED TO CHECK: ZEC processed lines count: {}, expected: {}",
+                    processed.len(),
+                    expected_proc
+                );
+                assert_eq!(
+                    processed.len(),
+                    expected_proc + 1,
+                    "Processed lines count mismatch for {}",
+                    book_code
+                );
             } else {
-                assert_eq!(processed.len(), expected_proc, "Processed lines count mismatch for {}", book_code);
+                assert_eq!(
+                    processed.len(),
+                    expected_proc,
+                    "Processed lines count mismatch for {}",
+                    book_code
+                );
             }
         }
     }

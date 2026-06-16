@@ -466,7 +466,7 @@ pub fn marker_occurs_in(marker: &str) -> MarkerSection {
         MarkerSection::Poetry
     } else if matches!(raw, "li1" | "li2" | "li3" | "li4") {
         MarkerSection::Text
-    } else if matches!(raw, "tr" | "th" | "tc" | "thr" | "tcr") {
+    } else if matches!(raw, "tr") { // removed character markers from here:  | "th" | "tc1" | "tc2" | "tc3" | "tc4" | "thr" | "tcr"
         MarkerSection::TableRow
     } else if matches!(raw, "qac") {
         MarkerSection::AcrosticVerse

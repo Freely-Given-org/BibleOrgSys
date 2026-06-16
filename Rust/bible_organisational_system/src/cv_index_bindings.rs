@@ -1223,7 +1223,7 @@ mod tests {
         let processed = crate::processing::process_lines(raw_lines, "HAG", "OET-LV", &options);
         println!("Final OET-LV Haggai processed line entries: {}", processed.len());
 
-        let mut index  = PyInternalBibleBookCVIndex::new("OET-LV", "HAG");
+        let mut _index  = PyInternalBibleBookCVIndex::new("OET-LV", "HAG");
         println!("This test is UNFINISHED: CV index building and lookup not yet implemented for OET-LV Haggai");
         // index.build(pyo3::Python::<'_>, &PyInternalBibleEntryList::from(processed.clone())).expect("Failed to build CV index for OET-LV Haggai");
 
