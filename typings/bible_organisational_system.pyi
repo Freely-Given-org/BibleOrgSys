@@ -96,7 +96,7 @@ def set_rust_debug(value: bool) -> None: ...
 def set_rust_strict_checking(value: bool) -> None: ...
 def processLines(
     raw_lines: list[tuple[str, str]],
-    book_code: str,
+    bos_book_code: str,
     work_name: str,
     options: ProcessLinesOptions,
 ) -> InternalBibleEntryList: ...
@@ -107,7 +107,7 @@ def parseOsis(path: str) -> dict: ...
 def saveBookFast(
     path: str,
     work_name: str,
-    book_code: str,
+    bos_book_code: str,
     entries: InternalBibleEntryList,
     cv_index: InternalBibleBookCVIndex | None,
     section_index: InternalBibleBookSectionIndex | None,
@@ -127,7 +127,7 @@ def parseWordAttributes(*args, **_kwargs) -> dict:
 
 def validateMarkers(
     entries: InternalBibleEntryList,
-    book_code: str,
+    bos_book_code: str,
     work_name: str,
     strict_checking: bool,
 ) -> dict: ...
@@ -135,14 +135,14 @@ def validateBibleMarkers(
     books_dict: dict, work_name: str, strict_checking: bool
 ) -> dict: ...
 def getVersification(
-    entries: InternalBibleEntryList, book_code: str, work_name: str
+    entries: InternalBibleEntryList, bos_book_code: str, work_name: str
 ) -> dict: ...
 def getBibleVersification(books_dict: dict, work_name: str) -> dict: ...
-def getAddedUnits(entries: InternalBibleEntryList, book_code: str) -> dict: ...
+def getAddedUnits(entries: InternalBibleEntryList, bos_book_code: str) -> dict: ...
 def getBibleAddedUnits(books_dict: dict) -> dict: ...
 def checkBook(
     entries: InternalBibleEntryList,
-    book_code: str,
+    bos_book_code: str,
     work_name: str,
     options: CheckOptions,
     discovery: DiscoveryFlags,
@@ -875,9 +875,6 @@ class InternalBibleBookCVIndex:
 
     def build(self, entries: InternalBibleEntryList) -> None:
         """Build the CV index from processed entries (snake_case)."""
-
-    def validate(self) -> list[str]:
-        """Validate the index structure."""
 
     def makeBookCVIndex(self, entries: InternalBibleEntryList) -> None:
         """Build the CV index from processed entries"""

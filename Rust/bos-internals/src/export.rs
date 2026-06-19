@@ -118,7 +118,7 @@ pub fn export_to_text(
                     content.push_str(&format!("\n{} ", v_num));
                 } else if matches!(
                     marker,
-                    "p" | "pi1" | "pi2" | "pi3" | "pi4" | "s1" | "s2" | "s3" | "s4" | "ms1" | "ms2" | "ms3" | "ms4"
+                    "p" | "pi1" | "pi2" | "pi3" | "pi4" | "s1" | "s2" | "s3" | "s4" | "ms1" | "ms2" | "ms3"
                 ) {
                     local_ignored.insert(marker.to_string());
                 } else if !text.is_empty() {
@@ -851,7 +851,7 @@ pub fn export_to_html5(
                         let _ = writer.write_line_open_close("span", &display_v, Some(&[("class", "verseNumber")]));
                         let _ = writer.write_line_open_close("span", "&nbsp;", Some(&[("class", "verseNumberPostspace")]));
                     }
-                } else if matches!(marker, "ms1" | "ms2" | "ms3" | "ms4") {
+                } else if matches!(marker, "ms1" | "ms2" | "ms3") {
                     if have_open_verse {
                         let _ = writer.write_line_close("span");
                         have_open_verse = false;
@@ -976,7 +976,7 @@ pub fn export_to_html5(
                         have_open_paragraph = false;
                     }
                     let _ = writer.write_line_open_close("p", " ", Some(&[("class", "blankParagraph")]));
-                } else if matches!(marker, "v~" | "p~") {
+                } else if matches!(marker, "v~" | "XXXp~") {
                     if !have_open_paragraph {
                         let _ = writer.write_line_open("p", Some(&[("class", "unknownParagraph")]), None);
                         have_open_paragraph = true;

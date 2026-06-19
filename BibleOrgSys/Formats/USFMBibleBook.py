@@ -385,7 +385,7 @@ class USFMBibleBook( BibleBook ):
                     marker, text = text[1:3], text[4:]
                 else:
                     if text[0] not in ',:;.?!”’} -—[‘"' and not text.startswith( '\\w '): dPrint( 'Never', debuggingThisFunction, f"handleUWEncoding '{self.workName}' {self.BBB}_{C}:{V}: handled INLINE '{text}'" )
-                    marker = 'p~'
+                    marker = 'v~' # 'XXXp~'
             if marker == 'INLINE':
                 logging.critical( f"Programming error in {self.BBB} handleUWEncoding() with INLINE='{text}'" )
 
@@ -500,7 +500,7 @@ class USFMBibleBook( BibleBook ):
                         elif text.startswith( '\\w ' ):
                             marker, text = 'w', text[3:] # Drop \ts\\* and adjust marker
                         elif text.startswith( '{\\w ' ): # uW UST Exo 17:10 (probably bad USFM???)
-                            marker = 'p~' # Drop \ts\\* -- try a continuation paragraph???
+                            marker = 'v~' # 'XXXp~' # Drop \ts\\* -- try a continuation paragraph???
                         else:
                             dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"USFMBibleBook.load() {self.workName} {self.BBB} {C}:{V} ts\\* {text=}" )
                             if self.doExtraChecking: assert False, "We want to stop here"

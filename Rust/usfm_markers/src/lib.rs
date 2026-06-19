@@ -78,7 +78,7 @@ pub static USFM_ALL_MARKERS: &[&str] = &[
     "iot", "io","io1","io2","io3","io4", "ili","ili1","ili2","ili3","ili4",
     "iex","iqt", "ie",
 
-    "ms","ms1","ms2","ms3","ms4", "mr","sr",
+    "ms","ms1","ms2","ms3", "mr","sr",
     "s","s1","s2","s3","s4","qa", "qc",
     "r","d","sp",
 

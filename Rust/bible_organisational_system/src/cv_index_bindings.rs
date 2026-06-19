@@ -685,7 +685,7 @@ impl PyCVIndexEntry {
     ///     context: Optional list of context markers
     #[new]
     #[pyo3(signature = (entry_index, entry_count, context=None))]
-    fn new(entry_index: usize, entry_count: u16, context: Option<Vec<String>>) -> Self {
+    fn new(entry_index: u16, entry_count: u16, context: Option<Vec<String>>) -> Self {
         let ctx = context.unwrap_or_default().into_iter().map(|s| s.into()).collect();
         Self {
             inner: CVIndexEntry::new(entry_index, entry_count, ctx),
@@ -1003,10 +1003,10 @@ impl PyInternalBibleBookCVIndex {
             .map_err(|e| PyValueError::new_err(e.to_string()))
     }
 
-    /// Validate the index structure.
-    fn validate<'py>(&self, _py: Python<'py>) -> Vec<String> {
-        self.inner.validate()
-    }
+    // /// Validate the index structure.
+    // fn validate<'py>(&self, _py: Python<'py>) -> Vec<String> {
+    //     self.inner.validate()
+    // }
 
     // === camelCase methods (Python backward compat, accept tuples) ===
 
@@ -1216,12 +1216,12 @@ mod tests {
         
         // Results should match test_data/OET-LV_HAG_rawLines.txt
         let original_count = raw_lines.len();
-        println!("Original lines read: {}", original_count);
+        // println!("Original lines read: {}", original_count);
         assert_eq!(original_count, 57, "Expected 57 raw lines in Haggai ESFM file");
 
         let options = crate::processing::ProcessLinesOptions::default();
         let processed = crate::processing::process_lines(raw_lines, "HAG", "OET-LV", &options);
-        println!("Final OET-LV Haggai processed line entries: {}", processed.len());
+        // println!("Final OET-LV Haggai processed line entries: {}", processed.len());
 
         let mut _index  = PyInternalBibleBookCVIndex::new("OET-LV", "HAG");
         println!("This test is UNFINISHED: CV index building and lookup not yet implemented for OET-LV Haggai");

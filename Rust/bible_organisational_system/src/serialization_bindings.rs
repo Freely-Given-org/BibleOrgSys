@@ -13,7 +13,7 @@ pub fn py_save_book_fast(
     _py: Python,
     path: &str,
     work_name: &str,
-    book_code: &str,
+    bos_book_code: &str,
     entries: &PyInternalBibleEntryList,
     cv_index: Option<&PyInternalBibleBookCVIndex>,
     section_index: Option<&PyInternalBibleBookSectionIndex>,
@@ -21,7 +21,7 @@ pub fn py_save_book_fast(
     save_bos_bible(
         Path::new(path),
         work_name,
-        book_code,
+        bos_book_code,
         entries.inner.clone(),
         cv_index.map(|idx| &idx.inner),
         section_index.map(|idx| &idx.inner),

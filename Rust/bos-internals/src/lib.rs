@@ -124,37 +124,37 @@ pub use export::{export_to_text, export_to_html5};
 use std::sync::atomic::{AtomicU8, AtomicBool, Ordering};
 
 // A global atomic variable in Rust
-pub static VERBOSITY: AtomicU8 = AtomicU8::new(2);
-pub static STRICT_CHECKING: AtomicBool = AtomicBool::new(false);
-pub static DEBUG: AtomicBool = AtomicBool::new(false);
+pub static VERBOSITY_LEVEL: AtomicU8 = AtomicU8::new(2);
+pub static STRICT_CHECKING_FLAG: AtomicBool = AtomicBool::new(false);
+pub static DEBUG_FLAG: AtomicBool = AtomicBool::new(false);
 
-pub fn set_verbosity(level: u8) {
+pub fn set_verbosity_level(level: u8) {
     // Store the level (0-4) using Relaxed ordering (fastest)
-    VERBOSITY.store(level, Ordering::Relaxed);
+    VERBOSITY_LEVEL.store(level, Ordering::Relaxed);
 }
-pub fn get_verbosity() -> u8 {
-    VERBOSITY.load(Ordering::Relaxed)
-}
-
-pub fn set_strict_checking(value: bool) {
-    STRICT_CHECKING.store(value, Ordering::Relaxed);
-}
-pub fn get_strict_checking() -> bool {
-    STRICT_CHECKING.load(Ordering::Relaxed)
+pub fn get_verbosity_level() -> u8 {
+    VERBOSITY_LEVEL.load(Ordering::Relaxed)
 }
 
-pub fn set_debug(value: bool) {
-    DEBUG.store(value, Ordering::Relaxed);
+pub fn set_strict_checking_flag(value: bool) {
+    STRICT_CHECKING_FLAG.store(value, Ordering::Relaxed);
 }
-pub fn get_debug() -> bool {
-    DEBUG.load(Ordering::Relaxed)
+pub fn have_strict_checking_flag() -> bool {
+    STRICT_CHECKING_FLAG.load(Ordering::Relaxed)
+}
+
+pub fn set_debug_flag(value: bool) {
+    DEBUG_FLAG.store(value, Ordering::Relaxed);
+}
+pub fn have_debug_flag() -> bool {
+    DEBUG_FLAG.load(Ordering::Relaxed)
 }
 
 // Internal Rust macro for displaying user messages based on verbosity level
 #[macro_export]
 macro_rules! verbosity_println {
     ($level:expr, $($arg:tt)*) => {
-        if crate::get_verbosity() >= $level {
+        if crate::get_verbosity_level() >= $level {
             println!($($arg)*);
         }
     };

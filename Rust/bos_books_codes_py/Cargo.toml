@@ -10,5 +10,5 @@ crate-type = ["cdylib"]
 
 [dependencies]
 pyo3 = { workspace = true, features = ["extension-module", "abi3-py312"] }
-bos_books_codes = { path = "../bos_books_codes", editable = true }  # Local dependency
+bos_books_codes = { path = "../bos_books_codes" }  # Local dependency
 compact_str = { workspace = true }

@@ -172,9 +172,9 @@ impl std::fmt::Display for InternalBibleExtra {
 ///     "v~",
 ///     "v",
 ///     "In the beginning...",
+///     "In the beginning...",
 ///     None,
-///     None,
-///     None,
+///     "In the beginning...",
 /// ).unwrap();
 ///
 /// assert_eq!(entry.marker(), "v~");
@@ -247,10 +247,10 @@ impl InternalBibleEntry {
         Ok(Self {
             marker,
             original_marker: Some(original_marker.into()),
-            original_text: original_text,
-            adjusted_text: Some(adjusted_text),
+            original_text: original_text.clone(),
+            adjusted_text: if adjusted_text==original_text {None} else {Some(adjusted_text)},
             extras,
-            clean_text: Some(clean_text.into()),
+            clean_text: if clean_text==original_text {None} else {Some(clean_text.into())},
         })
     }
 
@@ -267,7 +267,8 @@ impl InternalBibleEntry {
         clean_text: impl Into<CompactString> + Clone, // Clone is needed for assertions
     ) -> Self {
 
-        let clean_text = clean_text.into().trim().to_string();
+        let binding = clean_text.clone().into();
+        let clean_text = binding.trim();
 
         assert!(!marker.clone().into().is_empty(), "Marker cannot be empty");
         assert!(!marker.clone().into().contains('\\') && !marker.clone().into().contains(' ') && !marker.clone().into().contains('*'), "Invalid character in marker: '{}'", marker.clone().into());
@@ -283,10 +284,10 @@ impl InternalBibleEntry {
         Self {
             marker: marker.into(),
             original_marker: Some(original_marker.into()),
-            original_text: original_text.into(),
-            adjusted_text: Some(adjusted_text.into()),
+            original_text: original_text.clone().into(),
+            adjusted_text: if adjusted_text.clone().into()==original_text.into() {None} else {Some(adjusted_text.clone().into())},
             extras,
-            clean_text: Some(clean_text.into()),
+            clean_text: if clean_text==adjusted_text.into() {None} else {Some(clean_text.into())},
         }
     }
 
@@ -374,7 +375,7 @@ impl InternalBibleEntry {
     /// Get the clean text (notes and formatting removed).
     #[inline]
     pub fn clean_text(&self) -> &str {
-        self.clean_text.as_deref().unwrap_or_else(|| self.original_text.as_ref())
+        self.clean_text.as_deref().unwrap_or_else(|| self.adjusted_text())
     }
 
     /// Get the clean text with ESFM underlines converted to spaces.

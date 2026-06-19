@@ -221,7 +221,7 @@ impl std::ops::AddAssign for InternalBibleEntryList {
 
 impl std::fmt::Display for InternalBibleEntryList {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        const MAX_PRINTED: usize = 20;
+        const MAX_PRINTED: usize = if cfg!(debug_assertions) {300} else {20};
 
         writeln!(f, "InternalBibleEntryList:")?;
         if self.data.is_empty() {
@@ -272,7 +272,7 @@ mod tests {
         list.push(InternalBibleEntry::simple("v", "1"));
         list.push(InternalBibleEntry::simple("v~", "In the beginning..."));
 
-        println!("Test InternalBibleEntryList = ({} entries) {}", list.len(), list);
+        // println!("Test InternalBibleEntryList = ({} entries) {}", list.len(), list);
         assert_eq!(list.len(), 3);
         assert_eq!(list[0].marker(), "c");
         assert_eq!(list[1].marker(), "v");
@@ -287,11 +287,8 @@ mod tests {
         }
 
         let slice = list.slice(4, 10);
-        println!(
-            "Test InternalBibleEntryList slice = ({} entries) {}",
-            slice.len(),
-            slice
-        );
+        // println!("Test InternalBibleEntryList slice = ({} entries) {}",
+        //     slice.len(), slice);
         assert_eq!(slice.len(), 6);
         assert_eq!(slice[0].clean_text(), "3");
         assert_eq!(slice[4].clean_text(), "5");
@@ -304,7 +301,7 @@ mod tests {
         list.push(InternalBibleEntry::simple("p", ""));
         list.push(InternalBibleEntry::simple("v", "1"));
 
-        println!("Test InternalBibleEntryList = ({} entries) {}", list.len(), list);
+        // println!("Test InternalBibleEntryList = ({} entries) {}", list.len(), list);
         assert_eq!(list.contains_marker("c", None), Some(0));
         assert_eq!(list.contains_marker("v", None), Some(2));
         assert_eq!(list.contains_marker("v", Some(2)), None); // Limited search
@@ -321,11 +318,8 @@ mod tests {
 
         let combined = list1 + list2;
 
-        println!(
-            "Test combined InternalBibleEntryList = ({} entries) {}",
-            combined.len(),
-            combined
-        );
+        // println!("Test combined InternalBibleEntryList = ({} entries) {}",
+        //     combined.len(), combined);
         assert_eq!(combined.len(), 2);
         assert_eq!(combined[0].marker(), "c");
         assert_eq!(combined[1].marker(), "v");

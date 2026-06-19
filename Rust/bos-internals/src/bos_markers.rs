@@ -123,8 +123,8 @@ pub mod custom_content {
     pub const VERSE_BRIDGE: &str = "v=";
     /// `v~` - Verse text (anything after the verse number on a `\v` line)
     pub const VERSE_TEXT: &str = "v~";
-    /// `p~` - Paragraph text (anything on a paragraph line like `\p`, `\q`, etc.)
-    pub const PARAGRAPH_TEXT: &str = "p~";
+    /// `p~` - Paragraph text (anything on a paragraph line like `\p`, `\q`, etc.) XXX
+    // pub const PARAGRAPH_TEXT: &str = "XXXp~";
     /// `cl¤` - Chapter label BEFORE `\c 1` (represents text for "chapter" throughout book)
     pub const CHAPTER_LABEL_BOOK: &str = "cl¤";
     /// `vp#` - Published verse number converted to a separate newline field
@@ -136,7 +136,7 @@ pub mod custom_content {
         CHAPTER_NUMBER,
         VERSE_BRIDGE,
         VERSE_TEXT,
-        PARAGRAPH_TEXT,
+        //PARAGRAPH_TEXT,
         CHAPTER_LABEL_BOOK,
         VERSE_PUBLISHED,
     ];
@@ -158,16 +158,20 @@ pub mod custom_nesting {
     /// `intro` - Inserted at the start of book introductions
     pub const INTRO: &str = "intro";
     /// `ilist` - Inserted at the start of introduction lists (before `\ili` markers)
+    /// NOTE: We only do this at the outer level -- not for nested lists
     pub const INTRO_LIST: &str = "ilist";
     /// `chapters` - Inserted after introduction, before first Bible content
     pub const CHAPTERS: &str = "chapters";
-    /// `list` - Inserted at the start of lists (before `\li` markers)
+    /// `list` - Inserted at the start of lists (before `\li#` markers)
+    /// NOTE: We only do this at the outer level -- not for nested lists
     pub const LIST: &str = "list";
+    /// `table` - Inserted at the start of tables (before `\tr` markers)
+    pub const TABLE: &str = "table";
     /// `iot` - Introduction outline title (added if not already present)
     pub const INTRO_OUTLINE_TITLE: &str = "iot";
 
     /// All custom nesting markers as a slice.
-    pub const ALL: &[&str] = &[HEADERS, INTRO, INTRO_LIST, CHAPTERS, LIST, INTRO_OUTLINE_TITLE];
+    pub const ALL: &[&str] = &[HEADERS, INTRO, INTRO_LIST, CHAPTERS, LIST, TABLE, INTRO_OUTLINE_TITLE];
 
     /// Check if a marker is a custom nesting marker.
     #[inline]
@@ -199,28 +203,23 @@ pub mod paragraph_markers {
     pub const PMC: &str = "pmc";
     pub const PMR: &str = "pmr";
     pub const CLS: &str = "cls";
-    pub const PI: &str = "pi";
     pub const PI1: &str = "pi1";
     pub const PI2: &str = "pi2";
     pub const PI3: &str = "pi3";
     pub const PI4: &str = "pi4";
-    pub const PH: &str = "ph";
     pub const PH1: &str = "ph1";
     pub const PH2: &str = "ph2";
     pub const PH3: &str = "ph3";
     pub const PH4: &str = "ph4";
-    pub const Q: &str = "q";
     pub const Q1: &str = "q1";
     pub const Q2: &str = "q2";
     pub const Q3: &str = "q3";
     pub const Q4: &str = "q4";
     pub const QR: &str = "qr";
-    pub const QM: &str = "qm";
     pub const QM1: &str = "qm1";
     pub const QM2: &str = "qm2";
     pub const QM3: &str = "qm3";
     pub const QM4: &str = "qm4";
-    pub const LI: &str = "li";
     pub const LI1: &str = "li1";
     pub const LI2: &str = "li2";
     pub const LI3: &str = "li3";
@@ -228,10 +227,10 @@ pub mod paragraph_markers {
 
     pub const NB: &str = "nb";
 
-    /// All paragraph markers -- ones that should have the text placed into a p~ field when processed
+    /// All paragraph markers -- ones that should have the text placed into a p~ XXX v~ field when processed
     pub const ALL: &[&str] = &[
-        P, PC, PR, M, MI, PM, PMO, PMC, PMR, CLS, PI, PI1, PI2, PI3, PI4, PH, PH1, PH2, PH3, PH4, Q, Q1, Q2, Q3, Q4,
-        QR, QM, QM1, QM2, QM3, QM4, LI, LI1, LI2, LI3, LI4, NB,
+        P, PC, PR, M, MI, PM, PMO, PMC, PMR, CLS, PI1, PI2, PI3, PI4, PH1, PH2, PH3, PH4, Q1, Q2, Q3, Q4,
+        QR, QM1, QM2, QM3, QM4, LI1, LI2, LI3, LI4, NB,
     ];
 
     /// Check if a marker is a paragraph marker.
@@ -246,7 +245,7 @@ pub mod introduction_markers {
     pub const ALL: &[&str] = &[
         "imt", "imt1", "imt2", "imt3", "imt4", "is", "is1", "is2", "is3", "is4", "ip", "ipi", "im",
         "imi", "ipq", "imq", "ipr", "iq", "iq1", "iq2", "iq3", "io", "io1", "io2", "io3", "io4",
-        "iot", "ior", "ili", "ili1", "ili2", "ili3", "ili4", "iex", "ib",
+        "iot", "ior", "ili1", "ili2", "iex", "ib",
     ];
 
     #[inline]
@@ -258,7 +257,7 @@ pub mod introduction_markers {
 /// USFM heading markers.
 pub mod heading_markers {
     pub const ALL: &[&str] = &[
-        "s", "s1", "s2", "s3", "s4", "sr", "is", "is1", "is2", "is3", "is4", "mr", "qa", "qc",
+        "s1", "s2", "s3", "s4", "sr", "ms1", "ms2", "ms3", "mr", "is1", "is2", "is3", "is4", "qa", "qc",
     ];
 
     #[inline]
@@ -269,7 +268,7 @@ pub mod heading_markers {
 
 /// USFM intro outline markers.
 pub mod intro_outline_markers {
-    pub const ALL: &[&str] = &["io", "io1", "io2", "io3", "io4"];
+    pub const ALL: &[&str] = &["io1", "io2", "io3", "io4"];
 
     #[inline]
     pub fn is_intro_outline(marker: &str) -> bool {
@@ -279,7 +278,7 @@ pub mod intro_outline_markers {
 
 /// USFM intro list markers.
 pub mod intro_list_markers {
-    pub const ALL: &[&str] = &["ili", "ili1", "ili2", "ili3", "ili4"];
+    pub const ALL: &[&str] = &["ili1", "ili2"];
 
     #[inline]
     pub fn is_intro_list(marker: &str) -> bool {
@@ -289,7 +288,7 @@ pub mod intro_list_markers {
 
 /// USFM main text list markers.
 pub mod main_text_list_markers {
-    pub const ALL: &[&str] = &["li1", "li2", "li3", "li4"];
+    pub const ALL: &[&str] = &["li1", "li2", "li3", "li4", "lh", "lf", "lim1", "lim2", "lim3", "lim4"];
 
     #[inline]
     pub fn is_main_text_list(marker: &str) -> bool {
@@ -302,9 +301,8 @@ pub mod major_section_markers {
     pub const MS1: &str = "ms1";
     pub const MS2: &str = "ms2";
     pub const MS3: &str = "ms3";
-    pub const MS4: &str = "ms4";
 
-    pub const ALL: &[&str] = &[MS1, MS2, MS3, MS4];
+    pub const ALL: &[&str] = &[MS1, MS2, MS3];
 
     #[inline]
     pub fn is_major_section(marker: &str) -> bool {
@@ -314,7 +312,7 @@ pub mod major_section_markers {
 
 /// USFM title markers.
 pub mod title_markers {
-    pub const ALL: &[&str] = &["mt", "mt1", "mt2", "mt3", "mt4", "mte", "mte1", "mte2", "toc1", "toc2", "toc3", "h"];
+    pub const ALL: &[&str] = &["mt1", "mt2", "mt3", "mt4", "mte1", "mte2", "toc1", "toc2", "toc3", "h"];
 }
 
 /// Generate an end marker for a given marker.

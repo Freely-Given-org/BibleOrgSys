@@ -43,7 +43,7 @@ import BibleOrgSys.BibleOrgSysGlobals as BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2026-06-16' # by RJH
+LAST_MODIFIED_DATE = '2026-06-19' # by RJH
 SHORT_PROGRAM_NAME = "OldBiblicalEnglish"
 PROGRAM_NAME = "OpenBibleData English Language Handling functions"
 PROGRAM_VERSION = '0.97'
@@ -2748,7 +2748,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
             (('westwarde',),'westward'), ((' weste',),' west'),
             ((' wetheris',),' wethers'),((' wethir',),' wether'), ((' wette ',),' wet '),
         (('whalfishes',),'whales'),
-                ((' wha ',),' what '), ((' whateuer',),' whatever'), (('Whatsoeuer',),'Whatsoever'),(('whatsoeuer',),'whatsoever'),
+                ((' wha ',' wote ',' wot '),' what '), ((' whateuer',),' whatever'), (('Whatsoeuer',),'Whatsoever'),(('whatsoeuer',),'whatsoever'),
             ((' wheete',' wheate',' whete'),' wheat'),
                 ((' wheeles',),' wheels'),((' wheele',' whele'),' wheel'),#((' wheele,',),' wheel,'),((' wheele:',),' wheel:'),
                 ((' whelps',' whelppes',' whelpes',' whelpis',' welpes'),' whelps/pups_or_cubs'),((' whelp ',' whelpe '),' whelp/pup_or_cub '),
@@ -2878,7 +2878,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
         # First 'ayen' below has already been substituted above
         (('again biere','ayenbiere',),'redeemer/saviour'),(('ayenbouyte','ayenbouyt'),'bought_back/redeemed'), # Lam 3:58, Hos 7:13
         ((' ayenward',),' to_the_opposite_side'), # Wycl Mrk 4:35
-        ((' axyngis',),' askings'),((' axynge',' axyng'),' asking'), # Wycl Tob 7:10
+        ((' axyngis',),' askings'),((' axynge',' axyng', ' axen'),' asking'), # Wycl Mrk 10:38 Tob 7:10
     ((' beefes',' beeves',' beeues',),' cattle'), # Wycl 'Num 31:33
         ((' behests',' biheestis'),' behests/promises'), # Ecc 5:4
             ((' behest ',' biheest '),' behest/promise '),
@@ -3111,6 +3111,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
         ((' viliche',),' vilely'), # Wycl Deu 25:3
         ((' vytale',),' vital(s)/essential(s)'),
     ((' warpe',),' warp'),((' warp',),' warp/weave'), # Lev 13:59
+        ((' waschun',),' washed'), # Wycl Mrk 10:39
         ((' waxed',' wexed'),' waxed/grew'),((' waxeth',' waxith',' wexith'),' waxeth/waxes/grows'),((' wexe ',),' wax/grow '), # Psa 89:6, Mrk 4:32
         ((' welewide',),' withered'), # Wycl Mrk 4:6
         ((' weltred',),' overturned'), # Cvdl Mrk 9:20
@@ -3121,7 +3122,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
         ((' whett ',' whet '),' sharpen '), # Ecc 10:10
         ((' wiste',' wist'),' knew'), # Mrk 7:24, 14:40
         ((' wite ',),' wit/know '),((' wite,',),' wit/know,'),((' wite.',),' wit/know.'),((' wite;',),' wit/know;'), # Wycl 1Ki 20:13, Isa 41:22
-        (('withall',),'also/fully'),
+        (('withall','withal'),'also/fully'), # Mrk 10:39
         (('withoutforth',),'out_and_about'), # Wycl Eze 34:21
         (('wlappid',),'wrapped'), # Wycl 16:4
         ((' wolden',),' wanted'), # Wycl Mrk 9:12,29
@@ -3254,7 +3255,7 @@ for wordMapEntry in ENGLISH_WORD_MAP:
                        ' reckoned/counted',' ruins',
                        'scattered', 'stiff-necked', 'stranger',
                        'themselves','throughout',' towards',' turn ',' youth',
-                       'whithersoever','whosoever',' hosts/armies','thyself/yourself'
+                       ' washed','whithersoever','whosoever',' hosts/armies','thyself/yourself'
                        ): # sometimes two→one and sometimes it's a single word
         assert newWord not in newWords, f"Duplicated {newWord=}"
     if someOldWords[0].startswith(' '): # and '_' not in someOldWords[0] and '_' not in newWord:
