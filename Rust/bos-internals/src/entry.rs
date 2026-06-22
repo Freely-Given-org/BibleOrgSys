@@ -148,7 +148,7 @@ impl std::fmt::Display for InternalBibleExtra {
     }
 }
 
-/// Represents a single line/entry in the internal Bible format.
+/// Represents a single line/entry in the internal Bible processedLines format.
 ///
 /// Each entry holds:
 /// - The (standardised) marker (e.g., `s1` instead of `s`) or an end marker (e.g., `¬v`) or a custom nesting marker (e.g., `intro`)
@@ -244,11 +244,14 @@ impl InternalBibleEntry {
         //         || (clean_text == original_text.trim() && adjusted_text == original_text),
         //     "For simple markers and end markers, or for simple text, clean_text and adjusted_text must match original_text. Got marker '{}' with clean_text: '{}', adjusted_text: '{}', original_text: '{}'", marker, clean_text, adjusted_text, original_text);
 
+        // We try to save memory here but not storing multiple identical copies of strings
+        //  We don't store the adjusted_text if it's identical to the original text (as it is much of the time, i.e., for verses without notes, xrefs, figs)
+        //  nor do we store the clean_text if it's identical to the original text (as it is much of the time, i.e., for plain text verses)
         Ok(Self {
             marker,
             original_marker: Some(original_marker.into()),
             original_text: original_text.clone(),
-            adjusted_text: if adjusted_text==original_text {None} else {Some(adjusted_text)},
+            adjusted_text: if adjusted_text==original_text {assert!(extras.is_none()); None} else {Some(adjusted_text)},
             extras,
             clean_text: if clean_text==original_text {None} else {Some(clean_text.into())},
         })

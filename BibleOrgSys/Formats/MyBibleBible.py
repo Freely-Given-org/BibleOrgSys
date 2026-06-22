@@ -1058,7 +1058,7 @@ def createMyBibleModule( self, outputFolder, controlDict ) -> bool:
             elif marker == 'li3': composedLine += '• '+adjustLine(BBB,C,V,text)
             elif marker == 'li4': composedLine += '• '+adjustLine(BBB,C,V,text)
             elif marker in ( 'cd', 'sp', ): composedLine += '<i>'+adjustLine(BBB,C,V,text)+'</i>'
-            elif marker in ( 'v~', 'p~', ):
+            elif marker in ( 'v~', 'XXXp~', ):
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, lastMarker )
                 if lastMarker == 'p': composedLine += '<pb/>' # We had a continuation paragraph
                 elif lastMarker == 'm': composedLine += '<br/>' # We had a continuation paragraph

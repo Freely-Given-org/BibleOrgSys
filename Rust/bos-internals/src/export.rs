@@ -545,8 +545,8 @@ fn write_header(
     control_dict: &HashMap<String, String>,
 ) -> Result<(), Box<dyn std::error::Error>> {
     writer.write_line_open("head", None, None)?;
-    writer.write_line_text("<meta http-equiv=\"Content-Type\" content=\"text/html;charset=utf-8\">", Some(true))?;
-    writer.write_line_text("<link rel=\"stylesheet\" type=\"text/css\" href=\"BibleBook.css\">", Some(true))?;
+    writer.write_line_text("<meta http-equiv=\"Content-Type\" content=\"text/html;charset=utf-8\">", None)?;
+    writer.write_line_text("<link rel=\"stylesheet\" type=\"text/css\" href=\"BibleBook.css\">", None)?;
     if let Some(title) = control_dict.get("HTML5Title") {
         if !title.is_empty() {
             writer.write_line_open_close("title", title, None)?;
@@ -593,10 +593,10 @@ fn write_header(
     for bbb in book_order {
         let bk_name = book_names.get(bbb).map(|s| s.as_str()).unwrap_or(bbb.as_str());
         if bbb == my_bbb {
-            writer.write_line_text(&format!("<li class=\"bookNameEntry\"><span class=\"currentBookName\">{}</span></li>", bk_name), Some(true))?;
+            writer.write_line_text(&format!("<li class=\"bookNameEntry\"><span class=\"currentBookName\">{}</span></li>", bk_name), None)?;
         } else {
             let filename = filename_dict.get(bbb).map(|s| s.as_str()).unwrap_or("");
-            writer.write_line_text(&format!("<li class=\"bookNameEntry\"><a class=\"bookNameLink\" href=\"{}\">{}</a></li>", filename, bk_name), Some(true))?;
+            writer.write_line_text(&format!("<li class=\"bookNameEntry\"><a class=\"bookNameLink\" href=\"{}\">{}</a></li>", filename, bk_name), None)?;
         }
     }
     writer.write_line_close("ul")?;
@@ -614,7 +614,7 @@ fn write_footer(
     writer.write_line_open("footer", None, None)?;
     writer.write_line_open("p", Some(&[("class", "footerLine")]), None)?;
     writer.write_line_open("a", Some(&[("href", "http://www.w3.org/html/logo/")]), None)?;
-    writer.write_line_text("<img src=\"http://www.w3.org/html/logo/badge/html5-badge-h-css3-semantics.png\" width=\"165\" height=\"64\" alt=\"HTML5 Powered with CSS3 / Styling, and Semantics\" title=\"HTML5 Powered with CSS3 / Styling, and Semantics\">", Some(true))?;
+    writer.write_line_text("<img src=\"http://www.w3.org/html/logo/badge/html5-badge-h-css3-semantics.png\" width=\"165\" height=\"64\" alt=\"HTML5 Powered with CSS3 / Styling, and Semantics\" title=\"HTML5 Powered with CSS3 / Styling, and Semantics\">", None)?;
     writer.write_line_close("a")?;
     writer.write_line_text(&format!("This page automatically created {} by {} v{}", today_str, program_name, program_version), None)?;
     writer.write_line_close("p")?;
@@ -635,7 +635,7 @@ fn write_end_notes(
             writer.write_line_open_close("h3", "Footnotes", Some(&[("class", "footnotesHeader")]))?;
             writer.write_line_open("div", Some(&[("class", "footnoteLine")]), None)?;
             for line in &globals.footnote_html5 {
-                writer.write_line_text(line, Some(true))?;
+                writer.write_line_text(line, None)?;
             }
             writer.write_line_close("div")?;
         }
@@ -644,7 +644,7 @@ fn write_end_notes(
             writer.write_line_open_close("h3", "Endnotes", Some(&[("class", "endnotesHeader")]))?;
             writer.write_line_open("div", Some(&[("class", "endnoteLine")]), None)?;
             for line in &globals.endnote_html5 {
-                writer.write_line_text(line, Some(true))?;
+                writer.write_line_text(line, None)?;
             }
             writer.write_line_close("div")?;
         }
@@ -653,7 +653,7 @@ fn write_end_notes(
             writer.write_line_open_close("h3", "Cross References", Some(&[("class", "xrefsHeader")]))?;
             writer.write_line_open("div", Some(&[("class", "xrefSection")]), None)?;
             for line in &globals.xref_html5 {
-                writer.write_line_text(line, Some(true))?;
+                writer.write_line_text(line, None)?;
             }
             writer.write_line_close("div")?;
         }
@@ -696,7 +696,7 @@ pub fn export_to_html5(
                 return (local_ignored, local_unhandled);
             }
             
-            if let Err(e) = writer.write_line_text("<!DOCTYPE html>", Some(true)) {
+            if let Err(e) = writer.write_line_text("<!DOCTYPE html>", None) {
                 println!("Error writing doctype for book {}: {:?}", bbb, e);
                 return (local_ignored, local_unhandled);
             }

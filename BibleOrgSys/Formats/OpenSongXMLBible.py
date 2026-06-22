@@ -291,7 +291,7 @@ def createOpenSongXML( BibleObject, outputFolder=None, controlDict=None, validat
             elif marker in ('b', 'nb', 'ib', ):
                 if BibleOrgSysGlobals.debugFlag: assert not text and not extras
                 ignoredMarkers.add( marker )
-            elif marker in ('v~', 'p~',):
+            elif marker in ('v~', 'XXXp~',):
                 if BibleOrgSysGlobals.debugFlag: assert text or extras
                 if not text: # this is an empty (untranslated) verse
                     text = '- - -' # but we'll put in a filler
@@ -304,7 +304,7 @@ def createOpenSongXML( BibleObject, outputFolder=None, controlDict=None, validat
                     logging.warning( f"toOpenSong: lost extras in {marker} field in {BBB} {C}:{V}" )
                     #if BibleOrgSysGlobals.debugFlag: assert False, "We want to stop here"
                 unhandledMarkers.add( marker )
-            if extras and marker not in ('v~','p~',) and marker not in ignoredMarkers:
+            if extras and marker not in ('v~','XXXp~',) and marker not in ignoredMarkers:
                 logging.critical( f"toOpenSong: extras not handled for {marker} at {BBB} {C}:{V}" )
         if accumulator:
             writerObject.writeLineOpenClose ( 'v', accumulator, ('n',verseNumberString) )

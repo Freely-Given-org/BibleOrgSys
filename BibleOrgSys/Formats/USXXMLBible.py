@@ -1004,7 +1004,7 @@ def createUSXXMLBible( self, outputFolderpath:Path|str, controlDict, validationS
                 if not paraJustOpened:
                     xw.removeFinalNewline( suppressFollowingIndent=True )
                 paraJustOpened = False
-            elif marker in ('v~','p~',):
+            elif marker in ('v~','XXXp~',):
                 if not adjText: logger.critical( f"toUSXXML: Missing text for {marker}" ); continue
                 # if not paraJustOpened: # copying Paratext style
                 #     xw.removeFinalNewline( suppressFollowingIndent=True )

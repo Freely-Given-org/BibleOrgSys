@@ -43,10 +43,10 @@ import bos_books_codes_py
 import usfm_markers_py
 
 
-LAST_MODIFIED_DATE = '2026-05-26' # by RJH
+LAST_MODIFIED_DATE = '2026-06-22' # by RJH
 SHORT_PROGRAM_NAME = "USXXMLBibleBookHandler"
 PROGRAM_NAME = "USX XML Bible book handler"
-PROGRAM_VERSION = '0.29'
+PROGRAM_VERSION = '0.30'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -260,6 +260,24 @@ class USXXMLBibleBook( BibleBook ):
                         assert '\n' not in processedNoteField
                         assert '\t' not in processedNoteField
                     charLine += processedNoteField
+                elif subelement.tag == 'link': # Used to include extra resources
+                    BibleOrgSysGlobals.checkXMLNoText( subelement, location )
+                    BibleOrgSysGlobals.checkXMLNoSubelements( subelement, location )
+                    # Process the attributes first
+                    linkStyle = linkDisplay = linkTarget = None
+                    for attrib,value in subelement.items():
+                        if attrib=='style':
+                            linkStyle = value
+                            assert linkStyle in ('jmp',)
+                        elif attrib=='display':
+                            linkDisplay = value # e.g., "click here"
+                        elif attrib=='target':
+                            linkTarget = value # e.g., some reference
+                        else:
+                            logging.error( f"KW54 Unprocessed {attrib} attribute ({value}) in {location}" )
+                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
+                    self.addPriorityError( 3, C, V, f"Unprocessed {repr(linkDisplay)} link to {repr(linkTarget)} in {location}" )
+                    print( f"Losing {subelement.tail=} in {linkStyle=} {linkDisplay=} {linkTarget=}" )
                 else:
                     logging.error( f"BD23 Unprocessed {subelement.tag} subelement ({subelement.text.strip() if subelement.text else subelement.text}) after {self.BBB} {C}:{V} in {sublocation}" )
                     self.addPriorityError( 1, C, V, f"Unprocessed {subelement.tag} subelement" )
@@ -345,6 +363,24 @@ class USXXMLBibleBook( BibleBook ):
                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                     self.addPriorityError( 2, C, V, f"Unmatched subelement for {repr(unmmatchedMarker)} in {sublocation}" if unmmatchedMarker else f"Unmatched subelement in {sublocation}" )
                     if not BibleOrgSysGlobals.isBlank( subelement.tail ): noteField += subelement.tail
+                elif subelement.tag == 'link': # Used to include extra resources
+                    BibleOrgSysGlobals.checkXMLNoText( subelement, location )
+                    BibleOrgSysGlobals.checkXMLNoSubelements( subelement, location )
+                    # Process the attributes first
+                    linkStyle = linkDisplay = linkTarget = None
+                    for attrib,value in subelement.items():
+                        if attrib=='style':
+                            linkStyle = value
+                            assert linkStyle in ('jmp',)
+                        elif attrib=='display':
+                            linkDisplay = value # e.g., "click here"
+                        elif attrib=='target':
+                            linkTarget = value # e.g., some reference
+                        else:
+                            logging.error( f"KW54 Unprocessed {attrib} attribute ({value}) in {location}" )
+                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
+                    self.addPriorityError( 3, C, V, f"Unprocessed {repr(linkDisplay)} link to {repr(linkTarget)} in {location}" )
+                    print( f"Losing {subelement.tail=} in {linkStyle=} {linkDisplay=} {linkTarget=}" )
                 else:
                     logging.error( f"Unprocessed {subelement.tag} subelement after {self.BBB} {C}:{V} in {sublocation}" )
                     self.addPriorityError( 1, C, V, f"Unprocessed {subelement.tag} subelement" )

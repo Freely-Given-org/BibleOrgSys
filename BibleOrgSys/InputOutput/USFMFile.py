@@ -38,22 +38,18 @@ Module for reading UTF-8 USFM (Unified Standard Format Marker) Bible file.
 import sys
 import logging
 
-from bible_organisational_system import splitUSFMMarkerFromText, readUSFMFile
+from bible_organisational_system import readUSFMFile
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint, LARGE_DUMMY_VALUE
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2026-05-17' # by RJH (Rust conversion)
+LAST_MODIFIED_DATE = '2026-06-21' # by RJH (Rust conversion)
 SHORT_PROGRAM_NAME = "USFMFile"
 PROGRAM_NAME = "USFM File loader"
 PROGRAM_VERSION = '0.90'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
-
-
-
-# splitUSFMMarkerFromText is now imported from bible_organisational_system
 
 
 

@@ -1,5 +1,5 @@
 //! USFM nesting and end marker logic.
-use std::thread::current;
+// use std::thread::current;
 
 //
 // CHANGELOG:
@@ -14,6 +14,7 @@ use crate::bos_markers::{
 };
 use crate::entry::InternalBibleEntry;
 use crate::entry_lists::InternalBibleEntryList;
+use crate::have_strict_checking_flag;
 
 /// Add logical verse start markers (`v=`) before section headings
 ///   but don't add multiple markers in the section headings are consecutive
@@ -55,7 +56,7 @@ pub fn add_verse_markers_before_headings(entries: InternalBibleEntryList, work_n
                     if saw_continuation_after_field && current_verse_number.is_some() {
                         if let Some(current_verse) = current_verse_number.as_deref() {
                             let verse_text = if current_verse_part_index > 0 {
-                                println!("{} {} added v= of {}b", work_name, bos_book_code, current_verse);
+                                println!("{} {} added line_entry 'v=' = '{}b'", work_name, bos_book_code, current_verse);
                                 format!("{current_verse}b")
                             } else {
                                 current_verse.to_string()
@@ -119,11 +120,12 @@ pub fn add_verse_markers_before_headings(entries: InternalBibleEntryList, work_n
         }
     }
 
-    debug_assert!(
-        validate_verse_starts(&result).is_empty(),
-        "{} {} process_lines failed with issues: {:?}",
-        work_name, bos_book_code, validate_verse_starts(&result)
-    ); // TODO: Fix doubled validation calls here
+    if have_strict_checking_flag() || cfg!(debug_assertions) {
+        let validation_results = validate_verse_starts(&result);
+        if !validation_results.is_empty() {
+            panic!("add_verse_numbers_before_headings for {} {} failed with issues: {:?}", work_name, bos_book_code, validation_results);
+        }
+    }
 
     result
 }
@@ -246,7 +248,7 @@ pub fn add_nesting_markers(
             if matches!(m, "v" | "c") {
                 return true;
             }
-            if matches!(m, "v~" | "XXXp~") {
+            if matches!(m, "v~") {
                 return false;
             }
         }
@@ -486,7 +488,7 @@ pub fn add_nesting_markers(
                     } else if let Some(last_p) = &last_p_marker
                         // && last_open_m == last_p.as_str()
                         // && paragraph_has_ended(j, &entries_vec)
-                    {
+                        {
                         // Paragraph is ending - close it BEFORE closing the verse
                         // but the paragraph might be followed by an open verse marker in open_markers
                         assert_ne!(new_lines.last().expect("Must be there").marker(), "v=",
@@ -503,10 +505,10 @@ pub fn add_nesting_markers(
                     break;
                 }
             }
-            if let Some(pos) = open_markers.iter().rposition(|m| m == "v") {
-                let m = open_markers.remove(pos);
-                new_lines.push(InternalBibleEntry::simple(format!("¬{}", m), current_verse.as_str()));
-            }
+            // if let Some(pos) = open_markers.iter().rposition(|m| m == "v") {
+            //     let m = open_markers.remove(pos);
+            //     new_lines.push(InternalBibleEntry::simple(format!("¬{}", m), current_verse.as_str()));
+            // }
             current_verse = CompactString::from(text);
 
         } else if heading_markers::is_heading(marker) {
@@ -798,11 +800,12 @@ pub fn add_nesting_markers(
         new_lines.len()
     );
 
-    debug_assert!(
-        validate_nesting(&new_lines, bos_book_code, work_name).is_empty(),
-        "process_lines failed with issues: {:?}",
-        validate_nesting(&new_lines, bos_book_code, work_name)
-    ); // TODO: Fix doubled validation calls here
+    if have_strict_checking_flag() || cfg!(debug_assertions) {
+        let validation_results = validate_nesting(&new_lines, bos_book_code, work_name);
+        if !validation_results.is_empty() {
+            panic!("add_nesting_markers for {} {} failed with issues: {:?}", work_name, bos_book_code, validation_results);
+        }
+    }
 
     new_lines
 }
@@ -839,14 +842,16 @@ pub fn validate_nesting(processed_lines: &InternalBibleEntryList, bos_book_code:
             if is_end_marker(&next_marker) {
                 issues.push(format!(
                     "Special {} {} verse number marker 'v=' at index {} after {}:{} is followed by an end marker '{}'",
-                    work_name, bos_book_code, n, c, v, next_marker
-                ));
+                    work_name, bos_book_code, n, c, v, next_marker));
             } else if !["s1", "s2", "s3", "s4", "ms1", "ms2", "ms3", "sp"].contains(&next_marker.as_str()) {
                 issues.push(format!(
                     "Special {} {} verse number marker 'v=' at index {} after {}:{} is not followed by a verse or section marker (found '{}')",
-                    work_name, bos_book_code, n, c, v, next_marker
-                ));
+                    work_name, bos_book_code, n, c, v, next_marker));
             }
+        } else if current_marker == "v~" && next_marker == "v" {
+            issues.push(format!(
+                "Missing {} {} verse end marker '¬v' at index {} after {}:{} (found 'v' = '{}')",
+                work_name, bos_book_code, n, c, v, processed_lines[n + 1].clean_text()));
         }
 
         // previous_marker = current_marker;
@@ -881,12 +886,14 @@ pub fn add_additional_markers(
 
 #[cfg(test)]
 mod tests {
+    use crate::set_strict_checking_flag;
     use crate::entry::InternalBibleEntry;
     use crate::entry_lists::InternalBibleEntryList;
     use crate::nesting::{add_verse_markers_before_headings, add_additional_markers};
 
     #[test]
     fn test_add_verse_markers_before_headings_no_change() {
+        set_strict_checking_flag( true );
         let mut list = InternalBibleEntryList::new();
         list.push(InternalBibleEntry::simple("c", "1"));
         list.push(InternalBibleEntry::simple("p", ""));
@@ -903,6 +910,7 @@ mod tests {
 
     #[test]
     fn test_add_verse_markers_before_headings_simple() {
+        set_strict_checking_flag( true );
         let mut list = InternalBibleEntryList::new();
         list.push(InternalBibleEntry::simple("c", "1"));
         list.push(InternalBibleEntry::simple("p", ""));
@@ -932,6 +940,7 @@ mod tests {
 
     #[test]
     fn test_add_verse_markers_before_headings_complex() {
+        set_strict_checking_flag( true );
         let mut list = InternalBibleEntryList::new();
         list.push(InternalBibleEntry::simple("c", "1"));
         list.push(InternalBibleEntry::simple("p", ""));
@@ -972,6 +981,7 @@ mod tests {
 
     #[test]
     fn test_add_verse_markers_before_headings_multiple_headers() {
+        set_strict_checking_flag( true );
         let mut list = InternalBibleEntryList::new();
         list.push(InternalBibleEntry::simple("mt1", "Main title"));
         list.push(InternalBibleEntry::simple("ie", ""));
@@ -1024,6 +1034,7 @@ mod tests {
 
     #[test]
     fn test_add_nesting_markers_simple_p() {
+        set_strict_checking_flag( true );
         let mut list = InternalBibleEntryList::new();
         list.push(InternalBibleEntry::simple("c", "1"));
         list.push(InternalBibleEntry::simple("p", ""));
@@ -1055,6 +1066,7 @@ mod tests {
 
     #[test]
     fn test_add_nesting_markers_simple_lists() {
+        set_strict_checking_flag( true );
         let mut list = InternalBibleEntryList::new();
         list.push(InternalBibleEntry::simple("id", "XXA"));
         list.push(InternalBibleEntry::simple("mt1", "XXA Book"));
@@ -1127,6 +1139,7 @@ mod tests {
 
     #[test]
     fn test_add_nesting_markers_normal() {
+        set_strict_checking_flag( true );
         let mut list = InternalBibleEntryList::new();
         list.push(InternalBibleEntry::simple("id", "XXB"));
         list.push(InternalBibleEntry::simple("mt1", "XXB Book"));
@@ -1187,6 +1200,7 @@ mod tests {
 
     #[test]
     fn test_add_nesting_markers_complex_headings_and_lists() {
+        set_strict_checking_flag( true );
         let mut list = InternalBibleEntryList::new();
         list.push(InternalBibleEntry::simple("id", "XXC"));
         list.push(InternalBibleEntry::simple("h", "XXC"));
@@ -1313,6 +1327,7 @@ mod tests {
 
     #[test]
     fn test_add_nesting_markers_complex_nb() {
+        set_strict_checking_flag( true );
         let mut list = InternalBibleEntryList::new();
         list.push(InternalBibleEntry::simple("id", "XXC"));
         list.push(InternalBibleEntry::simple("mt1", "XXC Book"));

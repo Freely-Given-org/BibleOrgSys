@@ -231,11 +231,11 @@ def createEasyWorshipBible( BibleObject, outputFolder=None ):
                 else:
                     textBuffer += ('\r\n\r\n' if textBuffer else '') + f'{C}:{V} {text}'
                     lastVWritten = V
-            elif marker == 'p~':
-                if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
-                    assert textBuffer # This is a continued part of the verse -- failed with this bad source USFM:
-                                        #     \c 1 \v 1 \p These events happened…
-                textBuffer += f' {text}' # continuation of the same verse
+            # elif marker == 'XXXp~':
+            #     if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+            #         assert textBuffer # This is a continued part of the verse -- failed with this bad source USFM:
+            #                             #     \c 1 \v 1 \p These events happened…
+            #     textBuffer += f' {text}' # continuation of the same verse
             else:
                 ignoredMarkers.add( marker )
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, textBuffer )

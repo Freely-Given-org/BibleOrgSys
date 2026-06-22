@@ -85,7 +85,7 @@ from usfm_markers_py import to_standard_marker, get_newline_markers_list, is_new
                             USFM_BIBLE_PARAGRAPH_MARKERS, USFM_ALL_BIBLE_PARAGRAPH_MARKERS, USFM_ALL_MARKERS
 
 
-LAST_MODIFIED_DATE = '2026-06-19' # by RJH
+LAST_MODIFIED_DATE = '2026-06-20' # by RJH
 SHORT_PROGRAM_NAME = "InternalBibleBook"
 PROGRAM_NAME = "Internal Bible book handler"
 PROGRAM_VERSION = '1.0.2'
@@ -100,7 +100,7 @@ MAX_NONCRITICAL_ERRORS_PER_BOOK_NORMAL = 3
 MAX_NONCRITICAL_ERRORS_PER_BOOK_VERBOSE = 5
 
 
-BOS_CUSTOM_CONTENT_MARKERS = [ 'c~', 'c#', 'v=', 'v~', 'p~', 'cl¤', 'vp#' ]
+BOS_CUSTOM_CONTENT_MARKERS = [ 'c~', 'c#', 'v=', 'v~', 'XXXp~', 'cl¤', 'vp#' ]
 """
     c~  anything after the chapter number on a \\c line is split off into here --
             note that it can be blank (but have extras) if the chapter number is footnoted
@@ -119,7 +119,7 @@ BOS_CUSTOM_CONTENT_MARKERS = [ 'c~', 'c#', 'v=', 'v~', 'p~', 'cl¤', 'vp#' ]
 """
 
 # NOTE: Don't use any of the following symbols here: = ¬ or backslashes.
-BOS_PRINTABLE_MARKERS = USFM_ALL_TITLE_MARKERS + USFM_ALL_INTRODUCTION_MARKERS + USFM_ALL_SECTION_HEADING_MARKERS + ['v~', 'p~'] # Should c~ and c# be in here???
+BOS_PRINTABLE_MARKERS = USFM_ALL_TITLE_MARKERS + USFM_ALL_INTRODUCTION_MARKERS + USFM_ALL_SECTION_HEADING_MARKERS + ['v~', 'XXXp~'] # Should c~ and c# be in here???
 
 # BOS_REGULAR_NESTING_MARKERS = USFM_ALL_SECTION_HEADING_MARKERS + ('c','v' ) # No need to nest s1 type markers (one line only expected)
 BOS_REGULAR_NESTING_MARKERS = ['c','v']
@@ -539,16 +539,18 @@ class InternalBibleBook:
     # end of InternalBibleBook.__makeErrorRef
 
 
-    def addLine( self, marker:str, text:str ) -> None:
+    def addLine( self, originalMarker:str, text:str ) -> None:
         """
         Append a (USFM-based) 2-tuple to self._rawLines.
             This is a very simple function,
                 but having it allows us to have a single point in order to catch particular bugs or errors.
         """
         forceDebugHere = False
+        marker = originalMarker
         if marker not in BOS_CUSTOM_CONTENT_MARKERS and marker not in ('cl¤',):
             marker = to_standard_marker( marker )
-        vPrint( 'Never', forceDebugHere or DEBUGGING_THIS_MODULE,
+        if forceDebugHere or ( BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE ):
+            vPrint( 'Quiet', forceDebugHere or DEBUGGING_THIS_MODULE,
                 f"InternalBibleBook.addLine( {marker}= '{text}' ) for {self.objectTypeString} '{self.workName} …" )
         assert marker and isinstance( marker, str )
 
@@ -603,6 +605,7 @@ class InternalBibleBook:
                         stripLogger( f'Additional "Possibly needed to strip whitespace" messages suppressed for {self.workName} {self.BBB}' )
                         self.pntsCount = -1 # So we don't do this again (for this book)
 
+        # dPrint( 'Info', forceDebugHere or DEBUGGING_THIS_MODULE,f"InternalBibleBook.addLine marker {originalMarker=} was changed to {marker=} with {text=}" )
         self._rawLines.append( (marker, text) )
     # end of InternalBibleBook.addLine
 
@@ -651,7 +654,7 @@ class InternalBibleBook:
     # end of InternalBibleBook.appendToLastLine
 
 
-    def addVerseSegments( self, V:str, text:str, location:str|None=None ) -> None:
+    def addVerseSegmentsForSword( self, V:str, text:str, location:str|None=None ) -> None:
         """
         Takes a text line that might optionally include
             \\NL** markers to indicate a new line.
@@ -664,7 +667,7 @@ class InternalBibleBook:
         No return value.
         """
         forceDebugHere = False
-        fnPrint( DEBUGGING_THIS_MODULE, f"\nInternalBibleBook.addVerseSegments( {V!r}, {text!r}, {location!r} )" )
+        fnPrint( DEBUGGING_THIS_MODULE, f"\nInternalBibleBook.addVerseSegmentsForSword( {V!r}, {text!r}, {location!r} )" )
         if forceDebugHere or ( BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE ):
             assert not self._processedFlag
         ourText = text # Work on a copy so we can still print the original for error messages
@@ -771,7 +774,7 @@ class InternalBibleBook:
 
         elif ourText: # No newlines in result -- just add the simple line
             self.addLine( 'v', V + ' ' + ourText )
-    # end of InternalBibleBook.addVerseSegments
+    # end of InternalBibleBook.addVerseSegmentsForSword
 
 
     # (Removed _processLineFix as it is now implemented in Rust)
@@ -1751,21 +1754,6 @@ class InternalBibleBook:
         # try:
         verseEntryList, contextList = self._CVIndex.getVerseEntriesWithContext( (C,V), strict, complete ) # Gives a KeyError if not found
         assert isinstance( verseEntryList, InternalBibleEntryList )
-
-        # TODO: Move this into the Rust code as a CVIndex validation check
-        # # Check that we don't have any duplicated verses in the section that we're about to return
-        # and that we have no text from the previous verse
-        lastV = None
-        for entry in verseEntryList:
-            marker = entry.getMarker()
-            if marker == 'v':
-                text = entry.getOriginalText()
-                assert text != lastV, f"Repeated verse {BCVReference=} {marker} {text=}\nfrom {verseEntryList}"
-                lastV = text
-            elif marker in ('v~','p~'):
-                text = entry.getOriginalText()
-                assert lastV, f"getContextVerseData for {self.workName} {self.BBB} {BCVReference=} has {marker} {text=}\nfrom {verseEntryList}"
-    
         return verseEntryList, contextList
         # NOTE: The following (and more) is now done by the index get function
         # except KeyError: # Maybe V is something like '4b' so try again just with the leading digits

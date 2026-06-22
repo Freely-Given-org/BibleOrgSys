@@ -2522,7 +2522,7 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
                 elif marker == 'li2': verseText += '◦' + cleanText
                 elif marker == 'v': firstWord = True # Ignore
                 elif marker == 'v~': verseText += cleanText
-                elif marker == 'p~': verseText += cleanText
+                # elif marker == 'XXXp~': verseText += cleanText
                 elif marker == 'vw': # What's this ???
                     verseText = f"{verseText}{'' if firstWord else ' '}{cleanText}"
                     firstWord = False
@@ -2639,7 +2639,7 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
                     elif marker == 'v': V = cleanText
                     elif C == '-1' and marker not in ('headers','intro'): V = str( int(V) + 1 )
                     if ourMarkerList:
-                        if marker not in ourMarkerList and not (marker in ('v~','p~') and lastParagraphMarker in ourMarkerList):
+                        if marker not in ourMarkerList and not (marker in ('v~','XXXp~') and lastParagraphMarker in ourMarkerList):
                             continue
                     elif C=='-1' and not optionsDict['includeIntroFlag']: continue
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Searching in {BBB} {C}:{V} {marker} = {cleanText}" )
@@ -2654,7 +2654,7 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
                         origTextToBeSearched = lineEntry.getFullText() if optionsDict['includeExtrasFlag'] else cleanText
                         if C != '0' and not optionsDict['includeMainTextFlag']:
                             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Got {origTextToBeSearched!r} but  don't include main text" )
-                            if marker in ('v~','p~') or marker in BibleOrgSysGlobals.USFMParagraphMarkers:
+                            if marker in ('v~','XXXp~') or marker in BibleOrgSysGlobals.USFMParagraphMarkers:
                                 origTextToBeSearched = ''
                                 if origTextToBeSearched != cleanText: # we must have extras -- we need to remove the main text
                                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Got extras" )

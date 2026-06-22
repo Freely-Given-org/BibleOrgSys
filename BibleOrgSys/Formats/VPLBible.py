@@ -6,7 +6,7 @@
 #
 # Module handling verse-per-line text Bible files
 #
-# Copyright (C) 2014-2025 Robert Hunt
+# Copyright (C) 2014-2026 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -102,6 +102,7 @@ CHANGELOG:
     2023-02-28 Added vplType 5 file handling
     2025-06-29 Added vplType 6 file handing for SLT
     2025-09-26 Improved vplType 6 file handling for BLB and MSB
+    2026-06-22 Added USFM id lines, etc. at beginning of each book
 """
 from pathlib import Path
 import logging
@@ -113,12 +114,13 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Bible import Bible, BibleBook
 from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
+import bos_books_codes_py
 
 
-LAST_MODIFIED_DATE = '2025-10-30' # by RJH
+LAST_MODIFIED_DATE = '2026-06-22' # by RJH
 SHORT_PROGRAM_NAME = "VPLBible"
 PROGRAM_NAME = "VPL Bible format handler"
-PROGRAM_VERSION = '0.44'
+PROGRAM_VERSION = '0.46'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -671,6 +673,9 @@ class VPLBible( Bible ):
                             thisBook = BibleBook( self, BBB )
                             thisBook.objectNameString = 'VPL Bible Book object'
                             thisBook.objectTypeString = 'VPL'
+                            thisBook.addLine( 'id', bos_books_codes_py.bos_book_code_to_usfm_abbrev(BBB) )
+                            thisBook.addLine( 'usfm', '3.0' )
+                            thisBook.addLine( 'ide', 'UTF-8' )
                             verseList = BOSx.getNumVersesList( BBB )
                             numChapters, numVerses = len(verseList), verseList[0]
                             lastBookCodeText = bookCodeText
@@ -767,6 +772,9 @@ class VPLBible( Bible ):
                             thisBook = BibleBook( self, BBB )
                             thisBook.objectNameString = 'VPL Bible Book object'
                             thisBook.objectTypeString = 'VPL'
+                            thisBook.addLine( 'id', bos_books_codes_py.bos_book_code_to_usfm_abbrev(BBB) )
+                            thisBook.addLine( 'usfm', '3.0' )
+                            thisBook.addLine( 'ide', 'UTF-8' )
                             verseList = BOSx.getNumVersesList( BBB )
                             numChapters, numVerses = len(verseList), verseList[0]
                             lastBBB, lastChapterNumberString, lastChapterNumber = BBB, None, 0
@@ -809,6 +817,9 @@ class VPLBible( Bible ):
                             thisBook = BibleBook( self, BBB )
                             thisBook.objectNameString = 'VPL Bible Book object'
                             thisBook.objectTypeString = 'VPL'
+                            thisBook.addLine( 'id', bos_books_codes_py.bos_book_code_to_usfm_abbrev(BBB) )
+                            thisBook.addLine( 'usfm', '3.0' )
+                            thisBook.addLine( 'ide', 'UTF-8' )
                             verseList = BOSx.getNumVersesList( BBB )
                             numChapters, numVerses = len(verseList), verseList[0]
                             lastBookCodeText = bookCodeText

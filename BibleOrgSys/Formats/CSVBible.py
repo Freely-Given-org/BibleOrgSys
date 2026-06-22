@@ -858,6 +858,9 @@ class CSVBible( Bible ):
                     # lastBookNumber = bookNumber
                     lastChapterNumber = lastVerseNumber = -1
                     lastBBB = BBB
+                    addLine( 'id', bos_books_codes_py.bos_book_code_to_usfm_abbrev(BBB), fgRef, thisBook )
+                    addLine( 'usfm', '3.0', fgRef, thisBook )
+                    addLine( 'ide', 'UTF-8', fgRef, thisBook )
                     if self.ESFMWordTables:
                         addLine( 'rem', f'ESFM v0.6 {BBB}', fgRef, thisBook )
                         wordTableFilename = f"OET-LV_{'OT' if isOT else 'NT'}_word_table.tsv"

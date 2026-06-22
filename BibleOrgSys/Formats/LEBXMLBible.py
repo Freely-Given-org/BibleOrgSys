@@ -6,7 +6,7 @@
 #
 # Module handling LEB XML Bibles
 #
-# Copyright (C) 2023-2025 Robert Hunt
+# Copyright (C) 2023-2026 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -30,7 +30,8 @@ CHANGELOG:
     2024-11-13 Fix missing spaces between words, and improve C:V handling esp. for footnotes
     2025-03-04 Fixed bug where idiom text wasn't being included and some li tails
     2025-05-14 Put floor characters around idioms
-    2025-05-23 Fix space before Selah inside list items in Psalms, fix bug inserting tails that were None 
+    2025-05-23 Fix space before Selah inside list items in Psalms, fix bug inserting tails that were None
+    2026-06-21 Handle XML Block
 """
 import logging
 import os
@@ -46,10 +47,10 @@ from BibleOrgSys.Bible import Bible, BibleBook
 import bos_books_codes_py
 
 
-LAST_MODIFIED_DATE = '2026-04-26' # by RJH
+LAST_MODIFIED_DATE = '2026-06-22' # by RJH
 SHORT_PROGRAM_NAME = "LEBXMLBible"
 PROGRAM_NAME = "LEB XML Bible format handler"
-PROGRAM_VERSION = '0.27'
+PROGRAM_VERSION = '0.30'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -407,21 +408,21 @@ class LEBXMLBible( Bible ):
         self.loadBooks()
 
 
-    def __loadFile( self, OSISFilepath ) -> list[BibleBook]:
+    def __loadFile( self, XMLFilepath ) -> list[BibleBook]:
         """
         Load a single source XML file and remove the header from the tree.
         Also, extracts some useful elements from the header element.
         """
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  LEBXMLBible loading {OSISFilepath}…" )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  LEBXMLBible loading {XMLFilepath}…" )
 
         vPrint( 'Info', DEBUGGING_THIS_MODULE, "Resetting bookList and loadErrors")
         bookList:list[tuple[BibleBook,list[str]]] = []
         loadErrors:list[str] = []
 
-        try: self.XMLTree = ElementTree().parse( OSISFilepath )
+        try: self.XMLTree = ElementTree().parse( XMLFilepath )
         except ParseError as err:
-            logging.critical( f"Loader parse error in xml file {OSISFilepath}: {sys.exc_info()[0]} {err}" )
-            loadErrors.append( f"Loader parse error in xml file {OSISFilepath}: {sys.exc_info()[0]} {err}" )
+            logging.critical( f"Loader parse error in xml file {XMLFilepath}: {sys.exc_info()[0]} {err}" )
+            loadErrors.append( f"Loader parse error in xml file {XMLFilepath}: {sys.exc_info()[0]} {err}" )
             return
         if BibleOrgSysGlobals.debugFlag: assert self.XMLTree # Fail here if we didn't load anything at all
 
@@ -449,9 +450,9 @@ class LEBXMLBible( Bible ):
                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
 
         if len( bookList ) == 1:
-            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"    _loadFile({OSISFilepath}) is returning {bookList[0][0].BBB} with {len(bookList[0][1])} loadErrors" )
+            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"    _loadFile({XMLFilepath}) is returning {bookList[0][0].BBB} with {len(bookList[0][1])} loadErrors" )
         else: # More than one book in this LEB file
-            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"    _loadFile({OSISFilepath}) is returning {len(bookList)} books" )
+            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"    _loadFile({XMLFilepath}) is returning {len(bookList)} books" )
         return bookList
     # end of LEBXMLBible._loadFile function
 
@@ -463,7 +464,8 @@ class LEBXMLBible( Bible ):
         fnPrint( DEBUGGING_THIS_MODULE, f"addLEBLine( {marker=}, {rest=}, ... )" )
         assert isinstance( marker, str ) and marker
         assert isinstance( rest, str ) and rest != 'None', f"{marker=}, {rest=}"
-        dPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"===> Adding LEB line {marker}='{rest}'")
+        dPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"===> Adding LEB line {marker} = '{rest}'")
+        assert 'title' not in rest, f"addLEBLine( {marker=}, {rest=}, ... )"
         alObject.addLine( marker, rest )
     # end of addLine
 
@@ -474,6 +476,7 @@ class LEBXMLBible( Bible ):
         fnPrint( DEBUGGING_THIS_MODULE, f"appendToLastLEBLine( {appendage=}, ... )" )
         assert isinstance( appendage, str ) and appendage
         dPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"===> Appending LEB line '{appendage}'")
+        # assert 'title' not in appendage, f"appendToLastLEBLine( {appendage=}, ... )"
         alObject.appendToLastLine( appendage )
     # end of appendToLastLine
 
@@ -524,7 +527,7 @@ class LEBXMLBible( Bible ):
                 logging.warning( f"mf82 Unprocessed {attrib} attribute ({value}) in {location}" )
                 loadErrors.append( f"Unprocessed {attrib} attribute ({value}) in {location} (mf82)" )
                 if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
-        # The book IDs seem to be OSIS (or SBL)
+        # The book IDs seem to be OSIS (or SBL) style
         try: BBB = bos_books_codes_py.osis_book_code_to_bos_book_code( bookID )
         except:
             try: BBB = bos_books_codes_py.sbl_abbrev_to_bos_book_code( bookID )
@@ -540,8 +543,11 @@ class LEBXMLBible( Bible ):
         USFMNumber = bos_books_codes_py.bos_book_code_to_usfm_num_str( BBB )
         vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  It seems we have {BBB}" )
         thisBook = BibleBook( self, BBB )
-        thisBook.objectNameString = 'OSIS XML Bible Book object'
-        thisBook.objectTypeString = 'OSIS'
+        thisBook.objectNameString = 'LEB XML Bible Book object'
+        thisBook.objectTypeString = 'LEB'
+        thisBook.addLine( 'id', bos_books_codes_py.bos_book_code_to_usfm_abbrev(BBB) )
+        thisBook.addLine( 'usfm', '3.0' )
+        thisBook.addLine( 'ide', 'UTF-8' )
         vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"Appending {thisBook.BBB} and {len(loadErrors)} load errors to bookList" )
         for bkLE in bookList:
             assert len(bkLE) == 2 # bookObject and loadErrors
@@ -549,7 +555,6 @@ class LEBXMLBible( Bible ):
         bookList.append( (thisBook,loadErrors.copy()) )
         loadErrors.clear()
         self.haveBook = True
-        self.addLEBLine( 'ide', 'UTF-8', thisBook )
         doneChapter = False
         for subelement in bookElement:
             BibleOrgSysGlobals.checkXMLNoTail( subelement, location, 'kf93', loadErrors )
@@ -627,15 +632,50 @@ class LEBXMLBible( Bible ):
                 BibleOrgSysGlobals.checkXMLNoText( subelement, location, 'jh82', loadErrors )
                 BibleOrgSysGlobals.checkXMLNoTail( subelement, location, 'c7mn', loadErrors )
                 self.processList( subelement, thisBook, loadErrors )
+                # if thisBook.BBB=='PSA' and self.state['C']=='7':
+                #     # print( f"{thisBook._rawLines=}=" )
+                #     for n,(m,t) in enumerate( thisBook._rawLines ):
+                #         print( f"  {n}: {m} = '{t}'")
+                #     # halt
+            elif subelement.tag == 'block': # e.g., Acts 23:@6
+                BibleOrgSysGlobals.checkXMLNoAttributes( subelement, location, 'aj48', loadErrors )
+                BibleOrgSysGlobals.checkXMLNoText( subelement, location, 'jh82', loadErrors )
+                BibleOrgSysGlobals.checkXMLNoTail( subelement, location, 'c7mn', loadErrors )
+                self.processBlock( subelement, thisBook, loadErrors )
             else:
                 logging.error( f"mas9 Unprocessed {location!r} subelement ({subelement.tag}) in {subelement.text}" )
                 loadErrors.append( f"Unprocessed {location!r} subelement ({subelement.tag}) in {subelement.text}(mas9)" )
-                if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
-                assert False, "We want to stop here"
+                if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, f"We want to stop here with unprocessed XML {BBB} {self.state['C']}:{self.state['V']} {subelement.tag=}"
+                assert False, f"We want to stop here with unprocessed XML {BBB} {self.state['C']}:{self.state['V']} {subelement.tag=}"
     # end of processChapter
 
 
-    def processParagraph( self, element, thisBook, loadErrors ):
+    def processBlock( self, blockElement, thisBook, loadErrors ):
+        """
+        Processes a block of indented paragraphs
+        """
+        fnPrint( DEBUGGING_THIS_MODULE, f"processBlock( {blockElement}, ..., {len(loadErrors)} ) for {thisBook.BBB}" )
+        assert isinstance( thisBook, BibleBook )
+
+        location = 'processBlock'
+        BibleOrgSysGlobals.checkXMLNoAttributes( blockElement, location, 'aj48', loadErrors )
+        BibleOrgSysGlobals.checkXMLNoText( blockElement, location, 'jck2', loadErrors )
+        BibleOrgSysGlobals.checkXMLNoTail( blockElement, location, 'cvf6', loadErrors )
+
+        for subelement in blockElement:
+            BibleOrgSysGlobals.checkXMLNoAttributes( subelement, location, 'hb67', loadErrors )
+            BibleOrgSysGlobals.checkXMLNoTail( subelement, location, 'ms24', loadErrors )
+            if subelement.tag == 'p':
+                self.processParagraph( subelement, thisBook, loadErrors, indentedBlock=True )
+            else:
+                logging.error( f"mas9 Unprocessed {location!r} subelement ({subelement.tag}) in {subelement.text}" )
+                loadErrors.append( f"Unprocessed {location!r} subelement ({subelement.tag}) in {subelement.text}(mas9)" )
+                if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, f"We want to stop here with unprocessed XML {self.state['C']}:{self.state['V']} {subelement.tag=}"
+                assert False, f"We want to stop here with unprocessed XML {self.state['C']}:{self.state['V']} {subelement.tag=}"
+    # end of processBlock
+
+
+    def processParagraph( self, element, thisBook, loadErrors, indentedBlock=False ):
         """
         Note: We also get blank paragraphs like "<p />" (which we change to /b's).
         """
@@ -661,7 +701,7 @@ class LEBXMLBible( Bible ):
         if text and text[-1] == ' ':
             text = text[:-1]
             haveOutstandingSpace = True
-        self.addLEBLine( 'p', '' if text is None else text, thisBook )
+        self.addLEBLine( 'pi' if indentedBlock else 'p', '' if text is None else text, thisBook )
 
         C = V = '?'
         for subelement in element:
@@ -684,7 +724,12 @@ class LEBXMLBible( Bible ):
                     continue
                 assert subelement.text.strip() == subelement.text
                 self.state['V'] = subelement.text
-                self.addLEBLine( 'v', f'{self.state['V']} ', thisBook )
+                if subelement.text == 'title':
+                    assert thisBook.BBB == 'PSA'
+                    self.addLEBLine( 'd', '', thisBook )
+                else:
+                    assert subelement.text.isdigit()
+                    self.addLEBLine( 'v', f'{self.state['V']} ', thisBook )
                 # assert haveOutstandingSpace == False # Why not???
                 haveOutstandingSpace = False
                 if subelement.tail:
@@ -813,7 +858,13 @@ class LEBXMLBible( Bible ):
                             # I think this is a random LEB encoding fault like '<p><verse-number id="Ge 2">2</verse-number><verse-number id="Ge 2:1">1</verse-number> And heaven...'
                             continue
                         assert sub2element.text.strip() == sub2element.text
-                        self.addLEBLine( 'v', f'{sub2element.text} ', thisBook )
+                        # self.addLEBLine( 'v', f'{sub2element.text} ', thisBook )
+                        if sub2element.text == 'title':
+                            assert thisBook.BBB == 'PSA'
+                            self.addLEBLine( 'd', '', thisBook )
+                        else:
+                            assert sub2element.text.isdigit()
+                            self.addLEBLine( 'v', f'{sub2element.text} ', thisBook )
                     elif sub2element.tag == 'supplied':
                         BibleOrgSysGlobals.checkXMLNoAttributes( sub2element, location, 'mns3', loadErrors )
                         # BibleOrgSysGlobals.checkXMLNoSubelements( sub2element, location, 'gd63', loadErrors )
@@ -1204,7 +1255,7 @@ def briefDemo() -> None:
 
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder
         for standardTestFolder in (
-                        BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'OSISTest1/' ),
+                        BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'LEBTest1/' ),
                         ):
             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nStandard testfolder is: {standardTestFolder}" )
             result1 = LEBXMLBibleFileCheck( standardTestFolder )
@@ -1218,7 +1269,7 @@ def briefDemo() -> None:
     BiblesFolderpath = Path( '/srv/Bibles/' )
     if 1: # Test LEBXMLBible object
         testFilepaths = (
-            BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'OSISTest1/' ), # Matigsalug test sample
+            BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'LEBTest1/' ), # Matigsalug test sample
             )
         justOne = ( testFilepaths[0], )
 

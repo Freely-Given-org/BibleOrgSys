@@ -648,7 +648,7 @@ class HebrewWLCBibleAddon():
                     assert isinstance( verseDataEntry, InternalBibleEntry )
                     marker, cleanText, extras = verseDataEntry.getMarker(), verseDataEntry.getCleanText(), verseDataEntry.getExtras()
                     adjustedText, original_text = verseDataEntry.getAdjustedText(), verseDataEntry.getOriginalText()
-                    if marker in ('v~','p~'):
+                    if marker in ('v~','XXXp~'):
                         verseDictList = self.getVerseDictList( verseDataEntry, currentVerseKey )
                         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, currentVerseKey.getShortText(), "verseDictList", verseDictList )
                         for j,verseDict in enumerate( verseDictList ): # each verseDict represents one word or token
@@ -789,7 +789,7 @@ def briefDemo() -> None:
                 for verseDataEntry in verseDataList:
                     assert isinstance( verseDataEntry, InternalBibleEntry )
                     marker = verseDataEntry.getMarker()
-                    if marker in ('v~','p~'):
+                    if marker in ('v~','XXXp~'):
                         verseDictList = wlc.getVerseDictList( verseDataEntry, testKey )
                         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "verseDictList", verseDictList )
                         for j, verseDict in enumerate( verseDictList ):
@@ -941,7 +941,7 @@ def fullDemo() -> None:
                 for verseDataEntry in verseDataList:
                     assert isinstance( verseDataEntry, InternalBibleEntry )
                     marker = verseDataEntry.getMarker()
-                    if marker in ('v~','p~'):
+                    if marker in ('v~','XXXp~'):
                         verseDictList = wlc.getVerseDictList( verseDataEntry, testKey )
                         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "verseDictList", verseDictList )
                         for j, verseDict in enumerate( verseDictList ):

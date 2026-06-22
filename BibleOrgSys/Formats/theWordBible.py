@@ -1119,7 +1119,7 @@ def theWordComposeVerseLine( BBB:str, C:str, V:str, verseData, ourGlobals ):
         elif marker == 'li3': resettheWordMargins( ourGlobals, 'pi3' ); composedLine += '<PI3>• '+theWordAdjustLine(BBB,C,V,text)
         elif marker == 'li4': resettheWordMargins( ourGlobals, 'pi4' ); composedLine += '<PI4>• '+theWordAdjustLine(BBB,C,V,text)
         elif marker in ( 'cd', 'sp', ): composedLine += '<i>'+theWordAdjustLine(BBB,C,V,text)+'</i>'
-        elif marker in ( 'v~', 'p~', ):
+        elif marker in ( 'v~', 'XXXp~', ):
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, lastMarker )
             if lastMarker == 'p': composedLine += '<CM>' # We had a continuation paragraph
             elif lastMarker == 'm': composedLine += '<CL>' # We had a continuation paragraph

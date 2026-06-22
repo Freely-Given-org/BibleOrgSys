@@ -100,8 +100,8 @@ class USFMBibleBook( BibleBook ):
             Uses C and V from the surrounding program context to make user messages more useful.
 
             Note: for uwAligned data, calls will look something like this:
-                    doAddLine( 'p~', '\\w Simon|x-occurrence="1" x-occurrences="1"\\w*' )
-                    doAddLine( 'p~', '\\w of|x-occurrence="1" x-occurrences="2"\\w* \\w Cyrene|x-occurrence="1" x-occurrences="1"\\w* (\\w the|x-occurrence="1" x-occurrences="2"\\w*' )
+                    doAddLine( 'XXXp~', '\\w Simon|x-occurrence="1" x-occurrences="1"\\w*' )
+                    doAddLine( 'XXXp~', '\\w of|x-occurrence="1" x-occurrences="2"\\w* \\w Cyrene|x-occurrence="1" x-occurrences="1"\\w* (\\w the|x-occurrence="1" x-occurrences="2"\\w*' )
             """
             fnPrint( DEBUGGING_THIS_MODULE, f"doAddLine( '{addMarker}', '{addText}' )" )
             # assert addText.count('\\w ') == addText.count('\\w*') # Logged around line 445
@@ -404,13 +404,13 @@ class USFMBibleBook( BibleBook ):
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "OBNS", self.containerBibleObject.objectNameString )
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, dir(self.containerBibleObject) )
 
-        gotUWEncoding = False
-        alignmentVariables = { 'level':0, 'maxLevel':0, 'text':'', 'words':'', 'saved':[] }
-        try:
-            if self.containerBibleObject.uWencoded:
-                gotUWEncoding = True
-                issueLinePositioningErrors = False
-        except AttributeError: pass # Don't worry about it
+        # gotUWEncoding = False
+        # alignmentVariables = { 'level':0, 'maxLevel':0, 'text':'', 'words':'', 'saved':[] }
+        # try:
+        #     if self.containerBibleObject.uWencoded:
+        #         gotUWEncoding = True
+        #         issueLinePositioningErrors = False
+        # except AttributeError: pass # Don't worry about it
 
         vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + f"Loading {filename}…" )
         #self.BBB = BBB
@@ -421,6 +421,18 @@ class USFMBibleBook( BibleBook ):
         originalBook = USFMFile()
         if encoding is None: encoding = 'utf-8'
         originalBook.read( self.sourceFilepath, encoding=encoding )
+
+        # Pre-check for uW alignment encoding in this file (it's not in FRT, etc.)
+        gotUWEncoding = False
+        for marker,text in originalBook.lines:
+            # NOTE: UHB and SR-GNT use the uW /w fields at the beginnings of lines, but doesn't contain /zaln or /ts fields
+            if marker in ('zaln-s','ts\\*','w') or '\\zaln-s' in text:
+                gotUWEncoding = True
+                break
+        if gotUWEncoding:
+            self.containerBibleObject.uWencoded = True
+            issueLinePositioningErrors = False
+        alignmentVariables = { 'level':0, 'maxLevel':0, 'text':'', 'words':'', 'saved':[] }
 
         # Do some important cleaning up before we save the data
         C, V = '-1', '-1' # So first/id line starts at -1:0
@@ -541,7 +553,12 @@ class USFMBibleBook( BibleBook ):
                     doAddLine( lastMarker, lastText )
                     lastMarker = lastText = None
                 if gotUWEncoding:
+                    originalMarker, originalText = marker, text
                     marker, text = handleUWEncoding( marker, text, alignmentVariables )
+                    # if marker != originalMarker or text != originalText:
+                    #     print( f"\n{originalMarker=} {originalText=}")
+                    #     print( f"After handleUWEncoding {marker=} {text=}")
+
             elif usfm_markers_py.is_internal_marker( marker ) \
             or (marker and marker.endswith('*') and usfm_markers_py.is_internal_marker(marker[:-1]) ): # the line begins with an internal marker -- append it to the previous line
                 if issueLinePositioningErrors \
@@ -557,13 +574,13 @@ class USFMBibleBook( BibleBook ):
                     #  dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "HERE1", lastMarker, lastText, "now", marker, text)
                     marker, text = handleUWEncoding( marker, text, alignmentVariables )
                     #  dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "HERE2", lastMarker, lastText, "now", marker, text)
-                    if marker in BibleOrgSysGlobals.USFMCharacterMarkers and (lastMarker in ('c', 'v', 'p~', 'd', 'q','pi','qm','li') or lastMarker in BibleOrgSysGlobals.USFMParagraphMarkers):
+                    if marker in BibleOrgSysGlobals.USFMCharacterMarkers and (lastMarker in ('c', 'v', 'XXXp~', 'd', 'q','pi','qm','li') or lastMarker in BibleOrgSysGlobals.USFMParagraphMarkers):
                         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"HereXX with {lastMarker} now {marker}" )
                         if not lastText.endswith(' '): lastText += ' ' # Not always good to add a space, but it's their fault!
                         lastText +=  '\\' + marker + ' ' + text
                         dPrint( 'Never', DEBUGGING_THIS_MODULE, f"USFMBibleBook.load() {self.BBB} {C} {V} Appended1a {marker}='{text}' to get combined line {lastMarker}='{lastText}'" )
                         marker = text = None # Seems to make no difference
-                    elif marker=='p~' and (lastMarker in ('v', 'p~', 'q','pi','qm','li') or lastMarker in BibleOrgSysGlobals.USFMParagraphMarkers):
+                    elif marker=='v~' and (lastMarker in ('v', 'XXXp~', 'q','pi','qm','li') or lastMarker in BibleOrgSysGlobals.USFMParagraphMarkers):
                         dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"HereYY with {lastMarker} now {marker}='{text}'" )
                         if not lastText.endswith(' '): lastText += ' ' # Not always good to add a space, but it's their fault!
                         lastText += text
@@ -572,7 +589,7 @@ class USFMBibleBook( BibleBook ):
                     elif marker == 'w' and lastMarker in ('ts','sp'): # \\ts: A common unfoldingWord USFM encoding error; \\sp in Hindu SNG
                         logging.error( f"USFMBibleBook.load() '{self.workName}' {self.BBB}_{C}:{V} added new paragraph for encoding error after {lastMarker}='{lastText}': {marker}='{text}'" )
                         marker, text = 'p', '\\w {text}'
-                    elif marker == 'p~' and lastMarker == 'ts': # A common unfoldingWord USFM encoding error
+                    elif marker == 'v~' and lastMarker == 'ts': # A common unfoldingWord USFM encoding error
                         logging.error( f"USFMBibleBook.load() '{self.workName}' {self.BBB}_{C}:{V} added new paragraph for encoding error after {lastMarker}='{lastText}': {marker}='{text}'" )
                         marker = 'p'
                     elif marker=='qs*' and not text.strip(): # selah character ending marker on its own line
@@ -584,7 +601,7 @@ class USFMBibleBook( BibleBook ):
                         logging.critical( f"Programming error ¬ZALN: USFMBibleBook.load() lost '{self.workName}' {self.BBB}_{C}:{V} text after {lastMarker}='{lastText}': {marker}='{text}'" )
                         if self.doExtraChecking or DEBUGGING_THIS_MODULE: assert False, "We want to stop here"
                 elif marker in ('tc1','tc2','tc3','tc4','tc5'):
-                    # and (lastMarker in ('v', 'p~', 'q','pi','qm','li') or lastMarker in BibleOrgSysGlobals.USFMParagraphMarkers):
+                    # and (lastMarker in ('v', 'XXXp~', 'q','pi','qm','li') or lastMarker in BibleOrgSysGlobals.USFMParagraphMarkers):
                     dPrint( 'Info', DEBUGGING_THIS_MODULE, f"HereTC with {lastMarker}='{lastText}' now {marker}='{text}'" )
                     lastText = f"{lastText}{'' if lastText.endswith(' ') else ' '}\\{marker} {text.strip()}" # Not always good to add a space, but it's their fault! Don't do it for footnotes, though.
                     dPrint( 'Info', DEBUGGING_THIS_MODULE, f"{self.BBB} {C} {V} AppendedTC {marker}='{text}' to get combined line {lastMarker}='{lastText}'" )
@@ -592,7 +609,7 @@ class USFMBibleBook( BibleBook ):
                 else:
                     #dPrint( 'Never', debuggingThisFunction, 'USFM Para Markers', BibleOrgSysGlobals.USFMParagraphMarkers )
                     logging.critical( f"Programming error: USFMBibleBook.load() lost '{self.workName}' {self.BBB}_{C}:{V} text after {lastMarker}='{lastText}': {marker}='{text}'" )
-                    if self.doExtraChecking or DEBUGGING_THIS_MODULE: assert False, "We want to stop here"
+                    if self.doExtraChecking or DEBUGGING_THIS_MODULE: assert False, f"We want to stop here with {marker=} {text=}"
             elif usfm_markers_py.is_note_marker( marker ) \
             or (marker and marker.endswith('*') and usfm_markers_py.is_note_marker(marker[:-1]) ): # the line begins with a note marker -- append it to the previous line
                 if text:
@@ -612,19 +629,19 @@ class USFMBibleBook( BibleBook ):
                 if marker in ('zaln-s','zaln-e'): # it's a Door43 translation alignment marker (should be self-closed)
                     gotUWEncoding = True
                     marker, text = handleUWEncoding( marker, text, alignmentVariables )
-                    if marker=='p~' and (lastMarker in ('v', 'p~', 'q','pi','qm','li') or lastMarker in BibleOrgSysGlobals.USFMParagraphMarkers):
+                    if marker=='v~' and (lastMarker in ('v', 'q','pi','qm','li') or lastMarker in BibleOrgSysGlobals.USFMParagraphMarkers):
                         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"HereYY with {lastMarker} now {marker}" )
                         if not lastText.endswith(' '): lastText += ' ' # Not always good to add a space, but it's their fault!
                         lastText +=  text
                         vPrint( 'Never', DEBUGGING_THIS_MODULE, f"{self.BBB} {C} {V} Appended3 {marker}='{text}' to get combined line {lastMarker}='{lastText}'" )
                         marker = text = None # Seems to make no difference
-                    elif marker == 'p~' and lastMarker in ('ts','sp','d'): # A common unfoldingWord USFM encoding error
+                    elif marker == 'v~' and lastMarker in ('ts','sp','d'): # A common unfoldingWord USFM encoding error
                         logging.error( f"USFMBibleBook.load() '{self.workName}' {self.BBB}_{C}:{V} added new paragraph for encoding error after {lastMarker}='{lastText}': {marker}='{text}'" )
                         marker = 'p'
                     else:
                         # print( 'USFM Para Markers', BibleOrgSysGlobals.USFMParagraphMarkers )
                         logging.critical( f"Programming error ZALN: USFMBibleBook.load() lost '{self.workName}' {self.BBB}_{C}:{V} text {lastMarker}='{lastText}': {marker}='{text}'" )
-                        if self.doExtraChecking: assert False, "We want to stop here"
+                        if self.doExtraChecking: assert False, f"We want to stop here with {marker=}"
                 elif marker and marker[0] == 'z': # it's a custom marker
                     if text:
                         loadErrors.append( f"{self.BBB} {C}:{V} Found '\\{marker}' unknown custom marker at beginning of line with text: {text!r}" )

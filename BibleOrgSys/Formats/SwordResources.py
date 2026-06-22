@@ -819,7 +819,7 @@ def importOSISVerseLine( osisVerseString, thisBook, moduleName, BBB:str, C:str, 
     # Now divide up lines and enter them
     location = f'{moduleName} {BBB} {C}:{V} {osisVerseString!r}' if DEBUGGING_THIS_MODULE else f'{moduleName} {BBB} {C}:{V}'
     if verseLine or V != '0':
-        thisBook.addVerseSegments( V, verseLine, location )
+        thisBook.addVerseSegmentsForSword( V, verseLine, location )
 # end of importOSISVerseLine
 
 
@@ -986,7 +986,7 @@ def importGBFVerseLine( gbfVerseString, thisBook, moduleName, BBB:str, C:str, V 
 
     # Now divide up lines and enter them
     location = f'{moduleName} {BBB} {C}:{V} {gbfVerseString!r}' if DEBUGGING_THIS_MODULE else f'{moduleName} {BBB} {C}:{V}'
-    thisBook.addVerseSegments( V, verseLine, location )
+    thisBook.addVerseSegmentsForSword( V, verseLine, location )
 # end of importGBFVerseLine
 
 
@@ -1100,7 +1100,7 @@ def importTHMLVerseLine( thmlVerseString, thisBookObject, moduleName, BBB:str, C
 
     # Now divide up lines and enter them
     location = f'{moduleName} {BBB} {C}:{V} {thmlVerseString!r}' if DEBUGGING_THIS_MODULE else f'{moduleName} {BBB} {C}:{V}'
-    thisBookObject.addVerseSegments( V, verseLine, location )
+    thisBookObject.addVerseSegmentsForSword( V, verseLine, location )
 # end of importTHMLVerseLine
 
 

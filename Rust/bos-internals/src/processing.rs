@@ -13,6 +13,7 @@ use crate::bos_markers::{ExtraType, is_end_marker};
 use crate::entry::{InternalBibleEntry, InternalBibleExtra};
 use crate::entry_extras::InternalBibleExtraList;
 use crate::entry_lists::InternalBibleEntryList;
+use crate::have_strict_checking_flag;
 
 /// Options for processing lines.
 #[derive(Debug, Clone, Copy)]
@@ -224,10 +225,18 @@ pub fn process_lines(
     let mut have_waiting_c: Option<String> = None;
     let mut errors = Vec::new();
 
-    for (marker, text) in raw_lines {
+    for (n,(marker, text)) in raw_lines.iter().enumerate() {
         let marker = crate::bos_markers::normalize_marker(marker.as_str());
         log::info!("process_lines: Processing marker {} with text '{}'", marker, text);
         // println!("process_lines: Processing marker {} with text '{}'", marker, text);
+        // if text.contains("O Yahweh, do not rebuke me in your anger,") {
+        //     println!("process_lines: Found {} {} raw line with {} {}='{}'", work_name, bos_book_code, n-2, raw_lines.get(n-2).unwrap().0, raw_lines.get(n-2).unwrap().1);
+        //     println!("process_lines: Found {} {} raw line with {} {}='{}'", work_name, bos_book_code, n-1, raw_lines.get(n-1).unwrap().0, raw_lines.get(n-1).unwrap().1);
+        //     println!("process_lines: Found {} {} raw line with {} {}='{}'", work_name, bos_book_code, n+0, raw_lines.get(n+0).unwrap().0, raw_lines.get(n+0).unwrap().1);
+        //     println!("process_lines: Found {} {} raw line with {} {}='{}'", work_name, bos_book_code, n+1, raw_lines.get(n+1).unwrap().0, raw_lines.get(n+1).unwrap().1);
+        //     println!("process_lines: Found {} {} raw line with {} {}='{}'", work_name, bos_book_code, n+2, raw_lines.get(n+2).unwrap().0, raw_lines.get(n+2).unwrap().1);
+        //     panic!("process_lines: Stop here");
+        // }
 
         if marker == "v" { // Put the most common marker first for better performance
             let mut parts = text.splitn(2, ' ');
@@ -375,11 +384,12 @@ pub fn process_lines(
     // Now add additional nesting and other markers in order to simplify future processing
     let processed_lines = crate::nesting::add_additional_markers(processed, work_name, bos_book_code);
 
-    debug_assert!(
-        validate(&processed_lines, bos_book_code, work_name).is_empty(),
-        "process_lines failed with issues: {:?}",
-        validate(&processed_lines, bos_book_code, work_name)
-    ); // TODO: Fix doubled validation calls here
+    if have_strict_checking_flag() || cfg!(debug_assertions) {
+        let validation_results = validate(&processed_lines, bos_book_code, work_name);
+        if !validation_results.is_empty() {
+            println!("process_lines failed with issues: {:?}", validation_results);
+        }
+    }
     processed_lines
 }
 

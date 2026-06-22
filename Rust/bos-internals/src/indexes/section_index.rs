@@ -9,13 +9,14 @@ use indexmap::IndexMap;
 use num_format::{Locale, ToFormattedString};
 use rkyv::validation;
 
-use crate::bos_markers::is_end_marker;
+use bos_books_codes::is_chapter_verse_book;
+use crate::bos_markers::{is_end_marker, title_markers};
 use crate::chapter_verse::ChapterVerse;
 use crate::indexes::section_index;
 use crate::parsing::get_small_leading_int;
 use crate::entry_lists::InternalBibleEntryList;
 use crate::error::LookupError;
-use crate::{set_strict_checking_flag, have_strict_checking_flag};
+use crate::have_strict_checking_flag;
 
 /// Markers that can define section boundaries.
 const SECTION_MARKERS: &[&str] = &[
@@ -331,17 +332,24 @@ impl InternalBibleBookSectionIndex {
         let mut current_verse_num_str = CompactString::from("0");
         let mut last_chapter_num_str = CompactString::from("-1");
         let mut last_verse_num_str = CompactString::from("0");
+        let mut last_marker = "";
         let mut pending = None;
         let mut context: Vec<CompactString> = Vec::new();
         let mut book_name = String::new();
-        let mut had_section_heading = false;
+        let mut had_section_heading_since_chapters = false;
         // let mut last_bridge_entry_index: Option<u16> = None;
         // let mut last_bridge_verse_num_str: Option<CompactString> = None;
 
         for (i, line_entry) in self.line_entries.iter().enumerate() {
             let marker = line_entry.marker();
+            if have_strict_checking_flag() || cfg!(debug_assertions) {
+                println!("  sectionIndex {} {} build loop (with {} existing index entries) {}: {}",
+                    self.work_name(), self.bos_book_code(), self.index_data.len(), i, marker);
+            }
 
-            if marker == "id" {
+            // Get the very first marker
+            if last_marker.is_empty() && ["id","usfm","ide","headers","h","intro","mt1"].contains(&marker) {
+                assert!(pending.is_none());
                 pending = Some(PendingSection {
                         start_cv: Some(ChapterVerse::new(current_chapter_num_str.as_str(), current_verse_num_str.as_str())),
                         start_index: 0,
@@ -349,8 +357,11 @@ impl InternalBibleBookSectionIndex {
                         name: self.bos_book_code().to_string(),
                         // has_content: false,
                     });
+                last_marker = marker;
                 continue
-            } else if marker == "h" {
+            }
+
+            if marker == "h" {
                 book_name = line_entry.clean_text().to_string();
                 continue;
             } else if marker == "c" {
@@ -363,25 +374,34 @@ impl InternalBibleBookSectionIndex {
                 current_verse_num_str = i.to_compact_string();
             } else if marker == "chapters" {
                 context.push(CompactString::from("chapters"));
+                current_chapter_num_str = CompactString::from("0");
+                had_section_heading_since_chapters = false;
             } else if marker == "s1" || marker == "ms1" {
-                had_section_heading = true;
+                had_section_heading_since_chapters = true;
             }
 
-            println!("Build {} {} section index loop {} with {} section index entries already from the given {} entry lines\n  with current {}:{} last {}:{} context=[{}] pending={:?}",
-                self.work_name(), self.bos_book_code(), i, self.index_data.len(), self.line_entries.len(),
-                current_chapter_num_str, current_verse_num_str, last_chapter_num_str, last_verse_num_str,
-                context.join(", "), pending);
+            if have_strict_checking_flag() || cfg!(debug_assertions) {
+                println!("    build {} {} section index loop {} with {} section index entries already from the given {} entry lines\n  with current {}:{} last {}:{} context=[{}] pending={:?}",
+                    self.work_name(), self.bos_book_code(), i, self.index_data.len(), self.line_entries.len(),
+                    current_chapter_num_str, current_verse_num_str, last_chapter_num_str, last_verse_num_str,
+                    context.join(", "), pending);
+            }
 
             // Once we reach the chapters, i.e., after the headers and introduction,
             //  we should only need to start sections at v= and sometimes at c markers
             if marker == "v=" {
-                let verse_num = line_entry.clean_text();
+            // && (!process_chapters_as_section_breaks || last_marker != "c") {
+                let special_verse_num = line_entry.clean_text();
+                // if current_verse_num_str=="0" && special_verse_num=="1" { current_verse_num_str = CompactString::from("1"); }
                 let next_line_entry = self.line_entries.get(i+1).unwrap();
                 let next_marker = next_line_entry.marker();
-                if ["s1","ms2"].contains(&next_marker) {
-                    println!("Build {} {} section index at {} {}:{} has v= followed by '{}' so need to start new index entry here",
-                            self.work_name(), self.bos_book_code(), i, current_chapter_num_str, verse_num, next_marker);
-                    current_verse_num_str = CompactString::from(verse_num);
+                if ["s1","ms1"].contains(&next_marker) {
+                    if have_strict_checking_flag() || cfg!(debug_assertions) {
+                        println!("    build {} section index at {} {} {}:{} has v= = '{}' followed by '{}' so need to start new index entry here",
+                                self.work_name(), i, self.bos_book_code(), current_chapter_num_str, current_verse_num_str, special_verse_num, next_marker);
+                    }
+                    let this_start_index = i as u16 - {if last_marker=="c" {1} else {0}};
+                    // current_verse_num_str = CompactString::from(special_verse_num);
                     let mut finishing_verse_num_str = CompactString::from(last_verse_num_str.clone());
                     if current_verse_num_str.contains("b") { finishing_verse_num_str = CompactString::from(current_verse_num_str.replace("b", "a")); }
                     // last_bridge_entry_index = Some(i as u16);
@@ -399,7 +419,7 @@ impl InternalBibleBookSectionIndex {
 
                     // Close previous section and start new one.
                     if let Some(mut this_pending_section) = pending.take() {
-                        if i as u16 > this_pending_section.start_index {
+                        if this_start_index > this_pending_section.start_index {
                             if this_pending_section.start_cv.is_none() {
                                 this_pending_section.start_cv = Some(ChapterVerse::new(
                                     current_chapter_num_str.as_str(),
@@ -408,7 +428,13 @@ impl InternalBibleBookSectionIndex {
                             }
                             let mut end_idx = (i as u16).saturating_sub(1);
                             for _ in 0..4 {
-                                if is_end_marker(self.line_entries.get(end_idx as usize).clone().unwrap().marker()) { break }
+                                if have_strict_checking_flag() || cfg!(debug_assertions) {
+                                    println!("      Finding end of previous section that started at {}: {} marker = {}", this_pending_section.start_index, end_idx, self.line_entries.get(end_idx as usize).clone().unwrap().marker());
+                                }
+                                let some_previous_marker = self.line_entries.get(end_idx as usize).clone().unwrap().marker();
+                                if is_end_marker(some_previous_marker)
+                                || (self.index_data.len()<2 && (["id","usfm","ide"].contains(&some_previous_marker) || title_markers::ALL.contains(&some_previous_marker)))
+                                    { break; }
                                 end_idx = end_idx.saturating_sub(1);
                             }
                             let (cv, entry) = this_pending_section.into_closed(
@@ -416,19 +442,21 @@ impl InternalBibleBookSectionIndex {
                                 finishing_verse_num_str.as_str(),
                                 end_idx,
                                 context.clone());
+                            if have_strict_checking_flag() || cfg!(debug_assertions) { assert!(!self.index_data.contains_key(&cv), "Losing data: {cv}"); }
                             self.index_data.insert(cv, entry);
                             // context.pop();
                         }
                     }
                     // New section starts at this section marker
                     pending = Some(PendingSection {
-                        start_cv: Some(ChapterVerse::new(current_chapter_num_str.as_str(), current_verse_num_str.as_str())),
-                        start_index: i.try_into().unwrap(),
+                        start_cv: Some(ChapterVerse::new(current_chapter_num_str.as_str(),  special_verse_num)),
+                        start_index: this_start_index,
                         reason: CompactString::from( if current_verse_num_str=="0" {if process_chapters_as_section_breaks {format!("c/{}", next_marker)} else {format!("{}/c", next_marker)}}
                                                      else {next_marker.to_string()}),
                         name: next_line_entry.clean_text().to_string(),
                         // has_content: false
                         });
+                    if have_strict_checking_flag() || cfg!(debug_assertions) { println!("    v= pending = {:?}", pending); }
                     }
             }
 
@@ -436,14 +464,18 @@ impl InternalBibleBookSectionIndex {
                 let mut next_relevant_marker = "";
                 if !process_chapters_as_section_breaks {
                     for adder in 1..9 { // Look at what's ahead
-                        next_relevant_marker = self.line_entries.get(i+adder).unwrap().marker();
-                        if ["v","v="].contains(&next_relevant_marker) { break; }
+                        if ["v","v="].contains(&self.line_entries.get(i+adder).unwrap().marker()) {
+                            next_relevant_marker = self.line_entries.get(i+adder).unwrap().marker();
+                            break;
+                        }
                     }
                 }
-                if process_chapters_as_section_breaks
-                || (next_relevant_marker != "v=" && !had_section_heading) { // If it's v=, we'll handle that on the next loop instead
-                    println!("Build {} {} section index at {} {}:{} has c followed by '{}' so need to start new index entry here",
-                        self.work_name(), self.bos_book_code(), i, current_chapter_num_str, current_verse_num_str, next_relevant_marker);
+                if next_relevant_marker != "v=" // If it's v=, we'll handle that on the next loop instead
+                && (!had_section_heading_since_chapters || process_chapters_as_section_breaks) {
+                    if have_strict_checking_flag() || cfg!(debug_assertions) {
+                        println!("    build {} {} section index at {} {}:{} has c followed by '{}' so need to start new index entry here",
+                            self.work_name(), self.bos_book_code(), i, current_chapter_num_str, current_verse_num_str, next_relevant_marker);
+                    }
                     // Close previous section and start new one.
                     if let Some(mut this_pending_section) = pending.take() {
                         if i as u16 > this_pending_section.start_index {
@@ -468,16 +500,25 @@ impl InternalBibleBookSectionIndex {
                                 last_verse_num_str.as_str(),
                                 end_idx,
                                 context.clone());
+                            if have_strict_checking_flag() || cfg!(debug_assertions) { assert!(!self.index_data.contains_key(&cv), "Losing data: {cv}"); }
                             self.index_data.insert(cv, entry);
                             // context.pop();
                         }
                     }
-                    // New section starts at this chapter marker
+                    // New section starts at or just before this chapter marker
+                    let mut start_idx = i;
+                    for subber in 1..i { // Look at what's behind
+                        if ["cl"].contains(&self.line_entries.get(i-subber).unwrap().marker()) {
+                            start_idx = i - subber;
+                            break;
+                        }
+                    }
                     pending = Some(PendingSection {
-                        start_cv: Some(ChapterVerse::new(current_chapter_num_str.as_str(), current_verse_num_str.as_str())),
-                        start_index: i.try_into().unwrap(),
+                        start_cv: Some(ChapterVerse::new(current_chapter_num_str.as_str(),
+                                                            if current_verse_num_str=="0" {"1"} else {current_verse_num_str.as_str()})),
+                        start_index: start_idx.try_into().unwrap(),
                         reason: CompactString::from("c"),
-                        name: current_chapter_num_str.to_string(),
+                        name: if book_name.is_empty() {current_chapter_num_str.to_string()} else {format!("{} {}", book_name, current_chapter_num_str)},
                         // has_content: false
                         });
                     }
@@ -498,6 +539,7 @@ impl InternalBibleBookSectionIndex {
                             current_verse_num_str.as_str(),
                             i as u16,
                             context.clone());
+                        if have_strict_checking_flag() || cfg!(debug_assertions) { assert!(!self.index_data.contains_key(&cv), "Losing data: {cv}"); }
                         self.index_data.insert(cv, entry);
                         context.clear();
                     }
@@ -553,6 +595,7 @@ impl InternalBibleBookSectionIndex {
                                 i as u16,
                                 context.clone(),
                             );
+                            if have_strict_checking_flag() || cfg!(debug_assertions) { assert!(!self.index_data.contains_key(&cv), "Losing data: {cv}"); }
                             self.index_data.insert(cv, entry);
                             context.clear();
                         }
@@ -579,7 +622,8 @@ impl InternalBibleBookSectionIndex {
                             i as u16,
                             context.clone(),
                         );
-                        assert_eq!(entry.reason_marker(), "is1");
+                        assert!(["is1","Headers"].contains(&entry.reason_marker()));
+                        if have_strict_checking_flag() || cfg!(debug_assertions) { assert!(!self.index_data.contains_key(&cv), "Losing data: {cv}"); }
                         self.index_data.insert(cv, entry);
                         context.clear();
                     }
@@ -780,7 +824,9 @@ impl InternalBibleBookSectionIndex {
                 last_chapter_num_str = current_chapter_num_str.clone();
                 last_verse_num_str = current_verse_num_str.clone();
             }
+            last_marker = marker;
         }
+        if have_strict_checking_flag() || cfg!(debug_assertions) { println!("Section heading loop finished with {} entries and pending={:?}", self.index_data.len(), pending); }
 
         // Close final section
         if let Some(section) = pending.as_mut().filter(|s| s.start_cv.is_none()) {
@@ -789,20 +835,35 @@ impl InternalBibleBookSectionIndex {
                 current_verse_num_str.as_str(),
             ));
         }
+        // Don't include the ¬chapters line in the final section
+        let mut end_idx = (self.line_entries.len() as u16).saturating_sub(1);
+        if self.line_entries.get(end_idx as usize).clone().unwrap().marker() == "¬chapters" {
+             end_idx = end_idx.saturating_sub(1); // Go back to the one before
+             assert!(is_end_marker(self.line_entries.get(end_idx as usize).clone().unwrap().marker()));
+        }
         if let Some(section) = pending {
-            println!("Adding final section");
+            if have_strict_checking_flag() || cfg!(debug_assertions) { println!("  Adding final section"); }
             let (cv, entry) = section.into_closed(
                 current_chapter_num_str.as_str(),
                 current_verse_num_str.as_str(),
-                (self.line_entries.len() as u16).saturating_sub(1),
+                end_idx,
                 context,
             );
-            self.index_data.insert(cv, entry);
+            if self.index_data.contains_key(&cv) { // This can happen for alternative endings to Mark
+                if have_strict_checking_flag() || cfg!(debug_assertions) {
+                    assert_eq!(self.bos_book_code(), "MRK", "{} {} section index is losing a key: {}", self.work_name(), self.bos_book_code(), cv);
+                }
+                self.index_data.insert(ChapterVerse::new(cv.chapter(), format!("{}b", cv.verse())), entry); // Append another b suffix
+            } else {
+                if have_strict_checking_flag() || cfg!(debug_assertions) { assert!(!self.index_data.contains_key(&cv), "Losing data: {cv}"); }
+                self.index_data.insert(cv, entry);
+            }
         }
+        if have_strict_checking_flag() || cfg!(debug_assertions) { println!("Section heading build finished with {} entries", self.index_data.len()); }
         self.indexed = true;
 
-        if true || cfg!(debug_assertions) {
-             let validation_results = self.validate();
+        if have_strict_checking_flag() || cfg!(debug_assertions) {
+             let validation_results = self.validate(&self.line_entries);
              if !validation_results.is_empty() {
                 panic!("{} {} section index validation failed with issues: {:?}", self.work_name, self.bos_book_code, validation_results);
             }
@@ -820,7 +881,7 @@ impl InternalBibleBookSectionIndex {
     /// Validate the section index structure.
     ///
     /// Returns a list of any issues found.
-    fn validate(&self) -> Vec<String> {
+    fn validate(&self, line_entries: &InternalBibleEntryList) -> Vec<String> {
         let mut issues = Vec::new();
 
         if !self.indexed {
@@ -831,8 +892,15 @@ impl InternalBibleBookSectionIndex {
         // Check for overlapping entries,
         //  for entries containing incorrect verse numbers,
         //  and that the last line in an index segment is an end marker
+        //  and that there's entries for -1:0 and 1:1.
+        let mut have_m1_0 = false;
+        let mut have_1_0 = false; // Surely we only need one of these???
+        let mut have_1_1 = false; // Surely we only need one of these???
         let mut last_end: usize = 0;
         for (cv, entry) in &self.index_data {
+            if cv.chapter()=="-1" && cv.verse()=="0" { have_m1_0 = true; }
+            if cv.chapter()=="1" && cv.verse()=="0" { have_1_0 = true; }
+            if cv.chapter()=="1" && (cv.verse()=="1" || cv.verse_int().unwrap()==1) { have_1_1 = true; } // Could be a verse bridge, e.g., '1-2'
             assert!(!cv.chapter().is_empty() && (cv.chapter().chars().all(|c| c.is_ascii_digit()) || cv.chapter() == "-1"),
                 "{} {} chapter should be a non-empty string of digits or '-1': found '{}' from {}",
                 self.work_name, self.bos_book_code, cv.chapter(), cv);
@@ -871,6 +939,12 @@ impl InternalBibleBookSectionIndex {
                 last_end = entry.end_index();
             }
 
+        assert!(have_m1_0 || line_entries.get(0).unwrap().marker()=="chapters", // i.e., no preliminary markers at all!!!
+                    "Expected {} {} section index '-1:0' entry:\nKeys {:?}\nHave {:?}\nFrom {:?}",
+                    self.work_name(), self.bos_book_code(), self.index_data.keys(), self.index_data.iter().take(4).collect::<std::collections::HashMap<_, _>>(), line_entries.iter().take(10).collect::<std::vec::Vec<_>>());
+        assert!(have_1_0 || have_1_1 || !is_chapter_verse_book(&self.bos_book_code),
+                    "{} {} section index is missing 1:1 entry\nKeys {:?}\nHave {:?}\nFrom {:?}",
+                    self.work_name(), self.bos_book_code(), self.index_data.keys(), self.index_data.iter().take(6).collect::<std::collections::HashMap<_, _>>(), line_entries.iter().take(10).collect::<std::vec::Vec<_>>());
         // Temporarily disabled but should it be reenabled again???
         // // Check that all entries are covered
         // if last_end != self.entries.len() {
@@ -905,12 +979,14 @@ impl PendingSection {
         context: Vec<CompactString>,
     ) -> (ChapterVerse, SectionIndexEntry) {
         let start_cv = self.start_cv.expect("section closed before start CV was resolved");
-        println!("Wanting to close pending {} {} section with {}:{} at {} with {}:[{}]",
-            start_cv, self.start_index, end_chapter, end_verse, end_index, self.reason, context.join(", "));
-        assert!(end_index > self.start_index,
-            "Attempting to close {} start_index={} section at end_index={}", start_cv, self.start_index, end_index);
-        assert!(get_small_leading_int(end_verse).unwrap() >= start_cv.verse_int().unwrap() || get_small_leading_int(end_chapter).unwrap() > start_cv.chapter_int().unwrap(),
-            "Attempting to close {} section at {}:{}", start_cv, end_chapter, end_verse);
+        if have_strict_checking_flag() || cfg!(debug_assertions) {
+            println!("      Wanting to close pending {} {} section with {}:{} at {} with {}:[{}]",
+                start_cv, self.start_index, end_chapter, end_verse, end_index, self.reason, context.join(", "));
+            assert!(end_index > self.start_index,
+                "Attempting to close {} start_index={} section at end_index={}", start_cv, self.start_index, end_index);
+            assert!(get_small_leading_int(end_verse).unwrap() >= start_cv.verse_int().unwrap() || get_small_leading_int(end_chapter).unwrap() > start_cv.chapter_int().unwrap(),
+                "Attempting to close {} section at {}:{}", start_cv, end_chapter, end_verse);
+            }
         let entry = SectionIndexEntry::new(
             end_chapter,
             end_verse,
@@ -959,6 +1035,7 @@ impl std::fmt::Display for InternalBibleBookSectionIndex {
 mod tests {
     use super::*;
     use crate::entry::InternalBibleEntry;
+    use crate::set_strict_checking_flag;
     
     fn create_sample_gen_test_entries() -> InternalBibleEntryList {
         let mut entries = InternalBibleEntryList::new();
@@ -1026,56 +1103,102 @@ mod tests {
     #[test]
     fn test_build_sample_gen_section_index() {
         set_strict_checking_flag( true );
-        let mut index = InternalBibleBookSectionIndex::new("XSV", "GEN");
-        index.build(create_sample_gen_test_entries()).unwrap();
-        log::trace!("Index1:{}", index);
-        assert!(index.is_indexed());
+        let mut section_index = InternalBibleBookSectionIndex::new("XSV", "GEN");
+        section_index.build(create_sample_gen_test_entries()).unwrap();
+        log::trace!("Index1:{}", section_index);
+        assert!(section_index.is_indexed());
 
-        assert_eq!(index.index_data.get_index(0).unwrap().0.to_string(), "-1:0"); // ID Header starts at -1:0
-        assert_eq!(index.index_data.get_index(0).unwrap().1.end_cv().to_string(), "-1:6"); // ID Header ends at -1:6
-        assert_eq!(index.index_data.get_index(0).unwrap().1.start_index(), 0); // starts at id
-        assert_eq!(index.index_data.get_index(0).unwrap().1.end_index(), 6); // ends at ¬headers
-        assert_eq!(index.index_data.get_index(0).unwrap().1.reason_marker(), "Headers");
-        assert_eq!(index.index_data.get_index(0).unwrap().1.section_name(), "GEN");
-        assert_eq!(index.index_data.get_index(0).unwrap().1.context(), Vec::<CompactString>::new());
+        assert_eq!(section_index.len(), 5, "{section_index}"); // Headers, is1, s1 (Creation), s1 (Fall), s1 (Chapter Three)
+        let section_reasons: Vec<_> = section_index.index_data.iter().map(|(_, entry)| entry.reason_marker().to_string()).collect();
+        assert_eq!(section_reasons, vec!["Headers", "is1", "s1/c", "s1", "s1/c"]);
 
-        assert_eq!(index.index_data.get_index(1).unwrap().0.to_string(), "-1:8"); // starts at -1:8 // was -1:8
-        assert_eq!(index.index_data.get_index(1).unwrap().1.end_cv().to_string(), "-1:10"); // ends at -1:10
-        assert_eq!(index.index_data.get_index(1).unwrap().1.start_index(), 8); // starts at is1
-        assert_eq!(index.index_data.get_index(1).unwrap().1.end_index(), 10); // ends at ¬intro
-        assert_eq!(index.index_data.get_index(1).unwrap().1.reason_marker(), "is1");
-        assert_eq!(index.index_data.get_index(1).unwrap().1.section_name(), "Introduction to Genesis");
-        assert_eq!(index.index_data.get_index(1).unwrap().1.context(), Vec::<CompactString>::new());
+        let first_section = section_index.index_data.get_index(0).unwrap();
+        assert_eq!(first_section.0.to_string(), "-1:0"); // ID Header starts at -1:0
+        assert_eq!(first_section.1.end_cv().to_string(), "-1:6"); // ID Header ends at -1:6
+        assert_eq!(first_section.1.start_index(), 0); // starts at id
+        assert_eq!(first_section.1.end_index(), 6); // ends at ¬headers
+        assert_eq!(first_section.1.reason_marker(), "Headers");
+        assert_eq!(first_section.1.section_name(), "GEN");
+        assert_eq!(first_section.1.context(), Vec::<CompactString>::new());
 
-        assert_eq!(index.index_data.get_index(2).unwrap().0.to_string(), "1:1"); // starts at 1:1
-        assert_eq!(index.index_data.get_index(2).unwrap().1.end_cv().to_string(), "2:1"); // ends at 2:1
-        assert_eq!(index.index_data.get_index(2).unwrap().1.start_index(), 13); // starts at the v= before s1 marker
-        assert_eq!(index.index_data.get_index(2).unwrap().1.end_index(), 25); // ends at ¬p
-        assert_eq!(index.index_data.get_index(2).unwrap().1.reason_marker(), "s1");
-        assert_eq!(index.index_data.get_index(2).unwrap().1.section_name(), "The Creation");
-        assert_eq!(index.index_data.get_index(2).unwrap().1.context(), ["chapters", "c"]);
+        let second_section = section_index.index_data.get_index(1).unwrap();
+        assert_eq!(second_section.0.to_string(), "-1:8"); // starts at -1:8 // was -1:8
+        assert_eq!(second_section.1.end_cv().to_string(), "-1:10"); // ends at -1:10
+        assert_eq!(second_section.1.start_index(), 8); // starts at is1
+        assert_eq!(second_section.1.end_index(), 10); // ends at ¬intro
+        assert_eq!(second_section.1.reason_marker(), "is1");
+        assert_eq!(second_section.1.section_name(), "Introduction to Genesis");
+        assert_eq!(second_section.1.context(), Vec::<CompactString>::new());
 
-        assert_eq!(index.index_data.get_index(3).unwrap().0.to_string(), "2:2"); // starts at 2:2
-        assert_eq!(index.index_data.get_index(3).unwrap().1.end_cv().to_string(), "2:3"); // ends at 2:3
-        assert_eq!(index.index_data.get_index(3).unwrap().1.start_index(), 26); // starts at the v= before s1 marker
-        assert_eq!(index.index_data.get_index(3).unwrap().1.end_index(), 34); // ends at ¬c
-        assert_eq!(index.index_data.get_index(3).unwrap().1.reason_marker(), "s1");
-        assert_eq!(index.index_data.get_index(3).unwrap().1.section_name(), "The Fall");
-        assert_eq!(index.index_data.get_index(3).unwrap().1.context(), ["chapters", "c"]);
+        let third_section = section_index.index_data.get_index(2).unwrap();
+        assert_eq!(third_section.0.to_string(), "1:1"); // starts at 1:1
+        assert_eq!(third_section.1.end_cv().to_string(), "2:1"); // ends at 2:1
+        assert_eq!(third_section.1.start_index(), 12); // starts at the c before s1 marker
+        assert_eq!(third_section.1.end_index(), 25); // ends at ¬p
+        assert_eq!(third_section.1.reason_marker(), "s1/c");
+        assert_eq!(third_section.1.section_name(), "The Creation");
+        assert_eq!(third_section.1.context(), ["chapters", "c"]);
 
-        assert_eq!(index.index_data.get_index(4).unwrap().0.to_string(), "3:1"); // starts at 3:1
-        assert_eq!(index.index_data.get_index(4).unwrap().1.end_cv().to_string(), "3:2"); // ends at 3:2
-        assert_eq!(index.index_data.get_index(4).unwrap().1.start_index(), 36); // starts at entry index 36 (the preceding v= bridge marker)
-        assert_eq!(index.index_data.get_index(4).unwrap().1.end_index(), 46);
-        assert_eq!(index.index_data.get_index(4).unwrap().1.reason_marker(), "s1");
-        assert_eq!(index.index_data.get_index(4).unwrap().1.section_name(), "Chapter Three");
-        assert_eq!(index.index_data.get_index(4).unwrap().1.context(), ["chapters", "c"]);
+        let fourth_section = section_index.index_data.get_index(3).unwrap();
+        assert_eq!(fourth_section.0.to_string(), "2:2"); // starts at 2:2
+        assert_eq!(fourth_section.1.end_cv().to_string(), "2:3"); // ends at 2:3
+        assert_eq!(fourth_section.1.start_index(), 26); // starts at the v= before s1 marker
+        assert_eq!(fourth_section.1.end_index(), 34); // ends at ¬c
+        assert_eq!(fourth_section.1.reason_marker(), "s1");
+        assert_eq!(fourth_section.1.section_name(), "The Fall");
+        assert_eq!(fourth_section.1.context(), ["chapters", "c"]);
 
-        assert_eq!(index.len(), 5); // Headers, is1, s1 (Creation), s1 (Fall), s1 (Chapter Three)
+        let fifth_section = section_index.index_data.get_index(4).unwrap();
+        assert_eq!(fifth_section.0.to_string(), "3:1"); // starts at 3:1
+        assert_eq!(fifth_section.1.end_cv().to_string(), "3:2"); // ends at 3:2
+        assert_eq!(fifth_section.1.start_index(), 35); // starts at the c before s1 marker
+        assert_eq!(fifth_section.1.end_index(), 45); // Don't include the ¬chapters
+        assert_eq!(fifth_section.1.reason_marker(), "s1/c");
+        assert_eq!(fifth_section.1.section_name(), "Chapter Three");
+        assert_eq!(fifth_section.1.context(), ["chapters", "c"]);
     }
 
     #[test]
-    // #[ignore = "Need to get section index working properly"]
+    fn test_test_kjb_mark() {
+        set_strict_checking_flag( true );
+        let mut entries = InternalBibleEntryList::new();
+        entries.push(InternalBibleEntry::simple("id", "MRK")); // 0
+        entries.push(InternalBibleEntry::simple("usfm", "3.0")); // 1
+        entries.push(InternalBibleEntry::simple("ide", "UTF-8")); // 2
+        entries.push(InternalBibleEntry::simple("headers", "")); // 3
+        entries.push(InternalBibleEntry::simple("h", "Mark")); // 4
+        entries.push(InternalBibleEntry::simple("toc1", "Mark")); // 5
+        entries.push(InternalBibleEntry::simple("toc2", "Mark")); // 6
+        entries.push(InternalBibleEntry::simple("toc3", "Mrk")); // 7
+        entries.push(InternalBibleEntry::simple("ie", "")); // 8
+        entries.push(InternalBibleEntry::simple("¬headers", "")); // 9
+        entries.push(InternalBibleEntry::simple("chapters", "")); // 10
+        entries.push(InternalBibleEntry::simple("cl", "CHAP")); // 11
+        entries.push(InternalBibleEntry::simple("c", "1")); // 12
+        entries.push(InternalBibleEntry::simple("iex", "1 The office of Iohn the Baptist. 9 Iesus is baptized, 12 tempted, 14 he preacheth: 16 calleth Peter, Andrew, Iames and Iohn: 23 healeth one that had a deuill, 29 Peters mother in law, 32 many diseased persons, 41 and cleanseth the Leper.")); // 13
+        entries.push(InternalBibleEntry::simple("v", "1")); // 14
+        entries.push(InternalBibleEntry::simple("v~", "¶ The beginning of the Gospel of Iesus Christ, the Sonne of God,")); // 15
+        entries.push(InternalBibleEntry::simple("¬v", "1")); // 16
+        entries.push(InternalBibleEntry::simple("v", "2")); // 17
+        entries.push(InternalBibleEntry::simple("v~", "As it is written in the Prophets, Behold, I send my messenger before thy face, which shall prepare thy way before thee.")); // 18
+        entries.push(InternalBibleEntry::simple("¬v", "2")); // 19
+        entries.push(InternalBibleEntry::simple("¬c", "1")); // 20
+        entries.push(InternalBibleEntry::simple("¬chapters", "")); // 21
+
+        let mut section_index = InternalBibleBookSectionIndex::new("KJB", "TST");
+        section_index.build(entries).unwrap();
+
+        assert_eq!(section_index.len(), 2);
+        let section_reasons: Vec<_> = section_index.index_data.iter().map(|(_, entry)| entry.reason_marker().to_string()).collect();
+        assert_eq!(section_reasons, vec!["Headers", "c"]);
+
+        let second_section = section_index.index_data.get_index(1).unwrap();
+        assert_eq!(second_section.0.to_string(), "1:1");
+        assert_eq!(second_section.1.start_index(), 11); // The 'cl' marker
+        assert_eq!(second_section.1.end_index(), 20); // The '¬c' marker
+    }
+
+    #[test]
     fn test_section_index_with_single_section_heading_at_verse_2() {
         set_strict_checking_flag( true );
         let mut entries = InternalBibleEntryList::new();
@@ -1083,69 +1206,135 @@ mod tests {
         entries.push(InternalBibleEntry::simple("headers", "")); // 1
         entries.push(InternalBibleEntry::simple("h", "Test1")); // 2
         entries.push(InternalBibleEntry::simple("¬headers", "")); // 3
-        entries.push(InternalBibleEntry::simple("c", "1")); // 4
-        entries.push(InternalBibleEntry::simple("v", "1")); // 5
-        entries.push(InternalBibleEntry::simple("v~", "First section text")); // 6
-        entries.push(InternalBibleEntry::simple("¬v", "1")); // 7
-        entries.push(InternalBibleEntry::simple("v=", "2")); // 8
-        entries.push(InternalBibleEntry::simple("s1", "Second section")); // 9
-        entries.push(InternalBibleEntry::simple("p", "")); // 10
-        entries.push(InternalBibleEntry::simple("v", "2")); // 11
-        entries.push(InternalBibleEntry::simple("v~", "Second section text")); // 12
-        entries.push(InternalBibleEntry::simple("¬v", "2")); // 13
-        entries.push(InternalBibleEntry::simple("¬c", "1")); // 14
-        entries.push(InternalBibleEntry::simple("¬chapters", "")); // 15
+        entries.push(InternalBibleEntry::simple("chapters", "")); // 4
+        entries.push(InternalBibleEntry::simple("c", "1")); // 5
+        entries.push(InternalBibleEntry::simple("v", "1")); // 6
+        entries.push(InternalBibleEntry::simple("v~", "First section text")); // 7
+        entries.push(InternalBibleEntry::simple("¬v", "1")); // 8
+        entries.push(InternalBibleEntry::simple("v=", "2")); // 9
+        entries.push(InternalBibleEntry::simple("s1", "Second section")); // 10
+        entries.push(InternalBibleEntry::simple("p", "")); // 11
+        entries.push(InternalBibleEntry::simple("v", "2")); // 12
+        entries.push(InternalBibleEntry::simple("v~", "Second section text")); // 13
+        entries.push(InternalBibleEntry::simple("¬v", "2")); // 14
+        entries.push(InternalBibleEntry::simple("¬c", "1")); // 15
+        entries.push(InternalBibleEntry::simple("¬chapters", "")); // 16
 
-        let mut index = InternalBibleBookSectionIndex::new("XSV", "TST");
-        index.build(entries).unwrap();
+        let mut section_index = InternalBibleBookSectionIndex::new("XSV", "TST");
+        section_index.build(entries).unwrap();
 
-        let sections: Vec<_> = index.index_data.iter().map(|(_, entry)| entry.reason_marker().to_string()).collect();
-        assert_eq!(sections, vec!["Headers", "c", "s1"]);
+        assert_eq!(section_index.len(), 3);
+        let section_reasons: Vec<_> = section_index.index_data.iter().map(|(_, entry)| entry.reason_marker().to_string()).collect();
+        assert_eq!(section_reasons, vec!["Headers", "c", "s1"]);
 
-        let second_section = index.index_data.get_index(2).unwrap();
-        assert_eq!(second_section.0.to_string(), "1:2");
-        assert_eq!(second_section.1.start_index(), 8);
+        let second_section = section_index.index_data.get_index(1).unwrap();
+        assert_eq!(second_section.0.to_string(), "1:1");
+        assert_eq!(second_section.1.start_index(), 5);
+        assert_eq!(second_section.1.end_index(), 8);
+
+        let third_section = section_index.index_data.get_index(2).unwrap();
+        assert_eq!(third_section.0.to_string(), "1:2");
+        assert_eq!(third_section.1.start_index(), 9);
+        assert_eq!(third_section.1.end_index(), 15); // The '¬c' marker
     }
 
     #[test]
-    #[ignore = "Need to get section index working properly"]
+    fn test_section_index_with_ms1() {
+        set_strict_checking_flag( true );
+        let mut entries = InternalBibleEntryList::new();
+        entries.push(InternalBibleEntry::simple("id", "JOB")); // 0
+        entries.push(InternalBibleEntry::simple("headers", "")); // 1
+        entries.push(InternalBibleEntry::simple("h", "Test1")); // 2
+        entries.push(InternalBibleEntry::simple("¬headers", "")); // 3
+        entries.push(InternalBibleEntry::simple("chapters", "")); // 4
+        entries.push(InternalBibleEntry::simple("c", "1")); // 5
+        entries.push(InternalBibleEntry::simple("v=", "1")); // 6
+        entries.push(InternalBibleEntry::simple("ms1", "SECTION ONE: The introduction")); // 7
+        entries.push(InternalBibleEntry::simple("mr", "(1:1–2:13)")); // 8
+        entries.push(InternalBibleEntry::simple("s1", "Iyyov's prosperous life")); // 9
+        entries.push(InternalBibleEntry::simple("rem", "/s1 Prologue; Job and His Family; Satan Tests Job")); // 10
+        entries.push(InternalBibleEntry::simple("p", "")); // 11
+        entries.push(InternalBibleEntry::simple("v", "1")); // 12
+        entries.push(InternalBibleEntry::simple("v~", "First section text")); // 13
+        entries.push(InternalBibleEntry::simple("¬v", "1")); // 14
+        entries.push(InternalBibleEntry::simple("v=", "2")); // 15
+        entries.push(InternalBibleEntry::simple("s1", "Second section")); // 16
+        entries.push(InternalBibleEntry::simple("p", "")); // 17
+        entries.push(InternalBibleEntry::simple("v", "2")); // 18
+        entries.push(InternalBibleEntry::simple("v~", "Second section text")); // 19
+        entries.push(InternalBibleEntry::simple("¬v", "2")); // 20
+        entries.push(InternalBibleEntry::simple("¬c", "1")); // 21
+        entries.push(InternalBibleEntry::simple("¬chapters", "")); // 22
+
+        let mut section_index = InternalBibleBookSectionIndex::new("PQR", "JOB");
+        section_index.build(entries).unwrap();
+
+        assert_eq!(section_index.len(), 3);
+        let section_reasons: Vec<_> = section_index.index_data.iter().map(|(_, entry)| entry.reason_marker().to_string()).collect();
+        assert_eq!(section_reasons, vec!["Headers", "ms1/c", "s1"]);
+
+        let second_section = section_index.index_data.get_index(1).unwrap();
+        assert_eq!(second_section.0.to_string(), "1:1");
+        assert_eq!(second_section.1.start_index(), 5);
+        assert_eq!(second_section.1.end_index(), 14);
+
+        let third_section = section_index.index_data.get_index(2).unwrap();
+        assert_eq!(third_section.0.to_string(), "1:2");
+        assert_eq!(third_section.1.start_index(), 15);
+        assert_eq!(third_section.1.end_index(), 21);
+    }
+
+    #[test]
     fn test_bridge_verse_before_section_heading_starts_section_complex() {
         set_strict_checking_flag( true );
         let mut entries = InternalBibleEntryList::new();
         entries.push(InternalBibleEntry::simple("id", "TST")); // 0
         entries.push(InternalBibleEntry::simple("h", "Test2")); // 1
-        entries.push(InternalBibleEntry::simple("c", "1")); // 2
-        entries.push(InternalBibleEntry::simple("v", "1")); // 3
-        entries.push(InternalBibleEntry::simple("v~", "Verse one text")); // 4
-        entries.push(InternalBibleEntry::simple("v=", "2")); // 5
-        entries.push(InternalBibleEntry::simple("s1", "First section heading")); // 6
-        entries.push(InternalBibleEntry::simple("p", "")); // 7
-        entries.push(InternalBibleEntry::simple("v", "2")); // 8
-        entries.push(InternalBibleEntry::simple("v~", "Verse two text")); // 9
-        entries.push(InternalBibleEntry::simple("v", "3")); // 10
-        entries.push(InternalBibleEntry::simple("v~", "Verse three text")); // 11
-        entries.push(InternalBibleEntry::simple("¬p", "")); // 12
-        entries.push(InternalBibleEntry::simple("¬s1", "")); // 13
-        entries.push(InternalBibleEntry::simple("v=", "3b")); // 14
-        entries.push(InternalBibleEntry::simple("s1", "Second section heading")); // 15
-        entries.push(InternalBibleEntry::simple("p", "")); // 16
-        entries.push(InternalBibleEntry::simple("v~", "More verse three text")); // 17
-        entries.push(InternalBibleEntry::simple("¬p", "")); // 18
-        entries.push(InternalBibleEntry::simple("¬s1", "")); // 19
+        entries.push(InternalBibleEntry::simple("chapters", "")); // 2
+        entries.push(InternalBibleEntry::simple("c", "1")); // 3
+        entries.push(InternalBibleEntry::simple("v", "1")); // 4
+        entries.push(InternalBibleEntry::simple("v~", "Verse one text")); // 5
+        entries.push(InternalBibleEntry::simple("¬v", "1")); // 6
+        entries.push(InternalBibleEntry::simple("v=", "2")); // 7
+        entries.push(InternalBibleEntry::simple("s1", "First section heading")); // 8
+        entries.push(InternalBibleEntry::simple("p", "")); // 9
+        entries.push(InternalBibleEntry::simple("v", "2")); // 10
+        entries.push(InternalBibleEntry::simple("v~", "Verse two text")); // 11
+        entries.push(InternalBibleEntry::simple("¬v", "2")); // 12
+        entries.push(InternalBibleEntry::simple("v", "3")); // 13
+        entries.push(InternalBibleEntry::simple("v~", "Verse three text")); // 14
+        entries.push(InternalBibleEntry::simple("¬p", "")); // 15
+        entries.push(InternalBibleEntry::simple("¬s1", "")); // 16
+        entries.push(InternalBibleEntry::simple("v=", "3b")); // 17
+        entries.push(InternalBibleEntry::simple("s1", "Second section heading")); // 18
+        entries.push(InternalBibleEntry::simple("p", "")); // 19
+        entries.push(InternalBibleEntry::simple("v~", "More verse three text")); // 20
+        entries.push(InternalBibleEntry::simple("¬v", "3")); // 21
+        entries.push(InternalBibleEntry::simple("¬p", "")); // 22
+        entries.push(InternalBibleEntry::simple("¬s1", "")); // 23
+        entries.push(InternalBibleEntry::simple("¬c", "1")); // 24
+        entries.push(InternalBibleEntry::simple("¬chapters", "")); // 25
 
-        let mut index = InternalBibleBookSectionIndex::new("YSV", "TST");
-        index.build(entries).unwrap();
+        let mut section_index = InternalBibleBookSectionIndex::new("YSV", "TST");
+        section_index.build(entries).unwrap();
 
-        let sections: Vec<_> = index.index_data.iter().map(|(_, entry)| entry.reason_marker().to_string()).collect();
+        let sections: Vec<_> = section_index.index_data.iter().map(|(_, entry)| entry.reason_marker().to_string()).collect();
         assert_eq!(sections, vec!["Headers", "c", "s1", "s1"]);
 
-        let second_section = index.index_data.get_index(2).unwrap();
-        assert_eq!(second_section.0.to_string(), "1:2");
-        assert_eq!(second_section.1.start_index(), 5);
+        let second_section = section_index.index_data.get_index(1).unwrap();
+        assert_eq!(second_section.0.to_string(), "1:1");
+        assert_eq!(second_section.1.start_index(), 3);
+        assert_eq!(second_section.1.end_index(), 6);
 
-        let third_section = index.index_data.get_index(3).unwrap();
-        assert_eq!(third_section.0.to_string(), "1:3b");
-        assert_eq!(third_section.1.start_index(), 14);
+        let third_section = section_index.index_data.get_index(2).unwrap();
+        assert_eq!(third_section.0.to_string(), "1:2");
+        assert_eq!(third_section.1.start_index(), 7);
+        assert_eq!(third_section.1.end_index(), 16);
+
+        let fourth_section = section_index.index_data.get_index(3).unwrap();
+        assert_eq!(fourth_section.0.to_string(), "1:3b");
+        assert_eq!(fourth_section.1.start_index(), 17);
+        assert_eq!(fourth_section.1.end_index(), 24);
     }
 
     fn create_sample_mrk_test_entries() -> InternalBibleEntryList {
@@ -1154,84 +1343,105 @@ mod tests {
         // Section 1 (Headers)
         entries.push(InternalBibleEntry::simple("id", "MRK Test Version")); // 0
         entries.push(InternalBibleEntry::simple("usfm", "3.0")); // 1
-        entries.push(InternalBibleEntry::simple("h", "Mark")); // 2
-        entries.push(InternalBibleEntry::simple("mt1", "Mark")); // 3
+        entries.push(InternalBibleEntry::simple("headers", "")); // 2
+        entries.push(InternalBibleEntry::simple("h", "Mark")); // 3
+        entries.push(InternalBibleEntry::simple("mt1", "Mark")); // 4
+        entries.push(InternalBibleEntry::simple("¬headers", "")); // 5
+
+        entries.push(InternalBibleEntry::simple("chapters", "")); // 6
 
         // Section 2 Chapter begins WITHOUT a section heading (should be absorbed into the first section)
-        entries.push(InternalBibleEntry::simple("c", "1")); // 4
-        entries.push(InternalBibleEntry::simple("p", "")); // 5
-        entries.push(InternalBibleEntry::simple("v", "1")); // 6
-        entries.push(InternalBibleEntry::simple("v~", "First verse of Mark...")); // 7
-        entries.push(InternalBibleEntry::simple("v", "2")); // 8
-        entries.push(InternalBibleEntry::simple("v~", "Verse 2 of Mark 1...")); // 9
+        entries.push(InternalBibleEntry::simple("c", "1")); // 7
+        entries.push(InternalBibleEntry::simple("p", "")); // 8
+        entries.push(InternalBibleEntry::simple("v", "1")); // 9
+        entries.push(InternalBibleEntry::simple("v~", "First verse of Mark...")); // 10
+        entries.push(InternalBibleEntry::simple("¬v", "1")); // 11
+        entries.push(InternalBibleEntry::simple("v", "2")); // 12
+        entries.push(InternalBibleEntry::simple("v~", "Verse 2 of Mark 1...")); // 13
+        entries.push(InternalBibleEntry::simple("¬v", "2")); // 14
 
         // Section 3
-        entries.push(InternalBibleEntry::simple("s1", "First section heading")); // 10
-        entries.push(InternalBibleEntry::simple("p", "")); // 11
-        entries.push(InternalBibleEntry::simple("v", "3")); // 12
-        entries.push(InternalBibleEntry::simple("v~", "Verse 3 of chapter 1...")); // 13
-        entries.push(InternalBibleEntry::simple("v", "4")); // 14
-        entries.push(InternalBibleEntry::simple("v~", "Verse 4 of chapter 1...")); // 15
+        entries.push(InternalBibleEntry::simple("v=", "3")); // 15
+        entries.push(InternalBibleEntry::simple("s1", "First section heading")); // 16
+        entries.push(InternalBibleEntry::simple("p", "")); // 17
+        entries.push(InternalBibleEntry::simple("v", "3")); // 18
+        entries.push(InternalBibleEntry::simple("v~", "Verse 3 of chapter 1...")); // 19
+        entries.push(InternalBibleEntry::simple("v", "4")); // 20
+        entries.push(InternalBibleEntry::simple("v~", "Verse 4 of chapter 1...")); // 21
+        entries.push(InternalBibleEntry::simple("¬s1", "")); // 22
 
         // Section 4
-        entries.push(InternalBibleEntry::simple("s1", "First alternative ending to Mark")); // 16
-        entries.push(InternalBibleEntry::simple("p", "")); // 17
-        entries.push(InternalBibleEntry::simple("v~", "No verses here--just text...")); // 18 "XXXp~"
+        entries.push(InternalBibleEntry::simple("v=", "4b")); // 23
+        entries.push(InternalBibleEntry::simple("s1", "First alternative ending to Mark")); // 24
+        entries.push(InternalBibleEntry::simple("p", "")); // 25
+        entries.push(InternalBibleEntry::simple("v~", "No verses here--just text...")); // 26
+        entries.push(InternalBibleEntry::simple("¬v", "4")); // 27
+        entries.push(InternalBibleEntry::simple("¬s1", "")); // 28
 
         // Section 5
-        entries.push(InternalBibleEntry::simple("s1", "Second alternative ending to Mark")); // 19
-        entries.push(InternalBibleEntry::simple("p", "")); // 20
-        entries.push(InternalBibleEntry::simple("v", "9")); // 21
-        entries.push(InternalBibleEntry::simple("v~", "Has verses here...")); // 22
+        entries.push(InternalBibleEntry::simple("v=", "9")); // 29
+        entries.push(InternalBibleEntry::simple("s1", "Second alternative ending to Mark")); // 30
+        entries.push(InternalBibleEntry::simple("p", "")); // 31
+        entries.push(InternalBibleEntry::simple("v", "9")); // 32
+        entries.push(InternalBibleEntry::simple("v~", "Has verses here...")); // 33
+        entries.push(InternalBibleEntry::simple("¬v", "9")); // 34
+        entries.push(InternalBibleEntry::simple("¬s1", "")); // 35
+        entries.push(InternalBibleEntry::simple("¬c", "1")); // 36
+        entries.push(InternalBibleEntry::simple("¬chapters", "")); // 37
 
         entries
     }
 
     #[test]
-    #[ignore = "Need to get section index working properly"]
     fn test_build_sample_mrk_section_index() {
         set_strict_checking_flag( true );
-        let mut index = InternalBibleBookSectionIndex::new("YSV", "MRK");
-        index.build(create_sample_mrk_test_entries()).unwrap();
-        log::trace!("Index2:{}", index);
-        assert!(index.is_indexed());
+        let mut section_index = InternalBibleBookSectionIndex::new("YSV", "MRK");
+        section_index.build(create_sample_mrk_test_entries()).unwrap();
+        log::trace!("Index2:{}", section_index);
+        assert!(section_index.is_indexed());
 
-        assert_eq!(index.index_data.get_index(0).unwrap().0.to_string(), "-1:0"); // ID Header starts at -1:0
-        assert_eq!(index.index_data.get_index(0).unwrap().1.end_cv().to_string(), "-1:3"); // ID Header ends at -1:3
-        assert_eq!(index.index_data.get_index(0).unwrap().1.start_index(), 0); // starts at entry index 0
-        assert_eq!(index.index_data.get_index(0).unwrap().1.end_index(), 3); // ends at entry index 3
-        assert_eq!(index.index_data.get_index(0).unwrap().1.reason_marker(), "Headers");
-        assert_eq!(index.index_data.get_index(0).unwrap().1.section_name(), "MRK");
+        assert_eq!(section_index.len(), 5); // Headers, c, s1, s1 x2 (at end)
 
-        assert_eq!(index.index_data.get_index(1).unwrap().0.to_string(), "1:1"); // starts at 1:1
-        assert_eq!(index.index_data.get_index(1).unwrap().1.end_cv().to_string(), "1:2"); // ends at 1:2
-        assert_eq!(index.index_data.get_index(1).unwrap().1.start_index(), 4); // starts at entry index 4 (c marker)
-        assert_eq!(index.index_data.get_index(1).unwrap().1.end_index(), 9); // ends at entry index 9
-        assert_eq!(index.index_data.get_index(1).unwrap().1.reason_marker(), "c");
-        assert_eq!(index.index_data.get_index(1).unwrap().1.section_name(), "Mark 1");
+        let first_section = section_index.index_data.get_index(0).unwrap();
+        assert_eq!(first_section.0.to_string(), "-1:0"); // ID Header starts at -1:0
+        assert_eq!(first_section.1.end_cv().to_string(), "-1:5"); // ID Header ends at -1:5
+        assert_eq!(first_section.1.start_index(), 0); // starts at beginning
+        assert_eq!(first_section.1.end_index(), 5); // ends at '¬headers'
+        assert_eq!(first_section.1.reason_marker(), "Headers");
+        assert_eq!(first_section.1.section_name(), "MRK");
 
-        assert_eq!(index.index_data.get_index(2).unwrap().0.to_string(), "1:3"); // starts at 1:3
-        assert_eq!(index.index_data.get_index(2).unwrap().1.end_cv().to_string(), "1:4"); // ends at 1:4
-        assert_eq!(index.index_data.get_index(2).unwrap().1.start_index(), 10); // starts at entry index 10 (s1 marker)
-        assert_eq!(index.index_data.get_index(2).unwrap().1.end_index(), 15); // ends at entry index 15
-        assert_eq!(index.index_data.get_index(2).unwrap().1.reason_marker(), "s1");
-        assert_eq!(index.index_data.get_index(2).unwrap().1.section_name(), "First section heading");
+        let second_section = section_index.index_data.get_index(1).unwrap();
+        assert_eq!(second_section.0.to_string(), "1:1"); // starts at 1:1
+        assert_eq!(second_section.1.end_cv().to_string(), "1:2"); // ends at 1:2
+        assert_eq!(second_section.1.start_index(), 7); // starts at c marker
+        assert_eq!(second_section.1.end_index(), 14); // ends at ¬v marker
+        assert_eq!(second_section.1.reason_marker(), "c");
+        assert_eq!(second_section.1.section_name(), "Mark 1");
+    // #[ignore = "Need to get section index working properly"]
 
-        assert_eq!(index.index_data.get_index(3).unwrap().0.to_string(), "1:4"); // starts at 1:4
-        assert_eq!(index.index_data.get_index(3).unwrap().1.end_cv().to_string(), "1:4"); // ends at 1:4
-        assert_eq!(index.index_data.get_index(3).unwrap().1.start_index(), 16); // starts at entry index 16
-        assert_eq!(index.index_data.get_index(3).unwrap().1.end_index(), 18); // ends at entry index 18
-        assert_eq!(index.index_data.get_index(3).unwrap().1.reason_marker(), "s1");
-        assert_eq!(index.index_data.get_index(3).unwrap().1.section_name(), "First alternative ending to Mark");
+        let third_section = section_index.index_data.get_index(2).unwrap();
+        assert_eq!(third_section.0.to_string(), "1:3"); // starts at 1:3
+        assert_eq!(third_section.1.end_cv().to_string(), "1:4"); // ends at 1:4
+        assert_eq!(third_section.1.start_index(), 15); // starts' at v= marker
+        assert_eq!(third_section.1.end_index(), 22); // ends at '¬s1'
+        assert_eq!(third_section.1.reason_marker(), "s1");
+        assert_eq!(third_section.1.section_name(), "First section heading");
 
-        assert_eq!(index.index_data.get_index(4).unwrap().0.to_string(), "1:9"); // starts at 1:4
-        assert_eq!(index.index_data.get_index(4).unwrap().1.end_cv().to_string(), "1:9"); // ends at 1:4
-        assert_eq!(index.index_data.get_index(4).unwrap().1.start_index(), 19); // starts at entry index 19
-        assert_eq!(index.index_data.get_index(4).unwrap().1.end_index(), 22); // ends at entry index 22
-        assert_eq!(index.index_data.get_index(4).unwrap().1.reason_marker(), "s1");
-        assert_eq!(index.index_data.get_index(4).unwrap().1.section_name(), "Second alternative ending to Mark");
+        let fourth_section = section_index.index_data.get_index(3).unwrap();
+        assert_eq!(fourth_section.0.to_string(), "1:4b"); // starts at 1:4b
+        assert_eq!(fourth_section.1.end_cv().to_string(), "1:4"); // ends at 1:4
+        assert_eq!(fourth_section.1.start_index(), 23); // starts at 'v='
+        assert_eq!(fourth_section.1.end_index(), 28); // ends at '¬s1'
+        assert_eq!(fourth_section.1.reason_marker(), "s1");
+        assert_eq!(fourth_section.1.section_name(), "First alternative ending to Mark");
 
-        assert_eq!(index.len(), 5); // Headers, c, s1, s1 x2 (at end)
+        let fifth_section = section_index.index_data.get_index(4).unwrap();
+        assert_eq!(fifth_section.0.to_string(), "1:9"); // starts at 1:4
+        assert_eq!(fifth_section.1.end_cv().to_string(), "1:9"); // ends at 1:4
+        assert_eq!(fifth_section.1.start_index(), 29); // starts at 'v='
+        assert_eq!(fifth_section.1.end_index(), 36); // ends at '¬s1'
+        assert_eq!(fifth_section.1.reason_marker(), "s1");
+        assert_eq!(fifth_section.1.section_name(), "Second alternative ending to Mark");
     }
 
     fn create_sample_psa_test_entries() -> InternalBibleEntryList {
@@ -1283,73 +1493,79 @@ mod tests {
     }
 
     #[test]
-    #[ignore = "Need to get section index working properly"]
+    #[ignore = "Need to get section index or test working properly"]
     fn test_build_sample_section_index_psa() {
         set_strict_checking_flag( true );
-        let mut index = InternalBibleBookSectionIndex::new("ZSV", "PSA");
-        index.build(create_sample_psa_test_entries()).unwrap();
-        log::trace!("PSA index:{}", index);
-        assert!(index.is_indexed());
+        let mut section_index = InternalBibleBookSectionIndex::new("ZSV", "PSA");
+        section_index.build(create_sample_psa_test_entries()).unwrap();
+        log::trace!("PSA index:{}", section_index);
+        assert!(section_index.is_indexed());
+
+        assert_eq!(section_index.len(), 6); // Headers, is1, c, s1, c, c/s1 (merged)
 
         // 0: Headers
-        assert_eq!(index.index_data.get_index(0).unwrap().0.to_string(), "-1:0");
-        assert_eq!(index.index_data.get_index(0).unwrap().1.end_cv().to_string(), "-1:2");
-        assert_eq!(index.index_data.get_index(0).unwrap().1.start_index(), 0); // starts at entry index 0
-        assert_eq!(index.index_data.get_index(0).unwrap().1.end_index(), 2); // ends at entry index 2
-        assert_eq!(index.index_data.get_index(0).unwrap().1.reason_marker(), "Headers");
-        assert_eq!(index.index_data.get_index(0).unwrap().1.section_name(), "PSA");
+        let first_section = section_index.index_data.get_index(0).unwrap();
+        assert_eq!(first_section.0.to_string(), "-1:0");
+        assert_eq!(first_section.1.end_cv().to_string(), "-1:2");
+        assert_eq!(first_section.1.start_index(), 0); // starts at entry index 0
+        assert_eq!(first_section.1.end_index(), 2); // ends at entry index 2
+        assert_eq!(first_section.1.reason_marker(), "Headers");
+        assert_eq!(first_section.1.section_name(), "PSA");
 
         // 1: Intro
-        assert_eq!(index.index_data.get_index(1).unwrap().0.to_string(), "-1:3");
-        assert_eq!(index.index_data.get_index(1).unwrap().1.end_cv().to_string(), "-1:4");
-        assert_eq!(index.index_data.get_index(1).unwrap().1.start_index(), 3); // starts at entry index 3
-        assert_eq!(index.index_data.get_index(1).unwrap().1.end_index(), 4); // ends at entry index 4
-        assert_eq!(index.index_data.get_index(1).unwrap().1.reason_marker(), "is1");
-        assert_eq!(index.index_data.get_index(1).unwrap().1.section_name(), "Introduction to Psalms");
+        let second_section = section_index.index_data.get_index(1).unwrap();
+        assert_eq!(second_section.0.to_string(), "-1:3");
+        assert_eq!(second_section.1.end_cv().to_string(), "-1:4");
+        assert_eq!(second_section.1.start_index(), 3); // starts at entry index 3
+        assert_eq!(second_section.1.end_index(), 4); // ends at entry index 4
+        assert_eq!(second_section.1.reason_marker(), "is1");
+        assert_eq!(second_section.1.section_name(), "Introduction to Psalms");
 
         // 2: Chapter 1
-        assert_eq!(index.index_data.get_index(2).unwrap().0.to_string(), "1:1");
-        assert_eq!(index.index_data.get_index(2).unwrap().1.end_cv().to_string(), "1:2");
-        assert_eq!(index.index_data.get_index(2).unwrap().1.start_index(), 5); // starts at entry index 5
-        assert_eq!(index.index_data.get_index(2).unwrap().1.end_index(), 10); // ends at entry index 10
-        assert_eq!(index.index_data.get_index(2).unwrap().1.reason_marker(), "c");
-        assert_eq!(index.index_data.get_index(2).unwrap().1.section_name(), "");
+        let third_section = section_index.index_data.get_index(2).unwrap();
+        assert_eq!(third_section.0.to_string(), "1:1");
+        assert_eq!(third_section.1.end_cv().to_string(), "1:2");
+        assert_eq!(third_section.1.start_index(), 5); // starts at entry index 5
+        assert_eq!(third_section.1.end_index(), 10); // ends at entry index 10
+        assert_eq!(third_section.1.reason_marker(), "c");
+        assert_eq!(third_section.1.section_name(), "");
 
         // 3: Mid-chapter heading
-        assert_eq!(index.index_data.get_index(3).unwrap().0.to_string(), "1:3");
-        assert_eq!(index.index_data.get_index(3).unwrap().1.end_cv().to_string(), "1:4");
-        assert_eq!(index.index_data.get_index(3).unwrap().1.start_index(), 11); // starts at entry index 11
-        assert_eq!(index.index_data.get_index(3).unwrap().1.end_index(), 16); // ends at entry index 16
-        assert_eq!(index.index_data.get_index(3).unwrap().1.reason_marker(), "s1");
-        assert_eq!(index.index_data.get_index(3).unwrap().1.section_name(), "First section heading mid-chapter");
+        let fourth_section = section_index.index_data.get_index(3).unwrap();
+        assert_eq!(fourth_section.0.to_string(), "1:3");
+        assert_eq!(fourth_section.1.end_cv().to_string(), "1:4");
+        assert_eq!(fourth_section.1.start_index(), 11); // starts at entry index 11
+        assert_eq!(fourth_section.1.end_index(), 16); // ends at entry index 16
+        assert_eq!(fourth_section.1.reason_marker(), "s1");
+        assert_eq!(fourth_section.1.section_name(), "First section heading mid-chapter");
 
         // 4: Chapter 2
-        assert_eq!(index.index_data.get_index(4).unwrap().0.to_string(), "2:1");
-        assert_eq!(index.index_data.get_index(4).unwrap().1.end_cv().to_string(), "2:2");
-        assert_eq!(index.index_data.get_index(4).unwrap().1.start_index(), 17); // starts at entry index 17
-        assert_eq!(index.index_data.get_index(4).unwrap().1.end_index(), 22); // ends at entry index 22
-        assert_eq!(index.index_data.get_index(4).unwrap().1.reason_marker(), "c");
-        assert_eq!(index.index_data.get_index(4).unwrap().1.section_name(), "");
+        let fifth_section = section_index.index_data.get_index(4).unwrap();
+        assert_eq!(fifth_section.0.to_string(), "2:1");
+        assert_eq!(fifth_section.1.end_cv().to_string(), "2:2");
+        assert_eq!(fifth_section.1.start_index(), 17); // starts at entry index 17
+        assert_eq!(fifth_section.1.end_index(), 22); // ends at entry index 22
+        assert_eq!(fifth_section.1.reason_marker(), "c");
+        assert_eq!(fifth_section.1.section_name(), "");
 
         // 5: Chapter 3 (merged c/s1)
-        assert_eq!(index.index_data.get_index(5).unwrap().0.to_string(), "3:1");
-        assert_eq!(index.index_data.get_index(5).unwrap().1.end_cv().to_string(), "3:2");
-        assert_eq!(index.index_data.get_index(5).unwrap().1.start_index(), 24); // starts at entry index 24 (s1 marker)
-        assert_eq!(index.index_data.get_index(5).unwrap().1.end_index(), 29); // ends at entry index 29
-        assert_eq!(index.index_data.get_index(5).unwrap().1.reason_marker(), "c/s1");
-        assert_eq!(index.index_data.get_index(5).unwrap().1.section_name(), "Psa 3 section heading");
-
-        assert_eq!(index.len(), 6); // Headers, is1, c, s1, c, c/s1 (merged)
+        let sixth_section = section_index.index_data.get_index(5).unwrap();
+        assert_eq!(sixth_section.0.to_string(), "3:1");
+        assert_eq!(sixth_section.1.end_cv().to_string(), "3:2");
+        assert_eq!(sixth_section.1.start_index(), 24); // starts at entry index 24 (s1 marker)
+        assert_eq!(sixth_section.1.end_index(), 29); // ends at entry index 29
+        assert_eq!(sixth_section.1.reason_marker(), "c/s1");
+        assert_eq!(sixth_section.1.section_name(), "Psa 3 section heading");
     }
 
     #[test]
-    #[ignore = "Need to get section index working properly"]
+    #[ignore = "Need to get section index or test working properly"]
     fn test_table_of_contents() {
         set_strict_checking_flag( true );
-        let mut index = InternalBibleBookSectionIndex::new("XSV", "GEN");
-        index.build(create_sample_gen_test_entries()).unwrap();
+        let mut section_index = InternalBibleBookSectionIndex::new("XSV", "GEN");
+        section_index.build(create_sample_gen_test_entries()).unwrap();
 
-        let toc = index.table_of_contents();
+        let toc = section_index.table_of_contents();
         assert!(!toc.is_empty());
 
         // Check that section names are captured
@@ -1362,21 +1578,21 @@ mod tests {
     }
 
     #[test]
-    #[ignore = "Need to get section index working properly"]
+    #[ignore = "Need to get section index or test working properly"]
     fn test_get_section_entries() {
         set_strict_checking_flag( true );
-        let mut index = InternalBibleBookSectionIndex::new("XSV", "GEN");
-        index.build(create_sample_gen_test_entries()).unwrap();
+        let mut section_index = InternalBibleBookSectionIndex::new("XSV", "GEN");
+        section_index.build(create_sample_gen_test_entries()).unwrap();
 
         // Get first section
-        if let Some((cv, _)) = index.iter().next() {
-            let entries = index.get_section_entries(cv).unwrap();
+        if let Some((cv, _)) = section_index.iter().next() {
+            let entries = section_index.get_section_entries(cv).unwrap();
             assert!(!entries.is_empty());
         }
     }
 
     #[test]
-    #[ignore = "Need to get section index working properly"]
+    // #[ignore = "Need to get section index or test working properly"]
     fn test_oet_rv_haggai_section_index_build() {
         // Note that OET-RV Haggai has NO section headings inside verse boundaries
         set_strict_checking_flag( true );
@@ -1394,8 +1610,199 @@ mod tests {
         let options = crate::processing::ProcessLinesOptions::default();
         let processed_line_entries = crate::processing::process_lines(raw_lines, "HAG", "OET-RV", &options);
 
-        let mut index = InternalBibleBookSectionIndex::new("OET-RV", "HAG");
-        index.build(processed_line_entries).unwrap();
+        // println!("OET-RV HAG processed_line_entries = {}", processed_line_entries);
+        // OET-RV HAG processed_line_entries = InternalBibleEntryList:
+        //     0/ id = "HAG - Open English Translation…ders' Version (OET-RV) v0.1.03"
+        //     1/ usfm = "3.0"
+        //     2/ ide = "UTF-8"
+        //     3/ rem = "ESFM v0.6 HAG"
+        //     4/ rem = "WORDTABLE OET-LV_OT_word_table.tsv"
+        //     5/ headers = ""
+        //     6/ h = "Haggai"
+        //     7/ toc1 = "Haggai"
+        //     8/ toc2 = "Haggai"
+        //     9/ toc3 = "Hag."
+        //     10/ mt1 = "Haggai"
+        //     11/ ¬headers = ""
+        //     12/ intro = ""
+        //     13/ is1 = "Introduction"
+        //     14/ ip = "This document contains a numbe… bless their living situation."
+        //     15/ iot = "Main components of this account"
+        //     16/ io1 = "God's command to rebuild the temple 1:1-15"
+        //     17/ io1 = "Stories of comfort and hope 2:1-23"
+        //     18/ ¬iot = ""
+        //     19/ rem = "This is still a very early loo…dvance before using in public."
+        //     20/ ie = ""
+        //     21/ ¬intro = ""
+        //     22/ chapters = ""
+        //     23/ c = "1"
+        //     24/ v= = "1"
+        //     25/ s1 = "God's command to rebuild the temple"
+        //     26/ rem = "/s1 The Lord's Command to Rebu… Command to Rebuild the Temple"
+        //     27/ p = ""
+        //     28/ c# = "1"
+        //     29/ v = "1"
+        //     30/ v~ = "In Dareyavesh's (Darius's¦3755…375591 son), telling them that" + extras
+        //     31/ ¬v = "1"
+        //     32/ v = "2"
+        //     33/ v~ = "Commander-in-chief Yahweh says…2 Yahweh's¦375598 ≈residence.”"
+        //     34/ ¬v = "2"
+        //     35/ ¬p = ""
+        //     36/ p = ""
+        //     37/ v = "3"
+        //     38/ v~ = "Then Yahweh¦375618 ≈gave this …gai¦375621 to tell the people:"
+        //     39/ ¬v = "3"
+        //     40/ ¬p = ""
+        //     41/ m = ""
+        //     42/ v = "4"
+        //     43/ v~ = "Is it a time¦375625 for all of…Yahweh's temple lies in ruins?"
+        //     44/ ¬v = "4"
+        //     45/ v = "5"
+        //     46/ v~ = "≈So¦375635 now Commander-in-ch…e what you're all going to do."
+        //     47/ ¬v = "5"
+        //     48/ v = "6"
+        //     49/ v~ = "You've all planted a lot, ≈but…ets seem to be full of holes.”"
+        //     50/ ¬v = "6"
+        //     51/ ¬m = ""
+        //     52/ p = ""
+        //     53/ v = "7"
+        //     54/ v~ = "≈So Commander-in-chief Yahweh¦…e what you're all going to do."
+        //     55/ ¬v = "7"
+        //     56/ v = "8"
+        //     57/ v~ = "Go up into the hills¦375682 an…e,” says¦375692 Yahweh¦375693."
+        //     58/ ¬v = "8"
+        //     59/ ¬p = ""
+        //     60/ p = ""
+        //     61/ v = "9"
+        //     62/ v~ = "“You ≈expected much, but¦37569…y ≈working on your own houses."
+        //     63/ ¬v = "9"
+        //     64/ v = "10"
+        //     65/ v~ = "That's why the sky withholds t…il withholds its¦375733 crops."
+        //     66/ ¬v = "10"
+        //     67/ v = "11"
+        //     68/ v~ = "I've¦375735 ≈summoned¦375735 a… onto ≈everything you all do.”"
+        //     69/ ¬v = "11"
+        //     70/ ¬p = ""
+        //     71/ v= = "12"
+        //     72/ s1 = "The people start rebuilding"
+        //     73/ rem = "/s1 The People Obey the Lord's…mmand; Obedience to God's Call"
+        //     74/ p = ""
+        //     75/ v = "12"
+        //     76/ v~ = "Then Shealtiyel's son Zerubave… the people ≈respected Yahweh."
+        //     77/ ¬v = "12"
+        //     78/ v = "13"
+        //     79/ v~ = "Then¦375802 Yahweh's¦375805 me…m with¦375806 you¦375811 all.”"
+        //     80/ ¬v = "13"
+        //     81/ v = "14"
+        //     82/ v~ = "Then¦375816 Yahweh ≈inspired S…49, Commander-in-chief Yahweh,"
+        //     83/ ¬v = "14"
+        //     84/ v = "15"
+        //     85/ v~ = "on¦375856 the twenty-fourth da…esh the king¦375860 of Persia."
+        //     86/ ¬v = "15"
+        //     87/ ¬p = ""
+        //     88/ ¬c = "1"
+        //     89/ c = "2"
+        //     90/ v= = "1"
+        //     91/ s1 = "The splendour of the new temple"
+        //     92/ rem = "/s1 The Future Glory of the Te…romised Glory of the New House"
+        //     93/ p = ""
+        //     94/ c# = "2"
+        //     95/ v = "1"
+        //     96/ v~ = "On the 21st of the seventh¦375… prophet¦375873 Haggai¦375872:"
+        //     97/ ¬v = "1"
+        //     98/ v = "2"
+        //     99/ v~ = "Please ≈ask Shealtiyel's son Z…the rest of the people¦375898,"
+        //     100/ ¬v = "2"
+        //     101/ v = "3"
+        //     102/ v~ = "“≈Are there any of you still a…g¦375919 in¦375902 comparison." + extras
+        //     103/ ¬v = "3"
+        //     104/ v = "4"
+        //     105/ v~ = "Yahweh is telling you now, Zer… with you ≈as you work¦375944."
+        //     106/ ¬v = "4"
+        //     107/ v = "5"
+        //     108/ v~ = "≈That's what I promised¦375955…Don't¦375965 be afraid¦375967," + extras
+        //     109/ ¬v = "5"
+        //     110/ v = "6"
+        //     111/ v~ = "because¦375970 Commander-in-ch…9 and the dry land, once more." + extras
+        //     112/ ¬v = "6"
+        //     113/ v = "7"
+        //     114/ v~ = "I'll shake¦375994 all the nati…mander-in-chief Yahweh¦376012."
+        //     115/ ¬v = "7"
+        //     116/ v = "8"
+        //     117/ v~ = "Commander-in-chief Yahweh¦3760…er¦376016 belong¦376017 to me."
+        //     118/ ¬v = "8"
+        //     119/ v = "9"
+        //     120/ v~ = "*I declare that this ≈temple w…sperity to this place¦376035.”"
+        //     121/ ¬v = "9"
+        //     122/ ¬p = ""
+        //     123/ v= = "10"
+        //     124/ s1 = "Haggai consults the priests"
+        //     125/ rem = "/s1 Blessings Promised for Obe…e Prophet Consults the Priests"
+        //     126/ p = ""
+        //     127/ v = "10"
+        //     128/ v~ = "On the 24th of the ninth¦37604… prophet¦376057 Haggai¦376056:"
+        //     129/ ¬v = "10"
+        //     130/ v = "11"
+        //     131/ v~ = "Commander-in-chief Yahweh¦3760…Mosheh's ≈instructions¦376070."
+        //     132/ ¬v = "11"
+        //     133/ v = "12"
+        //     134/ v~ = "‘≈If a priest took some meat¦3…r food  become¦376102 holy?’ ”"
+        //     135/ ¬p = ""
+        //     136/ p = ""
+        //     137/ v~ = "“No, it wouldn't,” the priests¦376104 ≈replied."
+        //     138/ ¬p = ""
+        //     139/ ¬v = "12"
+        //     140/ p = ""
+        //     141/ v = "13"
+        //     142/ v~ = "Then¦376108 Haggai¦376109 aske…ood, would it become unclean?”" + extras
+        //     143/ ¬p = ""
+        //     144/ p = ""
+        //     145/ v~ = "“Yes, it would become unclean,…riests¦376121 answered¦376120."
+        //     146/ ¬p = ""
+        //     147/ ¬v = "13"
+        //     148/ p = ""
+        //     149/ v = "14"
+        //     150/ v~ = "“≈That's what Yahweh¦376139 de…t transfers to your offerings."
+        //     151/ rem = "/s1 The Lord Promises His Blessing"
+        //     152/ ¬v = "14"
+        //     153/ v = "15"
+        //     154/ v~ = "So¦376151 now think back to be…id for Yahweh's¦376169 temple."
+        //     155/ ¬v = "15"
+        //     156/ v = "16"
+        //     157/ v~ = "≈During that time, when someon…re was only enough for twenty."
+        //     158/ ¬v = "16"
+        //     159/ v = "17"
+        //     160/ v~ = "Yahweh¦376205 declares that he…ill didn't¦376199 turn to him."
+        //     161/ ¬v = "17"
+        //     162/ v = "18"
+        //     163/ v~ = "Think back to the time from wh… month¦376219). Consider that."
+        //     164/ ¬v = "18"
+        //     165/ v = "19"
+        //     166/ v~ = "Is any grain left in¦376234 th…bless you from today onwards.”"
+        //     167/ ¬v = "19"
+        //     168/ ¬p = ""
+        //     169/ v= = "20"
+        //     170/ s1 = "God's promise to Zerubavel"
+        //     171/ rem = "/s1 The Lord's Promise to Zeru…ubbabel the Lord's Signet Ring"
+        //     172/ p = ""
+        //     173/ v = "20"
+        //     174/ v~ = "Then Yahweh¦376254 gave a seco…gai¦376259 on¦376260 the 24th:"
+        //     175/ ¬v = "20"
+        //     176/ v = "21"
+        //     177/ v~ = "Tell Zerubavel, the governor¦3…s¦376277 and the earth¦376280."
+        //     178/ ¬v = "21"
+        //     179/ v = "22"
+        //     180/ v~ = "I'll overthrow the thrones¦376… ≈will kill¦376285 each other."
+        //     181/ ¬v = "22"
+        //     182/ v = "23"
+        //     183/ v~ = "Commander-in-chief Yahweh decl…6316 he's been chosen¦376319.”"
+        //     184/ ¬v = "23"
+        //     185/ ¬p = ""
+        //     186/ ¬c = "2"
+        //     187/ ¬chapters = ""
+
+        let mut section_index = InternalBibleBookSectionIndex::new("OET-RV", "HAG");
+        section_index.build(processed_line_entries).unwrap();
 
         // It should give the following seven entries:
         //    0 -1:0 InternalBibleBookSectionIndexEntry object: (inclusive) endCV=-1:12 ix=0–12 (cnt=13) Headers='HAG'
@@ -1405,74 +1812,77 @@ mod tests {
         //    4 2:1 InternalBibleBookSectionIndexEntry object: (inclusive) endCV=2:9 ix=88–119 (cnt=32) s1='The splendour of the new temple'
         //    5 2:10 InternalBibleBookSectionIndexEntry object: (inclusive) endCV=2:19 ix=120–164 (cnt=45) s1='Haggai consults the priests'
         //    6 2:20 InternalBibleBookSectionIndexEntry object: (inclusive) endCV=2:23 ix=165–182 (cnt=18) s1='God's promise to Zerubavel'
-        assert_eq!(index.len(), 7);
+
+        assert_eq!(section_index.len(), 7);
+        let sections: Vec<_> = section_index.index_data.iter().map(|(_, entry)| entry.reason_marker().to_string()).collect();
+        assert_eq!(sections, vec!["Headers", "is1", "s1/c", "s1", "s1/c", "s1", "s1"]);
 
         // 0 -1:0 Headers='HAG'
-        let (cv0, entry0) = index.index_data.get_index(0).unwrap();
+        let (cv0, entry0) = section_index.index_data.get_index(0).unwrap();
         assert_eq!(cv0.to_string(), "-1:0");
-        assert_eq!(entry0.end_cv().to_string(), "-1:12");
+        assert_eq!(entry0.end_cv().to_string(), "-1:11");
         assert_eq!(entry0.start_index(), 0);
-        assert_eq!(entry0.end_index(), 12);
+        assert_eq!(entry0.end_index(), 11);
         assert_eq!(entry0.reason_marker(), "Headers");
         assert_eq!(entry0.section_name(), "HAG");
 
         // 1 -1:13 is1='Introduction'
-        let (cv1, entry1) = index.index_data.get_index(1).unwrap();
+        let (cv1, entry1) = section_index.index_data.get_index(1).unwrap();
         assert_eq!(cv1.to_string(), "-1:13");
-        assert_eq!(entry1.end_cv().to_string(), "-1:22");
+        assert_eq!(entry1.end_cv().to_string(), "-1:21");
         assert_eq!(entry1.start_index(), 13);
-        assert_eq!(entry1.end_index(), 22);
+        assert_eq!(entry1.end_index(), 21);
         assert_eq!(entry1.reason_marker(), "is1");
         assert_eq!(entry1.section_name(), "Introduction");
 
         // 2 1:1 s1='God\'s command to rebuild the temple'
-        let (cv2, entry2) = index.index_data.get_index(2).unwrap();
+        let (cv2, entry2) = section_index.index_data.get_index(2).unwrap();
         assert_eq!(cv2.to_string(), "1:1");
         assert_eq!(entry2.end_cv().to_string(), "1:11");
-        assert_eq!(entry2.start_index(), 25);
-        assert_eq!(entry2.end_index(), 71);
-        assert_eq!(entry2.reason_marker(), "s1");
+        assert_eq!(entry2.start_index(), 23);
+        assert_eq!(entry2.end_index(), 70);
+        assert_eq!(entry2.reason_marker(), "s1/c");
         assert_eq!(entry2.section_name(), "God's command to rebuild the temple");
 
         // 3 1:11 s1='The people start rebuilding'
-        let (cv3, entry3) = index.index_data.get_index(3).unwrap();
+        let (cv3, entry3) = section_index.index_data.get_index(3).unwrap();
         assert_eq!(cv3.to_string(), "1:12");
         assert_eq!(entry3.end_cv().to_string(), "1:15");
         assert_eq!(entry3.start_index(), 71);
-        assert_eq!(entry3.end_index(), 90);
+        assert_eq!(entry3.end_index(), 88);
         assert_eq!(entry3.reason_marker(), "s1");
         assert_eq!(entry3.section_name(), "The people start rebuilding");
 
         // 4 2:1 s1='The splendour of the new temple'
-        let (cv4, entry4) = index.index_data.get_index(4).unwrap();
+        let (cv4, entry4) = section_index.index_data.get_index(4).unwrap();
         assert_eq!(cv4.to_string(), "2:1");
         assert_eq!(entry4.end_cv().to_string(), "2:9");
-        assert_eq!(entry4.start_index(), 90);
-        assert_eq!(entry4.end_index(), 123);
-        assert_eq!(entry4.reason_marker(), "s1");
+        assert_eq!(entry4.start_index(), 89);
+        assert_eq!(entry4.end_index(), 122);
+        assert_eq!(entry4.reason_marker(), "s1/c");
         assert_eq!(entry4.section_name(), "The splendour of the new temple");
 
         // 5 2:9 s1='Haggai consults the priests'
-        let (cv5, entry5) = index.index_data.get_index(5).unwrap();
+        let (cv5, entry5) = section_index.index_data.get_index(5).unwrap();
         assert_eq!(cv5.to_string(), "2:10");
         assert_eq!(entry5.end_cv().to_string(), "2:19");
         assert_eq!(entry5.start_index(), 123);
-        assert_eq!(entry5.end_index(), 169);
+        assert_eq!(entry5.end_index(), 168);
         assert_eq!(entry5.reason_marker(), "s1");
         assert_eq!(entry5.section_name(), "Haggai consults the priests");
 
         // 6 2:19 s1='God\'s promise to Zerubavel'
-        let (cv6, entry6) = index.index_data.get_index(6).unwrap();
+        let (cv6, entry6) = section_index.index_data.get_index(6).unwrap();
         assert_eq!(cv6.to_string(), "2:20");
         assert_eq!(entry6.end_cv().to_string(), "2:23");
         assert_eq!(entry6.start_index(), 169);
-        assert_eq!(entry6.end_index(), 187);
+        assert_eq!(entry6.end_index(), 186); // Don't include the ¬chapters
         assert_eq!(entry6.reason_marker(), "s1");
         assert_eq!(entry6.section_name(), "God's promise to Zerubavel");
     }
 
     #[test]
-    #[ignore = "Need to get section index working properly"]
+    #[ignore = "Need to get section index or test working properly"]
     fn test_oet_rv_malachi_section_index_build() {
         // Note that OET-RV Malachi has 3 section headings inside verse boundaries
         set_strict_checking_flag( true );
@@ -1490,9 +1900,6 @@ mod tests {
         let options = crate::processing::ProcessLinesOptions::default();
         let processed_line_entries = crate::processing::process_lines(raw_lines, "MAL", "OET-RV", &options);
 
-        let mut index = InternalBibleBookSectionIndex::new("OET-RV", "MAL");
-        index.build(processed_line_entries.clone()).unwrap();
-        
         // println!("OET-RV MAL processed_line_entries = {}", processed_line_entries);
         // OET-RV MAL processed_line_entries = InternalBibleEntryList:
         //     0/ id = "MAL - Open English Translation…ders' Version (OET-RV) v0.1.05"
@@ -1775,6 +2182,9 @@ mod tests {
         //     277/ ¬c = "4"
         //     278/ ¬chapters = ""
 
+        let mut section_index = InternalBibleBookSectionIndex::new("OET-RV", "MAL");
+        section_index.build(processed_line_entries.clone()).unwrap();
+        
         // It should give the following eleven entries:
         //    0 -1:0 InternalBibleBookSectionIndexEntry object: (inclusive) endCV=-1:12 ix=0–13 (cnt=14) Headers='MAL'
         //    1 -1:13 InternalBibleBookSectionIndexEntry object: (inclusive) endCV=-1:22 ix=14–23 (cnt=9) is1='Introduction'
@@ -1784,10 +2194,13 @@ mod tests {
         //    4 2:1 InternalBibleBookSectionIndexEntry object: (inclusive) endCV=2:9 ix=88–119 (cnt=32) s1='The splendour of the new temple'
         //    5 2:10 InternalBibleBookSectionIndexEntry object: (inclusive) endCV=2:19 ix=120–164 (cnt=45) s1='Haggai consults the priests'
         //    6 2:20 InternalBibleBookSectionIndexEntry object: (inclusive) endCV=2:23 ix=165–182 (cnt=18) s1='God's promise to Zerubavel'
-        assert_eq!(index.len(), 11);
+
+        assert_eq!(section_index.len(), 11);
+        let sections: Vec<_> = section_index.index_data.iter().map(|(_, entry)| entry.reason_marker().to_string()).collect();
+        assert_eq!(sections, vec!["Headers", "is1", "s1", "s1", "s1/c", "s1", "s1", "s1", "s1", "s1/c"]);
 
         // 0 -1:0 Headers='MAL'
-        let (cv0, entry0) = index.index_data.get_index(0).unwrap();
+        let (cv0, entry0) = section_index.index_data.get_index(0).unwrap();
         assert_eq!(cv0.to_string(), "-1:0");
         assert_eq!(entry0.end_cv().to_string(), "-1:13");
         assert_eq!(entry0.start_index(), 0);
@@ -1796,7 +2209,7 @@ mod tests {
         assert_eq!(entry0.section_name(), "MAL");
 
         // 1 -1:13 is1='Introduction'
-        let (cv1, entry1) = index.index_data.get_index(1).unwrap();
+        let (cv1, entry1) = section_index.index_data.get_index(1).unwrap();
         assert_eq!(cv1.to_string(), "-1:14");
         assert_eq!(entry1.end_cv().to_string(), "-1:23");
         assert_eq!(entry1.start_index(), 14);
@@ -1805,7 +2218,7 @@ mod tests {
         assert_eq!(entry1.section_name(), "Introduction");
 
         // 2 1:1 chapter one start
-        let (cv2, entry2) = index.index_data.get_index(2).unwrap();
+        let (cv2, entry2) = section_index.index_data.get_index(2).unwrap();
         assert_eq!(cv2.to_string(), "1:1");
         assert_eq!(entry2.end_cv().to_string(), "1:1");
         assert_eq!(entry2.start_index(), 24); // c
@@ -1814,7 +2227,7 @@ mod tests {
         assert_eq!(entry2.section_name(), "Malaki 1");
 
         // 3 1:2 s1='Yahweh's love for the Israelis'
-        let (cv3, entry3) = index.index_data.get_index(3).unwrap();
+        let (cv3, entry3) = section_index.index_data.get_index(3).unwrap();
         assert_eq!(cv3.to_string(), "1:2");
         assert_eq!(entry3.end_cv().to_string(), "1:5");
         assert_eq!(entry3.start_index(), 31); // v=

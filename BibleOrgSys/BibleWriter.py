@@ -1199,7 +1199,7 @@ class BibleWriter( InternalBible ):
                     elif marker in ('p','pi1','pi2','pi3','pi4', 's1','s2','s3','s4', 'ms1','ms2','ms3','ms4',): # Drop out these fields
                         ignoredMarkers.add( marker )
                     elif text:
-                        #if marker not in ('p~','v~'): # The most common ones
+                        #if marker not in ('XXXp~','v~'): # The most common ones
                             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"toText.writeTextFile: Using marker {marker!r}:{text!r}" )
                         textBuffer += (' ' if textBuffer else '') + text
                 if textBuffer: myFile.write( f"{textBuffer}\n" ) # Write the last bit
@@ -2466,7 +2466,7 @@ class BibleWriter( InternalBible ):
                     writerObject.writeLineOpenClose( 'p', ' ', ('class','blankParagraph') )
 
                 # Character markers
-                elif marker in ('v~','p~',):
+                elif marker in ('v~','XXXp~',):
                     #if BibleOrgSysGlobals.debugFlag and marker=='v~': assert haveOpenVerse
                     if not haveOpenParagraph:
                         logger.warning( f"toHTML5: Have verse text {text} outside a paragraph in {BBB} {C}:{V}" )
@@ -2487,7 +2487,7 @@ class BibleWriter( InternalBible ):
                         logger.critical( f"toHTML5: {self.abbreviation} lost extras in {marker} field in {BBB} {C}:{V}" )
                         if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: assert False, "We want to stop here"
                     unhandledMarkers.add( marker )
-                if extras and marker not in ('v~','p~','s1','s2','s3','s4','d', 'ip','ipi','ipq','ipr', 'im','imi','imq', 'iq1','iq2','iq3','iq4', 'iex',):
+                if extras and marker not in ('v~','XXXp~','s1','s2','s3','s4','d', 'ip','ipi','ipq','ipr', 'im','imi','imq', 'iq1','iq2','iq3','iq4', 'iex',):
                     logger.critical( f"toHTML5: extras not handled for {marker} at {BBB} {C}:{V}" )
                     if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: assert False, "We want to stop here"
 
@@ -2808,7 +2808,7 @@ class BibleWriter( InternalBible ):
                         logger.warning( f"_toBibleDoorText {self.abbreviation} {BBB} encountered a paragraph error with a verse following {currentParagraphMarker!r} around {C}:{V}" )
                         currentText += f'm{paragraphDelimiter}' # Put in a margin paragraph
                     currentText += fullText
-                elif pseudoMarker == 'p~':
+                elif pseudoMarker == 'XXXp~':
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Ooops", repr(currentText[-4:]) )
                     assert currentText[-1] == paragraphDelimiter
                     assert currentParagraphMarker not in ('','s1','r')
@@ -3573,7 +3573,7 @@ class BibleWriter( InternalBible ):
                     if self.doExtraChecking: assert not text
                     thisHTML += f'<p class="{pqHTMLClassDict[marker]}">'
                     pOpen = True
-                elif marker in ('v~','p~',):
+                elif marker in ('v~','XXXp~',):
                     #if BibleOrgSysGlobals.debugFlag and marker=='v~': assert vOpen
                     if text or extras:
                         if not vOpen:
@@ -3626,7 +3626,7 @@ class BibleWriter( InternalBible ):
                         logger.critical( f"_toBibleDoorJSONCHTML: {self.abbreviation} lost extras in {marker} field in {BBB} {C}:{V}" )
                         if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: assert False, "We want to stop here"
                     unhandledMarkers.add( marker )
-                if extras and marker not in ('v~','p~','s1','s2','s3','s4','d', 'ip','ipi','ipq','ipr', 'im','imi','imq', 'iq1','iq2','iq3','iq4', 'iex',):
+                if extras and marker not in ('v~','XXXp~','s1','s2','s3','s4','d', 'ip','ipi','ipq','ipr', 'im','imi','imq', 'iq1','iq2','iq3','iq4', 'iex',):
                     logger.critical( f"_toBibleDoorJSONCHTML: extras not handled for {marker} at {BBB} {C}:{V}" )
                     if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: assert False, "We want to stop here"
 
@@ -4261,7 +4261,7 @@ class BibleWriter( InternalBible ):
                     if adjText:
                         xw.writeLineOpenSelfclose( 'verse', [('number',adjText.replace('<','').replace('>','').replace('"','')),('style','v')] )
 
-                elif marker in ('v~','p~',):
+                elif marker in ('v~','XXXp~',):
                     if not adjText: logger.warning( f"toUSX2XML: Missing text for {marker}" ); continue
                     xw.removeFinalNewline( suppressFollowingIndent=True )
                     xw.writeLineText( handleInternalTextMarkersForUSX2(adjText)+xtra, noTextCheck=True ) # no checks coz might already have embedded XML
@@ -4762,7 +4762,7 @@ class BibleWriter( InternalBible ):
                     if adjText:
                         xw.writeLineOpenSelfclose( 'v', ('id',adjText.replace('<','').replace('>','').replace('"','')) )
 
-                elif marker in ('v~','p~',):
+                elif marker in ('v~','XXXp~',):
                     if not adjText: logger.warning( f"toUSFXXML: Missing text for {marker}" ); continue
                     # TODO: We haven't stripped out character fields from within the verse — not sure how USFX handles them yet
                     xw.removeFinalNewline( suppressFollowingIndent=True )
@@ -5542,7 +5542,7 @@ class BibleWriter( InternalBible ):
                         haveOpenList = True
                     adjustedText = processXRefsAndFootnotes( text, extras, 0 )
                     writerObject.writeLineOpenClose( 'item', checkOSISText(adjustedText), ('type','x-indent-'+marker[-1]), noTextCheck=True )
-                elif marker in ('v~','p~',):
+                elif marker in ('v~','XXXp~',):
                     adjText = processXRefsAndFootnotes( text, extras, 0 )
                     writerObject.writeLineText( checkOSISText(adjText), noTextCheck=True )
                 elif marker in ('q1','q2','q3','q4',):
@@ -5578,7 +5578,7 @@ class BibleWriter( InternalBible ):
                         logger.critical( f"toOSIS: {self.abbreviation} lost extras in {marker} field in {BBB} {C}:{V}" )
                         #if BibleOrgSysGlobals.debugFlag: assert False, "We want to stop here"
                     unhandledMarkers.add( marker )
-                if marker not in ('v','v~','p','p~','q1','q2','q3','q4','s1','s2','s3','s4','d',) and extras:
+                if marker not in ('v','v~','p','XXXp~','q1','q2','q3','q4','s1','s2','s3','s4','d',) and extras:
                     logger.critical( f"toOSIS: Programming note: Didn't handle {extras!r} extras: {marker}" )
                 lastMarker = marker
 
@@ -6103,7 +6103,7 @@ class BibleWriter( InternalBible ):
                     writerObject.writeLineOpenClose ( 'VERS', text,
                             ('vnumber',verseNumberString) if endVerseNumberString is None else [('vnumber',verseNumberString),('enumber',endVerseNumberString)],
                             noTextCheck=haveEmbeddedStylesFlag )
-                elif marker == 'p~':
+                elif marker == 'XXXp~':
                     if self.doExtraChecking: assert text or extras
                     text = processZefXRefsAndFootnotes( text, extras )
                     text = checkZefaniaText( text, checkLeftovers=self.doExtraChecking )
@@ -6121,7 +6121,7 @@ class BibleWriter( InternalBible ):
                         logger.error( f"toZefania: {self.abbreviation} lost extras in {marker} field in {BBB} {C}:{V}" )
                         #if BibleOrgSysGlobals.debugFlag: assert False, "We want to stop here"
                     unhandledMarkers.add( marker )
-                if extras and marker not in ('v~','p~',) and marker not in ignoredMarkers:
+                if extras and marker not in ('v~','XXXp~',) and marker not in ignoredMarkers:
                     logger.critical( f"toZefania: extras not handled for {marker} at {BBB} {C}:{V}" )
             if haveOpenChapter:
                 writerObject.writeLineClose( 'CHAPTER' )
@@ -6299,7 +6299,7 @@ class BibleWriter( InternalBible ):
                     if not text: # this is an empty (untranslated) verse
                         text = '- - -' # but we'll put in a filler
                     writerObject.writeLineOpenClose ( 'VERSE', text, ('vnumber',verseNumberString) )
-                elif marker == 'p~':
+                elif marker == 'XXXp~':
                     if self.doExtraChecking: assert text or extras
                     # TODO: We haven't stripped out character fields from within the verse — not sure how Haggai handles them yet
                     if text: writerObject.writeLineOpenClose ( 'VERSE', text )
@@ -6311,7 +6311,7 @@ class BibleWriter( InternalBible ):
                         logger.error( f"toHaggai: {self.abbreviation} lost extras in {marker} field in {BBB} {C}:{V}" )
                         #if BibleOrgSysGlobals.debugFlag: assert False, "We want to stop here"
                     unhandledMarkers.add( marker )
-                if extras and marker not in ('v~','p~',) and marker not in ignoredMarkers:
+                if extras and marker not in ('v~','XXXp~',) and marker not in ignoredMarkers:
                     logger.critical( f"toHaggai: extras not handled for {marker} at {BBB} {C}:{V}" )
             if haveOpenParagraph:
                 writerObject.writeLineClose ( 'PARAGRAPH' )
@@ -7019,7 +7019,7 @@ class BibleWriter( InternalBible ):
                         haveOpenList = True
                     adjustedText = processXRefsAndFootnotes( text, extras )
                     writerObject.writeLineOpenClose( 'item', checkSwordText(adjustedText), ('type','x-indent-'+marker[-1]), noTextCheck=True )
-                elif marker in ('v~','p~',):
+                elif marker in ('v~','XXXp~',):
                     #if not haveOpenL: closeAnyOpenLG()
                     #writeVerseStart( writerObject, ix, BBB, chapterRef, text )
                     adjText = processXRefsAndFootnotes( text, extras )
@@ -7058,7 +7058,7 @@ class BibleWriter( InternalBible ):
                         logger.critical( f"toSwordModule: {self.abbreviation} lost extras in {marker} field in {BBB} {C}:{V}" )
                         #if BibleOrgSysGlobals.debugFlag: assert False, "We want to stop here"
                     unhandledMarkers.add( marker )
-                if extras and marker not in ('v~','p~','s1','s2','s3','s4', 'd', ): logger.critical( f"toSwordModule: extras not handled for {marker} at {BBB} {C}:{V}" )
+                if extras and marker not in ('v~','XXXp~','s1','s2','s3','s4', 'd', ): logger.critical( f"toSwordModule: extras not handled for {marker} at {BBB} {C}:{V}" )
                 lastMarker = marker
             if haveOpenIntro or haveOpenOutline or haveOpenLG or haveOpenL or unprocessedMarker:
                 logger.error( f"toSwordModule: a {haveOpenIntro} {haveOpenOutline} {haveOpenLG} {haveOpenL} {unprocessedMarker}" )
@@ -7325,14 +7325,14 @@ class BibleWriter( InternalBible ):
                 elif marker in ('b', 'nb', 'ib', ):
                     if self.doExtraChecking: assert not text
                     ignoredMarkers.add( marker )
-                elif marker in ('v~', 'p~',):
+                elif marker in ('v~', 'XXXp~',):
                     if started: accumulator += (' ' if accumulator else '') + text
                 else:
                     if text:
                         logger.error( f"toSwordSearcher: {self.abbreviation} lost text in {marker} field in {BBB} {C}:{V} {text!r}" )
                         #if BibleOrgSysGlobals.debugFlag: assert False, "We want to stop here"
                     unhandledMarkers.add( marker )
-                #if extras and marker not in ('v~','p~',): logger.critical( f"toSwordSearcher: extras not handled for {marker} at {BBB} {C}:{V}" )
+                #if extras and marker not in ('v~','XXXp~',): logger.critical( f"toSwordSearcher: extras not handled for {marker} at {BBB} {C}:{V}" )
             if accumulator: writer.write( f"{accumulator}\n" )
         # end of toSwordSearcher:writeSSBook
 
@@ -7508,14 +7508,14 @@ class BibleWriter( InternalBible ):
                 elif marker in ('b', 'nb', 'ib', ):
                     if self.doExtraChecking: assert not text
                     ignoredMarkers.add( marker )
-                elif marker in ('v~', 'p~', 'tr',):
+                elif marker in ('v~', 'XXXp~', 'tr',):
                     if started: accumulator += (' ' if accumulator else '') + text
                 else:
                     if text:
                         logger.warning( f"toDrupalBible: {self.abbreviation} lost text in {marker} field in {BBB} {C}:{V} {text!r}" )
                         #if BibleOrgSysGlobals.debugFlag: assert False, "We want to stop here"
                     unhandledMarkers.add( marker )
-                #if extras and marker not in ('v~','p~',): logger.critical( f"toDrupalBible: extras not handled for {marker} at {BBB} {C}:{V}" )
+                #if extras and marker not in ('v~','XXXp~',): logger.critical( f"toDrupalBible: extras not handled for {marker} at {BBB} {C}:{V}" )
             if accumulator: writer.write( f"{bookCode}|{C}|{V}|{linemark}|{doDrupalTextFormat( accumulator )}\n" )
         # end of toDrupalBible:writeDrupalBibleBook
 
@@ -8062,7 +8062,7 @@ class BibleWriter( InternalBible ):
                 elif marker == 'tr':
                     #assert cleanText or extras
                     textBuffer += '\n' + cleanText
-                elif marker in ('v~','p~',):
+                elif marker in ('v~','XXXp~',):
                     #assert cleanText or extras
                     textBuffer += cleanText
                 elif marker in ('b','nb','ib',):
@@ -8074,7 +8074,7 @@ class BibleWriter( InternalBible ):
                         logger.error( f"toPhotoBible: {self.abbreviation} lost text in {marker} field in {BBB} {C}:{V} {cleanText!r}" )
                         if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: assert False, "We want to stop here"
                     unhandledMarkers.add( marker )
-                #if extras and marker not in ('v~','p~',):
+                #if extras and marker not in ('v~','XXXp~',):
                     #logger.critical( f"toPhotoBible: extras not handled for {marker} at {BBB} {C}:{V}" )
                     #if BibleOrgSysGlobals.debugFlag: assert False, "We want to stop here"
                 lastMarker = marker
@@ -9329,7 +9329,7 @@ class BibleWriter( InternalBible ):
                     styleName = "Introduction " if marker[0]=='i' else ""
                     styleName += f"List Item {marker[-1]}"
                     insertODFParagraph( BBB, C, V, styleName, adjText, extras, document, textCursor, 'Default Style' )
-                elif marker in ('v~','p~',):
+                elif marker in ('v~','XXXp~',):
                     if self.doExtraChecking: assert inTextParagraph
                     if adjText or extras:
                         insertFormattedODFText( BBB, C, V, adjText, extras, document, textCursor, 'Default Style' )
@@ -9735,7 +9735,7 @@ class BibleWriter( InternalBible ):
                             assert not text
                             allFile.write( f"\\BibleParagraphStyle{listMarkerTranslate[marker]}\n" )
                             bookFile.write( f"\\BibleParagraphStyle{listMarkerTranslate[marker]}\n" )
-                        elif marker in ('v~','p~',):
+                        elif marker in ('v~','XXXp~',):
                             allFile.write( f"{texText(text)}\n" )
                             bookFile.write( f"{texText(text)}\n" )
                         else:
@@ -9743,7 +9743,7 @@ class BibleWriter( InternalBible ):
                                 logger.error( f"toTeX: {self.abbreviation} lost text in {marker} field in {BBB} {C}:{V} {text!r}" )
                                 #if BibleOrgSysGlobals.debugFlag: assert False, "We want to stop here"
                             unhandledMarkers.add( marker )
-                        #if extras and marker not in ('v~','p~',): logger.critical( f"toTeX: extras not handled for {marker} at {BBB} {C}:{V}" )
+                        #if extras and marker not in ('v~','XXXp~',): logger.critical( f"toTeX: extras not handled for {marker} at {BBB} {C}:{V}" )
                     allFile.write( "\\BibleBookEnd\n" )
                     bookFile.write( "\\BibleBookEnd\n" )
                     bookFile.write( "\\end{document}\n" )
