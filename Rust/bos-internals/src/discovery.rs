@@ -262,7 +262,9 @@ pub fn discover_book(entries: &InternalBibleEntryList, _bbb: &str) -> BookDiscov
             }
         } else if marker == "v~" {
             results.have_verse_text = true;
-            results.completed_verse_count += 1;
+            if last_marker == Some("v".to_string()) {
+                results.completed_verse_count += 1;
+            }
         } else if matches!(marker, "mt" | "mt1" | "mt2" | "mt3" | "mt4") {
             results.have_main_headings = true;
             results.main_headings_count += 1;
@@ -765,7 +767,7 @@ mod tests {
     }
 
     #[test]
-    #[ignore = "Need to fix nesting and CV index first"]
+    #[ignore = "Not handling ms1 marker properly yet"]
     fn test_oet_rv_discovery() {
         let test_folder_path = "../../Tests/DataFilesForTests/OET-RV";
         let mut books = IndexMap::new();

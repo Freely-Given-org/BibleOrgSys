@@ -5,6 +5,7 @@
 // CHANGELOG:
 //   2026-05-27 Make 'nb' cause a close 'nb' to be added BEFORE the new 'c' marker, but the 'nb' itself is closed with the original paragraph marker
 use compact_str::CompactString;
+use std::collections::HashMap;
 use indexmap::IndexMap;
 use usfm_markers::normalize_marker;
 
@@ -16,18 +17,28 @@ use crate::entry::InternalBibleEntry;
 use crate::entry_lists::InternalBibleEntryList;
 use crate::have_strict_checking_flag;
 
+// TODO: These need to go into BOS Markers
+/// Markers that can define section boundaries.
+const NESTABLE_SECTION_MARKERS: &[&str] = &[
+    "is1", // Introductory sections
+    "ms1", //"ms2", "ms3", // Major sections
+    "s1",  // Section headings
+    "iex", // Chapter introductions, e.g., in KJB-1611
+    "c",   // Chapters can also define section boundaries, especially for intro-to-content transitions
+];
+const SECTION_HEADER_FIELDS_PRECEDED_BY_PREVERSE_NUMBER: [&str; 8] = ["s1", "s2", "s3", "s4", "ms1", "ms2", "ms3", "sp"];
+
 /// Add logical verse start markers (`v=`) before section headings
 ///   but don't add multiple markers in the section headings are consecutive
-pub fn add_verse_markers_before_headings(entries: InternalBibleEntryList, work_name: &str, bos_book_code: &str,)
+pub fn add_preverse_markers_before_headings(entries: InternalBibleEntryList, work_name: &str, bos_book_code: &str,)
              -> InternalBibleEntryList {
     let entries_vec = entries.into_vec();
     let num_entries = entries_vec.len();
     let mut result = InternalBibleEntryList::with_capacity(num_entries + 40);
 
-    let fields_preceded = ["s1", "s2", "s3", "s4", "ms1", "ms2", "ms3", "sp"];
-    let mut fields_also_preceded: Vec<&str> = Vec::new();
-    fields_also_preceded.extend_from_slice(paragraph_markers::ALL);
-    fields_also_preceded.extend_from_slice(&["c#", "sr", "r", "mr", "d", "ib", "b", "cl¤", "tr"]);
+    // let mut fields_also_preceded: Vec<&str> = Vec::new();
+    // fields_also_preceded.extend_from_slice(paragraph_markers::ALL);
+    // fields_also_preceded.extend_from_slice(&["c#", "sr", "r", "mr", "d", "ib", "b", "cl¤", "tr"]);
 
     let mut current_verse_number: Option<CompactString> = None;
     // let mut current_verse_clean_text: Option<CompactString> = None;
@@ -35,6 +46,7 @@ pub fn add_verse_markers_before_headings(entries: InternalBibleEntryList, work_n
     let mut current_verse_part_index: usize = 0;
     let mut just_added_vequals = false;
 
+    let mut chapter_number_str = "0";
     for j in 0..num_entries {
         let entry = &entries_vec[j];
         let marker = entry.marker();
@@ -42,8 +54,11 @@ pub fn add_verse_markers_before_headings(entries: InternalBibleEntryList, work_n
             "{} {} entry marker should not be empty and should not contain a backslash: found '{}'", work_name, bos_book_code, marker);
         assert!( normalize_marker(marker) == marker,
             "{} {} Entry marker should be normalized (no extra spaces, etc.): found '{}'", work_name, bos_book_code, marker);
+        if marker == "c" {
+            chapter_number_str = entry.clean_text();
+        }
 
-        if fields_preceded.contains(&marker) {
+        if SECTION_HEADER_FIELDS_PRECEDED_BY_PREVERSE_NUMBER.contains(&marker) {
             let mut saw_continuation_after_field = false;
             let mut inserted_verse_text = String::new();
 
@@ -56,7 +71,7 @@ pub fn add_verse_markers_before_headings(entries: InternalBibleEntryList, work_n
                     if saw_continuation_after_field && current_verse_number.is_some() {
                         if let Some(current_verse) = current_verse_number.as_deref() {
                             let verse_text = if current_verse_part_index > 0 {
-                                println!("{} {} added line_entry 'v=' = '{}b'", work_name, bos_book_code, current_verse);
+                                // println!("{} {} added c{} line_entry 'v=' = '{}b'", work_name, bos_book_code, chapter_number_str, current_verse);
                                 format!("{current_verse}b")
                             } else {
                                 current_verse.to_string()
@@ -121,7 +136,7 @@ pub fn add_verse_markers_before_headings(entries: InternalBibleEntryList, work_n
     }
 
     if have_strict_checking_flag() || cfg!(debug_assertions) {
-        let validation_results = validate_verse_starts(&result);
+        let validation_results = validate_preverse_marker_insertions(&result);
         if !validation_results.is_empty() {
             panic!("add_verse_numbers_before_headings for {} {} failed with issues: {:?}", work_name, bos_book_code, validation_results);
         }
@@ -131,7 +146,7 @@ pub fn add_verse_markers_before_headings(entries: InternalBibleEntryList, work_n
 }
 
 /// (Debug) Validate the processed lines for common issues and return a list of error messages.
-pub fn validate_verse_starts(processed_lines: &InternalBibleEntryList) -> Vec<String> {
+pub fn validate_preverse_marker_insertions(processed_lines: &InternalBibleEntryList) -> Vec<String> {
     let mut issues = Vec::new();
 
     if processed_lines.is_empty() {
@@ -160,9 +175,9 @@ pub fn validate_verse_starts(processed_lines: &InternalBibleEntryList) -> Vec<St
             //         processed_lines[n + 3].marker().to_string(),
             //         processed_lines[n + 4].marker().to_string());
             // }
-            if !["s1", "s2", "s3", "s4", "ms1", "ms2", "ms3", "sp"].contains(&next_marker.as_str()) {
+            if !SECTION_HEADER_FIELDS_PRECEDED_BY_PREVERSE_NUMBER.contains(&next_marker.as_str()) {
                 issues.push(format!(
-                    "Special verse number marker 'v=' at index {} is not followed by a verse or section marker (found '{}')",
+                    "Preverse number marker 'v=' at index {} is not followed by a verse or section marker (found '{}')",
                     n, next_marker
                 ));
             }
@@ -179,7 +194,7 @@ pub fn validate_verse_starts(processed_lines: &InternalBibleEntryList) -> Vec<St
                 + marker_counts.get("ms1").cloned().unwrap_or(0)
                 + marker_counts.get("ms2").cloned().unwrap_or(0)
                 + marker_counts.get("sp").cloned().unwrap_or(0),
-        "There should not be more 'v=' markers than section markers, but found {} 'v=' markers and {} section markers",
+        "There should not be more preverse 'v=' markers than section markers, but found {} 'v=' markers and {} section markers",
         marker_counts.get("v=").cloned().unwrap_or(0),
         marker_counts.get("s1").cloned().unwrap_or(0)
             + marker_counts.get("s2").cloned().unwrap_or(0)
@@ -227,6 +242,8 @@ pub fn add_nesting_markers(
     let mut last_marker: Option<CompactString> = None;
     let mut last_p_marker: Option<CompactString> = None;
     let mut last_s_marker: Option<CompactString> = None;
+    let mut section_crosses_chapters = HashMap::new();
+    for section_marker in NESTABLE_SECTION_MARKERS { section_crosses_chapters.insert(CompactString::from(*section_marker), false); }
 
     // Helper functions for look-ahead
     let chapter_has_ended = |start_idx: usize, entries: &[InternalBibleEntry]| {
@@ -256,28 +273,28 @@ pub fn add_nesting_markers(
     };
 
     let section_has_ended = |current_marker: &str, start_idx: usize, entries: &[InternalBibleEntry]| {
-        let mut other_possibilities = Vec::new();
-        if let Some(level_char) = current_marker.chars().last()
-            && level_char.is_ascii_digit()
-            && level_char > '1'
-        {
-            let level = level_char.to_digit(10).unwrap();
-            let base = &current_marker[..current_marker.len() - 1];
-            for z in 1..level {
-                other_possibilities.push(format!("{}{}", base, z));
-            }
-        }
-        if matches!(current_marker, "s1" | "s2" | "s3" | "s4") {
-            other_possibilities.push("ms1".to_string());
-            other_possibilities.push("ms2".to_string());
-        }
+        // let mut other_possibilities = Vec::new();
+        // if let Some(level_char) = current_marker.chars().last()
+        //     && level_char.is_ascii_digit()
+        //     && level_char > '1'
+        // {
+        //     let level = level_char.to_digit(10).unwrap();
+        //     let base = &current_marker[..current_marker.len() - 1];
+        //     for z in 1..level {
+        //         other_possibilities.push(format!("{}{}", base, z));
+        //     }
+        // }
+        // if matches!(current_marker, "s1" | "s2" | "s3" | "s4") {
+        //     other_possibilities.push("ms1".to_string());
+        //     other_possibilities.push("ms2".to_string());
+        // }
 
         for entry in entries.iter().skip(start_idx + 1) {
             let m = entry.marker();
-            if m == current_marker || m == "v=" || other_possibilities.iter().any(|p| p == m) {
+            if m == current_marker || m == "v=" || NESTABLE_SECTION_MARKERS.iter().any(|p| *p == m) {
                 return true;
             }
-            if matches!(m, "v" | "v~" | "XXXp~") {
+            if matches!(m, "v" | "v~") {
                 return false;
             }
         }
@@ -291,7 +308,21 @@ pub fn add_nesting_markers(
             if paragraph_markers::is_paragraph(m) || m == "v=" || main_text_list_markers::is_main_text_list(m) {
                 return true;
             }
-            if matches!(m, "v" | "v~" | "XXXp~") {
+            if matches!(m, "v" | "v~") {
+                return false;
+            }
+        }
+        true
+    };
+
+    let list_has_ended = |start_idx: usize, entries: &[InternalBibleEntry]| {
+        for entry in entries.iter().skip(start_idx + 1) {
+            let m = entry.marker();
+            // "v=" comes before section headings and some other list markers
+            if paragraph_markers::is_paragraph(m) || m == "v=" {
+                return true;
+            }
+            if matches!(m, "v" | "v~" | "li1" | "li2" | "li3" | "li4" ) {
                 return false;
             }
         }
@@ -301,7 +332,7 @@ pub fn add_nesting_markers(
     // let find_next_relevant_list_marker = |start_idx: usize, entries: &[InternalBibleEntry]| {
     //     for entry in entries.iter().skip(start_idx + 1) {
     //         let m = entry.marker();
-    //         if !matches!(m, "c" | "v" | "v~" | "XXXp~") {
+    //         if !matches!(m, "c" | "v" | "v~") {
     //             return Some(CompactString::from(m));
     //         }
     //     }
@@ -328,8 +359,7 @@ pub fn add_nesting_markers(
         let marker = entry.marker();
         let marker_owned = CompactString::from(marker);
         let text = entry.clean_text();
-        // println!("Processing entry {}: Marker: {}, Clean Text: '{}', open_markers {}", j, marker, text, open_markers.join(", "));
-        // assert!(work_name!="OET-RV" ||bos_book_code != "HAG" || new_lines.len() != 92, "Gone too far without finding the expected verse end marker for 1:15 in OET-RV Haggai: Got {:#?}", new_lines.slice(85,95).iter());
+        // println!("Processing {} {} entry {}: Marker: {}, Clean Text: '{}', open_markers {}", work_name, bos_book_code, j, marker, text, open_markers.join(", "));
 
         if current_chapter == "-1" {
             current_verse = CompactString::from(new_lines.len().to_string());
@@ -367,6 +397,35 @@ pub fn add_nesting_markers(
             open_markers.pop();
             new_lines.push(InternalBibleEntry::simple("¬ilist", ""));
         }
+        if !["v","v~","li1"].contains(&marker) && list_has_ended(j, &entries_vec) {
+            // if let Some(last_open) = open_markers.last().map(|s| s.to_string())
+            //     && last_open == "li1"
+            //     && list_has_ended(j, &entries_vec)
+            // {
+            //     open_markers.pop();
+            //     new_lines.push(InternalBibleEntry::simple("¬li1", ""));
+            // }
+            // else
+            if let Some(l_pos) = open_markers.iter().rposition(|m| m == "li1")
+                && list_has_ended(j, &entries_vec) { // the list can also end mid-verse
+                open_markers.remove(l_pos);
+                new_lines.push(InternalBibleEntry::simple("¬li1", ""));
+            }
+            if let Some(l_pos) = open_markers.iter().rposition(|m| m == "list")
+                && list_has_ended(j, &entries_vec) { // the list can also end mid-verse
+                open_markers.remove(l_pos);
+                new_lines.push(InternalBibleEntry::simple("¬list", ""));
+            }
+        //     if let Some(last_open) = open_markers.last().map(|s| s.to_string())
+        //         && last_open == "list"
+        //         && list_has_ended(j, &entries_vec)
+        //     {
+        //         open_markers.pop();
+        //         new_lines.push(InternalBibleEntry::simple("¬list", ""));
+        //     }
+        // }
+        }
+
         // if let Some(last_open) = open_markers.last().map(|s| s.to_string())
         //     && last_open == "list"
         //     && !main_text_list_markers::is_main_text_list(marker)
@@ -385,17 +444,22 @@ pub fn add_nesting_markers(
         // }
 
         if marker == "c" {
+            println!("At c with open_markers=[{}]", open_markers.join(", "));
             (c, v) = (text, "0");
-            if let Some(last_open) = open_markers.last().map(|s| s.to_string())
-                && (last_open == "headers" || last_open == "intro")
-            {
-                open_markers.pop();
-                new_lines.push(InternalBibleEntry::simple(format!("¬{}", last_open), ""));
+
+            for _ in 0..3 {
+                if let Some(last_open) = open_markers.last().map(|s| s.to_string())
+                    && (last_open == "headers" || last_open == "intro"  || last_open == "is1")
+                {
+                    open_markers.pop();
+                    new_lines.push(InternalBibleEntry::end_marker(format!("¬{}", last_open), "").expect("Oops"));
+                }
+                else { break; }
             }
 
             if let Some(pos) = open_markers.iter().rposition(|m| m == "v") {
                 let m = open_markers.remove(pos);
-                new_lines.push(InternalBibleEntry::simple(format!("¬{}", m), current_verse.as_str()));
+                new_lines.push(InternalBibleEntry::end_marker(format!("¬{}", m), current_verse.as_str()).expect("Oops"));
             }
 
             // Check if there's an nb marker after this chapter
@@ -409,22 +473,58 @@ pub fn add_nesting_markers(
                     // nb extends this paragraph across chapters
                     // Close with ¬nb instead of ¬p or whatever to indicate section break
                     // BUT keep the paragraph on the stack so it can be closed later
-                    new_lines.push(InternalBibleEntry::simple("¬nb", ""));
+                    new_lines.push(InternalBibleEntry::end_marker("¬nb", "").expect("Oops"));
                     // Do NOT remove from open_markers - paragraph continues
                     // Do NOT clear last_p_marker - it will be closed at the next paragraph
                 } else {
                     // Paragraph is ending - close it BEFORE closing the previous chapter
                     let m = open_markers.remove(pos);
                     assert_ne!(new_lines.last().expect("Must be there").marker(), "v=", "Adding ¬{} after v= with open_markers=[{}]", m, open_markers.join(", "));
-                    new_lines.push(InternalBibleEntry::simple(format!("¬{}", m), ""));
+                    new_lines.push(InternalBibleEntry::end_marker(format!("¬{}", m), "").expect("Oops"));
                     last_p_marker = None;
                 }
             }
 
+            // Close a section BEFORE closing the chapter if it hasn't crossed chapter boundaries
+            if let Some(last_s) = &last_s_marker
+            && let Some(s_pos) = open_markers.iter().rposition(|m| NESTABLE_SECTION_MARKERS.contains(&&m.as_str())) {
+                if section_has_ended(last_s, j, &entries_vec)
+                && !section_crosses_chapters[last_s] {
+                    println!(
+                        "At {} {}:{} processing chapter marker and closing section that hasn't crossed chapter boundaries: last_s='{}' Current open markers: {}",
+                        j, c, v, last_s, open_markers.join(", "));
+                    assert_eq!(s_pos, open_markers.len()-1, "Expected {} to be last marker (not {}) in [{}] with last_s_marker='{:?}'", last_s, s_pos, open_markers.join(", "), last_s_marker); // Must be the last marker then
+                    new_lines.push(InternalBibleEntry::end_marker(format!("¬{}", last_s), "").expect("Oops"));
+                    open_markers.remove(s_pos); // Could do pop here
+                    last_s_marker = None;
+                }
+                else {
+                    println!(
+                        "At {} {}:{} processing chapter marker and seems like section has crossed chapter boundaries: last_s='{}' Current open markers: {}",
+                        j, c, v, last_s, open_markers.join(", "));
+                    section_crosses_chapters.insert(last_s.clone(), true);
+                }
+            }
+
             // Close the previous chapter
-            if let Some(pos) = open_markers.iter().rposition(|m| m == "c") {
-                let m = open_markers.remove(pos);
-                new_lines.push(InternalBibleEntry::simple(format!("¬{}", m), current_chapter.as_str()));
+            if let Some(c_pos) = open_markers.iter().rposition(|m| m == "c") {
+                let m = open_markers.remove(c_pos);
+                new_lines.push(InternalBibleEntry::end_marker("¬c", current_chapter.as_str()).expect("Oops"));
+            }
+
+            // Close a section AFTER closing the chapter if it has crossed chapter boundaries
+            if let Some(last_s) = &last_s_marker
+            && let Some(s_pos) = open_markers.iter().rposition(|m| NESTABLE_SECTION_MARKERS.contains(&&m.as_str())) {
+                if section_has_ended(last_s, j, &entries_vec)
+                && section_crosses_chapters[last_s] {
+                    println!(
+                        "At {} {}:{} processing chapter marker and closing section that has crossed chapter boundaries: last_s='{}' Current open markers: {}",
+                        j, c, v, last_s, open_markers.join(", "));
+                    assert_eq!(s_pos, open_markers.len()-1, "Expected {} to be last marker (not {}) in [{}] with last_s_marker='{:?}'", last_s, s_pos, open_markers.join(", "), last_s_marker); // Must be the last marker then
+                    new_lines.push(InternalBibleEntry::simple(format!("¬{}", last_s), ""));
+                    open_markers.remove(s_pos); // Could do pop here
+                    last_s_marker = None;
+                }
             }
 
             if !open_markers.iter().any(|m| m == "chapters") {
@@ -435,8 +535,9 @@ pub fn add_nesting_markers(
             current_chapter = CompactString::from(text);
             current_verse = CompactString::from("0");
             open_markers.push(marker_owned.clone());
-
-        } else if marker == "v" { // || marker == "v="
+        }
+        
+        else if marker == "v" { // || marker == "v="
             v = text;
             // For verse markers, we want to close any open verse if the verse is ending
             //  and close any open paragraph if the verse is ending and the next marker is not a continuation of the verse.
@@ -445,7 +546,7 @@ pub fn add_nesting_markers(
                 if let Some(last_open_m) = open_markers.last().map(|s| s.to_string()) {
                     if last_open_m == "v" {
                         open_markers.pop();
-                        new_lines.push(InternalBibleEntry::simple("¬v", current_verse.as_str()));
+                        new_lines.push(InternalBibleEntry::end_marker("¬v", current_verse.as_str()).expect("msg"));
                         made_change = true;
                     } else if let Some(last_p) = &last_p_marker
                         && last_open_m == last_p.as_str()
@@ -454,7 +555,7 @@ pub fn add_nesting_markers(
                         // Paragraph is ending - close it BEFORE closing the verse
                         assert_ne!(new_lines.last().expect("Must be there").marker(), "v=", "At {}:{} adding ¬{} after v= with open_markers=[{}]", c, v, last_open_m, open_markers.join(", "));
                         open_markers.pop();
-                        new_lines.push(InternalBibleEntry::simple(format!("¬{}", last_open_m), ""));
+                        new_lines.push(InternalBibleEntry::end_marker(format!("¬{}", last_open_m), "").expect("Oops"));
                         made_change = true;
                     }
                 }
@@ -464,41 +565,69 @@ pub fn add_nesting_markers(
             }
             if let Some(pos) = open_markers.iter().rposition(|m| m == "v") {
                 let m = open_markers.remove(pos);
-                new_lines.push(InternalBibleEntry::simple(format!("¬{}", m), current_verse.as_str()));
+                new_lines.push(InternalBibleEntry::end_marker(format!("¬{}", m), current_verse.as_str()).expect("Oops"));
             }
             current_verse = CompactString::from(text);
             if marker == "v" {
                 open_markers.push(marker_owned.clone());
             }
-        } else if marker == "v=" { // Then we're about to hit a section heading or similar
+        }
+
+        else if marker == "v=" { // Then we're about to hit a section heading or similar
             // For verse markers, we want to close any open verse if the verse is ending
             //  and close any open paragraph if the verse is ending and the next marker is not a continuation of the verse.
-            // if cfg!(debug_assertions) {
-            //     println!(
-            //         "At {} {}:{} processing verse marker {} = '{}': last_p_marker='{}' Current open markers: {}",
-            //         j, c, v, marker, text, last_p_marker.clone().unwrap_or_default(), open_markers.join(", "));
-            // }
+            if cfg!(debug_assertions) {
+                println!(
+                    "At {} {}:{} processing preverse marker {} = '{}': last_p_marker='{}' Current open markers: {}",
+                    j, c, v, marker, text, last_p_marker.clone().unwrap_or_default(), open_markers.join(", "));
+            }
             for _ in 0..9 {
                 let mut made_change = false;
                 if let Some(last_open_m) = open_markers.last().map(|s| s.to_string()) {
+                    // Close any open verse (if it's actually ended)
                     if last_open_m == "v" && verse_has_ended(j, &entries_vec) {
                         open_markers.pop();
-                        new_lines.push(InternalBibleEntry::simple("¬v", current_verse.as_str()));
+                        new_lines.push(InternalBibleEntry::end_marker("¬v", current_verse.as_str()).expect("Oops"));
                         made_change = true;
-                    } else if let Some(last_p) = &last_p_marker
+                    }
+                    // Close any open paragraph
+                    if let Some(last_p) = &last_p_marker
                         // && last_open_m == last_p.as_str()
                         // && paragraph_has_ended(j, &entries_vec)
                         {
                         // Paragraph is ending - close it BEFORE closing the verse
                         // but the paragraph might be followed by an open verse marker in open_markers
                         assert_ne!(new_lines.last().expect("Must be there").marker(), "v=",
-                            "At {}:{} adding ¬{} after v= with last_p_marker='{}' open_markers=[{}]",
+                            "At {}:{} adding ¬{} before v= with last_p_marker='{}' open_markers=[{}]",
                             c, v, last_open_m, last_p_marker.clone().unwrap_or_default(), open_markers.join(", "));
                         if let Some(pos) = open_markers.iter().rposition(|m| m == last_p) {
                             open_markers.remove(pos);
-                            new_lines.push(InternalBibleEntry::simple(format!("¬{}", last_p), ""));
+                            new_lines.push(InternalBibleEntry::end_marker(format!("¬{}", last_p), "").expect("Oops"));
                             made_change = true;
                         }
+                    }
+                    // If the last open marker was a section, and the section has ended, then close it
+                    if let Some(last_s) = &last_s_marker
+                        && last_open_m == last_s.as_str()
+                        && section_has_ended(last_s, j, &entries_vec)
+                    {
+                        println!("    Removing {} from end of {:?}", last_s, open_markers);
+                        assert_ne!(new_lines.last().expect("Must be there").marker(), "v=", "Adding ¬{} before v= with open_markers=[{}]", last_open_m, open_markers.join(", "));
+                        open_markers.pop();
+                        new_lines.push(InternalBibleEntry::end_marker(format!("¬{}", last_open_m), "").expect("Oops"));
+                        made_change = true;
+                    }
+                    // If there's an open section (followed by an open chapter), then close the open section here
+                    else if let Some(last_s) = &last_s_marker
+                        // && last_open_m == last_s.as_str()
+                        && section_has_ended(last_s, j, &entries_vec)
+                        && open_markers.contains(&last_s)
+                    { // There must be a c marker at the end of open_markers after the s
+                        println!("    Removing {} from middle of {:?}", last_s, open_markers);
+                        assert_ne!(new_lines.last().expect("Must be there").marker(), "v=", "Adding ¬{} before v= with open_markers=[{}]", last_s, open_markers.join(", "));
+                        open_markers.retain(|ss| ss != last_s); // Remove that section marker
+                        new_lines.push(InternalBibleEntry::end_marker(format!("¬{}", last_s), "").expect("Oops"));
+                        made_change = true;
                     }
                 }
                 if !made_change {
@@ -510,31 +639,33 @@ pub fn add_nesting_markers(
             //     new_lines.push(InternalBibleEntry::simple(format!("¬{}", m), current_verse.as_str()));
             // }
             current_verse = CompactString::from(text);
-
-        } else if heading_markers::is_heading(marker) {
+        }
+        
+        else if heading_markers::is_heading(marker) { // e.g., s1, s2, but also including 'ms1','ms2', etc.
             // For heading markers, we want to close any open verse, paragraph, or section if the heading is ending them.
-            for _ in 0..9 {
+            for q_q in 0..9 {
+                println!("       {} loop with marker={}, last_p_marker={:?} last_s_marker={:?} and open_markers=[{}]", q_q, marker, last_p_marker, last_s_marker, open_markers.join(", "));
                 let mut made_change = false;
                 if let Some(last_open_m) = open_markers.last().map(|s| s.to_string()) {
                     if last_open_m == "v" && verse_has_ended(j, &entries_vec) {
                         open_markers.pop();
-                        new_lines.push(InternalBibleEntry::simple("¬v", current_verse.as_str()));
+                        new_lines.push(InternalBibleEntry::end_marker("¬v", current_verse.as_str()).expect("Oops"));
+                        made_change = true;
+                    } else if let Some(last_s) = &last_s_marker
+                        && last_open_m == last_s.as_str()
+                        && (marker==last_s || section_has_ended(last_s, j, &entries_vec))
+                    {
+                        assert_ne!(new_lines.last().expect("Must be there").marker(), "v=", "HERE Adding ¬{} after v= with open_markers=[{}]", last_open_m, open_markers.join(", "));
+                        open_markers.pop();
+                        new_lines.push(InternalBibleEntry::end_marker(format!("¬{}", last_open_m), "").expect("Oops"));
                         made_change = true;
                     } else if let Some(last_p) = &last_p_marker {
                         if last_open_m == last_p.as_str() {
                             assert_ne!(new_lines.last().expect("Must be there").marker(), "v=", "Adding ¬{} after v= with open_markers=[{}]", last_open_m, open_markers.join(", "));
                             open_markers.pop();
-                            new_lines.push(InternalBibleEntry::simple(format!("¬{}", last_open_m), ""));
+                            new_lines.push(InternalBibleEntry::end_marker(format!("¬{}", last_open_m), "").expect("Oops"));
                             made_change = true;
                         }
-                    } else if let Some(last_s) = &last_s_marker
-                        && last_open_m == last_s.as_str()
-                        && section_has_ended(last_s, j, &entries_vec)
-                    {
-                        assert_ne!(new_lines.last().expect("Must be there").marker(), "v=", "Adding ¬{} after v= with open_markers=[{}]", last_open_m, open_markers.join(", "));
-                        open_markers.pop();
-                        new_lines.push(InternalBibleEntry::simple(format!("¬{}", last_open_m), ""));
-                        made_change = true;
                     }
                 }
                 if !made_change {
@@ -545,44 +676,55 @@ pub fn add_nesting_markers(
                 && let Some(pos) = open_markers.iter().rposition(|m| m == "v")
             {
                 let m = open_markers.remove(pos);
-                new_lines.push(InternalBibleEntry::simple(format!("¬{}", m), current_verse.as_str()));
+                new_lines.push(InternalBibleEntry::end_marker(format!("¬{}", m), current_verse.as_str()).expect("Oops"));
             }
             if let Some(lp) = &last_p_marker
                 && let Some(pos) = open_markers.iter().rposition(|m| m == lp)
             {
                 let m = open_markers.remove(pos);
                 assert_ne!(new_lines.last().expect("Must be there").marker(), "v=", "Adding ¬{} after v= with open_markers=[{}]", m, open_markers.join(", "));
-                new_lines.push(InternalBibleEntry::simple(format!("¬{}", m), ""));
+                new_lines.push(InternalBibleEntry::end_marker(format!("¬{}", m), "").expect("Oops"));
             }
-            if let Some(ls) = &last_s_marker
-                && let Some(pos) = open_markers.iter().rposition(|m| m == ls)
-            {
-                let m = open_markers.remove(pos);
-                new_lines.push(InternalBibleEntry::simple(format!("¬{}", m), ""));
-            }
+            // // This code also closes 's2' markers which aren't open
+            // if let Some(ls) = &last_s_marker
+            //     && let Some(pos) = open_markers.iter().rposition(|m| m == ls)
+            // {
+            //     let m = open_markers.remove(pos);
+            //     new_lines.push(InternalBibleEntry::end_marker(format!("¬{}", m), ""));
+            // }
             last_p_marker = None;
-        } else if main_text_list_markers::is_main_text_list(marker) {
+            if NESTABLE_SECTION_MARKERS.contains(&marker) {
+                assert!(!open_markers.contains(&marker_owned),
+                    "add_nesting_markers for {} {} about to add another {} to {:?}",
+                    work_name, bos_book_code, marker, open_markers);
+                section_crosses_chapters.insert(CompactString::from(marker), false);
+                open_markers.push(marker_owned.clone());
+                last_s_marker = Some(marker_owned.clone());
+            }
+        }
+        
+        else if main_text_list_markers::is_main_text_list(marker) {
             // NOTE: These MUST come before the paragraph marker check (because these markers are included)
             // For main text list markers, we want to close any open verse or paragraph if the list is ending.
             // if cfg!(debug_assertions) {
             //     println!("At {} processing list marker {} = '{}' last_p_marker={:?} Current open markers: {}",
             //         j, marker, text, last_p_marker, open_markers.join(", "));
             // }
-            // This loop is to close any open verse of paragraph that should be closed before the new list entry starts.
+            // This loop is to close any open verse or paragraph that should be closed before the new list entry starts.
             for _ in 0..9 {
                 let mut made_change = false;
                 if let Some(last_open_m) = open_markers.last().map(|s| s.to_string()) {
                     // println!("Last open m 1 = {}", last_open_m);
                     if last_open_m == "v" && verse_has_ended(j, &entries_vec) {
                         open_markers.pop();
-                        new_lines.push(InternalBibleEntry::simple("¬v", current_verse.as_str()));
+                        new_lines.push(InternalBibleEntry::end_marker("¬v", current_verse.as_str()).expect("Oops"));
                         made_change = true;
                     }
                 } else if let Some(last_p) = &last_p_marker
                     && main_text_list_markers::is_main_text_list(last_p)
                 {
                     open_markers.pop();
-                    new_lines.push(InternalBibleEntry::simple(format!("¬{}", last_p), ""));
+                    new_lines.push(InternalBibleEntry::end_marker(format!("¬{}", last_p), "").expect("Oops"));
                     made_change = true;
                 }
                 if !made_change {
@@ -593,13 +735,13 @@ pub fn add_nesting_markers(
                 && let Some(pos) = open_markers.iter().rposition(|m| m == "v")
             {
                 let m = open_markers.remove(pos);
-                new_lines.push(InternalBibleEntry::simple(format!("¬{}", m), current_verse.as_str()));
+                new_lines.push(InternalBibleEntry::end_marker(format!("¬{}", m), current_verse.as_str()).expect("Oops"));
             }
             if let Some(lp) = &last_p_marker
                 && let Some(pos) = open_markers.iter().rposition(|m| m == lp)
             {
                 let m = open_markers.remove(pos);
-                new_lines.push(InternalBibleEntry::simple(format!("¬{}", m), ""));
+                new_lines.push(InternalBibleEntry::end_marker(format!("¬{}", m), "").expect("Oops"));
             }
             if !open_markers.iter().any(|m| m == "list") {
                 new_lines.push(InternalBibleEntry::nesting_marker("list"));
@@ -607,9 +749,13 @@ pub fn add_nesting_markers(
             }
             open_markers.push(marker_owned.clone());
             last_p_marker = Some(marker_owned.clone());
-        } else if marker == "nb" { // NOTE: This MUST come before the paragraph marker check (because this marker is included)
+        }
+        
+        else if marker == "nb" { // NOTE: This MUST come before the paragraph marker check (because this marker is included)
             // nb is a NOP for nesting - it's just a paragraph marker that extends across chapters
-        } else if paragraph_markers::is_paragraph(marker) {
+        }
+        
+        else if paragraph_markers::is_paragraph(marker) {
             // For paragraph markers, we want to close any open verse if the paragraph is ending.
             // if cfg!(debug_assertions) && open_markers.contains(&CompactString::new("list")) {
             //         println!("At {} processing paragraph marker {} = '{}' last_p_marker={:?} Current open markers: {}",
@@ -620,13 +766,13 @@ pub fn add_nesting_markers(
                 if let Some(last_open_m) = open_markers.last().map(|s| s.to_string()) {
                     if last_open_m == "v" && verse_has_ended(j, &entries_vec) {
                         open_markers.pop();
-                        new_lines.push(InternalBibleEntry::simple("¬v", current_verse.as_str()));
+                        new_lines.push(InternalBibleEntry::end_marker("¬v", current_verse.as_str()).expect("Oops"));
                         made_change = true;
                     } else if let Some(last_p) = &last_p_marker
                         && (last_open_m == last_p.as_str() || last_open_m == "list")
                     {
                         open_markers.pop();
-                        new_lines.push(InternalBibleEntry::simple(format!("¬{}", last_open_m), ""));
+                        new_lines.push(InternalBibleEntry::end_marker(format!("¬{}", last_open_m), "").expect("Oops"));
                         made_change = true;
                     }
                 }
@@ -638,19 +784,23 @@ pub fn add_nesting_markers(
                 && let Some(pos) = open_markers.iter().rposition(|m| m == "v")
             {
                 let m = open_markers.remove(pos);
-                new_lines.push(InternalBibleEntry::simple(format!("¬{}", m), current_verse.as_str()));
+                new_lines.push(InternalBibleEntry::end_marker(format!("¬{}", m), current_verse.as_str()).expect("Oops"));
             }
             if let Some(lp) = &last_p_marker
                 && let Some(pos) = open_markers.iter().rposition(|m| m == lp)
             {
                 let m = open_markers.remove(pos);
-                new_lines.push(InternalBibleEntry::simple(format!("¬{}", m), ""));
+                new_lines.push(InternalBibleEntry::end_marker(format!("¬{}", m), "").expect("Oops"));
             }
             open_markers.push(marker_owned.clone());
             last_p_marker = Some(marker_owned.clone());
-        } else if marker == "iot" {
+        }
+        
+        else if marker == "iot" {
             open_markers.push(CompactString::from("iot"));
-        } else if intro_outline_markers::is_intro_outline(marker) {
+        }
+        
+        else if intro_outline_markers::is_intro_outline(marker) {
             let should_open = if let Some(lm) = &last_marker {
                 lm != "iot" && !intro_outline_markers::is_intro_outline(lm)
             } else {
@@ -660,7 +810,9 @@ pub fn add_nesting_markers(
                 new_lines.push(InternalBibleEntry::nesting_marker("iot"));
                 open_markers.push(CompactString::from("iot"));
             }
-        } else if intro_list_markers::is_intro_list(marker) {
+        }
+        
+        else if intro_list_markers::is_intro_list(marker) {
             let should_open = last_marker
                 .as_ref()
                 .is_none_or(|lm| !intro_list_markers::is_intro_list(lm));
@@ -668,76 +820,90 @@ pub fn add_nesting_markers(
                 new_lines.push(InternalBibleEntry::nesting_marker("ilist"));
                 open_markers.push(CompactString::from("ilist"));
             }
-        } else if major_section_markers::is_major_section(marker) {
-            // For major section markers, we want to close any open verse, paragraph, or section if the major section is ending.
-            for _ in 0..9 {
-                let mut made_change = false;
-                if let Some(last_open_m) = open_markers.last().map(|s| s.to_string()) {
-                    if last_open_m == "headers" || last_open_m == "intro" {
-                        open_markers.pop();
-                        new_lines.push(InternalBibleEntry::simple(format!("¬{}", last_open_m), ""));
-                        made_change = true;
-                    } else if last_open_m == "v" && verse_has_ended(j, &entries_vec) {
-                        open_markers.pop();
-                        new_lines.push(InternalBibleEntry::simple("¬v", current_verse.as_str()));
-                        made_change = true;
-                    } else if let Some(last_p) = &last_p_marker {
-                        if last_open_m == last_p.as_str() {
-                            open_markers.pop();
-                            new_lines.push(InternalBibleEntry::simple(format!("¬{}", last_open_m), ""));
-                            made_change = true;
-                        }
-                    } else if let Some(last_s) = &last_s_marker {
-                        if last_open_m == last_s.as_str() && section_has_ended(last_s, j, &entries_vec) {
-                            open_markers.pop();
-                            new_lines.push(InternalBibleEntry::simple(format!("¬{}", last_open_m), ""));
-                            made_change = true;
-                        }
-                    } else if last_open_m == "c" && chapter_has_ended(j, &entries_vec) {
-                        open_markers.pop();
-                        new_lines.push(InternalBibleEntry::simple("¬c", current_chapter.as_str()));
-                        made_change = true;
-                    } else if last_open_m == marker {
-                        open_markers.pop();
-                        new_lines.push(InternalBibleEntry::simple(format!("¬{}", marker), ""));
-                        made_change = true;
-                    }
-                }
-                if !made_change {
-                    break;
-                }
-            }
+        }
+        
+        // else if major_section_markers::is_major_section(marker) { // like ms1, ms2, ms3
+        //     panic!("Can't get here because handled above in section markers");
+        //     // For major section markers, we want to close any open verse, paragraph, or section if the major section is ending.
+        //     for _ in 0..9 {
+        //         let mut made_change = false;
+        //         if let Some(last_open_m) = open_markers.last().map(|s| s.to_string()) {
+        //             if last_open_m == "headers" || last_open_m == "intro" {
+        //                 open_markers.pop();
+        //                 new_lines.push(InternalBibleEntry::end_marker(format!("¬{}", last_open_m), "").expect("Oops"));
+        //                 made_change = true;
+        //             } else if last_open_m == "v" && verse_has_ended(j, &entries_vec) {
+        //                 open_markers.pop();
+        //                 new_lines.push(InternalBibleEntry::end_marker("¬v", current_verse.as_str()).expect("Oops"));
+        //                 made_change = true;
+        //             } else if let Some(last_p) = &last_p_marker {
+        //                 if last_open_m == last_p.as_str() {
+        //                     open_markers.pop();
+        //                     new_lines.push(InternalBibleEntry::end_marker(format!("¬{}", last_open_m), "").expect("Oops"));
+        //                     made_change = true;
+        //                 }
+        //             } else if let Some(last_s) = &last_s_marker {
+        //                 if last_open_m == last_s.as_str() && section_has_ended(last_s, j, &entries_vec) {
+        //                     open_markers.pop();
+        //                     new_lines.push(InternalBibleEntry::end_marker(format!("¬{}", last_open_m), "").expect("Oops"));
+        //                     made_change = true;
+        //                 }
+        //             } else if last_open_m == "c" && chapter_has_ended(j, &entries_vec) {
+        //                 open_markers.pop();
+        //                 new_lines.push(InternalBibleEntry::end_marker("¬c", current_chapter.as_str()).expect("Oops"));
+        //                 made_change = true;
+        //             } else if last_open_m == marker {
+        //                 open_markers.pop();
+        //                 new_lines.push(InternalBibleEntry::end_marker(format!("¬{}", marker), "").expect("Oops"));
+        //                 made_change = true;
+        //             }
+        //         }
+        //         if !made_change {
+        //             break;
+        //         }
+        //     }
 
-            if !open_markers.iter().any(|m| m == "chapters") {
-                new_lines.push(InternalBibleEntry::nesting_marker("chapters"));
-                open_markers.push(CompactString::from("chapters"));
-            } else if let Some(lp) = &last_p_marker
-                && let Some(pos) = open_markers.iter().rposition(|m| m == lp)
-            {
-                let m = open_markers.remove(pos);
-                new_lines.push(InternalBibleEntry::simple(format!("¬{}", m), ""));
-            }
+        //     if !open_markers.iter().any(|m| m == "chapters") {
+        //         new_lines.push(InternalBibleEntry::nesting_marker("chapters"));
+        //         open_markers.push(CompactString::from("chapters"));
+        //     } else if let Some(lp) = &last_p_marker
+        //         && let Some(pos) = open_markers.iter().rposition(|m| m == lp)
+        //     {
+        //         let m = open_markers.remove(pos);
+        //         new_lines.push(InternalBibleEntry::end_marker(format!("¬{}", m), "").expect("Oops"));
+        //     }
 
-            if let Some(ls) = &last_s_marker
-                && let Some(pos) = open_markers.iter().rposition(|m| m == ls)
-            {
-                let m = open_markers.remove(pos);
-                new_lines.push(InternalBibleEntry::simple(format!("¬{}", m), ""));
-            }
+        //     if let Some(ls) = &last_s_marker
+        //         && let Some(pos) = open_markers.iter().rposition(|m| m == ls)
+        //     {
+        //         let m = open_markers.remove(pos);
+        //         new_lines.push(InternalBibleEntry::simple(format!("¬{}", m), ""));
+        //     }
 
-            if let Some(pos) = open_markers.iter().rposition(|m| m == marker) {
-                let m = open_markers.remove(pos);
-                new_lines.push(InternalBibleEntry::simple(format!("¬{}", m), ""));
-            }
-            open_markers.push(marker_owned.clone());
-            last_p_marker = None;
-            last_s_marker = Some(marker_owned.clone());
-        } else if marker == "vp#" {
+        //     if let Some(pos) = open_markers.iter().rposition(|m| m == marker) {
+        //         let m = open_markers.remove(pos);
+        //         new_lines.push(InternalBibleEntry::simple(format!("¬{}", m), ""));
+        //     }
+        //     open_markers.push(marker_owned.clone());
+        //     last_p_marker = None;
+        //     last_s_marker = Some(marker_owned.clone());
+        // }
+        
+        else if marker == "vp#" {
             if let Some(pos) = open_markers.iter().rposition(|m| m == "v") {
                 let m = open_markers.remove(pos);
                 new_lines.push(InternalBibleEntry::simple(format!("¬{}", m), current_verse.as_str()));
             }
-        } else if usfm_markers::get_marker_content_type(marker) == Some('N') {
+        }
+        
+        else if marker == "ie" { // optional so can't rely on this
+            if let Some(pos) = open_markers.iter().rposition(|m| m == "is1") {
+                let m = open_markers.remove(pos);
+                new_lines.push(InternalBibleEntry::simple(format!("¬{}", m), current_verse.as_str()));
+            }
+        }
+        
+        else if usfm_markers::get_marker_content_type(marker) == Some('N') {
             // For other USFM markers that we haven't specifically handled, we want to close any open verse if the marker is ending the verse.
             for _ in 0..999 {
                 let mut made_change = false;
@@ -766,15 +932,23 @@ pub fn add_nesting_markers(
             }
         }
 
+        if have_strict_checking_flag() || cfg!(debug_assertions) { // End of loop checks
+            if open_markers.contains(&CompactString::from("chapters")) {
+                assert!(!open_markers.contains(&CompactString::from("headers")), "open_markers=[{}]", open_markers.join(", "));
+                assert!(!open_markers.contains(&CompactString::from("intro")), "open_markers=[{}]", open_markers.join(", "));
+            }
+        }
+
+        // End of loop code
         new_lines.push(entry.clone());
         last_marker = Some(marker_owned);
     }
 
     // Close any left-over open markers
-    // if cfg!(debug_assertions) && !open_markers.is_empty() {
-    //     println!("add_nesting_markers() finished processing entries, now closing remaining open markers: {}",
-    //         open_markers.join(", "));
-    // }
+    if cfg!(debug_assertions) && !open_markers.is_empty() {
+        println!("add_nesting_markers() finished processing entries, now closing remaining open markers: {}",
+            open_markers.join(", "));
+    }
     while let Some(marker) = open_markers.pop() {
         let mut end_marker_str = CompactString::from("¬");
         end_marker_str.push_str(&marker);
@@ -785,7 +959,7 @@ pub fn add_nesting_markers(
             // (Is that logic correct as this problem only occurs with nb which spans the chapter!!! ???)
             if paragraph_markers::ALL.contains(&open_markers.last().unwrap().as_str()) {
                 let m = open_markers.pop().unwrap();
-                new_lines.push(InternalBibleEntry::simple(format!("¬{}", m), ""));
+                new_lines.push(InternalBibleEntry::end_marker(format!("¬{}", m), "").expect("Oops"));
             }
             current_chapter.as_str()
         } else {
@@ -863,7 +1037,7 @@ pub fn validate_nesting(processed_lines: &InternalBibleEntryList, bos_book_code:
             let start_marker: CompactString = marker.chars().skip(1).collect();
             if count != marker_counts.get(&start_marker).unwrap_or(&0) {
                 issues.push(format!(
-                    "{} {} end marker '{}' has {} entries but its corresponding start marker has {} from {}",
+                    "{} {} end marker '{}' has {} entries but its corresponding start marker has {} from [{}]",
                     work_name, bos_book_code, marker, count, marker_counts.get(&start_marker).unwrap_or(&0),
                     processed_lines.iter().filter_map(|e| Some(e.marker())).collect::<Vec<_>>().join(", ")));
             }
@@ -880,7 +1054,7 @@ pub fn add_additional_markers(
     work_name: &str,
     bos_book_code: &str,
 ) -> InternalBibleEntryList {
-    let list = add_verse_markers_before_headings(entries, work_name, bos_book_code); // This is always done first
+    let list = add_preverse_markers_before_headings(entries, work_name, bos_book_code); // This is always done first
     add_nesting_markers(list, work_name, bos_book_code)
 }
 
@@ -889,7 +1063,7 @@ mod tests {
     use crate::set_strict_checking_flag;
     use crate::entry::InternalBibleEntry;
     use crate::entry_lists::InternalBibleEntryList;
-    use crate::nesting::{add_verse_markers_before_headings, add_additional_markers};
+    use crate::nesting::{add_preverse_markers_before_headings, add_additional_markers};
 
     #[test]
     fn test_add_verse_markers_before_headings_no_change() {
@@ -900,7 +1074,7 @@ mod tests {
         list.push(InternalBibleEntry::simple("v", "1"));
         list.push(InternalBibleEntry::simple("v~", "Verse one text."));
 
-        let list = add_verse_markers_before_headings(list, "test_add_verse_markers_before_headings_no_change", "aaa"); // This is always done first
+        let list = add_preverse_markers_before_headings(list, "test_add_verse_markers_before_headings_no_change", "aaa"); // This is always done first
 
         assert_eq!(
             list.iter().filter_map(|e| Some(e.marker())).collect::<Vec<_>>(),
@@ -909,7 +1083,7 @@ mod tests {
     }
 
     #[test]
-    fn test_add_verse_markers_before_headings_simple() {
+    fn test_add_preverse_markers_before_headings_simple() {
         set_strict_checking_flag( true );
         let mut list = InternalBibleEntryList::new();
         list.push(InternalBibleEntry::simple("c", "1"));
@@ -926,7 +1100,7 @@ mod tests {
         list.push(InternalBibleEntry::simple("v", "1"));
         list.push(InternalBibleEntry::simple("v~", "Chapter two Verse one text."));
 
-        let list = add_verse_markers_before_headings(list, "test_add_verse_markers_before_headings_simple", "bbb"); // This is always done first
+        let list = add_preverse_markers_before_headings(list, "test_add_verse_markers_before_headings_simple", "bbb"); // This is always done first
 
         assert_eq!(
             list.iter().filter_map(|e| Some(e.marker())).collect::<Vec<_>>(),
@@ -939,7 +1113,7 @@ mod tests {
     }
 
     #[test]
-    fn test_add_verse_markers_before_headings_complex() {
+    fn test_add_preverse_markers_before_headings_complex() {
         set_strict_checking_flag( true );
         let mut list = InternalBibleEntryList::new();
         list.push(InternalBibleEntry::simple("c", "1"));
@@ -966,7 +1140,7 @@ mod tests {
             "Chapter three Verse one text in same paragraph.",
         ));
 
-        let list = add_verse_markers_before_headings(list, "test_add_verse_markers_before_headings_complex", "ccc"); // This is always done first
+        let list = add_preverse_markers_before_headings(list, "test_add_verse_markers_before_headings_complex", "ccc"); // This is always done first
 
         assert_eq!(
             list.iter().filter_map(|e| Some(e.marker())).collect::<Vec<_>>(),
@@ -980,7 +1154,7 @@ mod tests {
     }
 
     #[test]
-    fn test_add_verse_markers_before_headings_multiple_headers() {
+    fn test_add_preverse_markers_before_headings_multiple_headers() {
         set_strict_checking_flag( true );
         let mut list = InternalBibleEntryList::new();
         list.push(InternalBibleEntry::simple("mt1", "Main title"));
@@ -1014,7 +1188,7 @@ mod tests {
         list.push(InternalBibleEntry::simple("v", "3"));
         list.push(InternalBibleEntry::simple("v~", "Chapter two Verse three text."));
 
-        let list = add_verse_markers_before_headings(list, "test_add_verse_markers_before_headings_multiple_headers", "ddd"); // This is always done first
+        let list = add_preverse_markers_before_headings(list, "test_add_verse_markers_before_headings_multiple_headers", "ddd"); // This is always done first
 
         assert_eq!(
             list.iter().filter_map(|e| Some(e.marker())).collect::<Vec<_>>(),
@@ -1049,16 +1223,7 @@ mod tests {
             list.iter().filter_map(|e| Some(e.marker())).collect::<Vec<_>>(),
             [
                 "chapters",
-                "c",
-                "p",
-                "v",
-                "v~",
-                "¬v",
-                "v",
-                "v~",
-                "¬v",
-                "¬p",
-                "¬c",
+                "c", "p", "v","v~","¬v", "v","v~","¬v", "¬p", "¬c",
                 "¬chapters"
             ]
         );
@@ -1095,43 +1260,13 @@ mod tests {
             list.iter().filter_map(|e| Some(e.marker())).collect::<Vec<_>>(),
             [
                 "id",
-                "headers",
-                "mt1",
-                "¬headers",
-                "intro",
-                "ip",
-                "ilist",
-                "ili1",
-                "ili1",
-                "ili2",
-                "¬ilist",
-                "ie",
-                "¬intro",
+                "headers", "mt1", "¬headers",
+                "intro", "ip", "ilist", "ili1", "ili1", "ili2", "¬ilist", "ie", "¬intro",
                 "chapters",
-                "c",
-                "p",
-                "v",
-                "v~",
-                "¬v",
-                "¬p",
-                "list",
-                "li1",
-                "v",
-                "v~",
-                "¬v",
-                "¬li1",
-                "li1",
-                "v",
-                "v~",
-                "¬v",
-                "¬li1",
-                "¬list",
-                "p",
-                "v",
-                "v~",
-                "¬v",
-                "¬p",
-                "¬c",
+                "c", "p", "v","v~","¬v", "¬p",
+                    "list", "li1", "v","v~","¬v", "¬li1",
+                    "li1", "v","v~","¬v", "¬li1", "¬list",
+                "p", "v","v~","¬v", "¬p", "¬c",
                 "¬chapters"
             ]
         );
@@ -1169,30 +1304,9 @@ mod tests {
                 "headers", "mt1", "¬headers",
                 "intro", "ip", "ie","¬intro",
                 "chapters",
-                "c",
-                "p",
-                "v",
-                "v~",
-                "¬v",
-                "¬p",
-                "q1",
-                "v",
-                "v~",
-                "¬v",
-                "¬q1",
-                "¬c",
-                "c",
-                "v=",
-                "s1",
-                "m",
-                "v",
-                "v~",
-                "¬v",
-                "v",
-                "v~",
-                "¬v",
-                "¬m",
-                "¬c",
+                "c", "p", "v","v~","¬v", "¬p",
+                    "q1", "v","v~","¬v", "¬q1", "¬c",
+                "c", "v=", "s1", "m", "v","v~","¬v", "v","v~","¬v", "¬m", "¬s1",  "¬c",
                 "¬chapters"
             ]
         );
@@ -1222,7 +1336,7 @@ mod tests {
         list.push(InternalBibleEntry::simple("v", "2"));
         list.push(InternalBibleEntry::simple("v~", "Chapter two Verse two text."));
         list.push(InternalBibleEntry::simple("c", "3"));
-        list.push(InternalBibleEntry::simple("s1", "Chapter 3 heading"));
+        list.push(InternalBibleEntry::simple("s1", "Chapter 3 heading crosses chapters"));
         list.push(InternalBibleEntry::simple("p", ""));
         list.push(InternalBibleEntry::simple("v", "1"));
         list.push(InternalBibleEntry::simple("v~", "Chapter three Verse one text."));
@@ -1257,69 +1371,16 @@ mod tests {
                 "headers", "h", "mt1", "¬headers",
                 "intro", "ip", "ilist", "ili1", "ili1", "¬ilist", "ie", "¬intro",
                 "chapters",
-                "c",
-                "p",
-                "v",
-                "v~",
-                "¬v",
-                "v",
-                "v~",
-                "¬v",
-                "¬p",
-                "¬c",
-                "c",
-                "p",
-                "v",
-                "v~",
-                "¬v",
-                "v",
-                "v~",
-                "¬v",
-                "¬p",
-                "¬c",
-                "c",
-                "v=",
-                "s1",
-                "p",
-                "v",
-                "v~",
-                "¬v",
-                "¬p",
-                "q1",
-                "v",
-                "v~",
-                "¬v",
-                "¬q1",
-                "¬c",
-                "c",
-                "p",
-                "v",
-                "v~",
-                "¬v",
-                "¬p",
-                "m",
-                "v",
-                "v~",
-                "¬v",
-                "¬m",
-                "¬c",
-                "c",
-                "p",
-                "v",
-                "v~",
-                "¬p",
-                "list",
-                "li1",
-                "v~",
-                "¬v",
-                "¬li1",
-                "li1",
-                "v",
-                "v~",
-                "¬v",
-                "¬li1",
-                "¬list",
-                "¬c",
+                "c", "p", "v","v~","¬v", "v","v~","¬v", "¬p", "¬c",
+                "c", "p", "v","v~","¬v", "v","v~","¬v", "¬p", "¬c",
+                "c", "v=", "s1", "p", "v","v~","¬v", "¬p",
+                    "q1", "v","v~","¬v", "¬q1", "¬c",
+                "c", "p", "v","v~","¬v", "¬p",
+                    "m", "v","v~","¬v", "¬m", "¬c",
+                "c", "p", "v","v~", "¬p",
+                    "list", "li1", "v~","¬v", "¬li1",
+                    "li1", "v","v~","¬v", "¬li1", "¬list",
+                "¬c", "¬s1",
                 "¬chapters"
             ]
         );
@@ -1346,7 +1407,7 @@ mod tests {
         list.push(InternalBibleEntry::simple("v", "2"));
         list.push(InternalBibleEntry::simple("v~", "Chapter two Verse two text."));
         list.push(InternalBibleEntry::simple("c", "3"));
-        list.push(InternalBibleEntry::simple("s1", "Chapter 3 heading"));
+        list.push(InternalBibleEntry::simple("s1", "Chapter 3 heading crosses chapters"));
         list.push(InternalBibleEntry::simple("q1", ""));
         list.push(InternalBibleEntry::simple("v", "1"));
         list.push(InternalBibleEntry::simple("v~", "Chapter three Verse one text."));
@@ -1375,70 +1436,16 @@ mod tests {
             list.iter().filter_map(|e| Some(e.marker())).collect::<Vec<_>>(),
             [
                 "id",
-                "headers",
-                "mt1",
-                "¬headers",
-                "intro",
-                "ip",
-                "ie",
-                "¬intro",
+                "headers", "mt1", "¬headers",
+                "intro", "ip", "ie", "¬intro",
                 "chapters",
-                "c",
-                "p",
-                "v",
-                "v~",
-                "¬v",
-                "v",
-                "v~",
-                "¬v",
-                "¬nb",
-                "¬c",
-                "c",
-                "nb",
-                "v",
-                "v~",
-                "¬v",
-                "v",
-                "v~",
-                "¬v",
-                "¬p",
-                "¬c",
-                "c",
-                "v=",
-                "s1",
-                "q1",
-                "v",
-                "v~",
-                "¬v",
-                "¬q1",
-                "q2",
-                "v",
-                "v~",
-                "¬v",
-                "¬q2",
-                "¬c",
-                "c",
-                "p",
-                "v",
-                "v~",
-                "¬v",
-                "¬p",
-                "m",
-                "v",
-                "v~",
-                "¬v",
-                "¬nb",
-                "¬c",
-                "c",
-                "nb",
-                "v",
-                "v~",
-                "¬v",
-                "v",
-                "v~",
-                "¬v",
-                "¬m",
-                "¬c",
+                "c", "p", "v","v~","¬v", "v","v~","¬v", "¬nb", "¬c",
+                "c", "nb", "v","v~","¬v", "v","v~","¬v", "¬p", "¬c",
+                "c", "v=", "s1", "q1", "v","v~","¬v", "¬q1",
+                    "q2", "v","v~","¬v", "¬q2", "¬c",
+                "c", "p", "v","v~","¬v", "¬p",
+                    "m", "v","v~","¬v", "¬nb", "¬c",
+                "c", "nb", "v","v~","¬v", "v","v~","¬v", "¬m", "¬c",  "¬s1",
                 "¬chapters"
             ]
         );

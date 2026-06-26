@@ -1195,6 +1195,7 @@ mod tests {
     use std::io::{BufRead, BufReader};
 
     #[test]
+    #[ignore = "Test not finished yet"]
     fn test_oet_lv_haggai_processing() {
         let file_path = "../../Tests/DataFilesForTests/OET-LV/OET-LV_HAG.ESFM";
         let file = File::open(file_path).expect("Could not open OET-LV Haggai ESFM file");

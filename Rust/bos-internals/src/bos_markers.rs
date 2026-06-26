@@ -157,6 +157,8 @@ pub mod custom_nesting {
     pub const HEADERS: &str = "headers";
     /// `intro` - Inserted at the start of book introductions
     pub const INTRO: &str = "intro";
+    /// `iot` - Introduction outline title (added if not already present)
+    pub const INTRO_OUTLINE_TITLE: &str = "iot";
     /// `ilist` - Inserted at the start of introduction lists (before `\ili` markers)
     /// NOTE: We only do this at the outer level -- not for nested lists
     pub const INTRO_LIST: &str = "ilist";
@@ -167,8 +169,6 @@ pub mod custom_nesting {
     pub const LIST: &str = "list";
     /// `table` - Inserted at the start of tables (before `\tr` markers)
     pub const TABLE: &str = "table";
-    /// `iot` - Introduction outline title (added if not already present)
-    pub const INTRO_OUTLINE_TITLE: &str = "iot";
 
     /// All custom nesting markers as a slice.
     pub const ALL: &[&str] = &[HEADERS, INTRO, INTRO_LIST, CHAPTERS, LIST, TABLE, INTRO_OUTLINE_TITLE];
@@ -320,6 +320,7 @@ pub mod title_markers {
 /// End markers are prefixed with `¬` ('not' sign).
 #[inline]
 pub fn end_marker(marker: &str) -> CompactString {
+    assert!(marker.len()>=1);
     let mut end = CompactString::from("¬");
     end.push_str(marker);
     end
@@ -328,12 +329,12 @@ pub fn end_marker(marker: &str) -> CompactString {
 /// Check if a marker is an end marker (starts with `¬`).
 #[inline]
 pub fn is_end_marker(marker: &str) -> bool {
-    marker.starts_with('¬')
+    marker.len()>=2 && marker.starts_with('¬')
 }
 
 /// Get the base marker from an end marker (removes `¬` prefix).
 #[inline]
-pub fn base_marker(end_marker: &str) -> Option<&str> {
+pub fn base_of_end_marker(end_marker: &str) -> Option<&str> {
     end_marker.strip_prefix('¬')
 }
 
@@ -514,9 +515,9 @@ mod tests {
 
     #[test]
     fn test_base_marker() {
-        assert_eq!(base_marker("¬v"), Some("v"));
-        assert_eq!(base_marker("¬chapters"), Some("chapters"));
-        assert_eq!(base_marker("v"), None);
+        assert_eq!(base_of_end_marker("¬v"), Some("v"));
+        assert_eq!(base_of_end_marker("¬chapters"), Some("chapters"));
+        assert_eq!(base_of_end_marker("v"), None);
     }
 
     #[test]

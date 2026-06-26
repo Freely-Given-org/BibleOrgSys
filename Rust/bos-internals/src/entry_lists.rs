@@ -221,7 +221,7 @@ impl std::ops::AddAssign for InternalBibleEntryList {
 
 impl std::fmt::Display for InternalBibleEntryList {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        const MAX_PRINTED: usize = if cfg!(debug_assertions) {300} else {20};
+        const MAX_PRINTED: usize = if cfg!(debug_assertions) {300} else {35};
 
         writeln!(f, "InternalBibleEntryList:")?;
         if self.data.is_empty() {

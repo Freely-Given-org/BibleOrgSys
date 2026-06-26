@@ -337,12 +337,12 @@ impl InternalBibleEntry {
     ///
     /// Used for simple markers that don't have complex processing.
     pub fn simple(marker: impl Into<CompactString>, text: impl Into<CompactString>) -> Self {
-        let marker = marker.into();
-        let text = text.into();
+        // let marker = marker.into();
+        // let text = text.into();
         Self {
-            marker,
+            marker: marker.into(),
             original_marker: None,
-            original_text: text.clone(),
+            original_text: text.into(),
             adjusted_text: None,
             extras: None,
             clean_text: None,

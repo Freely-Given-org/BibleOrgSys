@@ -29,6 +29,7 @@ Module handling USX Bible book xml to parse and load as an internal Bible book.
 CHANGELOG:
     2024-06-11 Fix bug with XML tail duplication after <char> field inside <note>
     2026-05-26 Handle Rust libraries
+    2026-06-25 Better handling of NET XNL fields
 """
 import logging
 import os
@@ -43,10 +44,10 @@ import bos_books_codes_py
 import usfm_markers_py
 
 
-LAST_MODIFIED_DATE = '2026-06-22' # by RJH
+LAST_MODIFIED_DATE = '2026-06-25' # by RJH
 SHORT_PROGRAM_NAME = "USXXMLBibleBookHandler"
 PROGRAM_NAME = "USX XML Bible book handler"
-PROGRAM_VERSION = '0.30'
+PROGRAM_VERSION = '0.31'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -261,8 +262,8 @@ class USXXMLBibleBook( BibleBook ):
                         assert '\t' not in processedNoteField
                     charLine += processedNoteField
                 elif subelement.tag == 'link': # Used to include extra resources
-                    BibleOrgSysGlobals.checkXMLNoText( subelement, location )
-                    BibleOrgSysGlobals.checkXMLNoSubelements( subelement, location )
+                    BibleOrgSysGlobals.checkXMLNoText( subelement, sublocation )
+                    BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation )
                     # Process the attributes first
                     linkStyle = linkDisplay = linkTarget = None
                     for attrib,value in subelement.items():
@@ -274,10 +275,16 @@ class USXXMLBibleBook( BibleBook ):
                         elif attrib=='target':
                             linkTarget = value # e.g., some reference
                         else:
-                            logging.error( f"KW54 Unprocessed {attrib} attribute ({value}) in {location}" )
+                            logging.error( f"KW54 Unprocessed {attrib} attribute ({value}) in {sublocation}" )
                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
-                    self.addPriorityError( 3, C, V, f"Unprocessed {repr(linkDisplay)} link to {repr(linkTarget)} in {location}" )
-                    print( f"Losing {subelement.tail=} in {linkStyle=} {linkDisplay=} {linkTarget=}" )
+                    charLine = f'{charLine}{linkDisplay}{subelement.tail}'
+                    # self.addPriorityError( 3, C, V, f"Unprocessed {repr(linkDisplay)} link to {repr(linkTarget)} in {sublocation}" )
+                    # print( f"LosingA {self.workName} {self.BBB} {C}:{V} {subelement.tail=} in {linkStyle=} {linkDisplay=} {linkTarget=}" )
+                elif subelement.tag == 'optbreak':
+                    BibleOrgSysGlobals.checkXMLNoText( subelement, sublocation )
+                    BibleOrgSysGlobals.checkXMLNoAttributes( subelement, sublocation )
+                    BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation )
+                    if not BibleOrgSysGlobals.isBlank( subelement.tail ): charLine = f'{charLine}//{subelement.tail.strip()}'
                 else:
                     logging.error( f"BD23 Unprocessed {subelement.tag} subelement ({subelement.text.strip() if subelement.text else subelement.text}) after {self.BBB} {C}:{V} in {sublocation}" )
                     self.addPriorityError( 1, C, V, f"Unprocessed {subelement.tag} subelement" )
@@ -379,8 +386,14 @@ class USXXMLBibleBook( BibleBook ):
                         else:
                             logging.error( f"KW54 Unprocessed {attrib} attribute ({value}) in {location}" )
                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
-                    self.addPriorityError( 3, C, V, f"Unprocessed {repr(linkDisplay)} link to {repr(linkTarget)} in {location}" )
-                    print( f"Losing {subelement.tail=} in {linkStyle=} {linkDisplay=} {linkTarget=}" )
+                    noteField = f'{noteField}{linkDisplay}{subelement.tail}'
+                    # self.addPriorityError( 3, C, V, f"Unprocessed {repr(linkDisplay)} link to {repr(linkTarget)} in {location}" )
+                    # print( f"LosingB {self.workName} {self.BBB} {C}:{V} {subelement.tail=} in {linkStyle=} {linkDisplay=} {linkTarget=}" )
+                elif subelement.tag == 'optbreak':
+                    BibleOrgSysGlobals.checkXMLNoText( subelement, sublocation )
+                    BibleOrgSysGlobals.checkXMLNoAttributes( subelement, sublocation )
+                    BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation )
+                    if not BibleOrgSysGlobals.isBlank( subelement.tail ): noteField = f'{noteField}//{subelement.tail.strip()}'
                 else:
                     logging.error( f"Unprocessed {subelement.tag} subelement after {self.BBB} {C}:{V} in {sublocation}" )
                     self.addPriorityError( 1, C, V, f"Unprocessed {subelement.tag} subelement" )
@@ -750,6 +763,11 @@ class USXXMLBibleBook( BibleBook ):
                         assert '\n' not in tableCode
                         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"tableCode: {tableCode}" )
                         self.addLine( 'tr', tableCode )
+                elif element.tag == 'note':
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "NOTE", BibleOrgSysGlobals.elementStr( element ) )
+                    processedNoteField = loadNoteField( element, location )
+                    if BibleOrgSysGlobals.strictCheckingFlag: assert '\n' not in processedNoteField
+                    self.appendToLastLine( processedNoteField )
                 else:
                     logging.error( f"DV60 Unprocessed {element.tag} element after {self.BBB} {C}:{V} in {location}" )
                     self.addPriorityError( 1, C, V, f"Unprocessed {element.tag} element" )
