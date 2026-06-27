@@ -2217,41 +2217,45 @@ class BibleWriter( InternalBible ):
         # end of toHTML5.convertToPageReference
 
 
-        def createSectionCrossReference( givenRef ):
-            """
-            Returns an HTML string for a section cross-reference.
+        import threading
+        xref_lock = threading.Lock()
 
-            Must be able to handle things like:
-                (Mat. 19:9; Mar. 10:11-12; Luk. 16:18)
-                (Luk. 6:27-28,32-36)
-                (Luk. 16:13; 12:22-31)
-                (1 Kru. 11:1-9; 14:1-7)
-            """
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"toHTML5.createSectionCrossReference: {givenRef!r}" )
-            adjRef = givenRef
-            result = bracket = ''
-            for bracketLeft,bracketRight in (('(',')'),('[',']'),):
-                if adjRef and adjRef[0]==bracketLeft and adjRef[-1]==bracketRight:
-                    result += bracketLeft
-                    bracket = bracketRight
-                    adjRef = adjRef[1:-1] # Remove the brackets
-            for j,originalRef in enumerate( adjRef.split( ';' ) ):
-                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, " ", j, originalRef )
-                if j: result += ';' # Restore the semicolons
-                ref = originalRef.strip()
-                if ref:
-                    if j: # later section refs might not include the book name, e.g., Luk. 16:13; 12:22-31
-                        letterCount = 0
-                        for char in ref:
-                            if char.isalpha(): letterCount += 1
-                        if letterCount < 2: # Allows for something like 16:13a but assumes no single letter book abbrevs
-                            ref = ((analysis[0]+' ') if analysis else '' ) + ref # Prepend the last BBB if there was one
-                    analysis = BRL.getFirstReference( ref, f"section cross-reference {ref!r} from {givenRef!r}" )
-                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "a", analysis )
-                    link = convertToPageReference(analysis) if analysis else None
-                    result += f'<a class="sectionCrossReferenceLink" href="{link}">{originalRef}</a>' if link else originalRef
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Returning {result + bracket!r}" )
-            return result + bracket
+        def createSectionCrossReference( givenRef ):
+            with xref_lock:
+                """
+                Returns an HTML string for a section cross-reference.
+
+                Must be able to handle things like:
+                    (Mat. 19:9; Mar. 10:11-12; Luk. 16:18)
+                    (Luk. 6:27-28,32-36)
+                    (Luk. 16:13; 12:22-31)
+                    (1 Kru. 11:1-9; 14:1-7)
+                """
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"toHTML5.createSectionCrossReference: {givenRef!r}" )
+                adjRef = givenRef
+                result = bracket = ''
+                for bracketLeft,bracketRight in (('(',')'),('[',']'),):
+                    if adjRef and adjRef[0]==bracketLeft and adjRef[-1]==bracketRight:
+                        result += bracketLeft
+                        bracket = bracketRight
+                        adjRef = adjRef[1:-1] # Remove the brackets
+                for j,originalRef in enumerate( adjRef.split( ';' ) ):
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, " ", j, originalRef )
+                    if j: result += ';' # Restore the semicolons
+                    ref = originalRef.strip()
+                    if ref:
+                        if j: # later section refs might not include the book name, e.g., Luk. 16:13; 12:22-31
+                            letterCount = 0
+                            for char in ref:
+                                if char.isalpha(): letterCount += 1
+                            if letterCount < 2: # Allows for something like 16:13a but assumes no single letter book abbrevs
+                                ref = ((analysis[0]+' ') if analysis else '' ) + ref # Prepend the last BBB if there was one
+                        analysis = BRL.getFirstReference( ref, f"section cross-reference {ref!r} from {givenRef!r}" )
+                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "a", analysis )
+                        link = convertToPageReference(analysis) if analysis else None
+                        result += f'<a class="sectionCrossReferenceLink" href="{link}">{originalRef}</a>' if link else originalRef
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Returning {result + bracket!r}" )
+                return result + bracket
         # end of toHTML5.createSectionCrossReference
 
 

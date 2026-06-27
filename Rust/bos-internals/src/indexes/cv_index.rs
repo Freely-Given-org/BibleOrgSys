@@ -548,10 +548,10 @@ impl InternalBibleBookCVIndex {
                 for (j,index_entry) in self.index_data.iter().enumerate() {
                     println!("  {}/ {} = {}", j, index_entry.0, index_entry.1);
                 }
-                panic!("{} {} CV index validation failed with issues: {:#?}", self.work_name, self.bos_book_code, validation_results);
+                panic!("{} {} CV index validation failed with {} issues: {:#?}", self.work_name, self.bos_book_code, validation_results.len(), validation_results);
             }
         }
-        // debug_assert!(self.validate().is_empty(), "CV index validation failed with issues: {:?}", self.validate()); // TODO: Fix doubled validation calls here
+
         Ok(())
     }
 
@@ -1414,7 +1414,6 @@ mod tests {
     }
 
     #[test]
-    #[ignore = "Not handling EZE yet"]
     fn test_oet_rv_cv_indexing() {
         set_strict_checking_flag( true );
         let test_folder_path = "../../Tests/DataFilesForTests/OET-RV";

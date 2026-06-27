@@ -257,7 +257,7 @@ pub mod introduction_markers {
 /// USFM heading markers.
 pub mod heading_markers {
     pub const ALL: &[&str] = &[
-        "s1", "s2", "s3", "s4", "sr", "ms1", "ms2", "ms3", "mr", "is1", "is2", "is3", "is4", "qa", "qc",
+        "s1", "s2", "s3", "s4", "ms1", "ms2", "ms3", "is1", "is2", "is3", "is4", "qa", "qc",
     ];
 
     #[inline]

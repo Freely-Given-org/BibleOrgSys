@@ -11,11 +11,12 @@ use usfm_markers::normalize_marker;
 
 use crate::bos_markers::{
     heading_markers, intro_list_markers, intro_outline_markers, introduction_markers, is_end_marker,
-    main_text_list_markers, major_section_markers, paragraph_markers,
+    main_text_list_markers, major_section_markers, paragraph_markers
 };
 use crate::entry::InternalBibleEntry;
 use crate::entry_lists::InternalBibleEntryList;
 use crate::have_strict_checking_flag;
+// use crate::abbreviate;
 
 // TODO: These need to go into BOS Markers
 /// Markers that can define section boundaries.
@@ -34,7 +35,7 @@ pub fn add_preverse_markers_before_headings(entries: InternalBibleEntryList, wor
              -> InternalBibleEntryList {
     let entries_vec = entries.into_vec();
     let num_entries = entries_vec.len();
-    let mut result = InternalBibleEntryList::with_capacity(num_entries + 40);
+    let mut result = InternalBibleEntryList::with_capacity(num_entries * 1.1 as usize);
 
     // let mut fields_also_preceded: Vec<&str> = Vec::new();
     // fields_also_preceded.extend_from_slice(paragraph_markers::ALL);
@@ -138,7 +139,7 @@ pub fn add_preverse_markers_before_headings(entries: InternalBibleEntryList, wor
     if have_strict_checking_flag() || cfg!(debug_assertions) {
         let validation_results = validate_preverse_marker_insertions(&result);
         if !validation_results.is_empty() {
-            panic!("add_verse_numbers_before_headings for {} {} failed with issues: {:?}", work_name, bos_book_code, validation_results);
+            panic!("add_verse_numbers_before_headings validation for {} {} failed with {} issues: {:?}", work_name, bos_book_code, validation_results.len(), validation_results);
         }
     }
 
@@ -153,6 +154,19 @@ pub fn validate_preverse_marker_insertions(processed_lines: &InternalBibleEntryL
         issues.push("No processed_lines entries to validate".to_string());
         return issues;
     }
+
+    let have_another_close_preverse_marker = |start_idx: usize, entries: &InternalBibleEntryList| {
+        for entry in entries.iter().skip(start_idx + 1) {
+            let m = entry.marker();
+            if m == "v=" {
+                return true;
+            }
+            if matches!(m, "v" | "v~") {
+                return false;
+            }
+        }
+        false
+    };
 
     let mut previous_marker = CompactString::new("");
     let mut next_marker = CompactString::new("");
@@ -178,9 +192,14 @@ pub fn validate_preverse_marker_insertions(processed_lines: &InternalBibleEntryL
             if !SECTION_HEADER_FIELDS_PRECEDED_BY_PREVERSE_NUMBER.contains(&next_marker.as_str()) {
                 issues.push(format!(
                     "Preverse number marker 'v=' at index {} is not followed by a verse or section marker (found '{}')",
-                    n, next_marker
-                ));
+                    n, next_marker));
             }
+
+            if have_another_close_preverse_marker( n, &processed_lines) {
+                issues.push(format!(
+                    "Preverse number marker 'v=' at index {} is followed closely by another preverse marker: {}",
+                    n, processed_lines.slice(n-1, n+10)));
+                }
         }
 
         previous_marker = current_marker;
@@ -234,13 +253,14 @@ pub fn add_nesting_markers(
     let entries_vec = entries.into_vec();
     let num_entries = entries_vec.len();
     let mut new_lines = InternalBibleEntryList::with_capacity(num_entries * 1.1 as usize);
-    let mut open_markers: Vec<CompactString> = Vec::new();
-
+    
     // Context tracking
+    let mut open_markers: Vec<CompactString> = Vec::new();
     let mut current_chapter = CompactString::from("-1");
     let mut current_verse = CompactString::from("-1");
     let mut last_marker: Option<CompactString> = None;
     let mut last_p_marker: Option<CompactString> = None;
+    // TODO: Remove last_s_marker because we can see if 's1' is in open_markers instead
     let mut last_s_marker: Option<CompactString> = None;
     let mut section_crosses_chapters = HashMap::new();
     for section_marker in NESTABLE_SECTION_MARKERS { section_crosses_chapters.insert(CompactString::from(*section_marker), false); }
@@ -292,6 +312,20 @@ pub fn add_nesting_markers(
         for entry in entries.iter().skip(start_idx + 1) {
             let m = entry.marker();
             if m == current_marker || m == "v=" || NESTABLE_SECTION_MARKERS.iter().any(|p| *p == m) {
+                return true;
+            }
+            if matches!(m, "v" | "v~") {
+                return false;
+            }
+        }
+        true
+    };
+
+    let ms1_has_ended = |start_idx: usize, entries: &[InternalBibleEntry]| {
+        for entry in entries.iter().skip(start_idx + 1) {
+            let m = entry.marker();
+            // "v=" comes before section headings and some other list markers
+            if m == "ms1" {
                 return true;
             }
             if matches!(m, "v" | "v~") {
@@ -359,7 +393,7 @@ pub fn add_nesting_markers(
         let marker = entry.marker();
         let marker_owned = CompactString::from(marker);
         let text = entry.clean_text();
-        // println!("Processing {} {} entry {}: Marker: {}, Clean Text: '{}', open_markers {}", work_name, bos_book_code, j, marker, text, open_markers.join(", "));
+        // println!("{}/ Process {} {} marker='{}' clean_text='{}' open_markers=[{}]", j, work_name, bos_book_code, marker, abbreviate::<48, 24>(text), open_markers.join(", "));
 
         if current_chapter == "-1" {
             current_verse = CompactString::from(new_lines.len().to_string());
@@ -444,7 +478,7 @@ pub fn add_nesting_markers(
         // }
 
         if marker == "c" {
-            println!("At c with open_markers=[{}]", open_markers.join(", "));
+            // println!("At c with open_markers=[{}]", open_markers.join(", "));
             (c, v) = (text, "0");
 
             for _ in 0..3 {
@@ -490,18 +524,18 @@ pub fn add_nesting_markers(
             && let Some(s_pos) = open_markers.iter().rposition(|m| NESTABLE_SECTION_MARKERS.contains(&&m.as_str())) {
                 if section_has_ended(last_s, j, &entries_vec)
                 && !section_crosses_chapters[last_s] {
-                    println!(
-                        "At {} {}:{} processing chapter marker and closing section that hasn't crossed chapter boundaries: last_s='{}' Current open markers: {}",
-                        j, c, v, last_s, open_markers.join(", "));
+                    // println!(
+                    //     "  At {} {}:{} processing chapter marker and closing section that hasn't crossed chapter boundaries: last_s='{}' Current open markers: {}",
+                    //     j, c, v, last_s, open_markers.join(", "));
                     assert_eq!(s_pos, open_markers.len()-1, "Expected {} to be last marker (not {}) in [{}] with last_s_marker='{:?}'", last_s, s_pos, open_markers.join(", "), last_s_marker); // Must be the last marker then
                     new_lines.push(InternalBibleEntry::end_marker(format!("¬{}", last_s), "").expect("Oops"));
                     open_markers.remove(s_pos); // Could do pop here
                     last_s_marker = None;
                 }
                 else {
-                    println!(
-                        "At {} {}:{} processing chapter marker and seems like section has crossed chapter boundaries: last_s='{}' Current open markers: {}",
-                        j, c, v, last_s, open_markers.join(", "));
+                    // println!(
+                    //     "At {} {}:{} processing chapter marker and seems like section has crossed chapter boundaries: last_s='{}' Current open markers: {}",
+                    //     j, c, v, last_s, open_markers.join(", "));
                     section_crosses_chapters.insert(last_s.clone(), true);
                 }
             }
@@ -517,9 +551,9 @@ pub fn add_nesting_markers(
             && let Some(s_pos) = open_markers.iter().rposition(|m| NESTABLE_SECTION_MARKERS.contains(&&m.as_str())) {
                 if section_has_ended(last_s, j, &entries_vec)
                 && section_crosses_chapters[last_s] {
-                    println!(
-                        "At {} {}:{} processing chapter marker and closing section that has crossed chapter boundaries: last_s='{}' Current open markers: {}",
-                        j, c, v, last_s, open_markers.join(", "));
+                    // println!(
+                    //     "At {} {}:{} processing chapter marker and closing section that has crossed chapter boundaries: last_s='{}' Current open markers: {}",
+                    //     j, c, v, last_s, open_markers.join(", "));
                     assert_eq!(s_pos, open_markers.len()-1, "Expected {} to be last marker (not {}) in [{}] with last_s_marker='{:?}'", last_s, s_pos, open_markers.join(", "), last_s_marker); // Must be the last marker then
                     new_lines.push(InternalBibleEntry::simple(format!("¬{}", last_s), ""));
                     open_markers.remove(s_pos); // Could do pop here
@@ -576,11 +610,10 @@ pub fn add_nesting_markers(
         else if marker == "v=" { // Then we're about to hit a section heading or similar
             // For verse markers, we want to close any open verse if the verse is ending
             //  and close any open paragraph if the verse is ending and the next marker is not a continuation of the verse.
-            if cfg!(debug_assertions) {
-                println!(
-                    "At {} {}:{} processing preverse marker {} = '{}': last_p_marker='{}' Current open markers: {}",
-                    j, c, v, marker, text, last_p_marker.clone().unwrap_or_default(), open_markers.join(", "));
-            }
+            // if cfg!(debug_assertions) {
+            //     println!("  At {} {}:{} processing preverse marker {} = '{}': last_p_marker='{}' Current open markers: {}",
+            //                 j, c, v, marker, text, last_p_marker.clone().unwrap_or_default(), open_markers.join(", "));
+            // }
             for _ in 0..9 {
                 let mut made_change = false;
                 if let Some(last_open_m) = open_markers.last().map(|s| s.to_string()) {
@@ -611,7 +644,7 @@ pub fn add_nesting_markers(
                         && last_open_m == last_s.as_str()
                         && section_has_ended(last_s, j, &entries_vec)
                     {
-                        println!("    Removing {} from end of {:?}", last_s, open_markers);
+                        // println!("    Removing {} from end of {:?}", last_s, open_markers);
                         assert_ne!(new_lines.last().expect("Must be there").marker(), "v=", "Adding ¬{} before v= with open_markers=[{}]", last_open_m, open_markers.join(", "));
                         open_markers.pop();
                         new_lines.push(InternalBibleEntry::end_marker(format!("¬{}", last_open_m), "").expect("Oops"));
@@ -623,7 +656,7 @@ pub fn add_nesting_markers(
                         && section_has_ended(last_s, j, &entries_vec)
                         && open_markers.contains(&last_s)
                     { // There must be a c marker at the end of open_markers after the s
-                        println!("    Removing {} from middle of {:?}", last_s, open_markers);
+                        // println!("    Removing {} from middle of {:?}", last_s, open_markers);
                         assert_ne!(new_lines.last().expect("Must be there").marker(), "v=", "Adding ¬{} before v= with open_markers=[{}]", last_s, open_markers.join(", "));
                         open_markers.retain(|ss| ss != last_s); // Remove that section marker
                         new_lines.push(InternalBibleEntry::end_marker(format!("¬{}", last_s), "").expect("Oops"));
@@ -634,17 +667,19 @@ pub fn add_nesting_markers(
                     break;
                 }
             }
-            // if let Some(pos) = open_markers.iter().rposition(|m| m == "v") {
-            //     let m = open_markers.remove(pos);
-            //     new_lines.push(InternalBibleEntry::simple(format!("¬{}", m), current_verse.as_str()));
-            // }
+            // Close an open ms1 section if necessary
+            if let Some(pos) = open_markers.iter().rposition(|m| m == "ms1")
+            && ms1_has_ended(j, &entries_vec) {
+                open_markers.remove(pos);
+                new_lines.push(InternalBibleEntry::end_marker("¬ms1", "").expect("Oops"));
+            }
             current_verse = CompactString::from(text);
         }
         
-        else if heading_markers::is_heading(marker) { // e.g., s1, s2, but also including 'ms1','ms2', etc.
+        else if heading_markers::is_heading(marker) { // e.g., s1, s2, but also including 'ms1','ms2', and 'is1', etc.
             // For heading markers, we want to close any open verse, paragraph, or section if the heading is ending them.
-            for q_q in 0..9 {
-                println!("       {} loop with marker={}, last_p_marker={:?} last_s_marker={:?} and open_markers=[{}]", q_q, marker, last_p_marker, last_s_marker, open_markers.join(", "));
+            for _ in 0..9 {
+                // println!("       {} loop with marker={}, last_p_marker={:?} last_s_marker={:?} and open_markers=[{}]", q_q, marker, last_p_marker, last_s_marker, open_markers.join(", "));
                 let mut made_change = false;
                 if let Some(last_open_m) = open_markers.last().map(|s| s.to_string()) {
                     if last_open_m == "v" && verse_has_ended(j, &entries_vec) {
@@ -667,6 +702,13 @@ pub fn add_nesting_markers(
                             made_change = true;
                         }
                     }
+                }
+                // See if we already have this current marker in open markers (albeit not at the end)
+                if let Some(pos) = open_markers.iter().rposition(|m| m == marker) {
+                    // println!("             {} Removing {} header marker from open_markers=[{}]", q_q, marker, open_markers.join(", "));
+                    let m = open_markers.remove(pos);
+                    new_lines.push(InternalBibleEntry::end_marker(format!("¬{}", m), "").expect("Oops"));
+                    made_change = true;
                 }
                 if !made_change {
                     break;
@@ -695,8 +737,8 @@ pub fn add_nesting_markers(
             last_p_marker = None;
             if NESTABLE_SECTION_MARKERS.contains(&marker) {
                 assert!(!open_markers.contains(&marker_owned),
-                    "add_nesting_markers for {} {} about to add another {} to {:?}",
-                    work_name, bos_book_code, marker, open_markers);
+                    "add_nesting_markers for {} {} {} {}:{} about to add another {} to {:?}",
+                    work_name, bos_book_code, j, current_chapter, current_verse, marker, open_markers);
                 section_crosses_chapters.insert(CompactString::from(marker), false);
                 open_markers.push(marker_owned.clone());
                 last_s_marker = Some(marker_owned.clone());
@@ -940,15 +982,17 @@ pub fn add_nesting_markers(
         }
 
         // End of loop code
-        new_lines.push(entry.clone());
+        // if marker == "ms1" { println!("            Before ms1 was {:?}", new_lines.iter().last())}
+        // if marker == "mr"  { println!("            Before mr was {:?}", new_lines.iter().last())}
+        new_lines.push(entry.clone()); // Push this current marker and entry
         last_marker = Some(marker_owned);
     }
 
     // Close any left-over open markers
-    if cfg!(debug_assertions) && !open_markers.is_empty() {
-        println!("add_nesting_markers() finished processing entries, now closing remaining open markers: {}",
-            open_markers.join(", "));
-    }
+    // if cfg!(debug_assertions) && !open_markers.is_empty() {
+    //     println!("add_nesting_markers() finished processing entries, now closing remaining open markers: {}",
+    //         open_markers.join(", "));
+    // }
     while let Some(marker) = open_markers.pop() {
         let mut end_marker_str = CompactString::from("¬");
         end_marker_str.push_str(&marker);
@@ -977,7 +1021,7 @@ pub fn add_nesting_markers(
     if have_strict_checking_flag() || cfg!(debug_assertions) {
         let validation_results = validate_nesting(&new_lines, bos_book_code, work_name);
         if !validation_results.is_empty() {
-            panic!("add_nesting_markers for {} {} failed with issues: {:?}", work_name, bos_book_code, validation_results);
+            panic!("add_nesting_markers validation for {} {} failed with {} issues: {:?}", work_name, bos_book_code, validation_results.len(), validation_results);
         }
     }
 

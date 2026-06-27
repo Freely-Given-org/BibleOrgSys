@@ -896,7 +896,7 @@ impl InternalBibleBookSectionIndex {
         if have_strict_checking_flag() || cfg!(debug_assertions) {
              let validation_results = self.validate(&self.line_entries);
              if !validation_results.is_empty() {
-                panic!("{} {} section index validation failed with issues: {:?}", self.work_name, self.bos_book_code, validation_results);
+                panic!("{} {} section index validation failed with {} issues: {:?}", self.work_name, self.bos_book_code, validation_results.len(), validation_results);
             }
         }
         Ok(())

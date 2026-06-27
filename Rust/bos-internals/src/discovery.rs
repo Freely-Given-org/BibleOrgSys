@@ -767,7 +767,6 @@ mod tests {
     }
 
     #[test]
-    #[ignore = "Not handling ms1 marker properly yet"]
     fn test_oet_rv_discovery() {
         let test_folder_path = "../../Tests/DataFilesForTests/OET-RV";
         let mut books = IndexMap::new();

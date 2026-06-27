@@ -411,7 +411,7 @@ fn format_html_verse_text(
     globals: &mut Html5Globals,
 ) -> String {
     let mut adj_text = given_text.to_string();
-    let mut offset: isize = 0;
+    let mut offset: usize = 0;
     
     if let Some(extras_list) = extras {
         for extra in extras_list.iter() {
@@ -419,7 +419,13 @@ fn format_html_verse_text(
             let extra_index = extra.index();
             let extra_text = extra.text();
 
-            let adj_index = (extra_index as isize - offset) as usize;
+            let byte_offset = given_text
+                .char_indices()
+                .nth(extra_index)
+                .map(|(b_idx, _)| b_idx)
+                .unwrap_or_else(|| given_text.len());
+
+            let adj_index = byte_offset + offset;
             
             // Generate HTML for the extra
             let formatted_extra = match extra_type {
@@ -439,7 +445,7 @@ fn format_html_verse_text(
             // Insert it
             if adj_index <= adj_text.len() {
                 adj_text.insert_str(adj_index, &formatted_extra);
-                offset -= formatted_extra.len() as isize;
+                offset += formatted_extra.len();
             }
         }
     }
@@ -735,7 +741,7 @@ pub fn export_to_html5(
                 let extras = entry.extras();
                 let has_extras = entry.has_extras();
 
-                if marker.contains('¬') || crate::bos_markers::custom_nesting::is_custom_nesting(marker) || marker == "v=" {
+                if marker.contains('¬') || (crate::bos_markers::custom_nesting::is_custom_nesting(marker) && marker != "iot") || marker == "v=" {
                     continue;
                 }
 
@@ -1018,7 +1024,7 @@ pub fn export_to_html5(
             let _ = write_footer(&mut writer, program_name, program_version, today_str);
 
             let _ = writer.write_line_close("html");
-            let _ = writer.close(true);
+            let _ = writer.close(false);
 
             (local_ignored, local_unhandled)
         })

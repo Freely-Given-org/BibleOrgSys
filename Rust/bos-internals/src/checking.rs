@@ -1084,7 +1084,6 @@ mod tests {
     }
 
     #[test]
-    #[ignore = "Not handling ms1 properly yet"]
     fn test_oet_rv_checking() {
         let test_folder_path = "../../Tests/DataFilesForTests/OET-RV";
 
