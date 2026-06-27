@@ -7,7 +7,7 @@
 use compact_str::{CompactString, ToCompactString};
 use indexmap::IndexMap;
 use num_format::{Locale, ToFormattedString};
-use rkyv::validation;
+use rkyv::{validation, with};
 
 use bos_books_codes::is_chapter_verse_book;
 use crate::bos_markers::{is_end_marker, title_markers};
@@ -621,10 +621,12 @@ impl InternalBibleBookSectionIndex {
                             if have_strict_checking_flag() || cfg!(debug_assertions) {
                                 assert!(!self.index_data.contains_key(&cv), "Losing data: {cv}");
                                 assert_eq!(cv.verse().parse::<u16>(), Ok(current_pending_section.start_index));
-                                assert_eq!(last_verse_num_str.parse::<u16>(), Ok(current_pending_section.end_index),
-                                            "build {} {} section index loop {} with {} section index entries already, failed with {} {}\nfrom {}",
-                                        self.work_name(), self.bos_book_code(), i, self.index_data.len(),
-                                        last_verse_num_str, current_pending_section.end_index, self.line_entries);
+                                if current_chapter_num_str != "-1" {
+                                    assert_eq!(last_verse_num_str.parse::<u16>(), Ok(current_pending_section.end_index),
+                                                "build {} {} section index loop {} with {} section index entries already, failed with {} {}\nfrom {}",
+                                            self.work_name(), self.bos_book_code(), i, self.index_data.len(),
+                                            last_verse_num_str, current_pending_section.end_index, self.line_entries);
+                                }
                             }
                             self.index_data.insert(cv, current_pending_section);
                             context.clear();
@@ -884,7 +886,14 @@ impl InternalBibleBookSectionIndex {
                 if have_strict_checking_flag() || cfg!(debug_assertions) {
                     assert_eq!(self.bos_book_code(), "MRK", "{} {} section index is losing a key: {}", self.work_name(), self.bos_book_code(), cv);
                 }
-                self.index_data.insert(ChapterVerse::new(cv.chapter(), format!("{}n", cv.verse())), entry); // Append another b suffix
+                let suffix_char = if cv.has_verse_suffix() {cv.verse().chars().last().unwrap()} else {' '};
+                let next_suffix_char = char::from_u32(suffix_char as u32 + 1).unwrap_or(suffix_char); // Convert to u32, add 1, and convert back to a char
+                let without_last = match cv.verse().char_indices().next_back() {
+                            Some((idx, _)) => &cv.verse()[..idx],
+                            None => "", // Returns empty string if the original string was empty
+                        };
+                let new_verse_number = if suffix_char==' ' {cv.verse().to_string()} else {format!("{}{}", without_last, next_suffix_char)};
+                self.index_data.insert(ChapterVerse::new(cv.chapter(), new_verse_number), entry); // Append another suffix
             } else {
                 if have_strict_checking_flag() || cfg!(debug_assertions) { assert!(!self.index_data.contains_key(&cv), "Losing data: {cv}"); }
                 self.index_data.insert(cv, entry);
@@ -935,7 +944,7 @@ impl InternalBibleBookSectionIndex {
             assert!(!cv.chapter().is_empty() && (cv.chapter().chars().all(|c| c.is_ascii_digit()) || cv.chapter() == "-1"),
                 "{} {} chapter should be a non-empty string of digits or '-1': found '{}' from {}",
                 self.work_name, self.bos_book_code, cv.chapter(), cv);
-            assert!(!cv.verse().is_empty() && cv.verse().chars().all(|c| c.is_ascii_digit() || c=='-' || c=='b'),
+            assert!(!cv.verse().is_empty() && cv.verse().chars().all(|c| c.is_ascii_digit() || c=='-' || c=='b' || c=='c'),
                 "{} {} verse should be a non-empty string of digits (or a verse bridge): found '{}' from {}",
                 self.work_name, self.bos_book_code, cv.verse(), cv);
 
@@ -948,11 +957,14 @@ impl InternalBibleBookSectionIndex {
                 assert_eq!(cv.verse().parse::<usize>().unwrap(), index_entry.start_index(),
                     "Unexpected {} {} start index of {} for {} entry: {}",
                     self.work_name, self.bos_book_code, index_entry.start_index(), cv, index_entry);
-                assert_eq!(index_entry.end_verse_num_str().parse::<usize>(), Ok(index_entry.end_index()),
-                    "Unexpected {} {} end index of {} for {} entry: {}\nfrom {}",
-                    self.work_name, self.bos_book_code, index_entry.end_index(), cv, index_entry, line_entries);
-
-            } else { // We're now into the chapters
+                if !["Headers","is1"].contains(&index_entry.reason_marker()) {
+                    assert_eq!(index_entry.end_verse_num_str().parse::<usize>(), Ok(index_entry.end_index()),
+                        "Unexpected {} {} end index of {} for {} entry: {}\nfrom {}",
+                        self.work_name, self.bos_book_code, index_entry.end_index(), cv, index_entry, line_entries);
+                }
+            }
+            
+            else { // We're now into the chapters
 
                 // for processed_line_entry in self.entries.slice(entry.start_index(), entry.end_index()) {
                 //     if processed_line_entry.marker() == "v" || processed_line_entry.marker() == "¬v" {

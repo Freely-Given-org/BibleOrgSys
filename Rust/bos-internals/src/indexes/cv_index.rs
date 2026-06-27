@@ -6,14 +6,14 @@
 
 use compact_str::CompactString;
 use indexmap::IndexMap;
-use log::trace;
+// use log::trace;
 
+use bos_books_codes::is_chapter_verse_book;
 use crate::bos_markers::{regular_nesting, custom_nesting, is_end_marker};
 use crate::chapter_verse::ChapterVerse;
 use crate::entry_lists::InternalBibleEntryList;
 use crate::error::{IndexError, LookupError};
-use crate::have_strict_checking_flag;
-use bos_books_codes::is_chapter_verse_book;
+use crate::{have_strict_checking_flag, verbosity_println};
 
 /// An entry in the CV index, representing a single Chapter:Verse reference.
 ///
@@ -401,6 +401,7 @@ impl InternalBibleBookCVIndex {
         if line_entries.is_empty() {
             return Err(IndexError::EmptyEntries);
         }
+        verbosity_println!(3, "  Building CV index for {} {} from {} processed line entries…", self.work_name(), self.bos_book_code(), line_entries.len());
         self.line_entries = line_entries;
         
         let mut current_chapter = CompactString::new("-1");
@@ -471,6 +472,8 @@ impl InternalBibleBookCVIndex {
                 //     }
                 // }
                 let current_end_line_index = i - 1;
+                verbosity_println!(4, "    At {} about to append CV entry: {} {}+{} [{}] with celi={} lsli={} leli={}",
+                            i, cv, current_start_line_index, line_entry_count, current_context.join(", "), current_end_line_index, last_start_line_index, last_end_line_index);
                 if have_strict_checking_flag() || cfg!(debug_assertions) {
                     assert!(current_start_line_index > last_start_line_index || current_start_line_index==0,
                             "{} {} {}:{} CV index entry {} start is backwards: previous start was {}, now {} (+{}-1= {})",
@@ -490,6 +493,7 @@ impl InternalBibleBookCVIndex {
                                 self.work_name(), self.bos_book_code(), current_chapter, current_verse,
                                 self.line_entries.get(current_end_line_index).unwrap().marker());
                     }
+                    // assert!(!self.index_data.contains_key(&cv), "About to lose existing index entry for {}", cv);
                 }
                 self.index_data
                     .insert(cv, CVIndexEntry::new(current_start_line_index as u16, line_entry_count, current_context.clone()));
@@ -533,6 +537,7 @@ impl InternalBibleBookCVIndex {
                     "{} {} {}:{} final CV index entry end is wrong: finished at {}, now {}+{}-1= {}",
                     self.work_name(), self.bos_book_code(), current_chapter, current_verse,
                     last_end_line_index, current_start_line_index, line_entry_count, current_end_line_index);
+            assert!(!self.index_data.contains_key(&cv), "At end, about to lose existing index entry for {}", cv);
             }
         self.index_data.insert(cv, CVIndexEntry::new(current_start_line_index as u16, line_entry_count, current_context));
         self.indexed = true;
