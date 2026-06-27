@@ -583,7 +583,7 @@ class InternalBible:
         if not self.suppliedMetadata: # How/Why can this happen?
             logging.warning( f"No {applyMetadataType} metadata supplied to applySuppliedMetadata() function" )
             if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag:
-                halt # No self.suppliedMetadata supplied to applySuppliedMetadata()
+                assert False, "We want to stop here" # No self.suppliedMetadata supplied to applySuppliedMetadata()
             return
 
         if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE and BibleOrgSysGlobals.verbosityLevel > 2:
@@ -820,7 +820,7 @@ class InternalBible:
                                 logging.warning(f"About to copy {newKey}={value!r} from {applyMetadataType} metadata file even though already have {key!r} (different case)={self.settingsDict[key]!r}" )
                                 break
                     self.settingsDict[newKey] = value
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, self.settingsDict ); halt
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, self.settingsDict ); assert False, "We want to stop here"
 
         elif applyMetadataType in ( 'e-Sword-Bible', 'e-Sword-Commentary', 'MySword' ):
             # Available fields include: Abbreviation, Apocrypha, Comments, Description, Font, NT, OT,
@@ -846,7 +846,7 @@ class InternalBible:
 
         else:
             logging.critical( f"Unknown {applyMetadataType!r} metadata type given to applySuppliedMetadata" )
-            if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: halt
+            if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: assert False, "We want to stop here"
 
         if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE and BibleOrgSysGlobals.verbosityLevel>3:
             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Updated settings dict ({len(self.settingsDict)}):" )
@@ -1234,7 +1234,7 @@ class InternalBible:
         if count == 0:
             vPrint( 'Never', DEBUGGING_THIS_MODULE, "  guessXRefBBB using first plus other characters…" )
             for bookName in self.bookNameDict:
-                if not bookName: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, self.bookNameDict ); halt # temp……
+                if not bookName: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, self.bookNameDict ); assert False, "We want to stop here" # temp……
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"aRS={adjRefString!r}, bN={bookName!r}" )
                 if adjRefString[0] != bookName[0]: continue # The first letters don't match
                 found = True
@@ -1360,7 +1360,7 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
         fnPrint( DEBUGGING_THIS_MODULE, "InternalBible:discover() using Rust" )
         if 'discoveryResults' in self.__dict__:
             logging.warning( "discover: We had done this already!" )
-            if DEBUGGING_THIS_MODULE: halt
+            if DEBUGGING_THIS_MODULE: assert False, "We want to stop here"
 
         from bible_organisational_system import discoverBible
 
@@ -1505,7 +1505,7 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
                         if 'OTHER'+key not in aggregateResults: aggregateResults['OTHER'+key] = value
                         else: aggregateResults['OTHER'+key] += value
                 #elif value==True: # This test must come below the isinstance tests
-                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "tgot", BBB, key, value ); halt
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "tgot", BBB, key, value ); assert False, "We want to stop here"
                     #if key not in aggregateResults: aggregateResults[key] = 1
                     #else: aggregateResults[key] += 1
                     #if isOT:
@@ -1518,7 +1518,7 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
                         #if 'DC'+key not in aggregateResults: aggregateResults['DC'+key] = 1
                         #else: aggregateResults['DC'+key] += 1
                 #elif value==False:
-                    #halt
+                    #assert False, "We want to stop here"
                     #pass # No action needed here
                 else:
                     logging.warning( f"discover: unactioned discovery result {BBB} {key} {value!r}" )
@@ -1557,7 +1557,7 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
             aggregateResults['DCpercentageProgressByVerse'] = str( round( aggregateResults['DCcompletedVerseCount'] * 100 / aggregateResults['DCverseCount'] ) ) + '%'
 
         # Save the results
-        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "ALL discoveryResults", aggregateResults ); halt
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "ALL discoveryResults", aggregateResults ); assert False, "We want to stop here"
         #for key,value in aggregateResults.items():
             #if key.endswith( 'ordCount' ): vPrint( 'Quiet', DEBUGGING_THIS_MODULE, key, value )
         self.discoveryResults['ALL'] = aggregateResults
@@ -1876,7 +1876,7 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
                                 # Haven't put counts into category array yet
                             else:
                                 vPrint( 'Quiet', DEBUGGING_THIS_MODULE, anotherKey, "not done yet" )
-                                #halt # Not done yet
+                                #assert False, "We want to stop here" # Not done yet
 
         # Taking those word lists, find uncommon words
         threshold = 4 # i.e., find words used less often that this many times as possible candidates for spelling errors
@@ -2040,7 +2040,7 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
                                     for something in sorted(errorDictionary['ByBook'][BBB][thisKey][subCategory]):
                                         BBBPart += f"&nbsp;<b>{something}</b>:&nbsp;{errorDictionary['ByBook'][BBB][thisKey][subCategory][something]}&nbsp;&nbsp; "
                                     BBBPart += "</p>"
-                                else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "A weird 1" ); halt
+                                else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "A weird 1" ); assert False, "We want to stop here"
                         else: # Have a category with subcategories
                             for secondKey in errorDictionary['ByBook'][BBB][thisKey]:
                                 if not errorDictionary['ByBook'][BBB][thisKey][secondKey]: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "HEY 3—Should not have had", BBB, thisKey, secondKey )
@@ -2205,7 +2205,7 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
                                         for something in sorted(errorDictionary['ByCategory'][category][BBB][subCategory]):
                                             categoryPart += f"{something}:{errorDictionary['ByCategory'][category][BBB][subCategory][something]} "
                                         categoryPart += "</p>"
-                                    else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "A weird 2" ); halt
+                                    else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "A weird 2" ); assert False, "We want to stop here"
                         else:
                             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Have left-over thisKey", thisKey )
                             continue # ignore for now temp …
@@ -2255,7 +2255,7 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
                                         for something in sorted(errorDictionary['ByCategory'][category][BBB][subCategory]):
                                             categoryPart += f"{something}:{errorDictionary['ByCategory'][category][BBB][subCategory][something]} "
                                         categoryPart += "</p>"
-                                    else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "A weird 2" ); halt
+                                    else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "A weird 2" ); assert False, "We want to stop here"
                         else:
                             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Have left-over thisKey", thisKey )
                             continue # ignore for now temp …
@@ -2344,7 +2344,7 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
         fnPrint( DEBUGGING_THIS_MODULE, f"getNumChapters( {BBB} )" )
         assert len(BBB) == 3
 
-        #if 'KJV' not in self.sourceFolder and BBB in self.triedLoadingBook: halt
+        #if 'KJV' not in self.sourceFolder and BBB in self.triedLoadingBook: assert False, "We want to stop here"
         if not bos_books_codes_py.is_valid_bos_book_code( BBB ): raise KeyError
         self.loadBookIfNecessary( BBB )
         if BBB in self:
@@ -2522,7 +2522,7 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
                 elif marker == 'li2': verseText += '◦' + cleanText
                 elif marker == 'v': firstWord = True # Ignore
                 elif marker == 'v~': verseText += cleanText
-                elif marker == 'p~': verseText += cleanText
+                # elif marker == 'XXXp~': verseText += cleanText
                 elif marker == 'vw': # What's this ???
                     verseText = f"{verseText}{'' if firstWord else ' '}{cleanText}"
                     firstWord = False
@@ -2565,7 +2565,7 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
         for someKey in optionsDict:
             if someKey not in optionsList:
                 vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"findText warning: unexpected {someKey!r} option = {optionsDict[someKey]!r}" )
-                if DEBUGGING_THIS_MODULE: halt
+                if DEBUGGING_THIS_MODULE: assert False, "We want to stop here"
 
         # Go through all the given options
         if 'workName' not in optionsDict: optionsDict['workName'] = self.getAName( abbrevFirst=True )
@@ -2639,7 +2639,7 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
                     elif marker == 'v': V = cleanText
                     elif C == '-1' and marker not in ('headers','intro'): V = str( int(V) + 1 )
                     if ourMarkerList:
-                        if marker not in ourMarkerList and not (marker in ('v~','p~') and lastParagraphMarker in ourMarkerList):
+                        if marker not in ourMarkerList and not (marker in ('v~','XXXp~') and lastParagraphMarker in ourMarkerList):
                             continue
                     elif C=='-1' and not optionsDict['includeIntroFlag']: continue
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Searching in {BBB} {C}:{V} {marker} = {cleanText}" )
@@ -2654,7 +2654,7 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
                         origTextToBeSearched = lineEntry.getFullText() if optionsDict['includeExtrasFlag'] else cleanText
                         if C != '0' and not optionsDict['includeMainTextFlag']:
                             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Got {origTextToBeSearched!r} but  don't include main text" )
-                            if marker in ('v~','p~') or marker in BibleOrgSysGlobals.USFMParagraphMarkers:
+                            if marker in ('v~','XXXp~') or marker in BibleOrgSysGlobals.USFMParagraphMarkers:
                                 origTextToBeSearched = ''
                                 if origTextToBeSearched != cleanText: # we must have extras -- we need to remove the main text
                                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Got extras" )
@@ -2769,14 +2769,14 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
             internalBibleBookData = copy.copy( bookObject._processedLines )
             bookObject._processedLines = InternalBibleEntryList() # Contains more-processed tuples which contain the actual Bible text -- see below
             for processedBibleEntry in internalBibleBookData:
-                fullText = processedBibleEntry[5] # toUSFM3() only uses marker and fullText
+                fullText = processedBibleEntry[2] # toUSFM3() only uses marker and fullText
                 if fullText:
                     while True: # replace \\w …\\w* fields with the actual word they contain (losing the attributes)
                         match = re.search( '\\\\w (.+?)\\|.+?\\\\w\\*', fullText )
                         if not match: break
                         fullText = f'{fullText[:match.start()]}{match.group(1)}{fullText[match.end():]}'
-                bookObject._processedLines.append( InternalBibleEntry( processedBibleEntry[0], processedBibleEntry[1], processedBibleEntry[2],
-                    processedBibleEntry[3], processedBibleEntry[4], fullText ) )
+                bookObject._processedLines.append( InternalBibleEntry( processedBibleEntry[0], processedBibleEntry[1], fullText,
+                                                    processedBibleEntry[3], processedBibleEntry[4], processedBibleEntry[5] ) )
         return copiedSelf
     # end of InternalBible._getBibleWithoutWFields
 
@@ -2817,7 +2817,7 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
             ref = BBB, '1', '1'
             origVerseText = self.getVerseText( ref )
             dPrint( 'Info', DEBUGGING_THIS_MODULE, '  InternalBible.analyseAndExportUWoriginal', ref, origVerseText )
-            if len(origVerseText) < 11: halt # Should be at least eleven characters (Jesus wept.)
+            if len(origVerseText) < 11: assert False, "We want to stop here" # Should be at least eleven characters (Jesus wept.)
 
             if bos_books_codes_py.is_old_testament_nr( BBB ):
                 analysedOTBookList.append( BBB )
@@ -2907,10 +2907,10 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
                                             # elif POS in ( 'CC','CO','CS', 'DO', 'IE', 'P', ):
                                             #     assert morph.count( ',' ) == 9
                                             # elif POS in ( 'D', ): assert morph.count( ',' ) == 10
-                                            # else: print( POS, morph, morph.count(',') ); halt # Unrecognised morph POS
+                                            # else: print( POS, morph, morph.count(',') ); assert False, "We want to stop here" # Unrecognised morph POS
                                         else:
                                             dPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"Unrecognised language code in '{morph}' from {BBB} {C}:{V} '{wField}'" )
-                                            # halt # Unrecognised morph language code
+                                            # assert False, "We want to stop here" # Unrecognised morph language code
                                         morph = morph[3:] # No need for that language code
                                     else: # only one is UHB NEH 1:6
                                         morph = ''
@@ -3507,7 +3507,7 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
 f'''  InternalBible.analyseAndExportUWalignments: Have {len(aggregatedAlignmentsList):,} alignment entries for {self.abbreviation}
     Maximum of {maxOriginalWords} original language words in one {self.abbreviation} entry
     Maximum of {maxTranslatedWords} translated words in one {self.abbreviation} entry''' )
-        #halt
+        #assert False, "We want to stop here"
     # end of InternalBible.analyseAndExportUWalignments
 # end of class InternalBible
 

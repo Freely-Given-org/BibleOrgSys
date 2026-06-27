@@ -415,7 +415,7 @@ def getZippedPickledBibleDetails( zipFilepath, extended=False ):
                     pB.pickleVersionData.update( BibleAttributeDict )
                 else:
                     pB.pickleVersionData.update( _getObjectAttributesDict( pickleInputFile ) )
-    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "getZippedPickledBibleDetails returning", pB.pickleVersionData ); halt
+    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "getZippedPickledBibleDetails returning", pB.pickleVersionData ); assert False, "We want to stop here"
     return pB.pickleVersionData
 # end of getZippedPickledBibleDetails
 

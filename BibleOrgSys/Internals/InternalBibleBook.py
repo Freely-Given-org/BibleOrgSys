@@ -85,10 +85,10 @@ from usfm_markers_py import to_standard_marker, get_newline_markers_list, is_new
                             USFM_BIBLE_PARAGRAPH_MARKERS, USFM_ALL_BIBLE_PARAGRAPH_MARKERS, USFM_ALL_MARKERS
 
 
-LAST_MODIFIED_DATE = '2026-05-20' # by RJH
+LAST_MODIFIED_DATE = '2026-06-20' # by RJH
 SHORT_PROGRAM_NAME = "InternalBibleBook"
 PROGRAM_NAME = "Internal Bible book handler"
-PROGRAM_VERSION = '1.00'
+PROGRAM_VERSION = '1.0.2'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -100,7 +100,7 @@ MAX_NONCRITICAL_ERRORS_PER_BOOK_NORMAL = 3
 MAX_NONCRITICAL_ERRORS_PER_BOOK_VERBOSE = 5
 
 
-BOS_CUSTOM_CONTENT_MARKERS = [ 'c~', 'c#', 'v=', 'v~', 'p~', 'cl¤', 'vp#' ]
+BOS_CUSTOM_CONTENT_MARKERS = [ 'c~', 'c#', 'v=', 'v~', 'XXXp~', 'cl¤', 'vp#' ]
 """
     c~  anything after the chapter number on a \\c line is split off into here --
             note that it can be blank (but have extras) if the chapter number is footnoted
@@ -119,7 +119,7 @@ BOS_CUSTOM_CONTENT_MARKERS = [ 'c~', 'c#', 'v=', 'v~', 'p~', 'cl¤', 'vp#' ]
 """
 
 # NOTE: Don't use any of the following symbols here: = ¬ or backslashes.
-BOS_PRINTABLE_MARKERS = USFM_ALL_TITLE_MARKERS + USFM_ALL_INTRODUCTION_MARKERS + USFM_ALL_SECTION_HEADING_MARKERS + ['v~', 'p~'] # Should c~ and c# be in here???
+BOS_PRINTABLE_MARKERS = USFM_ALL_TITLE_MARKERS + USFM_ALL_INTRODUCTION_MARKERS + USFM_ALL_SECTION_HEADING_MARKERS + ['v~', 'XXXp~'] # Should c~ and c# be in here???
 
 # BOS_REGULAR_NESTING_MARKERS = USFM_ALL_SECTION_HEADING_MARKERS + ('c','v' ) # No need to nest s1 type markers (one line only expected)
 BOS_REGULAR_NESTING_MARKERS = ['c','v']
@@ -149,7 +149,7 @@ BOS_NESTING_MARKERS = BOS_REGULAR_NESTING_MARKERS + BOS_ALL_CUSTOM_NESTING_MARKE
 #for marker in USFM_BIBLE_PARAGRAPH_MARKERS: BOS_END_MARKERS.append( '¬'+marker )
 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, len(BOS_END_MARKERS), BOS_END_MARKERS )
 BOS_END_MARKERS = [ f'¬{marker}' for marker in BOS_NESTING_MARKERS]
-#dPrint( 'Quiet', DEBUGGING_THIS_MODULE, len(BOS_END_MARKERS), BOS_END_MARKERS );halt
+#dPrint( 'Quiet', DEBUGGING_THIS_MODULE, len(BOS_END_MARKERS), BOS_END_MARKERS );assert False, "We want to stop here"
 # (46) ['¬c', '¬v', '¬headers', '¬intro', '¬ilist', '¬chapters', '¬list', '¬iot', '¬p', '¬pc', '¬pr',
 #       '¬m', '¬mi', '¬pm', '¬pmo', '¬pmc', '¬pmr', '¬cls',
 #       '¬pi','¬pi1','¬pi2','¬pi3','¬pi4', '¬ph','¬ph1','¬ph2','¬ph3','¬ph4',
@@ -539,26 +539,28 @@ class InternalBibleBook:
     # end of InternalBibleBook.__makeErrorRef
 
 
-    def addLine( self, marker:str, text:str ) -> None:
+    def addLine( self, originalMarker:str, text:str ) -> None:
         """
         Append a (USFM-based) 2-tuple to self._rawLines.
             This is a very simple function,
                 but having it allows us to have a single point in order to catch particular bugs or errors.
         """
         forceDebugHere = False
+        marker = originalMarker
         if marker not in BOS_CUSTOM_CONTENT_MARKERS and marker not in ('cl¤',):
             marker = to_standard_marker( marker )
-        vPrint( 'Never', forceDebugHere or DEBUGGING_THIS_MODULE,
+        if forceDebugHere or ( BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE ):
+            vPrint( 'Quiet', forceDebugHere or DEBUGGING_THIS_MODULE,
                 f"InternalBibleBook.addLine( {marker}= '{text}' ) for {self.objectTypeString} '{self.workName} …" )
         assert marker and isinstance( marker, str )
 
         if text:
             if '\n' in text or '\r' in text:
                 (logging.warning if self.objectTypeString=='uW Notes' else logging.critical)( f"InternalBibleBook.addLine found newLine in {self.objectTypeString} text: {marker}='{text}'" )
-                if forceDebugHere or BibleOrgSysGlobals.debugFlag: halt
+                if forceDebugHere or BibleOrgSysGlobals.debugFlag: assert False, "We want to stop here"
             elif '\\\\' in text:
                 (logging.warning if self.objectTypeString=='uW Notes' else logging.critical)( f"InternalBibleBook.addLine found doubled backslash in {self.objectTypeString} text: {marker}='{text}'" )
-                if forceDebugHere or BibleOrgSysGlobals.debugFlag: halt
+                if forceDebugHere or BibleOrgSysGlobals.debugFlag: assert False, "We want to stop here"
 
         if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag:
             assert not self._processedFlag
@@ -584,11 +586,11 @@ class InternalBibleBook:
             logging.warning( f"IBB.addLine: Not a NL marker: {marker}={text!r}" )
             if 1 or marker != 'w': # This can happen with unfoldingWord aligned Bibles
                 dPrint( 'Quiet', DEBUGGING_THIS_MODULE, self, repr(marker), repr(text) )
-                if DEBUGGING_THIS_MODULE: halt # How did this happen?
+                if DEBUGGING_THIS_MODULE: assert False, "We want to stop here" # How did this happen?
 
         if text is None:
             (logging.warning if marker in ('b',) else logging.critical)( f"InternalBibleBook.addLine: Received {self.objectTypeString} {self.BBB} {marker}={text!r}" )
-            if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag: halt # Programming error in the calling routine, sorry
+            if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag: assert False, "We want to stop here" # Programming error in the calling routine, sorry
             text = '' # Try to recover
 
         if text.strip() != text:
@@ -603,6 +605,7 @@ class InternalBibleBook:
                         stripLogger( f'Additional "Possibly needed to strip whitespace" messages suppressed for {self.workName} {self.BBB}' )
                         self.pntsCount = -1 # So we don't do this again (for this book)
 
+        # dPrint( 'Info', forceDebugHere or DEBUGGING_THIS_MODULE,f"InternalBibleBook.addLine marker {originalMarker=} was changed to {marker=} with {text=}" )
         self._rawLines.append( (marker, text) )
     # end of InternalBibleBook.addLine
 
@@ -622,7 +625,7 @@ class InternalBibleBook:
             assert self._rawLines # Must be an existing line to append to
         if additionalText and ( '\n' in additionalText or '\r' in additionalText ):
             logging.critical( f"InternalBibleBook.appendToLastLine found newLine in {self.objectTypeString} additionalText: {expectedLastMarker}='{additionalText}'" )
-            if forceDebugHere or BibleOrgSysGlobals.debugFlag: halt
+            if forceDebugHere or BibleOrgSysGlobals.debugFlag: assert False, "We want to stop here"
         if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag:
             assert not self._processedFlag
             assert additionalText and isinstance( additionalText, str )
@@ -651,7 +654,7 @@ class InternalBibleBook:
     # end of InternalBibleBook.appendToLastLine
 
 
-    def addVerseSegments( self, V:str, text:str, location:str|None=None ) -> None:
+    def addVerseSegmentsForSword( self, V:str, text:str, location:str|None=None ) -> None:
         """
         Takes a text line that might optionally include
             \\NL** markers to indicate a new line.
@@ -664,7 +667,7 @@ class InternalBibleBook:
         No return value.
         """
         forceDebugHere = False
-        fnPrint( DEBUGGING_THIS_MODULE, f"\nInternalBibleBook.addVerseSegments( {V!r}, {text!r}, {location!r} )" )
+        fnPrint( DEBUGGING_THIS_MODULE, f"\nInternalBibleBook.addVerseSegmentsForSword( {V!r}, {text!r}, {location!r} )" )
         if forceDebugHere or ( BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE ):
             assert not self._processedFlag
         ourText = text # Work on a copy so we can still print the original for error messages
@@ -732,7 +735,7 @@ class InternalBibleBook:
                             self.addLine( marker, '' )
                         else:
                             logging.error( f"It seems that we had a blank {bits[0]!r} field \nin {ourText!r}" )
-                            if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag: halt
+                            if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag: assert False, "We want to stop here"
                     else:
                         assert len(bits) == 2
                         if forceDebugHere or ( BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE ):
@@ -771,7 +774,7 @@ class InternalBibleBook:
 
         elif ourText: # No newlines in result -- just add the simple line
             self.addLine( 'v', V + ' ' + ourText )
-    # end of InternalBibleBook.addVerseSegments
+    # end of InternalBibleBook.addVerseSegmentsForSword
 
 
     # (Removed _processLineFix as it is now implemented in Rust)
@@ -1129,7 +1132,7 @@ class InternalBibleBook:
         for entry in self._processedLines:
             if entry.getMarker() == adjFieldName:
                 if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: assert not entry.getExtras() # We're maybe losing some info here
-                return entry.getText()
+                return entry.getOriginalText()
     # end of InternalBibleBook.getField
 
 
@@ -1751,16 +1754,6 @@ class InternalBibleBook:
         # try:
         verseEntryList, contextList = self._CVIndex.getVerseEntriesWithContext( (C,V), strict, complete ) # Gives a KeyError if not found
         assert isinstance( verseEntryList, InternalBibleEntryList )
-
-        # # Check that we don't have any duplicated verses in the section that we're about to return
-        # lastV = None
-        # for entry in verseEntryList:
-        #     marker, text = entry.getMarker(), entry.getFullText()
-        #     print( f"InternalBibleBook.getContextVerseData {BCVReference} {marker}={text}" )
-        #     if marker == 'v':
-        #         assert text != lastV
-        #         lastV = text
-    
         return verseEntryList, contextList
         # NOTE: The following (and more) is now done by the index get function
         # except KeyError: # Maybe V is something like '4b' so try again just with the leading digits
@@ -1829,7 +1822,7 @@ class InternalBibleBook:
                         else:
                             if not strict:
                                 logging.critical( f"InternalBibleBook.getContextVerseData( {startBCVReference} to {endBCVReference}) for {self.workName} {self.BBB} failed at {strC}:{strV}")
-                                halt
+                                assert False, "We want to stop here"
                                 break # return what we've got
                             raise kerr
                     else: # we're only doing one chapter

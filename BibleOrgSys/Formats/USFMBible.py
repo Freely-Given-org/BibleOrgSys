@@ -263,7 +263,7 @@ def findReplaceText( self, optionsDict, confirmCallback ):
     for someKey in optionsDict:
         if someKey not in optionsList:
             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"findReplaceText warning: unexpected {someKey!r} option = {optionsDict[someKey]!r}" )
-            if DEBUGGING_THIS_MODULE: halt
+            if DEBUGGING_THIS_MODULE: assert False, "We want to stop here"
 
     # Go through all the given options
     if 'workName' not in optionsDict: optionsDict['workName'] = self.abbreviation if self.abbreviation else self.name

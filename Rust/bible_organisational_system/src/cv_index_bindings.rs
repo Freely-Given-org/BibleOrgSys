@@ -184,24 +184,24 @@ impl PyInternalBibleEntry {
     /// Create a new InternalBibleEntry.
     ///
     /// Matches the Python constructor signature:
-    ///     InternalBibleEntry(marker, originalMarker, adjustedText, cleanText, extras, original_text)
+    ///     InternalBibleEntry(marker, originalMarker, original_text, adjusted_text, extras, clean_text)
     ///
     /// For end markers / added nesting markers, originalMarker through original_text should be None.
     #[new]
-    #[pyo3(signature = (marker, original_marker, adjusted_text=None, clean_text=None, extras=None, original_text=None))]
+    #[pyo3(signature = (marker, original_marker, original_text="", adjusted_text="", extras=None, clean_text=""))]
     fn new(
         marker: &str,
-        original_marker: Option<&str>,
-        adjusted_text: Option<&str>,
-        clean_text: Option<&str>,
+        original_marker: &str,
+        original_text: &str,
+        adjusted_text: &str,
         extras: Option<&PyInternalBibleExtraList>,
-        original_text: Option<&str>,
+        clean_text: &str,
     ) -> PyResult<Self> {
         // If only marker and one other arg given (2-arg form: marker + clean_text)
         // The second arg is original_marker in the signature but acts as clean_text
-        if adjusted_text.is_none() && extras.is_none() && original_text.is_none() {
-            if let Some(text) = original_marker
-                && (clean_text.is_none() || clean_text.unwrap().is_empty())
+        if adjusted_text.is_empty() && extras.is_none() && original_text.is_empty() {
+            if let text = original_marker
+                && (clean_text.is_empty() || clean_text.is_empty())
             {
                 // 2-arg simple form: (marker, clean_text)
                 if is_end_marker(marker) {
@@ -227,19 +227,20 @@ impl PyInternalBibleEntry {
         }
 
         // Full 6-arg form
-        let orig_marker = original_marker.ok_or_else(|| {
-            PyValueError::new_err(format!("originalMarker is required for regular entries (marker={} original_marker={:?} adjusted_text={:?} clean_text={:?} extras={:?} original_text={:?})", marker, original_marker, adjusted_text, clean_text, extras, original_text))
-        })?;
-        let adj_text = adjusted_text
-            .ok_or_else(|| PyValueError::new_err(format!("adjustedText is required for regular entries (marker={} original_marker={:?} adjusted_text={:?} clean_text={:?} extras={:?} original_text={:?})", marker, original_marker, adjusted_text, clean_text, extras, original_text)))?;
-        let cln_text = clean_text
-            .ok_or_else(|| PyValueError::new_err(format!("cleanText is required for regular entries (marker={} original_marker={:?} adjusted_text={:?} clean_text={:?} extras={:?} original_text={:?})", marker, original_marker, adjusted_text, clean_text, extras, original_text)))?;
-        let orig_text = original_text
-            .ok_or_else(|| PyValueError::new_err(format!("original_text is required for regular entries (marker={} original_marker={:?} adjusted_text={:?} clean_text={:?} extras={:?} original_text={:?})", marker, original_marker, adjusted_text, clean_text, extras, original_text)))?;
+        let orig_marker = original_marker;
+        // .ok_or_else(|| {
+        //     PyValueError::new_err(format!("originalMarker is required for regular entries (marker={} original_marker={:?} adjusted_text={:?} clean_text={:?} extras={:?} original_text={:?})", marker, original_marker, adjusted_text, clean_text, extras, original_text))
+        // })?;
+        let orig_text = original_text;
+            // .ok_or_else(|| PyValueError::new_err(format!("original_text is required for regular entries (marker={} original_marker={:?} adjusted_text={:?} clean_text={:?} extras={:?} original_text={:?})", marker, original_marker, adjusted_text, clean_text, extras, original_text)))?;
+        let adj_text = adjusted_text;
+            // .ok_or_else(|| PyValueError::new_err(format!("adjustedText is required for regular entries (marker={} original_marker={:?} adjusted_text={:?} clean_text={:?} extras={:?} original_text={:?})", marker, original_marker, adjusted_text, clean_text, extras, original_text)))?;
+        let cln_text = clean_text;
+            // .ok_or_else(|| PyValueError::new_err(format!("cleanText is required for regular entries (marker={} original_marker={:?} adjusted_text={:?} clean_text={:?} extras={:?} original_text={:?})", marker, original_marker, adjusted_text, clean_text, extras, original_text)))?;
 
         let rust_extras = extras.map(|e| e.inner.clone());
 
-        InternalBibleEntry::new(marker, orig_marker, adj_text, cln_text, rust_extras, orig_text)
+        InternalBibleEntry::new(marker, orig_marker, orig_text, adj_text, rust_extras, cln_text)
             .map(|inner| Self { inner })
             .map_err(|e| PyValueError::new_err(e.to_string()))
     }
@@ -248,21 +249,21 @@ impl PyInternalBibleEntry {
         &self,
     ) -> (
         &str,
-        Option<&str>,
-        Option<&str>,
-        Option<&str>,
+        &str,
+        &str,
+        &str,
         Option<PyInternalBibleExtraList>,
-        Option<&str>,
+        &str,
     ) {
         (
             self.inner.marker(),
             self.inner.original_marker(),
-            self.inner.adjusted_text(),
-            Some(self.inner.clean_text()),
-            self.inner
-                .extras()
-                .map(|e| PyInternalBibleExtraList::from(e.clone())),
             self.inner.original_text(),
+            self.inner.adjusted_text(),
+            self.inner
+            .extras()
+            .map(|e| PyInternalBibleExtraList::from(e.clone())),
+            self.inner.clean_text(),
         )
     }
 
@@ -276,13 +277,13 @@ impl PyInternalBibleEntry {
 
     /// Get the original marker before adjustment.
     #[getter(originalMarker)]
-    fn original_marker(&self) -> Option<&str> {
+    fn original_marker(&self) -> &str {
         self.inner.original_marker()
     }
 
     /// Get the adjusted text (notes removed, formatting retained).
     #[getter(adjustedText)]
-    fn adjusted_text(&self) -> Option<&str> {
+    fn adjusted_text(&self) -> &str {
         self.inner.adjusted_text()
     }
 
@@ -300,33 +301,33 @@ impl PyInternalBibleEntry {
 
     /// Get the original text (full USFM).
     #[getter(original_text)]
-    fn original_text(&self) -> Option<&str> {
+    fn original_text(&self) -> &str {
         self.inner.original_text()
     }
 
     // --- camelCase getter methods (Python backward compat) ---
 
-    /// Get the marker (Python compat).
+    /// Get the marker
     fn getMarker(&self) -> &str {
         self.inner.marker()
     }
 
-    /// Get the original marker (Python compat).
-    fn getOriginalMarker(&self) -> Option<&str> {
+    /// Get the original marker
+    fn getOriginalMarker(&self) -> &str {
         self.inner.original_marker()
     }
 
-    /// Get the adjusted text (Python compat).
-    fn getAdjustedText(&self) -> Option<&str> {
+    /// Get the adjusted text
+    fn getAdjustedText(&self) -> &str {
         self.inner.adjusted_text()
     }
 
-    /// Get the adjusted text — alias (Python compat).
-    fn getText(&self) -> Option<&str> {
-        self.inner.adjusted_text()
-    }
+    // /// Get the adjusted text — alias
+    // fn getText(&self) -> Option<&str> {
+    //     self.inner.adjusted_text()
+    // }
 
-    /// Get the clean text, optionally removing ESFM underlines (Python compat).
+    /// Get the clean text, optionally removing ESFM underlines
     #[pyo3(signature = (remove_esfm_underlines=false))]
     fn getCleanText(&self, remove_esfm_underlines: bool) -> String {
         if remove_esfm_underlines {
@@ -336,32 +337,32 @@ impl PyInternalBibleEntry {
         }
     }
 
-    /// Get the extras (Python compat).
+    /// Get the extras
     fn getExtras(&self) -> Option<PyInternalBibleExtraList> {
         self.inner.extras().map(|e| PyInternalBibleExtraList::from(e.clone()))
     }
 
-    /// Get the original text (Python compat).
-    fn getOriginalText(&self) -> Option<&str> {
+    /// Get the original text (should be identical to the line read from the original file)
+    fn getOriginalText(&self) -> &str {
         self.inner.original_text()
     }
 
-    /// Get the full text — returns original_text (Python compat).
-    fn getFullText(&self) -> Option<&str> {
-        self.inner.original_text()
+    /// Get the full text — returns TRIMMED original_text
+    fn getFullText(&self) -> &str {
+        self.inner.original_text().trim()
     }
 
     // --- Mutators ---
 
-    /// Set the clean text (also sets adjusted and original text).
-    /// Only works when extras is None.
-    fn setCleanText(&mut self, new_value: &str) -> PyResult<()> {
-        if self.inner.has_extras() {
-            return Err(PyValueError::new_err("Cannot set cleanText when extras exist"));
-        }
-        self.inner.set_clean_text(new_value);
-        Ok(())
-    }
+    // /// Set the clean text (also sets adjusted and original text).
+    // /// Only works when extras is None.
+    // fn setCleanText(&mut self, new_value: &str) -> PyResult<()> {
+    //     if self.inner.has_extras() {
+    //         return Err(PyValueError::new_err("Cannot set cleanText when extras exist"));
+    //     }
+    //     self.inner.set_clean_text(new_value);
+    //     Ok(())
+    // }
 
     // --- Predicates ---
 
@@ -385,8 +386,8 @@ impl PyInternalBibleEntry {
         match key_index {
             0 => Ok(self.inner.marker().into_pyobject(py)?.into_any().unbind()),
             1 => Ok(self.inner.original_marker().into_pyobject(py)?.into_any().unbind()),
-            2 => Ok(self.inner.adjusted_text().into_pyobject(py)?.into_any().unbind()),
-            3 => Ok(self.inner.clean_text().into_pyobject(py)?.into_any().unbind()),
+            2 => Ok(self.inner.original_text().into_pyobject(py)?.into_any().unbind()),
+            3 => Ok(self.inner.adjusted_text().into_pyobject(py)?.into_any().unbind()),
             4 => match self.inner.extras() {
                 Some(e) => {
                     let py_extras = PyInternalBibleExtraList::from(e.clone());
@@ -394,7 +395,7 @@ impl PyInternalBibleEntry {
                 }
                 None => Ok(py.None()),
             },
-            5 => Ok(self.inner.original_text().into_pyobject(py)?.into_any().unbind()),
+            5 => Ok(self.inner.clean_text().into_pyobject(py)?.into_any().unbind()),
             _ => Err(PyIndexError::new_err(format!("Invalid {} index number", key_index))),
         }
     }
@@ -408,33 +409,35 @@ impl PyInternalBibleEntry {
     }
 
     fn __repr__(&self) -> String {
-        let abbrev_adj = self
-            .inner
-            .adjusted_text()
-            .map(abbreviate::<100, 50>)
-            .unwrap_or_default();
+        let abbrev_adj = abbreviate::<100, 50>(self.inner.adjusted_text());
+        // let abbrev_adj = self
+        //     .inner
+        //     .adjusted_text()
+        //     .map(abbreviate::<100, 50>);
+        //     // .unwrap_or_default();
         let abbrev_clean = abbreviate::<100, 50>(self.inner.clean_text());
-        let abbrev_orig = self
-            .inner
-            .original_text()
-            .map(abbreviate::<100, 50>)
-            .unwrap_or_default();
+        let abbrev_orig = abbreviate::<100, 50>(self.inner.original_text());
+        // let abbrev_orig = self
+        //     .inner
+        //     .original_text()
+        //     .map(abbreviate::<100, 50>);
+        //     // .unwrap_or_default();
 
         let mut result = format!(
             "InternalBibleEntry object:\n    {} = {:?}",
             self.inner.marker(),
             abbrev_clean
         );
-        if self.inner.original_marker() != Some(self.inner.marker())
+        if self.inner.original_marker() != self.inner.marker()
             || self
                 .inner
-                .original_text()
-                .map(|t| t != self.inner.clean_text())
-                .unwrap_or(false)
+                .original_text() != self.inner.clean_text()
+                // .map(|t| t != self.inner.clean_text())
+                // .unwrap_or(false)
         {
             result += &format!(
                 "\n  from Original {} = {:?}",
-                self.inner.original_marker().unwrap_or(""),
+                self.inner.original_marker(),
                 abbrev_orig
             );
         }
@@ -569,7 +572,7 @@ impl PyInternalBibleEntryList {
         self.inner.extend(&other.inner);
     }
 
-    /// Support the + operator to combine lists (Python compat).
+    /// Support the + operator to combine lists
     fn __add__(&self, other: &PyInternalBibleEntryList) -> Self {
         let mut combined = self.inner.clone();
         combined.extend(&other.inner);
@@ -682,7 +685,7 @@ impl PyCVIndexEntry {
     ///     context: Optional list of context markers
     #[new]
     #[pyo3(signature = (entry_index, entry_count, context=None))]
-    fn new(entry_index: usize, entry_count: u16, context: Option<Vec<String>>) -> Self {
+    fn new(entry_index: u16, entry_count: u16, context: Option<Vec<String>>) -> Self {
         let ctx = context.unwrap_or_default().into_iter().map(|s| s.into()).collect();
         Self {
             inner: CVIndexEntry::new(entry_index, entry_count, ctx),
@@ -724,22 +727,22 @@ impl PyCVIndexEntry {
 
     // --- camelCase getter methods (Python backward compat) ---
 
-    /// Get the entry index (Python compat).
+    /// Get the entry index
     fn getEntryIndex(&self) -> usize {
         self.inner.entry_index()
     }
 
-    /// Get the next entry index (Python compat).
+    /// Get the next entry index
     fn getNextEntryIndex(&self) -> usize {
         self.inner.next_entry_index()
     }
 
-    /// Get the entry count (Python compat).
+    /// Get the entry count
     fn getEntryCount(&self) -> u16 {
         self.inner.entry_count()
     }
 
-    /// Get the context list (Python compat).
+    /// Get the context list
     fn getContextList(&self) -> Vec<String> {
         self.inner.context().iter().map(|s| s.to_string()).collect()
     }
@@ -869,7 +872,7 @@ impl PyInternalBibleBookCVIndex {
 
     // === Properties (camelCase backward compat) ===
 
-    /// Get the work name (Python compat).
+    /// Get the work name
     #[getter(workName)]
     fn work_name_compat(&self) -> &str {
         self.inner.work_name()
@@ -1000,22 +1003,22 @@ impl PyInternalBibleBookCVIndex {
             .map_err(|e| PyValueError::new_err(e.to_string()))
     }
 
-    /// Validate the index structure.
-    fn validate<'py>(&self, _py: Python<'py>) -> Vec<String> {
-        self.inner.validate()
-    }
+    // /// Validate the index structure.
+    // fn validate<'py>(&self, _py: Python<'py>) -> Vec<String> {
+    //     self.inner.validate()
+    // }
 
     // === camelCase methods (Python backward compat, accept tuples) ===
 
-    /// Build the CV index from processed entries (Python compat).
+    /// Build the CV index from processed entries
     fn makeBookCVIndex<'py>(&mut self, _py: Python<'py>, entries: &PyInternalBibleEntryList) -> PyResult<()> {
-        verbosity_println!(3, "Building CV index for {} {}…", self.inner.work_name(), self.inner.bos_book_code());
+        verbosity_println!(3, "Building CV index for {} {} from {} entries…", self.inner.work_name(), self.inner.bos_book_code(), entries.__len__());
         self.inner
             .build(entries.inner.clone())
             .map_err(|e| PyValueError::new_err(e.to_string()))
     }
 
-    /// Perform discovery on this book (Python compat).
+    /// Perform discovery on this book
     fn discover<'py>(&self, py: Python<'py>) -> PyResult<Bound<'py, PyBookDiscoveryResults>> {
         let results = bos_internals::discovery::discover_book(self.inner.entries(), self.inner.bos_book_code());
         Bound::new(py, PyBookDiscoveryResults { inner: results })
@@ -1052,7 +1055,7 @@ impl PyInternalBibleBookCVIndex {
             .map_err(|_| PyKeyError::new_err(format!("({:?}, {:?})", cv_key.0, cv_key.1)))
     }
 
-    /// Get all entries for a chapter (Python compat).
+    /// Get all entries for a chapter
     fn getChapterEntries(&self, chapter: &str) -> PyResult<PyInternalBibleEntryList> {
         self.inner
             .get_chapter_entries(chapter)
@@ -1060,7 +1063,7 @@ impl PyInternalBibleBookCVIndex {
             .map_err(|_| PyKeyError::new_err(format!("Chapter {:?}", chapter)))
     }
 
-    /// Get chapter entries with context markers (Python compat).
+    /// Get chapter entries with context markers
     fn getChapterEntriesWithContext(&self, chapter: &str) -> PyResult<(PyInternalBibleEntryList, Vec<String>)> {
         let start_cv = ChapterVerse::new(chapter, "0");
         let first_entry = self
@@ -1068,6 +1071,7 @@ impl PyInternalBibleBookCVIndex {
             .get_index_entry(&start_cv)
             .ok_or_else(|| PyKeyError::new_err(format!("({:?}, '0')", chapter)))?;
 
+        // Convert context CompactStrings to Vec<String>
         let context: Vec<String> = first_entry.context().iter().map(|s| s.to_string()).collect();
 
         // Try to find the start of the next chapter
@@ -1088,6 +1092,7 @@ impl PyInternalBibleBookCVIndex {
         };
 
         let entries = self.inner.entries().slice(first_entry.entry_index(), end_index);
+        debug_assert!(entries.last().map(|e| e.is_end_marker()).unwrap_or(false), "Last entry in chapter should be end marker not {:?}", entries.last().map(|e| e.marker()));
         Ok((PyInternalBibleEntryList::from(entries), context))
     }
 
@@ -1181,3 +1186,48 @@ pub fn py_build_bible_cv_indexes<'py>(
     Ok(dict)
 }
 
+
+#[cfg(test)]
+mod tests {
+
+    use super::*;
+    use std::fs::File;
+    use std::io::{BufRead, BufReader};
+
+    #[test]
+    #[ignore = "Test not finished yet"]
+    fn test_oet_lv_haggai_processing() {
+        let file_path = "../../Tests/DataFilesForTests/OET-LV/OET-LV_HAG.ESFM";
+        let file = File::open(file_path).expect("Could not open OET-LV Haggai ESFM file");
+        let reader = BufReader::new(file);
+
+        let mut raw_lines = Vec::new();
+        for line in reader.lines() {
+            let line = line.expect("Could not read line");
+            if line.trim().is_empty() {
+                continue;
+            }
+            let (marker, text) = match line.split_once(' ') {
+                Some((m, t)) => (m, t),
+                None => (line.as_str(), ""),
+            };
+            let marker = marker.strip_prefix('\\').unwrap_or(marker);
+            raw_lines.push((marker.to_string(), text.to_string()));
+        }
+        
+        // Results should match test_data/OET-LV_HAG_rawLines.txt
+        let original_count = raw_lines.len();
+        // println!("Original lines read: {}", original_count);
+        assert_eq!(original_count, 57, "Expected 57 raw lines in Haggai ESFM file");
+
+        let options = crate::processing::ProcessLinesOptions::default();
+        let processed = crate::processing::process_lines(raw_lines, "HAG", "OET-LV", &options);
+        // println!("Final OET-LV Haggai processed line entries: {}", processed.len());
+
+        let mut _index  = PyInternalBibleBookCVIndex::new("OET-LV", "HAG");
+        println!("This test is UNFINISHED: CV index building and lookup not yet implemented for OET-LV Haggai");
+        // index.build(pyo3::Python::<'_>, &PyInternalBibleEntryList::from(processed.clone())).expect("Failed to build CV index for OET-LV Haggai");
+
+        // let _ = index.getChapterEntriesWithContext("-1").expect("Failed to get chapter entries with context for Haggai intro");
+    }
+}

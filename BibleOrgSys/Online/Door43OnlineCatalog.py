@@ -120,7 +120,7 @@ class Door43CatalogResources:
         else:
             if BibleOrgSysGlobals.debugFlag or DEBUGGING_THIS_MODULE:
                 vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "    contentType", contentType )
-            halt # Haven't had this contentType before
+            assert False, "We want to stop here" # Haven't had this contentType before
     # end of Door43CatalogResources.getOnlineData
 
 
@@ -431,7 +431,7 @@ class Door43CatalogBible( USFMBible ):
                 with zipfile.ZipFile( myTempFile ) as myzip:
                     # NOTE: Could be a security risk here
                     myzip.extractall( unzippedFolderpath )
-            else: halt # unknown content type
+            else: assert False, "We want to stop here" # unknown content type
 
         # There's probably a folder inside this folder
         folders = os.listdir( unzippedFolderpath )

@@ -91,7 +91,7 @@ def main() -> None:
 
     while True: # Loop until they stop it
         userInput = input( '\n' + "Enter a verse number 1..31102 or a single Bible verse reference (or QUIT): " )
-        if userInput.lower() in ('exit', 'quit', 'q', 'stop', 'halt',):
+        if userInput.lower() in ('exit', 'quit', 'q', 'stop', 'assert False, "We want to stop here"',):
             break
 
         # See if it's an absolute verse number

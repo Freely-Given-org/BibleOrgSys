@@ -249,7 +249,7 @@ def theWordGetBBBCV( lineNumber, volumeType='BOTH' ):
                 if lineNumber < (runningTotal + verseTotal + verseCount ):
                     return BBB, C, lineNumber - runningTotal - verseTotal + 1
                 verseTotal += verseCount
-            halt # programming error
+            assert False, "We want to stop here" # programming error
         runningTotal += lines
 # end of theWordGetBBBCV
 
@@ -368,7 +368,7 @@ def theWordHandleIntroduction( BBB:str, bookData, ourGlobals ):
                 logging.warning( f"theWordHandleIntroduction: doesn't handle {BBB} {marker!r} yet" )
                 if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE:
                     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"theWordHandleIntroduction: doesn't handle {BBB} {marker!r} yet" )
-                    halt
+                    assert False, "We want to stop here"
                 ourGlobals['unhandledMarkers'].add( marker + ' (in intro)' )
         intV += 1 # Step to the next introductory section "verse"
 
@@ -377,7 +377,7 @@ def theWordHandleIntroduction( BBB:str, bookData, ourGlobals ):
         logging.warning( f"theWordHandleIntroduction: Doesn't handle formatted line yet: {BBB} {composedLine!r}" )
         vPrint( 'Never', DEBUGGING_THIS_MODULE, f"theWordHandleIntroduction: Doesn't handle formatted line yet: {BBB} {composedLine!r}" )
         if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
-            halt
+            assert False, "We want to stop here"
     return composedLine
 # end of theWordHandleIntroduction
 
@@ -446,7 +446,7 @@ def theWordAdjustLine( BBB:str, C:str, V:str, originalLine:str ):
         #if '\\f' in originalLine:
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "o", originalLine )
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "n", line )
-            #halt
+            #assert False, "We want to stop here"
 
     if '\\' in line: # Handle character formatting fields
         line = removeUSFMCharacterField( 'fig', line, closed_flag=True ) # Remove figures
@@ -485,7 +485,7 @@ def theWordAdjustLine( BBB:str, C:str, V:str, originalLine:str ):
     if '\\' in line:
         logging.critical( f"theWordAdjustLine: Doesn't handle formatted line yet: {BBB} {C}:{V} {line!r}" )
         vPrint( 'Never', DEBUGGING_THIS_MODULE, f"theWordAdjustLine: Doesn't handle formatted line yet: {BBB} {C}:{V} {line!r}" )
-        if DEBUGGING_THIS_MODULE and BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag: halt
+        if DEBUGGING_THIS_MODULE and BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag: assert False, "We want to stop here"
     return line
 # end of theWordAdjustLine
 
@@ -503,7 +503,7 @@ def resettheWordMargins( ourGlobals, setKey=None ) -> None:
     if setKey: ourGlobals[setKey] = True
     #if was and not ourGlobals['pi1']:
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Went off at", BBB, C, V, marker, text )
-        #if BBB=='MAT' and C==4 and V==17: halt
+        #if BBB=='MAT' and C==4 and V==17: assert False, "We want to stop here"
 # end of resettheWordMargins
 
 
@@ -554,7 +554,7 @@ def handleRTFLine( myName, BBB:str, C:str, V:str, originalLine:str, bookObject, 
     line = line.replace( '</<sup>>', '</sup>' ) # aleppo
     if line.endswith( '<CI><PI2>' ): line = line[:-5] # remove <PI2> from Tanakh1917
     line = line.replace( '<26-Ezekiel.21:3>', '' ) # Tanakh1917
-    #if '\xa0' in line: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, myName, BBB, C, V, repr(originalLine) ); halt
+    #if '\xa0' in line: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, myName, BBB, C, V, repr(originalLine) ); assert False, "We want to stop here"
     line = line.replace( '\xa0', ' ' ) # NBSpace? Not sure what this is (in aleppo and arm1967 and others?)
     if line.endswith( ' <CM>\t' ): line = line.replace( ' <CM>\t', '<CM>' ) # asv
     line = re.sub( '<V (\\d{1,3}):(\\d{1,3})>', '', line ) # cpdv for some verses
@@ -576,7 +576,7 @@ def handleRTFLine( myName, BBB:str, C:str, V:str, originalLine:str, bookObject, 
     line = re.sub( '<A (\\d{1,3})\\.(\\d{1,2})>', '', line )
     #if '<A' in line:
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "line3", repr(originalLine), '\n', repr(line) )
-        #if BibleOrgSysGlobals.debugFlag: halt
+        #if BibleOrgSysGlobals.debugFlag: assert False, "We want to stop here"
     line = re.sub( '<22-Song of Songs\\.(\\d{1,2})\\.(\\d{1,2})>', '', line ) # Tanakh1917
     line = line.replace( '<z1>', '' ).replace( '<z2>', '' ) # footnote referent text in leb
     line = re.sub( '<AF(.)(.*?)>', '', line ) # sblgnt.nt seems to have alternatives immediately before the word
@@ -652,11 +652,11 @@ def handleRTFLine( myName, BBB:str, C:str, V:str, originalLine:str, bookObject, 
     line = line.replace( '<wh>','' )
     if '<WH' in line or '<wh' in line:
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "line4", repr(originalLine), '\n', repr(line) )
-        #halt
+        #assert False, "We want to stop here"
     line = re.sub( '<l=(.+?)>', '', line )
     if '<l=' in line:
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "line5", repr(originalLine), '\n', repr(line) )
-        #halt
+        #assert False, "We want to stop here"
 
     # Simple HTML tags (with no semantic info)
     line = line.replace('<b>','\\bd ').replace('</b>','\\bd*')
@@ -735,7 +735,7 @@ def handleRTFLine( myName, BBB:str, C:str, V:str, originalLine:str, bookObject, 
             logging.error( f"theWordBible.load: Doesn't handle {BBB} {C}:{V} formatted line yet: {repr(line)}" )
             if 1: # Unhandled stuff -- not done properly yet……
                 line = re.sub( '<(.+?)>', '', line ) # Remove all remaining sets of angle brackets
-            if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: halt
+            if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: assert False, "We want to stop here"
 
 
     line = line.replace( '\\NL*\\NL*', '\\NL*' ) # Don't need double-ups
@@ -764,7 +764,7 @@ def handleRTFLine( myName, BBB:str, C:str, V:str, originalLine:str, bookObject, 
                         bookObject.addLine( marker, '' )
                     else:
                         logging.error( f"It seems that we had a blank {bits[0]!r} field in {originalLine!r}" )
-                        #halt
+                        #assert False, "We want to stop here"
                 else:
                     assert len(bits) == 2
                     if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE:
@@ -795,7 +795,7 @@ def handleRTFLine( myName, BBB:str, C:str, V:str, originalLine:str, bookObject, 
                     #myGlobals['haveParagraph'] = False
         if leftovers: logging.critical( f"Had leftovers {repr(leftovers)}" )
         if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: assert not leftovers
-        #halt
+        #assert False, "We want to stop here"
     else: # no newlines in the middle
         if C==1 and V==1 and not appendedCFlag: bookObject.addLine( 'c', str(C) ); appendedCFlag = True
         bookObject.addLine( 'v', f'{V} {line}' )
@@ -969,7 +969,7 @@ class theWordBible( Bible ):
             except UnicodeDecodeError:
                 logging.critical( f"theWord Bible module file fails with encoding: {self.sourceFilename} {self.encoding}" )
 
-        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, self.suppliedMetadata['theWord'] ); halt
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, self.suppliedMetadata['theWord'] ); assert False, "We want to stop here"
         #if 'description' in self.suppliedMetadata['theWord'] and len(self.suppliedMetadata['theWord']['description'])<40: self.name = self.suppliedMetadata['theWord']['description']
         #if 'short.title' in self.suppliedMetadata['theWord']: self.shortName = self.suppliedMetadata['theWord']['short.title']
 
@@ -1119,7 +1119,7 @@ def theWordComposeVerseLine( BBB:str, C:str, V:str, verseData, ourGlobals ):
         elif marker == 'li3': resettheWordMargins( ourGlobals, 'pi3' ); composedLine += '<PI3>• '+theWordAdjustLine(BBB,C,V,text)
         elif marker == 'li4': resettheWordMargins( ourGlobals, 'pi4' ); composedLine += '<PI4>• '+theWordAdjustLine(BBB,C,V,text)
         elif marker in ( 'cd', 'sp', ): composedLine += '<i>'+theWordAdjustLine(BBB,C,V,text)+'</i>'
-        elif marker in ( 'v~', 'p~', ):
+        elif marker in ( 'v~', 'XXXp~', ):
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, lastMarker )
             if lastMarker == 'p': composedLine += '<CM>' # We had a continuation paragraph
             elif lastMarker == 'm': composedLine += '<CL>' # We had a continuation paragraph
@@ -1128,7 +1128,7 @@ def theWordComposeVerseLine( BBB:str, C:str, V:str, verseData, ourGlobals ):
                 composedLine += theWordAdjustLine( BBB,C,V, text )
                 if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE:
                     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "theWordComposeVerseLine:", BBB, C, V, marker, lastMarker, verseData )
-                    halt # This should never happen -- probably a b marker with text
+                    assert False, "We want to stop here" # This should never happen -- probably a b marker with text
             #if ourGlobals['pi1']: composedLine += '<PI>'
             #elif ourGlobals['pi2']: composedLine += '<PI2>'
             #elif ourGlobals['pi3']: composedLine += '<PI3>'
@@ -1154,7 +1154,7 @@ def theWordComposeVerseLine( BBB:str, C:str, V:str, verseData, ourGlobals ):
     if '\\' in composedLine:
         logging.critical( f"theWordComposeVerseLine: Doesn't handle formatted line yet: {BBB} {C}:{V} {composedLine!r}" )
         vPrint( 'Never', DEBUGGING_THIS_MODULE, f"theWordComposeVerseLine: Doesn't handle formatted line yet: {BBB} {C}:{V} {composedLine!r}" )
-        if DEBUGGING_THIS_MODULE and BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag: halt
+        if DEBUGGING_THIS_MODULE and BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag: assert False, "We want to stop here"
     return composedLine.rstrip()
 # end of theWordComposeVerseLine
 
@@ -1272,7 +1272,7 @@ def createTheWordModule( self, outputFolder, controlDict ):
             bookCount += 1
             if lineCount != checkCount:
                 logging.critical( f"Wrong number of lines written: {bookCount} {BBB} {lineCount} {checkCount}" )
-                if BibleOrgSysGlobals.debugFlag: halt
+                if BibleOrgSysGlobals.debugFlag: assert False, "We want to stop here"
             handledBooks.append( BBB )
             if BBB == endBBB: break
             BBB = BOS.getNextBookCode( BBB )
@@ -1369,7 +1369,7 @@ def testtWB( indexString, twBfolder, twBfilename ):
             vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nComparing original and re-exported theWord files…" )
             result = BibleOrgSysGlobals.fileCompare( twBfilename, twBfilename, twBfolder, outputFolder )
             if BibleOrgSysGlobals.debugFlag:
-                if not result: halt
+                if not result: assert False, "We want to stop here"
 # end of testtWB
 
 

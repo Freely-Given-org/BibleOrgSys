@@ -100,8 +100,8 @@ class USFMBibleBook( BibleBook ):
             Uses C and V from the surrounding program context to make user messages more useful.
 
             Note: for uwAligned data, calls will look something like this:
-                    doAddLine( 'p~', '\\w Simon|x-occurrence="1" x-occurrences="1"\\w*' )
-                    doAddLine( 'p~', '\\w of|x-occurrence="1" x-occurrences="2"\\w* \\w Cyrene|x-occurrence="1" x-occurrences="1"\\w* (\\w the|x-occurrence="1" x-occurrences="2"\\w*' )
+                    doAddLine( 'XXXp~', '\\w Simon|x-occurrence="1" x-occurrences="1"\\w*' )
+                    doAddLine( 'XXXp~', '\\w of|x-occurrence="1" x-occurrences="2"\\w* \\w Cyrene|x-occurrence="1" x-occurrences="1"\\w* (\\w the|x-occurrence="1" x-occurrences="2"\\w*' )
             """
             fnPrint( DEBUGGING_THIS_MODULE, f"doAddLine( '{addMarker}', '{addText}' )" )
             # assert addText.count('\\w ') == addText.count('\\w*') # Logged around line 445
@@ -146,7 +146,7 @@ class USFMBibleBook( BibleBook ):
                     text = text[ix:] # Get the final bit of the line
 
             # assert '\\v' not in text
-            # if '\\v' in text: print( f"doAddLine( '{addMarker}', '{addText}' ) -> {marker=} {text=}" ); halt
+            # if '\\v' in text: print( f"doAddLine( '{addMarker}', '{addText}' ) -> {marker=} {text=}" ); assert False, "We want to stop here"
             # if self.workName=='ULT' and self.BBB=='JER' and C=='4':
             #     print( f"Added final line: {marker}={text!r}\n" )
             self.addLine( marker, text ) # Call the function in the base class to save the line (or the remainder of the line if we split it above)
@@ -168,7 +168,7 @@ class USFMBibleBook( BibleBook ):
                 (but \\w markers left in the text)
             """
             debuggingThisFunction = DEBUGGING_THIS_MODULE or False # (99 if self.BBB=='NEH' and C=='1' else False)
-            # if self.BBB=='NEH' and C=='1' and V=='2': halt
+            # if self.BBB=='NEH' and C=='1' and V=='2': assert False, "We want to stop here"
             fnPrint( debuggingThisFunction, f"'{self.workName}' {self.BBB}_{C}:{V} handleUWEncoding( {givenMarker}={givenText!r}\n              level={variables['level']}, aText='{variables['text']}', aWords='{variables['words']}' )…" )
             if variables['text']:
                 assert variables['text'].startswith( 'x-strong="' )
@@ -292,7 +292,7 @@ class USFMBibleBook( BibleBook ):
                         loadErrors.append( f"{self.BBB} {C}:{V} Unclosed '\\{marker}' Door43 custom alignment marker at beginning of line (with no text)" )
                         logging.warning( f"Unclosed '\\{marker}' Door43 custom alignment marker after {self.BBB} {C}:{V} at beginning of line (with no text)" )
                         dPrint( 'Info', debuggingThisFunction, "The above warnings and error messages need fixing!")
-                        if debuggingThisFunction or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag: halt # Error messages need fixing
+                        if debuggingThisFunction or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag: assert False, "We want to stop here" # Error messages need fixing
                     else: # self-closing was ok
                         variables['level'] += 1
                         if variables['level'] > variables['maxLevel']: variables['maxLevel'] = variables['level']
@@ -324,7 +324,7 @@ class USFMBibleBook( BibleBook ):
                 marker, text = findInternalStarts( 'INLINE', f'\\{marker} {text}', variables )
             elif marker == 'zaln-e': # unexpected
                 logging.critical( "Didn't expect zaln-e marker at beginning of line" )
-                halt
+                assert False, "We want to stop here"
 
             # Could be v, w, etc. -- now look inside the text
             marker, text = findInternalStarts( marker, text, variables ) # Could be more
@@ -360,7 +360,7 @@ class USFMBibleBook( BibleBook ):
                     #assert variables['level'] >= 0
                 elif '\\zaln-e' in text:
                     logging.critical( f"Not enough zaln-e markers (expected {variables['level']}) in {marker}={text}" )
-                    halt # Not enough zaln-e markers
+                    assert False, "We want to stop here" # Not enough zaln-e markers
                 else: # end marker(s) must be on a following line
                     #dPrint( 'Quiet', debuggingThisFunction, self.wordName, self.BBB, C, V, "words3a", variables['words'] )
                     #dPrint( 'Quiet', debuggingThisFunction, f"{marker}={text}" )
@@ -385,7 +385,7 @@ class USFMBibleBook( BibleBook ):
                     marker, text = text[1:3], text[4:]
                 else:
                     if text[0] not in ',:;.?!”’} -—[‘"' and not text.startswith( '\\w '): dPrint( 'Never', debuggingThisFunction, f"handleUWEncoding '{self.workName}' {self.BBB}_{C}:{V}: handled INLINE '{text}'" )
-                    marker = 'p~'
+                    marker = 'v~' # 'XXXp~'
             if marker == 'INLINE':
                 logging.critical( f"Programming error in {self.BBB} handleUWEncoding() with INLINE='{text}'" )
 
@@ -404,13 +404,13 @@ class USFMBibleBook( BibleBook ):
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "OBNS", self.containerBibleObject.objectNameString )
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, dir(self.containerBibleObject) )
 
-        gotUWEncoding = False
-        alignmentVariables = { 'level':0, 'maxLevel':0, 'text':'', 'words':'', 'saved':[] }
-        try:
-            if self.containerBibleObject.uWencoded:
-                gotUWEncoding = True
-                issueLinePositioningErrors = False
-        except AttributeError: pass # Don't worry about it
+        # gotUWEncoding = False
+        # alignmentVariables = { 'level':0, 'maxLevel':0, 'text':'', 'words':'', 'saved':[] }
+        # try:
+        #     if self.containerBibleObject.uWencoded:
+        #         gotUWEncoding = True
+        #         issueLinePositioningErrors = False
+        # except AttributeError: pass # Don't worry about it
 
         vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + f"Loading {filename}…" )
         #self.BBB = BBB
@@ -422,13 +422,25 @@ class USFMBibleBook( BibleBook ):
         if encoding is None: encoding = 'utf-8'
         originalBook.read( self.sourceFilepath, encoding=encoding )
 
+        # Pre-check for uW alignment encoding in this file (it's not in FRT, etc.)
+        gotUWEncoding = False
+        for marker,text in originalBook.lines:
+            # NOTE: UHB and SR-GNT use the uW /w fields at the beginnings of lines, but doesn't contain /zaln or /ts fields
+            if marker in ('zaln-s','ts\\*','w') or '\\zaln-s' in text:
+                gotUWEncoding = True
+                break
+        if gotUWEncoding:
+            self.containerBibleObject.uWencoded = True
+            issueLinePositioningErrors = False
+        alignmentVariables = { 'level':0, 'maxLevel':0, 'text':'', 'words':'', 'saved':[] }
+
         # Do some important cleaning up before we save the data
         C, V = '-1', '-1' # So first/id line starts at -1:0
         lastMarker = lastText = None
         loadErrors:list[str] = []
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "USFMBibleBook.load():", type(originalBook), type(originalBook.lines), len(originalBook.lines), originalBook.lines[0] )
         for marker,text in originalBook.lines: # Always process a line behind in case we have to combine lines
-            # if self.workName=='SR-GNT' and self.BBB=='MRK' and C=='5' and V=='26': halt
+            # if self.workName=='SR-GNT' and self.BBB=='MRK' and C=='5' and V=='26': assert False, "We want to stop here"
             if DEBUGGING_THIS_MODULE and gotUWEncoding:
                 dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'''\n'{self.workName}' {self.BBB} USFMBible.load() loop for line {marker}='{text}' for alignment level = {alignmentVariables['level']} (Max so far = {alignmentVariables['maxLevel']})
     Alignment text = {alignmentVariables['text']!r}{chr(10) if alignmentVariables['text'] else ''}    Alignment words = {alignmentVariables['words']!r}''' )
@@ -454,7 +466,7 @@ class USFMBibleBook( BibleBook ):
             #             logging.warning( "Found suspect concatenated w fields in \\{}='{}' after {} {} {}:{}" \
             #                         .format( marker, text, self.workName, self.BBB, C, V ) )
             #         # else: print( f"handleUWEncoding(): Got '{text[ixWordEndIndex+1:]}' immediately following '{firstWord}' in '{self.workName}' {self.BBB}_{C}:{V}")
-            #     else: print( f"Mismatched in \\w fields {marker}='{text}'" ); halt # Some other marker
+            #     else: print( f"Mismatched in \\w fields {marker}='{text}'" ); assert False, "We want to stop here" # Some other marker
 
             if (marker=='w' and text.count('\\w ')+1 !=  text.count('\\w*')) \
             or (marker!='w' and text.count('\\w ') !=  text.count('\\w*')):
@@ -478,7 +490,7 @@ class USFMBibleBook( BibleBook ):
                             marker, text = 'v', text[3:] # Drop s5 and adjust marker
                         else:
                             dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"USFMBibleBook.load() {self.workName} {self.BBB} s5 {text=}" )
-                            if self.doExtraChecking: halt
+                            if self.doExtraChecking: assert False, "We want to stop here"
                     else: # was just whitespace
                         loadErrors.append( f"{self.BBB} {C}:{V} Removed '\\{marker}' Door43 custom marker at beginning of line (with following whitespace)" )
                         logging.warning( f"Removed '\\{marker}' Door43 custom marker after {self.BBB} {C}:{V} at beginning of line (with following whitespace)" )
@@ -500,10 +512,10 @@ class USFMBibleBook( BibleBook ):
                         elif text.startswith( '\\w ' ):
                             marker, text = 'w', text[3:] # Drop \ts\\* and adjust marker
                         elif text.startswith( '{\\w ' ): # uW UST Exo 17:10 (probably bad USFM???)
-                            marker = 'p~' # Drop \ts\\* -- try a continuation paragraph???
+                            marker = 'v~' # 'XXXp~' # Drop \ts\\* -- try a continuation paragraph???
                         else:
                             dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"USFMBibleBook.load() {self.workName} {self.BBB} {C}:{V} ts\\* {text=}" )
-                            if self.doExtraChecking: halt
+                            if self.doExtraChecking: assert False, "We want to stop here"
                     else: # was just whitespace
                         loadErrors.append( f"{self.BBB} {C}:{V} Removed '\\{marker}' Door43 chunking marker at beginning of line (with following whitespace)" )
                         logging.warning( f"Removed '\\{marker}' Door43 chunking marker after {self.BBB} {C}:{V} at beginning of line (with following whitespace)" )
@@ -541,7 +553,12 @@ class USFMBibleBook( BibleBook ):
                     doAddLine( lastMarker, lastText )
                     lastMarker = lastText = None
                 if gotUWEncoding:
+                    originalMarker, originalText = marker, text
                     marker, text = handleUWEncoding( marker, text, alignmentVariables )
+                    # if marker != originalMarker or text != originalText:
+                    #     print( f"\n{originalMarker=} {originalText=}")
+                    #     print( f"After handleUWEncoding {marker=} {text=}")
+
             elif usfm_markers_py.is_internal_marker( marker ) \
             or (marker and marker.endswith('*') and usfm_markers_py.is_internal_marker(marker[:-1]) ): # the line begins with an internal marker -- append it to the previous line
                 if issueLinePositioningErrors \
@@ -557,13 +574,13 @@ class USFMBibleBook( BibleBook ):
                     #  dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "HERE1", lastMarker, lastText, "now", marker, text)
                     marker, text = handleUWEncoding( marker, text, alignmentVariables )
                     #  dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "HERE2", lastMarker, lastText, "now", marker, text)
-                    if marker in BibleOrgSysGlobals.USFMCharacterMarkers and (lastMarker in ('c', 'v', 'p~', 'd', 'q','pi','qm','li') or lastMarker in BibleOrgSysGlobals.USFMParagraphMarkers):
+                    if marker in BibleOrgSysGlobals.USFMCharacterMarkers and (lastMarker in ('c', 'v', 'XXXp~', 'd', 'q','pi','qm','li') or lastMarker in BibleOrgSysGlobals.USFMParagraphMarkers):
                         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"HereXX with {lastMarker} now {marker}" )
                         if not lastText.endswith(' '): lastText += ' ' # Not always good to add a space, but it's their fault!
                         lastText +=  '\\' + marker + ' ' + text
                         dPrint( 'Never', DEBUGGING_THIS_MODULE, f"USFMBibleBook.load() {self.BBB} {C} {V} Appended1a {marker}='{text}' to get combined line {lastMarker}='{lastText}'" )
                         marker = text = None # Seems to make no difference
-                    elif marker=='p~' and (lastMarker in ('v', 'p~', 'q','pi','qm','li') or lastMarker in BibleOrgSysGlobals.USFMParagraphMarkers):
+                    elif marker=='v~' and (lastMarker in ('v', 'XXXp~', 'q','pi','qm','li') or lastMarker in BibleOrgSysGlobals.USFMParagraphMarkers):
                         dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"HereYY with {lastMarker} now {marker}='{text}'" )
                         if not lastText.endswith(' '): lastText += ' ' # Not always good to add a space, but it's their fault!
                         lastText += text
@@ -572,7 +589,7 @@ class USFMBibleBook( BibleBook ):
                     elif marker == 'w' and lastMarker in ('ts','sp'): # \\ts: A common unfoldingWord USFM encoding error; \\sp in Hindu SNG
                         logging.error( f"USFMBibleBook.load() '{self.workName}' {self.BBB}_{C}:{V} added new paragraph for encoding error after {lastMarker}='{lastText}': {marker}='{text}'" )
                         marker, text = 'p', '\\w {text}'
-                    elif marker == 'p~' and lastMarker == 'ts': # A common unfoldingWord USFM encoding error
+                    elif marker == 'v~' and lastMarker == 'ts': # A common unfoldingWord USFM encoding error
                         logging.error( f"USFMBibleBook.load() '{self.workName}' {self.BBB}_{C}:{V} added new paragraph for encoding error after {lastMarker}='{lastText}': {marker}='{text}'" )
                         marker = 'p'
                     elif marker=='qs*' and not text.strip(): # selah character ending marker on its own line
@@ -582,9 +599,9 @@ class USFMBibleBook( BibleBook ):
                     else:
                         #dPrint( 'Never', debuggingThisFunction, 'USFM Para Markers', BibleOrgSysGlobals.USFMParagraphMarkers )
                         logging.critical( f"Programming error ¬ZALN: USFMBibleBook.load() lost '{self.workName}' {self.BBB}_{C}:{V} text after {lastMarker}='{lastText}': {marker}='{text}'" )
-                        if self.doExtraChecking or DEBUGGING_THIS_MODULE: halt
+                        if self.doExtraChecking or DEBUGGING_THIS_MODULE: assert False, "We want to stop here"
                 elif marker in ('tc1','tc2','tc3','tc4','tc5'):
-                    # and (lastMarker in ('v', 'p~', 'q','pi','qm','li') or lastMarker in BibleOrgSysGlobals.USFMParagraphMarkers):
+                    # and (lastMarker in ('v', 'XXXp~', 'q','pi','qm','li') or lastMarker in BibleOrgSysGlobals.USFMParagraphMarkers):
                     dPrint( 'Info', DEBUGGING_THIS_MODULE, f"HereTC with {lastMarker}='{lastText}' now {marker}='{text}'" )
                     lastText = f"{lastText}{'' if lastText.endswith(' ') else ' '}\\{marker} {text.strip()}" # Not always good to add a space, but it's their fault! Don't do it for footnotes, though.
                     dPrint( 'Info', DEBUGGING_THIS_MODULE, f"{self.BBB} {C} {V} AppendedTC {marker}='{text}' to get combined line {lastMarker}='{lastText}'" )
@@ -592,7 +609,7 @@ class USFMBibleBook( BibleBook ):
                 else:
                     #dPrint( 'Never', debuggingThisFunction, 'USFM Para Markers', BibleOrgSysGlobals.USFMParagraphMarkers )
                     logging.critical( f"Programming error: USFMBibleBook.load() lost '{self.workName}' {self.BBB}_{C}:{V} text after {lastMarker}='{lastText}': {marker}='{text}'" )
-                    if self.doExtraChecking or DEBUGGING_THIS_MODULE: halt
+                    if self.doExtraChecking or DEBUGGING_THIS_MODULE: assert False, f"We want to stop here with {marker=} {text=}"
             elif usfm_markers_py.is_note_marker( marker ) \
             or (marker and marker.endswith('*') and usfm_markers_py.is_note_marker(marker[:-1]) ): # the line begins with a note marker -- append it to the previous line
                 if text:
@@ -612,19 +629,19 @@ class USFMBibleBook( BibleBook ):
                 if marker in ('zaln-s','zaln-e'): # it's a Door43 translation alignment marker (should be self-closed)
                     gotUWEncoding = True
                     marker, text = handleUWEncoding( marker, text, alignmentVariables )
-                    if marker=='p~' and (lastMarker in ('v', 'p~', 'q','pi','qm','li') or lastMarker in BibleOrgSysGlobals.USFMParagraphMarkers):
+                    if marker=='v~' and (lastMarker in ('v', 'q','pi','qm','li') or lastMarker in BibleOrgSysGlobals.USFMParagraphMarkers):
                         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"HereYY with {lastMarker} now {marker}" )
                         if not lastText.endswith(' '): lastText += ' ' # Not always good to add a space, but it's their fault!
                         lastText +=  text
                         vPrint( 'Never', DEBUGGING_THIS_MODULE, f"{self.BBB} {C} {V} Appended3 {marker}='{text}' to get combined line {lastMarker}='{lastText}'" )
                         marker = text = None # Seems to make no difference
-                    elif marker == 'p~' and lastMarker in ('ts','sp','d'): # A common unfoldingWord USFM encoding error
+                    elif marker == 'v~' and lastMarker in ('ts','sp','d'): # A common unfoldingWord USFM encoding error
                         logging.error( f"USFMBibleBook.load() '{self.workName}' {self.BBB}_{C}:{V} added new paragraph for encoding error after {lastMarker}='{lastText}': {marker}='{text}'" )
                         marker = 'p'
                     else:
                         # print( 'USFM Para Markers', BibleOrgSysGlobals.USFMParagraphMarkers )
                         logging.critical( f"Programming error ZALN: USFMBibleBook.load() lost '{self.workName}' {self.BBB}_{C}:{V} text {lastMarker}='{lastText}': {marker}='{text}'" )
-                        if self.doExtraChecking: halt
+                        if self.doExtraChecking: assert False, f"We want to stop here with {marker=}"
                 elif marker and marker[0] == 'z': # it's a custom marker
                     if text:
                         loadErrors.append( f"{self.BBB} {C}:{V} Found '\\{marker}' unknown custom marker at beginning of line with text: {text!r}" )
@@ -662,7 +679,7 @@ class USFMBibleBook( BibleBook ):
                         loadErrors.append( f"{self.BBB} {C}:{V} Found Bad USFM line with {marker=} {text=}" )
                         logging.critical( f"Bad USFM line at {self.BBB} {C}:{V} with {marker=} {text=}" )
                     self.addPriorityError( 100, C, V, f"Found bad USFM line in file with {marker=} {text=}" )
-            if (text and '.Καὶ' in text) or (lastText and '.Καὶ' in lastText): halt
+            if (text and '.Καὶ' in text) or (lastText and '.Καὶ' in lastText): assert False, "We want to stop here"
             if marker and not lastMarker:
                 lastMarker, lastText = marker, text
 
@@ -688,9 +705,9 @@ class USFMBibleBook( BibleBook ):
                     #for j, (C,V,text,words) in enumerate( self.uWalignments, start=1 ):
                         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{j} {self.BBB}_{C}:{V} '{text}'\n    = {words}" )
                         #if j > 8: break
-            #if self.BBB == 'GEN': halt
+            #if self.BBB == 'GEN': assert False, "We want to stop here"
         if loadErrors: self.checkResultsDictionary['Load Errors'] = loadErrors
-        #if debugging: dPrint( 'Quiet', DEBUGGING_THIS_MODULE, self._rawLines ); halt
+        #if debugging: dPrint( 'Quiet', DEBUGGING_THIS_MODULE, self._rawLines ); assert False, "We want to stop here"
     # end of USFMBibleBook.load
 # end of class USFMBibleBook
 

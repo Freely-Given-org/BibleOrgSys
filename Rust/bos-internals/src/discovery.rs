@@ -262,7 +262,9 @@ pub fn discover_book(entries: &InternalBibleEntryList, _bbb: &str) -> BookDiscov
             }
         } else if marker == "v~" {
             results.have_verse_text = true;
-            results.completed_verse_count += 1;
+            if last_marker == Some("v".to_string()) {
+                results.completed_verse_count += 1;
+            }
         } else if matches!(marker, "mt" | "mt1" | "mt2" | "mt3" | "mt4") {
             results.have_main_headings = true;
             results.main_headings_count += 1;
@@ -300,7 +302,7 @@ pub fn discover_book(entries: &InternalBibleEntryList, _bbb: &str) -> BookDiscov
                 results.have_nested_usf_markers = true;
             }
             results.figures_count += clean_text.matches("\\fig ").count() as u16;
-            if is_printed(marker) || matches!(marker, "v~" | "p~") {
+            if is_printed(marker) || matches!(marker, "v~" | "XXXp~") {
                 count_words(marker, clean_text, true, &mut results);
             }
         }

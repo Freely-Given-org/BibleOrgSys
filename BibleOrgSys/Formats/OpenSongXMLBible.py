@@ -291,7 +291,7 @@ def createOpenSongXML( BibleObject, outputFolder=None, controlDict=None, validat
             elif marker in ('b', 'nb', 'ib', ):
                 if BibleOrgSysGlobals.debugFlag: assert not text and not extras
                 ignoredMarkers.add( marker )
-            elif marker in ('v~', 'p~',):
+            elif marker in ('v~', 'XXXp~',):
                 if BibleOrgSysGlobals.debugFlag: assert text or extras
                 if not text: # this is an empty (untranslated) verse
                     text = '- - -' # but we'll put in a filler
@@ -299,12 +299,12 @@ def createOpenSongXML( BibleObject, outputFolder=None, controlDict=None, validat
             else:
                 if text:
                     logging.warning( f"toOpenSong: lost text in {marker} field in {BBB} {C}:{V} {text!r}" )
-                    #if BibleOrgSysGlobals.debugFlag: halt
+                    #if BibleOrgSysGlobals.debugFlag: assert False, "We want to stop here"
                 if extras:
                     logging.warning( f"toOpenSong: lost extras in {marker} field in {BBB} {C}:{V}" )
-                    #if BibleOrgSysGlobals.debugFlag: halt
+                    #if BibleOrgSysGlobals.debugFlag: assert False, "We want to stop here"
                 unhandledMarkers.add( marker )
-            if extras and marker not in ('v~','p~',) and marker not in ignoredMarkers:
+            if extras and marker not in ('v~','XXXp~',) and marker not in ignoredMarkers:
                 logging.critical( f"toOpenSong: extras not handled for {marker} at {BBB} {C}:{V}" )
         if accumulator:
             writerObject.writeLineOpenClose ( 'v', accumulator, ('n',verseNumberString) )
@@ -469,7 +469,7 @@ class OpenSongXMLBible( Bible ):
                 USFMAbbreviation = bos_books_codes_py.bos_book_code_to_usfm_abbrev( BBB )
                 if not USFMAbbreviation:
                     logging.critical( f"Unable to find USFM abbreviation for '{BBB}'" )
-                    if BibleOrgSysGlobals.strictCheckingFlag: halt
+                    if BibleOrgSysGlobals.strictCheckingFlag: assert False, "We want to stop here"
                     USFMAbbreviation = 'XXA'
                 thisBook.addLine( 'id', f'{USFMAbbreviation.upper()} imported by {PROGRAM_NAME_VERSION}' )
                 thisBook.addLine( 'h', bookName )
@@ -614,7 +614,7 @@ def briefDemo() -> None:
                     svk = VerseReferences.SimpleVerseKey( b, c, v )
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, svk, ob.getVerseDataList( reference ) )
                     vPrint( 'Normal', DEBUGGING_THIS_MODULE, reference, svk.getShortText(), xb.getVerseText( svk ) )
-            if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE and not xb: halt # if no books
+            if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE and not xb: assert False, "We want to stop here" # if no books
 # end of OpenSongXMLBible.briefDemo
 
 def fullDemo() -> None:
@@ -681,7 +681,7 @@ def fullDemo() -> None:
                         vPrint( 'Normal', DEBUGGING_THIS_MODULE, reference, svk.getShortText(), xb.getVerseText( svk ) )
                     except KeyError:
                         vPrint( 'Normal', DEBUGGING_THIS_MODULE, reference, svk.getShortText(), "KEY ERROR: Verse doesn't seem to exist!" )
-            if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE and not xb: halt # if no books
+            if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE and not xb: assert False, "We want to stop here" # if no books
 # end of OpenSongXMLBible.fullDemo
 
 if __name__ == '__main__':

@@ -589,7 +589,7 @@ class HebrewStrongsFileConverter:
                 entryResults['note'] = note
             else:
                 logging.error( f"2d4f Unprocessed {element.text!r} element ({element.tag}) in entry" )
-                if BibleOrgSysGlobals.debugFlag: halt
+                if BibleOrgSysGlobals.debugFlag: assert False, "We want to stop here"
             if element.tail is not None and element.tail.strip(): logging.error( f"Unexpected {element.tag!r} tail data after {element.tail} element in entry" )
 
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, entryID, entryResults )
@@ -797,7 +797,7 @@ class BrownDriverBriggsFileConverter:
             elif attrib == 'mod': entryMod = value
             elif attrib == 'cite': entryCite = value
             elif attrib == 'form': entryForm = value
-            else: logging.warning( f"ngs9 Unprocessed {value!r} attribute ({attrib}) in main entry element" ); halt
+            else: logging.warning( f"ngs9 Unprocessed {value!r} attribute ({attrib}) in main entry element" ); assert False, "We want to stop here"
 
         self.XMLEntries[lang][entryID] = entry
 

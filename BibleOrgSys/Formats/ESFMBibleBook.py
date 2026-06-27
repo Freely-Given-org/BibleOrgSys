@@ -296,7 +296,7 @@ class ESFMBibleBook( BibleBook ):
                                 resultText += saveSemanticTag( BBB, C, V, bracedGroupText if bracedGroupText else word, tagText )
                             else: # WEB Luke 16:7 contains a footnote: \f + \ft 100 cors = about 2,110 liters or 600 bushels.\f*
                                 logging.critical( f"Something funny with special symbol {V!r} at {char} {BBB}:{C}" )
-                                if BibleOrgSysGlobals.debugFlag or DEBUGGING_THIS_MODULE: halt
+                                if BibleOrgSysGlobals.debugFlag or DEBUGGING_THIS_MODULE: assert False, "We want to stop here"
                             if char == '_':
                                 if not underlineGroupFlag: # it's just starting now
                                     underlineGroup += word + char
@@ -461,7 +461,7 @@ class ESFMBibleBook( BibleBook ):
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"After {self.BBB} {C}:{V} \\{marker} {original_text!r}" )
             if not marker:
                 logging.critical( f"After {self.BBB} {C}:{V} \\{marker} {original_text!r}" )
-                if DEBUGGING_THIS_MODULE: halt
+                if DEBUGGING_THIS_MODULE: assert False, "We want to stop here"
                 continue
 
             # Keep track of where we are for more helpful error messages
@@ -545,8 +545,8 @@ class ESFMBibleBook( BibleBook ):
                         for num in thisDict[tag]:
                             if isinstance( thisDict[tag][num], list ):
                                 vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n{name} Found {tag} {num}: {thisDict[tag][num]}" )
-            halt
-        #if debugging: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, self._rawLines ); halt
+            assert False, "We want to stop here"
+        #if debugging: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, self._rawLines ); assert False, "We want to stop here"
 
         self.lookForAuxiliaryFilenames()
     # end of ESFMBibleBook.load

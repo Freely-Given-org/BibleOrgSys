@@ -200,11 +200,11 @@ impl PyCheckOptions {
 pub fn py_validate_processed_markers<'py>(
     py: Python<'py>,
     entries: &PyInternalBibleEntryList,
-    book_code: &str,
+    bos_book_code: &str,
     work_name: &str,
     strict_checking: bool,
 ) -> PyResult<Bound<'py, PyDict>> {
-    let results = checking::validate_processed_markers(&entries.inner, book_code, work_name, strict_checking);
+    let results = checking::validate_processed_markers(&entries.inner, bos_book_code, work_name, strict_checking);
 
     let dict = PyDict::new(py);
     dict.set_item("validation_errors", results.validation_errors)?;
@@ -224,10 +224,10 @@ pub fn py_validate_processed_markers<'py>(
 pub fn py_get_versification<'py>(
     py: Python<'py>,
     entries: &PyInternalBibleEntryList,
-    book_code: &str,
+    bos_book_code: &str,
     work_name: &str,
 ) -> PyResult<Bound<'py, PyDict>> {
-    let info = checking::get_versification(&entries.inner, book_code, work_name);
+    let info = checking::get_versification(&entries.inner, bos_book_code, work_name);
 
     let result = PyList::empty(py);
     result.append(info.versification)?;
@@ -247,9 +247,9 @@ pub fn py_get_versification<'py>(
 pub fn py_get_added_units<'py>(
     py: Python<'py>,
     entries: &PyInternalBibleEntryList,
-    book_code: &str,
+    bos_book_code: &str,
 ) -> PyResult<Bound<'py, PyDict>> {
-    let info = checking::get_added_units(&entries.inner, book_code);
+    let info = checking::get_added_units(&entries.inner, bos_book_code);
 
     let result = PyList::empty(py);
     result.append(info.paragraph_references)?;
@@ -270,12 +270,12 @@ pub fn py_get_added_units<'py>(
 pub fn py_check_book<'py>(
     py: Python<'py>,
     entries: &PyInternalBibleEntryList,
-    book_code: &str,
+    bos_book_code: &str,
     work_name: &str,
     options: &PyCheckOptions,
     discovery: &PyDiscoveryFlags,
 ) -> PyResult<Bound<'py, PyDict>> {
-    let results = checking::check_book(&entries.inner, book_code, work_name, &options.inner, &discovery.inner);
+    let results = checking::check_book(&entries.inner, bos_book_code, work_name, &options.inner, &discovery.inner);
 
     let dict = PyDict::new(py);
     dict.set_item("newline_marker_errors", results.newline_marker_errors)?;

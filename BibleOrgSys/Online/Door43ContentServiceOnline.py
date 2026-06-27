@@ -123,7 +123,7 @@ class DCSBibles:
             return responseObject.json()
         else:
             vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "    contentType", contentType )
-            halt # Haven't had this contentType before
+            assert False, "We want to stop here" # Haven't had this contentType before
     # end of DCSBibles.getOnlineData
 
 
@@ -367,7 +367,7 @@ class DCSBible( USFMBible ):
                     myTempFile.close() # Automatically deletes the file
                 else:
                     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "    contentType", repr(contentType) )
-                    halt # unknown content type
+                    assert False, "We want to stop here" # unknown content type
             self.downloadedAllBooks = True
 
             # There's probably a folder inside this folder
@@ -428,7 +428,7 @@ class DCSBible( USFMBible ):
                         ourUSFMfile.write( downloadedData )
                 else:
                     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "    contentType", repr(contentType) )
-                    halt # unknown content type
+                    assert False, "We want to stop here" # unknown content type
                 if not self.preloadDone:
                     self.preload()
             else:

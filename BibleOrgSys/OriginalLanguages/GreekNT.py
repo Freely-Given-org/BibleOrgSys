@@ -105,7 +105,7 @@ class GreekNT( Bible ):
         elif not os.access( self.sourceFilepath, os.R_OK ):
             logging.critical( f"GreekNT: File {self.sourceFilepath!r} is unreadable" )
             return # No use continuing
-        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, self.possibleFilenames ); halt
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, self.possibleFilenames ); assert False, "We want to stop here"
 
         self.name = self.givenName
         #gNTfc = GreekNTFileConverter( self.sourceFilepath ) # Load and process the XML
@@ -239,7 +239,7 @@ class GreekNT( Bible ):
                     # self.thisBook.addLine( 'g', f"{POSCode}/{parsingCode}" )
                     #reference = BBB,bits[0][1],bits[0][2], # Put the BBB into the reference
                     #lineTuples.append( (reference,bits[1],bits[2],) )
-                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, reference,bits[1],bits[2] ); halt
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, reference,bits[1],bits[2] ); assert False, "We want to stop here"
             #if 0: #except:
                 #logging.critical( "Invalid line in " + filepath + " -- line ignored at " + str(lineCount) )
                 #if lineCount > 1: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'Previous line was: ', lastLine )

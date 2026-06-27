@@ -6,7 +6,7 @@
 #
 # Module handling verse-per-line text Bible files
 #
-# Copyright (C) 2014-2025 Robert Hunt
+# Copyright (C) 2014-2026 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -102,6 +102,7 @@ CHANGELOG:
     2023-02-28 Added vplType 5 file handling
     2025-06-29 Added vplType 6 file handing for SLT
     2025-09-26 Improved vplType 6 file handling for BLB and MSB
+    2026-06-22 Added USFM id lines, etc. at beginning of each book
 """
 from pathlib import Path
 import logging
@@ -113,12 +114,13 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Bible import Bible, BibleBook
 from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
+import bos_books_codes_py
 
 
-LAST_MODIFIED_DATE = '2025-10-30' # by RJH
+LAST_MODIFIED_DATE = '2026-06-22' # by RJH
 SHORT_PROGRAM_NAME = "VPLBible"
 PROGRAM_NAME = "VPL Bible format handler"
-PROGRAM_VERSION = '0.44'
+PROGRAM_VERSION = '0.46'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -275,7 +277,7 @@ def VPLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=Fal
                             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"First line got type #{vplType} {match.group(0)!r} match from {firstLines!r}" )
                     else:
                         vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"VPLBibleFileCheck: (unexpected) first line was {thisFilename!r} in {firstLines}" )
-                        if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: halt
+                        if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: assert False, "We want to stop here"
                         continue
                 foundProjects.append( (tryFolderName, thisFilename,) )
                 lastFilenameFound = thisFilename
@@ -405,7 +407,7 @@ class VPLBible( Bible ):
                         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"First line got type #{vplType} {match.group(0)!r} match from {line!r}" )
                     else:
                         vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"VPLBible.load: (unexpected) first line was {self.sourceFilepath!r} in {line}" )
-                        if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: halt
+                        if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: assert False, "We want to stop here"
                 if line == 'Chapter 1':
                     vplType = 5
                     break
@@ -539,7 +541,7 @@ class VPLBible( Bible ):
                             if not BBB: BBB = bos_books_codes_py.english_name_to_bos_book_code( bookCodeText )  # Try to guess
                         if not BBB:
                             logging.critical( f"VPL Bible: Unable to determine book code from text {lastBookCodeText!r} after {lastBBB!r}={bookCodeText}" )
-                            halt
+                            assert False, "We want to stop here"
 
                     # Handle special formatting
                     #   [square-brackets] are for Italicized words
@@ -671,6 +673,9 @@ class VPLBible( Bible ):
                             thisBook = BibleBook( self, BBB )
                             thisBook.objectNameString = 'VPL Bible Book object'
                             thisBook.objectTypeString = 'VPL'
+                            thisBook.addLine( 'id', bos_books_codes_py.bos_book_code_to_usfm_abbrev(BBB) )
+                            thisBook.addLine( 'usfm', '3.0' )
+                            thisBook.addLine( 'ide', 'UTF-8' )
                             verseList = BOSx.getNumVersesList( BBB )
                             numChapters, numVerses = len(verseList), verseList[0]
                             lastBookCodeText = bookCodeText
@@ -714,7 +719,7 @@ class VPLBible( Bible ):
                             # might be a continuation line
                             logging.warning( f"{self.workName}: Assuming a continuation line at {BBB} {lineNumber:,}: '{line}'" )
                             thisBook.appendToLastLine( f' {line}' )
-                        else: halt
+                        else: assert False, "We want to stop here"
                     elif line:
                         blankLineCount = 0
                         if thisBook is not None and lastChapterNumber and lastVerseNumber:
@@ -757,7 +762,7 @@ class VPLBible( Bible ):
                         if not newBBB: newBBB = bos_books_codes_py.english_name_to_bos_book_code( refB )  # Try to guess
                         if not newBBB:
                             logging.critical( f"VPL6 Bible: Unable to determine book code from text '{refB}' after '{lastBBB}'" )
-                            halt
+                            assert False, "We want to stop here"
                         if newBBB != lastBBB:
                             if lastBBB is not None:
                                 vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Saving {BBB} book…" )
@@ -767,6 +772,9 @@ class VPLBible( Bible ):
                             thisBook = BibleBook( self, BBB )
                             thisBook.objectNameString = 'VPL Bible Book object'
                             thisBook.objectTypeString = 'VPL'
+                            thisBook.addLine( 'id', bos_books_codes_py.bos_book_code_to_usfm_abbrev(BBB) )
+                            thisBook.addLine( 'usfm', '3.0' )
+                            thisBook.addLine( 'ide', 'UTF-8' )
                             verseList = BOSx.getNumVersesList( BBB )
                             numChapters, numVerses = len(verseList), verseList[0]
                             lastBBB, lastChapterNumberString, lastChapterNumber = BBB, None, 0
@@ -790,7 +798,7 @@ class VPLBible( Bible ):
 
                 else:
                     logging.critical( f"Unknown VPL type {vplType} while processing line {lineNumber}: '{line}'" )
-                    if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: halt
+                    if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: assert False, "We want to stop here"
 
                 # TODO: Blank lines now get thru (and this might mess things up a little)
                 #if not line: continue # Just discard blank lines # Might want to enable this line ????
@@ -809,13 +817,16 @@ class VPLBible( Bible ):
                             thisBook = BibleBook( self, BBB )
                             thisBook.objectNameString = 'VPL Bible Book object'
                             thisBook.objectTypeString = 'VPL'
+                            thisBook.addLine( 'id', bos_books_codes_py.bos_book_code_to_usfm_abbrev(BBB) )
+                            thisBook.addLine( 'usfm', '3.0' )
+                            thisBook.addLine( 'ide', 'UTF-8' )
                             verseList = BOSx.getNumVersesList( BBB )
                             numChapters, numVerses = len(verseList), verseList[0]
                             lastBookCodeText = bookCodeText
                             lastChapterNumber = lastVerseNumber = -1
                         else:
                             logging.critical( f"VPLBible{vplType} could not figure out {bookCodeText!r} book code" )
-                            if BibleOrgSysGlobals.debugFlag: halt
+                            if BibleOrgSysGlobals.debugFlag: assert False, "We want to stop here"
 
                     if BBB:
                         if chapterNumber != lastChapterNumber: # We've started a new chapter

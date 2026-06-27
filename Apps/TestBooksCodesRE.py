@@ -79,7 +79,7 @@ def doBBB():
         match = re.search( BBB_RE, BBB )
         if not match:
             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB )
-            halt # Got a BBB that can't be found by the RE
+            assert False, "We want to stop here" # Got a BBB that can't be found by the RE
 # end of doBBB
 
 
@@ -111,7 +111,7 @@ def doOSIS():
         match = re.search( OSIS_BOOK_RE, OB )
         if not match:
             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, OB )
-            halt # Got a OB that can't be found by the RE
+            assert False, "We want to stop here" # Got a OB that can't be found by the RE
 # end of doOSIS
 
 

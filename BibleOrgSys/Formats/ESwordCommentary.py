@@ -235,7 +235,7 @@ class ESwordCommentary( Bible ):
                 #logging.error( f"checkForExtraMaterial: {self.name} contains {BBB} {C}:{V} {text!r}" )
                 #if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE:
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"checkForExtraMaterial: {self.name} contains {BBB} {C}:{V} {text!r}" )
-                    ##halt
+                    ##assert False, "We want to stop here"
     ## end of ESwordCommentary.checkForExtraMaterial
 
 
@@ -265,7 +265,7 @@ class ESwordCommentary( Bible ):
         row = self.cursor.fetchone()
         for key in row.keys():
             self.suppliedMetadata['e-Sword-Commentary'][key] = row[key]
-        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, self.suppliedMetadata['e-Sword-Commentary'] ); halt
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, self.suppliedMetadata['e-Sword-Commentary'] ); assert False, "We want to stop here"
         #if 'Description' in self.settingsDict and len(self.settingsDict['Description'])<40: self.name = self.settingsDict['Description']
         #if 'Abbreviation' in self.settingsDict: self.abbreviation = self.settingsDict['Abbreviation']
         if 'encryption' in self.suppliedMetadata['e-Sword-Commentary']:
@@ -303,7 +303,7 @@ class ESwordCommentary( Bible ):
         #elif self.suppliedMetadata['e-Sword-Commentary']['Apocrypha']: # incomplete
             #testament, BBB = 'AP', 'XXX'
             #booksExpected, textLineCountExpected = 99, 999999
-            #halt
+            #assert False, "We want to stop here"
         #if not BBB:
             #logging.critical( f"e-Sword settings encoding error -- no testament set: {self.suppliedMetadata['e-Sword-Commentary']}" )
             #loadErrors.append( f"e-Sword settings encoding error -- no testament set: {self.suppliedMetadata['e-Sword-Commentary']}" )
@@ -326,7 +326,7 @@ class ESwordCommentary( Bible ):
         #if numRows != textLineCountExpected:
             #logging.critical( f"Row count for {self.sourceFilename} seems wrong: {numRows} instead of {textLineCountExpected}" )
             #loadErrors.append( f"Row count for {self.sourceFilename} seems wrong: {numRows} instead of {textLineCountExpected}" )
-        ##halt
+        ##assert False, "We want to stop here"
 
         self.BibleOrganisationalSystem = BibleOrganisationalSystem( 'GENERIC-KJV-66-ENG' )
         assert self.BibleOrganisationalSystem is not None
@@ -361,7 +361,7 @@ class ESwordCommentary( Bible ):
         #row = cursor.fetchone()
         #for key in row.keys():
             #self.suppliedMetadata['e-Sword-Commentary'][key] = row[key]
-        ##dPrint( 'Quiet', DEBUGGING_THIS_MODULE, self.suppliedMetadata['e-Sword-Commentary'] ); halt
+        ##dPrint( 'Quiet', DEBUGGING_THIS_MODULE, self.suppliedMetadata['e-Sword-Commentary'] ); assert False, "We want to stop here"
         ##if 'Description' in self.settingsDict and len(self.settingsDict['Description'])<40: self.name = self.settingsDict['Description']
         ##if 'Abbreviation' in self.settingsDict: self.abbreviation = self.settingsDict['Abbreviation']
         #if 'encryption' in self.suppliedMetadata['e-Sword-Commentary']:
@@ -659,7 +659,7 @@ def createESwordCommentaryModule( self, outputFolder, controlDict ):
             ##if '\\f' in originalLine:
                 ##dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "o", originalLine )
                 ##dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "n", line )
-                ##halt
+                ##assert False, "We want to stop here"
 
         if '\\' in line: # Handle character formatting fields
             line = removeUSFMCharacterField( 'fig', line, closed_flag=True ) # Remove figures
@@ -697,7 +697,7 @@ def createESwordCommentaryModule( self, outputFolder, controlDict ):
         if '\\' in line:
             logging.warning( f"toESword.adjustLine: Doesn't handle formatted line yet: {BBB} {C}:{V} {line!r}" )
             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"toESword.adjustLine: Doesn't handle formatted line yet: {BBB} {C}:{V} {line!r}" )
-            if DEBUGGING_THIS_MODULE: halt
+            if DEBUGGING_THIS_MODULE: assert False, "We want to stop here"
         return line
     # end of toESword.adjustLine
 
@@ -734,7 +734,7 @@ def createESwordCommentaryModule( self, outputFolder, controlDict ):
                     logging.warning( f"toESword.handleIntroduction: doesn't handle {BBB} {marker!r} yet" )
                     if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE:
                         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"toESword.handleIntroduction: doesn't handle {BBB} {marker!r} yet" )
-                        halt
+                        assert False, "We want to stop here"
                     ourGlobals['unhandledMarkers'].add( marker + ' (in intro)' )
             intV += 1 # Step to the next introductory section "verse"
 
@@ -742,7 +742,7 @@ def createESwordCommentaryModule( self, outputFolder, controlDict ):
         if '\\' in composedLine:
             logging.warning( f"toESword.handleIntroduction: Doesn't handle formatted line yet: {BBB} {composedLine!r}" )
             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"toESword.handleIntroduction: Doesn't handle formatted line yet: {BBB} {composedLine!r}" )
-            if DEBUGGING_THIS_MODULE: halt
+            if DEBUGGING_THIS_MODULE: assert False, "We want to stop here"
         return composedLine.replace( '~^~', '\\' )
     # end of toESword.handleIntroduction
 
@@ -867,7 +867,7 @@ def createESwordCommentaryModule( self, outputFolder, controlDict ):
             elif marker == 'li3': composedLine += '<PI3>• '+adjustLine(BBB,C,V,text)
             elif marker == 'li4': composedLine += '<PI4>• '+adjustLine(BBB,C,V,text)
             elif marker in ( 'cd', 'sp', ): composedLine += '<i>'+adjustLine(BBB,C,V,text)+'</i>'
-            elif marker in ( 'v~', 'p~', ):
+            elif marker in ( 'v~', 'XXXp~', ):
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, lastMarker )
                 if lastMarker == 'p': composedLine += '~^~line ' # We had a continuation paragraph
                 elif lastMarker == 'm': composedLine += '~^~line ' # We had a continuation paragraph
@@ -875,7 +875,7 @@ def createESwordCommentaryModule( self, outputFolder, controlDict ):
                 elif lastMarker != 'v':
                     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, C, V, marker, lastMarker, verseData )
                     composedLine += adjustLine(BBB,C,V, text )
-                    if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: halt # This should never happen -- probably a b marker with text
+                    if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: assert False, "We want to stop here" # This should never happen -- probably a b marker with text
                 #if ourGlobals['pi1']: composedLine += '<PI>'
                 #elif ourGlobals['pi2']: composedLine += '<PI2>'
                 #elif ourGlobals['pi3']: composedLine += '<PI3>'
@@ -888,7 +888,7 @@ def createESwordCommentaryModule( self, outputFolder, controlDict ):
                 logging.warning( f"toESword.composeVerseLine: doesn't handle {marker!r} yet" )
                 if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE:
                     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"toESword.composeVerseLine: doesn't handle {marker!r} yet" )
-                    halt
+                    assert False, "We want to stop here"
                 ourGlobals['unhandledMarkers'].add( marker )
             lastMarker = marker
 
@@ -900,7 +900,7 @@ def createESwordCommentaryModule( self, outputFolder, controlDict ):
         if '\\' in composedLine.replace( '\\line ', '' ):
             logging.warning( f"toESword.composeVerseLine: Doesn't handle formatted line yet: {BBB} {C}:{V} {composedLine!r}" )
             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"toESword.composeVerseLine: Doesn't handle formatted line yet: {BBB} {C}:{V} {composedLine!r}" )
-            if DEBUGGING_THIS_MODULE: halt
+            if DEBUGGING_THIS_MODULE: assert False, "We want to stop here"
         return composedLine.replace( '~^~', '\\' ).rstrip()
     # end of toESword.composeVerseLine
 
@@ -910,7 +910,7 @@ def createESwordCommentaryModule( self, outputFolder, controlDict ):
         Writes a book to the e-Sword sqlObject file.
         """
         fnPrint( DEBUGGING_THIS_MODULE, f"toESword.writeESwordCommentaryBook( {sqlObject}, {BBB}, {ourGlobals}" )
-        halt # Not written yet
+        assert False, "We want to stop here" # Not written yet
 
         nonlocal lineCount
         bkData = self.books[BBB] if BBB in self.books else None
@@ -983,7 +983,7 @@ def createESwordCommentaryModule( self, outputFolder, controlDict ):
     # Set-up their Bible reference system
     BOS = BibleOrganisationalSystem( 'GENERIC-KJV-66-ENG' )
     #BRL = BibleReferenceList( BOS, BibleObject=None )
-    halt # Not written yet
+    assert False, "We want to stop here" # Not written yet
 
     # Try to figure out if it's an OT/NT or what (allow for up to 4 extra books like FRT,GLS, etc.)
     if len(self) <= (39+4) and self.containsAnyOT39Books() and not self.containsAnyNT27Books():
@@ -1144,7 +1144,7 @@ def testeSwC( indexString, eSwCfolder, eSwCfilename ):
                 vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nComparing original and re-exported e-Sword files…" )
                 result = BibleOrgSysGlobals.fileCompare( eSwCfilename, eSwCfilename, eSwCfolder, outputFolder )
                 if BibleOrgSysGlobals.debugFlag:
-                    if not result: halt
+                    if not result: assert False, "We want to stop here"
     vPrint( 'Info', DEBUGGING_THIS_MODULE, "testeSwC2:", eSwC ) # Just print a summary
 # end of testeSwC
 

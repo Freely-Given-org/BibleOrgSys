@@ -175,7 +175,7 @@ class BibleBrainBibles:
             return responseObject.json()
         else:
             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'contentType', contentType )
-            halt # Haven't had this contentType before
+            assert False, "We want to stop here" # Haven't had this contentType before
     # end of BibleBrainBibles.getOnlineData
 
 

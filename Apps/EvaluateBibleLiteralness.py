@@ -369,7 +369,7 @@ def loadGreekData( state:State ) -> bool:
                         .replace('¬','') # untranslated
                         .replace(' ','_') )
                 assert ' ' not in partWithFirstName, f"{n} {greekWord} {partWithFirstName=} {vltGloss=} {oetGloss=}"
-                # print( f"{firstName}" ); halt
+                # print( f"{firstName}" ); assert False, "We want to stop here"
                 # for oetSubgloss in firstName.split( '_' ):
                 #     assert oetSubgloss, f"{n} {greekWord} {vltGloss=} {oetGloss=}"
                 #     likelyGreekGlosses[greekWord].add( oetSubgloss[1:-1] if oetSubgloss[0]=='(' and oetSubgloss[-1]==')' else oetSubgloss )
@@ -418,7 +418,7 @@ def loadGreekData( state:State ) -> bool:
             # Sort so longest sublists are first, then longest single words, finishing with the shortest single word
             state.likelyGreekGlosses[grkWrd] = sorted( glossList, key = lambda x: 100+len(x) if isinstance(x,list) else len(x), reverse=True )
             # print( f"\n{grkWrd} {state.likelyGreekGlosses[grkWrd]} from {glossSet}")
-            # if len(state.likelyGreekGlosses[grkWrd])> 5: halt
+            # if len(state.likelyGreekGlosses[grkWrd])> 5: assert False, "We want to stop here"
     return True
 # end of EvaluateBibleLiteralness.loadGreekData()
 
@@ -511,7 +511,7 @@ def loadBible( versionAbbreviation:str, state:State ) -> bool:
         or versionAbbreviation in state.selectedVersesOnlyVersions:
             state.preloadedBibles[versionAbbreviation] = thisBible
         else:
-            halt # preloadVersion failed
+            assert False, "We want to stop here" # preloadVersion failed
 
     return True
 # end of EvaluateBibleLiteralness.loadEnglishTranslation()
@@ -577,7 +577,7 @@ def preloadVersion( versionAbbreviation:str, folderOrFileLocation:str, state:Sta
         # print( f"{versionAbbreviation} {thisBible.settingsDict=}" )
         # verseEntryList, contextList = thisBible.getContextVerseData( ('MAT', '2', '1') )
         # print( f"{versionAbbreviation} Mat 2:1 {verseEntryList=} {contextList=}" )
-        # if versionAbbreviation=='Luth': halt
+        # if versionAbbreviation=='Luth': assert False, "We want to stop here"
     elif 'OET' in versionAbbreviation or 'ESFM' in folderOrFileLocation: # ESFM
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Preloading ‘{versionAbbreviation}’ ESFM Bible…" )
         thisBible = ESFMBible.ESFMBible( folderOrFileLocation, givenName=versionName, givenAbbreviation=versionAbbreviation )
@@ -689,7 +689,7 @@ def checkOT( EnglishVersionAbbreviation:str, state:State ) -> bool:
             numVerses = referenceBible.getNumVerses( BBB, C )
             if numVerses is None: # something unusual
                 logging.error( f"checkOT: no verses found for {BBB} {C}" )
-                halt
+                assert False, "We want to stop here"
                 continue
             for v in range( 1, numVerses+1 ):
                 V = str( v )
@@ -717,7 +717,7 @@ def checkNT( EnglishVersionAbbreviation:str, state:State ) -> bool:
             numVerses = referenceBible.getNumVerses( BBB, C )
             if numVerses is None: # something unusual
                 logging.error( f"checkNT: no verses found for {BBB} {C}" )
-                halt
+                assert False, "We want to stop here"
                 continue
             for v in range( 1, numVerses+1 ):
                 V = str( v )

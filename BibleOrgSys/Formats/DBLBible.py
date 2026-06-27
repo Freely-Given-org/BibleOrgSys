@@ -321,7 +321,7 @@ class DBLBible( Bible ):
                 if attrib=='id': licenseID = value
                 else:
                     logging.warning( f"Unprocessed {attrib} attribute ({value}) in {location}" )
-                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
             DBLLicense['Id'] = licenseID # This is a long hex number (16 chars)
 
             # Now process the actual metadata
@@ -348,11 +348,11 @@ class DBLBible( Bible ):
                             DBLLicense[element.tag][subelement.tag] = subelement.text
                         else:
                             logging.warning( f"Unprocessed {subelement.tag} subelement '{subelement.text}' in {sub2location}" )
-                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                 else:
                     logging.warning( f"Unprocessed {element.tag} element in {sublocation}" )
                     #self.addPriorityError( 1, c, v, f"Unprocessed {element.tag} element" )
-                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
         vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Loaded {len(DBLLicense)} license elements." )
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'DBLLicense', DBLLicense )
         if DBLLicense: self.suppliedMetadata['DBL']['License'] = DBLLicense
@@ -393,7 +393,7 @@ class DBLBible( Bible ):
                     elif attrib=='default': bookListIsDefault = value
                     else:
                         logging.warning( f"Unprocessed {attrib} attribute ({value}) in {sublocation}" )
-                        if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                        if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"bookListID={bookListIsDefault!r} bookListIsDefault={bookListID}" )
                 bookListTag = f"{subelement.tag}-{bookListID}{' (default)' if bookListIsDefault=='true' else ''}"
                 assert bookListTag not in ourDict
@@ -428,7 +428,7 @@ class DBLBible( Bible ):
                             ourDict[bookListTag]['books'].append( bookCode )
                     else:
                         logging.warning( f"Unprocessed {sub2element.tag} sub2element '{sub2element.text}' in {sub2location}" )
-                        if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                        if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                     #if 0:
                         #items = sub2element.items()
                         #for sub3element in sub2element:
@@ -472,7 +472,7 @@ class DBLBible( Bible ):
                 elif attrib=='revision': mdRevision = value
                 else:
                     logging.warning( f"Unprocessed {attrib} attribute ({value}) in {location}" )
-                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
             if BibleOrgSysGlobals.debugFlag:
                 vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"mdType={mdType!r} mdTypeVersion={mdTypeVersion!r} mdVersion={mdVersion!r} mdID={mdID!r} mdRevision={mdRevision!r}" )
                 assert mdType is None or mdType == 'text'
@@ -510,7 +510,7 @@ class DBLBible( Bible ):
                                     elif attrib=='name': systemId['Name'] = value
                                     else:
                                         logging.warning( f"Unprocessed {attrib} attribute ({value}) in {sub2location}" )
-                                        if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                                        if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                                 for sub2element in subelement:
                                     sub3location = sub2element.tag + ' ' + sub2location
                                     BibleOrgSysGlobals.checkXMLNoAttributes( sub2element, sub3location )
@@ -525,7 +525,7 @@ class DBLBible( Bible ):
                             self.suppliedMetadata['DBL']['identification'][thisTag] = subelement.text
                         else:
                             logging.warning( f"KW42 Unprocessed {subelement.tag} subelement {sub2location!r} in {subelement.text}" )
-                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                 elif element.tag == 'confidential':
                     BibleOrgSysGlobals.checkXMLNoAttributes( element, sublocation )
                     BibleOrgSysGlobals.checkXMLNoSubelements( element, sublocation )
@@ -546,7 +546,7 @@ class DBLBible( Bible ):
                             if attrib=='url': url = value
                             else:
                                 logging.warning( f"Unprocessed {attrib} attribute ({value}) in {sub2location}" )
-                                if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                                if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                         pass # url isn't saved XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXx
                         if subelement.tag == 'rightsHolder':
                             BibleOrgSysGlobals.checkXMLNoAttributes( subelement, sub2location )
@@ -605,7 +605,7 @@ class DBLBible( Bible ):
                             else: agencies[subelement.tag] = [ subelement.text ]
                         else:
                             logging.warning( f"KJ76 Unprocessed {subelement.tag} subelement '{subelement.text}' in {sub2location}" )
-                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                     if rightsHolders: agencies['RightsHolders'] = rightsHolders
                     if contributors: agencies['Contributors'] = contributors
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "agencies", agencies )
@@ -627,7 +627,7 @@ class DBLBible( Bible ):
                             self.suppliedMetadata['DBL']['language'][subelement.tag] = subelement.text
                         else:
                             logging.warning( f"NH34 Unprocessed {subelement.tag} subelement '{subelement.text}' in {sub2location}" )
-                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                 elif element.tag == 'country':
                     BibleOrgSysGlobals.checkXMLNoAttributes( element, sublocation )
                     BibleOrgSysGlobals.checkXMLNoText( element, sublocation )
@@ -644,7 +644,7 @@ class DBLBible( Bible ):
                             self.suppliedMetadata['DBL'][element.tag][subelement.tag] = subelement.text
                         else:
                             logging.warning( f"QT45 Unprocessed {subelement.tag} subelement '{subelement.text}' in {sub2location}" )
-                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                 elif element.tag == 'countries':
                     BibleOrgSysGlobals.checkXMLNoAttributes( element, sublocation )
                     BibleOrgSysGlobals.checkXMLNoText( element, sublocation )
@@ -670,7 +670,7 @@ class DBLBible( Bible ):
                             countries[country['iso']] = country
                         else:
                             logging.warning( f"KJ79 Unprocessed {subelement.tag} subelement '{subelement.text}' in {sub2location}" )
-                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "countries", countries )
                     assert 'countries' not in self.suppliedMetadata['DBL']
                     self.suppliedMetadata['DBL']['countries']  = countries
@@ -690,7 +690,7 @@ class DBLBible( Bible ):
                             self.suppliedMetadata['DBL'][element.tag][subelement.tag] = subelement.text
                         else:
                             logging.warning( f"TR45 Unprocessed {subelement.tag} subelement '{subelement.text}' in {sub2location}" )
-                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                 elif element.tag == 'relationships':
                     BibleOrgSysGlobals.checkXMLNoAttributes( element, sublocation )
                     BibleOrgSysGlobals.checkXMLNoText( element, sublocation )
@@ -724,7 +724,7 @@ class DBLBible( Bible ):
                                 self.suppliedMetadata['DBL'][element.tag][bookCode][sub2element.tag] = sub2element.text
                             else:
                                 logging.warning( f"Unprocessed {sub2element.tag} sub2element '{sub2element.text}' in {sub3location}" )
-                                if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                                if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                 elif element.tag == 'contents':
                     getContents( element, sublocation )
                 elif element.tag == 'progress':
@@ -744,18 +744,18 @@ class DBLBible( Bible ):
                             elif attrib=='stage': stage = value
                             else:
                                 logging.warning( f"Unprocessed {attrib} attribute ({value}) in {sub2location}" )
-                                if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                                if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, bookCode, stage )
                         assert len(bookCode) == 3
                         if 'bookNames' in self.suppliedMetadata['DBL']:
                             if bookCode not in self.suppliedMetadata['DBL']['bookNames']:
                                 logging.warning( f"Bookcode {bookCode} mentioned in progress but not found in bookNames" )
-                                if BibleOrgSysGlobals.strictCheckingFlag and BibleOrgSysGlobals.debugFlag: halt
+                                if BibleOrgSysGlobals.strictCheckingFlag and BibleOrgSysGlobals.debugFlag: assert False, "We want to stop here"
                         elif 'names' in self.suppliedMetadata['DBL']:
                             vPrint( 'Never', DEBUGGING_THIS_MODULE, "Why don't we have a bookNames entry???" )
                             if bookCode not in self.suppliedMetadata['DBL']['names']:
                                 logging.warning( f"Bookcode {bookCode} mentioned in progress but not found in names" )
-                                if BibleOrgSysGlobals.strictCheckingFlag and BibleOrgSysGlobals.debugFlag: halt
+                                if BibleOrgSysGlobals.strictCheckingFlag and BibleOrgSysGlobals.debugFlag: assert False, "We want to stop here"
                         assert stage in ('1','2','3','4')
                         self.suppliedMetadata['DBL'][element.tag][bookCode] = stage
                 elif element.tag == 'contact':
@@ -773,7 +773,7 @@ class DBLBible( Bible ):
                             self.suppliedMetadata['DBL'][element.tag][subelement.tag] = subelement.text
                         else:
                             logging.warning( f"KP96 Unprocessed {subelement.tag} subelement '{subelement.text}' in {sub2location}" )
-                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                 elif element.tag == 'copyright':
                     BibleOrgSysGlobals.checkXMLNoAttributes( element, sublocation )
                     BibleOrgSysGlobals.checkXMLNoText( element, sublocation )
@@ -807,10 +807,10 @@ class DBLBible( Bible ):
                                         copyright[subelement.tag+'-'+contentType] = BibleOrgSysGlobals.getFlattenedXML( sub2element, sub3location )
                                 else:
                                     logging.warning( f"Unprocessed {sub2element.tag} sub2element '{sub2element.text}' in {sub3location}" )
-                                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                         else:
                             logging.warning( f"ZX23 Unprocessed {subelement.tag} subelement '{subelement.text}' in {sub2location}" )
-                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "copyright", copyright )
                     assert 'copyright' not in self.suppliedMetadata['DBL']
                     self.suppliedMetadata['DBL']['copyright']  = copyright
@@ -834,7 +834,7 @@ class DBLBible( Bible ):
                                 self.suppliedMetadata['DBL'][element.tag][subelement.tag+'-'+contentType] = BibleOrgSysGlobals.getFlattenedXML( subelement, sub2location )
                         else:
                             logging.warning( f"KY88 Unprocessed {subelement.tag} subelement '{subelement.text}' in {sub2location}" )
-                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                 elif element.tag == 'archiveStatus':
                     BibleOrgSysGlobals.checkXMLNoAttributes( element, sublocation )
                     BibleOrgSysGlobals.checkXMLNoText( element, sublocation )
@@ -851,7 +851,7 @@ class DBLBible( Bible ):
                             self.suppliedMetadata['DBL'][element.tag][subelement.tag] = subelement.text
                         else:
                             logging.warning( f"Unprocessed {subelement.tag} subelement '{subelement.text}' in {sub2location}" )
-                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                 elif element.tag == 'format' and BibleOrgSysGlobals.isBlank( element.text ):
                     BibleOrgSysGlobals.checkXMLNoAttributes( element, sublocation )
                     BibleOrgSysGlobals.checkXMLNoText( element, sublocation )
@@ -867,7 +867,7 @@ class DBLBible( Bible ):
                             formatDict[subelement.tag] = subelement.text
                         else:
                             logging.warning( f"WS23 Unprocessed {subelement.tag} subelement '{subelement.text}' in {sub2location}" )
-                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "formatDict", formatDict )
                     assert 'format' not in self.suppliedMetadata['DBL']
                     self.suppliedMetadata['DBL']['format']  = formatDict
@@ -896,7 +896,7 @@ class DBLBible( Bible ):
                                 if attrib=='uri': uri1 = value
                                 else:
                                     logging.warning( f"Unprocessed {attrib} attribute ({value}) in {sub2location}" )
-                                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                             for sub2element in subelement:
                                 sub3location = sub2element.tag + ' ' + sub2location
                                 BibleOrgSysGlobals.checkXMLNoText( sub2element, sub3location )
@@ -908,7 +908,7 @@ class DBLBible( Bible ):
                                         if attrib=='uri': uri2 = value
                                         else:
                                             logging.warning( f"Unprocessed {attrib} attribute ({value}) in {sub3location}" )
-                                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                                     #if uri2.startswith( 'USX_' ):
                                         #if 'USXFolderName' in self.suppliedMetadata['DBL']:
                                             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Seem to have multiple USX folders: had {self.suppliedMetadata['DBL']['USXFolderName']} now {uri2}" )
@@ -944,7 +944,7 @@ class DBLBible( Bible ):
                                     container1[resource['uri']] = resource
                                 else:
                                     logging.warning( f"Unprocessed {sub2element.tag} sub2element '{sub2element.text}' in {sub3location}" )
-                                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                             containers[uri1] = container1
                         elif subelement.tag == 'resource':
                             BibleOrgSysGlobals.checkXMLNoText( subelement, sub2location )
@@ -958,12 +958,12 @@ class DBLBible( Bible ):
                                 elif attrib=='uri': uri = value
                                 else:
                                     logging.warning( f"Unprocessed {attrib} attribute ({value}) in {sub2location}" )
-                                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                             if 'Resources' not in manifest: manifest['Resources'] = {}
                             manifest['Resources'][uri] = (checksum,mimeType,size,uri)
                         else:
                             logging.warning( f"YT76 Unprocessed {subelement.tag} subelement '{subelement.text}' in {sub2location}" )
-                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                     manifest['containers'] = containers
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "manifest", manifest )
                     assert 'manifest' not in self.suppliedMetadata['DBL']
@@ -985,7 +985,7 @@ class DBLBible( Bible ):
                                 if attrib=='id': nameID = value
                                 else:
                                     logging.warning( f"Unprocessed {attrib} attribute ({value}) in {sub2location}" )
-                                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                             assert nameID not in names
                             names[nameID] = {}
                             for sub2element in subelement:
@@ -997,10 +997,10 @@ class DBLBible( Bible ):
                                     names[nameID][sub2element.tag] = sub2element.text
                                 else:
                                     logging.warning( f"Unprocessed {sub2element.tag} sub2element '{sub2element.text}' in {sub3location}" )
-                                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                         else:
                             logging.warning( f"CD32 Unprocessed {subelement.tag} subelement '{subelement.text}' in {sub2location}" )
-                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                     # TODO: Need to pivot these as well ???
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "names", names )
                     assert 'names' not in self.suppliedMetadata['DBL']
@@ -1031,11 +1031,11 @@ class DBLBible( Bible ):
                                         if attrib=='code': bookCode = value
                                         else:
                                             logging.warning( f"Unprocessed {attrib} attribute ({value}) in {sub3location}" )
-                                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                                     if bookCode: bookList.append( bookCode )
                                 else:
                                     logging.warning( f"JD46 Unprocessed {sub2element.tag} sub2element '{sub2element.text}' in {sub3location}" )
-                                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                             assert bookList
                             assert 'books' not in canonicalContent
                             canonicalContent['books'] = bookList
@@ -1057,16 +1057,16 @@ class DBLBible( Bible ):
                                         elif attrib=='role': assert 'role' not in content; content['role'] = value
                                         else:
                                             logging.warning( f"Unprocessed {attrib} attribute ({value}) in {sub3location}" )
-                                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                                 else:
                                     logging.warning( f"BD42 Unprocessed {sub2element.tag} sub2element '{sub2element.text}' in {sub3location}" )
-                                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                             assert content
                             assert 'content' not in structure
                             structure['content'] = content
                         else:
                             logging.warning( f"BS53 Unprocessed {subelement.tag} subelement '{subelement.text}' in {sub2location}" )
-                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                         if canonicalContent:
                             assert 'canonicalContent' not in source
                             source['canonicalContent'] = canonicalContent
@@ -1094,7 +1094,7 @@ class DBLBible( Bible ):
                                 elif attrib=='default': defaultFlag = getFlagFromAttribute( attrib, value )
                                 else:
                                     logging.warning( f"Unprocessed {attrib} attribute ({value}) in {sub2location}" )
-                                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                             publication['ID'] = publicationID
                             publication['DefaultFlag'] = defaultFlag
                             for sub2element in subelement:
@@ -1119,7 +1119,7 @@ class DBLBible( Bible ):
                                             if attrib=='code': bookCode = value
                                             else:
                                                 logging.warning( f"Unprocessed {attrib} attribute ({value}) in {sub4location}" )
-                                                if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                                                if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                                         assert bookCode not in canonicalContent
                                         canonicalContent.append( bookCode )
                                     publication['CanonicalContent'] = canonicalContent
@@ -1140,7 +1140,7 @@ class DBLBible( Bible ):
                                             elif attrib=='src': source = value
                                             else:
                                                 logging.warning( f"Unprocessed {attrib} attribute ({value}) in {sub4location}" )
-                                                if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                                                if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                                         assert name not in structure
                                         structure[name] = (name,role,source)
                                         #if 'USXFolderName' not in self.suppliedMetadata['DBL'] \
@@ -1149,7 +1149,7 @@ class DBLBible( Bible ):
                                     publication['Structure'] = structure
                                 else:
                                     logging.warning( f"VF56 Unprocessed {sub2element.tag} sub2element '{sub2element.text}' in {sub3location}" )
-                                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                             #assert publicationID not in publications # Fails on Kwere NT
                             if publicationID in publications: # already
                                 publicationID += 'a'
@@ -1157,14 +1157,14 @@ class DBLBible( Bible ):
                             publications[publicationID] = publication
                         else:
                             logging.warning( f"PZ95 Unprocessed {subelement.tag} subelement '{subelement.text}' in {sub2location}" )
-                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "publications", publications )
                     assert 'publications' not in self.suppliedMetadata['DBL']
                     self.suppliedMetadata['DBL']['publications']  = publications
                 else:
                     logging.warning( f"QT26 Unprocessed {element.tag} element in {sublocation}" )
                     #self.addPriorityError( 1, c, v, f"Unprocessed {element.tag} element" )
-                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, '\n', self.suppliedMetadata['DBL'] )
         vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Loaded {len(self.suppliedMetadata['DBL'])} supplied metadata elements." )
 
@@ -1204,7 +1204,7 @@ class DBLBible( Bible ):
                             logging.info( f"USX folder is {self.suppliedMetadata['DBL']['USXFolderName']}" )
                             break
                     break
-        else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "No book list" ); halt
+        else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "No book list" ); assert False, "We want to stop here"
         self.suppliedMetadata['DBL']['OurBookList']  = bookList
     # end of DBLBible.loadDBLMetadata
 
@@ -1257,11 +1257,11 @@ class DBLBible( Bible ):
                             elif isinstance( sub2Value, tuple ):
                                 if BibleOrgSysGlobals.debugFlag or DEBUGGING_THIS_MODULE:
                                     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "How do we handle a tuple here???" )
-                            else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Programming error3 in applySuppliedMetadata", mainKey, subKey, sub2Key, repr(sub2Value) ); halt
+                            else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Programming error3 in applySuppliedMetadata", mainKey, subKey, sub2Key, repr(sub2Value) ); assert False, "We want to stop here"
                     elif isinstance( subValue, list ): # flatten this
                         flattenedMetadata[mainKey+'--'+subKey] = '--'.join( subValue )
-                    else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Programming error2 in applySuppliedMetadata", mainKey, subKey, repr(subValue) ); halt
-            else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Programming error in applySuppliedMetadata", mainKey, repr(value) ); halt
+                    else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Programming error2 in applySuppliedMetadata", mainKey, subKey, repr(subValue) ); assert False, "We want to stop here"
+            else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Programming error in applySuppliedMetadata", mainKey, repr(value) ); assert False, "We want to stop here"
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nflattenedMetadata", flattenedMetadata )
 
         nameChangeDict = {'License':'Licence'}
@@ -1309,7 +1309,7 @@ class DBLBible( Bible ):
                 elif attrib=='versetext': versetext = value
                 else:
                     logging.warning( f"Unprocessed style {attrib} attribute ({value}) in {location}" )
-                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "StyleID", styleID )
             assert styleID not in ourDict
             ourDict[styleID] = {}
@@ -1338,7 +1338,7 @@ class DBLBible( Bible ):
                         ourDict[styleID]['properties'][name] = ( element.text, attribDict )
                 else:
                     logging.warning( f"Unprocessed style {subelement.tag} subelement '{subelement.text}' in {sublocation}" )
-                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Styles:", DBLStyles['styles'] )
         # end of getStyle
 
@@ -1374,7 +1374,7 @@ class DBLBible( Bible ):
                 else:
                     logging.warning( f"Unprocessed {element.tag} element in {sublocation}" )
                     #self.addPriorityError( 1, c, v, f"Unprocessed {element.tag} element" )
-                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, '\n', self.suppliedMetadata['DBL'] )
         vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Loaded {len(DBLStyles['styles'])} style elements." )
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'DBLStyles', DBLStyles )
@@ -1451,7 +1451,7 @@ class DBLBible( Bible ):
 
         ##dPrint( 'Quiet', DEBUGGING_THIS_MODULE, '\n', self.suppliedMetadata['DBL'] )
         #dPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Loaded {len(DBLVersification)} versification elements." )
-        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'DBLVersification', DBLVersification ); halt
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'DBLVersification', DBLVersification ); assert False, "We want to stop here"
     ## end of DBLBible.loadDBLVersification
 
 
@@ -1506,7 +1506,7 @@ class DBLBible( Bible ):
 
         ##dPrint( 'Quiet', DEBUGGING_THIS_MODULE, '\n', DBLLanguage )
         #dPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Loaded {len(DBLLanguage)} language sections." )
-        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'DBLLanguage', DBLLanguage ); halt
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'DBLLanguage', DBLLanguage ); assert False, "We want to stop here"
     ## end of DBLBible.loadDBLLanguage
 
 

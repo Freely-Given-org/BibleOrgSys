@@ -209,11 +209,11 @@ def createEpubBible( BibleObject, outputFolder=None ):
                     vBridgeStartInt = vBridgeEndInt = None
                 else:
                     lastVWritten = V
-            elif marker == 'p~':
-                if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
-                    assert textBuffer # This is a continued part of the verse -- failed with this bad source USFM:
-                                        #     \c 1 \v 1 \p These events happened…
-                textBuffer += f' {text}' # continuation of the same verse
+            # elif marker == 'XXXp~':
+            #     if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+            #         assert textBuffer # This is a continued part of the verse -- failed with this bad source USFM:
+            #                             #     \c 1 \v 1 \p These events happened…
+            #     textBuffer += f' {text}' # continuation of the same verse
             else:
                 ignoredMarkers.add( marker )
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, textBuffer )
@@ -790,7 +790,7 @@ def fullDemo() -> None:
                         and not blockName.startswith( 'bookExtra-' ):
                             # Shouldn't get here
                             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, blockName, index, len(result), hexlify(result), result, moduleFilename, )
-                            if DEBUGGING_THIS_MODULE: halt
+                            if DEBUGGING_THIS_MODULE: assert False, "We want to stop here"
 
 
     if 0: # all discovered modules in the test folder

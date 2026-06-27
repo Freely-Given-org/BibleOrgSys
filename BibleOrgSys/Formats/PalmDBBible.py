@@ -146,7 +146,7 @@ def PalmDBBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=
                 #if strictCheck or BibleOrgSysGlobals.strictCheckingFlag:
                     #firstLine = BibleOrgSysGlobals.peekIntoFile( thisFilename, tryFolderName )
                     #if not firstLine.startswith( "info\t"):
-                        #dPrint( 'Info', DEBUGGING_THIS_MODULE, f"PalmDBBible (unexpected) first line was {thisFilename!r} in {firstLine}" ); halt
+                        #dPrint( 'Info', DEBUGGING_THIS_MODULE, f"PalmDBBible (unexpected) first line was {thisFilename!r} in {firstLine}" ); assert False, "We want to stop here"
                         #continue
                 foundProjects.append( (tryFolderName, thisFilename,) )
                 lastFilenameFound = thisFilename
@@ -234,7 +234,7 @@ class PalmDBBible( Bible ):
             """
             #if BibleOrgSysGlobals.debugFlag:
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"getBinaryString( {hexlify(binary)}={binary}, {numBytes} )" )
-            if len(binary) < numBytes: halt # Too few bytes provided
+            if len(binary) < numBytes: assert False, "We want to stop here" # Too few bytes provided
             binary = binary[:numBytes]
             if DEBUGGING_THIS_MODULE:
                 for someInt in binary:
@@ -275,9 +275,9 @@ class PalmDBBible( Bible ):
                     #elif result.startswith( '\xe2\x80\x99' ): result = 'ZZZ' + result[3:]
                     #elif result.startswith( '\xe2\x80\x9c' ): result = 'PPP' + result[3:]
                     #elif result.startswith( '\xe2\x80\x9d' ): result = 'QQQ' + result[3:]
-                    #else: halt
+                    #else: assert False, "We want to stop here"
                     if DEBUGGING_THIS_MODULE:
-                        if '\xe2' in result: halt
+                        if '\xe2' in result: assert False, "We want to stop here"
                         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Got2 invalid string {result!r}" )
             return result
         # end of getBinaryString
@@ -317,7 +317,7 @@ class PalmDBBible( Bible ):
             assert byteOffset == len(binary)
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, " expectedWords =", expectedWords )
             #if BibleOrgSysGlobals.debugFlag:
-                #halt
+                #assert False, "We want to stop here"
 
             # Now read in the word lists
             vPrint( 'Info', DEBUGGING_THIS_MODULE, "\nLoading word lists…" )
@@ -359,7 +359,7 @@ class PalmDBBible( Bible ):
                                 #thisBook.addPriorityError( 20, C, V, f"Found unexpected slash in dictionary word {word!r} @ {len(words):04x}={len(words)}" )
                                 if DEBUGGING_THIS_MODULE:
                                     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"      Found unexpected slash in dictionary word {word!r} @ {len(words):04x}={len(words)}" )
-                                    halt
+                                    assert False, "We want to stop here"
                         words.append( word )
                         numRegularWords += 1
                     else: # it's a compressed word
@@ -466,7 +466,7 @@ class PalmDBBible( Bible ):
                 assert verseText
                 if 'SQ' in verseText or 'AAA' in verseText or 'XXX' in verseText or 'WWW' in verseText:
                     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "What's this here for:", repr(verseText) )
-                    if DEBUGGING_THIS_MODULE: halt
+                    if DEBUGGING_THIS_MODULE: assert False, "We want to stop here"
 
             adjText = verseText.strip().replace( ' .', '.' ).replace( ' ,', ',' ) \
                                        .replace( ' :', ':' ).replace( ' ;', ';' ).replace( ' ?', '?' ) \
@@ -486,7 +486,7 @@ class PalmDBBible( Bible ):
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  adjText2={adjText1!r}" )
             if '\\x' in repr(adjText):
                 vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "What's this slash here for:", repr(adjText) )
-                if DEBUGGING_THIS_MODULE: halt
+                if DEBUGGING_THIS_MODULE: assert False, "We want to stop here"
             #adjText1 = adjText
 
             # Put footnotes in properly
@@ -575,7 +575,7 @@ class PalmDBBible( Bible ):
                             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"    {hexlify(recordBytes)}\n    {recordBytes}" )
                         else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"    {hexlify(recordBytes)}" )
             #if BibleOrgSysGlobals.debugFlag:
-                #halt
+                #assert False, "We want to stop here"
 
             # Now read the first record of actual Bible data which is the Bible header info
             vPrint( 'Info', DEBUGGING_THIS_MODULE, "\nLoading Bible header info…" )
@@ -592,11 +592,11 @@ class PalmDBBible( Bible ):
             byteShiftedFlag = not versionAttribute & 2
             RTLFlag = versionAttribute & 4
             if BibleOrgSysGlobals.verbosityLevel > 1:
-                if copyProtectedFlag: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " Copy protected!" ); halt
+                if copyProtectedFlag: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " Copy protected!" ); assert False, "We want to stop here"
                 else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " Not copy protected." )
                 if byteShiftedFlag: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  BYTE SHIFTED! # See http://en.wikipedia.org/wiki/Shift_JIS for Japanese" )
                 else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " Not byte shifted." )
-                if RTLFlag: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " Right-aligned (RTL languages)!" ); halt
+                if RTLFlag: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " Right-aligned (RTL languages)!" ); assert False, "We want to stop here"
                 else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " Left-aligned (LTR languages)." )
                 if BibleOrgSysGlobals.verbosityLevel > 3:
                     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  wordIndexIndex={wordIndexIndex} numWordListRecords={numWordListRecords} numBooks={numBooks}" )
@@ -611,7 +611,7 @@ class PalmDBBible( Bible ):
             assert byteOffset == len(binary)
             #if BibleOrgSysGlobals.debugFlag:
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "bookIndexMetadata", len(bookIndexMetadata), bookIndexMetadata )
-                #halt
+                #assert False, "We want to stop here"
 
             # Now load the word lists
             loadWordlists()
@@ -619,7 +619,7 @@ class PalmDBBible( Bible ):
             dPrint( 'Never', DEBUGGING_THIS_MODULE, "numWords =", numWords )
             #if BibleOrgSysGlobals.debugFlag:
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "words", numWords, words[:200], words[-80:] )
-                #halt
+                #assert False, "We want to stop here"
 
             # Now read in the Bible book chapter/verse data
             vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Loading Bible book chapter/verse lists…" )
@@ -720,7 +720,7 @@ class PalmDBBible( Bible ):
                 binary = b''
                 verse = ''
                 for j in range( totalCharacters ):
-                    #if BBB=='EXO' and V==3: halt
+                    #if BBB=='EXO' and V==3: assert False, "We want to stop here"
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, self.name )
                     #if (name == 'kjv' and BBB=='GAL' and V>5) \
                     #or (name == 'kjv' and BBB=='TI2' and V>24) \
@@ -761,7 +761,7 @@ class PalmDBBible( Bible ):
                             if DEBUGGING_THIS_MODULE:
                                 vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n\n\nGot HUGE ix {ix:04x} {ix}/{len(words)} @ {byteOffset}/{len(binary)}" )
                             word = '<UNKNOWN>'
-                            if DEBUGGING_THIS_MODULE: halt
+                            if DEBUGGING_THIS_MODULE: assert False, "We want to stop here"
                             #if C==0: C = 1
                         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{BBB} {C}:{V} tC={j} vC={verseCount} acc={accumulatedTokensPerVerseList[verseCount]} {verse!r}" )
                     else:
@@ -771,23 +771,23 @@ class PalmDBBible( Bible ):
                     for wordBit in word.split(): # Handle each part of combined words separately to ensure correct handling of each part
                         if wordBit.startswith( '<BOOK>' ):
                             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n<BOOK>" )
-                            #if not word.startswith( '<BOOK>' ): vPrint( 'Quiet', DEBUGGING_THIS_MODULE, repr(verse), '+', repr(word) ); halt
+                            #if not word.startswith( '<BOOK>' ): vPrint( 'Quiet', DEBUGGING_THIS_MODULE, repr(verse), '+', repr(word) ); assert False, "We want to stop here"
                             if verse: saveSegment( BBB, C, V, verse ); verse = ''
                             C = V = 0
                         elif wordBit.startswith( '<CHAPTER>' ):
                             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n<CHAPTER>" )
-                            #if not word.startswith( '<CHAPTER>' ): vPrint( 'Quiet', DEBUGGING_THIS_MODULE, repr(verse), '+', repr(word) ); halt
+                            #if not word.startswith( '<CHAPTER>' ): vPrint( 'Quiet', DEBUGGING_THIS_MODULE, repr(verse), '+', repr(word) ); assert False, "We want to stop here"
                             if verse: saveSegment( BBB, C, V, verse ); verse = ''
                             accumulatedVerseCount += verseCount
                             verseCount = 0
                             C += 1; V = 0
                         elif wordBit.startswith( '<DESC>' ):
                             vPrint( 'Never', DEBUGGING_THIS_MODULE, "\n<DESC>" )
-                            #if not word.startswith( '<DESC>' ): vPrint( 'Quiet', DEBUGGING_THIS_MODULE, repr(verse), '+', repr(word) ); halt
+                            #if not word.startswith( '<DESC>' ): vPrint( 'Quiet', DEBUGGING_THIS_MODULE, repr(verse), '+', repr(word) ); assert False, "We want to stop here"
                             if verse: saveSegment( BBB, C, V, verse ); verse = ''
                         elif wordBit.startswith( '<VERSE>' ):
                             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n<VERSE>" )
-                            #if not word.startswith( '<VERSE>' ): vPrint( 'Quiet', DEBUGGING_THIS_MODULE, repr(verse), '+', repr(word) ); halt
+                            #if not word.startswith( '<VERSE>' ): vPrint( 'Quiet', DEBUGGING_THIS_MODULE, repr(verse), '+', repr(word) ); assert False, "We want to stop here"
                             if C==0: C = 1; vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Correct C to one!" )
                             if verse: saveSegment( BBB, C, V, verse ); verse = ''
                             if V==0: V = 1
@@ -816,13 +816,13 @@ class PalmDBBible( Bible ):
                         #verseCount += 1
                         V += 1
                     #tokenCount += 1
-                    #if len(verse)>200: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, repr(verse) ); halt
+                    #if len(verse)>200: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, repr(verse) ); assert False, "We want to stop here"
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "verse", repr(verse[:100]) )
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Done", byteOffset, len(binary) )
                 #assert byteOffset == len(binary)
                 self.stashBook( thisBook )
             #if BibleOrgSysGlobals.debugFlag:
-                #halt
+                #assert False, "We want to stop here"
 
         if loadErrors:
             self.checkResultsDictionary['Load Errors'] = loadErrors

@@ -560,7 +560,7 @@ class ZefaniaXMLBible( Bible ):
                         vRef = value
                         if vRef != '1':
                             logging.error( f"Expected to find vRef of '1' but got {vRef!r}" )
-                            if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: halt
+                            if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: assert False, "We want to stop here"
                     else: logging.warning( f"Unprocessed {value!r} attribute ({attrib}) in caption element" )
                 if BibleOrgSysGlobals.debugFlag: assert vRef
                 vText = element.text
@@ -643,7 +643,7 @@ class ZefaniaXMLBible( Bible ):
                         elif css is None and idStyle=='cl:divineName': SFM = '\\nd'
                         else:
                             logging.error( f"Ignored1 css is {css!r} idStyle is {idStyle!r}" )
-                            if BibleOrgSysGlobals.debugFlag: halt
+                            if BibleOrgSysGlobals.debugFlag: assert False, "We want to stop here"
                         sText, sTail = sub2element.text.strip('\n'), sub2element.tail
                         if BibleOrgSysGlobals.debugFlag: assert sText
                         if SFM: vText += SFM+' ' + sText + SFM+'*'
@@ -669,7 +669,7 @@ class ZefaniaXMLBible( Bible ):
                 elif css is None and idStyle=='cl:divineName': SFM = '\\nd'
                 else:
                     logging.error( f"Ignored2 css is {css!r} idStyle is {idStyle!r}" )
-                    if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: halt
+                    if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: assert False, "We want to stop here"
 
                 for sub2element in subelement:
                     if sub2element.tag == GR_TAG:

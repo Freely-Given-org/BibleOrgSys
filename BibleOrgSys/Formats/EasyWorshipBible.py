@@ -231,11 +231,11 @@ def createEasyWorshipBible( BibleObject, outputFolder=None ):
                 else:
                     textBuffer += ('\r\n\r\n' if textBuffer else '') + f'{C}:{V} {text}'
                     lastVWritten = V
-            elif marker == 'p~':
-                if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
-                    assert textBuffer # This is a continued part of the verse -- failed with this bad source USFM:
-                                        #     \c 1 \v 1 \p These events happened…
-                textBuffer += f' {text}' # continuation of the same verse
+            # elif marker == 'XXXp~':
+            #     if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+            #         assert textBuffer # This is a continued part of the verse -- failed with this bad source USFM:
+            #                             #     \c 1 \v 1 \p These events happened…
+            #     textBuffer += f' {text}' # continuation of the same verse
             else:
                 ignoredMarkers.add( marker )
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, textBuffer )
@@ -594,11 +594,11 @@ class EasyWorshipBible( Bible ):
                 if rewriteResult1 != bookBytes:
                     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nbookBytes", len(bookBytes), hexlify(bookBytes) )
                     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nrewriteResult1", len(rewriteResult1), hexlify(rewriteResult1) )
-                    halt
+                    assert False, "We want to stop here"
                 if byteResult1 != byteResult:
                     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, len(byteResult), hexlify(byteResult) )
                     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, len(byteResult1), hexlify(byteResult1) )
-                    halt
+                    assert False, "We want to stop here"
             if '\t' in textResult:
                 logging.warning( f"Replacing tab characters in {BBB} = {bookAbbrev}" )
                 textResult = textResult.replace( '\t', ' ' )
@@ -805,7 +805,7 @@ def briefDemo() -> None:
                         and not blockName.startswith( 'bookExtra-' ):
                             # Shouldn't get here
                             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, blockName, index, len(result), hexlify(result), result, moduleFilename, )
-                            if DEBUGGING_THIS_MODULE: halt
+                            if DEBUGGING_THIS_MODULE: assert False, "We want to stop here"
 # end of EasyWorshipBible.briefDemo
 
 def fullDemo() -> None:
@@ -909,7 +909,7 @@ def fullDemo() -> None:
                         and not blockName.startswith( 'bookExtra-' ):
                             # Shouldn't get here
                             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, blockName, index, len(result), hexlify(result), result, moduleFilename, )
-                            if DEBUGGING_THIS_MODULE: halt
+                            if DEBUGGING_THIS_MODULE: assert False, "We want to stop here"
 
 
     if 0: # all discovered modules in the test folder

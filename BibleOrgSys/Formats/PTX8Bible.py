@@ -287,7 +287,7 @@ def loadPTX8ProjectData( BibleObject, sourceFolder, encoding='utf-8' ):
                     elif attrib=='BookNameForm': bookNameForm = value
                     else:
                         logging.error( f"Unprocessed {elementLocation!r} attribute ({attrib}) in {value}" )
-                        if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                        if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                 PTXSettingsDict[element.tag] = { 'PrePart':prePart, 'PostPart':postPart, 'BookNameForm':bookNameForm }
             else:
                 BibleOrgSysGlobals.checkXMLNoAttributes( element, elementLocation )
@@ -763,7 +763,7 @@ class PTX8Bible( Bible ):
                         elif attrib=='long': bnLong = value
                         else:
                             logging.error( f"Unprocessed {treeLocation!r} attribute ({attrib}) in {value}" )
-                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, bnCode, booksNamesDict[bnCode] )
                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: assert len(bnCode)==3
                     try: BBB = bos_books_codes_py.usfm_abbrev_to_bos_book_code( bnCode )
@@ -774,10 +774,10 @@ class PTX8Bible( Bible ):
                     booksNamesDict[BBB] = (bnCode,bnAbbr,bnShort,bnLong,)
                 else:
                     logging.error( f"Unprocessed {element.tag} element in {elementLocation}" )
-                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
         else:
             logging.critical( f"Unrecognised PTX8 bookname settings tag: {self.XMLTree.tag}" )
-            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
+            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: assert False, "We want to stop here"
 
         try: self.filepathsNotYetLoaded.remove( bookNamesFilepath )
         except ValueError: logging.critical( f"PTX8 books names file seemed unexpected: {bookNamesFilepath}" )
@@ -827,7 +827,7 @@ class PTX8Bible( Bible ):
                         elif attrib=='Homograph': lexemeHomograph = value
                         else:
                             logging.error( f"Unprocessed {elementLocation!r} attribute ({attrib}) in {value}" )
-                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Lexeme {lexemeType} form={lexemeHomograph!r} homograph={lexemeForm}" )
                     assert lexemeType in ( 'Word', 'Phrase', 'Stem', 'Prefix' )
                     if lexemeType not in lexiconDict['Entries']: lexiconDict['Entries'][lexemeType] = {}
@@ -849,7 +849,7 @@ class PTX8Bible( Bible ):
                                 if attrib=='Id': senseID = value
                                 else:
                                     logging.error( f"Unprocessed {sublocation!r} attribute ({attrib}) in {value}" )
-                                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'senseID={senseID!r}' )
                             assert senseID and senseID not in lexiconDict['Entries'][lexemeType][lexemeForm]['senseIDs']
                             for sub3element in sub2element:
@@ -864,18 +864,18 @@ class PTX8Bible( Bible ):
                                         if attrib=='Language': glossLanguage = value
                                         else:
                                             logging.error( f"Unprocessed {sub2location!r} attribute ({attrib}) in {value}" )
-                                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                                 else:
                                     logging.error( f"Unprocessed {sub3element.tag} sub3element '{sub3element.text}' in {sub2location}" )
-                                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                                 assert senseID not in lexiconDict['Entries'][lexemeType][lexemeForm]['senseIDs']
                                 lexiconDict['Entries'][lexemeType][lexemeForm]['senseIDs'][senseID] = (sub3element.text, glossLanguage)
                         else:
                             logging.error( f"Unprocessed {sub2element.tag} sub2element '{sub2element.text}' in {sublocation}" )
-                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                 else:
                     logging.error( f"Unprocessed {subelement.tag} subelement in {elementLocation}" )
-                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  returning", lexiconDict['Entries'][lexemeType][lexemeForm] )
         # end of processLexiconItem
 
@@ -917,13 +917,13 @@ class PTX8Bible( Bible ):
                             processLexiconItem( subelement, sublocation )
                         else:
                             logging.error( f"Unprocessed {subelement.tag} subelement '{subelement.text}' in {sublocation}" )
-                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                 else:
                     logging.error( f"Unprocessed {element.tag} element in {elementLocation}" )
-                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
         else:
             logging.critical( f"Unrecognised PTX8 lexicon tag: {self.XMLTree.tag}" )
-            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
+            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: assert False, "We want to stop here"
 
         try: self.filepathsNotYetLoaded.remove( lexiconFilepath )
         except ValueError: logging.critical( f"PTX8 lexicon file seemed unexpected: {lexiconFilepath}" )
@@ -965,7 +965,7 @@ class PTX8Bible( Bible ):
                 if attrib=='PeerSharing': peerSharingFlag = getFlagFromAttribute( attrib, value )
                 else:
                     logging.error( f"Unprocessed {treeLocation!r} attribute ({attrib}) in {value}" )
-                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
             projectUsersDict['PeerSharingFlag'] = peerSharingFlag
 
             # Now process the actual entries
@@ -985,7 +985,7 @@ class PTX8Bible( Bible ):
                         elif attrib=='UnregisteredUser': unregisteredUserFlag = getFlagFromAttribute( attrib, value )
                         else:
                             logging.error( f"Unprocessed {treeLocation!r} attribute ({attrib}) in {value}" )
-                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                     if 'Users' not in projectUsersDict: projectUsersDict['Users'] = {}
                     assert userName not in projectUsersDict['Users'] # no duplicates allowed presumably
                     projectUsersDict['Users'][userName] = {}
@@ -1019,11 +1019,11 @@ class PTX8Bible( Bible ):
                                         if attrib=='Id': bookID = value
                                         else:
                                             logging.error( f"Unprocessed {sub2location!r} attribute ({attrib}) in {value}" )
-                                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                                     projectUsersDict['Users'][userName][subelement.tag].append( bookID )
                                 else:
                                     logging.error( f"Unprocessed {sub2element.tag} sub2element '{sub2element.text}' in {sub2location}" )
-                                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                         elif subelement.tag in ('Permissions','AutomaticPermissions',):
                             BibleOrgSysGlobals.checkXMLNoText( subelement, sublocation )
                             if subelement.tag not in projectUsersDict['Users'][userName]:
@@ -1044,20 +1044,20 @@ class PTX8Bible( Bible ):
                                         elif attrib=='Granted': grantedFlag = getFlagFromAttribute( attrib, value )
                                         else:
                                             logging.error( f"Unprocessed {sub2location!r} attribute ({attrib}) in {value}" )
-                                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                                     projectUsersDict['Users'][userName][subelement.tag][permissionType] = grantedFlag
                                 else:
                                     logging.error( f"Unprocessed {sub2element.tag} sub2element '{sub2element.text}' in {sub2location}" )
-                                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                         else:
                             logging.error( f"Unprocessed {subelement.tag} subelement '{subelement.text}' in {sublocation}" )
-                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                 else:
                     logging.error( f"Unprocessed {element.tag} element in {elementLocation}" )
-                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
         else:
             logging.critical( f"Unrecognised PTX8 project users settings tag: {self.XMLTree.tag}" )
-            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
+            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: assert False, "We want to stop here"
 
         try: self.filepathsNotYetLoaded.remove( projectUsersFilepath )
         except ValueError: logging.critical( f"PTX8 project users file seemed unexpected: {projectUsersFilepath}" )
@@ -1101,7 +1101,7 @@ class PTX8Bible( Bible ):
                 if attrib=='NextId': nextId = value
                 else:
                     logging.error( f"Unprocessed {treeLocation!r} attribute ({attrib}) in {value}" )
-                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
 
             # Now process the actual entries
             for element in self.XMLTree:
@@ -1125,7 +1125,7 @@ class PTX8Bible( Bible ):
                         elif attrib=='DagPartial': DagPartialFlag = getFlagFromAttribute( attrib, value )
                         else:
                             logging.error( f"Unprocessed {treeLocation!r} attribute ({attrib}) in {value}" )
-                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                     tempDict['DefaultFlag'] = defaultFlag
                     tempDict['Psa151inPsaFlag'] = Psa151inPsaFlag
                     tempDict['LjeInBarFlag'] = LjeInBarFlag
@@ -1148,18 +1148,18 @@ class PTX8Bible( Bible ):
                             bookList.append( BBB )
                         else:
                             logging.error( f"Unprocessed {subelement.tag} subelement '{subelement.text}' in {sublocation}" )
-                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                     if bookList:
                         assert 'BookList' not in tempDict
                         tempDict['BookList'] = bookList
                 else:
                     logging.error( f"Unprocessed {element.tag} element in {elementLocation}" )
-                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                 assert Id not in canonsDict
                 canonsDict[Id] = tempDict
         else:
             logging.critical( f"Unrecognised PTX8 checking tag: {self.XMLTree.tag}" )
-            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
+            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: assert False, "We want to stop here"
 
         try: self.filepathsNotYetLoaded.remove( canonsFilepath )
         except ValueError: logging.critical( f"PTX8 checking status file seemed unexpected: {canonsFilepath}" )
@@ -1218,7 +1218,7 @@ class PTX8Bible( Bible ):
                             tempDict[subelement.tag] = subelement.text
                         else:
                             logging.error( f"Unprocessed {subelement.tag} subelement '{subelement.text}' in {sublocation}" )
-                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                     assert tempDict and 'BookName' in tempDict and 'Check' in tempDict
                     bn, chk = tempDict['BookName'], tempDict['Check']
                     del tempDict['BookName'], tempDict['Check']
@@ -1230,10 +1230,10 @@ class PTX8Bible( Bible ):
                     checkingStatusByCheckDict[chk][bn] = tempDict # Saved both ways
                 else:
                     logging.error( f"Unprocessed {element.tag} element in {elementLocation}" )
-                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
         else:
             logging.critical( f"Unrecognised PTX8 checking tag: {self.XMLTree.tag}" )
-            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
+            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: assert False, "We want to stop here"
 
         try: self.filepathsNotYetLoaded.remove( checkingStatusFilepath )
         except ValueError: logging.critical( f"PTX8 checking status file seemed unexpected: {checkingStatusFilepath}" )
@@ -1292,17 +1292,17 @@ class PTX8Bible( Bible ):
                         elif attrib=='CreatorResolve': creatorResolveFlag = getFlagFromAttribute( attrib, value )
                         else:
                             logging.error( f"Unprocessed {treeLocation!r} attribute ({attrib}) in {value}" )
-                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                     commentTagDict[element.tag] = { 'Id':Id, 'Name':name, 'Icon':icon, 'CreatorResolve':creatorResolveFlag }
                 elif element.tag == 'LastUsedID':
                     BibleOrgSysGlobals.checkXMLNoAttributes( element, elementLocation )
                     commentTagDict[element.tag] = element.text
                 else:
                     logging.error( f"Unprocessed {element.tag} element in {elementLocation}" )
-                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
         else:
             logging.critical( f"Unrecognised PTX8 comment tag list tag: {self.XMLTree.tag}" )
-            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
+            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: assert False, "We want to stop here"
 
         try: self.filepathsNotYetLoaded.remove( commentTagFilepath )
         except ValueError: logging.critical( f"PTX8 comment tag file seemed unexpected: {commentTagFilepath}" )
@@ -1356,7 +1356,7 @@ class PTX8Bible( Bible ):
                         elif attrib=='derived': derivedCode = value
                         else:
                             logging.error( f"Unprocessed {treeLocation!r} attribute ({attrib}) in {value}" )
-                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                     assert referenceString.count( ' ' ) == 1
                     assert referenceString.count( ':' ) == 1
                     assert len(derivedCode) == 8
@@ -1371,10 +1371,10 @@ class PTX8Bible( Bible ):
                     derivedTranslationStatusByBookDict[BBB][(C,V)] = (derivedCode,derivedFrom)
                 else:
                     logging.error( f"Unprocessed {element.tag} element in {elementLocation}" )
-                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
         else:
             logging.critical( f"Unrecognised PTX8 derived translation tag: {self.XMLTree.tag}" )
-            if BibleOrgSysGlobals.strictDerivedTranslationFlag or BibleOrgSysGlobals.debugFlag: halt
+            if BibleOrgSysGlobals.strictDerivedTranslationFlag or BibleOrgSysGlobals.debugFlag: assert False, "We want to stop here"
 
         try: self.filepathsNotYetLoaded.remove( derivedTranslationStatusFilepath )
         except ValueError: logging.critical( f"PTX8 derived translation status file seemed unexpected: {derivedTranslationStatusFilepath}" )
@@ -1476,7 +1476,7 @@ class PTX8Bible( Bible ):
                             elif attrib=='Date': date = value
                             else:
                                 logging.error( f"Unprocessed {treeLocation!r} attribute ({attrib}) in {value}" )
-                                if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                                if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                         commentDict = { 'Noter':noterName, 'Thread':thread, 'User':user,
                                         'VerseRef':verseRef, 'Language':language, 'Date':date }
 
@@ -1510,11 +1510,11 @@ class PTX8Bible( Bible ):
                                 commentDict[subelement.tag] = BibleOrgSysGlobals.getFlattenedXML( subelement, sublocation )
                             else:
                                 logging.error( f"Unprocessed {subelement.tag} subelement '{subelement.text}' in {sublocation}" )
-                                if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
-                    #elif element.tag == 'ConflictType':halt
+                                if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
+                    #elif element.tag == 'ConflictType':assert False, "We want to stop here"
                     else:
                         logging.error( f"Unprocessed {element.tag} element in {elementLocation}" )
-                        if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                        if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "commentDict", commentDict )
                     if commentDict['ConflictType'] == 'verseText':
                         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{len(self.conflicts)+1}/ Noter: {noterName} @ {commentDict['VerseRef']} @ {commentDict['Date'].split('T',1)[0]}" )
@@ -1531,7 +1531,7 @@ class PTX8Bible( Bible ):
                     notesDictByThread[thread].append( commentDict )
             else:
                 logging.critical( f"Unrecognised PTX8 {noterName} note/comment list tag: {self.XMLTree.tag}" )
-                if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
+                if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: assert False, "We want to stop here"
 
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nNotes for {noterName}: ({len(notesDictByName[noterName])}) {notesDictByName[noterName]}" )
 
@@ -1606,7 +1606,7 @@ class PTX8Bible( Bible ):
                             passageStatus = value
                         else:
                             logging.error( f"Unprocessed {treeLocation!r} attribute ({attrib}) in {value}" )
-                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                     assert passageKey
                     assert passageKey not in parallelPassageStatusDict # no duplicates allowed presumably
                     parallelPassageStatusDict[passageKey] = {}
@@ -1639,13 +1639,13 @@ class PTX8Bible( Bible ):
                                     parallelPassageStatusDict[passageKey][subelement.tag] = subelement.text
                         else:
                             logging.error( f"Unprocessed {subelement.tag} subelement '{subelement.text}' in {sublocation}" )
-                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                 else:
                     logging.error( f"Unprocessed {element.tag} element in {elementLocation}" )
-                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
         else:
             logging.critical( f"Unrecognised PTX8 parallel passage status tag: {self.XMLTree.tag}" )
-            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
+            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: assert False, "We want to stop here"
 
         try: self.filepathsNotYetLoaded.remove( parallelPassageStatusFilepath )
         except ValueError: logging.critical( f"PTX8 parallel passage status file seemed unexpected: {parallelPassageStatusFilepath}" )
@@ -1696,7 +1696,7 @@ class PTX8Bible( Bible ):
                         if attrib=='Id': termId = value
                         else:
                             logging.error( f"Unprocessed {sublocation!r} attribute ({attrib}) in {value}" )
-                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
 
                     for subelement in element:
                         sublocation = subelement.tag + ' ' + elementLocation
@@ -1723,11 +1723,11 @@ class PTX8Bible( Bible ):
                                     referenceList.append( verseCode )
                                 else:
                                     logging.error( f"Unprocessed {sub2element.tag} sub2element '{sub2element.text}' in {sub2location}" )
-                                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                             if referenceList: termRenderingEntryDict['referenceList'] = referenceList
                         else:
                             logging.error( f"Unprocessed {subelement.tag} subelement '{subelement.text}' in {sublocation}" )
-                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                     assert termId not in projectBiblicalTermsDict
                     projectBiblicalTermsDict[termId] = termRenderingEntryDict
                 elif element.tag == 'Versification':
@@ -1736,10 +1736,10 @@ class PTX8Bible( Bible ):
                     projectBiblicalTermsDict[element.tag] = element.text
                 else:
                     logging.error( f"Unprocessed {element.tag} element '{element.text}' in {elementLocation}" )
-                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
         else:
             logging.critical( f"Unrecognised PTX8 {versionName} project Biblical terms tag: {self.XMLTree.tag}" )
-            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
+            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: assert False, "We want to stop here"
 
         try: self.filepathsNotYetLoaded.remove( projectBiblicalTermsFilepath )
         except ValueError: logging.critical( f"PTX8 project Biblical terms file seemed unexpected: {projectBiblicalTermsFilepath}" )
@@ -1801,7 +1801,7 @@ class PTX8Bible( Bible ):
                                 if attrib=='id': StageId = value
                                 else:
                                     logging.error( f"Unprocessed {sublocation!r} attribute ({attrib}) in {value}" )
-                                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                             stage = {}
 
                             for sub2element in subelement:
@@ -1838,7 +1838,7 @@ class PTX8Bible( Bible ):
                                                 if attrib=='BookNum': bookNum = value
                                                 else:
                                                     logging.error( f"Unprocessed sub3 {sub3location!r} attribute ({attrib}) in {value}" )
-                                                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                                                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
 
                                             for j,sub4element in enumerate( sub3element ):
                                                 sub4location = sub4element.tag + ' in ' + sub3location
@@ -1852,16 +1852,16 @@ class PTX8Bible( Bible ):
                                                     stage['BookStatus']['CompletedChapters'][bookNum] = ('ChapRevId',j+1,'XXX')
                                                 else:
                                                     logging.error( f"Unprocessed {sub4element.tag} sub4element '{sub4element.text}' in {sub4location}" )
-                                                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                                                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                                         else:
                                             logging.error( f"Unprocessed {sub3element.tag} sub3element '{sub3element.text}' in {sub3location}" )
-                                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                                 elif sub2element.tag == 'TargetCompletionDateMap':
                                     BibleOrgSysGlobals.checkXMLNoAttributes( sub2element, sub2location, 'TCDM11' )
                                     if stage['TargetCompletionDateMap']:
                                         logging.critical( f"Got extra TargetCompletionDateMap (ignored): {BibleOrgSysGlobals.elementStr(sub2element)}" )
                                         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Had", stage['TargetCompletionDateMap'] )
-                                        halt
+                                        assert False, "We want to stop here"
 
                                     for sub3element in sub2element:
                                         sub3location = sub3element.tag + ' in ' + sub2location
@@ -1881,17 +1881,17 @@ class PTX8Bible( Bible ):
                                                     stage['TargetCompletionDateMap'][sub4element.tag] = sub4element.text
                                                 else:
                                                     logging.error( f"Unprocessed {sub4element.tag} sub4element '{sub4element.text}' in {sub4location}" )
-                                                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                                                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                                         else:
                                             logging.error( f"Unprocessed {sub3element.tag} sub3element '{sub3element.text}' in {sub3location}" )
-                                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                                 elif sub2element.tag == 'Task':
                                     taskId = None
                                     for attrib,value in sub2element.items():
                                         if attrib=='id': taskId = value
                                         else:
                                             logging.error( f"Unprocessed sub2 {sub2location!r} attribute ({attrib}) in {value}" )
-                                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
 
                                     taskDict = {}
                                     for sub3element in sub2element:
@@ -1906,7 +1906,7 @@ class PTX8Bible( Bible ):
                                                 if attrib=='book': bookAbbrev = value
                                                 else:
                                                     logging.error( f"Unprocessed sub3 {sub3location!r} attribute ({attrib}) in {value}" )
-                                                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                                                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                                         elif sub3element.tag in ( 'Type', 'EasiestBooksVPD', 'EasyBooksVPD', 'ModerateBooksVPD', 'DifficultBooksVPD', 'Availability', ):
                                             BibleOrgSysGlobals.checkXMLNoAttributes( sub3element, sub3location )
                                             BibleOrgSysGlobals.checkXMLNoSubelements( sub3element, sub3location )
@@ -1934,16 +1934,16 @@ class PTX8Bible( Bible ):
                                                             pass
                                                         else:
                                                             logging.error( f"Unprocessed {sub5element.tag} sub5element '{sub5element.text}' in {sub5location}" )
-                                                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                                                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                                                 else:
                                                     logging.error( f"Unprocessed {sub4element.tag} sub4element '{sub4element.text}' in {sub4location}" )
-                                                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                                                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                                         elif sub3element.tag == 'Descriptions':
                                             BibleOrgSysGlobals.checkXMLNoAttributes( sub3element, sub3location )
                                             BibleOrgSysGlobals.checkXMLNoSubelements( sub3element, sub3location )
                                         else:
                                             logging.error( f"Unprocessed {sub3element.tag} sub3element '{sub3element.text}' in {sub3location}" )
-                                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                                     if sub2element.tag not in stage:
                                         stage[sub2element.tag] = {}
                                     stage['Task'][taskId] = taskDict
@@ -1953,7 +1953,7 @@ class PTX8Bible( Bible ):
                                         if attrib=='id': checkId = value
                                         else:
                                             logging.error( f"Unprocessed sub2 {sub2location!r} attribute ({attrib}) in {value}" )
-                                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
 
                                     checkDict = {}
                                     for sub3element in sub2element:
@@ -1968,7 +1968,7 @@ class PTX8Bible( Bible ):
                                                 if attrib=='book': bookAbbrev = value
                                                 else:
                                                     logging.error( f"Unprocessed sub3 {sub3location!r} attribute ({attrib}) in {value}" )
-                                                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                                                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                                             if sub3element.tag not in checkDict: checkDict[sub3element.tag] = []
                                             checkDict[sub3element.tag].append( bookAbbrev )
                                         elif sub3element.tag in ( 'Type', ):
@@ -1986,7 +1986,7 @@ class PTX8Bible( Bible ):
                                             pass
                                         else:
                                             logging.error( f"Unprocessed {sub3element.tag} sub3element '{sub3element.text}' in {sub3location}" )
-                                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                                     if sub2element.tag not in stage:
                                         stage[sub2element.tag] = {}
                                     stage['Check'][checkId] = checkDict
@@ -2010,10 +2010,10 @@ class PTX8Bible( Bible ):
                                                     pass
                                                 else:
                                                     logging.error( f"Unprocessed {sub4element.tag} sub4element '{sub4element.text}' in {sub4location}" )
-                                                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                                                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                                         else:
                                             logging.error( f"Unprocessed {sub3element.tag} sub3element '{sub3element.text}' in {sub3location}" )
-                                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                                     #if sub2element.tag not in stage:
                                         #stage[sub2element.tag] = {}
                                     stage['Names']= namesDict
@@ -2023,13 +2023,13 @@ class PTX8Bible( Bible ):
                                     pass
                                 else:
                                     logging.error( f"Unprocessed {sub2element.tag} sub2element '{sub2element.text}' in {sub2location}" )
-                                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                             if stage:
                                 assert StageId not in stages
                                 stages[StageId] = stage
                         else:
                             logging.error( f"Unprocessed {subelement.tag} subelement '{subelement.text}' in {sublocation}" )
-                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                     if stages:
                         assert not projectProgressDict['Stages']
                         projectProgressDict['Stages'] = stages
@@ -2049,19 +2049,19 @@ class PTX8Bible( Bible ):
                             projectProgressDict[element.tag][subelement.tag] = subelement.text
                         else:
                             logging.error( f"Unprocessed {subelement.tag} subelement '{subelement.text}' in {sublocation}" )
-                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                 elif element.tag == 'BasePlanType':
                     BibleOrgSysGlobals.checkXMLNoAttributes( element, elementLocation )
                     BibleOrgSysGlobals.checkXMLNoSubelements( element, elementLocation )
                     projectProgressDict[element.tag] = element.text
                 else:
                     logging.error( f"Unprocessed {element.tag} element in {elementLocation}" )
-                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "bookStatusDict", bookStatusDict )
                 #projectProgressDict.append( bookStatusDict )
         else:
             logging.critical( f"Unrecognised PTX8 {versionName} project progress tag: {self.XMLTree.tag}" )
-            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
+            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: assert False, "We want to stop here"
 
         try: self.filepathsNotYetLoaded.remove( projectProgressFilepath )
         except ValueError: logging.critical( f"PTX8 project progress file seemed unexpected: {projectProgressFilepath}" )
@@ -2183,15 +2183,15 @@ class PTX8Bible( Bible ):
                                 printConfigDict[printConfigType][element.tag] = subelement.text
                             else:
                                 logging.error( f"Unprocessed {subelement.tag} subelement '{subelement.text}' in {sublocation}" )
-                                if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                                if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                     else:
                         logging.error( f"Unprocessed {element.tag} element in {elementLocation}" )
-                        if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                        if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "bookStatusDict", bookStatusDict )
                     #printConfigDict[printConfigType].append( bookStatusDict )
             else:
                 logging.critical( f"Unrecognised PTX8 {printConfigType} print configuration tag: {self.XMLTree.tag}" )
-                if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
+                if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: assert False, "We want to stop here"
 
             try: self.filepathsNotYetLoaded.remove( printConfigFilepath )
             except ValueError: logging.critical( f"PTX8 print config file seemed unexpected: {progressFilepath}" )
@@ -2402,7 +2402,7 @@ class PTX8Bible( Bible ):
                         elif attrib=='State': state = value; assert state in 'RW' # right/wrong
                         else:
                             logging.error( f"Unprocessed {treeLocation!r} attribute ({attrib}) in {value}" )
-                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                     assert word not in spellingStatusDict # no duplicates allowed presumably
                     spellingStatusDict[word] = {}
                     spellingStatusDict[word]['State'] = state
@@ -2419,13 +2419,13 @@ class PTX8Bible( Bible ):
                             spellingStatusDict[word][subelement.tag] = subelement.text
                         else:
                             logging.error( f"Unprocessed {subelement.tag} subelement '{subelement.text}' in {sublocation}" )
-                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                 else:
                     logging.error( f"Unprocessed {element.tag} element in {elementLocation}" )
-                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
         else:
             logging.critical( f"Unrecognised PTX8 spelling status tag: {self.XMLTree.tag}" )
-            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
+            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: assert False, "We want to stop here"
 
         try: self.filepathsNotYetLoaded.remove( spellingStatusFilepath )
         except ValueError: logging.critical( f"PTX8 spelling status file seemed unexpected: {spellingStatusFilepath}" )
@@ -2507,10 +2507,10 @@ class PTX8Bible( Bible ):
                                     currentStyle[name] = value
                                 else:
                                     logging.error( f"What's this style marker? {line!r}" )
-                                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
+                                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: assert False, "We want to stop here"
                             else:
                                 logging.error( f"What's this style line? {line!r}" )
-                                if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
+                                if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: assert False, "We want to stop here"
                     break; # Get out of decoding loop because we were successful
                 except UnicodeDecodeError:
                     logging.error( f"loadPTX8Styles fails with encoding: {encoding} on {styleFilepath}{'' if encoding==encodings[-1] else ' -- trying again'}" )
@@ -2563,7 +2563,7 @@ class PTX8Bible( Bible ):
                         elif attrib=='Guess': guessFlag = getFlagFromAttribute( attrib, value )
                         else:
                             logging.error( f"Unprocessed {sublocation!r} attribute ({attrib}) in {value}" )
-                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                     termRenderingEntryDict['guessFlag'] = guessFlag
 
                     for subelement in element:
@@ -2607,21 +2607,21 @@ class PTX8Bible( Bible ):
                                     termRenderingEntryDict[subelement.tag].append ( (sub2element.tag,sub2element.text) )
                                 else:
                                     logging.error( f"Unprocessed {sub2element.tag} sub2element '{sub2element.text}' in {sub2location}" )
-                                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
-                                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "termRenderingEntryDict", termRenderingEntryDict ); halt
+                                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
+                                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "termRenderingEntryDict", termRenderingEntryDict ); assert False, "We want to stop here"
                         else:
                             logging.error( f"Unprocessed {subelement.tag} subelement '{subelement.text}' in {sublocation}" )
-                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                 else:
                     logging.error( f"Unprocessed {element.tag} element '{element.text}' in {elementLocation}" )
-                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "termRenderingEntryDict", termRenderingEntryDict )
                 assert Id not in TermRenderingsDict # No duplicate ids allowed
                 TermRenderingsDict[Id] = termRenderingEntryDict
-                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "termRenderingEntryDict", termRenderingEntryDict ); halt
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "termRenderingEntryDict", termRenderingEntryDict ); assert False, "We want to stop here"
         else:
             logging.critical( f"Unrecognised PTX8 {versionName} term renderings tag: {self.XMLTree.tag}" )
-            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
+            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: assert False, "We want to stop here"
 
         try: self.filepathsNotYetLoaded.remove( renderingTermsFilepath )
         except ValueError: logging.critical( f"PTX8 rendering terms file seemed unexpected: {renderingTermsFilepath}" )
@@ -2706,7 +2706,7 @@ class PTX8Bible( Bible ):
                     analysisDict[subelement.tag] = subelement.text
                 else:
                     logging.error( f"Unprocessed {subelement.tag} subelement in {elementLocation}" )
-                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  returning", lexiconDict['Entries'][lexemeType][lexemeForm] )
             return analysisDict
         # end of processWordAnalysis
@@ -2734,7 +2734,7 @@ class PTX8Bible( Bible ):
                         if attrib=='Word': word = value
                         else:
                             logging.error( f"Unprocessed {treeLocation!r} attribute ({attrib}) in {value}" )
-                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                     assert word not in wordAnalysesDict # no duplicates allowed presumably
                     #wordAnalysesDict[word] = {}
 
@@ -2750,13 +2750,13 @@ class PTX8Bible( Bible ):
                             wordAnalysesDict[word] = processWordAnalysis( word, subelement, sublocation )
                         else:
                             logging.error( f"Unprocessed {subelement.tag} subelement '{subelement.text}' in {sublocation}" )
-                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                 else:
                     logging.error( f"Unprocessed {element.tag} element in {elementLocation}" )
-                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
         else:
             logging.critical( f"Unrecognised PTX8 word analysis tag: {self.XMLTree.tag}" )
-            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
+            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: assert False, "We want to stop here"
 
         try: self.filepathsNotYetLoaded.remove( wordAnalysesFilepath )
         except ValueError: logging.critical( f"PTX8 word analyses file seemed unexpected: {wordAnalysesFilepath}" )

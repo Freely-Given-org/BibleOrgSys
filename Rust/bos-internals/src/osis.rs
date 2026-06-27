@@ -218,7 +218,7 @@ fn parse_osis_slice(slice: &str, initial_bbb: Option<&str>) -> Vec<(String, Stri
                 state.tag_stack.pop();
                 match name.as_str() {
                     "w" | "note" | "hi" | "divineName" | "q" | "l" | "p" => {
-                        let marker = state.current_marker.clone().unwrap_or_else(|| "p~".to_string());
+                        let marker = state.current_marker.clone().unwrap_or_else(|| "XXXp~".to_string());
                         let normalized = normalize_marker(&marker);
                         flush_current_line(&mut state);
                         state.raw_lines.push((format!("{}*", normalized), "".to_string()));
@@ -351,7 +351,7 @@ fn parse_osis_single_threaded(content: &str) -> HashMap<String, Vec<(String, Str
                 state.tag_stack.pop();
                 match name.as_str() {
                     "w" | "note" | "hi" | "divineName" | "q" | "l" | "p" => {
-                        let marker = state.current_marker.clone().unwrap_or_else(|| "p~".to_string());
+                        let marker = state.current_marker.clone().unwrap_or_else(|| "XXXp~".to_string());
                         let normalized = normalize_marker(&marker);
                         flush_current_line(&mut state);
                         state.raw_lines.push((format!("{}*", normalized), "".to_string()));
@@ -546,7 +546,7 @@ fn handle_title_start(state: &mut ParserState, attrs: Attributes) {
 fn flush_current_line(state: &mut ParserState) {
     if !state.current_text.is_empty() {
         let marker = state.current_marker.take().unwrap_or_else(|| {
-            if state.current_v.is_some() { "v~".to_string() } else { "p~".to_string() }
+            if state.current_v.is_some() { "v~".to_string() } else { "XXXp~".to_string() }
         });
         let normalized = normalize_marker(&marker);
         let text = std::mem::take(&mut state.current_text);

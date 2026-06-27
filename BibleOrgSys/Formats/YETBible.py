@@ -179,7 +179,7 @@ def YETBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=Fal
                 if strictCheck or BibleOrgSysGlobals.strictCheckingFlag:
                     firstLine = BibleOrgSysGlobals.peekIntoFile( thisFilename, tryFolderName )
                     if not firstLine.startswith( "info\t"):
-                        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"YETBible (unexpected) first line was {thisFilename!r} in {firstLine}" ); halt
+                        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"YETBible (unexpected) first line was {thisFilename!r} in {firstLine}" ); assert False, "We want to stop here"
                         continue
                 foundProjects.append( (tryFolderName, thisFilename,) )
                 lastFilenameFound = thisFilename
@@ -370,7 +370,7 @@ class YETBible( Bible ):
                     if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag: assert '@' not in noteString
                     footnoteDict[(BBB,chapterNumberString,verseNumberString,indexNumberString)] = noteString
                     continue
-                else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "YETBible: Unknown line type", self.givenName, BBB, chapterNumberString, verseNumberString, len(bits), bits ); halt
+                else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "YETBible: Unknown line type", self.givenName, BBB, chapterNumberString, verseNumberString, len(bits), bits ); assert False, "We want to stop here"
             bookDict[lastBBB] = bookLines # Save the last book
 
 
@@ -423,7 +423,7 @@ class YETBible( Bible ):
                 if verseString.startswith( '\\\\' ):  # It's an initial paragraph marker
                     if verseString[3]==' ': marker, verseString = verseString[2], verseString[4:]
                     elif verseString[4]==' ': marker, verseString = verseString[2:4], verseString[5:]
-                    else: halt
+                    else: assert False, "We want to stop here"
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, '', '\\'+marker )
                     thisBook.addLine( marker, '' )
                 if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag: assert not verseString.startswith( '\\\\' )
@@ -434,7 +434,7 @@ class YETBible( Bible ):
                     else:
                         if bit[1]==' ': marker, bit = bit[0], bit[2:]
                         elif bit[2]==' ': marker, bit = bit[0:2], bit[3:]
-                        else: halt
+                        else: assert False, "We want to stop here"
                         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "mV", marker, repr(bit), repr(verseString) )
                         thisBook.addLine( marker, bit.rstrip() )
             self.stashBook( thisBook )

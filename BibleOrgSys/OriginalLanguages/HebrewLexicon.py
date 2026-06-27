@@ -41,10 +41,10 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2026-06-05' # by RJH
+LAST_MODIFIED_DATE = '2026-06-12' # by RJH
 SHORT_PROGRAM_NAME = "HebrewLexicon"
 PROGRAM_NAME = "Hebrew Lexicon handler"
-PROGRAM_VERSION = '0.22'
+PROGRAM_VERSION = '0.30'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -97,7 +97,6 @@ class HebrewLexiconIndex:
         @return: the name of a Bible object formatted as a string
         @rtype: string
         """
-        print( "Here in HebrewLexiconIndex.__str__" )
         result = "Hebrew Lexicon Index object"
         #if self.title: result += ('\n' if result else '') + self.title
         #if self.version: result += ('\n' if result else '') + f"Version: {self.version} "
@@ -300,6 +299,9 @@ class HebrewLexiconSimple:
     # end of HebrewLexiconSimple.getStrongsEntryField
 
 
+    simple_wRE = re.compile( '<w src="([^"]+?)">' )
+    complex_wRE1 = re.compile( '<w pron="(.+?)" xlit="(.+?)">' )
+    complex_wRE2 = re.compile( '<w xlit="(.+?)" pron="(.+?)">' )
     def getStrongsEntryHTML( self, key:str ) -> str|None:
         """
         The key is a Hebrew Strong's number (string) like 'H1979'.
@@ -323,43 +325,99 @@ class HebrewLexiconSimple:
             assert key and key[0]=='H' and key[1:].isdigit()
         if self.StrongsEntries is None: self.load()
 
+        # def repairField( compiledRE, field ) -> str:
+        #     """
+        #     """
+        #     for _ in range( 9 ):
+        #         match = compiledRE.search( field )
+        #         if match:
+        #             src = match.group( 1 )
+        #             assert src[0] == 'H' and src[1:].isdigit(), f"{entry=} {match=}"
+        #             field = f'{field[:match.start()]}<span class="Strongs" ref="{src}">H{field[match.end():]}'
+        #         else: break
+        #     else: need_more_repair_field_range
+        #     return field.replace( '</w>', '</span>' )
+        # # end of repairField
+        
         #if key == 'H1':
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Should be:" )
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'sHTML: <li value="1" id="ot:1"><i title="{awb}" xml:lang="hbo">אָב</i> a primitive word; father, in a literal and immediate, or figurative and remote application): <span class="kjv_def">chief, (fore-)father(-less), X patrimony, principal</span>. Compare names in "Abi-".</li>' )
         keyDigits = key[1:].lstrip( '0' ) # Remove leading zeroes
         if keyDigits in self.StrongsEntries:
             entry = self.StrongsEntries[keyDigits]
-            for j, (subentry,article) in enumerate( entry.items() ):
-                vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"    {j} {subentry}={article}" )
+            if DEBUGGING_THIS_MODULE:
+                for j, (subentry,article) in enumerate( entry.items() ):
+                    vPrint( 'Info', DEBUGGING_THIS_MODULE, f"    Strongs entry {j}: {subentry}={article}" )
             wordEntry = entry['word']
             wordHTML = f'<span class="HebrewWord" xml:lang="hbo">{wordEntry[0]}</span> ({wordEntry[3]}) {wordEntry[1]} ({wordEntry[2]})'
+
             sourceHTML = '<span class="Source"><b>Source:</b> {}</span>'.format( entry['source'].replace('<w>','<span class="Word">').replace('</w>','</span>') \
                         .replace('<def>','<span class="Def">').replace('</def>','</span>') ) \
                             if 'source' in entry else ''
-            match = re.search( '<w xlit="(.+?)" pron="(.+?)">', sourceHTML )
-            if match:
-                sourceHTML = sourceHTML[:match.start()] + '<span class="Hebrew" xml:lang="hbo">' + sourceHTML[match.end():]
-                #xlit, pron = match.group(1), match.group(2)
-            match = re.search( '<w pron="(.+?)" xlit="(.+?)">', sourceHTML )
-            if match:
-                sourceHTML = sourceHTML[:match.start()] + '<span class="Hebrew" xml:lang="hbo">' + sourceHTML[match.end():]
-                #pron, xlit = match.group(1), match.group(2)
-            match = re.search( '<w src="(.+?)">', sourceHTML )
-            if match:
-                src = match.group(1)
-                if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
-                    assert src[0] == 'H'
-                sourceHTML = sourceHTML[:match.start()] + f'<span class="Strongs" ref="{src}">H' + sourceHTML[match.end():]
+            for _ in range( 5 ):
+                match = self.complex_wRE2.search( sourceHTML )
+                if match:
+                    sourceHTML = sourceHTML[:match.start()] + '<span class="Hebrew" xml:lang="hbo" dir="rtl">' + sourceHTML[match.end():]
+                    #xlit, pron = match.group(1), match.group(2)
+                else: break
+            else: bad_wRE2
+            for _ in range( 10 ):
+                match = self.complex_wRE1.search( sourceHTML )
+                if match:
+                    sourceHTML = sourceHTML[:match.start()] + '<span class="Hebrew" xml:lang="hbo" dir="rtl">' + sourceHTML[match.end():]
+                    #pron, xlit = match.group(1), match.group(2)
+                else: break
+            else: bad_wRE1
+            for _ in range( 8 ):
+                match = self.simple_wRE.search( sourceHTML )
+                if match:
+                    src = match.group( 1 )
+                    assert src[0] == 'H' and src[1:].isdigit(), f"{entry=} {match=}"
+                    sourceHTML = f'{sourceHTML[:match.start()]}<span class="Strongs" ref="{src}">H{sourceHTML[match.end():]}'
+                else: break
+            else: need_more_source_w_range
+            sourceHTML = sourceHTML.replace( '</w>', '</span>' )
+
             meaningHTML = '<span class="Meaning"><b>Meaning:</b> {}</span>'.format( entry['meaning'] \
                         .replace('<def>','<span class="Def">').replace('</def>','</span>') ) \
                             if 'meaning' in entry else ''
+            for _ in range( 5 ):
+                match = self.simple_wRE.search( meaningHTML )
+                if match:
+                    src = match.group( 1 )
+                    assert src[0] == 'H' and src[1:].isdigit(), f"{entry=} {match=}"
+                    meaningHTML = f'{meaningHTML[:match.start()]}<span class="Strongs" ref="{src}">H{meaningHTML[match.end():]}'
+                else: break
+            else: need_more_usage_w_range
+            meaningHTML = meaningHTML.replace( '</w>', '</span>' )
+
             usageHTML = '<span class="KJVUsage"><b>KJV:</b> {}</span>'.format( entry['usage'] ) \
                             if 'usage' in entry else ''
+            for _ in range( 5 ):
+                match = self.simple_wRE.search( usageHTML )
+                if match:
+                    src = match.group( 1 )
+                    assert src[0] == 'H' and src[1:].isdigit(), f"{entry=} {match=}"
+                    usageHTML = f'{usageHTML[:match.start()]}<span class="Strongs" ref="{src}">H{usageHTML[match.end():]}'
+                else: break
+            else: need_more_usage_w_range
+            for _ in range( 5 ):
+                match = self.complex_wRE1.search( usageHTML )
+                if match:
+                    usageHTML = usageHTML[:match.start()] + '<span class="Hebrew" xml:lang="hbo" dir="rtl">' + usageHTML[match.end():]
+                    #pron, xlit = match.group(1), match.group(2)
+                else: break
+            else: bad_wRE1
+            usageHTML = usageHTML.replace( '</w>', '</span>' )
+
             #html = '<li value="{}" id="ot:{}"><span class="originalWord" title="{{{}}}" xml:lang="hbo">{}</span><br>{}<br>{}<br>{}</li>' \
                 #.format( keyDigits, keyDigits, entry['word'][2], entry['word'][0], sourceHTML, meaningHTML, usageHTML )
-            html = f'{wordHTML}<br>{sourceHTML}<br>{meaningHTML}<br>{usageHTML}' \
+            html = f'<p class=Strongs>{wordHTML}<br>{sourceHTML}<br>{meaningHTML}<br>{usageHTML}</p>' \
                             .replace( ' ,', ',' ).replace( ' ;', ';' ) # clean it up
             vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"  HebrewLexiconSimple.getStrongsEntryHTML about to return: {html}" )
+            assert '<w ' not in html, f"HebrewLexiconSimple.getStrongsEntryHTML: Unexpected {key} w span {html.count('<span')} {html.count('</span>')} from {html=}"
+            assert html.count('<p') == html.count('</p>'), f"HebrewLexiconSimple.getStrongsEntryHTML: Mismatched {key} paragraphs {html.count('<p')} {html.count('</p>')} from {html=}"
+            assert html.count('<span') == html.count('</span>'), f"HebrewLexiconSimple.getStrongsEntryHTML: Mismatched {key} spans {html.count('<span')} {html.count('</span>')} from {html=}"
             return html
     # end of HebrewLexiconSimple.getStrongsEntryHTML
 
@@ -420,104 +478,150 @@ class HebrewLexiconSimple:
         vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"  HebrewLexiconSimple.getBrDrBrEntryHTML got entry: {entry}" )
         # print( f"  HebrewLexiconSimple.getBrDrBrEntryHTML {key=} got entry: {entry}" )
         if getFull: # We have the full XML entry to format
-            namespace = '{http://openscriptures.github.com/morphhb/namespace}'
+            namespace1 = '{http://openscriptures.github.com/morphhb/namespace}'
+            namespace2 = '{http://www.w3.org/XML/1998/namespace}'
 
-            # See if there's more than one definition
-            defCount = 0
-            for subEntry in entry: # 'w','pos' (can be multiple),'def' (can be multiple),'status'
-                if subEntry.tag == f'{namespace}def':
-                    defCount += 1
+            openPcount = openLcount = 0
+            def processDictEntries( upperEntry, level ):
+                """
+                For recursive calls
+                """
+                nonlocal openPcount, openLcount
+                # print( f"{'  '*(level-1)}processDictEntries( {upperEntry.tag=}, {level=} ) {openPcount=} {openLcount=}" )
+                # See if there's more than one definition
+                defCount = 0
+                for subEntry in upperEntry: # 'w','pos' (can be multiple),'def' (can be multiple),'status'
+                    if subEntry.tag == f'{namespace1}def':
+                        defCount += 1
 
-            html = f'<p class="Key">{key}</p>\n'
-            haveOpenP = haveOpenL = 0
-            for subEntry in entry: # 'w','pos' (can be multiple),'def' (can be multiple),'status'
-                subEntryTag = subEntry.tag.replace( namespace, '' )
-                if subEntryTag == 'status': continue # Not interested here
-                print( f"{key=} {defCount=} {subEntryTag=} {[f'{attribName}={attribValue}' for attribName,attribValue in subEntry.items()]} {len(subEntry)} {subEntry.text=} {subEntry.tail=}" )
-                if subEntryTag == 'w':
-                    BibleOrgSysGlobals.checkXMLNoAttributes( subEntry, subEntryTag )
-                    BibleOrgSysGlobals.checkXMLNoSubelements( subEntry, subEntryTag )
-                    html = f'{html}<p><span class="word" dir="rtl">{subEntry.text}</span> {subEntry.tail}{"occurrences" if subEntry.tail and subEntry.tail.strip().isdigit() else ''}'
-                    haveOpenP += 1
-                elif subEntryTag == 'pos':
-                    assert haveOpenP == 1
-                    BibleOrgSysGlobals.checkXMLNoAttributes( subEntry, subEntryTag )
-                    BibleOrgSysGlobals.checkXMLNoSubelements( subEntry, subEntryTag )
-                    html = f'{html} <span class="POS">{subEntry.text}</span>{subEntry.tail}'
-                elif subEntryTag == 'stem':
-                    assert haveOpenP == 1
-                    BibleOrgSysGlobals.checkXMLNoAttributes( subEntry, subEntryTag )
-                    BibleOrgSysGlobals.checkXMLNoSubelements( subEntry, subEntryTag )
-                    html = f'{html} <span class="Stem">{subEntry.text}</span>{subEntry.tail}'
-                elif subEntryTag == 'def':
-                    if haveOpenP:
-                        html = f'{html}</p>'
-                        haveOpenP -= 1
-                    if haveOpenL == 2:
-                        html = f'{html}</ol>'
-                        haveOpenL -= 1
-                    BibleOrgSysGlobals.checkXMLNoAttributes( subEntry, subEntryTag )
-                    BibleOrgSysGlobals.checkXMLNoSubelements( subEntry, subEntryTag )
-                    if defCount > 1 and not haveOpenL:
-                        html = f'{html}\n<ol>'
-                        haveOpenL += 1
-                    html = f'{html}\n<{"li" if haveOpenL else "p"} class="Def"><b>{subEntry.text}</b>{'' if BibleOrgSysGlobals.isBlank(subEntry.tail) else subEntry.tail}</{"li" if haveOpenL else "p"}>'
-                elif subEntryTag == 'sense':
-                    BibleOrgSysGlobals.checkXMLNoAttributes( subEntry, subEntryTag )
-                    assert haveOpenP == 0
-                    if haveOpenL == 1:
-                        html = f'{html}\n<ol>'
-                        haveOpenL += 1
-                    insertHtml = ''
-                    for sub2Entry in subEntry:
-                        sub2EntryTag = sub2Entry.tag.replace( namespace, '' )
-                        print( f"      {sub2EntryTag=} {[f'{attribName}={attribValue}' for attribName,attribValue in sub2Entry.items()]} {len(sub2Entry)} {sub2Entry.text=} {sub2Entry.tail=}" )
-                        BibleOrgSysGlobals.checkXMLNoAttributes( sub2Entry, subEntryTag )
-                        BibleOrgSysGlobals.checkXMLNoSubelements( sub2Entry, subEntryTag )
-                        assert sub2EntryTag == 'def', f"{key=} {sub2EntryTag=} {sub2Entry.text}"
-                        insertHtml = f'{insertHtml} <b>{sub2Entry.text}</b>{'' if BibleOrgSysGlobals.isBlank(sub2Entry.tail) else sub2Entry.tail}'
-                    html = f'{html}\n<li class="Sense">{subEntry.text if subEntry.text else ''}{insertHtml}{'' if BibleOrgSysGlobals.isBlank(subEntry.tail) else subEntry.tail}</li>'
-                else:
-                    logging.critical( f"    Unprocessed {subEntryTag=} {[f'{attribName}={attribValue}' for attribName,attribValue in subEntry.items()]} {len(subEntry)=} {subEntry.text=} {subEntry.tail=}" )
-                    if haveOpenP:
-                        html = f'{html}</p>'
-                        haveOpenP -= 1
-                    if haveOpenL:
-                        html = f'{html}</ol>'
-                        haveOpenL -= 1
-                    html = f'{html}\n{BibleOrgSysGlobals.getFlattenedXML( subEntry, 'subEntry' )}'
-            if haveOpenP:
+                entriesHtml = ''
+                if openLcount > level:
+                    entriesHtml = f'{entriesHtml}</ul>'
+                    openLcount-= 1
+
+                for subEntry in upperEntry: # 'w','pos' (can be multiple),'def' (can be multiple),'status'
+                    subEntryTag = subEntry.tag.replace( namespace1, '' )
+                    if subEntryTag == 'status': continue # Not interested here
+                    # print( f"{'  '*level}{key=} {level=} {defCount=} {subEntryTag=} {[f'{attribName}={attribValue}' for attribName,attribValue in subEntry.items()]} {len(subEntry)} {subEntry.text=} {subEntry.tail=}" )
+                    if subEntryTag == 'w':
+                        assert BibleOrgSysGlobals.checkXMLNoSubelements( subEntry, subEntryTag )
+                        wSrc = None
+                        for attribName,attribValue in subEntry.items():
+                            if attribName == 'src':
+                                wSrc = attribValue
+                            else: logging.critical( f"Unprocessed {attribName} {attribValue=} attribute in 'w' entry"); assert False
+                        if openPcount > 0:
+                            entriesHtml = f'{entriesHtml}</p>'
+                            openPcount -= 1
+                        entriesHtml = f'''{entriesHtml}\n<p><span class="word" dir="rtl">{subEntry.text}</span> {subEntry.tail}{"occurrences" if subEntry.tail and subEntry.tail.strip().isdigit() else ''}'''
+                        openPcount += 1
+                    elif subEntryTag == 'pos':
+                        assert BibleOrgSysGlobals.checkXMLNoAttributes( subEntry, subEntryTag )
+                        assert BibleOrgSysGlobals.checkXMLNoSubelements( subEntry, subEntryTag )
+                        if openPcount == 0:
+                            entriesHtml = f'{entriesHtml}\n<p>'
+                            openPcount += 1
+                        entriesHtml = f'{entriesHtml} <span class="POS">{subEntry.text}</span>{subEntry.tail}'
+                    elif subEntryTag == 'foreign':
+                        assert BibleOrgSysGlobals.checkXMLNoSubelements( subEntry, subEntryTag )
+                        if openPcount == 0:
+                            entriesHtml = f'{entriesHtml}\n<p>'
+                            openPcount += 1
+                        fLang = None
+                        for attribName,attribValue in subEntry.items():
+                            if attribName == f'{namespace2}lang':
+                                fLang = attribValue
+                            else: logging.critical( f"Unprocessed {attribName} {attribValue=} attribute in 'foreign' entry"); assert False
+                        entriesHtml = f'{entriesHtml} <span class="foreign">lang={fLang}: {subEntry.text}</span>{subEntry.tail}'
+                    elif subEntryTag == 'stem':
+                        assert BibleOrgSysGlobals.checkXMLNoAttributes( subEntry, subEntryTag )
+                        assert BibleOrgSysGlobals.checkXMLNoSubelements( subEntry, subEntryTag )
+                        if openPcount == 0:
+                            entriesHtml = f'{entriesHtml}\n<p>'
+                            openPcount += 1
+                        entriesHtml = f'{entriesHtml} <span class="Stem">{subEntry.text}</span>{subEntry.tail}'
+                    elif subEntryTag == 'def':
+                        assert BibleOrgSysGlobals.checkXMLNoAttributes( subEntry, subEntryTag )
+                        assert BibleOrgSysGlobals.checkXMLNoSubelements( subEntry, subEntryTag )
+                        entriesHtml = f'{entriesHtml} <span class="Def">{subEntry.text}</span>{'' if BibleOrgSysGlobals.isBlank(subEntry.tail) else subEntry.tail}'
+                    elif subEntryTag == 'sense': # we ignore the 'n' attribute here
+                        if openPcount > 0:
+                            entriesHtml = f'{entriesHtml}</p>'
+                            openPcount -= 1
+                        if openLcount < level:
+                            entriesHtml = f'{entriesHtml}\n<ul>'
+                            openLcount += 1
+                        senseN = None
+                        for attribName,attribValue in subEntry.items():
+                            if attribName == 'n':
+                                senseN = attribValue # Can be a digit '1', or a character 'a', or a Roman numeral 'II
+                            else: logging.critical( f"Unprocessed {attribName} {attribValue=} attribute in 'sense' entry"); assert False
+                        insertHtml = processDictEntries( subEntry, level+1 ) # Recursive call
+                        entriesHtml = f'''{entriesHtml}\n<li class="Sense">{f'<span class="senseNum">{senseN}</span> ' if senseN else ''}{subEntry.text if subEntry.text else ''}{insertHtml}{'' if BibleOrgSysGlobals.isBlank(subEntry.tail) else subEntry.tail}</li>'''
+                        if openLcount > level:
+                            entriesHtml = f'{entriesHtml}</ul>'
+                            openLcount -= 1
+                    elif subEntryTag == 'ref': # We ignore the 'r' attribute which is an OSIS ref (useful for making a link)
+                        assert BibleOrgSysGlobals.checkXMLNoSubelements( subEntry, subEntryTag )
+                        refR = None
+                        for attribName,attribValue in subEntry.items():
+                            if attribName == 'r':
+                                refR = attribValue
+                            else: logging.critical( f"Unprocessed {attribName} {attribValue=} attribute in 'ref' entry"); assert False
+                        # print( f"Why is ref {key=} {subEntryTag=} {[f'{attribName}={attribValue}' for attribName,attribValue in subEntry.items()]} {len(subEntry)=} {subEntry.text=} {subEntry.tail=}" )
+                        entriesHtml = f'{entriesHtml} <span class="ref"">{subEntry.text}</span>{'' if BibleOrgSysGlobals.isBlank(subEntry.tail) else subEntry.tail}'
+                    elif subEntryTag == 'em':
+                        assert BibleOrgSysGlobals.checkXMLNoAttributes( subEntry, subEntryTag )
+                        assert BibleOrgSysGlobals.checkXMLNoSubelements( subEntry, subEntryTag )
+                        # print( f"What is EM {key=} {subEntryTag=} {[f'{attribName}={attribValue}' for attribName,attribValue in subEntry.items()]} {len(subEntry)=} {subEntry.text=} {subEntry.tail=}" )
+                        entriesHtml = f'{entriesHtml} <span class="Em">{subEntry.text}</span>{'' if BibleOrgSysGlobals.isBlank(subEntry.tail) else subEntry.tail}'
+                    elif subEntryTag == 'asp':
+                        assert BibleOrgSysGlobals.checkXMLNoAttributes( subEntry, subEntryTag )
+                        assert BibleOrgSysGlobals.checkXMLNoSubelements( subEntry, subEntryTag )
+                        # print( f"What is ASP {key=} {subEntryTag=} {[f'{attribName}={attribValue}' for attribName,attribValue in subEntry.items()]} {len(subEntry)=} {subEntry.text=} {subEntry.tail=}" )
+                        entriesHtml = f'{entriesHtml} <span class="Asp">{subEntry.text}</span>{'' if BibleOrgSysGlobals.isBlank(subEntry.tail) else subEntry.tail}'
+                    elif subEntryTag == 'page': # has attribute like 'p=2'
+                        assert BibleOrgSysGlobals.checkXMLNoText( subEntry, subEntryTag )
+                        assert BibleOrgSysGlobals.checkXMLNoSubelements( subEntry, subEntryTag )
+                        # print( f"Why is page {key=} {subEntryTag=} {[f'{attribName}={attribValue}' for attribName,attribValue in subEntry.items()]} {len(subEntry)=} {subEntry.text=} {subEntry.tail=}" )
+                        entriesHtml = f'{entriesHtml}\n<br>{'' if BibleOrgSysGlobals.isBlank(subEntry.tail) else subEntry.tail}'
+                    else:
+                        logging.critical( f"    Unprocessed {subEntryTag=} {[f'{attribName}={attribValue}' for attribName,attribValue in subEntry.items()]} {len(subEntry)=} {subEntry.text=} {subEntry.tail=}" )
+                        assert False, "We want to stop here"
+                    assert openPcount < 2 # Shouldn't have nested paragraphs in HTML
+                if openPcount:
+                    entriesHtml = f'{entriesHtml}</p>'
+                    openPcount -= 1
+                if openLcount >= level:
+                    entriesHtml = f'{entriesHtml}</ul>'
+                    openLcount -= 1
+                assert namespace1 not in entriesHtml, f"{namespace1=} left in {key} {entriesHtml=}"
+                assert namespace2 not in entriesHtml, f"{namespace2=} left in {key} {entriesHtml=}"
+                assert '<d' not in entriesHtml, f"<d left in {key} {entriesHtml=}"
+                assert '<n' not in entriesHtml, f"<n left in {key} {entriesHtml=}"
+                assert entriesHtml.count('<p') == entriesHtml.count('</p>'), f"HebrewLexiconSimple.getBrDrBrEntryHTML: Mismatched {key} paragraphs {entriesHtml.count('<p')} {entriesHtml.count('</p>')} from {entriesHtml=}"
+                assert entriesHtml.count('<span') == entriesHtml.count('</span>'), f"HebrewLexiconSimple.getBrDrBrEntryHTML: Mismatched {key} spans {entriesHtml.count('<span')} {entriesHtml.count('</span>')} from {entriesHtml=}"
+                return entriesHtml
+            # end of processDictEntries
+
+
+            html = f'<p class="Key">{key}</p>{processDictEntries( entry, 1 )}'
+            if openPcount:
+                assert not html.endswith( '</p>' )
                 html = f'{html}</p>'
-                haveOpenP -= 1
-                assert haveOpenP == 0
-            while haveOpenL:
-                html = f'{html}</ol>'
-                haveOpenL-= 1
-            assert haveOpenL == 0
-            return html.replace( namespace, '' )
-        else: # the older code
-            if entry:
-                mainEntry = entry[0] \
-                    .replace( '<sense>', '<span class="Sense">' ).replace( '</sense>', '</span>' ) \
-                    .replace( '<w>', '<span class="HebrewWord">' ).replace( '</w>', '</span>' ) \
-                    .replace( '<pos>', '<span class="POS">' ).replace( '</pos>', '</span>' ) \
-                    .replace( '<ref>', '<span class="Ref">' ).replace( '</ref>', '</span>' ) \
-                    .replace( '<def>', '<span class="Def">' ).replace( '</def>', '</span>' )
-                match = re.search( '<type="(.+?)" id="(.+?)">', mainEntry )
-                if match:
-                    #logging.warning( "Removed {} status field {} from {}" \
-                        #.format( entryID, repr(mainEntry[match.start():match.end()]), repr(mainEntry) ) )
-                    hType, hId = match.group(1), match.group(2)
-                    mainEntry = mainEntry[:match.start()] + f'<b>Type:</b> {hType}<br>' + mainEntry[match.end():]
-                match = re.search( '<id="(.+?)" type="(.+?)">', mainEntry )
-                if match:
-                    #logging.warning( "Removed {} status field {} from {}" \
-                        #.format( entryID, repr(mainEntry[match.start():match.end()]), repr(mainEntry) ) )
-                    hId, hType = match.group(1), match.group(2)
-                    mainEntry = mainEntry[:match.start()] + f'<b>Type:</b> {hType}<br>' + mainEntry[match.end():]
-                html = f'{mainEntry} <span class="Status">{{{entry[1]}}}</span>'
-                vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"  HebrewLexiconSimple.getBrDrBrEntryHTML about to return: {html}" )
-                return html
+                openPcount -= 1
+                assert openPcount == 0
+            while openLcount:
+                html = f'{html}</ul>'
+                openLcount-= 1
+
+            assert namespace1 not in html, f"{namespace1=} left in {key} {html=}"
+            assert namespace2 not in html, f"{namespace2=} left in {key} {html=}"
+            assert '<d' not in html, f"<d left in {key} {html=}"
+            assert '<n' not in html, f"<n left in {key} {html=}"
+            assert html.count('<p') == html.count('</p>'), f"HebrewLexiconSimple.getBrDrBrEntryHTML: Mismatched {key} paragraphs {html.count('<p')} {html.count('</p>')} from {html=}"
+            assert html.count('<span') == html.count('</span>'), f"HebrewLexiconSimple.getBrDrBrEntryHTML: Mismatched {key} spans {html.count('<span')} {html.count('</span>')} from {html=}"
+            return html #.replace( namespace1, '' )
     # end of HebrewLexiconSimple.getBrDrBrEntryHTML
 # end of HebrewLexiconSimple class
 

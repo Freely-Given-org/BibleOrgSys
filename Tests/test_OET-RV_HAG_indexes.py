@@ -28,6 +28,7 @@
 Module testing BibleBookOrdersConverter.py and BibleBookOrders.py.
 """
 from pathlib import Path
+import logging
 
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
@@ -37,10 +38,10 @@ from bible_organisational_system import InternalBibleEntryList, InternalBibleEnt
     InternalBibleBookCVIndex, InternalBibleBookSectionIndex
 
 
-LAST_MODIFIED_DATE = '2026-05-02' # by RJH
+LAST_MODIFIED_DATE = '2026-06-27' # by RJH
 SHORT_PROGRAM_NAME = "test_OET_RV_HAG_indexes"
 PROGRAM_NAME = "Test OET-RV HAG CV and section indexes"
-PROGRAM_VERSION = '0.112'
+PROGRAM_VERSION = '0.11.3'
 PROGRAM_NAME_VERSION = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -185,8 +186,9 @@ def load_OET_RV_Haggai() -> ESFMBible|None:
     """
 
     """
+    NOT UP-TO-DATE
     After _processLine( marker, text ) is called on each rawLine
-        (by splitting text off paragraph markers like 'v','p', etc. and adding 'v~' and 'p~' markers containing the Biblical text)
+        (by splitting text off paragraph markers like 'v','p', etc. and adding 'v~' and 'XXXp~' markers containing the Biblical text)
         which is then placed in _processedLines, we expect:
     processLines for HAG with len(self._rawLines)=81 initially got len(self._processedLines)=123
       0 entryWithPreliminaryProcessing=InternalBibleEntry object:
@@ -454,9 +456,10 @@ def load_OET_RV_Haggai() -> ESFMBible|None:
 
 
     """
-    Then _addNestingMarkers reprocesses those 123 lines to get 183 lines
+    Then _addNestingMarkers reprocesses those 123 lines to get 194 lines
         by inserting end markers like '¬v', '¬p', and many more.
 
+    NOT UP-TO-DATE
     _addNestingMarkers for HAG finishing with len(self._rawLines)=81 len(self._processedLines)=183
       0 entryWithNestingMarkers=InternalBibleEntry object:
     id = "HAG - Open English Translation—Readers' Version (OET-RV) v0.1.03"
@@ -1260,7 +1263,7 @@ def load_OET_RV_Haggai() -> ESFMBible|None:
     ¬chapters = '' from Original None = None = None
 
     188 originalMarkerList=['id', 'usfm', 'ide', 'rem', 'rem', None, 'h', 'toc1', 'toc2', 'toc3', 'mt1', None, None, 'is1', 'ip', 'iot', 'io1', 'io1', None, 'rem', 'ie', None, None, 'c', 'v', 's1', 'rem', 'p', 'c', 'v', 'v', None, 'v', 'v', None, None, 'p', 'v', 'v', None, None, 'm', 'v', 'v', None, 'v', 'v', None, 'v', 'v', None, None, 'p', 'v', 'v', None, 'v', 'v', None, None, 'p', 'v', 'v', None, 'v', 'v', None, 'v', 'v', None, None, 'v', 's1', 'rem', 'p', 'v', 'v', None, 'v', 'v', None, 'v', 'v', None, 'v', 'v', None, None, None, 'c', 'v', 's1', 'rem', 'p', 'c', 'v', 'v', None, 'v', 'v', None, 'v', 'v', None, 'v', 'v', None, 'v', 'v', None, 'v', 'v', None, 'v', 'v', None, 'v', 'v', None, 'v', 'v', None, None, 'v', 's1', 'rem', 'p', 'v', 'v', None, 'v', 'v', None, 'v', 'v', None, 'p', 'p', None, None, 'p', 'v', 'v', None, 'p', 'p', None, None, 'p', 'v', 'v', 'rem', None, 'v', 'v', None, 'v', 'v', None, 'v', 'v', None, 'v', 'v', None, 'v', 'v', None, None, 'v', 's1', 'rem', 'p', 'v', 'v', None, 'v', 'v', None, 'v', 'v', None, 'v', 'v', None, None, None, None]
-    188 adjustedMarkerList=['id', 'usfm', 'ide', 'rem', 'rem', 'headers', 'h', 'toc1', 'toc2', 'toc3', 'mt1', '¬headers', 'intro', 'is1', 'ip', 'iot', 'io1', 'io1', '¬iot', 'rem', 'ie', '¬intro', 'chapters', 'c', 'v=', 's1', 'rem', 'p', 'c#', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬p', 'p', 'v', 'v~', '¬v', '¬p', 'm', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬m', 'p', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬p', 'p', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬p', 'v=', 's1', 'rem', 'p', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬p', '¬c', 'c', 'v=', 's1', 'rem', 'p', 'c#', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬p', 'v=', 's1', 'rem', 'p', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬p', 'p', 'p~', '¬p', '¬v', 'p', 'v', 'v~', '¬p', 'p', 'p~', '¬p', '¬v', 'p', 'v', 'v~', 'rem', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬p', 'v=', 's1', 'rem', 'p', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬p', '¬c', '¬chapters']
+    188 adjustedMarkerList=['id', 'usfm', 'ide', 'rem', 'rem', 'headers', 'h', 'toc1', 'toc2', 'toc3', 'mt1', '¬headers', 'intro', 'is1', 'ip', 'iot', 'io1', 'io1', '¬iot', 'rem', 'ie', '¬intro', 'chapters', 'c', 'v=', 's1', 'rem', 'p', 'c#', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬p', 'p', 'v', 'v~', '¬v', '¬p', 'm', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬m', 'p', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬p', 'p', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬p', 'v=', 's1', 'rem', 'p', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬p', '¬c', 'c', 'v=', 's1', 'rem', 'p', 'c#', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬p', 'v=', 's1', 'rem', 'p', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬p', 'p', 'XXXp~', '¬p', '¬v', 'p', 'v', 'v~', '¬p', 'p', 'XXXp~', '¬p', '¬v', 'p', 'v', 'v~', 'rem', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬p', 'v=', 's1', 'rem', 'p', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', 'v', 'v~', '¬v', '¬p', '¬c', '¬chapters']
     """
     
     if 1: # Check that it loaded correctly
@@ -1372,7 +1375,7 @@ def test_CV_index( thisBible:ESFMBible ):
     thisBible.doPostLoadProcessing() # Makes the CV index as part of this
     bookObject = thisBible[BBB]
     vPrint( 'Info', DEBUGGING_THIS_MODULE, f"{bookObject._CVIndex=}" )
-    assert len(bookObject._CVIndex) == 63 # 2 chapters + 38 verses + 17(+6 extras) header/intro lines
+    assert len(bookObject._CVIndex) == 64 # 2 chapters + 38 verses + 18(+6 extras) header/intro lines
     # for ee,(CV,thisCVIndexEntry) in enumerate( bookObject._CVIndex.items() ):
     #     print( f"  {ee} {CV} {thisCVIndexEntry}" )
 
@@ -1424,10 +1427,10 @@ def test_section_index( thisBible:ESFMBible ):
     assert isinstance( bookObject._SectionIndex, InternalBibleBookSectionIndex ) # A dict with (C,V) keys
     assert len(bookObject._SectionIndex) == 7
     HAG_startCV_list = ( ('-1','0'),  ('-1','13'), ('1','1'),  ('1','12'), ('2','1'), ('2','10'), ('2','20') )
-    HAG_endCV_list   = ( ('-1','12'), ('-1','22'), ('1','11'), ('1','15'), ('2','9'), ('2','19'), ('2','23') )
-    HAG_indices      = ( (0,12), (13,22), (25,71), (72,90), (91,123), (124,169), (170,187) )
-    HAG_reasons     = ( 'Headers', 'is1', 's1', 's1', 's1', 's1', 's1' )
-    HAG_contexts     = ( [], [], [], [], [], [], [] )
+    HAG_endCV_list   = ( ('-1','11'), ('-1','22'), ('1','11'), ('1','15'), ('2','9'), ('2','19'), ('2','23') )
+    HAG_indices      = ( (0,11), (13,22), (24,72), (73,91), (92,126), (127,173), (174,192) )
+    HAG_reasons     = ( 'Headers', 'is1', 's1/c', 's1', 's1/c', 's1', 's1' )
+    HAG_contexts     = ( [], [], ['chapters','c'], ['chapters','c'], ['chapters','c'], ['chapters','c'], ['chapters','c'] )
     for n,((C,V),sectionIndexEntry) in enumerate( bookObject._SectionIndex.items() ):
         # print( f"  {n} {C}:{V} {sectionIndexEntry}")
         vPrint( 'Info', DEBUGGING_THIS_MODULE, f"{sectionIndexEntry=}" )

@@ -259,7 +259,7 @@ class BCVBible( Bible ):
                         processed = True
                         break
                 if not processed: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"ERROR: Unexpected {line!r} line in metadata file" )
-        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'SD', self.suppliedMetadata['BCV'] ); halt
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'SD', self.suppliedMetadata['BCV'] ); assert False, "We want to stop here"
         vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + f"Got {len(self.suppliedMetadata['BCV'])} metadata entries:" )
         if BibleOrgSysGlobals.verbosityLevel > 3:
             for key in sorted(self.suppliedMetadata['BCV']):
@@ -547,10 +547,10 @@ class BCVBibleBook( BibleBook ):
                         if originalMarker is None: originalMarker = marker
                         if text is None: text = ''
                         adjText, cleanText, extras = self.processLineFix( C, V, originalMarker, text, fixErrors ) # separate out the notes (footnotes and cross-references)
-                    self._processedLines.append( InternalBibleEntry(marker, originalMarker, adjText, cleanText, extras, text) )
+                    self._processedLines.append( InternalBibleEntry(marker, originalMarker, text, adjText, extras, cleanText) )
 
             #if loadErrors: self.checkResultsDictionary['Load Errors'] = loadErrors
-            #if debugging: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, self._rawLines ); halt
+            #if debugging: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, self._rawLines ); assert False, "We want to stop here"
         if fixErrors: self.checkResultsDictionary['Fix Text Errors'] = fixErrors
         self._processedFlag = True
         self.makeBookCVIndex()

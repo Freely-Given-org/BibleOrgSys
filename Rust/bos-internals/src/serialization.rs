@@ -11,7 +11,7 @@ use crate::chapter_verse::ChapterVerse;
 use indexmap::IndexMap;
 use crate::error::BosError;
 
-const BOS_BIBLE_VERSION: u32 = 1;
+const BOS_BIBLE_VERSION: u32 = 3;
 
 /// Structure representing a serialized Bible book.
 #[derive(Archive, Serialize, Deserialize)]
@@ -28,7 +28,7 @@ pub struct BOSBibleFile {
 pub fn save_bos_bible<P: AsRef<Path>>(
     path: P,
     work_name: &str,
-    book_code: &str,
+    bos_book_code: &str,
     entries: InternalBibleEntryList,
     cv_index: Option<&InternalBibleBookCVIndex>,
     section_index: Option<&InternalBibleBookSectionIndex>,
@@ -36,7 +36,7 @@ pub fn save_bos_bible<P: AsRef<Path>>(
     let file_data = BOSBibleFile {
         version: BOS_BIBLE_VERSION,
         work_name: work_name.to_string(),
-        bos_book_code: book_code.to_string(),
+        bos_book_code: bos_book_code.to_string(),
         entries,
         cv_index_data: cv_index.map(|idx| idx.index_data().clone()),
         section_index_data: section_index.map(|idx| idx.index_data().clone()),
@@ -53,14 +53,18 @@ pub fn save_bos_bible<P: AsRef<Path>>(
 }
 
 /// Load a Bible book from a binary file.
-pub fn load_bos_bible<P: AsRef<Path>>(path: P) -> Result<BOSBibleFile, BosError> {
-    let mut file = File::open(path).map_err(BosError::Io)?;
+pub fn load_bos_bible<P: AsRef<Path>+Clone>(path: P) -> Result<BOSBibleFile, BosError> {
+    let mut file = File::open(path.clone()).map_err(BosError::Io)?;
     let mut bytes = Vec::new();
     file.read_to_end(&mut bytes).map_err(BosError::Io)?;
 
     let deserialized = rkyv::from_bytes::<BOSBibleFile, rkyv::rancor::Error>(&bytes).map_err(|e| {
         crate::error::BosError::Parse(crate::error::ParseError::Generic(format!("Deserialization error: {}", e)))
     })?;
+
+    if deserialized.version < BOS_BIBLE_VERSION {
+        panic!("Serialised file from {} was v{} not v{}", path.as_ref().to_str().unwrap(), deserialized.version, BOS_BIBLE_VERSION);
+    }
     
     Ok(deserialized)
 }

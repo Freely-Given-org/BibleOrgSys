@@ -197,7 +197,7 @@ def ForgeForSwordSearcherBibleFileCheck( givenFolderName, strictCheck:bool=True,
                             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"ForgeForSwordSearcherBibleFileCheck First line got type {match.group(0)!r} match from {firstLine!r}" )
                     else:
                         vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"ForgeForSwordSearcherBibleFileCheck: (unexpected) first line was {thisFilename!r} in {firstLine}" )
-                        if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: halt
+                        if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: assert False, "We want to stop here"
                         continue
                 foundProjects.append( (tryFolderName, thisFilename,) )
                 lastFilenameFound = thisFilename
@@ -275,7 +275,7 @@ class ForgeForSwordSearcherBible( Bible ):
                             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"First line got type {match.group(0)!r} match from {line!r}" )
                     else:
                         vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"ForgeForSwordSearcherBible.load: (unexpected) first line was {thisFilename!r} in {firstLine}" )
-                        if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: halt
+                        if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: assert False, "We want to stop here"
                         continue
 
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'ForgeForSwordSearcher file line is "' + line + '"' )
@@ -412,7 +412,7 @@ class ForgeForSwordSearcherBible( Bible ):
                             lastChapterNumber = lastVerseNumber = -1
                         else:
                             logging.critical( f"ForgeForSwordSearcherBible could not figure out {bookCode!r} book code" )
-                            if BibleOrgSysGlobals.debugFlag: halt
+                            if BibleOrgSysGlobals.debugFlag: assert False, "We want to stop here"
 
                     if BBB:
                         if chapterNumber != lastChapterNumber: # We've started a new chapter

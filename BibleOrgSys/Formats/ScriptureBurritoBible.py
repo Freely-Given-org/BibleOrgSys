@@ -322,7 +322,7 @@ class ScriptureBurritoBible( Bible ):
                             if not subValue:  pass # ignore empty ones
                             elif isinstance( subValue, (str,bool,int) ):
                                 flattenedMetadata[mainKey+'--entry'+str(n)+'--'+subKey] = subValue # Straight copy
-                    else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Programming error5 in applySuppliedMetadata", mainKey, value, someListEntry, repr(someListEntry) ); halt
+                    else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Programming error5 in applySuppliedMetadata", mainKey, value, someListEntry, repr(someListEntry) ); assert False, "We want to stop here"
             elif isinstance( value, dict ): # flatten this
                 for subKey,subValue in value.items():
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Got2 {mainKey}--{subKey} = {subValue}" )
@@ -360,19 +360,19 @@ class ScriptureBurritoBible( Bible ):
                                             # elif isinstance( sub4Value, tuple ):
                                             #     if BibleOrgSysGlobals.debugFlag or DEBUGGING_THIS_MODULE:
                                             #         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "How do we handle a tuple here???" )
-                                            else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Programming error4 in applySuppliedMetadata", mainKey, subKey, sub2Key, repr(sub2Value) ); halt
+                                            else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Programming error4 in applySuppliedMetadata", mainKey, subKey, sub2Key, repr(sub2Value) ); assert False, "We want to stop here"
                                     # elif isinstance( sub3Value, tuple ):
                                     #     if BibleOrgSysGlobals.debugFlag or DEBUGGING_THIS_MODULE:
                                     #         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "How do we handle a tuple here???" )
-                                    else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Programming error4 in applySuppliedMetadata", mainKey, subKey, sub2Key, repr(sub2Value) ); halt
+                                    else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Programming error4 in applySuppliedMetadata", mainKey, subKey, sub2Key, repr(sub2Value) ); assert False, "We want to stop here"
                             # elif isinstance( sub2Value, tuple ):
                             #     if BibleOrgSysGlobals.debugFlag or DEBUGGING_THIS_MODULE:
                             #         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "How do we handle a tuple here???" )
-                            else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Programming error3 in applySuppliedMetadata", mainKey, subKey, sub2Key, repr(sub2Value) ); halt
+                            else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Programming error3 in applySuppliedMetadata", mainKey, subKey, sub2Key, repr(sub2Value) ); assert False, "We want to stop here"
                     elif isinstance( subValue, list ): # flatten this
                         flattenedMetadata[mainKey+'--'+subKey] = '--'.join( subValue )
-                    else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Programming error2 in applySuppliedMetadata", mainKey, subKey, repr(subValue) ); halt
-            else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Programming error in applySuppliedMetadata", mainKey, repr(value) ); halt
+                    else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Programming error2 in applySuppliedMetadata", mainKey, subKey, repr(subValue) ); assert False, "We want to stop here"
+            else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Programming error in applySuppliedMetadata", mainKey, repr(value) ); assert False, "We want to stop here"
         # dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nflattenedMetadata", flattenedMetadata )
 
         # The following does nothing useful for SB

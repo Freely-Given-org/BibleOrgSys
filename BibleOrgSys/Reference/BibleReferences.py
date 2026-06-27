@@ -1298,7 +1298,7 @@ class BibleReferenceList( BibleReferenceBase ):
                 if V1 and V2: result += f"{Bk1}.{C1}.{V1}-{Bk2}.{C2}.{V2}"
                 elif not V1 and not V2: result += f"{Bk1}.{C1}-{Bk2}.{C2}"
                 elif V2: result += f"{Bk1}.{C1}.1-{Bk2}.{C2}.{V2}"
-                else: halt
+                else: assert False, "We want to stop here"
                 lastBk, lastC, lastV = Bk2, C2, V2
             else: # It must be a single reference
                 BBB, C, V, S = refOrRefRange

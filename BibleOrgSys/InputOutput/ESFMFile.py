@@ -44,7 +44,7 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2026-05-17' # by RJH (Rust conversion)
+LAST_MODIFIED_DATE = '2026-06-07' # by RJH (Rust conversion)
 SHORT_PROGRAM_NAME = "ESFMFile"
 PROGRAM_NAME = "ESFM File loader"
 PROGRAM_VERSION = '0.90'
@@ -93,7 +93,7 @@ class ESFMFile:
 
         # Check/handle parameters
         if ignoreSFMs is None: ignoreSFMs = []
-        if isinstance(ignoreSFMs, tuple): ignoreSFMs = list(ignoreSFMs)
+        elif isinstance(ignoreSFMs, tuple): ignoreSFMs = list(ignoreSFMs)
 
         try:
             self.lines = readESFMFile( str(esfm_filepath), ignoreSFMs )

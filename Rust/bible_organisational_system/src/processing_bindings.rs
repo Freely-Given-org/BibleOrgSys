@@ -81,11 +81,11 @@ impl From<PyProcessLinesOptions> for ProcessLinesOptions {
 pub fn py_process_lines<'py>(
     py: Python<'py>,
     raw_lines: Vec<(String, String)>,
-    book_code: &str,
+    bos_book_code: &str,
     work_name: &str,
     options: PyProcessLinesOptions,
 ) -> PyResult<Bound<'py, PyInternalBibleEntryList>> {
-    let result = process_lines(raw_lines, book_code, work_name, &options.into());
+    let result = process_lines(raw_lines, bos_book_code, work_name, &options.into());
     Bound::new(py, PyInternalBibleEntryList { inner: result })
 }
 
