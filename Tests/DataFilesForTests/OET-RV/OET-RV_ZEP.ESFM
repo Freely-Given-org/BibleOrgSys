@@ -1,4 +1,4 @@
-\id ZEP - Open English Translation—Readers' Version (OET-RV) v0.1.05
+\id ZEP - Open English Translation—Readers' Version (OET-RV) v0.1.06
 \usfm 3.0
 \ide UTF-8
 \rem ESFM v0.6 ZEP
@@ -70,8 +70,8 @@
 \q1 They'll build¦374855 houses, but they \add ≈won't get to live in them\add*.
 \q1 ≈They'll plant¦374859 vineyards¦374860, but \add ≈won't get to\add* drink¦374862 their wine.
 \b
-\q1
 \rem /s1 The Great Day of the Lord
+\q1
 \v 14 Yahweh's big day \add of judgement\add* is near—
 \q2 ≈close and coming quickly.
 \q1 The sound¦374875 of Yahweh's day is bitter¦374878—
@@ -125,7 +125,7 @@
 \v 5 The inhabitants¦375025 of the coastal region¦375026 \add ≈are to be pitied\add*,
 \q2 the nation¦375028 of the Kerethites¦375029.
 \q1 ≈Yahweh's¦375032 \add ≈decision\add* is against¦375033 you all,
-\q2 Canaan¦375034, land of the Philistines¦375036.
+\q2 Canaan¦375034, land¦375035 of the Philistines¦375036.
 \q1 \add ≈I'll¦375037 destroy¦375037 you until¦375038 no one remains.\add*
 \q1
 \v 6 The coastal region¦375042 will become pastures¦375044 of meadows¦375045 for shepherds¦375046
@@ -136,8 +136,8 @@
 \q1 They'll lie down in their houses¦375057 in Ashkelon¦375058 in the evening¦375059,
 \q1 because¦375061 their god¦375064 Yahweh¦375063 will visit¦375062 them, and¦375050 he'll restore¦375065 their fortune¦375066.
 \b
-\q1
 \rem /s1 Judgment against Moab and Ammon; Against Moab and Ammon
+\q1
 \v 8 I've¦375069 heard¦375069 Moav's mocking
 \q1 ≈and the \add ≈Ammonites'\add* insults.
 \q1 They've insulted my people
@@ -157,14 +157,14 @@
 \q1
 \v 11 The people of Moab and Ammon will be \add ≈very scared\add* when Yahweh punishes them.
 \q1 He'll do that so powerfully that people will stop worshipping all other gods¦375140.
-\q1 People in every¦375145 nation¦375149 will worship Yahweh instead—each person in their own country.
+\q1 People in every¦375145 nation¦375149 will worship¦375142 Yahweh instead—each person in their own country.
 \b
-\q1
 \rem /s1 Judgment against Ethiopia and Assyria; Against Cush
+\q1
 \v 12 Also you¦375153, \add Ethiopians\add* (Kushites), will be \add ≈killed\add* by my sword¦375156.\x + \xo 2:12: \xt Isa 18:1-7.\x*
 \b
-\q1
 \rem /s1 Against Assyria
+\q1
 \v 13 \add @Yahweh\add* will \add ≈punish those in\add* the north¦375163.
 \q1 \add ≈Yes,\add* he'll destroy¦375164 Assyria¦375167.
 \q1 ≈He'll \add ≈turn\add* Nineveh¦375171 \add ≈into ruins\add*—
@@ -222,7 +222,7 @@
 \v 8 Yahweh¦375333 declares:
 \q1 Wait for me, for \add ≈when I pounce on\add* the prey,
 \q1 because my decision¦375338 is to gather¦375339 nations¦375340 and assemble¦375341 kingdoms¦375342,
-\q1 to pour my indignation¦375345 \add ≈and all my anger¦375348\add* out on them,
+\q1 to pour¦375343 my indignation¦375345 \add ≈and all my anger¦375348\add* out on them,
 \q1 because the whole world will be consumed¦375352 by the fire¦375350 of my jealousy¦375351.
 \b
 \q1
@@ -232,8 +232,8 @@
 \q1
 \v 10 From across the rivers¦375375 of \add Ethiopia\add* (Cush¦375377), my worshippers¦375378,
 \q1 my scattered¦375381 \add ≈children\add* \add will return and\add* bring¦375385 my offering¦375386.
-\q1
 \rem /s1 A remnant preserved
+\q1
 \v 11 On that day¦375388 you won't feel \add ≈ashamed¦375391 about all the times you disobeyed\add* me,
 \q1 because¦375397 \add ≈at¦375396 that time\add*, I'll¦375401 remove¦375401 \add ≈those proud people from among you\add*,
 \q1 and you won't continue to be arrogant on¦375396 my sacred¦375411 mountain¦375410.

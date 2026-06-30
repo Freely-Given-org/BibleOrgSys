@@ -1,4 +1,4 @@
-\id 1CO - Open English Translation—Readers' Version (OET-RV) v0.1.55
+\id 1CO - Open English Translation—Readers' Version (OET-RV) v0.1.57
 \usfm 3.0
 \ide UTF-8
 \rem ESFM v0.6 CO1
@@ -52,7 +52,7 @@
 \rem /s1 True and false wisdom; Divisions in the Church
 \p
 \v 10 Now brothers¦113169 and sisters¦113169, I appeal to you in the name¦113172 of our¦113175 \nd master¦113174 Yeshua Messiah¦113177\nd*, that you all agree together \add so\add* that there'll be no divisions¦113188 among¦113186 you, but¦113167 rather that you'll be united in your thinking and in your purpose,
-\v 11 because¦113203, my¦113208 brothers¦113207 and¦113207 sisters¦113207, it's been made clear to me by some from Chloe's¦113212 household, that you are quarrelling¦113214 among¦113215 yourselves.
+\v 11 because¦113203, my¦113208 brothers¦113207 and¦113207 sisters¦113207, it's been made¦113202 clear to me by some from Chloe's¦113212 household, that you are quarrelling¦113214 among¦113215 yourselves.
 \v 12 What I am talking¦113218 about is how many of you are claiming that you belong to Paul's group, \add for example,\add* or that you belong to Apollos' group, or that you belong to Cephas' group, or that you belong to Messiah's group.\x + \xo 1:12: \xt Acts 18:24.\x*
 \v 13 Has the \nd messiah¦113241\nd* been divided¦113239? Was it Paul who was executed¦113245 for you? Or were you immersed¦113254 \add in water\add* in the Paul's name¦113252?
 \p
@@ -210,8 +210,8 @@
 \v 8 But¦114988 you're all wronging¦114987 and cheating \add others, including¦114988\add* fellow¦114993 believers¦114993.
 \rem /s1 Avoiding Sexual Sin
 \p
-\v 9 Or don't¦114995 you¦114996 all know that \add ≈those who disobey\add* \nd God¦115001\nd* won't¦114995 inherit¦115004 his kingdom¦115002? Don't¦114995 let yourselves be deceived¦115006: those who are sexually¦115008 immoral¦115008 or idolaters¦115010, or adulterers¦115012 or male prostitutes or homosexuals,
-\v 10 or thieves¦115019 or greedy, or drunkards¦115028 or slanderers or swindlers¦115032, will inherit¦115036 God's kingdom¦115033.
+\v 9 Or don't¦114995 you¦114996 all know that \add ≈those who disobey\add* \nd God¦115001\nd* won't¦114995 inherit¦115004 his kingdom¦115002? Don't¦114995 let yourselves be deceived¦115006: those who are sexually¦115008 immoral¦115008 or idolaters¦115010 or adulterers¦115012, or men who submit to or perform homosexual acts,
+\v 10 or thieves¦115019 or the greedy, or drunkards¦115028 or slanderers or swindlers¦115032, will inherit¦115036 God's kingdom¦115033.
 \v 11 Now some of you all were like that, but¦115037 now you've been washed¦115042 and declared guiltless, and been declared innocent by the authority of the \nd master¦115051 Yeshua Messiah¦115054\nd*, and by our¦115061 god's \nd spirit¦115058\nd*.
 \s1 Avoid sexual immorality
 \rem /s1 Glorify God in Body and Spirit; Use Your Bodies for God's Glory
@@ -273,7 +273,7 @@
 \p
 \v 29 But brothers¦115736 and¦115736 sisters¦115736, I will say this: the time is short¦115739, so from now on, even those who are married should live as if they're not.
 \v 30 Those who are mourning should \add act\add* as if they're not, those who are celebrating should \add act\add* as if they're not, and those who are buying¦115767 \add act\add* as if they don't¦115757 own \add anything\add*,
-\v 31 and¦115771 those who are using this world, as if they're not using it¦115781, because¦115783 the present form of this world will soon pass away.
+\v 31 and¦115771 those who are using this world, as if they're not using it¦115781, because¦115783 the present form¦115785 of this world will soon pass away.
 \p
 \v 32 But I'd like you to be free from concern. Single men are concerned about things of the \nd master\nd*—pleasing¦115801 the \nd master\nd*—
 \v 33 but¦115806 married¦115807 men are concerned about worldly¦115811 affairs—wanting to please¦115813 their wives—so they're divided¦115818. And unmarried¦115823 or single women
@@ -362,7 +362,7 @@
 \p
 \v 11 All of those¦116941 things happened¦116939 to them as examples and¦116943 were written¦116942 down as warnings for us who are \add living\add* at the ends¦116951 of the ages.
 \p
-\v 12 So if you think your \add faith is solid\add*, be careful that you don't fall.
+\v 12 So if you think your \add faith is solid\add*, be careful that you don't fall¦116962.
 \v 13 You all haven't been tempted by anything except¦116968 what is common to humanity¦116970, but God is faithful¦116971 and won't¦116965 allow¦116977 you to be tempted beyond¦116981 what you all can handle. \add In fact,\add* along with the temptations, God will provide the way¦116991 out so that¦116992 you'll be able to endure them.
 \rem /s1 Idol Feasts and the Lord's Supper
 \p
@@ -384,7 +384,7 @@
 \v 25 You can eat anything that's sold at the \add meat\add* market¦117162 without even raising questions of conscience¦117169,
 \v 26 because¦117172:\x + \xo 10:26: \xt Psa 24:1.\x* ‘the earth¦117175 and¦117176 everything in it¦117179 belongs to \nd Yahweh¦117171\nd*.’
 \p
-\v 27 If an unbeliever¦117186 invites¦117183 you \add to a meal\add* and you plan to go, eat anything that's set before you without raising questions of conscience¦117203,
+\v 27 If an unbeliever¦117186 invites¦117183 you \add to a meal\add* and you plan to go, eat anything that's set¦117194 before you without raising questions of conscience¦117203,
 \v 28 but¦117205 if someone¦117206 tells you, “That has been offered as a sacrifice,” for the sake of the person who told you and for the sake of conscience¦117221, don't¦117213 eat it¦117218.
 \v 29 Now when I said¦117233 ‘for the sake of conscience’, I didn't¦117234 mean \em your\em* conscience, but¦117237 that¦117235 of the other¦117240 person, because why does \em my¦117246\em* freedom¦117245 need to be judged¦117247 by someone else's conscience?
 \v 30 As long as I've thanked¦117254 God for what I eat, why should I then criticise it?
@@ -594,7 +594,7 @@
 \v 16 Because¦119556 if the dead¦119557 don't¦119558 come back to life, then \nd Messiah¦119561\nd* can't¦119558 have come back to life,
 \v 17 but¦119564 if \nd Messiah¦119565\nd* didn't¦119566 come back to life, then your¦119571 faith¦119570 is wasted and you're all still¦119574 \add just unforgiven\add* sinners.
 \v 18 Again, if that's the case, those believers who've passed away \add simply\add* perished¦119587.
-\v 19 If our hope in \nd Messiah¦119596\nd* only \add applies\add* to this life¦119591, then we should be pitied more than \nd anyone¦119596\nd* else.
+\v 19 If our hope in \nd Messiah¦119596\nd* only \add applies\add* to this life¦119591, then we should be pitied more than anyone¦119596 else.
 \p
 \v 20 But \nd Messiah¦119606\nd* has indeed come back to life from the dead¦119609, leading the way for those who have passed away,
 \v 21 because¦119615 since¦119614 death¦119619 came through a man \add (Adam)\add*, then the resurrection¦119623 of the dead also comes through a man \add (Yeshua)\add*.
@@ -609,7 +609,7 @@
 \v 29 Otherwise¦119758, what will the people do who are being immersed \add in water\add* for the dead? If the dead don't¦119769 come back to life, why would they get immersed for them? TODO: WHAT'S THIS ABOUT?
 \v 30 \add As for us,\add* why do we¦119780 \add place ourselves\add* in danger¦119781 all the time?
 \v 31 I'm dying¦119786 every¦119784 day¦119785 by your¦119791 boasting¦119792 brothers¦119793 and¦119793 sisters¦119793, which¦119794 I have in \nd Messiah¦119797 Yeshua\nd* our¦119801 \nd master¦119800\nd*. TODO: WHAT DOES THIS MEAN?
-\v 32 If I fought¦119805 with wild animals at Ephesus¦119807 for human¦119804 \add purposes\add*, what did I gain? If the dead¦119813 aren't¦119814 brought back to life, then ‘Let's eat¦119816 and¦119817 drink¦119818, because¦119820 tomorrow¦119819 we'll die \add anyway\add*.’\x + \xo 15:32: \xt Isa 22:13.\x*
+\v 32 If I fought¦119805 with wild¦119805 animals at Ephesus¦119807 for human¦119804 \add purposes\add*, what did I gain? If the dead¦119813 aren't¦119814 brought back to life, then ‘Let's eat¦119816 and¦119817 drink¦119818, because¦119820 tomorrow¦119819 we'll die \add anyway\add*.’\x + \xo 15:32: \xt Isa 22:13.\x*
 \p
 \v 33 Don't be fooled: ‘Evil conversations¦119827 corrupt¦119824 good¦119826 character¦119825.’
 \v 34 Sober¦119829 up as you should, and stop sinning¦119833, because¦119835 some of you are \add quite\add* ignorant¦119834 about \nd God¦119836\nd*. (I say that to your shame¦119840.)

@@ -1,4 +1,4 @@
-\id EPH - Open English Translation—Readers' Version (OET-RV) v0.1.54
+\id EPH - Open English Translation—Readers' Version (OET-RV) v0.1.57
 \usfm 3.0
 \ide UTF-8
 \rem ESFM v0.6 EPH
@@ -19,7 +19,7 @@
 \ip In the second part of letter, Paul urges the reader that the believers need to be united in the messiah by means of their unity with each other.
 \ip Paul uses many allegories about the unity of people with God via the messiah: the believers are the body of the messiah, he is the head; it's like a house, with the messiah as the foundation stone; the believers are also like a bride with the messiah as the groom.
 \ip It's also explained here about the correct behaviour for couples, of parents and children, and for slaves and masters. Then in concluding his letter, it's explained about the armour that's given to believers for them to use to stand against Satan's attacks.
-\ip It should be noted here that this letter, like most of the scriptures, was dictated to a scribe (See 2 Thess 3:17), so it was an oral letter, quite different from our modern letters which we edit with word-processing software, adding a word back in a previous sentence, combining two short sentences, or breaking an over-long sentence. Oral letters tend to contain a lot of \it run-on sentences\it* where the thoughts keep flowing without a break, thus 1:3-14 is considered by most Greek experts to be one long sentence (like this one is 😀), however for us as readers, a sentence with some two hundred words is very difficult for us to absorb, hence this \em Reader's Version\em* breaks that single Greek sentence into a number of smaller sentences, in fact, this kind of adjustment is regularly done throughout the Bible by all major English translations in order to make them easier for us to read, but the disadvantage is that we can sometimes lose whatever the connection was between the consecutive thoughts. The \em OET\em* tries to be more transparent about such adjustments by placing the \em Literal Version\em* right beside this text so that the serious student can compare the two.
+\ip It should be noted here that this letter, like most of the scriptures, was dictated to a scribe (See 2 Thess 3:17), so it was an oral letter, quite different from our modern letters which we edit with word-processing software, adding a word back in a previous sentence, combining two short sentences, or breaking an over-long sentence. Oral letters tend to contain a lot of \it run-on sentences\it* where the thoughts keep flowing without a break, thus 1:3-14 is considered by most Greek experts to be one long sentence (like this one is 😀), however for us as readers, a sentence with some two hundred words is very difficult for us to absorb, hence this \em Readers' Version\em* breaks that single Greek sentence into a number of smaller sentences, in fact, this kind of adjustment is regularly done throughout the Bible by all major English translations in order to make them easier for us to read, but the disadvantage is that we can sometimes lose whatever the connection was between the consecutive thoughts. The \em OET\em* tries to be more transparent about such adjustments by placing the \em Literal Version\em* right beside this text so that the serious student can compare the two.
 \iot Main components of Paul's letter
 \io1 Introduction \ior 1:1-2\ior*
 \io1 Spiritual blessings from the messiah \ior 1:3–3:21\ior*
@@ -37,7 +37,7 @@
 \s1 Spiritual blessings
 \rem /s1 The glory of Christ in the church; Spiritual Blessings in Christ
 \p
-\v 3 We praise \nd God¦128033\nd*, the father¦128035 of our \nd master¦128037 Yeshua\nd* the messiah.\f + \fr 1:3 \ft Verses 3-14 seem to be just one long, rambling sentence in the Greek, and it's not totally clear what each part means, or how they all connect logically together in sequence. We have split it into smaller sentence chunks to try to help our readers extract some meaning out of it.\f* He is the one who's blessed us with every¦128047 spiritual¦128049 blessing in heavenly¦128052 places—blessings that come from the messiah.
+\v 3 We praise \nd God¦128033\nd*, the father¦128035 of our \nd master¦128037 Yeshua\nd* the messiah.\f + \fr 1:3 \ft Verses 3-14 seem to be just one long, rambling sentence in the Greek, and it's not totally clear what each part means, or how they all connect logically together in sequence. We have split it into smaller sentence chunks to try to help our readers extract some meaning out of it.\f* He is the one who's blessed¦128044 us with every¦128047 spiritual¦128049 blessing¦128048 in heavenly¦128052 places—blessings that come from the messiah.
 \v 4 He chose¦128056 us to follow him even before¦128060 the creation of the world¦128062, so that we could become pure¦128065 and blameless¦128067 in front¦128068 of him. Because of his¦128068 love¦128071
 \v 5 he decided in advance to adopt¦128075 us as his¦128087 children through¦128076 \nd Yeshua¦128078\nd* the \nd messiah¦128079\nd*. His¦128087 decision gave him great pleasure¦128084
 \v 6 and now he's praised¦128089 for the greatness of his¦128093 grace¦128092 which¦128096 favoured¦128097 us, as the one he loved¦128101
@@ -73,7 +73,7 @@
 \v 5 so although we were dead¦128543 as a result of our disobedience, he make us alive¦128551 along with the \nd messiah¦128554\nd*. Yes, we have been saved¦128557 by \add God's\add* grace¦128555.
 \v 6 And God lifted us up and sat¦128561 us together¦128561 with \nd Yeshua\nd* the \nd messiah¦128567\nd* in the heavenly¦128564 \add domains\add*
 \v 7 so that¦128574 for the ages to come, he could display¦128570 the overflowing riches¦128580 of his grace¦128583 through his kindness¦128586 to us via \nd Yeshua¦128592\nd* the \nd messiah¦128591\nd*.
-\v 8 It's \add God's\add* grace that allows you all to be saved¦128597 through¦128598 faith¦128600. This grace doesn't come from you, but rather it's a gift¦128608 from God—
+\v 8 It's \add God's\add* grace that allows you all to be saved¦128597 through¦128598 faith¦128600. That \add ?grace\add* doesn't come from you, but rather it's a gift¦128608 from God—
 \v 9 it doesn't originate from your actions so no one can brag about it.
 \v 10 We are God's workmanship¦128620 and he's created¦128621 us to do good¦128627 things by following \nd Yeshua\nd* the \nd messiah¦128623\nd*. God has already planned these things for us to do.
 \s1 Jews and non-Jews can be united
@@ -180,7 +180,7 @@
 \p
 \v 3 It's fitting¦129794 for dedicated \add believers\add* to not even entertain thoughts of sexual¦129781 immorality¦129781 or impurity¦129785 or greed¦129788.
 \v 4 Nor is dirty or foolish¦129801 talk¦129801 or crude¦129804 joking¦129804 fitting¦129809, but¦129810 rather¦129811 thankfulness¦129812.
-\v 5 You should realise that \nd anyone¦129837\nd* who is sexually¦129820 immoral¦129820 or impure or is a covetous¦129824 or idolatrous¦129828 person won't¦129829 have an inheritance¦129831 in the kingdom¦129835 of the \nd messiah¦129837\nd* and¦129838 of \nd God¦129839\nd*.
+\v 5 You should realise that anyone¦129837 who is sexually¦129820 immoral¦129820 or impure or is a covetous¦129824 or idolatrous¦129828 person won't¦129829 have an inheritance¦129831 in the kingdom¦129835 of the \nd messiah¦129837\nd* and¦129838 of \nd God¦129839\nd*.
 \p
 \v 6 Don't let anyone¦129840 seduce¦129842 you¦129841 with empty¦129844 talk, because¦129848 this is exactly what will induce God's strong anger¦129851 on those who are disobedient.
 \v 7 So¦129861 don't¦129860 get caught up with them
@@ -216,7 +216,7 @@
 \v 26 so that he could separate the church \add from the world\add* and wash it clean¦130122 with the water¦130126 of the \add good\add* message¦130128
 \v 27 in order to present¦130130 the splendid church to himself¦130133—without any stains¦130141 or wrinkles¦130143 or anything¦130145 like that—just pure¦130151 and¦130152 unblemished.
 \v 28 So husbands¦130158 should love their wives¦130163 just like their own bodies¦130168—anyone who loves his wife¦130173 is loving himself.
-\v 29 No one hates their own body¦130181, but¦130184 they feed and¦130186 look after it¦130188, just like the \nd messiah¦130192\nd* does for the church
+\v 29 No one hates their own body¦130181, but¦130184 they feed and¦130186 look after it¦130188, just like the \nd messiah¦130192\nd* does¦130190 for the church
 \v 30 and we¦130198 are parts of his¦130201 body¦130200.
 \v 31 \x + \xo 5:31: \xt Gen 2:24.\x*That's the reason why a man¦130214 leaves his father¦130216 and mother¦130220 and becomes joined¦130222 with his wife¦130226 and the two¦130232 of them become one unit.
 \v 32 This is an amazing mystery¦130237 but¦130242 I'm talking¦130243 about the \nd messiah¦130245\nd* and¦130246 the church.

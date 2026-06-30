@@ -1,4 +1,4 @@
-\id ECC - Open English Translation—Readers' Version (OET-RV) v0.1.04
+\id ECC - Open English Translation—Readers' Version (OET-RV) v0.1.05
 \usfm 3.0
 \ide UTF-8
 \rem ESFM v0.6 ECC
@@ -101,7 +101,7 @@
 \q1 I built¦278718 houses¦278720 for myself.
 \q1 I planted¦278721 vineyards¦278723 for myself.\x + \xo 2:4-8: \xt 1Ki 10:23-27; 2Ch 9:22-27.\x*
 \q1
-\v 5 I made gardens¦278727 for myself, and royal parks¦278728,
+\v 5 I made¦278725 gardens¦278727 for myself, and royal parks¦278728,
 \q1 and I planted¦278729 \add ≈all different kinds\add* of fruit¦278734 trees in them.
 \q1
 \v 6 I constructed pools¦278738 for myself
@@ -150,8 +150,8 @@
 \v 16 because \add ≈neither the wise person nor the fool will be remembered¦278920 forever\add*,
 \q1 \add ≈as they'll both be forgotten¦278930 in¦278926 the days¦278927 to come\add*—
 \q1 and¦278931 how \add strange it¦278930 is\add* that the wise die¦278932 \add ≈just like\add* the fool!
-\q1
 \rem /s1 The Futility of Work; Toil Is Meaningless
+\q1
 \v 17 Then¦278938 I hated¦278938 life¦278941 because of the misfortune around me—
 \q1 the work¦278945 that¦278946 was done¦278946 \add ≈in this world\add*,
 \q1 because everything¦278951 was pointless and¦278953 chasing¦278953 after the wind¦278954.
@@ -229,7 +229,7 @@
 \v 13 and everyone should eat¦279264 and drink¦279265 and see¦279266 good¦279267 in \add ≈everything they do\add*—
 \q1 that's a gift¦279271 from God¦279272.
 \q1
-\v 14 I know¦279275 that everything God does will be enduring.
+\v 14 I know¦279275 that everything God does¦279280 will be enduring.
 \q1 There's nothing that needs to be added¦279287 to it, or taken¦279290 away,
 \q1 and God has \add ≈done it like that so that people¦279293 will respect and want to obey him\add*.
 \q1
@@ -286,15 +286,15 @@
 \q1
 \v 6 A \add ≈small handful\add* of quietness¦279544 is better
 \q1 than \add ≈two very full handfuls of\add* work and¦279548 chasing¦279548 after the wind¦279549.
-\q1
 \rem /s1 The Advantages of Companionship
+\q1
 \v 7 Then¦279551 I turned and¦279553 I saw¦279553 a pointless thing \add ≈in this world\add*:
 \q1
 \v 8 \add ≈Sometimes there's a person living alone without a child or a relative, who works hard without stopping\add*.
 \q1 \add ≈However, wealth¦279580 doesn't satisfy¦279579 them because they wonder why they're working so hard and not sitting down to enjoy their good things\add*.
 \q1 That also is pointless, and it's an unpleasant business¦279594.
-\q1
 \rem /s1 The Value of a Friend
+\q1
 \v 9 Two \add >people\add* are better than one.
 \q1 because \add ≈their¦279609 working together can give a better result\add*.
 \q1
@@ -308,8 +308,8 @@
 \v 12 And even if one \add >person\add* would be easily overpowered¦279640,
 \q1 two¦279642 people could stand¦279643 against \add @an attacker\add*.
 \q1 A three-stranded rope can't¦279647 be \add ≈easily broken\add*.
-\q1
 \rem /s1 Advancement Is Meaningless; The Futility of Political Power
+\q1
 \v 13 A poor but wise youth¦279652 is better \add off\add*
 \q1 than an old but foolish¦279657 king¦279655 who \add ≈can't¦279659 accept\add* advice¦279662,
 \q1
@@ -438,8 +438,8 @@
 \q1
 \v 9 \add ≈It's better to enjoy what's right there than to feed the imagination\add*.
 \q1 That's also pointless and¦280254 chasing¦280254 after the wind¦280255.
-\q1
 \rem /s1 The Future—Determined and Unknown
+\q1
 \v 10 Everything that existed¦280259 has already¦280260 been named¦280261.
 \q1 It's known¦280263 what humankind¦280267 is
 \q1 and that \add @humans\add* can't¦280268 dispute¦280271 with the \add one\add* who's stronger¦280273 than them.
@@ -551,15 +551,15 @@
 \q1 but I couldn't find one \add such\add* woman¦280697 out of all of them.
 \q1
 \v 29 This is the only \add ≈conclusion\add* I came to:
-\q1 God made humankind¦280714 to \add ≈do good, but¦280716\add* \add instead\add* they've come up with many \add other kinds of\add* schemes¦280718.
+\q1 God made¦280710 humankind¦280714 to \add ≈do good, but¦280716\add* \add instead\add* they've come up with many \add other kinds of\add* schemes¦280718.
 \c 8
 \rem /s1 Obey the King and Enjoy Yourself
 \p
 \v 1 Who's like the wise person and \add ≈understands what's going on\add*?
 \q1 A person's wisdom¦280727 \add ≈makes¦280729 their face lighten up\add*
 \q1 and \add ≈gives their face a certain firmness\add*.
-\q1
 \rem /s1 Obey the King; Obedience to the King
+\q1
 \v 2 Follow the king's orders
 \q1 because¦280740 of your promise to God¦280743.
 \q1
@@ -587,8 +587,8 @@
 \p
 \v 9 I¦280843 saw all that and¦280844 applied¦280844 my mind¦280847 to \add ≈everything that happens in¦280859 this world\add*.
 \q1 \add ≡I saw\add* that sometimes a person can dominate \add ≈someone else to that person's detriment\add*.
-\q1
 \rem /s1 God's Ways Are Inscrutable
+\q1
 \v 10 I've¦280864 seen¦280864 wicked¦280865 \add >people\add* being buried¦280866—
 \q1 being \add carried\add* out from a sacred¦280869 place¦280868,
 \q1 and¦280863 \add what they'd done¦280876\add* there in¦280863 the city¦280872 was \add just\add* forgotten¦280871.
@@ -717,7 +717,7 @@
 \v 7 I've¦281504 seen slaves riding horses¦281508
 \q1 ^and princes¦281509 walking on the ground like slaves.
 \q1
-\v 8 A person who digs¦281516 a pit can fall into it,\x + \xo 10:8: \xt Psa 7:15; Prv 26:27.\x*
+\v 8 A person who digs¦281516 a pit can fall¦281519 into it,\x + \xo 10:8: \xt Psa 7:15; Prv 26:27.\x*
 \q1 ≈and \add an attacker who\add* breaks¦281520 through¦281520 a wall¦281521 gets bitten¦281522 by a snake¦281523.
 \q1
 \v 9 A person who pulls out rocks¦281526 might be hurt by them.
@@ -789,8 +789,8 @@
 \q1 because¦281772 you¦281773 don't know which \add areas\add* will grow well,
 \q1 or whether¦281779 it¦281778 will all \add ≈succeed¦281778\add* equally¦281786.
 \b
-\q1
 \rem /s1 Advice for Old and Young; Youth and Old Age; Remember Your Creator While Young
+\q1
 \v 7 Light is sweet¦281789
 \q2 and¦281791 it's good¦281791 for \add &your\add* eyes¦281792 to see¦281793 the sun¦281796.
 \q1
@@ -831,12 +831,12 @@
 \v 5 The people¦281925 will also become afraid¦281925 of heights¦281924
 \q1 and the road¦281927 will have its¦281941 terrors¦281926.
 \q1 The almond¦281929 trees will blossom¦281928
-\q1 and the locusts will drag themselves along¦281930.
+\q1 and the locusts will drag¦281930 themselves along¦281930.
 \q1 Normal desires¦281933 will be lost
 \q1 because¦281934 you'll be heading for your eternal¦281941 home
 \q1 and the mourners¦281947 will be in¦281927 the streets¦281943.
 \q1
-\v 6 \add ≡Think about God\add* before the silver¦281956 cord gets broken¦281960
+\v 6 \add ≡Think about God\add* before the silver¦281956 cord¦281955 gets broken¦281960
 \q1 ≈and the golden¦281959 bowl breaks,
 \q1 the pitcher shatters¦281960 at the well
 \q1 ≈and the wheel¦281966 is crushed at the cistern¦281969,

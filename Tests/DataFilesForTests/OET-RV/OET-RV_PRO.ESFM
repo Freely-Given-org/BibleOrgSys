@@ -1,4 +1,4 @@
-\id PRO - Open English Translation—Readers' Version (OET-RV) v0.1.04
+\id PRO - Open English Translation—Readers' Version (OET-RV) v0.1.06
 \usfm 3.0
 \ide UTF-8
 \rem ESFM v0.6 PRO
@@ -96,7 +96,7 @@
 \q1 ≈and stupid people despise knowledge¦269600?
 \q1
 \v 23 \add ≈Change your ways when I correct you\add*.
-\q1 Listen, I'll¦269605 pour my spirit out on you all.
+\q1 Listen, I'll¦269605 pour¦269605 my spirit out on you all.
 \q1 Let me declare¦269608 my messages¦269609 to you all
 \q1
 \v 24 because I've called¦269613 and you've all refused¦269614 \add to listen\add*.
@@ -112,7 +112,7 @@
 \q1 and calamity¦269642 comes like a whirlwind¦269643
 \q1 and when trouble¦269647 and anguish¦269648 reach you all.
 \q1
-\v 28 Then they'll call out to me \add for help\add* \add ≈but\add* I won't answer¦269653.
+\v 28 Then they'll call¦269651 out to me \add for help\add* \add ≈but\add* I won't answer¦269653.
 \q1 ≈They'll search¦269654 for me \add ≈but\add* won't be able to find me
 \q1
 \v 29 because¦269659 they hated¦269661 wisdom
@@ -140,7 +140,7 @@
 \v 2 \add so\add* you'll be attentive¦269710 to wisdom¦269711
 \q1 ≈\add and\add* your \add ≈mind¦269714 will look for\add* understanding¦269715,
 \q1
-\v 3 if you'll call out for insight¦269719,
+\v 3 if you'll call¦269720 out for insight¦269719,
 \q1 ≈raising your¦269723 voice¦269723 \add to ask\add* for understanding¦269721,
 \q1
 \v 4 if you go after it as if it's silver¦269728
@@ -193,10 +193,10 @@
 \v 20 So follow the ways of good \add people\add*,
 \q1 ≈and stay on¦269859 the path¦269859 \add ≈of those who want to do what's right¦269862\add*,
 \q1
-\v 21 because it's \add people\add* \add ≈who do what is right\add* who'll live in \add ?this\add* land,
+\v 21 because it's \add people\add* \add ≈who do what is right\add* who'll live in \add ?this\add* land¦269872,
 \q1 ≈and those who are blameless¦269873 will remain¦269874 in it.
 \q1
-\v 22 \add ≈However,\add* the wicked¦269877 \add people¦269881\add* will be \add ≈taken\add* off the land,
+\v 22 \add ≈However,\add* the wicked¦269877 \add people¦269881\add* will be \add ≈taken\add* off the land¦269878,
 \q1 ≈and¦269877 those¦269880 who are treacherous¦269880 will be torn away from it¦269882.
 \c 3
 \s1 Advice to the young
@@ -220,7 +220,7 @@
 \q1 ^and don't¦269939 \add ≈rely on your own logic\add*.
 \q1
 \v 6 Acknowledge Yahweh's \add involvement\add* in everything you do,
-\q1 and he will \add ≈show you the best course to follow\add*.
+\q1 and¦269947 he'll \add ≈make¦269948 the way easier to follow\add*.
 \q1
 \v 7 Don't¦269951 \add ≈pride yourself on¦269955 your¦269955 own wisdom\add*,\x + \xo 3:7: \xt Rom 12:16.\x*
 \q1 ^\add but rather\add* obey Yahweh¦269959 and¦269960 turn¦269960 away from evil¦269961.
@@ -258,12 +258,12 @@
 \q1
 \v 18 Wisdom is a tree¦270055 of life¦270057 for those¦270059 who embrace¦270059 it.
 \q1 ≈\add ≈People who are consistently wise\add* are blessed¦270062.
-\q1
 \rem /s1 God's Wisdom in Creation
+\q1
 \v 19 Yahweh¦270065 founded¦270067 the world using wisdom¦270066.
 \q1 ≈He established¦270070 the \add ≈atmosphere and sky\add* by understanding¦270072.
 \q1
-\v 20 As a result of his knowledge¦270074, the ocean depths¦270075 broke open,
+\v 20 As a result of his knowledge¦270074, the ocean depths¦270075 broke open¦270076,
 \q1 ≈and¦270077 the clouds¦270077 dripped¦270078 dew.
 \rem /s1 The True Security
 \b
@@ -496,7 +496,7 @@
 \q1 ≈\add ≈Don't think that you'll just have a nap first\add*.
 \q1
 \v 5 Save yourself¦270744 \add immediately\add* like a deer when it's \add ≈snagged\add*,
-\q1 ≈\add ≈or\add* a bird fleeing from a trapper.
+\q1 ≈\add ≈or\add* a bird¦270747 fleeing from a trapper.
 \b
 \q1
 \v 6 You¦270757 lazy person, go¦270752 \add and watch\add* an ant.
@@ -534,8 +534,8 @@
 \q1
 \v 16 There are six¦270849 \add things¦270855 that\add* Yahweh¦270853 hates¦270852,
 \q1 \add ≈actually\add* seven¦270854 that \add ≈he finds\add* detestable.
-\q1
 \rem /s1 Warning against Adultery
+\q1
 \v 17 \add ₁\add* arrogant eyes,
 \q1 \add ₂\add* a lying tongue¦270862,
 \q1 \add ₃\add* hands¦270864 that¦270865 shed innocent¦270868 blood¦270866,
@@ -610,7 +610,7 @@
 \q1 ≈Write them onto your \add ≈mind¦271086\add*.
 \q1
 \v 4 Tell¦271089 wisdom¦271089 that she's your sister¦271090,
-\q1 ≈and¦271092 call understanding¦271093 a close relative¦271092,
+\q1 ≈and¦271092 call¦271094 understanding¦271093 a close relative¦271092,
 \q1
 \v 5 so they'll keep you from the \add ≈street\add* woman—
 \q1 ≈from the \add ≈ungodly woman whose words¦271100 sound so\add* smooth¦271101.
@@ -669,7 +669,7 @@
 \q1 like a fool with a noose¦271248 around his neck,
 \q1
 \v 23 until an arrow¦271256 pierces¦271255 his \add ≈stomach\add*,
-\q1 like a bird rushing¦271258 into a trap,
+\q1 like a bird¦271259 rushing¦271258 into a trap,
 \q1 not knowing that it will cost him his life¦271268.
 \b
 \q1
@@ -679,7 +679,7 @@
 \v 25 Do let your \add ≈desires drive you in¦271292 her direction\add*.
 \q1 Don't¦271289 wander onto her pathways¦271292
 \q1
-\v 26 because she's caused many to be pierced and¦271299 fall—
+\v 26 because she's caused many to be pierced and¦271299 fall¦271298—
 \q1 \add ≈it would be difficult to count¦271299 them all\add*.
 \q1
 \v 27 Her¦271305 house¦271306 is the pathway to the grave—
@@ -689,7 +689,7 @@
 \rem /s1 The Gifts of Wisdom; Wisdom and folly; Wisdom Calls for a Hearing; In Praise of Wisdom
 \rem /s2 Wisdom's Call
 \q1
-\v 1 Doesn't wisdom¦271317 call out?\x + \xo 8:1-3: \xt Prv 1:20-21.\x*
+\v 1 Doesn't wisdom¦271317 call¦271318 out?\x + \xo 8:1-3: \xt Prv 1:20-21.\x*
 \q1 ≈\add ≡Doesn't\add* understanding¦271319 raise her¦271321 voice¦271321?
 \q1
 \v 2 On the high places by the road,
@@ -698,7 +698,7 @@
 \v 3 By the gates¦271335 at the \add ≈main entrance¦271339\add* to the city,
 \q1 ≈she¦271341 calls out loudly into the doorways¦271340.
 \q1
-\v 4 “To you, people¦271344, I call—
+\v 4 “To you, people¦271344, I call¦271345—
 \q1 ≈my voice¦271346 is \add ≡calling\add* all humankind¦271350.
 \q1
 \v 5 You¦271353 naive¦271353 people \add ≈must learn to be prudent¦271354\add*,
@@ -754,8 +754,8 @@
 \v 21 \add ≈so those¦271498 who love¦271498 me can inherit¦271497 wealth\add*,
 \q1 \add ≈as\add* I¦271502 fill¦271502 their¦271501 storerooms.
 \b
-\q1
 \rem /s1 Wisdom's Part in Creation
+\q1
 \v 22 Yahweh¦271505 created¦271506 me \add ≈among his first actions\add*—
 \q1 at the beginning of his works¦271510 \add ≈long ago\add*.\x + \xo 8:22: \xt Rev 3:14.\x*
 \q1
@@ -768,7 +768,7 @@
 \v 25 Before¦271530 the mountains¦271531 were \add ≈set into place\add*,
 \q1 \add and\add* before¦271530 the hills¦271534 \add ≈were seen\add*, I¦271535 was \add ≈revealed\add*.
 \q1
-\v 26 \add yes, even\add* before he made the earth¦271541 and fields¦271542,
+\v 26 \add yes, even\add* before he made¦271540 the earth¦271541 and fields¦271542,
 \q1 or the first¦271543 dust \add ≈on the ground\add*.
 \q1
 \v 27 I¦271551 was there¦271550:
@@ -843,7 +843,7 @@
 \q1 ≈and¦271749 years¦271751 will be added¦271749 to your¦271748 life¦271752.
 \q1
 \v 12 If you're¦271756 wise, you'll \add ≈be helping\add* yourself¦271758,
-\q1 ^and if you mock, then you alone¦271760 will \add ≈suffer the result\add*.
+\q1 ^and if you mock¦271759, then you alone¦271760 will \add ≈suffer the result\add*.
 \rem /s1 Folly Calls for a Hearing; Folly's Invitation and Promise
 \p
 \v 13 A foolish woman¦271763 is boisterous¦271765 and naive¦271766,
@@ -852,7 +852,7 @@
 \v 14 She sits¦271772 at the \add ≈doorway¦271773\add* of her¦271774 house¦271774,
 \q1 \add or\add* on a seat¦271777 in the city heights¦271778,
 \q1
-\v 15 in order to call out to those who are passing by—
+\v 15 in order to call¦271781 out to those who are passing by—
 \q1 those \add men\add* who are going straight¦271785 past on their¦271786 way¦271786.
 \q1
 \v 16 “Anyone who's naive¦271790 can turn¦271791 in here,”
@@ -957,10 +957,10 @@
 \q1 ^\add ≈but\add* ruin¦272073 for those¦272074 who do¦272074 evil.
 \q1
 \v 30 \add ≈Godly\add* \add >people\add* will \add ≈never\add* be shaken¦272081,
-\q1 ^\add ≈but\add* the wicked¦272082 won't¦272079 live \add ≡long\add* in the land.
+\q1 ^\add ≈but\add* the wicked¦272082 won't¦272079 live \add ≡long\add* in the land¦272086.
 \q1
 \v 31 The mouth¦272088 of a \add ≈godly¦272090\add* \add >person\add* produces wisdom¦272092 as its fruit¦272091,
-\q1 ^\add ≈but\add* the tongues¦272093 of perverse¦272094 \add >people\add* will be cut off.
+\q1 ^\add ≈but\add* the tongues¦272093 of perverse¦272094 \add >people\add* will be cut¦272095 off.
 \q1
 \v 32 The lips¦272097 of \add ≈godly¦272098\add* \add >person\add* experience pleasure¦272100,
 \q1 ^\add ≈but\add* the mouth¦272101 of the wicked¦272102 \add ≡experience\add* perversity¦272103.
@@ -1048,11 +1048,11 @@
 \v 27 Anyone¦272338 who strives diligently¦272338, strives for favour¦272341,
 \q1 ^\add ≈but\add* if you strive for evil¦272343, it'll come¦272344 to you.
 \q1
-\v 28 Anyone¦272346 who trusts¦272346 in¦272347 their riches¦272347 will fall,
+\v 28 Anyone¦272346 who trusts¦272346 in¦272347 their riches¦272347 will fall¦272349,
 \q1 ^\add ≈but\add* godly¦272351 \add >people\add* will thrive like green¦272350 leaves.
 \q1
 \v 29 Those who cause trouble¦272354 for their households¦272355 will inherit¦272356 the wind¦272358,
-\q1 ≈and¦272359 the fool will become a slave to those \add ≈with sensible values\add*.
+\q1 ≈and¦272359 the fool will become a slave¦272359 to those \add ≈with sensible values\add*.
 \q1
 \v 30 The fruit¦272365 of \add ≈doing what's right¦272367\add* is a tree¦272368 of life¦272369,
 \q1 ≈and¦272370 those who win people¦272371 \add over\add* are wise.
@@ -1322,7 +1322,7 @@
 \q1 ^\add ≈but\add* \add ≈those who do what's right¦273168\add* find a safe place in¦273167 their death¦273167.
 \q1
 \v 33 Wisdom resides in¦273174 an understanding \add ≈mind¦273170\add*,
-\q1 →and it's made known¦273176 \add even\add* among foolish \add >people\add*.
+\q1 →and it's made¦273176 known¦273176 \add even\add* among foolish \add >people\add*.
 \q1
 \v 34 \add ≈Doing what's right¦273178\add* makes a nation¦273181 great,
 \q1 ^\add ≈but\add* \add ≈disobeying God\add* \add brings\add* disgrace¦273182 to people¦273183 groups.
@@ -1690,7 +1690,7 @@
 \v 23 Poor \add >people\add* \add ≈make\add* requests,
 \q1 ^\add ≈but\add* the rich \add >person\add* answers¦274350 \add ≈harshly\add*.
 \q1
-\v 24 A person¦274353 with many companions \add will come to\add* ruin,
+\v 24 A person¦274353 with many companions¦274354 \add will come to\add* ruin,
 \q1 ^\add ≈but\add* there¦274356 is \add ≡a companion\add* that \add ≈sticks\add* closer than a brother¦274359.
 \c 19
 \q1
@@ -1817,7 +1817,7 @@
 \q1 →if they're \add ≈honest and¦274764 obedient\add*.
 \q1
 \v 12 The ear¦274769 that hears¦274770 and¦274771 the eye¦274771 that sees¦274772—
-\q1 →it was Yahweh¦274773 that made both of them.
+\q1 →it was Yahweh¦274773 that made¦274774 both of them.
 \q1
 \v 13 Don't¦274779 love¦274781 sleep¦274782 or you¦274785 might end up in poverty.
 \q1 ≈Open your¦274787 eyes¦274787 then you'll have enough food.
@@ -1835,7 +1835,7 @@
 \q1 ^\add ≈but\add* afterwards¦274828 it's \add like\add* a mouthful¦274831 of gravel¦274832.
 \q1
 \v 18 Plans¦274834 are established¦274836 with¦274835 advisers,
-\q1 →\add ≈so\add* wise guidance¦274837 \add is required for\add* war.
+\q1 →\add ≈so\add* wise guidance¦274837 \add is required for\add* war¦274839.
 \q1
 \v 19 The person who gossips reveals a secret¦274843,
 \q1 →so don't¦274848 get involved¦274849 \add with someone\add* with a big¦274846 mouth¦274847.
@@ -1868,7 +1868,7 @@
 \q1 ≈and his throne¦274936 is upheld¦274934 by \add that\add* loyal¦274935 commitment.
 \q1
 \v 29 The splendour¦274941 of young¦274939 men¦274939 is their strength¦274940,
-\q1 ≈and the adornment of old \add >people\add* is their gray hair¦274943.
+\q1 ≈and the adornment of old \add >people\add* is their grey hair¦274943.
 \q1
 \v 30 Lashes and wounds clean out evil¦274949,
 \q1 ≈and beatings¦274950 \add ≈clean out\add* the \add ≈innermost parts\add*.
@@ -1892,7 +1892,7 @@
 \v 6 \add ≈Wealth that's acquired¦275012 via a lying\add* tongue¦275014,
 \q1 →will be like a \add ?quick\add* breath¦275016 for those seeking death¦275020.
 \q1
-\v 7 The violence¦275022 of wicked¦275024 \add >people\add* will drag them away,
+\v 7 The violence¦275022 of wicked¦275024 \add >people\add* will drag¦275025 them away,
 \q1 because¦275026 they¦275027 refuse¦275027 to \add apply\add* justice¦275029.
 \q1
 \v 8 The paths of a guilty¦275034 person¦275033 are crooked¦275031,
@@ -1911,7 +1911,7 @@
 \q1 →subverting¦275079 the wicked until \add ?≈they're ruined\add*.
 \q1
 \v 13 Any person who shuts¦275083 their ears to the cry¦275085 of the poor
-\q1 →will also call out \add for help\add* but¦275092 won't¦275092 be answered¦275093.
+\q1 →will also call¦275091 out \add for help\add* but¦275092 won't¦275092 be answered¦275093.
 \q1
 \v 14 A discreet gift¦275095 subdues¦275097 anger¦275099,
 \q1 ≈and¦275100 a bribe¦275100 \add ≡quietens down\add* a strong¦275103 rage¦275102.
@@ -2009,7 +2009,7 @@
 \q1 →I'll be killed¦275375 \add ≈if I go outside\add*!”
 \q1
 \v 14 The mouth¦275379 of a \add ≈loose\add* woman is a deep pit.
-\q1 →Those who are cursed¦275381 by Yahweh¦275382 will fall into it.
+\q1 →Those who are cursed¦275381 by Yahweh¦275382 will fall¦275383 into it.
 \q1
 \v 15 Foolish¦275388 \add >ideas\add* \add ≈are natural in¦275390 the mind¦275390\add* of a youth¦275392.
 \q1 →\add but\add* the rod \add ≈bringing\add* discipline¦275394 drives¦275395 it¦275395 far from them.
@@ -2081,7 +2081,7 @@
 \q1 Your wisdom \add should tell you to\add* stop.
 \q1
 \v 5 \add ≈You glance at\add* \add @wealth\add* then \add ≈it'll be gone\add*,
-\q1 because¦275597 it'll make wings¦275602 for itself and \add ?fly away into\add* the sky like an eagle¦275603.
+\q1 because¦275597 it'll make¦275598 wings¦275602 for itself and \add ?fly away into\add* the sky like an eagle¦275603.
 \s2 -8-
 \p
 \v 6 Don't¦275609 eat¦275611 the food of a \add ≈stingy person\add*,
@@ -2205,7 +2205,7 @@
 \v 5 A wise \add >person\add* is strong,
 \q1 and¦275968 those with¦275967 knowledge¦275970 \add ≈increase their\add* power,
 \q1
-\v 6 →because you¦275977 need wise guidance¦275976 to go to war,
+\v 6 →because you¦275977 need wise guidance¦275976 to go to war¦275980,
 \q1 ≈and¦275981 victory¦275981 requires many advisers.
 \s2 -22-
 \p
@@ -2244,7 +2244,7 @@
 \v 15 Don't lie in wait like a wicked¦276079 \add >person\add* does at a \add ≈good\add* \add >person's\add* home¦276080.
 \q1 Don't devastate¦276084 the place¦276085 where¦276085 a \add ≈good\add* person lives,
 \q1
-\v 16 because¦276090 a \add ≈good\add* person might fall several times¦276091 then get up \add again¦276095\add*,
+\v 16 because¦276090 a \add ≈good\add* person might fall¦276093 several times¦276091 then get up \add again¦276095\add*,
 \q1 ^\add ≈but\add* the wicked¦276096 stumble¦276097 \add when\add* calamity¦276098 \add comes\add*.
 \s2 -28-
 \p
@@ -2363,7 +2363,7 @@
 \v 18 A man who gives a false¦276484 testimony¦276481 against¦276482 his neighbour¦276482,
 \q1 is like a club, or a sword¦276477, or a sharp¦276479 arrow¦276478.
 \p
-\v 19 Having confidence¦276490 in someone who acts treacherously¦276491 in a \add ≈time\add* of trouble¦276493,
+\v 19 Having confidence¦276490 in someone who acts¦276491 treacherously¦276491 in a \add ≈time\add* of trouble¦276493,
 \q1 is \add like having\add* a broken¦276487 tooth¦276486, or \add having your\add* foot¦276488 slip.
 \p
 \v 20 Taking off your coat on a cold day¦276498,
@@ -2398,7 +2398,7 @@
 \v 1 Like snow in¦276601 the summer¦276601, or rain at¦276601 harvest¦276603 time,
 \q1 so \add too\add* honour¦276609 isn't¦276605 fitting for a fool.
 \q1
-\v 2 Like a fluttering¦276612 bird or a darting swallow¦276613,
+\v 2 Like a fluttering¦276612 bird¦276611 or a darting swallow¦276613,
 \q1 so \add too\add* an \add ≈undeserved\add* curse¦276616 won't \add ≈land on you\add*.
 \q1
 \v 3 \add There's¦276625\add* a whip for the horse¦276623 and a bridle¦276624 for the donkey¦276625,
@@ -2471,7 +2471,7 @@
 \v 26 Hatred can be covered¦276846 by deception¦276848,
 \q1 →\add but\add* it¦276849 will be uncovered \add ≈when people gather together\add*.
 \q1
-\v 27 The \add >person\add* who digs¦276853 a pit will fall into it,
+\v 27 The \add >person\add* who digs¦276853 a pit will fall¦276857 into it,
 \q1 ≈and the \add >one\add* who rolls¦276858 a stone¦276859 will \add ≈have it come back on¦276856 them\add*.
 \p
 \v 28 A lying tongue¦276863 \add ≈despises\add* those who are crushed¦276867 by it,
@@ -2499,7 +2499,7 @@
 \q1 ^\add ≈but\add* even bitter¦276939 \add food\add* is sweet¦276940 when you're hungry¦276936.
 \q1
 \v 8 A person¦276949 who wanders away from their home¦276951,
-\q1 is like a bird that¦276943 wanders from its¦276946 nest¦276946.
+\q1 is like a bird¦276942 that¦276943 wanders from its¦276946 nest¦276946.
 \q1
 \v 9 \add ≈Lotions and perfumes¦276954 make a person¦276962 cheery\add*,
 \q1 →\add ≈but it's so pleasant¦276958 to be given good advice by a friend\add*.
@@ -2508,7 +2508,7 @@
 \q1 and don't¦276970 go¦276977 to your brother's house¦276973 \add ≈when calamity¦276979 hits you\add*.
 \q1 A¦276969 friend¦276967 nearby is better than a brother living a long way away.
 \q1
-\v 11 My¦276991 child, \add ≈make me happy by becoming wise\add*,
+\v 11 My¦276991 child, \add ≈make¦276988 me happy by becoming wise\add*,
 \q1 and¦276988 then I'll¦276990 be able to answer¦276990 \add <anyone\add* who taunts¦276991 me.
 \q1
 \v 12 A sensible¦276994 \add >person\add* sees¦276995 evil¦276996 and \add ≈stays out of sight\add*
@@ -2599,7 +2599,7 @@
 \q1 ^\add ≈but\add* the one who confesses¦277269 and then abandons \add <their bad behaviour\add*, will be shown¦277271 mercy¦277271.
 \q1
 \v 14 The person¦277274 \add ≈who strives to allows obey\add* \add <Yahweh\add* will be blessed¦277273,
-\q1 ^\add ≈but\add* the one who \add ≈firmly resists\add* will fall into trouble.
+\q1 ^\add ≈but\add* the one who \add ≈firmly resists\add* will fall¦277279 into trouble.
 \q1
 \v 15 A wicked¦277288 ruler¦277287 over \add ≈struggling\add* people¦277290,
 \q1 is \add like\add* a lion¦277282 roaring¦277284 or a bear attacking.
@@ -2607,13 +2607,13 @@
 \v 16 A ruler¦277294 lacking¦277295 understanding¦277296 \add can become\add* an oppressor.
 \q1 The person who hates¦277299 dishonest gain \add ≈will have a longer life\add*.
 \q1
-\v 17 A man tormented by the \add ≈killing of another\add* will flee to the pit.
+\v 17 A man tormented by the \add ≈killing of another\add* will flee¦277317 to the pit.
 \q1 Don't¦277318 let anyone support¦277320 him.
 \q1
 \v 18 The person with¦277330 blameless¦277325 \add ≈behaviour\add* will be rescued,
-\q1 ^\add ≈but\add* the crooked¦277327 \add >one\add* will \add ≈suddenly\add* fall.
+\q1 ^\add ≈but\add* the crooked¦277327 \add >one\add* will \add ≈suddenly\add* fall¦277329.
 \q1
-\v 19 The person working their land will \add ≈have enough food\add*,
+\v 19 The person working their land¦277333 will \add ≈have enough food\add*,
 \q1 ^\add ≈but\add* those \add ≈wasting their time\add* will \add ≈have their fill of\add* poverty¦277341.
 \q1
 \v 20 A faithful¦277344 person¦277343 will have great¦277345 blessing¦277347,
@@ -2784,7 +2784,7 @@
 \li1
 \v 16 \add 1.\add* the grave,
 \li1 \add 2.\add* \add ≈a childless woman\add*,
-\li1 \add 3.\add* land that never has enough¦277911 water¦277906, and
+\li1 \add 3.\add* land¦277902 that never has enough¦277911 water¦277906, and
 \li1 \add 4.\add* fire¦277907 that never \add ≈stops spreading\add*.
 \p
 \v 17 The eye¦277913 that¦277915 mocks¦277915 its father¦277916,
@@ -2811,7 +2811,7 @@
 \li1 \add 2.\add* a fool who \add ≈has plenty to eat\add*,
 \li1
 \v 23 \add 3.\add* a hated¦277996 woman¦277996 who gets married¦277998, and¦277999
-\li1 \add 4.\add* a female¦277999 slave who supplants her¦278003 mistress¦278003.
+\li1 \add 4.\add* a female¦277999 slave¦277999 who supplants her¦278003 mistress¦278003.
 \p
 \v 24 There are four¦278006 \add >creatures\add* on the earth¦278010
 \q1 that are small¦278008 but¦278011 extremely wise:
@@ -2880,7 +2880,7 @@
 \q1 →and he doesn't lack \add ≈in¦278209 prosperity\add*.
 \qa \bd ג\bd* (Gimel)
 \p
-\v 12 She \add ≈doesn't harm him\add*, but¦278218 does him good¦278217,
+\v 12 She \add ≈doesn't harm him\add*, but¦278218 does¦278216 him good¦278217,
 \q1 \add ≈right throughout her¦278223 life¦278223\add*.
 \qa \bd ד\bd* (Dalet)
 \p

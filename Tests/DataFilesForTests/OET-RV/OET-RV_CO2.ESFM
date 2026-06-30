@@ -1,4 +1,4 @@
-\id 2CO - Open English Translation—Readers' Version (OET-RV) v0.1.50
+\id 2CO - Open English Translation—Readers' Version (OET-RV) v0.1.52
 \usfm 3.0
 \ide UTF-8
 \rem ESFM v0.6 CO2
@@ -7,12 +7,12 @@
 \toc1 2 Corinthians
 \toc2 2 Corinthians
 \toc3 2 Cor.
-\mt2 Paul's second letter to the believers in
+\mt2 Paul's second known letter to the believers in
 \mt1 Corinth
 \is1 Introduction
-\ip This is Paul's second letter to the believers in Corinth that we have in our Bibles, but could easily have been his third or fourth letter to them. We deduce this from his reference to other letters, e.g., see https://www.GotQuestions.org/how-many-letters-Corinthians.html, but we don't have copies of them.
+\ip This is Paul's second letter written to the believers in Corinth that we have in our Bibles, but could easily have been his third or fourth letter to them. We deduce this from his reference to other letters (e.g., see https://www.GotQuestions.org/how-many-letters-Corinthians.html), but we don't have copies of them.
 \ip This letter from Paul to the believers in Corinth was written from Macedonia at a time when his relationship with the believers there wasn't very good.
-\ip In first part of this document, Paul tells about his relationship with the believers there in Corinth. He explains his sadness concerning the shame of the believers and their disobedience of him. Then he tells again about his happiness that his anger faded after the believers repented of their sin and then their good relationship was restored. He urged the believers to continue to collect a gift of aid for poor believers in Yerushalem.
+\ip In first part of this letter, Paul tells about his relationship with the believers there in Corinth. He explains his sadness concerning the shame of the believers and their disobedience of him. Then he tells again about his happiness that his anger faded after the believers repented of their sin and then their good relationship was restored. He urged the believers to continue to collect a gift of aid for poor believers in Yerushalem.
 \ip In the final four chapters, Paul justifies his missionary status to them. (Those that accused Paul said that he's not a true ambassador of Messiah.)
 \iot Main components of Paul's letter
 \io1 Introduction \ior 1:1-11\ior*
@@ -35,12 +35,12 @@
 \v 3 \add May\add* the god and father of our¦120672 \nd master¦120671 Yeshua Messiah¦120674\nd* \add be\add* blessed. He is the father of compassion¦120678 and \nd God¦120667\nd* of all comfort¦120682
 \v 4 who comforts us through all our¦120690 trials so that we¦120704 can comfort others through all their trials with the \add same\add* comfort that \nd God¦120708\nd* comforts us with.
 \v 5 In the same way that Messiah's many sufferings¦120713 are \add expected\add* of us, so too the Messiah's plentiful comfort¦120726 also \add reaches\add* us.
-\v 6 If we're being oppressed¦120730, it's for your comfort and salvation¦120736, and if we're being comforted, it's for your comfort which enables you all to endure¦120746 the same¦120748 sufferings that¦120743 we're suffering.
+\v 6 If we're being oppressed¦120730, it's for your comfort and salvation¦120736, and if we're being comforted, it's for your comfort which enables you all to endure¦120746 the same¦120748 sufferings that¦120743 we're suffering¦120753.
 \v 7 We have confident¦120767 expectations for you all because we know that you are partners¦120782 in suffering¦120785, and¦120762 hence also in comfort¦120789.
 \p
 \v 8 \x + \xo 1:8: \xt 1Cor 15:32.\x*Brothers¦120795 and sisters, we don't¦120790 want you¦120793 to miss out on knowing¦120794 about¦120797 our difficulties in \add the province of\add* Asia¦120806 \add Minor\add*. We were weighed¦120813 down with \add a situation\add* totally beyond¦120811 our power¦120812, so much so that¦120801 we thought we wouldn't live through it.
 \v 9 We were resigned in ourselves to the death¦120827 sentence¦120825 so that we wouldn't trust¦120831 in ourselves but¦120820 in \nd God¦120838\nd* who brings the dead¦120842 back to life—
-\v 10 \add the one\add* who rescued us from that death¦120848 and¦120852 will rescue us \add again\add*. He's the one we¦120858 put our hope in that he¦120862 will continue to rescue us
+\v 10 \add the one\add* who rescued¦120850 us from that death¦120848 and¦120852 will rescue us \add again\add*. He's the one we¦120858 put our hope in that he¦120862 will continue to rescue us
 \v 11 as you¦120866 also cooperated¦120863 with us through¦120885 your requests \add to him\add*. Through this, many people¦120879 will give thanks¦120887 on our behalf for the gift¦120884 that was granted to us \add in answer to the prayers\add* of many.
 \s1 The changes to Paul's plans
 \rem /s1 The Change in Paul's Plans; Paul's Change of Plans; The Postponement of Paul's Visit; Paul's concern for the church at Corinth
@@ -74,7 +74,7 @@
 \v 7 so now you should forgive¦121288 and comfort¦121290 him in case excess pain should drive him out.
 \v 8 That's why I'm urging all of you¦121301 to \add re\add*affirm him¦121304 \add now\add* with your love¦121305.
 \v 9 Another reason that I wrote¦121310 to you was to find out if you would \add stand strong\add* and be obedient¦121319 in everything.
-\v 10 But \nd anyone¦121342\nd* that you forgive for anything, I also forgive, because¦121329 what I've¦121335 also forgiven (if I have forgiven anything), it was for you all in the presence¦121341 of \nd Messiah¦121342\nd*
+\v 10 But anyone¦121342 that you forgive for anything, I also forgive, because¦121329 what I've¦121335 also forgiven (if I have forgiven anything), it was for you all in the presence¦121341 of \nd Messiah¦121342\nd*
 \v 11 so that we can't¦121344 be exploited¦121345 by Satan¦121348 (because¦121350 we're not ignorant about his¦121351 intentions).
 \s1 Paul's brief ministry in Troas
 \rem /s1 Ministers of the New Covenant; Paul's Anxiety in Troas
@@ -122,7 +122,7 @@
 \v 2 but¦121837 rather, we have renounced¦121838 any shameful¦121842 things that were hidden¦121840 and continue our \add spiritual\add* journey. Avoiding deception and \add taking care\add* not to distort God's message¦121850, we present the truth¦121857 \add clearly\add* even as we commend¦121858 ourselves¦121859 to everyone's¦121861 conscience¦121862 before¦121864 God.
 \v 3 But even if our¦121874 good¦121873 message¦121873 is concealed, it's concealed from those who are perishing¦121877.
 \v 4 The god of this age has blinded¦121887 the thinking¦121889 of the unbelievers¦121891 so that the light of the good message¦121902 about the greatness of the \nd messiah¦121907\nd* who's God's image¦121910, doesn't radiate¦121897 out to them,
-\v 5 because it's not us ourselves that we're proclaiming¦121916, but¦121923 the \nd master¦121921 Yeshua Messiah¦121920\nd*. \nd We\nd* \add serve\add* as your¦121926 slaves¦121924 because of him,
+\v 5 because it's not us ourselves that we're proclaiming¦121916, but¦121923 the \nd master¦121921 Yeshua Messiah¦121920\nd*. We \add serve\add* as your¦121926 slaves¦121924 because of him,
 \v 6 \x + \xo 4:6: \xt Gen 1:3.\x*because¦121950 the god who said, ‘Light will be shining¦121941 out of the darkness¦121939’, shined¦121944 in our¦121948 hearts¦121947 so that¦121935 we could experience God's greatness in the face¦121960 of \nd Yeshua Messiah¦121962\nd*.
 \p
 \v 7 So we¦121963 have this treasure¦121966 stored in containers made from the dirt, so that the excellence¦121973 of the power¦121975 will be from \nd God¦121978\nd* and¦121979 not from us \add ourselves\add*.
@@ -162,7 +162,7 @@
 \v 11 Because of that, having¦122344 known¦122344 the fear¦122347 of \nd Yahweh¦122349\nd*, we are persuading¦122351 people¦122350, but¦122354 \nd God¦122353\nd* sees what we're doing, and I'm hoping¦122356 that your¦122362 consciences¦122361 also see the same.
 \v 12 Again, we're not trying to promote ourselves¦122367 to you, but¦122386 we're giving¦122372 you all an opportunity¦122371 to take pride in us, so that you can \add respond to\add* those who take pride in \add outside\add* appearances¦122384 rather than in what's in the heart¦122390.
 \v 13 If we're being crazy, it's \add to serve\add* \nd God¦122394\nd*, or if we're being sensible¦122396, it's for all of you¦122397,
-\v 14 because¦122399 the \nd messiah's¦122403\nd* love controls us since we are convinced that¦122415 he died for \nd everyone¦122403\nd*. Hence we've all died
+\v 14 because¦122399 the \nd messiah's¦122403\nd* love controls us since we are convinced that¦122415 he died for everyone¦122403. Hence we've all died
 \v 15 and he died for everyone, so that anyone who's living, won't be living for themselves¦122427 any more, but¦122419 for the one who died for them and then¦122419 came back to life from the dead.
 \p
 \v 16 So from now on, we don't just know people in the physical dimension, and even if we have known \nd Messiah¦122451\nd* physically, that's no longer¦122454 how we know him.
@@ -226,7 +226,7 @@
 \v 6 but¦122931 the \nd God¦122939\nd* who comforts those who are humble¦122935, comforted us with the arrival of Titos¦122944.
 \v 7 It wasn't just his¦122951 coming¦122950, but¦122947 also because he'd been comforted¦122956 by all of you. He told us about your longing¦122966 for me, and your mourning¦122969 \add for my troubles\add* and your zeal for me, and it really cheered me up.
 \p
-\v 8 Yes, because even if I made you sad with my letter, I don't¦122988 regret \add sending\add* it. (\add Well,\add* for a while I was sad for you that I had sent the letter.)
+\v 8 Yes, because even if I made you sad with my letter,\f + \fr 7:8 \ft Most scholars agree that the letter referred to here (often referred to as ‘the severe letter’ because of its effects described in the rest of the paragraph) is not the one that we call ‘1 Corinthians’.\f* I don't¦122988 regret \add sending\add* it. (\add Well,\add* for a while I was sad for you that I had sent the letter.)
 \v 9 \add Anyway,\add* now I'm happy, not that it made you sad, but because that sadness led to turning away from your sin because \add that\add* sorrow was according¦123020 to God's \add values\add* so you didn't¦123010 lose anything because of us.
 \v 10 Because¦123029 sorrow according¦123030 to God's \add values\add* brings repentance¦123033 that leads to salvation¦123035 without regrets, but¦123040 the world's¦123042 sorrow leads to death¦123044.
 \v 11 See how this sorrow¦123053 according¦123051 to God's \add values\add* has produced¦123056 earnestness¦123060 in you all, but also eagerness to clear yourselves, resentment¦123065, fear¦123067, longing¦123070, zeal, and vengeance¦123075. You have proved yourselves innocent in the matter¦123084 in every¦123077 area.
@@ -297,7 +297,7 @@
 \v 10 \x + \xo 9:10: \xt Isa 55:10.\x*Thus \add God\add* who supplies the seed to the person sowing¦123850 and supplies our food¦123852, will be supplying and multiplying¦123858 your seeds \add as you sow in others\add* and will increase the harvest \add resulting\add* from your righteousness¦123870.
 \v 11 You will be enriched towards generosity¦123877 in every¦123873 way, which¦123880 will lead us all to give thanks¦123884 to \nd God¦123886\nd*.
 \v 12 Serving in this \add kind of\add* ministry¦123892 meets the needs¦123899 of the believers, but¦123902 also \add leads to\add* plenty¦123904 of \add occasions to\add* give thanks¦123907 to \nd God¦123911\nd*.
-\v 13 In proving yourselves by this ministry, they will honour \nd God¦123921\nd* as it displays your commitment to the good¦123930 message¦123930 of the \nd messiah¦123932\nd*, and your generosity¦123934 toward them and towards \nd everyone¦123932\nd*,
+\v 13 In proving yourselves by this ministry, they will honour \nd God¦123921\nd* as it displays your commitment to the good¦123930 message¦123930 of the \nd messiah¦123932\nd*, and your generosity¦123934 toward them and towards everyone¦123932,
 \v 14 and they will wish the best for you all and pray for you because¦123951 of God's overflowing goodness to you all.
 \v 15 \add Yes,\add* we thank \nd God¦123963\nd* for his¦123967 incredible gift¦123968.
 \c 10
@@ -311,7 +311,7 @@
 \v 5 \add We attack\add* every \add theory\add* that's used to argue against¦124048 \add the possibility of\add* knowing \nd God¦124052\nd*, and capturing all thinking¦124056 \add so it\add* becomes obedient¦124059 to the \nd messiah¦124061\nd*,
 \v 6 and¦124062 being ready¦124064 to stand against all disobedience¦124068 for whenever¦124069 your¦124072 obedience¦124074 might be complete.
 \p
-\v 7 You all are looking¦124078 at the \add outside\add* appearance¦124077 of things. \nd Anyone¦124086\nd* who has personally decided to \add follow\add* Messiah needs¦124089 to take this into account: just as they belong to Messiah, so also do we¦124102.
+\v 7 You all are looking¦124078 at the \add outside\add* appearance¦124077 of things. Anyone¦124086 who has personally decided to \add follow\add* Messiah needs¦124089 to take this into account: just as they belong to Messiah, so also do we¦124102.
 \v 8 So¦124105 if I boast¦124110 too often about our¦124115 authority¦124114 (which¦124116 the \nd master¦124119\nd* gave¦124117 us for building¦124122 you up rather than for tearing¦124126 you down), I won't¦124124 be ashamed¦124129 of it
 \v 9 so that hopefully I won't¦124131 be terrifying¦124135 you¦124136 all with my letters¦124139.
 \v 10 Some are saying¦124145, “His letters¦124143 are heavy¦124147 and strongly-worded, but¦124148 when he's actually here, he's weak and his words get mocked.”
