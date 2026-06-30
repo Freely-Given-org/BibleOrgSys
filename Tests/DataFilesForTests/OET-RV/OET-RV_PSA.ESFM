@@ -1,4 +1,4 @@
-\id PSA - Open English Translation—Readers' Version (OET-RV) v0.2.31
+\id PSA - Open English Translation—Readers' Version (OET-RV) v0.3.2
 \usfm 3.0
 \ide UTF-8
 \rem ESFM v0.6 PSA
@@ -30,7 +30,7 @@
 \s1 Wicked and godly roads
 \rem /s1 True Happiness; The Two Ways
 \p
-\v 1 A person will reap the benefits
+\v 1 \z1 A person will reap the benefits
 \q2 if they don't take advice¦243189 from wicked¦243190 people,
 \q2 and don't stand¦243194 \add ≈around where\add* sinners¦243192 \add ≈go\add*,
 \q2 and don't sit and join all the scoffers.
@@ -44,13 +44,13 @@
 \q2 and they prosper in everything they do.\x + \xo 1:3 \xt Gen 29:2-3.\x*
 \b
 \q1
-\v 4 \add But\add* wicked¦243235 \add people\add* won't \add prosper\add*—
+\v 4 \z2 \add But\add* wicked¦243235 \add people\add* won't \add prosper\add*—
 \q1 they're like straw that¦243240 gets blown away by the wind¦243243.
 \q1
 \v 5 The wicked¦243252 \add people\add* won't be able to stand¦243251 when \add God\add* judges¦243253 \add them\add*,
 \q1 and sinners¦243254 won't be able to join in¦243253 the assembly¦243255 of \add all the godly¦243256 people\add*,
 \q1
-\v 6 because Yahweh¦243261 knows the path \add chosen by godly¦243263 people\add*,
+\v 6 \z3 because Yahweh¦243261 knows the path \add chosen by godly¦243263 people\add*,
 \q1 but¦243264 the path of wicked¦243265 \add people\add* will be destroyed.
 \c 2
 \s1 God's chosen king
@@ -84,7 +84,7 @@
 \q1 ≈You'll smash¦243352 them to pieces like a clay pot.”
 \b
 \q1
-\v 10 So¦243354 act wisely \add all\add* you kings¦243355.
+\v 10 So¦243354 act¦243356 wisely \add all\add* you kings¦243355.
 \q1 ≈Be warned \add all\add* you rulers¦243358 of the earth¦243359.
 \q1
 \v 11 Serve¦243361 Yahweh¦243364 with¦243365 fear¦243365.
@@ -97,8 +97,7 @@
 \c 3
 \s1 A prayer when under attack
 \rem /s1 Trust in God under Adversity; Morning Prayer for Help
-\d A song by David¦243390 when he¦243391 fled from his son Avshalom \add (Absalom¦243394)\add*.
-\rem /d A psalm of David. When he fled from his son Absalom.; A psalm of David, regarding the time David fled from his son Absalom.; A Psalm of David, when he fled from his son Absalom.; A psalm: for David (when he fled from his son Absalom)
+\d A song by David¦243390 when he¦243391 fled¦243391 from his son Avshalom \add (Absalom¦243394)\add*.
 \q1
 \v 1 Yahweh¦243398, how did I get so many enemies?
 \q1 ≈Many \add people\add* are rising¦243404 up against¦243405 me.
@@ -126,15 +125,14 @@
 \q1 \add ≈Yes,\add* you've slapped all my enemies¦243470 on the cheek—
 \q1 you've broken¦243474 the teeth¦243472 of the wicked¦243473 \add people\add*.
 \q1
-\v 8 Salvation comes from Yahweh¦243477.
+\v 8 Salvation belongs to Yahweh¦243477.
 \q1 Your blessing¦243482 goes to your people¦243481. \qs (Instrumental¦243483 break¦243483.)\qs*
 \c 4
 \s1 A night-time prayer
 \rem /s1 Confident Plea for Deliverance from Enemies; Evening Prayer for Help
 \d For the musical director¦243485: a song by David¦243488 \add ≈to be accompanied by\add* stringed¦243486 instruments¦243486.
-\rem /d For the director of music. With stringed instruments. A psalm of David.; For the choir director: A psalm of David, to be accompanied by stringed instruments.; For the leader: with stringed instruments: a psalm: for David; To the leader: with stringed instruments. A Psalm of David.
 \q1
-\v 1 God¦243494 of my righteousness¦243495, answer¦243492 me when I call \add out\add*.
+\v 1 God¦243494 of my righteousness¦243495, answer¦243492 me when I call¦243491 \add out\add*.
 \q1 \add ≈You who granted me relief from\add* distress¦243496.
 \q1 Be gracious¦243499 to me and¦243500 \add ≈listen¦243500\add* to my prayer¦243501.
 \b
@@ -144,7 +142,7 @@
 \b
 \q1
 \v 3 \add ≈But¦243518 be aware\add* that Yahweh has \add ≈treats people who are faithful¦243523 to him as special to him\add*.
-\q1 Yahweh \add ≈pays attention\add* when I call out to him \add for help\add*.
+\q1 Yahweh \add ≈pays attention\add* when I call¦243527 out to him \add for help\add*.
 \b
 \q1
 \v 4 \add ≈Respect Yahweh\add* and don't¦243532 sin¦243534.\x + \xo 4:4: \xt Eph 4:26.\x*
@@ -154,7 +152,7 @@
 \q1 and¦243548 \add keep\add* trusting¦243548 him.
 \b
 \q1
-\v 6 Many \add people\add* \add ≈ask\add*, “Who can show us \add anything that's\add* good¦243560?”
+\v 6 Many \add people\add* \add ≈ask\add*, “Who can show¦243558 us \add anything that's\add* good¦243560?”
 \q1 Yahweh¦243566, \add ≈shower your¦243565 favour down\add* on us.
 \q1
 \v 7 You've \add ≈made me very happy\add*,
@@ -166,7 +164,6 @@
 \s1 A prayer for protection
 \rem /s1 A Prayer for Protection; Trust in God for Deliverance from Enemies
 \d For the musical director¦243590: a song by David¦243595 \add ≈to be accompanied by\add* flutes¦243593.
-\rem /d For the leader: with the flutes: a psalm: for David; For the director of music. For flutes. A psalm of David.; For the choir director: A psalm of David, to be accompanied by the flute.; To the leader: for the flutes. A Psalm of David.
 \q1
 \v 1 \add ≈Listen to what I say\add*, Yahweh¦243601.
 \q1 ≈\add ≈Give consideration¦243602 to my groans of distress\add*.
@@ -198,7 +195,7 @@
 \q1
 \v 9 Their \add ≈lips are always flapping\add*.
 \q1 ≈Their minds are their destruction¦243700.
-\q1 Their throats¦243704 are open graves¦243701\x + \xo 5:9: \xt Rom 3:13.\x*
+\q1 Their throats¦243704 are open¦243703 graves¦243701\x + \xo 5:9: \xt Rom 3:13.\x*
 \q1 ≈Their tongues¦243705 are \add full of\add* flattery¦243706.
 \q1
 \v 10 My god¦243711, make them feel guilty¦243709.
@@ -218,7 +215,6 @@
 \s1 A prayer in time of distress
 \rem /s1 A Prayer for Help in Time of Trouble; Prayer for Recovery from Grave Illness
 \d A song by David¦243754 for the singing director¦243748 \add ≈to be accompanied by\add* the \add ?≈eight-\add*stringed instrument¦243749.
-\rem /d For the leader: with stringed instruments: according to the sheminith: a psalm: for David; To the leader: with stringed instruments—according to The Sheminith. A Psalm of David.; For the director of music. With stringed instruments. According to \it sheminith.\it* A psalm of David.; For the choir director: A psalm of David, to be accompanied by an eight-stringed instrument.
 \q1
 \v 1 Yahweh¦243757, don't¦243758 rebuke¦243761 me \add ≈in your anger\add*,\x + \xo 6:1: \xt Psa 38:1.\x*
 \q1 ≈or discipline¦243765 me in your rage.
@@ -238,7 +234,7 @@
 \b
 \q1
 \v 6 I'm worn out from groaning¦243813.
-\q1 Every night¦243817 I make my bed¦243818 swim with¦243813 my tears¦243819.
+\q1 Every night¦243817 I make¦243814 my bed¦243818 swim with¦243813 my tears¦243819.
 \q1 I melt \add away\add* on¦243813 my couch¦243820.
 \q1
 \v 7 \add ≈I can barely open\add* my eyes¦243826 because¦243825 of \add &my\add* grief.
@@ -257,7 +253,6 @@
 \s1 A prayer for justice
 \rem /s1 A Prayer for Justice; Plea for Help against Persecutors
 \d A \add ≈song\add* by David¦243867 which¦243868 he sang to Yahweh¦243871 concerning the Benyamite, Kush.
-\rem /d A \it shiggaion\it* of David, which he sang to the Lord concerning Cush, a Benjamite.; A Shiggaion of David, which he sang to the Lord concerning Cush, a Benjaminite.; A shiggaion: for David (which he sang to the Lord because of Cush, a Benjamite); A psalm of David, which he sang to the Lord concerning Cush of the tribe of Benjamin.
 \q1
 \v 1 I've¦243885 \add ≈taken\add* refuge¦243885 in¦243884 you¦243884, Yahweh, my¦243889 god¦243883.
 \q1 Save me from those¦243889 who are \add ≈trying to get\add* me,
@@ -307,12 +302,12 @@
 \q1 he makes fiery¦244025 arrows¦244024.
 \b
 \q1
-\v 14 Look at \add @that person\add* who's pregnant with wickedness¦244032
+\v 14 Look¦244029 at \add @that person\add* who's pregnant with wickedness¦244032
 \q1 ≈and conceives¦244033 trouble
 \q1 ≈and gives¦244035 birth¦244035 to lies.
 \q1
 \v 15 He digs¦244040 a pit \add ≈then makes it deeper\add*,
-\q1 \add ≈but¦244041\add* he'll fall into the \add very\add* hole that¦244044 he made.
+\q1 \add ≈but¦244041\add* he'll fall into the \add very\add* hole that¦244044 he made¦244044.
 \q1
 \v 16 His trouble¦244048 returns¦244047 on¦244049 his own head,
 \q1 ≈and¦244050 his violence¦244052 \add ≈crushes\add* his own skull¦244051.
@@ -324,7 +319,6 @@
 \s1 God's splendour and mankind's status
 \rem /s1 God's Glory and Human Dignity; Divine Majesty and Human Dignity
 \d For¦244068 the musical director¦244065: a song by David¦244070 \add ≈to be accompanied by\add* a stringed instrument.\f + \fr 8:0 \ft Hebrew: ‘gittit’ instrument or style.\f*
-\rem /d For the director of music. According to \it gittith.\it* A psalm of David.; For the choir director: A psalm of David, to be accompanied by a stringed instrument.; To the leader: according to The Gittith. A Psalm of David.; For the leader: according to the gittith: a psalm: for David
 \q1
 \v 1 Our master¦244074 Yahweh¦244074, your \add ≈reputation¦244078\add* all over the earth¦244081 is magnificent.
 \q1 Your splendour¦244084 is \add ≈displayed across the sky\add*
@@ -340,7 +334,7 @@
 \q1 \add ≡Why would you even pay\add* attention¦244125 to \add ≈any descendant of ours\add*?\x + \xo 8:4: \xt Yob 7:17-18; Psa 144:3; Heb 2:6-8.\x*
 \b
 \q1
-\v 5 You've made him a little¦244129 lower¦244128 than \add ?≈God¦244130 (or ‘gods’)\add*,
+\v 5 You've made¦244128 him a little¦244129 lower¦244128 than \add ?≈God¦244130 (or ‘gods’)\add*,
 \q1 and \add ≈poured splendour and majesty¦244132 over\add* him.\f + \fr 8:5 \ft Although this is referring directly to humankind, we've strived to keep this segment in the singular, as many students of these songs also see messianic implications here.\f*
 \q1
 \v 6 You've established him as ruler¦244136 over \add ≈your creation\add*—
@@ -359,7 +353,6 @@
 \s1 Thanking Yahweh for his justice
 \rem /s1 God's Power and Justice; Thanksgiving to God for His Justice
 \d For the musical director¦244173: David's¦244177 song about the death of the son
-\rem /d For the choir director: A psalm of David, to be sung to the tune “Death of the Son.”; To the leader: according to Muth-labben. A Psalm of David.; For the leader: set to ‘Muth labben’: a psalm: for David; For the director of music. To the tune of “The Death of the Son.” A psalm of David.
 \q1
 \v 1 I will thank¦244180 Yahweh¦244181 with all \add ≈of my being\add*.
 \q1 ≈I will \add ≈tell others\add* all \add ≈about your¦244188 miracles\add*.
@@ -411,7 +404,7 @@
 \q1 I'll¦244322 \add ≈celebrate the salvation¦244323 that comes from you\add*.
 \b
 \q1
-\v 15 The nations¦244327 have sunk down into the pit they \add themselves\add* made.
+\v 15 The nations¦244327 have sunk down into the pit they \add themselves\add* made¦244329.
 \q1 ≈Their foot¦244335 is caught¦244334 in¦244328 the hidden¦244333 net¦244330 \add that¦244329 they themselves\add* \add ≈had put there\add*.
 \q1
 \v 16 Yahweh¦244340 has revealed himself¦244338—he's served justice¦244341—
@@ -489,7 +482,7 @@
 \b
 \q1
 \v 16 Yahweh¦244577 is king¦244578 forever¦244579 and ever.
-\q1 \add ≈He drove those other nations¦244582 out\add* of his land.
+\q1 \add ≈He drove those other nations¦244582 out\add* of his land¦244583.
 \b
 \q1
 \v 17 You've heard¦244587 the \add ≈request of those in need\add*, Yahweh¦244588.
@@ -501,7 +494,6 @@
 \s1 Trusting God for fair process
 \rem /s1 Confidence in the Lord; Song of Trust in God
 \d For the musical director¦244607: \add a song\add* by David¦244608.
-\rem /d To the leader. Of David.; For the choir director: A psalm of David.; For the leader: for David; For the director of music. Of David.
 \q1
 \v 1 I've taken refuge in Yahweh.
 \q1 How can you tell me,
@@ -530,7 +522,6 @@
 \s1 The requesting of God
 \rem /s1 A Prayer for Help; Plea for Help in Evil Times
 \d For the musical director¦244693: a song by David¦244698 \add ?≈to be played on the eight-stringed instrument\add*.
-\rem /d For the choir director: A psalm of David, to be accompanied by an eight-stringed instrument.; For the leader: according to the sheminith: a psalm: for David; To the leader: according to The Sheminith. A Psalm of David.; For the director of music. According to \it sheminith.\it* A psalm of David.
 \q1
 \v 1 Help, Yahweh¦244702, because¦244703 faithful \add >people\add* \add seem to\add* have disappeared.
 \q1 ≈Those who have integrity have vanished¦244709 from among humanity¦244712.
@@ -539,7 +530,7 @@
 \q1 ≈Everyone speaks with¦244724 flattering¦244723 lips and¦244725 \add ≈deceitful motives\add*.
 \b
 \q1
-\v 3 Yahweh¦244730, cut off all \add those\add* flattering¦244734 lips¦244733,
+\v 3 Yahweh¦244730, cut¦244729 off all \add those\add* flattering¦244734 lips¦244733,
 \q1 ≈\add and\add* every tongue¦244735 \add ≈that¦244736 exaggerates\add*.
 \q1
 \v 4 These are those who have said, “With our tongues¦244743 \add ≈we'll get whatever we want\add*.
@@ -565,7 +556,6 @@
 \s1 A prayer for help
 \rem /s1 Prayer for Deliverance from Enemies; A Prayer for Help
 \d For the musical director¦244799: a song by David¦244801.
-\rem /d To the leader. A Psalm of David.; For the leader: a psalm: for David; For the choir director: A psalm of David.; For the director of music. A psalm of David.
 \q1
 \v 1 Yahweh¦244807, for how long will you keep forgetting¦244808 about me?
 \q1 For how long will you hide¦244814 \add ≈yourself\add* from me?
@@ -591,7 +581,6 @@
 \rem /s1 Denunciation of Godlessness; Human Wickedness
 \r (Psa. 53)
 \d For the musical director¦244876: \add a song\add* by David¦244877.
-\rem /d To the leader. Of David.; For the choir director: A psalm of David.; For the leader: for David; For the director of music. Of David.
 \q1
 \v 1 Godless \add >people\add* \add ≈convince themselves\add* that there¦244901 is no god¦244906.
 \q1 They behave corruptly and do evil things.
@@ -621,7 +610,6 @@
 \s1 Who does Yahweh like?
 \rem /s1 What God Requires; Who Shall Abide in God's Sanctuary?
 \d A song by David¦244968.
-\rem /d A psalm: for David; A psalm of David.; A Psalm of David.
 \q1
 \v 1 Who's \add ≈allowed to\add* stay in¦244987 your tent?
 \q1 Who can live on¦244987 your sacred hill?
@@ -644,7 +632,6 @@
 \s1 Yahweh is my security
 \rem /s1 Song of Trust and Security in God; A Prayer of Confidence
 \d A song by David¦245043.
-\rem /d A Miktam of David.; A miktam: for David; A psalm of David.; A\it miktam\it* of David.
 \q1
 \v 1 Protect me, God,
 \q1 because \add ≈you are the one I trust for my safety\add*.
@@ -684,7 +671,6 @@
 \s1 A prayer for protection
 \rem /s1 Prayer for Deliverance from Persecutors; The Prayer of an Innocent Person
 \d A prayer by David¦245174.
-\rem /d A prayer: for David; A prayer of David.; A Prayer of David.
 \q1
 \v 1 Listen to my plea for justice, Yahweh.
 \q1 ≈Pay attention to my call for help.
@@ -746,16 +732,15 @@
 \rem /s1 Royal Thanksgiving for Victory; David's Song of Victory
 \r (2 Sam. 22:1-51)
 \d For the musical director¦245326: a song by Yahweh's¦245329 servant¦245328 David¦245330, when he sang the words¦245337 of this song to Yahweh on the day¦245340 that Yahweh rescued him from Shaul¦245350 \add (King Saul¦245350)\add* and all his \add other\add* enemies¦245348.
-\rem /d For the leader: for the Lord's servant: for David (who recited the words of this song to the Lord on the day when the Lord rescued him from the power of all his enemies and from the hand of Saul. He said:); To the leader. A Psalm of David the servant of the Lord, who addressed the words of this song to the Lord on the day when the Lord delivered him from the hand of all his enemies, and from the hand of Saul. He said:; For the director of music. Of David the servant of the Lord. He sang to the Lord the words of this song when the Lord delivered him from the hand of all his enemies and from the hand of Saul. He said:; For the choir director: A psalm of David, the servant of the Lord. He sang this song to the Lord on the day the Lord rescued him from all his enemies and from Saul.
 \q1
-\v 1 He said¦245353:
+\v 1 \z1 He said¦245353:
 \q1 I love¦245354 you¦245354, Yahweh¦245355, my \add source of\add* strength¦245356.
 \q1
 \v 2 Yahweh¦245359 is my rock, my fortress, \add ≈the one who brings me to safety\add*.
 \q1 ≈He's my god¦245364, my rock. I take refuge¦245366 in him.
 \q1 He's my shield¦245369, the \add ≈power that saves me\add*, my fortress.
 \q1
-\v 3 I will call \add ≈for help from\add* Yahweh¦245378
+\v 3 I will call¦245377 \add ≈for help from\add* Yahweh¦245378
 \q2 who \add ≈deserves all the praise¦245376 he gets\add*,
 \q1 and¦245379 then I'll be rescued from my enemies¦245381.
 \q1
@@ -771,7 +756,7 @@
 \q1 ≈My call for help entered his presence¦245416.
 \q1 ≈It \add ≈reached\add* his ears¦245419.
 \q1
-\v 7 Then the earth¦245425 quaked¦245423 and shook¦245422.
+\v 7 \z2 Then the earth¦245425 quaked¦245423 and shook¦245422.
 \q1 ≈The foundations¦245426 of the mountains¦245427 trembled¦245428
 \q1 ≈and were shaken because¦245430 \add @God\add* \add ≈was angry\add*.
 \q1
@@ -793,7 +778,7 @@
 \v 13 Yahweh¦245496 thundered¦245493 from the heavens¦245494.
 \q1 The voice¦245499 of the highest \add >one\add* shouted.\f + \fr 18:13 \ft ‘hail and burning coals’ has been omitted from this translation as the Hebrew words are assumed to have been accidentally copied from the previous verse.\f*
 \q1
-\v 14 He shot his arrows¦245507 and scattered¦245508 his enemies—
+\v 14 He shot his arrows¦245507 and \z2hilite scattered¦245508 his enemies\z2hilite*—
 \q1 ≈many lightning¦245509 bolts, and \add ≈forced them to disperse\add*.
 \q1
 \v 15 Then the water¦245517 channels¦245516 appeared¦245514.
@@ -814,7 +799,7 @@
 \v 19 He brought¦245557 me out to a wide open place¦245558.
 \q1 ≈He saved me because¦245560 he¦245561 was pleased with¦245562 me.
 \q1
-\v 20 Yahweh¦245566 has rewarded¦245565 me because \add ≈I've done nothing wrong\add*.
+\v 20 \z3 Yahweh¦245566 has rewarded¦245565 me because \add ≈I've done nothing wrong\add*.
 \q1 ≈He has restored me because \add ≈I'm innocent\add*.
 \q1
 \v 21 because¦245574 I've¦245576 \add ≈followed\add* Yahweh's¦245578 \add ≈instructions\add*
@@ -844,7 +829,7 @@
 \v 29 \add ≈With your help\add*, I \add ≈can run¦245662 forward into the invaders\add*.
 \q1 ≈\add ≈With my god's assistance\add*, I can leap over a wall¦245667.
 \q1
-\v 30 As for God¦245670, his \add #ways are\add* perfect.
+\v 30 \z2 As for God¦245670, his \add #ways are\add* perfect.
 \q1 ≈Yahweh's¦245675 message¦245673 has been refined¦245676.
 \q1 He is a shield¦245677 to everyone who \add ≈goes to him to stay safe\add*,
 \q1
@@ -873,8 +858,8 @@
 \v 38 I smashed¦245753 them so that they were unable to \add ≈regroup\add*.
 \q1 ≈They have fallen under¦245759 my feet¦245760.
 \q1
-\v 39 You put strength¦245764 on me for battle¦245765 \add ≈like a belt around me\add*.
-\q1 You made my enemies bow down to me.
+\v 39 You put strength¦245764 on me for \z2hilite battle¦245765\z2hilite* \add ≈like a belt around me\add*.
+\q1 You made¦245766 \z2hilite my enemies\z2hilite* bow down to me.
 \q1
 \v 40 You \add ≈allowed me to kill my¦245775 enemies¦245771\add*.
 \q1 ≈I annihilated those¦245775 who hated¦245775 me.
@@ -885,7 +870,7 @@
 \v 42 I \add ≈hammered\add* them into fine pieces like dust in the wind¦245796.
 \q1 ≈I emptied¦245799 them out like mud in the streets¦245798.
 \q1
-\v 43 You rescued me from people's feuds.
+\v 43 \z4 You rescued me from people's feuds.
 \q1 You've made me the head¦245806 over nations¦245807.
 \q1 ≈People serve¦245812 me that¦245809 I never knew¦245811 \add before\add*.
 \q1
@@ -915,7 +900,6 @@
 \s1 God's splendour displayed
 \rem /s1 God's Glory in Creation; God's Glory in Creation and the Law
 \d For the musical director¦245892: a song by David¦245894.
-\rem /d To the leader. A Psalm of David.; For the leader: a psalm: for David; For the choir director: A psalm of David.; For the director of music. A psalm of David.
 \q1
 \v 1 The skies¦245897 declare God's \add ≈talent and splendour¦245899\add*,
 \q1 ≈and \add ≈outer space\add* shows off his handiwork.
@@ -936,8 +920,8 @@
 \v 6 The sun rises from \add ≈side of our view\add*
 \q1 ≈and crosses the sky to the other.
 \q1 Nothing escapes its heat.
-\q1
 \rem /s1 The Law of the Lord
+\q1
 \v 7 Yahweh's \add #instructions are\add* perfect¦245971, restoring¦245972 \add ≈our motivation\add*.
 \q1 Yahweh's testimony is reliable¦245976, making¦245977 simple¦245978 \add >people\add* wise.
 \q1
@@ -971,7 +955,6 @@
 \s1 A prayer for victory
 \rem /s1 Prayer for Victory; A Prayer for Victory
 \d For the musical director¦246066: a song by David¦246068.
-\rem /d To the leader. A Psalm of David.; For the leader: a psalm: for David; For the choir director: A psalm of David.; For the director of music. A psalm of David.
 \q1
 \v 1 May Yahweh¦246072 help you \add ≈whenever trouble¦246074 comes\add*.
 \q1 ≈\add Then\add* may Yakob's \add (Jacob's)\add* God¦246078 protect¦246075 you
@@ -996,16 +979,15 @@
 \v 7 \add ≈Various leaders trust in various different military units\add*,
 \q1 but¦246140 we will \add ≈put our trust in\add* our god¦246147 Yahweh¦246146.
 \q1
-\v 8 They will \add ≈stumble\add* and fall,
+\v 8 They will \add ≈stumble\add* and fall¦246153,
 \q1 but¦246153 we will \add ≈be strong\add* and stand¦246156 \add ≈firm\add*.
 \q1
 \v 9 Yahweh¦246159, rescue the king¦246161.
-\q1 Answer us when we¦246165 call \add for help\add*.
+\q1 Answer us when we¦246165 call¦246165 \add for help\add*.
 \c 21
 \s1 Praise for victory
 \rem /s1 Thanksgiving for Victory; Praise for Victory
 \d For the musical director¦246167: a song by David¦246169.
-\rem /d To the leader. A Psalm of David.; For the leader: a psalm: for David; For the choir director: A psalm of David.; For the director of music. A psalm of David.
 \q1
 \v 1 The king's glad about your strength¦246173, Yahweh¦246172.
 \q1 ≈He's very happy about the salvation you provide.
@@ -1023,7 +1005,7 @@
 \q1 ≈You've given him splendour¦246225 and¦246226 majesty¦246226.
 \q1
 \v 6 When you grant him lasting blessings¦246234,
-\q1 you make him glad with¦246237 the \add ≈excitement\add* of your presence¦246240.
+\q1 you make¦246236 him glad with¦246237 the \add ≈excitement\add* of your presence¦246240.
 \q1
 \v 7 The king¦246245 trusts¦246246 in¦246247 Yahweh¦246247.
 \q1 He won't¦246250 waver \add ≈as he experiences\add* the loyal¦246248 commitment of the highest \add >one\add*.
@@ -1049,13 +1031,12 @@
 \s1 A cry of pain then a praise song
 \rem /s1 Plea for Deliverance from Suffering and Hostility; A Cry of Anguish and a Song of Praise
 \d For the musical director¦246315: a song by David¦246321 \add to the tune\add* ‘The doe of the dawn’.
-\rem /d For the director of music. To the tune of “The Doe of the Morning.” A psalm of David.; For the choir director: A psalm of David, to be sung to the tune “Doe of the Dawn.”; For the leader: set to ‘Hind of the Dawn’: a psalm: for David; To the leader: according to The Deer of the Dawn. A Psalm of David.
 \q1
 \v 1 My¦246329 god, my god, why have you abandoned¦246327 me?
 \q1 Why¦246324 are you so far from saving me
 \q1 ≈\add ≡and far from\add* \add ≈my plea for help\add*?\x + \xo 22:1: \xt Mat 27:46; Mrk 15:34.\x*
 \q1
-\v 2 My god¦246334, I call out in the daytime \add for help\add*, but¦246338 you¦246339 don't¦246338 answer¦246339 \add >me\add*,
+\v 2 My god¦246334, I call¦246335 out in the daytime \add for help\add*, but¦246338 you¦246339 don't¦246338 answer¦246339 \add >me\add*,
 \q1 ≈and at night¦246340 I'm not silent¦246343 \add either\add*.
 \q1
 \v 3 \add ≈Yet\add* you are sinless—
@@ -1071,7 +1052,7 @@
 \q1 ≈a disgrace to humanity¦246377 and despised¦246378 by the people¦246379.
 \q1
 \v 7 Everyone who sees me, taunts me.
-\q1 ≈They \add ?≈make faces at me\add*.
+\q1 ≈They \add ?≈make¦246387 faces at me\add*.
 \q1 ≈They shake¦246389 their heads at me.\x + \xo 22:7: \xt Mat 27:39; Mrk 15:29; Luk 23:35.\x*
 \q2
 \v 8 Go to Yahweh¦246396—he'll save him.
@@ -1116,7 +1097,7 @@
 \q1 ≈my \add ≈very existence\add* from the \add ≈clutch\add* of wild dogs.
 \q1
 \v 21 Save me from the lion's mouth¦246535.
-\q1 ≈Rescue me from the horns¦246537 of the wild bulls¦246538.
+\q1 ≈Rescue me from the horns¦246537 of the wild¦246538 bulls¦246538.
 \b
 \q1
 \v 22 I'll \add ≈promote\add* your¦246543 name¦246543 among my brothers¦246544.
@@ -1157,7 +1138,6 @@
 \s1 Protected and blessed by the shepherd
 \rem /s1 The Lord Our Shepherd; The Divine Shepherd
 \d A song by David¦246669.
-\rem /d A psalm: for David; A psalm of David.; A Psalm of David.
 \q1
 \v 1 Yahweh is my shepherd
 \q2 \add so\add* I won't lack anything.
@@ -1182,7 +1162,6 @@
 \s1 God the powerful King
 \rem /s1 The Great King; Entrance into the Temple
 \d A song by David.
-\rem /d Of David. A Psalm.; Of David. A psalm.; A psalm of David.; For David: a psalm
 \q1
 \v 1 The earth and all its content belong to Yahweh—
 \q1 ≈the world, and everything that lives in it,
@@ -1222,14 +1201,13 @@
 \s1 The praying so that get to teach
 \rem /s1 A Prayer for Guidance and Protection; Prayer for Guidance and for Deliverance
 \d \add A song\add* by David.
-\rem /d For David; A psalm of David.; Of David.
 \qa \bd א\bd* (Alef)
 \q1
 \v 1 I \add ≈offer\add* my life to you¦246862, Yahweh.
 \qa \bd ב\bd* (Beyt)
 \q1
 \v 2 My god, I trust in you¦246876.
-\q1 Don't let me be humiliated.
+\q1 Don't let me be humiliated¦246878.
 \q1 ≈Don't let my enemies \add ≈defeat me and then celebrate\add*.
 \qa \bd ג\bd* (Gimel)
 \q1
@@ -1316,7 +1294,6 @@
 \s1 A prayer of a godly person
 \rem /s1 Plea for Justice and Declaration of Righteousness; The Prayer of a Good Person
 \d \add A song\add* by David¦247066.
-\rem /d For David; A psalm of David.; Of David.
 \q1
 \v 1 \add ≈Declare me innocent\add*, Yahweh, because I have walked with integrity.
 \q1 ≈I've trusted in Yahweh without wavering.
@@ -1357,7 +1334,6 @@
 \s1 A prayer of praise
 \rem /s1 Triumphant Song of Confidence; A Prayer of Praise
 \d \add A song\add* by David.
-\rem /d For David; A psalm of David.; Of David.
 \q1
 \v 1 Yahweh is my light and \add ≈the one who saves me\add*—\add ≈why should I be afraid of anyone\add*?
 \q1 ≈Yahweh is \add ≈where my life is safe\add*—\add ≈why should I be worrying\add*?
@@ -1411,7 +1387,6 @@
 \s1 Prayer of requesting
 \rem /s1 Prayer for Help and Thanksgiving for It; A Prayer for Help
 \d \add A song\add* by David.
-\rem /d For David; A psalm of David.; Of David.
 \q1
 \v 1 Yahweh, I call out to you¦247399 \add for help¦247398\add*, my rock \add of safety\add*.
 \q1 Don't \add ≈refuse to hear me\add*
@@ -1449,7 +1424,6 @@
 \s1 The incredible power of God's voice
 \rem /s1 The Voice of the Lord in the Storm; The Voice of God in a Great Storm
 \d A praise song by David¦247500.
-\rem /d A psalm: for David; A psalm of David.; A Psalm of David.
 \q1
 \v 1 Acknowledge¦247516 Yahweh¦247512 you sons of the mighty one,
 \q2 acknowledge that greatness and power are his alone.
@@ -1487,7 +1461,6 @@
 \s1 Thanking Yahweh after sickness
 \rem /s1 A Prayer of Thanksgiving; Thanksgiving for Recovery from Grave Illness
 \d A song by David¦247620 for the temple dedication¦247618.
-\rem /d A Psalm. A Song at the dedication of the temple. Of David.; A psalm (a song for the dedication of the temple): for David; A psalm of David, sung at the dedication of the Temple.; A psalm. A song. For the dedication of the temple. Of David.
 \q1
 \v 1 I'll¦247623 praise you, Yahweh¦247624, because¦247625 you've¦247629 \add ≈helped me succeed\add*
 \q1 ≈and haven't allowed¦247629 my enemies¦247630 to \add ≈take advantage of\add* me.
@@ -1529,10 +1502,9 @@
 \s1 Trusting Yahweh despite enemies
 \rem /s1 A Prayer of Trust in God; Prayer and Praise for Deliverance from Enemies
 \d For the musical director¦247751: a song by David¦247753.
-\rem /d To the leader. A Psalm of David.; For the leader: a psalm: for David; For the choir director: A psalm of David.; For the director of music. A psalm of David.
 \q1
 \v 1 \add ≈I go to\add* you, Yahweh¦247757, \add ≈to be safe\add*.
-\q1 Never let me be humiliated.
+\q1 Never let me be humiliated¦247761.
 \q1 Rescue me, \add ≈because you always¦247762 do what's right¦247763\add*.
 \q1
 \v 2 \add ≈Listen\add* to me—rescue¦247772 me quickly¦247771.
@@ -1540,7 +1512,7 @@
 \q1 ≈a fortress to \add ≈keep me safe\add*.
 \q1
 \v 3 \add ≈Yes,\add* you're my rock¦247786 and my fortress¦247787,
-\q1 and you lead and guide¦247792 me \add ≈in order to maintain your¦247790 reputation¦247790\add*.
+\q1 and you lead¦247792 and guide¦247792 me \add ≈in order to maintain your¦247790 reputation¦247790\add*.
 \q1
 \v 4 Pluck me out of the net¦247796 that¦247797 they've hidden¦247798 for me,
 \q1 because¦247800 you're my \add ≈place¦247803 of safety\add*.
@@ -1620,7 +1592,6 @@
 \s1 Admitting sin and requesting forgiveness
 \rem /s1 Confession and Forgiveness; The Joy of Forgiveness
 \d A song\f + \fr 32:0 \ft In Hebrew, ‘maskil’ is perhaps the name of this class of song.\f* by David.
-\rem /d A psalm of David.; Of David. A \it maskil.\it*; Of David. A Maskil.; For David: a maskil
 \q1
 \v 1 Blessed¦248062 is the person¦248059 whose transgression is forgiven,
 \q1 ≈whose \add ≈disobedience\add* is covered.
@@ -1661,7 +1632,6 @@
 \c 33
 \s1 A praise song
 \rem /s1 The Greatness and Goodness of God; A Song of Praise
-\rem /d For David
 \q1
 \v 1 Rejoice in¦248189 Yahweh¦248189, you \add ≈godly¦248188 people\add*.
 \q1 ≈Praise is appropriate for \add ≈those who are honest on¦248189 the inside\add*.
@@ -1729,7 +1699,6 @@
 \s1 Praising Yahweh's goodness together
 \rem /s1 In Praise of God's Goodness; Praise for Deliverance from Trouble
 \d \add A song\add* by David who pretended¦248397 to be insane¦248400 in¦248397 front¦248401 of \add King\add* Avimelek, \add ≈causing the king to send him¦248403 away\add*.
-\rem /d Of David, when he feigned madness before Abimelech, so that he drove him out, and he went away.; A psalm of David, regarding the time he pretended to be insane in front of Abimelech, who sent him away.; For David (when he feigned madness in Abimelech's presence—Abimelech then drove him away, and he departed); Of David. When he pretended to be insane before Abimelech, who drove him away, and he left.
 \qa \bd א\bd* (Alef)
 \q1
 \v 1 I will praise¦248415 Yahweh¦248410 at¦248416 all times.
@@ -1795,7 +1764,7 @@
 \qa \bd ע\bd* (Ayin)
 \q1
 \v 16 Yahweh¦248565 \add ≈works against\add* those¦248566 who do¦248566 evil¦248567—
-\q1 to cut off the memory¦248570 of them from the earth¦248569.
+\q1 to cut¦248568 off the memory¦248570 of them from the earth¦248569.
 \qa \bd פ\bd* (Pe)
 \q1
 \v 17 The \add ≈godly\add* \add >people\add* cry¦248573 out and Yahweh¦248574 hears¦248575
@@ -1824,7 +1793,6 @@
 \s1 Requesting Yahweh's help
 \rem /s1 Prayer for Deliverance from Enemies; A Prayer for Help
 \d \add A song\add* by David.
-\rem /d For David; A psalm of David.; Of David.
 \q1
 \v 1 Yahweh, work against those who work against me.
 \q1 ≈Fight against those who fight against me.
@@ -1918,7 +1886,6 @@
 \s1 Wicked people and Yahweh's goodness
 \rem /s1 Human Wickedness and Divine Goodness; Human Wickedness
 \d For the musical director¦248921: \add a song\add* by Yahweh's¦248925 servant¦248923 David¦248926.
-\rem /d For the director of music. Of David the servant of the Lord.; To the leader. Of David, the servant of the Lord.; For the choir director: A psalm of David, the servant of the Lord.; For the leader: for the Lord's servant: for David
 \q1
 \v 1 My heart¦248934 \add ≈struggles with¦248933 the disobedience of\add* evil \add >people\add*.
 \q1 \add ≈They see no need to worry about God¦248938\add*
@@ -1962,7 +1929,6 @@
 \s1 The endings of godly and wicked people
 \rem /s1 The Destiny of the Wicked and of the Good; Exhortation to Patience and Trust
 \d \add A song\add* by David.
-\rem /d For David; A psalm of David.; Of David.
 \qa \bd א\bd* (Alef)
 \q1
 \v 1 Don't be irritated by \add ≈those who do evil\add*.
@@ -2116,7 +2082,6 @@
 \s1 The requesting of person suffering
 \rem /s1 The Prayer of a Sufferer; A Penitent Sufferer's Plea for Healing
 \d A song by David¦249455 for the memorial¦249456 offering¦249456.
-\rem /d A psalm of David, to bring us to the Lord's remembrance.; A psalm: for David: for commemoration; A Psalm of David, for the memorial offering.; A psalm of David. A petition.
 \q1
 \v 1 Yahweh¦249459, don't¦249460 rebuke¦249463 me in your anger.
 \q1 ≈Don't¦249460 punish me in your rage,
@@ -2189,7 +2154,6 @@
 \s1 The telling of sin of person suffering
 \rem /s1 The Confession of a Sufferer; Prayer for Wisdom and Forgiveness
 \d For the musical director¦249694: A song by David¦249698 for Yedutun.
-\rem /d For the director of music. For Jeduthun. A psalm of David.; For the leader: for Jeduthun: a psalm: for David; To the leader: to Jeduthun. A Psalm of David.; For Jeduthun, the choir director: A psalm of David.
 \q1
 \v 1 I \add ≈decided\add* that I'll watch what I say
 \q1 so that I won't¦249704 sin¦249704 with¦249705 my \add ≈lips\add*.
@@ -2201,11 +2165,11 @@
 \v 3 My¦249726 heart¦249724 became¦249722 hot when I thought about these things.
 \q1 ≈It burnt¦249728 like a fire¦249730, then finally I spoke¦249731.
 \q1
-\v 4 “Yahweh¦249736, make me know¦249744 when the end¦249738 of my \add life\add* will be
+\v 4 “Yahweh¦249736, make¦249735 me know¦249744 when the end¦249738 of my \add life\add* will be
 \q1 ≈and¦249739 the extent of my days¦249740.
 \q1 Let me see how transient¦249747 I am.
 \q1
-\v 5 See, you've¦249754 made my days¦249755 \add only\add* \add ≈the width of my hand\add*,
+\v 5 See, you've¦249754 made¦249754 my days¦249755 \add only\add* \add ≈the width of my hand\add*,
 \q1 and¦249756 my lifetime¦249756 is like nothing¦249757 in your sight¦249758.
 \q1 Surely all of humanity¦249765 is \add just\add* a single breath. \qs (Instrumental¦249767 break¦249767.)\qs*
 \q1
@@ -2218,7 +2182,7 @@
 \v 8 Rescue me from my disobedience.
 \q1 Don't¦249806 \add ≈allow fools to be able to mock me\add*.
 \q1
-\v 9 I \add ≈can't speak\add* and can't \add even\add* open my mouth¦249815,
+\v 9 I \add ≈can't speak\add* and can't \add even\add* open¦249813 my mouth¦249815,
 \q1 because¦249816 it's you who has done it.
 \q1
 \v 10 \add ≈Stop wounding me\add*.
@@ -2240,13 +2204,12 @@
 \s1 A song praising Yahweh
 \rem /s1 Thanksgiving for Deliverance and Prayer for Help; A Song of Praise
 \d For the musical director¦249879: a song by David¦249880.
-\rem /d For the leader: for David: a psalm; For the director of music. Of David. A psalm.; To the leader. Of David. A Psalm.; For the choir director: A psalm of David.
 \q1
 \v 1 I waited¦249885 patiently¦249884 for Yahweh¦249886 \add to help¦249890 me\add*.
 \q1 He listened¦249889 to me and heard my cry¦249890.
 \q1
 \v 2 He brought¦249893 me up out of a horrible pit in the sticky clay,
-\q1 →and he set my feet¦249903 on a rock¦249902 and made my steps¦249905 secure.
+\q1 →and he set¦249899 my feet¦249903 on a rock¦249902 and made my steps¦249905 secure.
 \q1
 \v 3 He's \add ≈given me a new song to sing\add*, praise¦249913 to our¦249914 god¦249914.
 \q1 Many will see¦249915 it and honour him
@@ -2280,9 +2243,9 @@
 \q1
 \v 11 Don't¦250032 \add ≈stop being merciful towards\add* me, Yahweh¦250031.
 \q1 Let your loyal¦250037 commitment and your trustworthiness always preserve¦250040 me.
-\q1
 \rem /s1 A Prayer for Help
 \rem /r (Psalm 70)
+\q1
 \v 12 More troubles¦250048 surround me than I can even count.
 \q1 My disobedience has caught up with me so that I'm no longer able to see¦250058 \add anything else\add*.
 \q1 They're more than the hairs¦250060 on my head¦250061, and my heart¦250062 fails¦250063 me.
@@ -2305,7 +2268,6 @@
 \s1 A prayer for healing
 \rem /s1 Assurance of God's Help and a Plea for Healing; A Prayer in Sickness
 \d For the musical director¦250131: a song by David¦250133.
-\rem /d To the leader. A Psalm of David.; For the leader: a psalm: for David; For the choir director: A psalm of David.; For the director of music. A psalm of David.
 \q1
 \v 1 \add #People\add* who are concerned for the weak will be blessed¦250136—
 \q1 →in the day¦250141 of trouble¦250142, Yahweh¦250144 will rescue¦250143 \add #them\add*.
@@ -2355,9 +2317,8 @@
 \s1 Hope when depressed
 \rem /s1 The Prayer of Someone in Exile; Longing for God and His Help in Distress
 \d For the musical director¦250300: a song\f + \fr 42:0 \ft In Hebrew, ‘maskil’ is perhaps the name of this class of song.\f* by Korah's¦250304 descendants.
-\rem /d To the leader. A Maskil of the Korahites.; For the director of music. A \it maskil\it* of the Sons of Korah.; For the leader: a maskil: for the Korahites; For the choir director: A psalm of the descendants of Korah.
 \q1
-\v 1 As a deer thirsts for streams of water¦250313,
+\v 1 As a deer¦250307 thirsts for streams of water¦250313,
 \q1 so \add too\add* my soul¦250315 longs for you¦250317, God¦250318.
 \q1
 \v 2 My soul¦250322 thirsts¦250321 for God—for the living¦250326 God.
@@ -2366,7 +2327,7 @@
 \v 3 My tears¦250337 are my food day and night¦250340,
 \q1 as people are \add ≈asking\add* me every day, “Where's your god?”
 \q1
-\v 4 These things I remember¦250351, and I pour out my soul¦250356 within¦250354 myself¦250354.
+\v 4 These things I remember¦250351, and I pour¦250353 out my soul¦250356 within¦250354 myself¦250354.
 \q1 I travelled with the crowd¦250370 and accompanied them to God's residence
 \q1 with shouts¦250366 of joy¦250368 and praise—a multitude¦250370 celebrating¦250371 a festival¦250371.
 \q1
@@ -2376,7 +2337,7 @@
 \q1 \add ≡praise him for\add* \add ≈how my god's presence leads to my being saved\add*.
 \q1
 \v 6 My soul¦250393 is bowed¦250394 down within¦250392 me,
-\q1 therefore¦250395 I remember¦250398 you¦250398 from the land of the Yordan¦250400 \add river\add*
+\q1 therefore¦250395 I remember¦250398 you¦250398 from the land¦250399 of the Yordan¦250400 \add river\add*
 \q1 and \add Mt.\add* Hermon's¦250401 \add heights¦250401\add* and from Mt. Mizar¦250403.
 \q1
 \v 7 Deep is calling¦250411 to deep with the \add ≈roar\add* of your waterfalls¦250413;
@@ -2409,7 +2370,7 @@
 \q1 Why have you rejected¦250506 me?
 \q1 Why do¦250510 I walk around mourning¦250509 because of an enemy's¦250512 oppression¦250511?
 \q1
-\v 3 Send out your light¦250516 and your truth¦250517—let them lead me.
+\v 3 Send out your light¦250516 and your truth¦250517—let them lead¦250519 me.
 \q1 Let them bring¦250520 me to your sacred¦250525 mountain¦250523
 \q1 ≈and to your \add #residence\add*.
 \q1
@@ -2425,7 +2386,6 @@
 \s1 A prayer for help
 \rem /s1 A Prayer for Protection; National Lament and Prayer for Help
 \d For the musical director¦250565: a song\f + \fr 44:0 \ft In Hebrew, ‘maskil’ is perhaps the name of this class of song.\f* by Korah's¦250568 descendants.
-\rem /d For the leader: for the Korahites: a maskil; For the director of music. Of the Sons of Korah. A \it maskil\it*; For the choir director: A psalm of the descendants of Korah.; To the leader. Of the Korahites. A Maskil.
 \q1
 \v 1 God¦250572, we have listened with¦250574 our ears.
 \q1 Our ancestors¦250576 have told us about \add ≈the miracles\add* you did in their¦250582 \add ≈time¦250582\add*—in the old days.
@@ -2433,7 +2393,7 @@
 \v 2 You drove out the \add other\add* nations¦250590 \add ≈with your power\add*, but you planted¦250592 \add @our ancestors\add*.
 \q1 ≈You \add ≈caused suffering for other people¦250594 groups\add*, but you sent \add @our ancestors\add* \add into the land\add*.
 \q1
-\v 3 \add ≈Yes,\add* they¦250601 didn't take over the land with their \add #swords\add*, and their \add ≈power\add* didn't save them,
+\v 3 \add ≈Yes,\add* they¦250601 didn't take over the land¦250602 with their \add #swords\add*, and their \add ≈power\add* didn't save them,
 \q1 ^but \add ≈it¦250606 was your power and your direction\add*, because¦250598 you¦250615 were pleased¦250615 with them.
 \q1
 \v 4 God¦250622, you¦250618 are my king¦250621 \add who\add* \add ≈plans victories¦250624\add* for Yakob's¦250625 \add descendants\add*.
@@ -2453,19 +2413,19 @@
 \v 9 Yet you've¦250667 rejected¦250667 and humiliated¦250668 us,
 \q1 and you don't¦250669 go out with¦250672 our armies¦250672.
 \q1
-\v 10 You made us turn¦250675 back from the enemy,
+\v 10 You made¦250675 us turn¦250675 back from the enemy,
 \q1 and¦250680 those¦250680 who hate¦250680 us take plunder¦250681 for themselves¦250682.
 \q1
-\v 11 You've made us like sheep¦250686 \add ≈to be eaten\add*,
+\v 11 You've made¦250685 us like sheep¦250686 \add ≈to be eaten\add*,
 \q1 and¦250688 you scattered¦250689 us among¦250688 the nations¦250688.
 \q1
 \v 12 You've sold your¦250694 people¦250694 for \add ≈virtually nothing¦250695\add*—
 \q1 ≈You haven't profited from their¦250701 sale.
 \q1
-\v 13 You've made us a reproach¦250705 to our¦250706 neighbours¦250706—
+\v 13 You've made¦250704 us a reproach¦250705 to our¦250706 neighbours¦250706—
 \q1 ≈a contempt and¦250708 a scorn¦250708 to those¦250709 around¦250709 us.
 \q1
-\v 14 You made us an insult among the \add other\add* nations¦250714—
+\v 14 You made¦250712 us an insult among the \add other\add* nations¦250714—
 \q1 ≈a shaking¦250715 of the head¦250717 among the peoples¦250720.
 \q1
 \v 15 My dishonour is \add ≈on my mind\add* all day¦250725,
@@ -2507,7 +2467,6 @@
 \s1 A royal wedding song
 \rem /s1 Ode for a Royal Wedding; A Royal Wedding Song
 \d For the musical director¦250847: a song\f + \fr 45:0 \ft In Hebrew, ‘maskil’ is perhaps the name of this class of song.\f* by Korah's¦250853 descendants. A love song \add ≈to be sung to the tune of\add* ‘Lilies’.
-\rem /d To the leader: according to Lilies. Of the Korahites. A Maskil. A love song.; For the choir director: A psalm of the descendants of Korah, to be sung to the tune “Lilies.” A love song.; For the leader: set to ‘Lilies’: for the Korahites: a maskil: a love song; For the director of music. To the tune of “Lilies.” Of the Sons of Korah. A \it maskil.\it* A wedding song.
 \q1
 \v 1 My heart¦250860 \add ≈is stirred with an excellent message¦250862\add*.
 \q1 I'll read aloud the words I've composed about the king.
@@ -2523,7 +2482,7 @@
 \v 4 Ride on triumphantly in your majesty¦250900 because of trustworthiness, humility¦250909, and innocence.
 \q1 Your \add ≈powerful actions display\add* your awesome¦250913 abilities.
 \q1
-\v 5 Your arrows are sharp¦250918—the peoples¦250919 fall under¦250920 you¦250920.
+\v 5 Your arrows are sharp¦250918—the peoples¦250919 fall¦250921 under¦250920 you¦250920.
 \q1 Your arrows \add ≈pierce\add* the hearts¦250922 of the king's¦250924 enemies¦250923.
 \q1
 \v 6 Your \add ≈reign\add*, God¦250928, \add will continue\add* forever¦250929.
@@ -2533,7 +2492,7 @@
 \q1 therefore¦250941 God¦250946, your god, has anointed¦250945 you with the oil of gladness more than your companions¦250950.
 \q1
 \v 8 All your¦250959 clothes¦250959 smell of myrrh¦250953, aloes¦250955, and¦250955 cassia¦250956.
-\q1 Stringed instruments¦250964 \add ≈playing from\add* of ivory¦250963 palaces¦250962 have made you¦250965 glad.
+\q1 Stringed instruments¦250964 \add ≈playing from\add* of ivory¦250963 palaces¦250962 have made¦250965 you¦250965 glad.
 \q1
 \v 9 Kings' daughters¦250968 are among¦250970 your honourable¦250970 women¦250970.
 \q1 ≈The queen¦250972 stands¦250971 on¦250970 your right¦250973, clothed in¦250970 gold¦250974 from Ofir¦250975.
@@ -2557,7 +2516,7 @@
 \q1 ≈They'll enter the king's palace¦251040.
 \q1
 \v 16 Your children¦251047 will be in the \add ≈positions that your ancestors¦251045 used to hold\add*—
-\q1 ≈you'll make them princes¦251049 \add ≈across the whole country\add*.
+\q1 ≈you'll make¦251048 them princes¦251049 \add ≈across the whole country\add*.
 \q1
 \v 17 I'll¦251055 ensure that your¦251056 name¦251056 will be remembered¦251055 by all generations,
 \q1 ≈therefore¦251061 the peoples¦251064 will give you¦251065 thanks forever.
@@ -2565,7 +2524,6 @@
 \s1 God's right here
 \rem /s1 God's Defense of His City and People; God Is with Us
 \d For the musical director¦251069: a song by Korah's¦251072 descendants. To be sung by soprano\f + \fr 46:0 \ft In Hebrew, like ‘alamot’.\f* voices.
-\rem /d For the director of music. Of the Sons of Korah. According to \it alamoth.\it* A song.; For the leader: for the Korahites: according to alamoth: a song; To the leader. Of the Korahites. According to Alamoth. A Song.; For the choir director: A psalm of the descendants of Korah, to be sung by soprano voices. A song.
 \q1
 \v 1 God¦251079 is our \add ≈protection\add* and¦251082 our strength¦251082,
 \q1 \add ≈always ready to help¦251083 when troubles¦251084 come\add*.
@@ -2576,7 +2534,7 @@
 \v 3 \add ≈making\add* its waters¦251105 roar and rage,
 \q1 as the mountains¦251108 shake¦251106 against the surging¦251109 \add @waters\add*. \qs (Instrumental¦251110 break¦251110.)\qs*
 \q1
-\v 4 There's a river¦251113 whose¦251114 streams¦251114 make God's city¦251116 happy—
+\v 4 There's a river¦251113 whose¦251114 streams¦251114 make¦251115 God's city¦251116 happy—
 \q1 the sacred¦251119 place¦251119 where the highest \add >one\add* lives.
 \q1
 \v 5 God is in¦251125 the middle of \add @that city\add*—she won't¦251126 be \add ≈affected\add*.
@@ -2591,8 +2549,8 @@
 \v 8 Come \add and\add* see¦251159 \add ≈what Yahweh¦251161 has done\add*—
 \q1 the destruction he's caused on earth¦251166.
 \q1
-\v 9 He \add ≈stops wars all over the world\add*.
-\q1 He breaks¦251176 \add #bows\add* and cuts \add #spears\add* into pieces.
+\v 9 He \add ≈stops wars¦251170 all over the world\add*.
+\q1 He breaks¦251176 \add #bows\add* and cuts¦251177 \add #spears\add* into pieces.
 \q1 He incinerates the shields.
 \q1
 \v 10 Stay quiet¦251184 and¦251185 \add ≈be aware\add* that I am God¦251189.
@@ -2605,7 +2563,6 @@
 \s1 God the king of entire world
 \rem /s1 God's Rule over the Nations; The Supreme Ruler
 \d For the musical director¦251206: a song\f + \fr 47:0 \ft In Hebrew, ‘maskil’ is perhaps the name of this class of song.\f* by Korah's¦251210 descendants.
-\rem /d For the director of music. Of the Sons of Korah. A psalm.; To the leader. Of the Korahites. A Psalm.; For the choir director: A psalm of the descendants of Korah.; For the leader: for the Korahites: a psalm
 \q1
 \v 1 Clap your hands, all you peoples¦251216.
 \q1 ≈Shout to God¦251221 with¦251222 a cheerful¦251220 voice¦251222.
@@ -2638,7 +2595,6 @@
 \s1 Yerushalem, God's city
 \rem /s1 Zion, the City of God; The Glory and Strength of Zion
 \d A song by Korah's¦251322 descendants.
-\rem /d A song. A psalm of the Sons of Korah.; A psalm of the descendants of Korah. A song.; A song: a psalm: for the Korahites; A Song. A Psalm of the Korahites.
 \q1
 \v 1 Yahweh¦251326 is \add ≈incredible\add* and¦251327 \add ≈deserves\add* to be praised¦251327 \add ≈a lot\add*,
 \q1 in¦251329 our¦251330 god's city¦251329 on¦251329 his sacred¦251333 hill¦251331.
@@ -2648,10 +2604,10 @@
 \q1 is Mt¦251342. Tsiyyon¦251344, on the northern sides—
 \q1 the great¦251349 king's city.
 \q1
-\v 3 God¦251352 has made himself¦251354 known¦251354 in¦251353 her¦251353 towers as \add ≈protector\add*,
+\v 3 God¦251352 has made¦251354 himself¦251354 known¦251354 in¦251353 her¦251353 towers as \add ≈protector\add*,
 \q1
 \v 4 because¦251358, look, the kings¦251361 assembled¦251362 themselves.
-\q1 They passed¦251363 by together¦251364.
+\q1 They¦251360 passed¦251363 by together¦251364.
 \q1
 \v 5 They saw¦251368 it, then they were astounded.
 \q1 They were dismayed, and they hurried¦251372 away.
@@ -2691,7 +2647,6 @@
 \s1 Trusting in wealth is foolishness
 \rem /s1 The Foolishness of Trusting in Riches; The Folly of Trust in Riches
 \d For the musical director¦251473: a song by Korah's¦251477 descendants.
-\rem /d For the director of music. Of the Sons of Korah. A psalm.; To the leader. Of the Korahites. A Psalm.; For the choir director: A psalm of the descendants of Korah.; For the leader: for the Korahites: a psalm
 \q1
 \v 1 Hear this, all you peoples¦251486.
 \q1 \add ≈Listen to this\add*, all you inhabitants¦251490 of the world¦251491,
@@ -2761,7 +2716,6 @@
 \s1 The true/correct worshipping
 \rem /s1 True Worship; The Acceptable Sacrifice
 \d A¦251717 song by Asaf¦251712.
-\rem /d A Psalm of Asaph.; A psalm: for Asaph; A psalm of Asaph.
 \q1
 \v 1 Yahweh, God¦251733, has spoken
 \q1 and summoned the world from the sun's rising to its setting.
@@ -2841,7 +2795,6 @@
 \s1 A prayer for forgiveness
 \rem /s1 Prayer for Cleansing and Pardon; A Prayer for Forgiveness
 \d For the musical director¦251947: a song by David from when the prophet Natan had gone to him after David had committed adultery with Bat-Sheva.
-\rem /d For the leader: a psalm: for David (when Nathan the prophet came to him after he had taken Bathsheba); For the choir director: A psalm of David, regarding the time Nathan the prophet came to him after David had committed adultery with Bathsheba.; For the director of music. A psalm of David. When the prophet Nathan came to him after David had committed adultery with Bathsheba.; To the leader. A Psalm of David, when the prophet Nathan came to him, after he had gone in to Bathsheba.
 \q1
 \v 1 Have mercy on me, God, because of your loyal commitment.
 \q1 ≈Blot out my disobedience, \add ≈because you're so merciful\add*.
@@ -2906,7 +2859,6 @@
 \s1 God's judgement and mercy
 \rem /s1 Judgment on the Deceitful; God's Judgment and Grace
 \d For the musical director¦252160: a song\f + \fr 52:0 \ft In Hebrew, ‘maskil’ is perhaps the name of this class of song.\f* by David written when Doeg the Edomite reported to \add King\add* Shaul that, “David went there to Ahimilik.”
-\rem /d For the choir director: A psalm of David, regarding the time Doeg the Edomite told Saul that Ahimelech had given refuge to David.; For the director of music. A \it maskil\it* of David. When Doeg the Edomite had gone to Saul and told him: “David has gone to the house of Ahimelech.”; To the leader. A Maskil of David, when Doeg the Edomite came to Saul and said to him, “David has come to the house of Ahimelech.”; For the leader: a maskil: for David (when Doeg the Edomite came and told Saul that David had gone to Abimelech's house)
 \q1
 \v 1 Why are you proud of making trouble, \add you\add* powerful \add man\add*?
 \q1 God's loyal commitment comes every day.
@@ -2940,12 +2892,11 @@
 \s1 Fools and human wickedness
 \rem /s1 Denunciation of Godlessness; Human Wickedness
 \d For the musical director¦252282: a song\f + \fr 53:0 \ft In Hebrew, ‘maskil’ is perhaps the name of this class of song.\f* by David¦252287 to be sung to the tune of ‘Mahalat’.\f + \fr 53:0 \ft The ‘Mahalat’ could be a tune or an instrument or a voice style.\f*
-\rem /d To the leader: according to Mahalath. A Maskil of David.; For the director of music. According to \it mahalath.\it* A \it maskil\it* of David.; For the choir director: A meditation of David.; For the leader: set to ‘Mahalath’: a maskil: for David
 \rem /r (Psalm 14)
 \q1
 \v 1 Fools tell themselves that there is no god¦252294.
 \q1 They are corrupt¦252295 and¦252296 have done disgusting acts of evil.
-\q1 There's no one who does good¦252301.\x + \xo 53:1-3: \xt Rom 3:10-12.\x*
+\q1 There's no one who does¦252299 good¦252301.\x + \xo 53:1-3: \xt Rom 3:10-12.\x*
 \q1
 \v 2 God¦252304 looks¦252306 down from heaven¦252305 on the children¦252309 of humanity¦252310
 \q1 to see¦252311 if there¦252312 are any with insight¦252313—
@@ -2953,7 +2904,7 @@
 \q1
 \v 3 They've all turned away.
 \q1 ≈Together they¦252323 have become corrupt¦252323.
-\q1 ≈There's not one who does good¦252327, not even one.
+\q1 ≈There's not one who does¦252325 good¦252327, not even one.
 \q1
 \v 4 Do those who \add ≈do evil\add* have no understanding—
 \q1 those who devour¦252338 my people¦252339 as if they were eating bread¦252341,
@@ -2971,7 +2922,6 @@
 \s1 God is my helper
 \rem /s1 Prayer for Vindication; A Prayer for Protection from Enemies
 \d For the musical director¦252383: a song\f + \fr 54:0 \ft In Hebrew, ‘maskil’ is perhaps the name of this class of song.\f* by David written when some people from Zif went to \add King\add* Shaul and told him that David was hiding in¦252384 their area.\x + \xo 54:0 \xt 1Sa 23:19-20.\x* \add ≈To be accompanied by\add* stringed¦252384 instruments¦252384.
-\rem /d To the leader: with stringed instruments. A Maskil of David, when the Ziphites went and told Saul, “David is in hiding among us.”; For the leader: with stringed instruments: a maskil: for David (when the Ziphites came and said to Saul, ‘David is in hiding among us.’); For the choir director: A meditation of David, regarding the time the Ziphites came and said to Saul, “We know where David is hiding.” To be accompanied by stringed instruments.; For the director of music. With stringed instruments. A \it maskil\it* of David. When the Ziphites had gone to Saul and said, “Is not David hiding among us?”
 \q1
 \v 1 \add ≈Use the strength that's part of your reputation to rescue\add* me, God,
 \q1 ≈and \add ≈use your power to declare me innocent\add*.
@@ -2998,7 +2948,6 @@
 \s1 A prayer for a person betrayed by a friend
 \rem /s1 Complaint about a Friend's Treachery; The Prayer of Someone Betrayed by a Friend
 \d For the musical director¦252467: a song\f + \fr 55:0 \ft In Hebrew, ‘maskil’ is perhaps the name of this class of song.\f* by David¦252470 \add ≈to be accompanied by\add* stringed¦252468 instruments¦252468.
-\rem /d For the leader: on stringed instruments: a maskil: for David; For the choir director: A psalm of David, to be accompanied by stringed instruments.; To the leader: with stringed instruments. A Maskil of David.; For the director of music. With stringed instruments. A \it maskil\it* of David.
 \q1
 \v 1 \add ≈Listen\add* to my prayer¦252475, God¦252474,
 \q1 and¦252476 don't¦252476 \add ≈ignore\add* my request.
@@ -3075,7 +3024,6 @@
 \s1 The praying due trusting of God
 \rem /s1 A Prayer of Trust in God; Trust in God under Persecution
 \d For the musical director¦252731: a song\f + \fr 56:0 \ft In Hebrew, ‘miktam’ is perhaps the name of this class of song.\f* by David¦252738, written when the Philistines¦252742 captured him at¦252740 Gat.\x + \xo 56:0 \xt 1Sam 21:11-15.\x* To be sung to the tune of “A dove on¦252740 distant oak trees”.
-\rem /d For the choir director: A psalm of David, regarding the time the Philistines seized him in Gath. To be sung to the tune “Dove on Distant Oaks.”; To the leader: according to The Dove on Far-off Terebinths. Of David. A Miktam, when the Philistines seized him in Gath.; For the leader: set to ‘The Dove of the Distant Oaks’: for David: a miktam (when the Philistines seized him in Gath); For the director of music. To the tune of “A Dove on Distant Oaks.” Of David. A\it miktam.\it* When the Philistines had seized him in Gath.
 \q1
 \v 1 Be merciful to me, God¦252747, because¦252748 men are attacking me.
 \q1 Those who fight¦252755 me press their assault all day¦252754 \add long\add*.
@@ -3100,7 +3048,7 @@
 \q1 and put my tears¦252834 into your bottle¦252835.
 \q1 Aren't they \add recorded\add* in¦252835 your book?
 \q1
-\v 9 Then my enemies¦252842 will \add ≈pull back when call out\add* \add to you for help\add*.
+\v 9 Then my enemies¦252842 will \add ≈pull back when call¦252845 out\add* \add to you for help\add*.
 \q1 I know¦252848 that because¦252849 God¦252851 is for me.
 \q1
 \v 10 In God¦252855—whose message I praise,
@@ -3119,7 +3067,6 @@
 \s1 A prayer for protection from predators
 \rem /s1 Praise and Assurance under Persecution; A Prayer for Help
 \d For the musical director¦252895: a song\f + \fr 57:0 \ft In Hebrew, ‘miktam’ is perhaps the name of this class of song.\f* by David¦252899 \add written\add* when he¦252901 was fleeing from Shaul¦252904 and hid in¦252901 a cave. To be sung to the tune of ‘Don't destroy’.
-\rem /d For the choir director: A psalm of David, regarding the time he fled from Saul and went into the cave. To be sung to the tune “Do Not Destroy!”; For the director of music. To the tune of “Do Not Destroy.” Of David. A\it miktam.\it* When he had fled from Saul into the cave.; For the leader: set to ‘Destroy not’: for David: a miktam (when he was a fugitive from Saul in the cave); To the leader: Do Not Destroy. Of David. A Miktam, when he fled from Saul, in the cave.
 \q1
 \v 1 Be merciful to me, God¦252909, be merciful to me,
 \q1 because¦252912 I \add ≈come to you to be safe\add* until these troubles are over.
@@ -3161,7 +3108,6 @@
 \s1 Punishment for the wicked
 \rem /s1 A Prayer for God to Punish the Wicked; Prayer for Vengeance
 \d For the musical director¦253041: a song\f + \fr 58:0 \ft In Hebrew, ‘miktam’ is perhaps the name of this class of song.\f* by David¦253045. To be sung to the tune of ‘Don't destroy’.
-\rem /d For the director of music. To the tune of “Do Not Destroy.” Of David. A\it miktam.\it*; For the choir director: A psalm of David, to be sung to the tune “Do Not Destroy!”; To the leader: Do Not Destroy. Of David. A Miktam.; For the leader: set to ‘Destroy not’: for David: a miktam
 \q1
 \v 1 \add ≈When you rulers speak¦253052, do you actually say what is right¦253051\add*?
 \q1 ≈Do you \add ≈give justice, you people\add*?
@@ -3182,7 +3128,7 @@
 \q1 ≈Yahweh¦253114, break off the fangs of the young¦253111 lions¦253111.
 \q1
 \v 7 Let them \add ≈melt\add* away like water¦253120.
-\q1 When \add #they\add* shoot their arrows¦253125, let them be as though they \add ≈were cut in half\add*.
+\q1 When \add #they\add* shoot their arrows¦253125, let them be as though they \add ≈were cut¦253128 in half\add*.
 \q1
 \v 8 Let them be like a snail¦253132 that \add ≈quietly disappears\add*.
 \q1 ≈Like a woman's¦253136 still-born child that never sees the sunlight.
@@ -3199,7 +3145,6 @@
 \s1 A prayer for safety
 \rem /s1 Prayer for Deliverance from Enemies; A Prayer for Safety
 \d For the musical director¦253181: a song\f + \fr 59:0 \ft In Hebrew, ‘miktam’ is perhaps the name of this class of song.\f* by David \add written\add* when \add King\add* Shaul¦253188 \add (Saul¦253188)\add* had sent¦253187 men to watch¦253189 David's¦253185 house¦253192 in¦253187 order¦253193 to kill¦253193 him¦253193. To be sung to the tune of ‘Don't destroy’.
-\rem /d For the director of music. To the tune of “Do Not Destroy.” Of David. A\it miktam.\it* When Saul had sent men to watch David's house in order to kill him.; To the leader: Do Not Destroy. Of David. A Miktam, when Saul ordered his house to be watched in order to kill him.; For the leader: set to ‘Destroy not’: for David: a miktam (when Saul sent men to keep watch on David's house to kill him); For the choir director: A psalm of David, regarding the time Saul sent soldiers to watch David's house in order to kill him. To be sung to the tune “Do Not Destroy!”
 \q1
 \v 1 Rescue me from my enemies¦253197, my god¦253199.
 \q1 ≈Protect me from those¦253200 who \add ≈want to attack\add* me.
@@ -3226,7 +3171,7 @@
 \q1 because¦253275 they say, “Who can hear¦253278 us?”
 \q1
 \v 8 But¦253281 Yahweh¦253282, you laugh¦253283 at them—
-\q1 ≈you mock all the \add pagan\add* nations¦253289.
+\q1 ≈you mock¦253286 all the \add pagan\add* nations¦253289.
 \q1
 \v 9 God¦253297, my strength¦253292, I'll¦253294 pay attention to you¦253293.
 \q1 You are my high fortress.
@@ -3235,7 +3180,7 @@
 \q1 God¦253301 will allow me to see my enemies¦253307 \add defeated\add*.
 \q1
 \v 11 Don't¦253310 \add just\add* kill¦253312 them, or my people¦253317 will forget¦253316.
-\q1 \add ≈Use¦253321\add* your¦253319 power¦253319 to scatter them and make them fall, my master¦253322, our shield¦253321.
+\q1 \add ≈Use¦253321\add* your¦253319 power¦253319 to scatter them and make¦253318 them fall, my master¦253322, our shield¦253321.
 \q1
 \v 12 \add ≈Despite\add* their pride¦253332, let them be caught¦253331
 \q1 for the sins of their mouths¦253327 and the words of their lips¦253330,
@@ -3263,7 +3208,6 @@
 \s1 A prayer for military help
 \rem /s1 Prayer for National Victory after Defeat; A Prayer for Deliverance
 \d For the musical director¦253401: a song\f + \fr 60:0 \ft In Hebrew, ‘miktam’ is perhaps the name of this class of song.\f* by David¦253407 for teaching¦253408 \add written\add* when he fought with Aram-Naharayim and with Aram-Tsovah, and Yoav returned and killed twelve thousand Edomites in the Salt Valley. To be sung to the tune of ‘The Lily of Testimony’.
-\rem /d For the director of music. To the tune of “The Lily of the Covenant.” A\it miktam\it* of David. For teaching. When he fought Aram Naharaim and Aram Zobah, and when Joab returned and struck down twelve thousand Edomites in the Valley of Salt.; For the choir director: A psalm of David useful for teaching, regarding the time David fought Aram-naharaim and Aram-zobah, and Joab returned and killed twelve thousand Edomites in the Valley of Salt. To be sung to the tune “Lily of the Testimony.”; To the leader: according to the Lily of the Covenant. A Miktam of David—for instruction—when he struggled with Aram-naharaim and with Aram-zobah, and when Joab on his return killed twelve thousand Edomites in the Valley of Salt.; For the leader: set to ‘The Lily of Testimony’: a miktam: for David: for instruction (when he fought against Aram-naharaim and Aram-zobah, and Joab returned and struck twelve thousand Edomites in the valley of Salt)
 \q1
 \v 1 God, you've abandoned us—you've broken through our defenses.
 \q1 ≈You've been angry—restore us again.
@@ -3271,7 +3215,7 @@
 \v 2 You've¦253433 made the land tremble—you've¦253436 torn it apart.
 \q1 →Heal its fissures, because it's shaking.
 \q1
-\v 3 You've made your people see difficult things.
+\v 3 You've made¦253441 your people see difficult things.
 \q1 ≈You've given us wine to drink \add ≈that makes us stagger\add*.
 \q1
 \v 4 You've set up a banner for those who honour you¦253451,
@@ -3308,12 +3252,11 @@
 \s1 A prayer for protection
 \rem /s1 A Prayer for Protection; Assurance of God's Protection
 \d For the musical director¦253557: a song by David¦253562 \add ≈to be accompanied by\add* stringed¦253561 instruments¦253561.
-\rem /d For the choir director: A psalm of David, to be accompanied by stringed instruments.; To the leader: with stringed instruments. Of David.; For the director of music. With stringed instruments. Of David.; For the leader: on stringed instruments: for David
 \q1
 \v 1 Hear my call \add for help\add*, God¦253566.
 \q1 ≈Answer my prayer¦253569.
 \q1
-\v 2 I call to you¦253575 from the ends of the earth¦253573 when \add ≈I feel\add* faint¦253577.
+\v 2 I call¦253576 to you¦253575 from the ends of the earth¦253573 when \add ≈I feel\add* faint¦253577.
 \q1 →Lead me to the rock¦253579 \add of stability\add* that's high¦253581 \add ≈above me\add*
 \q1
 \v 3 because¦253586 you've¦253588 been a \add ≈place of protection\add* for me—
@@ -3337,7 +3280,6 @@
 \s1 Trusting in God
 \rem /s1 Confidence in God's Protection; Song of Trust in God Alone
 \d For the musical director¦253653: a song by David¦253658 Hidutun.
-\rem /d For the director of music. For Jeduthun. A psalm of David.; For the leader: according to Jeduthun: a psalm: for David; To the leader: according to Jeduthun. A Psalm of David.; For Jeduthun, the choir director: A psalm of David.
 \q1
 \v 1 I wait in silence¦253665 for God¦253664 alone.
 \q1 \add ≈He's the only one who can rescue me\add*.
@@ -3384,7 +3326,6 @@
 \s1 Staying close to God
 \rem /s1 Comfort and Assurance in God's Presence; Longing for God
 \d A song by David¦253824 when he¦253825 was in¦253825 the Yehudah¦253827 wilderness¦253826.
-\rem /d A psalm: for David (when he was in the wilderness of Judah); A psalm of David. When he was in the Desert of Judah.; A psalm of David, regarding a time when David was in the wilderness of Judah.; A Psalm of David, when he was in the Wilderness of Judah.
 \q1
 \v 1 God¦253830, you're my god. I'm \add ≈eager to get to know\add* you.
 \q1 My \add ≈inner being\add* thirsts¦253835 for you, and my body¦253841 \add ≈needs\add* you
@@ -3424,7 +3365,6 @@
 \s1 Trusting God for protection
 \rem /s1 Prayer for Protection from Enemies; A Prayer for Protection
 \d For the musical director¦253953: a song by David¦253955.
-\rem /d To the leader. A Psalm of David.; For the leader: a psalm: for David; For the choir director: A psalm of David.; For the director of music. A psalm of David.
 \q1
 \v 1 Hear my voice of complaint¦253962, God¦253960.
 \q1 Save my from my enemies that I fear.
@@ -3462,7 +3402,6 @@
 \s1 Praising and thanking God
 \rem /s1 Thanksgiving for Earth's Bounty; Praise and Thanksgiving
 \d For the musical director¦254065: a song by David¦254067.
-\rem /d For the director of music. A psalm of David. A song.; To the leader. A Psalm of David. A Song.; For the choir director: A psalm of David. A song.; For the leader: a psalm: for David: a song
 \q1
 \v 1 Our praise¦254073 is ready for you¦254076, God¦254074 in¦254075 Tsiyyon¦254075 \add (Zion¦254075)\add*.
 \q1 We've fulfilled our vows.
@@ -3492,7 +3431,7 @@
 \q1
 \v 8 Those who live \add ≈all around the world\add*
 \q1 are amazed by the evidence of your¦254150 activities.
-\q1 You make them happy from the east to the west.
+\q1 You make¦254155 them happy from the east to the west.
 \q1
 \v 9 You look after the world and water it.
 \q1 You greatly enrich¦254163 it.
@@ -3517,7 +3456,6 @@
 \s1 Praising and thanking God
 \rem /s1 A Song of Praise and Thanksgiving; Praise for God's Goodness to Israel
 \d For¦254221 the musical director¦254215: a song.
-\rem /d For the director of music. A song. A psalm.; To the leader. A Song. A Psalm.; For the leader: a song: a psalm; For the choir director: A psalm. A song.
 \q1
 \v 1 Shout happily to God \add ≈you people all over the world\add*.
 \q1
@@ -3551,7 +3489,7 @@
 \q1 ≈You've purified us like refined silver.
 \q1
 \v 11 You led us \add like fish\add* into a net.
-\q1 ≈You \add ≈made us carry a heavy load\add* on¦254334 our¦254331 backs.
+\q1 ≈You \add ≈made¦254329 us carry a heavy load\add* on¦254334 our¦254331 backs.
 \q1
 \v 12 You let \add enemy horse\add*men ride over our heads.
 \q1 We went through fire and through water,
@@ -3585,37 +3523,35 @@
 \s1 A song thanking God
 \rem /s1 A Song of Thanksgiving; The Nations Called to Praise God
 \d For the musical director¦254420: a praise song \add ≈to be accompanied by\add* stringed¦254421 instruments¦254421.
-\rem /d For the choir director: A psalm, to be accompanied by stringed instruments. A song.; For the director of music. With stringed instruments. A psalm. A song.; For the leader: on stringed instruments: a psalm: a song; To the leader: with stringed instruments. A Psalm. A Song.
 \q1
-\v 1 May God¦254426 be gracious¦254427 to us and bless¦254428 us,
-\q1 and \add ≈show kindness towards\add* us \qs (Instrumental¦254432 break¦254432.)\qs*
+\v 1 \z1 May God¦254426 be gracious¦254427 to us and \z1hilite bless¦254428\z1hilite* us,
+\q1 and \add ≈show¦254427 kindness towards\add* us \qs (Instrumental¦254432 break¦254432.)\qs*
 \q1
-\v 2 so that those living on earth¦254436 will know¦254435 what you're like.
+\v 2 so that those living on \z1hilite earth¦254436\z1hilite* will know¦254435 what you're like.
 \q1 All the nations¦254440 will \add ≈learn about\add* your salvation¦254441.
 \q1
-\v 3 Let the peoples praise you, God¦254447.
+\v 3 \zr Let the peoples praise you, God¦254447.
 \q1 ≈Let all the \add ≈people groups\add* praise you.
 \q1
-\v 4 Let the nations be glad and sing happily,
+\v 4 \z2 Let the nations be glad and sing happily,
 \q1 because¦254456 you'll judge¦254458 the peoples¦254459 with \add ≈impartiality\add*,
 \q1 ≈and govern the nations \add ≈around the world\add*. \qs (Instrumental¦254465 break¦254465.)\qs*
 \q1
-\v 5 Let the peoples praise you, God¦254471.
+\v 5 \zr Let the peoples praise you, God¦254471.
 \q1 ≈Let all the \add ≈people groups\add* praise you.
 \q1
-\v 6 The earth¦254477 has yielded its harvest¦254479.
-\q1 ≈God¦254481, our god, has blessed¦254480 us.
+\v 6 \z1 The earth¦254477 has yielded its harvest¦254479.
+\q1 ≈God¦254481, our god, has \z1hilite blessed¦254480\z1hilite* us.
 \q1
-\v 7 May God¦254486 bless¦254485 us,
-\q1 and¦254487 may \add ≈people all around the world respect\add* him.
+\v 7 May God¦254486 \z1hilite bless¦254485\z1hilite* us,
+\q1 and¦254487 may \add ≈people all around the \z1hilite world\z1hilite* respect\add* him.
 \c 68
 \s1 A song of victory
 \rem /s1 Praise and Thanksgiving; A National Song of Triumph
 \d For the musical director¦254495: a song by David¦254496.
-\rem /d For the leader: for David: a psalm: a song; For the choir director: A psalm of David. A song.; To the leader. Of David. A Psalm. A Song.; For the director of music. Of David. A psalm. A song.
 \q1
 \v 1 Let God¦254502 \add ≈take action so\add* his¦254506 enemies¦254504 get scattered¦254503.
-\q1 Let those¦254506 who hate¦254506 him flee away from him
+\q1 Let those¦254506 who hate¦254506 him flee¦254505 away from him
 \q1
 \v 2 like smoke¦254511 is driven¦254510 away.
 \q1 Drive them away like wax melts¦254513 \add ≈beside a flame\add*,
@@ -3635,7 +3571,7 @@
 \q1
 \v 6 God¦254556 puts solitary¦254559 \add >people\add* into homes.
 \q1 He brings¦254562 out the prisoners¦254563 \add to live in\add* prosperity¦254564,
-\q1 but those¦254566 who are rebellious¦254566 live in a dry, barren land.
+\q1 but those¦254566 who are rebellious¦254566 live in a dry, barren land¦254568.
 \q1
 \v 7 God¦254571, when you went¦254572 out \add ≈ahead of\add* your people¦254574,
 \q1 you marched¦254575 through the wilderness¦254576. \qs (Instrumental¦254577 break¦254577.)\qs*
@@ -3731,13 +3667,12 @@
 \q1 His sovereignty is over Yisrael¦254884 and¦254886 his power¦254886 in¦254887 the skies¦254887.
 \q1
 \v 35 God, you are awesome in your¦254892 sacred place.
-\q1 The God of Yisrael¦254894—he's the one who gives power¦254899 and¦254899 strength¦254898 to his people¦254900.
+\q1 Yisrael's¦254894 god—he's the one who gives power¦254899 and¦254899 strength¦254898 to his people¦254900.
 \q1 \add ≈Praise\add* God.
 \c 69
 \s1 A request for help
 \rem /s1 Prayer for Deliverance from Persecution; A Cry for Help
 \d For the musical director¦254904: \add a song\add* by David¦254908 \add ≈to be sung to the tune of\add* ‘Lilies’.
-\rem /d For the director of music. To the tune of “Lilies.” Of David.; To the leader: according to Lilies. Of David.; For the leader: set to ‘Lilies’: for David; For the choir director: A psalm of David, to be sung to the tune “Lilies.”
 \q1
 \v 1 Save me, God¦254912, because¦254913 the waters¦254915 have reached my neck.
 \q1
@@ -3810,7 +3745,7 @@
 \q1 ≈When they think they're safe, let it become a trap.
 \q1
 \v 23 Let their eyes¦255173 be darkened so they¦255172 won't be able to see¦255174 anything,
-\q1 and make their \add ≈legs\add* continually¦255176 shake¦255177.
+\q1 and make¦255177 their \add ≈legs\add* continually¦255176 shake¦255177.
 \q1
 \v 24 Pour your indignation¦255183 out on them,
 \q1 ≈and let the fierceness¦255184 of your anger¦255185 overtake¦255186 them.
@@ -3856,7 +3791,6 @@
 \rem /s1 Prayer for Deliverance from Enemies; A Prayer for Help
 \r (Psa. 40:13-17)
 \d For the musical director¦255316: \add a song\add* by David¦255317 for the memorial¦255318 offering¦255318.
-\rem /d For the director of music. Of David. A petition.; To the leader. Of David, for the memorial offering.; For the leader: for David: for commemoration; For the choir director: A psalm of David, to bring us to the Lord's remembrance.
 \q1
 \v 1 Save me, God¦255321.
 \q1 ≈Yahweh¦255323, hurry \add here\add* to help¦255324 me.
@@ -3927,21 +3861,21 @@
 \v 17 God¦255542, you¦255543 have taught¦255543 me from my youth¦255544.
 \q1 Even now \add ≈I'm excited to tell about the wonderful¦255549 things you've¦255543 done\add*.
 \q1
-\v 18 Indeed, even when I'm old and¦255551 gray, God¦255557, don't¦255558 abandon¦255560 me,
+\v 18 Indeed, even when I'm old and¦255551 grey, God¦255557, don't¦255558 abandon¦255560 me,
 \q1 as I've been declaring¦255563 your strength¦255564 to the next generation¦255565—
 \q1 ≈your power to everyone¦255568 who is to come¦255568.
 \q1
 \v 19 \add ≈Your justice and¦255571 fairness is unable to be challenged\add*.
 \q1 ≈You who've done¦255578 great¦255579 things, God¦255572, who \add else\add* is like you?
 \q1
-\v 20 You who made me see¦255585 many troubles¦255588, will revive¦255592 us again,
+\v 20 You who made¦255585 me see¦255585 many troubles¦255588, will revive¦255592 us again,
 \q1 ≈and will bring¦255597 us back up from the depths¦255594 of the earth¦255595.
 \q1
 \v 21 May you¦255599 increase¦255599 my honour¦255601.
 \q1 ≈\add Turn\add* again¦255602 \add and¦255602\add* comfort¦255603 me.
 \q1
 \v 22 I'll also praise¦255609 you for your trustworthiness with the harp, my god¦255614.
-\q1 ≈I'll make music¦255615 for you with the harp, holy one of Yisrael¦255619.
+\q1 ≈I'll make¦255615 music¦255615 for you with the harp, holy one of Yisrael¦255619.
 \q1
 \v 23 When I sing praise to you, my lips¦255622 will shout for joy¦255621,
 \q1 along with my soul¦255627 which¦255628 you have \add ≈paid to have released\add*.
@@ -3952,7 +3886,6 @@
 \s1 A prayer to bless the king
 \rem /s1 Prayer for Guidance and Support for the King; A Prayer for the King
 \d A song by Shelomoh \add (Solomon)\add*.
-\rem /d Of Solomon.; A psalm of Solomon.; For Solomon
 \q1
 \v 1 Give the king your righteous decrees, God,
 \q1 ≈your righteousness to the king's son.
@@ -4023,7 +3956,6 @@
 \s1 The need for justice
 \rem /s1 Plea for Relief from Oppressors; The Justice of God
 \d A¦255865 song by Asaf¦255861.
-\rem /d A Psalm of Asaph.; A psalm: for Asaph; A psalm of Asaph.
 \q1
 \v 1 Surely God is good to Yisrael—
 \q1 to those with pure \add ≈motives\add*
@@ -4116,7 +4048,6 @@
 \s1 Requesting God's help
 \rem /s1 A Prayer for National Deliverance; Plea for Help in Time of National Humiliation
 \d A¦256117 song\f + \fr 74:0 \ft In Hebrew, ‘maskil’, is perhaps the name of this class of song.\f* by Asaf¦256114.
-\rem /d A Maskil of Asaph.; A \it maskil\it* of Asaph.; A maskil: for Asaph; A psalm of Asaph.
 \q1
 \v 1 Why God, have you rejected \add us\add* forever?
 \q1 Why \add ≈are you so angry at\add* the sheep in your pasture?
@@ -4191,7 +4122,6 @@
 \s1 God the judge
 \rem /s1 Thanksgiving for God's Wondrous Deeds; God the Judge
 \d For the musical director¦256359: a song by Asaf¦256364 to be sung to the tune of ‘Don't destroy’.
-\rem /d To the leader: Do Not Destroy. A Psalm of Asaph. A Song.; For the leader: set to ‘Destroy not’: a psalm: for Asaph: a song; For the choir director: A psalm of Asaph, to be sung to the tune “Do Not Destroy!” A song.; For the director of music. To the tune of “Do Not Destroy.” A psalm of Asaph. A song.
 \q1
 \v 1 We give thanks to you, God¦256371.
 \q1 We thank \add >you\add* \add ≈because you reveal your presence\add*.
@@ -4227,7 +4157,6 @@
 \s1 God is victorious
 \rem /s1 God the Victor; Israel's God—Judge of All the Earth
 \d For the musical director¦256479: a song by Asaf¦256482 \add ≈to be accompanied by\add* stringed¦256480 instruments¦256480.
-\rem /d For the leader: on stringed instruments: a psalm: for Asaph: a song; To the leader: with stringed instruments. A Psalm of Asaph. A Song.; For the choir director: A psalm of Asaph, to be accompanied by stringed instruments. A song.; For the director of music. With stringed instruments. A psalm of Asaph. A song.
 \q1
 \v 1 God¦256488 has made himself known¦256486 in Yehudah¦256487 \add (Judah)\add*.
 \q1 ≈His \add ≈reputation¦256491\add* is great¦256490 in Yisrael¦256489 \add (Israel¦256489)\add*.
@@ -4269,7 +4198,6 @@
 \s1 God's leadership
 \rem /s1 God's Mighty Deeds Recalled; Comfort in Time of Distress
 \d For the musical director¦256608: a song for Yedutun by Asaf¦256613.
-\rem /d For the leader: according to Jeduthun: for Asaph: a psalm; For the director of music. For Jeduthun. Of Asaph. A psalm.; To the leader: according to Jeduthun. Of Asaph. A Psalm.; For Jeduthun, the choir director: A psalm of Asaph.
 \q1
 \v 1 I will call out to God with my voice.
 \q1 I'll¦256621 call with my voice to God, and my god will hear me.
@@ -4292,7 +4220,7 @@
 \q1 and¦256677 my spirit makes searches¦256677 around diligently.
 \q1
 \v 7 Will my master¦256684 reject¦256682 me forever¦256681?
-\q1 ≈Will he never again¦256689 show me favour¦256688?
+\q1 ≈Will he never again¦256689 show¦256688 me favour¦256688?
 \q1
 \v 8 Was his loyal¦256694 commitment gone forever?
 \q1 ≈Had his promise failed forever?
@@ -4312,7 +4240,7 @@
 \v 13 Your way, God, is \add ^without imperfection\add*.
 \q1 What god compares to our \add ≈terrific\add* God?
 \q1
-\v 14 You are the god¦256751 who does miracles.
+\v 14 You are the god¦256751 who does¦256752 miracles.
 \q1 You've revealed your¦256756 strength¦256756 among¦256755 the peoples¦256755.
 \q1
 \v 15 You gave your people¦256761 victory by \add use of\add* your great power—
@@ -4334,13 +4262,12 @@
 \q1 and your trail through the surging waters¦256811,
 \q1 but¦256809 your footprints¦256813 couldn't be seen.
 \q1
-\v 20 You led your¦256820 people¦256820 like a flock¦256819
+\v 20 You led¦256818 your¦256820 people¦256820 like a flock¦256819
 \q1 \add ≈under the supervision\add* of Mosheh¦256823 and Aharon \add (Moses¦256823 and Aaron¦256824)\add*.
 \c 78
 \s1 God's past goodness
 \rem /s1 God and His People; God's Goodness and Israel's Ingratitude
 \d A¦256830 song\f + \fr 78:0 \ft In Hebrew, ‘maskil’ is perhaps the name of this class of song.\f* by Asaf¦256827.
-\rem /d A Maskil of Asaph.; A \it maskil\it* of Asaph.; A maskil: for Asaph; A psalm of Asaph.
 \q1
 \v 1 Hear my teaching, my people.
 \q1 ≈Listen to \add ≈what I'm saying\add*.
@@ -4576,7 +4503,6 @@
 \s1 A prayer for national restoration
 \rem /s1 A Prayer for the Nation's Deliverance; Plea for Mercy for Jerusalem
 \d A song by Asaf¦257500.
-\rem /d A Psalm of Asaph.; A psalm: for Asaph; A psalm of Asaph.
 \q1
 \v 1 God, foreign nations have come into \add the land you gave¦257518 as an\add* inheritance.
 \q1 They have defiled your holy temple.
@@ -4623,10 +4549,9 @@
 \s1 A prayer for national restoration
 \rem /s1 Prayer for Israel's Restoration; A Prayer for the Nation's Restoration
 \d For the musical director¦257668: a song by Asaf¦257673 to be sung to the tune of ‘Lilies of Agreement.’
-\rem /d For the leader: set to ‘Lilies’: a testimony: for Asaph: a psalm; For the director of music. To the tune of “The Lilies of the Covenant.” Of Asaph. A psalm.; To the leader: on Lilies, a Covenant. Of Asaph. A Psalm.; For the choir director: A psalm of Asaph, to be sung to the tune “Lilies of the Covenant.”
 \q1
 \v 1 Pay attention, Yisrael's shepherd¦257677.
-\q1 You who lead Yosef¦257683 \add (Joseph, meaning Israel¦257678)\add* like a flock¦257682;
+\q1 You who lead¦257681 Yosef¦257683 \add (Joseph, meaning Israel¦257678)\add* like a flock¦257682;
 \q1 You who sit¦257684 above the winged creatures \add on the sacred chest\add*, shine¦257686 on us!
 \q1
 \v 2 In the sight of Efrayim and Benyamin¦257692 and Menashsheh, stir up your¦257697 power¦257697.
@@ -4638,10 +4563,10 @@
 \v 4 Commander-in-chief Yahweh¦257710,
 \q1 how long will you¦257716 be angry at¦257717 your¦257718 people¦257718 when they pray?
 \q1
-\v 5 You have fed them with¦257725 bread¦257722 \add ≈made from\add* tears
+\v 5 You have fed them with¦257725 bread¦257722 \add ≈made¦257724 from\add* tears
 \q1 and¦257724 given¦257724 them tears to drink¦257724 in¦257725 great quantities.
 \q1
-\v 6 You make us something for our neighbours¦257731 to argue over,
+\v 6 You make¦257729 us something for our neighbours¦257731 to argue over,
 \q1 and our enemies¦257732 \add ≈laugh about\add* us among¦257735 themselves¦257735.
 \q1
 \v 7 Army¦257739 commander¦257739 God¦257738, restore¦257740 us.
@@ -4669,9 +4594,9 @@
 \q1 Look down from heaven¦257808 and take notice and take care of this grapevine¦257811.
 \q1
 \v 15 This is the root that you planted¦257818 \add ≈by your power\add*—
-\q1 the shoot that you made grow.
+\q1 the shoot that you made¦257823 grow.
 \q1
-\v 16 It has been cut down and burnt¦257827.
+\v 16 It has been cut¦257829 down and burnt¦257827.
 \q1 They perish¦257832 at¦257828 your¦257831 rebuke¦257830.
 \q1
 \v 17 May your hand be on the man \add ≈you've¦257847 given your power to\add*—
@@ -4686,7 +4611,6 @@
 \s1 Thanking God for relief
 \rem /s1 A Song for a Festival; God's Appeal to Stubborn Israel
 \d For¦257872 the musical director¦257868: a song by Asaf¦257873 \add ≈to be accompanied by\add* stringed instruments.\f + \fr 81:0 \ft In Hebrew, ‘Gitit’ could be an instrument or type of voice.\f*
-\rem /d To the leader: according to The Gittith. Of Asaph.; For the director of music. According to \it gittith.\it* Of Asaph.; For the choir director: A psalm of Asaph, to be accompanied by a stringed instrument.; For the leader: according to the gittith: for Asaph
 \q1
 \v 1 Sing aloud to God¦257877 our strength¦257878.
 \q1 ≈Shout out to Yakov's god with happiness.
@@ -4715,7 +4639,7 @@
 \q1 If you would only listen to me.
 \q1
 \v 9 There mustn't be any foreign god among you.
-\q1 ≈You mustn't worship any foreign god.
+\q1 ≈You mustn't worship¦257971 any foreign god.
 \q1
 \v 10 I'm your god¦257979 Yahweh¦257978 who brought¦257980 you¦257980 out of Egypt¦257982.
 \q1 Open your mouth¦257985 wide, and I'll¦257986 fill¦257986 it¦257986.
@@ -4741,7 +4665,6 @@
 \s1 God the defender
 \rem /s1 A Plea for Justice; God the Supreme Ruler
 \d A song by Asaf¦258044.
-\rem /d A Psalm of Asaph.; A psalm: for Asaph; A psalm of Asaph.
 \q1
 \v 1 God stands in the divine assembly.
 \q1 He renders judgement¦258058 among the gods.
@@ -4771,12 +4694,11 @@
 \s1 Praying for victory over enemies
 \rem /s1 A Prayer for the Defeat of Israel's Enemies; Prayer for Judgment on Israel's Foes
 \d A song by Asaf¦258126.
-\rem /d A psalm of Asaph. A song.; A Song. A Psalm of Asaph.; A song. A psalm of Asaph.; A song: a psalm: for Asaph
 \q1
 \v 1 God, don't¦258130 be silent¦258137.
 \q1 ≈Don't¦258130 ignore us and¦258138 remain unmoved, God.
 \q1
-\v 2 Look, your¦258147 enemies¦258147 are making a commotion,
+\v 2 Look¦258146, your¦258147 enemies¦258147 are making a commotion,
 \q1 ≈and¦258149 those¦258149 who hate¦258149 you¦258149 \add ≈starting to cause trouble\add*.
 \q1
 \v 3 They conspire against your people¦258156,
@@ -4808,7 +4730,7 @@
 \q1
 \v 12 They said¦258248, “Let's take¦258249 God's pastures¦258252 for ourselves¦258250.”
 \q1
-\v 13 My¦258256 god¦258256, make them like the whirling dust.
+\v 13 My¦258256 god¦258256, make¦258257 them like the whirling dust.
 \q1 ≈\add ≡Make them\add* like chaff¦258259 \add ≈blown around by\add* the wind¦258262,
 \q1
 \v 14 like the fire that burns¦258266 a forest¦258268,
@@ -4829,7 +4751,6 @@
 \s1 Longing to be in Yahweh's courtyards
 \rem /s1 The Joy of Worship in the Temple; Longing for God's House
 \d For¦258315 the musical director¦258312: a song by Korah's¦258318 descendants \add ≈to be accompanied by\add* stringed instruments.\f + \fr 84:0 \ft In Hebrew, ‘Gitit’ could be an instrument or type of voice.\f*
-\rem /d To the leader: according to The Gittith. Of the Korahites. A Psalm.; For the choir director: A psalm of the descendants of Korah, to be accompanied by a stringed instrument.; For the leader: according to the gittith: for the Korahites: a psalm; For the director of music. According to \it gittith.\it* Of the Sons of Korah. A psalm.
 \q1
 \v 1 How lovely¦258324 is the place¦258325 where you live,
 \q1 Commander-in-chief Yahweh¦258326.
@@ -4873,7 +4794,6 @@
 \s1 Prayer for national peace
 \rem /s1 Prayer for the Restoration of God's Favour; A Prayer for the Nation's Welfare
 \d For the musical director¦258473: a song by Korah's¦258477 descendants.
-\rem /d For the director of music. Of the Sons of Korah. A psalm.; To the leader. Of the Korahites. A Psalm.; For the choir director: A psalm of the descendants of Korah.; For the leader: for the Korahites: a psalm
 \q1
 \v 1 Yahweh¦258482, you've shown favour¦258481 to your¦258483 \add ≈country\add*.
 \q1 ≈You have restored Yakov's well-being.
@@ -4901,7 +4821,7 @@
 \q1 yet they mustn't turn \add back\add* again to \add ≈doing foolish things\add*.
 \q1
 \v 9 \add ≈Certainly he must be close to rescuing those¦258573 who strive to obey\add* him¦258573,
-\q1 then glory\f + \fr 85:9 \ft Many translations add ‘his’ to explain that it's God's glory, but we've left it ambiguous because it could also refer to the people's glory/honour.\f* will remain in¦258577 our¦258577 land.
+\q1 then glory\f + \fr 85:9 \ft Many translations add ‘his’ to explain that it's God's glory, but we've left it ambiguous because it could also refer to the people's glory/honour.\f* will remain in¦258577 our¦258577 land¦258577.
 \q1
 \v 10 Loyal commitment and trustworthiness have met together.
 \q1 ≈Righteousness and peace¦258585 have kissed each other.
@@ -4910,15 +4830,14 @@
 \q1 ≈and¦258592 righteousness¦258592 looks¦258594 down from the sky.
 \q1
 \v 12 Yes, Yahweh¦258599 will give his good blessings,
-\q1 →and then our land will yield its crops.
+\q1 →and then our land¦258602 will yield its crops.
 \q1
 \v 13 Righteousness will go¦258609 before¦258608 \add @Yahweh\add*,
-\q1 →and make a way¦258611 for his footsteps¦258612.
+\q1 →and make¦258610 a way¦258611 for his footsteps¦258612.
 \c 86
 \s1 God's great love
 \rem /s1 A Prayer for Help; Supplication for Help against Enemies
 \d A prayer¦258614 of David's¦258615.
-\rem /d A prayer: for David; A prayer of David.; A Prayer of David.
 \q1
 \v 1 \add ≈Turn this way\add* and listen, Yahweh,
 \q1 and answer me because¦258630 I'm weak and needy.
@@ -4977,7 +4896,6 @@
 \s1 Praising Tsiyyon (Zion)
 \rem /s1 In Praise of Jerusalem; The Joy of Living in Zion
 \d A song by Korah's¦258806 descendants.
-\rem /d Of the Korahites. A Psalm. A Song.; A psalm of the descendants of Korah. A song.; For the Korahites: a psalm: a song; Of the Sons of Korah. A psalm. A song.
 \q1
 \v 1 On the sacred hill stands the city he founded.
 \q1
@@ -5002,7 +4920,6 @@
 \s1 A depressed cry for help
 \rem /s1 Prayer for Help in Despondency; A Cry for Help
 \d For the musical director¦258879: a song by Korah's¦258878 descendants. To be sung to the tune of ‘Mahalat-Le'annot’ a song\f + \fr 88:0 \ft In Hebrew, ‘maskil’ is perhaps the name of this class of song.\f* by Heyman, \add ≈one of Ezra's descendants\add*.
-\rem /d For the choir director: A psalm of the descendants of Korah, to be sung to the tune “The Suffering of Affliction.” A psalm of Heman the Ezrahite. A song.; A song. A psalm of the Sons of Korah. For the director of music. According to \it mahalath leannoth.\it* A \it maskil\it* of Heman the Ezrahite.; A Song. A Psalm of the Korahites. To the leader: according to Mahalath Leannoth. A Maskil of Heman the Ezrahite.; A song: a psalm: for the Korahites: for the leader: set to ‘Mahalath le-annoth’: a maskil: for Heman the Ezrahite
 \q1
 \v 1 Yahweh¦258889 God¦258890 \add ≈who rescues me\add*,
 \q1 I¦258894 call out day¦258892 and night¦258895 to you¦258896 \add for help\add*.
@@ -5019,7 +4936,7 @@
 \v 5 I'm abandoned among¦258930 the dead.
 \q1 ≈I'm like the dead who lie in¦258930 the grave¦258936,
 \q1 about whom you¦258939 \add ≈don't¦258938 care any more\add*
-\q1 because they're cut off from your¦258942 power.
+\q1 because they're cut¦258943 off from your¦258942 power.
 \q1
 \v 6 You place me in the lowest¦258948 part of the pit—
 \q1 ≈in the dark and deep places¦258949.
@@ -5028,7 +4945,7 @@
 \q1 ≈and all your waves¦258958 crash over me. \qs (Instrumental¦258960 break¦258960.)\qs*
 \q1
 \v 8 Because of you¦258963, my acquaintances¦258964 avoid me.
-\q1 You have made me a shocking sight to them.
+\q1 You have made¦258966 me a shocking sight to them.
 \q1 I am hemmed in and¦258970 I cannot escape.
 \q1
 \v 9 My eyes grow weary from trouble.
@@ -5065,7 +4982,6 @@
 \s1 To be sung my the goodness of God
 \rem /s1 God's Covenant with David; A Hymn in Time of National Trouble
 \d A song\f + \fr 89:0 \ft In Hebrew, ‘maskil’ is perhaps the name of this class of song.\f* of Eytan, \add ≈one of Ezra's descendants\add*.
-\rem /d A Maskil of Ethan the Ezrahite.; A \it maskil\it* of Ethan the Ezrahite.; A psalm of Ethan the Ezrahite.; A maskil: for Ethan the Ezrahite
 \q1
 \v 1 I will sing of Yahweh's¦259074 acts of loyal¦259073 commitment forever¦259075.
 \q1 ≈I will proclaim your¦259081 truthfulness to future generations.
@@ -5121,8 +5037,8 @@
 \q1
 \v 18 because¦259264 our shield¦259266 belongs to Yahweh¦259265—
 \q1 ≈our king¦259269 belongs to Yisrael's¦259268 holy \add >one\add*.
-\q1
 \rem /s1 God's Promise to David
+\q1
 \v 19 Long ago you¦259273 spoke¦259273 in¦259275 a vision¦259275 to your¦259276 faithful¦259276 \add >ones\add*.
 \q1 You said¦259277, “I've \add ≈helped\add* a warrior¦259282.”
 \q1 ≈I've raised¦259283 up one chosen¦259284 from among the people¦259285.
@@ -5145,7 +5061,7 @@
 \v 25 I¦259333 will place his hand over the sea
 \q1 and his right¦259337 hand over the rivers¦259336.
 \q1
-\v 26 He will call out to me, ‘You are my father¦259342,
+\v 26 He will call¦259341 out to me, ‘You are my father¦259342,
 \q1 my god¦259344, and¦259345 the \add ≈reliable one who rescues me\add*.’
 \q1
 \v 27 I¦259351 also will place him¦259353 as my firstborn¦259352 son,
@@ -5180,8 +5096,8 @@
 \q1
 \v 37 It will be established¦259444 forever¦259445 like the moon¦259443,
 \q1 the faithful witness¦259446 in¦259447 the sky¦259447.” \qs (Instrumental¦259449 break¦259449.)\qs*
-\q1
 \rem /s1 Lament over the Defeat of the King
+\q1
 \v 38 But¦259452 you have refused and rejected¦259454—
 \q1 you've¦259453 been angry with your anointed¦259458 king.
 \q1
@@ -5205,8 +5121,8 @@
 \q1
 \v 45 You have shortened¦259515 the days¦259516 of his youth¦259517.
 \q1 You have covered him with shame¦259520. \qs (Instrumental¦259521 break¦259521.)\qs*
-\q1
 \rem /s1 A Prayer for Deliverance
+\q1
 \v 46 How long, Yahweh¦259527? Will you¦259528 hide¦259528 yourself¦259528 forever¦259529?
 \q1 ≈How long will your¦259534 anger¦259534 burn¦259530 like fire¦259533?
 \q1
@@ -5232,7 +5148,6 @@
 \s1 The people and the god
 \rem /s1 Of God and Human Beings; God's Eternity and Human Frailty
 \d A prayer¦259612 by God's man¦259614 Mosheh¦259613 \add (Moses¦259613)\add*.
-\rem /d A Prayer of Moses, the man of God.; A prayer of Moses, the man of God.; A prayer of Moses the man of God.; A prayer: ascribed to Moses, the man of God
 \q1
 \v 1 My master, you've been our \add ≈protection\add*
 \q1 throughout all generations.
@@ -5312,7 +5227,7 @@
 \v 6 \add ≡You won't be afraid\add* of the \add ≈forces\add* that \add ≈roam around\add* in¦259835 the darkness¦259835,
 \q1 ≈or of the destruction¦259837 that \add ≈causes devastation¦259838\add* at¦259835 noon time.
 \q1
-\v 7 A thousand \add warriors\add* might fall \add dead\add* at your side¦259842,
+\v 7 A thousand \add warriors\add* might fall¦259841 \add dead\add* at your side¦259842,
 \q1 ≈and ten¦259845 thousand at your right¦259846 hand¦259846,
 \q1 yet you¦259847 still won't¦259848 be reached \add by the enemy\add*.
 \q1
@@ -5347,7 +5262,6 @@
 \s1 A praise song
 \rem /s1 Thanksgiving for Vindication; A Song of Praise
 \d An accompanied song for \add #Rest Days\add*.
-\rem /d A psalm. A song. For the Sabbath day.; A psalm: a song: for the sabbath day; A Psalm. A Song for the Sabbath Day.; A psalm to be sung on the Lord's Day. A song.
 \q1
 \v 1 It's good¦259939 when people thank¦259940 \add you,\add* Yahweh¦259941,
 \q1 ≈and¦259942 sing praises¦259942 to you, the highest one
@@ -5358,7 +5272,7 @@
 \v 3 using the ten-stringed instrument,
 \q1 ≈and¦259957 the melody¦259961 from a harp.
 \q1
-\v 4 \add ≈Yes,\add* you¦259966, Yahweh¦259967, have made me happy by your actions.
+\v 4 \add ≈Yes,\add* you¦259966, Yahweh¦259967, have made¦259966 me happy by your actions.
 \q1 ≈I will cheerfully sing because¦259965 of what you've¦259966 done.
 \q1
 \v 5 Yahweh¦259978, you do incredible things.
@@ -5378,7 +5292,7 @@
 \q1 because¦260020 your enemies will perish¦260029.
 \q1 All those¦260033 who do¦260033 evil will be \add ≈forced to flee\add*.
 \q1
-\v 10 \add You've\add* \add ≈made me as powerful\add* as a wild bull¦260038.
+\v 10 \add You've\add* \add ≈made me as powerful\add* as a wild¦260038 bull¦260038.
 \q1 I've¦260040 been anointed¦260040 with¦260041 fresh¦260042 oil¦260041.
 \q1
 \v 11 With my \add own\add* eyes¦260046, I've looked¦260045 at¦260047 my enemies¦260047.
@@ -5397,7 +5311,7 @@
 \v 15 They'll proclaim that Yahweh¦260083 is an honest \add judge\add*.
 \q1 ≈\add ≈He's reliable\add* and¦260085 \add ^can only ever do what is right\add*.
 \c 93
-\s1 The God King
+\s1 The god King
 \rem /s1 The Majesty of God's Rule; God the King
 \q1
 \v 1 Yahweh reigns¦260092—he's robed in majesty¦260093.
@@ -5514,9 +5428,9 @@
 \q1 ≈and the mountain¦260402 peaks¦260401 are \add also\add* his.
 \q1
 \v 5 The oceans are his because he \add ≈created\add* them.
-\q1 ≈His hands¦260412 formed¦260413 \add all\add* the dry land.
+\q1 ≈His hands¦260412 formed¦260413 \add all\add* the dry land¦260411.
 \q1
-\v 6 Come on, let's bow down and¦260417 worship \add >him\add*.
+\v 6 Come on, let's bow down and¦260417 worship¦260416 \add >him\add*.
 \q1 ≈Let's kneel¦260418 in front¦260419 of our¦260422 creator, Yahweh¦260421,
 \q2
 \v 7 because he's our god¦260426.
@@ -5555,7 +5469,7 @@
 \q1 ≈He should be revered more than all other gods¦260522,
 \q1
 \v 5 because all the gods¦260528 of the other nations are \add just\add* idols¦260530,
-\q1 but¦260531 it's Yahweh¦260531 who made the \add ≈universe\add*.
+\q1 but¦260531 it's Yahweh¦260531 who made¦260533 the \add ≈universe\add*.
 \q1
 \v 6 There's splendour¦260540 and majesty¦260537 in his presence.
 \q1 ≈Strength and beauty¦260540 are in his sanctuary¦260541.
@@ -5606,7 +5520,7 @@
 \v 6 The heavens¦260670 declare¦260669 \add ≈that he does what is right¦260671\add*,
 \q1 and all the nations can see¦260672 his \add ≈splendour¦260676\add*.
 \q1
-\v 7 All those who worship carved figures will be shamed—
+\v 7 All those who worship¦260686 carved figures will be shamed—
 \q1 ≈those who boast¦260684 about worthless idols¦260685.
 \q1 Bow down to him, all you ‘gods¦260691’.
 \q1
@@ -5630,7 +5544,6 @@
 \s1 Praising the master
 \rem /s1 Praise the Judge of the World; God the Ruler of the World
 \d A¦260753 song.
-\rem /d A Psalm.; A psalm; A psalm.
 \q1
 \v 1 Sing a new song to Yahweh¦260769 because he's done wonderful \add >things\add*.
 \q1 His \add ≈power and his purity\add* have given him the victory.
@@ -5701,7 +5614,6 @@
 \s1 Let's thank and praise Yahweh
 \rem /s1 A Hymn of Praise; All Lands Summoned to Praise God
 \d The song of thanking¦260947.
-\rem /d A Psalm of thanksgiving.; A psalm of thanksgiving.; A psalm. For giving thanks.; A psalm: for thanksgiving
 \q1
 \v 1 Cheerfully shout to Yahweh¦260958, \add ≈everybody\add*.
 \q1
@@ -5723,7 +5635,6 @@
 \s1 A good king's pledge
 \rem /s1 A Sovereign's Pledge of Integrity and Justice; A King's Promise
 \d A song by David.
-\rem /d Of David. A Psalm.; Of David. A psalm.; A psalm of David.; For David: a psalm
 \q1
 \v 1 I will sing about¦261022 \add your\add* loyal commitment and justice.
 \q1 I'll¦261015 sing praises to you¦261020, Yahweh.
@@ -5753,7 +5664,6 @@
 \s1 Prayer for relief from troubles
 \rem /s1 Prayer to the Eternal King for Help; The Prayer of a Troubled Youth
 \d A prayer¦261115 of an afflicted¦261116 person feeling faint¦261119 and¦261120 who pours¦261122 out their sorrows to Yahweh¦261121.
-\rem /d A prayer of one overwhelmed with trouble, pouring out problems before the Lord.; A prayer of an afflicted man. When he is faint and pours out his lament before the Lord.; A prayer of one afflicted, when faint and pleading before the Lord.; A prayer: for the afflicted one when he is faint and pours out his complaint before the Lord
 \q1
 \v 1 Hear my prayer, Yahweh.
 \q1 ≈Let my call for help¦261129 reach you¦261130.
@@ -5774,7 +5684,7 @@
 \q1 I'm like an owl among the ruins.
 \q1
 \v 7 I¦261192 lie awake
-\q1 like a lonely bird sitting on the roof¦261198.
+\q1 like a lonely bird¦261194 sitting on the roof¦261198.
 \q1
 \v 8 My¦261206 enemies¦261205 taunt¦261204 me \add ≈all day¦261203 long\add*.
 \q1 They ridicule and curse me
@@ -5831,7 +5741,7 @@
 \q1 You \add ≈made\add* the skies¦261387 with your¦261386 \add own\add* hands¦261386.
 \q1
 \v 26 You'll remain even when they perish¦261392.
-\q1 They'll wear out like \add an old\add* \add ≈shirt\add*—
+\q1 They'll wear¦261397 out like \add an old\add* \add ≈shirt\add*—
 \q1 like clothes¦261398 you'll change¦261399 them and they'll disappear.
 \q1
 \v 27 \add ≈But¦261403\add* you \add ≈are there\add*,
@@ -5843,7 +5753,6 @@
 \s1 Yahweh's goodness
 \rem /s1 Thanksgiving for God's Goodness; The Love of God
 \d \add A song\add* by David.
-\rem /d For David; A psalm of David.; Of David.
 \q1
 \v 1 Bless¦261435 Yahweh¦261439 \add ≈with my entire¦261443 self\add*,
 \q1 ≈and¦261440 everything that's within me, \add ≡bless\add* \add ≈him because he's sinless\add*.
@@ -5943,13 +5852,13 @@
 \v 8 The mountains¦261713 rose up and the valleys¦261715 sunk down—
 \q1 \add all\add* into the \add #places\add* that¦261719 you'd established¦261721 for them.
 \q1
-\v 9 You set a boundary¦261724 that \add the waters\add* won't¦261727 cross¦261729 again¦261732 to cover¦261733 the earth¦261734.
+\v 9 You set¦261726 a boundary¦261724 that \add the waters\add* won't¦261727 cross¦261729 again¦261732 to cover¦261733 the earth¦261734.
 \q1
 \v 10 \add Now\add* he sends¦261736 springs¦261737 to flow into the valleys¦261738,
 \q1 \add and that\add* flow between¦261739 the mountains¦261740.
 \q1
 \v 11 They \add ≈supply water for\add* all the animals¦261746 in the countryside¦261747—
-\q1 the wild donkeys¦261749 can break¦261748 their¦261750 thirst¦261750.
+\q1 the wild¦261749 donkeys¦261749 can break¦261748 their¦261750 thirst¦261750.
 \q1
 \v 12 The birds build their nests beside them.
 \q1 They \add ≈chirp away from among¦261757 the greenery\add*.
@@ -5974,17 +5883,17 @@
 \v 18 The high¦261817 hills are for the wild goats¦261818.
 \q1 \add &Their\add* crevices are a safe place for the rock badgers¦261821.
 \q1
-\v 19 He made the moon¦261824 \add to mark\add* the \add ≈months\add*.
+\v 19 He made¦261823 the moon¦261824 \add to mark\add* the \add ≈months\add*.
 \q1 The sun¦261826 knows¦261827 \add ≈when it's time to go down\add*.
 \q1
-\v 20 You make the darkness¦261832 at night¦261834,
+\v 20 You make¦261830 the darkness¦261832 at night¦261834,
 \q1 when all the animals¦261840 in the forest¦261842 move around.
 \q1
 \v 21 The young¦261844 lions¦261844 roar for their prey,
 \q1 and \add ≈expect God¦261848 to supply\add* their food.
 \q1
 \v 22 They \add ≈slink away\add* when the sun¦261852 \add ≈comes up\add*
-\q1 and¦261854 lie down in their¦261856 dens.
+\q1 and¦261854 lie down in their¦261856 dens¦261856.
 \q1
 \v 23 \add Meanwhile\add* \add #people\add* \add ≈head off\add* to do \add #their\add* work¦261861,
 \q1 and¦261862 toil \add away\add* until¦261863 evening¦261865.
@@ -6004,7 +5913,7 @@
 \q1 to give¦261911 them their¦261912 food at¦261913 \add ≈the appropriate¦261913 time¦261913\add*.
 \q1
 \v 28 They gather¦261917 what you give¦261915 to them.
-\q1 ≈When you open your hand¦261919, they're satisfied¦261920.
+\q1 ≈When you open¦261918 your hand¦261919, they're satisfied¦261920.
 \q1
 \v 29 When you hide¦261923 \add ≈yourself away\add*, they're upset.
 \q1 ≈If you take away their breath¦261927, they die¦261928 and return¦261932 to dust.
@@ -6057,7 +5966,7 @@
 \v 8 He \add ^never forgets\add* his agreement¦262052 \add with us\add*—
 \q1 \add ≈Any promise he made\add* \add will endure\add* for a thousand¦262055 generations¦262056.
 \q1
-\v 9 \add ≈like\add* \add the one\add* he¦262059 made with Abraham¦262062,\x + \xo 105:9: \xt Gen 12:7; 17:8.\x*
+\v 9 \add ≈like\add* \add the one\add* he¦262059 made¦262059 with Abraham¦262062,\x + \xo 105:9: \xt Gen 12:7; 17:8.\x*
 \q1 and¦262063 his oath to Yitsak \add (Isaac¦262064)\add*.\x + \xo 105:9: \xt Gen 26:3.\x*
 \q1
 \v 10 \add ≈Later\add*, he¦262066 confirmed¦262066 it¦262066 again to Yaakov \add (Jacob)\add*,\x + \xo 105:10-11: \xt Gen 28:13.\x*
@@ -6100,7 +6009,7 @@
 \q1 ≈and¦262175 to teach wisdom¦262176 to his elders¦262175.
 \q1
 \v 23 Then¦262178 Yisrael¦262179 went¦262178 to Egypt¦262180 \add (Heb. Mitsrayim)\add*,\x + \xo 105:23: a \xt Gen 46:6; \xo b \xt Gen 47:11.\x*
-\q1 \add yes,\add* Yaakov \add (Jacob)\add* \add ≈lived for a time\add* in the land of Ham¦262185.
+\q1 \add yes,\add* Yaakov \add (Jacob)\add* \add ≈lived for a time\add* in the land¦262183 of Ham¦262185.
 \q1
 \v 24 Then¦262187 Yahweh made his people¦262190 \add ≈have large families\add*,
 \q1 and¦262192 \add ≡made them\add* much more powerful than their enemies.
@@ -6113,7 +6022,7 @@
 \q1 \add so they would deal\add* with it.
 \q1
 \v 27 They demonstrated signs¦262215 \add @from Yahweh\add* \add while\add* with¦262213 \add @the Egyptians\add*,
-\q1 ≈and miracles¦262216 in¦262213 the land of Ham¦262218.
+\q1 ≈and miracles¦262216 in¦262213 the land¦262217 of Ham¦262218.
 \q1
 \v 28 He sent¦262220 darkness¦262221 and \add the place\add* \add ≈went\add* dark.\x + \xo 105:28: \xt Exo 10:21-23.\x*
 \q1 They \add ≈couldn't argue against¦262225 his commands\add*.\f + \fr 105:28 \ft It's not clear who is being talked about here, so other translations will likely differ.\f*
@@ -6121,14 +6030,14 @@
 \v 29 He turned¦262232 their water¦262235 into blood¦262236,\x + \xo 105:29: \xt Exo 7:17-21.\x*
 \q1 and their fish¦262240 died.
 \q1
-\v 30 Their land swarmed¦262242 with¦262245 frogs¦262244,\x + \xo 105:30: \xt Exo 8:1-6.\x*
+\v 30 Their land¦262243 swarmed¦262242 with¦262245 frogs¦262244,\x + \xo 105:30: \xt Exo 8:1-6.\x*
 \q1 \add even\add* in¦262245 the \add ≈palace bedrooms\add*.
 \q1
 \v 31 He spoke¦262248 and¦262249 a swarm¦262250 of flies¦262250 came¦262249.\x + \xo 105:31: a \xt Exo 8:20-24; \xo b \xt Exo 8:16-17.\x*
 \q1 Gnats \add spread throughout\add* \add ≈the entire¦262252 country¦262254\add*.
 \q1
 \v 32 He \add ≈replaced the rain with hail\add*,\x + \xo 105:32-33: \xt Exo 9:22-25.\x*
-\q1 with fire flaming on¦262261 their¦262261 land.\f + \fr 105:32 \ft There was no fire mentioned in the Exodus plagues, hence some translations interpret this as lightning.\f*
+\q1 with fire flaming on¦262261 their¦262261 land¦262261.\f + \fr 105:32 \ft There was no fire mentioned in the Exodus plagues, hence some translations interpret this as lightning.\f*
 \q1
 \v 33 He \add ≈destroyed\add* their grapevines and¦262263 fig¦262265 trees—
 \q1 shattering¦262266 \add ≈all the other\add* trees.
@@ -6139,7 +6048,7 @@
 \v 35 and¦262277 devoured all of the vegetation¦262280 in¦262281 their region¦262281—
 \q1 they ate up all the \add ≈produce¦262283\add* from the \add ≈soil\add*.
 \q1
-\v 36 He \add ≈killed\add* every¦262287 \add ≈eldest male\add* in¦262290 their land\x + \xo 105:36: \xt Exo 12:29.\x*—
+\v 36 He \add ≈killed\add* every¦262287 \add ≈eldest male\add* in¦262290 their land¦262290\x + \xo 105:36: \xt Exo 12:29.\x*—
 \q1 the \add ≈star products\add* of their strength¦262294. STUD PRODUCTS???
 \q1
 \v 37 He brought¦262296 \add @his people\add* out \add ≈carrying\add* gold¦262298 and¦262296 silver¦262297,\x + \xo 105:37-38: \xt Exo 12:33-36.\x*
@@ -6196,10 +6105,10 @@
 \q1 and \add instead\add* they rebelled¦262442 \add down there\add* at¦262430 the Red Sea.
 \q1
 \v 8 \add ≈However,\add* he saved¦262450 them for \add ≈the sake of his reputation¦262452\add*—
-\q1 to make his incredible power¦262456 known¦262453 \add to the world\add*.
+\q1 to make¦262453 his incredible power¦262456 known¦262453 \add to the world\add*.
 \q1
 \v 9 He \add ≈commanded the Red\add* Sea and¦262458 it dried¦262462 up,
-\q1 then¦262458 he led them through \add &its\add* depths as if it was \add ≈ordinary land\add*\x + \xo 106:9-12: \xt Exo 14:21-31.\x*
+\q1 then¦262458 he led¦262463 them through \add &its\add* depths as if it was \add ≈ordinary land\add*\x + \xo 106:9-12: \xt Exo 14:21-31.\x*
 \q1
 \v 10 and¦262467 saved¦262467 them from the \add ≈forces\add* of those who hated¦262469 them—
 \q1 \add ≈yes,\add* he rescued them from \add &their\add* enemy's¦262472 \add ≈power\add*.
@@ -6231,7 +6140,7 @@
 \q1 ≈and¦262529 the flames¦262533 burnt¦262529 up the wicked¦262535 \add >people\add*.
 \b
 \q1
-\v 19 They made a \add gold\add* calf at¦262540 Horev,\x + \xo 106:19-23: \xt Exo 32:1-14.\x*
+\v 19 They made¦262537 a \add gold\add* calf at¦262540 Horev,\x + \xo 106:19-23: \xt Exo 32:1-14.\x*
 \q1 ≈and¦262541 worshipped¦262541 \add the metal\add* \add ≈statue\add* \add there\add*.
 \q1
 \v 20 They traded the splendour¦262547 of their¦262547 \add God\add*,
@@ -6240,7 +6149,7 @@
 \v 21 They forgot¦262553 about their¦262555 saviour¦262555 god¦262554
 \q1 who'd done¦262556 incredible \add >miracles\add* in¦262558 Egypt¦262558 \add (Heb. Mitsrayim)\add*,
 \q1
-\v 22 ≈\add ≡had done\add* \add ≈amazing feats\add* in the land of Ham¦262562 \add (i.e., Egypt)\add*,
+\v 22 ≈\add ≡had done\add* \add ≈amazing feats\add* in the land¦262561 of Ham¦262562 \add (i.e., Egypt)\add*,
 \q1 ≈\add and\add* \add ≈had demonstrated powerful forces\add* at the \add ≈Red\add* Sea.
 \q1
 \v 23 So¦262570 he said¦262570 that he'd destroy them,
@@ -6357,7 +6266,7 @@
 \v 6 Then¦262844 they¦262844 called out to Yahweh¦262847 in¦262848 their \add time of\add* trouble¦262848,
 \q1 →and he¦262851 rescued them out of their distress¦262850.
 \q1
-\v 7 He led them by a direct path¦262854
+\v 7 He led¦262853 them by a direct path¦262854
 \q1 so that they could go¦262856 to a city¦262859 to live in¦262854.
 \q1
 \v 8 Oh that people would praise Yahweh¦262863 for his loyal¦262864 commitment
@@ -6439,11 +6348,11 @@
 \v 33 He turns rivers¦263072 into wilderness¦263073,
 \q1 ≈and¦263074 springs¦263074 of water¦263075 into dry land,
 \q1
-\v 34 and a prosperous land into a barren place
+\v 34 and a prosperous land¦263078 into a barren place
 \q1 because¦263081 of the wickedness¦263081 of those¦263082 who live there.
 \q1
 \v 35 He turns the wilderness¦263086 into a pool
-\q1 and dry land into springs¦263092 of water.
+\q1 and dry land¦263090 into springs¦263092 of water.
 \q1
 \v 36 He settles the hungry¦263097 there¦263096,
 \q1 and¦263098 they¦263098 build a city¦263099 to live¦263095 in.
@@ -6473,7 +6382,6 @@
 \rem /s1 A Prayer for Help against Enemies; Praise and Prayer for Victory
 \r (Psa. 57:7-11; 60:5-12)
 \d A song by David¦263164.
-\rem /d A Song. A Psalm of David.; A song. A psalm of David.; A psalm of David. A song.; A song: a psalm: for David
 \q1
 \v 1 \add ≈I've made my decision\add*, God¦263169.
 \q1 I will sing, yes, I will sing praises¦263171 with \add ≈sincerity\add*.
@@ -6509,7 +6417,7 @@
 \v 11 \add ≈It seems that you've\add* rejected¦263280 us, God¦263279?
 \q1 You don't¦263277 go¦263283 into battle with¦263285 our¦263285 armies¦263285.
 \q1
-\v 12 Give us help against¦263292 \add &our\add* enemy,
+\v 12 Give¦263288 us help against¦263292 \add &our\add* enemy,
 \q1 because human¦263295 help is worthless¦263293.
 \q1
 \v 13 We'll win with¦263298 God's help.
@@ -6518,7 +6426,6 @@
 \s1 My god help me
 \rem /s1 Prayer for Vindication and Vengeance; The Complaint of Someone in Trouble
 \d A¦263310 song by David¦263307 for the choir¦263306 director¦263306.
-\rem /d For the leader: for David: a psalm; For the director of music. Of David. A psalm.; To the leader. Of David. A Psalm.; For the choir director: A psalm of David.
 \q1
 \v 1 \add You're the \add* God that I praise—
 \q1 don't be silent
@@ -6618,7 +6525,6 @@
 \s1 Yahweh and his chosen king
 \rem /s1 The Lord and His Chosen King; Assurance of Victory for God's Priest-King
 \d A song by David.
-\rem /d Of David. A Psalm.; Of David. A psalm.; A psalm of David.; For David: a psalm
 \q1
 \v 1 Yahweh¦263618 \add ≈told\add* my master, “Sit \add here\add* on¦263621 my right
 \q1 until I \add defeat\add* your¦263616 enemies¦263622.”
@@ -6797,13 +6703,13 @@
 \v 2 Yehudah¦263968 became¦263967 his sacred place,
 \q1 ≈\add and\add* Yisrael¦263970 his kingdom.
 \q1
-\v 3 The \add Red\add* Sea looked and¦263975 fled.\x + \xo 114:3: \xt Exo 14:21.\x*
+\v 3 The \add Red\add* Sea looked and¦263975 fled¦263975.\x + \xo 114:3: \xt Exo 14:21.\x*
 \q1 ≈The Yordan¦263976 \add river\add* turned¦263977 back.\x + \xo 114:3: \xt Josh 3:16.\x*
 \q1
 \v 4 The mountains¦263980 skipped like rams,
 \q1 ≈\add and\add* the little hills¦263983 like lambs¦263984.
 \q1
-\v 5 Why did you flee, sea¦263991?
+\v 5 Why did you flee¦263993, sea¦263991?
 \q1 ≈Yordan¦263994, why did you turn¦263995 back?
 \q1
 \v 6 Mountains, why did you skip like rams?
@@ -6826,7 +6732,7 @@
 \q1 “Where is their¦264047 god¦264047?”
 \q1
 \v 3 Our god¦264049 is in¦264050 heaven¦264050—
-\q1 he does whatever he wants.
+\q1 he does¦264055 whatever he wants.
 \q1
 \v 4 The \add other\add* nations' \add gods\add* are gold¦264059 and¦264059 silver¦264058 idols
 \q1 that \add ≈people have made with their¦264057 own\add* hands¦264061.
@@ -6839,9 +6745,9 @@
 \q1
 \v 7 They have hands, \add ≈but\add* can't feel \add anything\add*.
 \q1 ≈They have feet¦264087, \add ≈but\add* can't walk¦264089.
-\q1 They can't make any sounds¦264092 in¦264093 their throats¦264093.
+\q1 They can't make¦264092 any sounds¦264092 in¦264093 their throats¦264093.
 \q1
-\v 8 \add @The people\add* who make them are \add just\add* like them,
+\v 8 \add @The people\add* who make¦264097 them are \add just\add* like them,
 \q1 \add as is\add* everyone¦264098 who trusts¦264101 them \add to help them\add*.
 \q1
 \v 9 Yisrael¦264104 \add (Israel)\add*, trust¦264105 in¦264106 Yahweh¦264106—
@@ -6864,7 +6770,7 @@
 \q1 and \add also\add* to your descendants.
 \q1
 \v 15 May you all be blessed¦264157 by Yahweh¦264159
-\q1 who made heaven¦264161 and¦264162 earth¦264162.
+\q1 who made¦264160 heaven¦264161 and¦264162 earth¦264162.
 \q1
 \v 16 The heavens, \add ≈yes\add*, the heavens belong to Yahweh¦264166,
 \q1 \add ≈but¦264167\add* he's given¦264168 the earth¦264167 to \add ≈humanity¦264171\add*.
@@ -6883,7 +6789,7 @@
 \q1 and my requests for mercy.
 \q1
 \v 2 Because he¦264209 listened to me,
-\q1 as long as I live¦264212, I'll¦264213 call him \add for help\add*.
+\q1 as long as I live¦264212, I'll¦264213 call¦264213 him \add for help\add*.
 \q1
 \v 3 The ropes¦264217 of death¦264219 surrounded me,
 \q1 ≈and the snares of \add ≈the grave\add* confronted me.
@@ -6916,7 +6822,7 @@
 \v 12 How can I repay Yahweh¦264297 for all his kindnesses to me?
 \q1
 \v 13 I will raise the cup of salvation¦264305,
-\q1 and¦264307 call on¦264307 Yahweh's¦264308 name¦264307.
+\q1 and¦264307 call¦264309 on¦264307 Yahweh's¦264308 name¦264307.
 \q1
 \v 14 I¦264313 will fulfill my vows to Yahweh¦264312
 \q1 now in the presence¦264314 of all his people¦264319.
@@ -6929,7 +6835,7 @@
 \q1 You've released me from my chains.
 \q2
 \v 17 I will offer thanksgiving¦264346 to you as a sacrifice,
-\q1 and¦264347 I'll¦264344 call out to Yahweh¦264348 \add whenever I need help\add*.
+\q1 and¦264347 I'll¦264344 call¦264349 out to Yahweh¦264348 \add whenever I need help\add*.
 \q1
 \v 18 I¦264353 will fulfill my vows to Yahweh¦264352
 \q1 now in the presence¦264354 of all his people¦264359,
@@ -7408,7 +7314,7 @@
 \v 109 My life is in¦265496 \add ≈continual¦265497 danger\add*,
 \q1 \add ≈yet\add* I don't¦265499 forget¦265500 your¦265498 instructions.
 \q1
-\v 110 The wicked¦265503 have set a trap for me,
+\v 110 The wicked¦265503 have set¦265502 a trap for me,
 \q1 \add ≈but¦265506\add* I haven't strayed from your¦265506 principles.
 \q1
 \v 111 I \add ≈consider what you've revealed\add* as my heritage forever¦265512,
@@ -7530,7 +7436,7 @@
 \v 145 I cried out with¦265772 my whole \add ≈being\add*, “Answer me, Yahweh¦265776,
 \q1 I will keep your¦265777 regulations¦265777.”
 \q1
-\v 146 I call out to you¦265780—save¦265781 me,
+\v 146 I call¦265780 out to you¦265780—save¦265781 me,
 \q1 so that I can keep¦265782 \add ≈what you've revealed\add* \add to us\add*.
 \q1
 \v 147 I rise before the dawn and¦265787 cry¦265787 out for help¦265787.
@@ -7614,7 +7520,7 @@
 \v 170 May my request \add ≈reach your ears\add*.
 \q1 Rescue me \add ≈as you promised¦265962 you would\add*.
 \q1
-\v 171 May my lips¦265966 pour out praise¦265967,
+\v 171 May my lips¦265966 pour¦265965 out praise¦265967,
 \q1 because¦265968 you¦265969 teach¦265969 me your¦265970 regulations¦265970.
 \q1
 \v 172 Let my tongue¦265973 sing about your promise,
@@ -7635,7 +7541,6 @@
 \s1 Asking Yahweh for peace
 \rem /s1 Prayer for Deliverance from Slanderers; A Prayer for Help
 \d A song for walking uphill \add to Yerushalem\add*.
-\rem /d A song for the ascent to Jerusalem.; A song of ascents.; A Song of Ascents.; A song of the ascents
 \q1
 \v 1 I called out to Yahweh¦266023 \add ≈when I was in distress\add*,
 \q1 and he answered me.
@@ -7662,7 +7567,6 @@
 \s1 Yahweh our protector
 \rem /s1 The Lord Our Protector; Assurance of God's Protection
 \d A song for walking uphill \add to Yerushalem\add*.
-\rem /d A song for the ascent to Jerusalem.; A song of ascents.; A Song of Ascents.; A song of the ascents.
 \q1
 \v 1 I \add ≈look up towards\add* the hills.
 \q1 Where will my help come from?
@@ -7693,7 +7597,6 @@
 \s1 Wanting peace for Yerushalem
 \rem /s1 In Praise of Jerusalem; Song of Praise and Prayer for Jerusalem
 \d A song by David¦266157 while walking uphill \add to Yerushalem\add*.
-\rem /d A song of ascents. Of David.; A Song of Ascents. Of David.; A song of the ascents: for David; A song for the ascent to Jerusalem. A psalm of David.
 \q1
 \v 1 I was happy when they¦266167 said to me,
 \q1 “Let's go to Yahweh's house.”
@@ -7725,7 +7628,6 @@
 \s1 Praying to see mercy
 \rem /s1 A Prayer for Mercy; Supplication for Mercy
 \d A song for walking uphill \add to Yerushalem\add*.
-\rem /d A song for the ascent to Jerusalem.; A song of ascents.; A Song of Ascents.; A song of the ascents
 \q1
 \v 1 I¦266261 \add ≈look up towards\add* you—
 \q1 you who \add ≈rule from your throne in\add* the heavens.
@@ -7744,7 +7646,6 @@
 \s1 Thanking for Yahweh's protection
 \rem /s1 God the Protector of His People; Thanksgiving for Israel's Deliverance
 \d A song by David¦266288 while walking uphill \add to Yerushalem\add*.
-\rem /d A song of ascents. Of David.; A Song of Ascents. Of David.; A song of the ascents: for David; A song for the ascent to Jerusalem. A psalm of David.
 \q1
 \v 1 Let Yisra'el \add (Israel)\add* now say,
 \q1 “If Yahweh¦266300 hadn't \add ≈been on¦266303 our side\add*,
@@ -7774,7 +7675,6 @@
 \s1 Against wicked rulers
 \rem /s1 The Security of God's People
 \d A song for walking uphill \add to Yerushalem\add*.
-\rem /d A song for the ascent to Jerusalem.; A song of ascents.; A Song of Ascents.; A song of the ascents
 \q1
 \v 1 Those who trust in Yahweh¦266374
 \q1 are like Mt. Tsiyyon \add (Zion)\add* which can't be shaken—enduring forever¦266380.
@@ -7796,7 +7696,6 @@
 \s1 The cheerful harvest
 \rem /s1 A Harvest of Joy; A Prayer for Deliverance
 \d A song for walking uphill \add to Yerushalem\add*.
-\rem /d A song for the ascent to Jerusalem.; A song of ascents.; A Song of Ascents.; A song of the ascents
 \q1
 \v 1 When Yahweh¦266439 restored Tsiyyon's fortunes,
 \q1 we were like those who dream.
@@ -7821,7 +7720,6 @@
 \s1 Children are a blessing
 \rem /s1 In Praise of God's Goodness; God's Blessings in the Home
 \d A song by Solomon¦266484 while walking uphill \add to Yerushalem\add*.
-\rem /d A song of the ascents: for Solomon; A Song of Ascents. Of Solomon.; A song for the ascent to Jerusalem. A psalm of Solomon.; A song of ascents. Of Solomon.
 \q1
 \v 1 If it's not Yahweh who builds the house, those who build it \add ≈are just wasting their time\add*.
 \q1 ≈If it's not Yahweh who guards the city, the watchman stands guard uselessly.
@@ -7843,7 +7741,6 @@
 \s1 Prosperity for those who honour Yahweh
 \rem /s1 The Reward of Obedience to the Lord; The Happy Home of the Faithful
 \d A song for walking uphill \add to Yerushalem\add*.
-\rem /d A song for the ascent to Jerusalem.; A song of ascents.; A Song of Ascents.; A song of the ascents
 \q1
 \v 1 Blessed is everyone who honours Yahweh—
 \q1 who \add ≈strives to follow what he showed us\add*.
@@ -7868,7 +7765,6 @@
 \s1 Praying against haters of Tsiyyon
 \rem /s1 A Prayer against Israel's Enemies; Prayer for the Downfall of Israel's Enemies
 \d A song for walking uphill \add to Yerushalem\add*.
-\rem /d A song for the ascent to Jerusalem.; A song of ascents.; A Song of Ascents.; A song of the ascents
 \q1
 \v 1 Let Yisra'el \add (Israel)\add* say:
 \q1 “\add @My enemies\add* have attacked¦266634 me often since¦266635 my youth¦266635.
@@ -7899,7 +7795,6 @@
 \s1 Yahweh can redeem us
 \rem /s1 A Prayer for Help; Waiting for Divine Redemption
 \d A song for walking uphill \add to Yerushalem\add*.
-\rem /d A song for the ascent to Jerusalem.; A song of ascents.; A Song of Ascents.; A song of the ascents
 \q1
 \v 1 I call out to you, Yahweh¦266698—
 \q1 out from the depths.
@@ -7930,7 +7825,6 @@
 \s1 Explaing inner peace
 \rem /s1 Song of Quiet Trust; A Prayer of Humble Trust
 \d A song by David¦266763 while walking uphill \add to Yerushalem\add*.
-\rem /d A song of ascents. Of David.; A Song of Ascents. Of David.; A song of the ascents: for David; A song for the ascent to Jerusalem. A psalm of David.
 \q1
 \v 1 Yahweh, \add ≈I'm not boastful or full of pride\add*,
 \q1 nor do I \add ≈pretend to understand amazing things that are\add* beyond me.
@@ -7944,7 +7838,6 @@
 \s1 Yahweh's resting place in Tsiyyon
 \rem /s1 In Praise of the Temple; The Eternal Dwelling of God in Zion
 \d A song by David¦266813 while walking uphill \add to Yerushalem\add*.
-\rem /d A song for the ascent to Jerusalem.; A song of ascents.; A Song of Ascents.; A song of the ascents
 \q1
 \v 1 Yahweh¦266821, for David's¦266824 sake, remember all \add ≈the hardships he endured\add*.
 \q1
@@ -8005,23 +7898,21 @@
 \s1 Living peacefully together
 \rem /s1 The Blessedness of Unity; In Praise of Living in Peace
 \d A song by David¦266983 while walking uphill \add to Yerushalem\add*.
-\rem /d A song of ascents. Of David.; A Song of Ascents.; A song of the ascents: for David; A song for the ascent to Jerusalem. A psalm of David.
 \q1
-\v 1 \add ≈Listen¦267010\add*, it's \add really\add* good¦266999 and pleasant
+\v 1 \z1 \add ≈Listen¦267010\add*, it's \add really\add* good¦266999 and pleasant
 \q1 when \add the nation's\add* \add ≈people get on well\add* together.
 \q1
-\v 2 It's like having \add ≈expensive\add* oil on the head,
+\v 2 \z2 It's like having \add ≈expensive\add* oil on the head,
 \q1 running¦267020 down the beard—Aaron's beard,
 \q1 \add and\add* which¦267020 \add then\add* runs down onto the collar of his robes.
 \q1
-\v 3 It's like the dew on \add Mt.\add* Hermon
+\v 3 \z2 It's like the dew on \add Mt.\add* Hermon
 \q1 which falls on the mountains of Tsiyyon \add (Zion)\add*,
-\q1 because Yahweh commanded the blessing there—eternal life.
+\q1 \z1 because Yahweh commanded the blessing there—eternal life.
 \c 134
 \s1 Lift your hands and bless Yahweh
 \rem /s1 A Call to Praise God; Praise in the Night
 \d A song for walking uphill \add to Yerushalem\add*.
-\rem /d A song for the ascent to Jerusalem.; A song of ascents.; A Song of Ascents.; A song of the ascents
 \q1
 \v 1 Listen, bless¦267061 Yahweh, all you servants of Yahweh—
 \q1 \add you\add* who stand in Yahweh's¦267064 house at night.
@@ -8048,10 +7939,10 @@
 \q1 Yisra'el as his \add ≈very own¦267111\add*.
 \b
 \q1
-\v 5 \add ≈You see,\add* I myself know¦267115 that Yahweh¦267120 is great,
+\v 5 \add ≈You see,\add* I myself know¦267115 that Yahweh¦267120 is great¦267118,
 \q1 \add ≈yes,\add* our¦267120 master¦267120 is greater than all other gods¦267123.
 \q1
-\v 6 Yahweh¦267129 does whatever he wants to do
+\v 6 Yahweh¦267129 does¦267130 whatever he wants to do
 \q1 in heaven¦267131 and on¦267131 the earth¦267132,
 \q1 in the seas, \add ≈including¦267132\add* all their deepest parts.
 \q1
@@ -8073,7 +7964,7 @@
 \q1 and Og¦267180 king of Bashan¦267182,
 \q1 and all the Canaanite¦267185 \add ≈kings\add*.
 \q1
-\v 12 He gave¦267187 their¦267188 land as an inheritance—
+\v 12 He gave¦267187 their¦267188 land¦267188 as an inheritance—
 \q1 an inheritance to his people¦267192 Yisra'el.
 \b
 \q1
@@ -8093,7 +7984,7 @@
 \v 17 ≈They have ears, but¦267233 they¦267234 can't¦267233 hear,
 \q1 ≈and¦267233 there's no breath¦267240 in¦267241 their¦267241 mouths¦267241.
 \q1
-\v 18 Those who make them \add ≈will end up\add* like them,
+\v 18 Those who make¦267245 them \add ≈will end up\add* like them,
 \q1 as will all those¦267245 who \add put their¦267245\add* trust¦267249 in¦267250 them.
 \b
 \q1
@@ -8120,7 +8011,7 @@
 \v 3 Give thanks¦267304 to the master¦267305 of masters¦267306,
 \q1 because¦267307 his loyal¦267309 affection \add continues\add* forever.
 \q1
-\v 4 \add ≡Thank\add* him—the only one who does great¦267313 miracles—
+\v 4 \add ≡Thank\add* him—the only one who does¦267311 great¦267313 miracles—
 \q1 because¦267315 his loyal¦267317 commitment continues forever¦267316.
 \q1
 \v 5 \add ≡Thank\add* him who \add ≈used his wisdom to make the universe\add*,\x + \xo 136:5: \xt Gen 1:1.\x*
@@ -8129,7 +8020,7 @@
 \v 6 \add ≡Thank\add* him who spread¦267326 the earth¦267327 out over the waters¦267330,\x + \xo 136:6: \xt Gen 1:2.\x*
 \q1 because¦267331 his loyal¦267333 commitment continues forever¦267332.
 \q1
-\v 7 \add ≡Thank\add* him who made the great¦267337 lights¦267336,\x + \xo 136:7-9: \xt Gen 1:16.\x*
+\v 7 \add ≡Thank\add* him who made¦267335 the great¦267337 lights¦267336,\x + \xo 136:7-9: \xt Gen 1:16.\x*
 \q1 because¦267338 his loyal¦267340 commitment continues forever¦267339:
 \q1
 \v 8 the sun¦267344 to rule over the day¦267346,
@@ -8151,14 +8042,14 @@
 \v 13 \add ≡Thank\add* him who divided¦267383 the Red Sea in \add ≈two\add*,\x + \xo 136:13-15: \xt Exo 14:21-29.\x*
 \q1 because¦267388 his loyal¦267390 commitment continues forever¦267389.
 \q1
-\v 14 Then¦267392 he made Yisra'el¦267393 go through the middle¦267394 of \add @that sea\add*,
+\v 14 Then¦267392 he made¦267392 Yisra'el¦267393 go through the middle¦267394 of \add @that sea\add*,
 \q1 because¦267395 his loyal¦267397 commitment continues forever¦267396.
 \q1
 \v 15 Then¦267399 he threw Far-oh and¦267401 his army down into the Red Sea,
 \q1 because¦267405 his loyal¦267407 commitment continues forever¦267406.
 \b
 \q1
-\v 16 \add ≡Thank\add* him who led his people¦267410 through the wilderness¦267411,
+\v 16 \add ≡Thank\add* him who led¦267409 his people¦267410 through the wilderness¦267411,
 \q1 because¦267412 his loyal¦267414 commitment continues forever¦267413.
 \q1
 \v 17 \add ≡Thank\add* him who struck¦267416 down great¦267418 kings¦267417,
@@ -8173,7 +8064,7 @@
 \v 20 \add ≡Thank him who killed\add* King¦267438 Og from Bashan¦267439,
 \q1 because¦267440 his loyal¦267442 commitment continues forever¦267441.
 \q1
-\v 21 \add ≡Thank\add* him who gave¦267444 them the land as their¦267445 inheritance¦267446,
+\v 21 \add ≡Thank\add* him who gave¦267444 them the land¦267445 as their¦267445 inheritance¦267446,
 \q1 because¦267447 his loyal¦267449 commitment continues forever¦267448.
 \q1
 \v 22 \add ≡Thank him who gave\add* an inheritance¦267451 to his servant¦267453 Yisra'el¦267452,
@@ -8229,14 +8120,13 @@
 \s1 A prayer of thankfulness
 \rem /s1 A Prayer of Thanksgiving; Thanksgiving and Praise
 \d \add A song\add* by David.
-\rem /d For David; A psalm of David.; Of David.
 \q1
 \v 1 I will thank¦267617 you, \add Yahweh\add*, with my whole \add ≈being\add*.
 \q1 I'll¦267612 sing praises to you in front of the \add ≈idols\add*.
 \q1
 \v 2 I will bow down toward your sacred temple,
 \q1 and I'll thank you for your loyal commitment and for your trustworthiness,
-\q1 because you've made your \add ≈reputation\add* and your message \add ≈more important than anything else\add*.
+\q1 because you've made¦267640 your \add ≈reputation\add* and your message \add ≈more important than anything else\add*.
 \q1
 \v 3 \add ≈When\add* I called \add out for help\add*, you¦267644 answered me.
 \q1 →You \add ≈gave me strength and made me bold\add*.
@@ -8264,7 +8154,6 @@
 \s1 God's care and total knowledge
 \rem /s1 God's Complete Knowledge and Care; The Inescapable God
 \d One of David's¦267704 songs for the choir¦267703 director¦267703.
-\rem /d For the leader: for David: a psalm; For the director of music. Of David. A psalm.; To the leader. Of David. A Psalm.; For the choir director: A psalm of David.
 \q1
 \v 1 Yahweh, you have examined me, and you know¦267712 \add >me\add*.
 \q1
@@ -8307,7 +8196,7 @@
 \v 13 \add ≈Yes¦267821,\add* you created my internal parts—
 \q1 you put me together inside my mother's womb.
 \q1
-\v 14 I'll praise you because \add ≈it's incredible how my body is\add* made.
+\v 14 I'll praise you because \add ≈it's incredible how my body is\add* made¦267835.
 \q1 \add Everything\add* \add ≈you do is\add* wonderful.
 \q1 My inner being knows that very well.
 \q1
@@ -8347,7 +8236,6 @@
 \s1 A prayer for protection
 \rem /s1 A Prayer for Protection; Prayer for Deliverance from Enemies
 \d A song by David¦267929 for the choir¦267927 director¦267927.
-\rem /d To the leader. A Psalm of David.; For the leader: a psalm: for David; For the choir director: A psalm of David.; For the director of music. A psalm of David.
 \q1
 \v 1 Yahweh¦267933, rescue¦267932 me from wicked men.
 \q1 ≈\add ≈Keep me safe\add* from men of violence¦267937,
@@ -8380,7 +8268,7 @@
 \v 9 Those who surround¦268032 me raise their heads.
 \q1 Let the mischief¦268033 from their own lips¦268034 \add ≈bounce back on\add* them.
 \q1
-\v 10 Let burning¦268043 coals¦268043 fall on¦268044 them.
+\v 10 Let burning¦268043 coals¦268043 fall¦268045 on¦268044 them.
 \q1 ≈Throw them into the fire¦268044 \add or\add* into muddy pits.
 \q1 →Never again will they¦268040 \add ≈try to attack\add*.
 \q1
@@ -8397,7 +8285,6 @@
 \s1 Accepting correction
 \rem /s1 Prayer for Preservation from Evil; An Evening Prayer
 \d A song by David¦268089.
-\rem /d A psalm: for David; A psalm of David.; A Psalm of David.
 \q1
 \v 1 Yahweh, I called out to you. Come quickly to me.
 \q1 ≈\add ≈Listen\add* to my voice when I call to you.
@@ -8439,12 +8326,11 @@
 \s1 A prayer for protection
 \rem /s1 Prayer for Deliverance from Persecutors; A Prayer for Help
 \d A song\f + \fr 142:0 \ft In Hebrew, ‘maskil’ is perhaps the name of this class of song.\f* and prayer¦268216 of David¦268213 when he¦268214 was \add hiding\add* in¦268214 a cave.
-\rem /d A Maskil of David. When he was in the cave. A Prayer.; A \it maskil\it* of David. When he was in the cave. A prayer.; A maskil: for David (when he was in the cave): a prayer; A psalm of David, regarding his experience in the cave. A prayer.
 \q1
 \v 1 I cry¦268223 out to Yahweh with my voice.
 \q1 ≈With my voice I plead to Yahweh for \add &his\add* favour¦268228.
 \q1
-\v 2 I pour out my sorrows to him.
+\v 2 I pour¦268231 out my sorrows to him.
 \q1 ≈I declare my troubles¦268234 in front of him.
 \q1
 \v 3 When my spirit is weak within¦268240 me, you¦268244 yourself know¦268244 my path.
@@ -8457,7 +8343,7 @@
 \q1
 \v 5 I called out to you \add for help\add*, Yahweh¦268273.
 \q1 I said that you're my \add ≈protection\add*—
-\q1 my portion¦268277 in the land of the living.
+\q1 my portion¦268277 in the land¦268278 of the living.
 \q1
 \v 6 Listen to my cries \add for help\add* because I've¦268289 been \add ≈driven into a bad situation\add*.
 \q1 ≈Rescue me from my pursuers because they're stronger¦268294 than I am.
@@ -8468,7 +8354,6 @@
 \s1 A prayer to be rescued
 \rem /s1 Prayer for Deliverance from Enemies; A Prayer for Help
 \d A song by David¦268314.
-\rem /d A psalm: for David; A psalm of David.; A Psalm of David.
 \q1
 \v 1 Hear my prayer, Yahweh—listen to my requests.
 \q1 On account of your faithfulness, answer me in¦268331 your righteousness¦268338.
@@ -8518,7 +8403,6 @@
 \s1 The thanking due to victory
 \rem /s1 A King Thanks God for Victory; Prayer for National Deliverance and Security
 \d \add A song\add* by David.
-\rem /d For David; A psalm of David.; Of David.
 \q1
 \v 1 Blessed be Yahweh, my \add ≈stable base\add*,
 \q1 who trains my hands for war
@@ -8577,7 +8461,6 @@
 \s1 A praise song
 \rem /s1 A Hymn of Praise; The Greatness and the Goodness of God
 \d A¦268632 praise¦268641 \add song\add* by David¦268627.
-\rem /d Praise. Of David.; A psalm of praise. Of David.; A psalm of praise of David.; A psalm of praise: for David
 \qa \bd א\bd* (Alef)
 \q1
 \v 1 I will \add ≈highly commend\add* you¦268640, my god, the King.
@@ -8686,7 +8569,7 @@
 \v 5 Blessed are the \add #people\add* who have Yacob's¦268867 god \add ≈to help\add* \add #them\add*—
 \q1 whose hope is in¦268868 \add #their\add* God¦268866 Yahweh¦268872:
 \q1
-\v 6 He's the one who made the heavens¦268877 and earth¦268878, the sea¦268881, and all that is in¦268888 them.
+\v 6 He's the one who made¦268875 the heavens¦268877 and earth¦268878, the sea¦268881, and all that is in¦268888 them.
 \q1 He's the one who \add ≈remains faithful¦268890\add* forever¦268891.\x + \xo 146:6: \xt Acts 4:24; 14:15.\x*
 \q1
 \v 7 He's the one who \add ≈executes\add* justice¦268894 for the oppressed¦268896.

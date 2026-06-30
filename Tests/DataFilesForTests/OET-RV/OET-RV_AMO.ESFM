@@ -1,4 +1,4 @@
-\id AMO - Open English Translation—Readers' Version (OET-RV) v0.1.58
+\id AMO - Open English Translation—Readers' Version (OET-RV) v0.1.59
 \usfm 3.0
 \ide UTF-8
 \rem ESFM v0.6 AMO
@@ -20,8 +20,8 @@
 \c 1
 \p
 \v 1 \add This is\add* the message¦367691 that¦367698 Amos¦367692 (who was among¦367696 the shepherds¦367696 in Tekoa¦367697) saw concerning Yisra'el \add (Israel¦367702)\add* in the days of King Uzziyah of Yehudah¦367711 \add (Judah)\add*, and also in the days of Yoash's¦367716 son King Yaraveam \add (Jeroboam)\add* of Yisrael¦367702, two years¦367719 before the earthquake¦367721.\x + \xo 1:1: a \xt 2Ki 15:1-7; 2Ch 26:1-23; \xo b \xt 2Ki 14:23-29.\x*
-\q1
 \rem /s1 Judgment on Israel's Neighbours
+\q1
 \v 2 \add @Amos\add* said¦367723,
 \q1 “Yahweh¦367725 will \add ≈shout loudly\add* from Tsiyyon¦367726 \add (Zion¦367726)\add*.
 \q1 ≈He will raise his voice¦367733 from Yerushalem¦367731 \add (Jerusalem)\add*.
@@ -53,7 +53,7 @@
 \q1 to hand them over to Edom¦367814.\x + \xo 1:6-8: \xt Isa 14:29-31; Jer 47:1-7; Eze 25:15-17; Yoel 3:4-8; Zeph 2:4-7; Zech 9:5-7.\x*
 \v 7 I'll¦367816 send¦367816 fire¦367817 onto Azzah's¦367819 walls,
 \q1 and¦367820 it'll devour her fortresses¦367821.
-\v 8 I will cut off those from Ashdod¦367825
+\v 8 I will cut¦367823 off those from Ashdod¦367825
 \q1 ≈and the \add ≈ruler of\add* Ashkelon¦367828.
 \q1 I'll¦367823 \add ≈cause problems for\add* Ekron¦367833,
 \q1 and the rest of the Philistines¦367836 will \add ≈die\add*,”
@@ -84,7 +84,7 @@
 \v 13 This is what Yahweh¦367912 says¦367911,
 \q1 “\add ≈Even if\add* the Ammonites were \add ≈three¦367915 or four¦367922 sins below the threshold\add*,
 \q1 I wouldn't turn away \add their¦367934\add* punishment,
-\q1 because¦367925 they¦367927 ripped¦367927 open the pregnant¦367928 women¦367928 of Gilead¦367929,
+\q1 because¦367925 they¦367927 ripped¦367927 open¦367927 the pregnant¦367928 women¦367928 of Gilead¦367929,
 \q1 \add ≈in order to grab territory¦367934\add*.\x + \xo 1:13-15: \xt Jer 49:1-6; Eze 21:28-32; 25:1-7; Zeph 2:8-11.\x*
 \q1
 \v 14 I'll¦367936 light a fire in Rabah's¦367939 walls,
@@ -156,7 +156,7 @@
 \v 12 But¦368159 you all \add ≈persuaded\add* the Nazirites¦368162 to drink¦368159 wine\x + \xo 2:12: \xt Num 6:2-3.\x*
 \q1 and¦368164 ordered¦368167 the prophets not to prophesy.
 \q1
-\v 13 Listen, I'm going to make you \add ≈lose your¦368175 stability\add*
+\v 13 Listen, I'm going to make¦368174 you \add ≈lose your¦368175 stability\add*
 \q1 just like a cart wobbles when it's carrying a \add heavy\add* load of grain¦368181.
 \q1
 \v 14 Even fast \add >people\add* \add ≈won't be able to reach a safe place¦368184\add*.
@@ -167,7 +167,7 @@
 \q1 \add Even\add* the \add ≈fast runner won't be able to\add* escape.
 \q1 The \add ≈horse-rider won't escape with¦368202\add* his life¦368209.
 \q1
-\v 16 Even the bravest warriors¦368213 will flee naked¦368214 that day¦368216.
+\v 16 Even the bravest warriors¦368213 will flee¦368215 naked¦368214 that day¦368216.
 \mi That is Yahweh's¦368221 declaration.
 \c 3
 \rem /s1 Witnesses Summoned Against Israel; Israel's sins and threatened punishment; Israel's Guilt and Punishment
@@ -181,9 +181,9 @@
 \v 3 Do two¦368262 \add >people\add* walk¦368261 together¦368263, \add ≈without first agreeing to meet\add*?
 \q1
 \v 4 Would a lion roar in¦368271 the forest¦368271 when he doesn't have any prey?
-\q1 ≈Would a young¦368276 lion growl¦368277 from his¦368277 den if he's caught¦368282 nothing?
+\q1 ≈Would a young¦368276 lion growl¦368277 from his¦368277 den¦368278 if he's caught¦368282 nothing?
 \q1
-\v 5 Would a bird fall into a trap on the ground when no bait \add ≈has been put in it\add*?
+\v 5 Would a bird¦368285 fall¦368284 into a trap on the ground when no bait \add ≈has been put in it\add*?
 \q1 ≈Would a trap \add just\add* spring¦368293 up from the ground when it hasn't caught anything?
 \q1
 \v 6 If a \add warning\add* trumpet¦368306 sounds in¦368307 a city, won't¦368309 the people¦368308 \add ≈start to worry\add*?
@@ -217,7 +217,7 @@
 \v 13 \add ≈Take notice\add* \add of this\add* and¦368426 testify¦368426 against Yakob's descendants.
 \mi That is the declaration of the master¦368431 Yahweh¦368431, army¦368434 commander¦368434 God¦368433.
 \p
-\v 14 “On the day¦368437 that I bring punishment for Yisrael's¦368441 sins to her, I'll¦368443 also bring punishment on the altars of Beyt-El. The altar's horns¦368451 will be cut off and fall to the ground¦368454.\x + \xo 3:14: \xt 2Ki 23:15.\x*
+\v 14 “On the day¦368437 that I bring punishment for Yisrael's¦368441 sins to her, I'll¦368443 also bring punishment on the altars of Beyt-El. The altar's horns¦368451 will be cut¦368450 off and fall¦368453 to the ground¦368454.\x + \xo 3:14: \xt 2Ki 23:15.\x*
 \v 15 I'll¦368456 destroy the winter¦368459 house along with the summer¦368463 house. The houses of ivory¦368466 will perish¦368464, and¦368456 the large¦368469 houses will vanish.
 \mi That is Yahweh's¦368472 declaration.”
 \c 4
@@ -305,7 +305,7 @@
 \v 1 Hear this message¦368741 \add ≈of mourning\add* over you¦368746 that¦368743 I take up, \add ≈people\add* of Yisrael¦368749:
 \q1
 \v 2 The virgin¦368756 Yisrael¦368757 has fallen¦368751—she won't¦368752 rise again.
-\q1 She's¦368751 abandoned¦368758 on her land—there's¦368762 no one to \add ≈help\add* her up,
+\q1 She's¦368751 abandoned¦368758 on her land¦368761—there's¦368762 no one to \add ≈help\add* her up,
 \q1
 \v 3 because this is what the master¦368768 Yahweh¦368768 says¦368767:
 \q1 “The¦368769 city¦368770 that went out with a thousand¦368772 \add warriors\add* will have a hundred left,
@@ -327,7 +327,7 @@
 \v 7 Those people turn¦368834 justice¦368836 into \add ≈a bitter thing\add*
 \q1 and¦368837 throw righteousness¦368837 down to the ground¦368838.”
 \p
-\v 8 God made the Pleiades¦368842 and Orion¦368843 \add constellations\add*.
+\v 8 God made¦368841 the Pleiades¦368842 and Orion¦368843 \add constellations\add*.
 \q1 He turns¦368844 darkness¦368846 into the morning¦368845
 \q1 and he makes¦368849 the day¦368847 dark with night¦368848
 \q1 He calls¦368850 for the waters¦368851 of the sea¦368853
@@ -363,7 +363,7 @@
 \v 16 Therefore, this is what Yahweh¦368977 says¦368973, the god¦368975 \add ≈with armies\add*, my master¦368977,
 \q1 “Wailing will be in all the squares,
 \q1 ≈and in all the streets¦368984 they'll \add ≈complain\add*, ‘\add ≈Oh no. Oh no.\add*’
-\q1 They'll call the farmers¦368990 to mourning¦368981
+\q1 They'll call¦368989 the farmers¦368990 to mourning¦368981
 \q1 ≈and the mourners to wail.
 \v 17 There'll be wailing¦369003 in¦369007 all the vineyards¦369002 because¦369004 I'll¦369006 pass¦369006 through among you¦369007,”
 \mi Yahweh¦369009 says¦369008.
@@ -397,7 +397,7 @@
 \q1 did¦369102 you¦369102 bring¦369102 me sacrifices¦369100 and¦369101 offerings¦369101 in¦369105 the wilderness¦369105 for forty¦369106 years?\x + \xo 5:25-27: \xt Acts 7:42-43.\x*
 \q1
 \v 26 You've all lifted up the images¦369117 of Sikkut¦369113, your king¦369114,
-\q1 and¦369115 Kiyyun¦369116, your star¦369118 god¦369119 that¦369120 you¦369121 made for yourselves¦369122.
+\q1 and¦369115 Kiyyun¦369116, your star¦369118 god¦369119 that¦369120 you¦369121 made¦369121 for yourselves¦369122.
 \v 27 Therefore I will exile¦369124 you¦369125 \add far\add* beyond¦369126 Damascus¦369127,”
 \mi says¦369128 Yahweh¦369129, whose name¦369133 is the god¦369130 \add ≈with armies\add*.
 \c 6
@@ -444,7 +444,7 @@
 \v 9 \add ≈When¦369254 that happens\add*, if there's ten¦369258 people left in¦369260 a house¦369260, they'll all die¦369262.
 \v 10 When¦369264 a person's relative¦369265 comes to take their bodies out of the house to be burnt outside, if he asks the person in¦369274 the house if there's anyone¦369277 with¦369274 them and¦369264 if that person says there's not, then¦369264 he'll say, “\add ≈Don't¦369283 say anything else\add* because¦369282 we mustn't mention¦369284 Yahweh's¦369286 name.”
 \q1
-\v 11 \add Yes,\add* because, listen, Yahweh¦369291 will give a command¦369292,
+\v 11 \add Yes¦369290,\add* because, listen, Yahweh¦369291 will give a command¦369292,
 \q1 and the big house will be smashed¦369293 to pieces,
 \q1 ≈and the little house \add turned\add* into rubble¦369299.
 \q1
@@ -459,7 +459,7 @@
 \v 14 Therefore, listen, I'll raise¦369329 up a nation¦369338 against¦369330 you \add ≈people\add* of Yisrael¦369332.
 \mi That's the declaration of Yahweh¦369335, the god¦369336 \add ≈with armies\add*.
 \q1 They'll afflict you
-\q1 from Lebo¦369341-Hamat¦369342 to the brook in the Arabah¦369346.”
+\q1 from Lebo¦369341-Hamat¦369342 to the brook in the Aravah¦369346.”
 \c 7
 \s1 The locusts vision
 \rem /s1 Visions foretelling doom upon Israel; Locusts, Fire and a Plumb Line; Locusts, Fire, and a Plumb Line; A Vision of Locusts
@@ -475,7 +475,7 @@
 \s4 Northern kingdom
 \p
 \v 4 This is what my master Yahweh showed¦369399 me:
-\m Listen, my master Yahweh called on¦369405 fire¦369405 to judge¦369404 \add >the country\add*. It \add ≈dried up\add* the vast, deep water under the earth and \add also would have\add* devoured¦369413 the land
+\m Listen, my master Yahweh called on¦369405 fire¦369405 to judge¦369404 \add >the country\add*. It \add ≈dried up\add* the vast, deep water under the earth and \add also would have\add* devoured¦369413 the land¦369416
 \v 5 \add ≈except\add* I said¦369418, “My master¦369419 Yahweh¦369419, please¦369423 stop. How will \add ≈Israel\add* survive because¦369427 it's so small¦369428?”
 \p
 \v 6 \add So\add* Yahweh¦369442 also \add ≈backed off\add* from that and said¦369441 that \add *he\add* wouldn't do it.
@@ -488,7 +488,7 @@
 \v 8 and¦369458 \add *he\add* \add ≈asked\add* me, “Amos¦369465, what do you see?”
 \p “A plumb line,” I \add ≈answered\add*.
 \p “Listen, I'll¦369478 \add ≈drop\add* a plumb-line \add down to check out\add* my people¦369474 Yisrael¦369475,” my master¦369469 said. “Never again¦369479 will I spare them.
-\v 9 The \add ≈hilltop shrines\add* of Yitsak \add (Isaac¦369485)\add* will be destroyed.
+\v 9 The \add ≈hilltop¦369484 shrines¦369484\add* of Yitsak \add (Isaac¦369485)\add* will be destroyed.
 \q1 ≈Yisrael's sanctuaries¦369486 will be ruined,
 \q1 and¦369483 I'll¦369489 \add ≈take action\add* against the house¦369492 of Yaraveam \add (Jeroboam)\add* with¦369494 the sword¦369494.”
 \s1 Amos and Amasiyas
@@ -496,7 +496,7 @@
 \s4 Both kingdoms
 \p
 \v 10 Then Amatsyah, the priest¦369499 at¦369513 Beyt-El \add (Bethel)\add*, sent¦369497 a message to Yisrael's King¦369506 Yaraveam, saying: “Amos¦369512 has conspired¦369510 against¦369511 you¦369511 \add ≈right among the Israeli¦369506 people\add*. The \add ≈country can't¦369516 handle\add* all his messages¦369525.
-\v 11 Amos¦369531 is saying that \add you,\add* Yaraveam¦369534, will die¦369533 by the sword¦369532 and that Yisrael¦369535 will definitely \add ≈get taken\add* into exile away from this land.”
+\v 11 Amos¦369531 is saying that \add you,\add* Yaraveam¦369534, will die¦369533 by the sword¦369532 and that Yisrael¦369535 will definitely \add ≈get taken\add* into exile away from this land¦369539.”
 \p
 \v 12 Amatsyah \add ≈ordered\add* Amos¦369546, “Hey prophet! Go \add and\add* run yourself¦369551 back to the Yehudah¦369555 \add ≈region¦369554\add*, and \add ≈earn your living\add* and prophesy there.
 \v 13 \add ≈But¦369563\add* you¦369568 must never again¦369569 prophesy¦369570 here at Beyt-El because¦369571 it's the king's sanctuary¦369572, and¦369576 it's the royal residence.”
@@ -528,7 +528,7 @@
 \s4 Northern kingdom
 \p
 \v 4 Listen¦369717 to this, you who trample¦369717 the needy¦369718
-\q1 ≈and take the poor off the land.
+\q1 ≈and take the poor off the land¦369723.
 \v 5 They say,
 \q1 “When will the new moon \add celebrations\add* be over, so we can sell grain again?
 \q1 ≈When will the Rest Day be over, so we can sell wheat?
@@ -621,7 +621,7 @@
 \v 9 Because, listen, I will give a command¦370078,
 \q1 and I'll¦370079 shake¦370079 Yisrael¦370086 among¦370080 all the nations¦370082,
 \q1 as one shakes grain in¦370080 a sieve¦370089,
-\q1 \add ≈but¦370079\add* not even a pebble¦370093 will fall to the ground¦370094.
+\q1 \add ≈but¦370079\add* not even a pebble¦370093 will fall¦370092 to the ground¦370094.
 \v 10 All my people¦370100 who are sinners¦370099 will die¦370097 by the sword¦370096,
 \q1 \add including¦370105\add* those who said, ‘\add ≈We're totally immune from any\add* disaster¦370107.’
 \s1 Yisrael's future restoration
@@ -644,7 +644,7 @@
 \v 14 I'll¦370169 bring my people¦370173 Yisrael¦370174 back from captivity¦370172.
 \q1 They'll build the ruined cities¦370176 and inhabit¦370178 them.
 \q1 They'll plant¦370179 vineyards¦370180 and drink¦370181 their wine,
-\q1 ≈and they'll make gardens¦370186 and eat¦370187 their fruit¦370190.
+\q1 ≈and they'll make¦370185 gardens¦370186 and eat¦370187 their fruit¦370190.
 \q1
 \v 15 I'll¦370192 plant¦370192 them upon their land,
 \q1 and¦370192 they'll never again¦370198 be uprooted from the land that¦370201 I've¦370202 given¦370202 them,”

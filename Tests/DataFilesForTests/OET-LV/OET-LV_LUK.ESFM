@@ -4,8 +4,8 @@
 \rem ESFM v0.6 LUK
 \rem WORDTABLE OET-LV_NT_word_table.tsv
 \rem The VLT source table used to create this file is Copyright © 2022 by https://GreekCNTR.org
-\rem ESFM file originally created 2026-04-09 11:29 by Extract_VLT_NT_to_ESFM v1.0
-\rem USFM file edited by ScriptedBibleEditor v0.35
+\rem ESFM file originally created 2026-06-07 15:03 by Extract_VLT_NT_to_ESFM v1.0
+\rem ESFM file edited by ScriptedBibleEditor v0.8.2 using ScriptedVLTUpdates
 \h Loukas
 \toc1 Loukas
 \toc2 Loukas
@@ -75,7 +75,7 @@
 \v 59 And¦38272 it¦38273_became¦38273 on¦38274 the¦38275 \untr the¦38278\untr* eighth¦38279 day¦38277, they¦38280_came¦38280 to¦38281_circumcise¦38281 the¦38282 little¦38283_child¦38283, and¦38284 they¦38285_were¦38285_calling¦38285 it¦38286 Zaⱪarias¦38293 after¦38287 the¦38288 name¦38289 of¦38290_the¦38290 father¦38291 of¦38292_him¦38292.
 \v 60 And¦38294 having¦38295_been¦38295_answering¦38295 the¦38296 mother¦38297 of¦38298_him¦38298 said¦38299: No¦38300, but¦38301 he¦38302_will¦38302_be¦38302_being¦38302_called¦38302 Yōannaʸs¦38306.
 \v 61 And¦38307 they¦38308_said¦38308 to¦38309 her¦38310, \untr that¦38311\untr* No¦38312_one¦38312 is¦38313 of¦38314 the¦38316 relatives¦38318 of¦38320_you¦38320, who¦38321 is¦38322_being¦38322_called¦38322 \untr the¦38323\untr* by¦38325_ this¦38327 _name¦38325.
-\v 62 And¦38330 they¦38329_were¦38329_signaling¦38329 to¦38331_the¦38331 father¦38332 of¦38333_him¦38333, what¦38336 the¦38334 \add name¦38334\add* \untr wishfully¦38338\untr* he¦38339_might¦38339_be¦38339_wanting¦38339 him¦38341 to¦38340_be¦38340_being¦38340_called¦38340.
+\v 62 And¦38330 they¦38329_were¦38329_signalling¦38329 to¦38331_the¦38331 father¦38332 of¦38333_him¦38333, what¦38336 the¦38334 \add name¦38334\add* \untr wishfully¦38338\untr* he¦38339_might¦38339_be¦38339_wanting¦38339 him¦38341 to¦38340_be¦38340_being¦38340_called¦38340.
 \v 63 And¦38343 having¦38344_requested¦38344 \add +a¦38346\add*_tablet¦38346, he¦38347_wrote¦38347 saying¦38348: Yōannaʸs¦38349 is¦38350 \add +the¦38353\add*_name¦38353 of¦38354_him¦38354. And¦38361 all¦38363 marvelled¦38362.
 \v 64 And¦38365 the¦38367 mouth¦38368 of¦38369_him¦38369 was¦38364_opened¦38364_up¦38364 immediately¦38370, and¦38371 the¦38372 tongue¦38373 of¦38374_him¦38374, and¦38375 he¦38376_was¦38376_speaking¦38376 blessing¦38377 \untr the¦38378\untr* \nd god¦38379\nd*.
 \v 65 And¦38380 fear¦38387 became¦38381 on¦38385 all¦38386, the¦38388 \add >ones¦38388\add* dwelling¦38389_around¦38389 them¦38390, and¦38392 in¦38393 all¦38394 the¦38395 mountainous¦38396 \add area¦38396\add* of¦38398_ \untr the¦38397\untr* _Youdaia¦38398 all¦38403 \untr the¦38404\untr* these¦38406 messages¦38405. was¦38401_being¦38401_discussed¦38401.
@@ -242,7 +242,7 @@
 \v 4 And¦41466 when¦41464 he¦41467_ceased¦41467 speaking¦41468, he¦41469_said¦41469 to¦41470 \untr the¦41471\untr* Simōn¦41472: Set¦41473_out¦41473 into¦41475 the¦41476 depth¦41477 and¦41478 lower¦41479 the¦41481 nets¦41482 of¦41483_you¦41483_all¦41483 for¦41484 \add +a¦41485\add*_catch¦41485.
 \v 5 And¦41486 Simōn¦41490 answering¦41487, said¦41492: Master¦41496, through¦41497 all¦41498 night¦41500 having¦41501_laboured¦41501, nothing¦41502 we¦41503_took¦41503, but¦41505 at¦41504 the¦41506 message¦41508 of¦41509_you¦41509, I¦41515_will¦41515_be¦41515_lowering¦41515 the¦41517 nets¦41519.
 \v 6 And¦41521 this¦41522 having¦41523_done¦41523, they¦41524_caught¦41524 \add +a¦41525\add*_ great¦41528 _multitude¦41525 of¦41526_fishes¦41526, and¦41532 the¦41534 nets¦41536 of¦41539_them¦41539 was¦41529_being¦41529_torn¦41529.
-\v 7 And¦41540 they¦41541_signaled¦41541 to¦41544_the¦41544 companions¦41545 in¦41547 the¦41548 other¦41549 boat¦41550, \untr which¦41551\untr* having¦41553_come¦41553 to¦41555_give¦41555_help¦41555 to¦41557_them¦41557, and¦41558 they¦41559_came¦41559, and¦41562 they¦41563_filled¦41563 both¦41565 \untr the¦41567\untr* boats¦41568, so¦41569_that¦41569 them¦41574 to¦41573_be¦41573_being¦41573_sunk¦41573.
+\v 7 And¦41540 they¦41541_signalled¦41541 to¦41544_the¦41544 companions¦41545 in¦41547 the¦41548 other¦41549 boat¦41550, \untr which¦41551\untr* having¦41553_come¦41553 to¦41555_give¦41555_help¦41555 to¦41557_them¦41557, and¦41558 they¦41559_came¦41559, and¦41562 they¦41563_filled¦41563 both¦41565 \untr the¦41567\untr* boats¦41568, so¦41569_that¦41569 them¦41574 to¦41573_be¦41573_being¦41573_sunk¦41573.
 \v 8 But¦41577 Simōn¦41579 Petros¦41580 having¦41575_seen¦41575 fell¦41581_before¦41581 to¦41583_the¦41583 knees¦41584 of¦41587_\nd Yaʸsous/(Yəhōshūˊa)¦41587\nd* saying¦41588: Come¦41590_out¦41590 from¦41591 me¦41592, because¦41593 I¦41596_am¦41596 \add +a¦41594\add*_man¦41594 sinful¦41595, \nd master¦41597\nd*.
 \v 9 For/Because¦41599 amazement¦41598 seized¦41600 him¦41601 and¦41603 all¦41604 the¦41605 \add >ones¦41605\add* with¦41606 him¦41607, at¦41608 the¦41609 catch¦41611 of¦41612_the¦41612 fishes¦41613 which¦41615 they¦41616_captured¦41616,
 \v 10 and¦41619 also¦41622 Yakōbos/(Yaˊₐqoⱱ)¦41623 and¦41625 Yōannaʸs¦41626, sons¦41630 of¦41631_Zebedaios¦41631, who¦41632 likewise¦41617 were¦41633 partners¦41634 \untr the¦41635\untr* with¦41636_Simōn¦41636. And¦41638 \untr the¦41645\untr* \nd Yaʸsous¦41646\nd* said¦41640 to¦41641 \untr the¦41642\untr* Simōn¦41643: Be¦41650_ not¦41649 _fearing¦41650, from¦41651 the¦41652 \add time¦41652\add* now¦41653 you¦41655_will¦41655_be¦41655 catching¦41656 people¦41654.

@@ -1,4 +1,4 @@
-\id HOS - Open English Translation—Readers' Version (OET-RV) v0.1.55
+\id HOS - Open English Translation—Readers' Version (OET-RV) v0.1.56
 \usfm 3.0
 \ide UTF-8
 \rem ESFM v0.6 HOS
@@ -32,7 +32,7 @@
 \v 5 \add ≈At that time\add* in¦363667 the Yizre'el valley¦363667, I'll¦363662 break¦363662 Yisrael's \add ≈military power\add*.”
 \p
 \v 6 Then¦363670 \add @Gomer\add* conceived¦363670 again and bore a daughter¦363673, and \add @Yahweh\add* told \add @Hoshea\add*, “Name her Lo-Ruhamah¦363679 \add (which means ‘No mercy’)\add*, because¦363680 I'll¦363682 no longer have mercy on the \add ≈Israelis¦363687, and I won't¦363681\add* forgive them at all.
-\v 7 But¦363695 I'll have mercy on¦363701 Yehudah's¦363698 \add ≈descendants\add*, and¦363695 I'll save them \add so they'll be able to see that it was\add* their¦363702 god¦363702 Yahweh¦363701. (I won't¦363703 save them using \add #bows, swords¦363706, battles¦363707\add*, horses¦363708, or horsemen.)”
+\v 7 But¦363695 I'll have mercy on¦363701 Yehudah's¦363698 \add ≈descendants\add*, and¦363695 I'll save them \add so they'll be able to see that it was\add* their¦363702 god¦363702 Yahweh¦363701. (I won't¦363703 save them using \add #bows, swords¦363706, battles¦363707\add*, horses¦363708, or horsemen¦363709.)”
 \p
 \v 8 After she'd weaned¦363711 Lo-Ruhamah¦363715, she got pregnant¦363716 \add again\add* and¦363711 bore a \add second\add* son.
 \v 9 Then¦363720 Yahweh said, “Name him Lo-Ammi \add (which means ‘Not my people’)\add* because¦363725 you're not my people and¦363720 I'm not your god.”
@@ -299,7 +299,7 @@
 \b
 \q1
 \v 10 Yehudah's¦364687 leaders¦364686 are like \add thieves\add* who move a boundary¦364689.
-\q1 I'll¦364691 pour my anger¦364693 out on them like water¦364692 \add from a jug\add*.
+\q1 I'll¦364691 pour¦364691 my anger¦364693 out on them like water¦364692 \add from a jug\add*.
 \q1
 \v 11 Efrayim¦364696 is oppressed¦364695.
 \q1 It's crushed¦364697 in judgement¦364698,
@@ -349,7 +349,7 @@
 \q1 Your love¦364819 is like a morning¦364822 cloud¦364820 \add that doesn't last long\add*—
 \q1 ≈like the dew that \add ≈quickly disappears\add*.
 \q1
-\v 5 That's why I've cut them to pieces¦364830 by \add means of\add* the prophets¦364831.
+\v 5 That's why I've cut¦364830 them to pieces¦364830 by \add means of\add* the prophets¦364831.
 \q1 ≈I've killed¦364832 them with¦364831 the messages¦364833 \add ≈that I've spoken\add*.
 \q1 \add ≈My\add* judgement¦364836 is like the light¦364837 that \add ≈shines out\add*.
 \q1
@@ -386,7 +386,7 @@
 \rem /s1 Conspiracy in the Palace
 \s4 Northern kingdom
 \q1
-\v 3 They make the king¦364934 glad with their evil¦364931,
+\v 3 They make¦364932 the king¦364934 glad with their evil¦364931,
 \q1 ≈and the leaders¦364936 with their lies.
 \q1
 \v 4 They're all adulterers¦364939, like an oven overheated by the baker¦364943.
@@ -412,9 +412,9 @@
 \q1
 \v 10 Yisrael's¦365026 pride¦365024 testifies¦365023 against it¦365023,
 \q1 yet they haven't returned¦365030 to their¦365034 god¦365034 Yahweh¦365033,
-\q1 ≈nor have they \add ≈tried to obey\add* all his¦365027 \add instructions\add*.
-\q1
 \rem /s1 Futile Reliance on the Nations
+\q1
+\q1 ≈nor have they \add ≈tried to obey\add* all his¦365027 \add instructions\add*.
 \v 11 Efrayim¦365042\add /Yisrael\add* is like a dove¦365043, heartless¦365046 and¦365041 foolish,
 \q1 calling¦365048 to Egypt¦365047 \add for help\add*, then¦365041 \add ≈trying\add* Assyria¦365049.
 \q1
@@ -426,7 +426,7 @@
 \q1 ≈Devastation \add ≈will hit\add* them because they've rebelled against¦365081 me.
 \q1 →I would have bought them back, but¦365077 they told lies about me.
 \q1
-\v 14 They don't¦365084 cry to me from their heart¦365088, \add ≈but\add* they wail on¦365088 their beds¦365093.
+\v 14 They don't¦365084 cry to me from their heart¦365088, \add ≈but\add* they wail¦365090 on¦365088 their beds¦365093.
 \q1 They gather together for grain¦365096 and¦365084 new wine, \add but\add* they turn¦365099 away from me.
 \q1
 \v 15 \add ≈Although\add* I trained \add >them\add* and¦365106 \add ≈helped them become strong\add*,
@@ -461,7 +461,7 @@
 \q1 My anger¦365177 burns against them.
 \q1 For how long will they¦365183 be incapable of innocence¦365184,
 \q1
-\v 6 because¦365194 it came from Yisrael¦365187—a craftsman¦365189 made it.
+\v 6 because¦365194 it came from Yisrael¦365187—a craftsman¦365189 made¦365190 it.
 \q1 It's not God¦365192.
 \q1 That calf in Shomron¦365199 will end up in pieces,
 \q1
@@ -472,7 +472,7 @@
 \v 8 Yisrael¦365221 is swallowed¦365220 up.
 \q1 Now they're among¦365224 the nations¦365224 like a \add ≈cup that¦365226 no one likes\add*
 \q1
-\v 9 because they've gone up to Assyria¦365235—a wild donkey¦365236 all alone.
+\v 9 because they've gone up to Assyria¦365235—a wild¦365236 donkey¦365236 all alone.
 \q1 Efrayim¦365239\add /Yisrael\add* has hired¦365240 lovers for herself.
 \q1
 \v 10 Even though they¦365248 hire lovers among¦365249 the nations¦365249, now I'll¦365251 gather¦365251 them together.
@@ -506,14 +506,14 @@
 \q1 ≈You've loved¦365331 the wages of a sex-worker on all the threshing¦365336 floors¦365336.
 \q1
 \v 2 The \add grain\add* threshing floor¦365339 and the winepress¦365340 won't¦365341 \add ≈provide enough\add*
-\q1 ≈and the \add ≈grape harvest\add* will fail them.
+\q1 ≈and the \add ≈grape harvest\add* will fail¦365344 them.
 \q1
-\v 3 \add @The people\add* won't remain¦365348 on¦365354 Yahweh's¦365350 land,
+\v 3 \add @The people\add* won't remain¦365348 on¦365354 Yahweh's¦365350 land¦365349,
 \q1 instead, Efrayim¦365352\add /Yisrael\add* will return¦365351 to Egypt¦365353,
 \q1 ≈and they'll eat¦365356 \add ≈non-kosher\add* food in¦365354 Assyria¦365354.
 \b
 \q1
-\v 4 They won't pour out wine offerings to Yahweh¦365361,
+\v 4 They won't pour¦365360 out wine offerings to Yahweh¦365361,
 \q1 ≈and their sacrifices¦365368 won't please¦365365 him.
 \q1 To them, it'll be like the \add ≈food at a\add* funeral—
 \q1 everyone who eats it will become defiled.
@@ -554,7 +554,7 @@
 \q1 \add But¦365475\add* they came¦365471 to Baal¦365472-Peor¦365474 and they devoted themselves¦365475 to that shameful¦365476 \add >thing\add*.
 \q1 ≈They became detestable¦365478 like that which they loved¦365479.\x + \xo 9:10: \xt Num 25:1-5.\x*
 \q1
-\v 11 As for Efrayim\add /Yisrael\add*, their¦365484 splendour¦365484 will fly away like a bird—
+\v 11 As for Efrayim\add /Yisrael\add*, their¦365484 splendour¦365484 will fly away like a bird¦365482—
 \q1 no birth¦365485, no pregnancy¦365486, and no conception¦365487.
 \q1
 \v 12 Even if they¦365492 bring¦365492 up their¦365495 children¦365495, I'll¦365496 \add ≈cause them all to die one by one\add*.
@@ -625,7 +625,7 @@
 \q1
 \v 9 “\add ≈Yes,\add* Yisrael¦365714, you've¦365713 been sinning since¦365711 the \add ≈time¦365711\add* of Gibeah¦365712.\x + \xo 10:9: \xt Jdg 19:1-30.\x*
 \q1 There they¦365716 have remained¦365716.
-\q1 Won't the war against the sons¦365724 of injustice¦365725 overtake¦365719 them in¦365720 Gibeah?
+\q1 Won't the war¦365721 against the sons¦365724 of injustice¦365725 overtake¦365719 them in¦365720 Gibeah?
 \q1
 \v 10 When \add ≈I'm ready\add*, I'll¦365728 discipline¦365728 them,
 \q1 and the nations will be gathered¦365729 against¦365730 them when they're \add ≈taken in¦365732 chains\add* for their¦365734 two¦365733 sins.
@@ -681,7 +681,7 @@
 \q1 and devour¦365892 them because¦365893 of their own plans.
 \q1
 \v 7 My¦365897 people¦365895 are \add ≈insistent\add* on turning¦365897 away from me.
-\q1 Though they¦365901 call to the highest \add >one\add*, he¦365904 won't¦365903 lift \add them\add* up.
+\q1 Though they¦365901 call¦365901 to the highest \add >one\add*, he¦365904 won't¦365903 lift \add them\add* up.
 \b
 \q1
 \v 8 How can I give¦365908 you up, O Efrayim¦365909?
@@ -702,7 +702,7 @@
 \v 10 They'll \add ≈decide to follow\add* Yahweh¦365945—he'll roar like a lion¦365947.
 \q1 When he roars, his children¦365954 will come¦365953 trembling¦365953 from the west.
 \q1
-\v 11 They will come trembling¦365957 like a bird from Egypt¦365959—
+\v 11 They will come trembling¦365957 like a bird¦365958 from Egypt¦365959—
 \q1 like a dove¦365960 from Assyria¦365962.
 \q1 I'll¦365963 settle¦365963 them in their¦365966 homes¦365966
 \mi That's what Yahweh¦365969 declares.
@@ -791,7 +791,7 @@
 \q1
 \v 2 Now they \add ≈disobey\add* \add God\add* more and more,
 \q1 and they make cast metal images¦366197 for themselves—
-\q1 idols¦366200 skillfully¦366199 made from their¦366203 silver¦366198—
+\q1 idols¦366200 skillfully¦366199 made¦366195 from their¦366203 silver¦366198—
 \q1 ≈all of them the work¦366201 of craftsmen¦366202.
 \q1 They say about them, ‘Those who sacrifice¦366207 people, kiss¦366210 calves¦366209.’
 \q1
@@ -870,8 +870,8 @@
 \q1 We won't ride on \add war-\add*horses.
 \q1 Nor will we say¦366407, ‘Our god,’ again to \add ≈anything that we've made ourselves\add*
 \q1 because \add &this\add* fatherless \add nation\add* finds compassion in you¦366411.”
-\q1
 \rem /s1 Assurance of Forgiveness; The Lord Promises New Life for Israel
+\q1
 \v 4 “I will heal their waywardness.
 \q1 I'll love them freely
 \q1 because my anger has turned away from them.

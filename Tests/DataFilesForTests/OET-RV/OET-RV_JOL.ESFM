@@ -1,4 +1,4 @@
-\id JOL - Open English Translation—Readers' Version (OET-RV) v0.1.10
+\id JOL - Open English Translation—Readers' Version (OET-RV) v0.1.11
 \usfm 3.0
 \ide UTF-8
 \rem ESFM v0.6 JOL
@@ -38,15 +38,15 @@
 \q1 and what the hopping \add #locusts\add* \add ≈left behind\add*, the destroying¦366569 \add #locusts\add* have eaten.
 \q1
 \v 5 Wake up, drunkards¦366572, and weep.
-\q1 \add ≈Yes,\add* wail, all you¦366577 wine drinkers¦366577.
+\q1 \add ≈Yes,\add* wail¦366574, all you¦366577 wine drinkers¦366577.
 \q1 Wail about the sweet¦366581 wine, because¦366582 \add ≈it's all gone now\add*.
 \b
 \q1
-\v 6 Because a powerful nation¦366588 \add (of locusts)\add* with innumerable \add soldiers\add* has come¦366589 against my land,
+\v 6 Because a powerful nation¦366588 \add (of locusts)\add* with innumerable \add soldiers\add* has come¦366589 against my land¦366592,
 \q1 Its teeth are like a lion's teeth,
 \q1 ≈and the fangs¦366599 are like those of a lioness.\x + \xo 1:6: \xt Rev 9:8.\x*
 \q1
-\v 7 It's made my grapevine¦366604 into a \add ≈piece of rubbish\add*
+\v 7 It's made¦366603 my grapevine¦366604 into a \add ≈piece of rubbish\add*
 \q1 ≈and my fig¦366606 tree¦366606 into splinters¦366607.
 \q1 Stripping \add everything\add*, it's stripped¦366608 it and thrown¦366610 it away.
 \q1 Its branches¦366612 have become¦366611 white¦366611 \add (without the bark)\add*.
@@ -68,15 +68,15 @@
 \v 12 The grapevine¦366661 has dried up and the fig¦366663 tree has been made weak.
 \q1 ≈The pomegranate¦366665 tree, also the palm¦366668 tree and the apple¦366669 tree, all of the trees¦366672 across the countryside¦366673 have dried up.
 \q1 →So humanity's¦366682 joy¦366678 has dried up.
-\q1
 \rem /s1 A Call to Repentance and Prayer; A Call to Repentance
+\q1
 \v 13 \add ≈Get dressed\add* \add in sackcloth\add* and \add ≈sing dirges\add*, you priests¦366687.
 \q1 ≈Wail, you servants of the altar¦366690.
 \q1 Come, \add ≈spend¦366692 the night¦366692\add* in sackcloth, servants of my god,
 \q1 because¦366696 the grain¦366700 offering and the drink¦366701 offering have been withheld¦366697 from the house¦366698 of your god.
 \q1
 \v 14 Consecrate¦366703 a fast,
-\q1 ≈call an assembly¦366707.
+\q1 ≈call¦366706 an assembly¦366707.
 \q1 Gather the elders¦366709 and all the \add ≈residents of the country\add*
 \q1 to the house¦366713 of Yahweh your¦366715 god¦366715,
 \q1 and cry¦366716 out to Yahweh.
@@ -86,7 +86,7 @@
 \q1 and it will come as destruction¦366727 from the powerful one.\x + \xo 1:15: \xt Isa 13:6.\x*
 \b
 \q1
-\v 16 Hasn't our food been cut off \add ≈right in front of\add* our eyes¦366734,
+\v 16 Hasn't our food been cut¦366736 off \add ≈right in front of\add* our eyes¦366734,
 \q1 \add and\add* joy¦366739 and gladness¦366740 \add ≡cut off\add* from God's house¦366737?
 \q1
 \v 17 The seeds¦366743 have shrivelled¦366742 under¦366744 their¦366745 clods¦366745.
@@ -99,7 +99,7 @@
 \q1 because¦366761 there's¦366762 no pasture¦366763 \add to graze\add*.
 \q1 Also the flocks¦366767 of sheep¦366768 have suffered¦366769.
 \q1
-\v 19 I¦366773 call \add for help\add* to you¦366771, Yahweh¦366772,
+\v 19 I¦366773 call¦366773 \add for help\add* to you¦366771, Yahweh¦366772,
 \q1 because¦366774 fire¦366775 has devoured the pastures¦366777 in the wilderness¦366778,
 \q1 and¦366779 the flame¦366779 has burnt all the trees¦366783 in the countryside¦366784.
 \q1
@@ -141,7 +141,7 @@
 \q1 All of their¦366896 faces¦366901 \add ≈turn dark\add*.\f + \fr Joel 2:6b \ft We don't have a good understanding of an uncommon Hebrew word used here, so other translations might differ.\f*
 \q1
 \v 7 They run¦366906 like warriors¦366905.
-\q1 Like men¦366907 of war, they climb the wall¦366910.
+\q1 Like men¦366907 of war¦366908, they climb the wall¦366910.
 \q1 Then they walk, each man \add ≈choosing his own way forward\add*,
 \q1 and they don't¦366914 veer off their¦366916 paths¦366916.
 \q1
@@ -204,16 +204,16 @@
 \rem /s1 God Restores Fertility to the Land; The Lord's Promise of Restoration; God's Response and Promise; Israel forgiven and restored; The Lord's Answer
 \s4 Southern kingdom
 \q1
-\v 18 Then¦367086 Yahweh¦367087 was jealous¦367086 for his land,
+\v 18 Then¦367086 Yahweh¦367087 was jealous¦367086 for his land¦367088,
 \q1 and¦367086 he had pity on his people¦367092.
 \q1
 \v 19 Then¦367094 Yahweh¦367095 answered¦367094 and told his people¦367097,
 \q1 “Listen, I'll send¦367099 you grain¦367103 and new wine and oil¦367105,
 \q1 and it'll be enough for you all,
-\q1 and I'll no longer make you \add ≈a country for the other nations¦367114 to mock\add*.
+\q1 and I'll no longer make¦367110 you \add ≈a country for the other nations¦367114 to mock\add*.
 \q1
 \v 20 And I will distance the northern¦367118 \add army\add* from you,
-\q1 and I will banish \add #them\add* into a land of dryness¦367125 and desolation¦367126—
+\q1 and I will banish \add #them\add* into a land¦367124 of dryness¦367125 and desolation¦367126—
 \q1 \add #their\add* face into the eastern¦367133 sea
 \q1 and \add #their\add* back into the western¦367138 sea.
 \q1 \add #Their\add* stench¦367140 will rise,
@@ -221,7 +221,7 @@
 \q1 because¦367143 \add #they've\add* \add ≈made many powerful moves\add*.”
 \b
 \q1
-\v 21 Don't¦367147 fear¦367149, land. Be¦367150 glad and celebrate,
+\v 21 Don't¦367147 fear¦367149, land¦367150. Be¦367150 glad and celebrate,
 \q1 because¦367153 Yahweh¦367156 has been \add ≈doing¦367157 powerful things\add*.
 \q1
 \v 22 Don't¦367162 worry, \add you\add* animals¦367162 in the countryside¦367163,

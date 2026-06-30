@@ -11,7 +11,7 @@ use rkyv::{validation, with};
 
 use bos_books_codes::is_chapter_verse_book;
 use crate::bos_markers::{is_end_marker, title_markers};
-use crate::chapter_verse::ChapterVerse;
+use crate::chapter_verse::{self, ChapterVerse};
 use crate::indexes::section_index;
 use crate::parsing::get_small_leading_int;
 use crate::entry_lists::InternalBibleEntryList;
@@ -135,12 +135,13 @@ impl std::fmt::Display for SectionIndexEntry {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(
             f,
-            "SectionEntry({} [{} lines {}-{}] {:?})",
-            self.reason_marker,
+            "SectionEntry(ends {} lines {}-{} {} {:?} [{}])",
             self.end_cv(),
             self.start_index,
             self.end_index,
-            self.section_name
+            self.reason_marker,
+            self.section_name,
+            self.context.join(", "),
         )
     }
 }
@@ -337,6 +338,7 @@ impl InternalBibleBookSectionIndex {
         let mut context: Vec<CompactString> = Vec::new();
         let mut book_name = String::new();
         let mut had_section_heading_since_chapters = false;
+        let mut just_had_ms1 = false;
         // let mut last_bridge_entry_index: Option<u16> = None;
         // let mut last_bridge_verse_num_str: Option<CompactString> = None;
 
@@ -370,6 +372,7 @@ impl InternalBibleBookSectionIndex {
                 current_verse_num_str = CompactString::from("0");
             } else if marker == "v" {
                 current_verse_num_str = CompactString::from(line_entry.clean_text());
+                just_had_ms1 = false;
             } else if current_chapter_num_str == "-1" && marker != "chapters" {
                 current_verse_num_str = i.to_compact_string();
             } else if marker == "chapters" {
@@ -378,6 +381,7 @@ impl InternalBibleBookSectionIndex {
                 had_section_heading_since_chapters = false;
             } else if marker == "s1" || marker == "ms1" {
                 had_section_heading_since_chapters = true;
+                if marker == "ms1" { just_had_ms1 = true; }
             }
 
             if have_strict_checking_flag() || cfg!(debug_assertions) {
@@ -388,7 +392,7 @@ impl InternalBibleBookSectionIndex {
             }
 
             // Once we reach the chapters, i.e., after the headers and introduction,
-            //  we should only need to start sections at v= and sometimes at c markers
+            //  we should only need to start sections at v=, at s1 after ms1, and sometimes at c markers
             if marker == "v=" {
             // && (!process_chapters_as_section_breaks || last_marker != "c") {
                 let special_verse_num = line_entry.clean_text();
@@ -446,10 +450,13 @@ impl InternalBibleBookSectionIndex {
                                 finishing_verse_num_str.as_str(),
                                 end_idx,
                                 context.clone());
-                            println!("    About to close section at {}:{} with current_chapter_num_str={} current_verse_num_str={} last_verse_num_str={}",
-                                        last_chapter_num_str, finishing_verse_num_str, current_chapter_num_str, current_verse_num_str, last_verse_num_str);
-                            assert_ne!(finishing_verse_num_str, "0", "Don't want to finish the previous section at {}:{}", last_chapter_num_str, finishing_verse_num_str);
-                            if have_strict_checking_flag() || cfg!(debug_assertions) { assert!(!self.index_data.contains_key(&cv), "Losing data: {cv}"); }
+                            if have_strict_checking_flag() || cfg!(debug_assertions) {
+                                println!("    About to close section at {}:{} with current_chapter_num_str={} current_verse_num_str={} last_verse_num_str={}",
+                                            last_chapter_num_str, finishing_verse_num_str, current_chapter_num_str, current_verse_num_str, last_verse_num_str);
+                                assert_ne!(finishing_verse_num_str, "0", "Don't want to finish the previous {} {} section at {}:{}",
+                                            self.work_name(), self.bos_book_code(), last_chapter_num_str, finishing_verse_num_str);
+                                assert!(!self.index_data.contains_key(&cv), "Losing data: {cv} trying to insert {entry}");
+                            }
                             self.index_data.insert(cv, entry);
                             // context.pop();
                         }
@@ -465,6 +472,33 @@ impl InternalBibleBookSectionIndex {
                         });
                     if have_strict_checking_flag() || cfg!(debug_assertions) { println!("    v= pending = {:?}", pending); }
                     }
+            }
+
+            else if marker == "s1" && just_had_ms1 { // There wouldn't be another v= before this s1, so we handle it differently
+                assert!(pending.is_some()); // The ms1
+                // Handle previous section and start new one.
+                let (cv, new_ms1_entry) = pending.take().unwrap().into_closed(
+                    "0",
+                    "0",
+                    (i - 1) as u16,
+                    context.clone());
+                assert!(new_ms1_entry.reason_marker().contains("ms1"));
+                let this_verse_num_str = String::from(cv.verse());
+                 // Let's change the verse number back to "0" to prevent overwriting problems
+                let adj_cv = ChapterVerse::new(cv.chapter(), if this_verse_num_str=="1" {"0"} else {cv.verse()});
+                if have_strict_checking_flag() || cfg!(debug_assertions) {
+                    assert!(!self.index_data.contains_key(&adj_cv), "Losing data: {adj_cv} trying to insert new_ms1_entry {new_ms1_entry}");
+                }
+                self.index_data.insert(adj_cv, new_ms1_entry);
+                // New s1 section starts at this section marker
+                pending = Some(PendingSection {
+                    start_cv: Some(ChapterVerse::new(current_chapter_num_str.as_str(),  this_verse_num_str)),
+                    start_index: i as u16,
+                    reason: CompactString::from( if current_verse_num_str=="0" { if process_chapters_as_section_breaks {"c/s1"} else {"s1/c"} } else {"s1"}),
+                    name: line_entry.clean_text().to_string(),
+                    // has_content: false
+                    });
+                if have_strict_checking_flag() || cfg!(debug_assertions) { println!("    v= pending = {:?}", pending); }
             }
 
             else if marker == "c" {
@@ -507,7 +541,8 @@ impl InternalBibleBookSectionIndex {
                                 last_verse_num_str.as_str(),
                                 end_idx,
                                 context.clone());
-                            if have_strict_checking_flag() || cfg!(debug_assertions) { assert!(!self.index_data.contains_key(&cv), "Losing data: {cv}"); }
+                            if have_strict_checking_flag() || cfg!(debug_assertions) {
+                                assert!(!self.index_data.contains_key(&cv), "Losing {} {} section index data: {}", self.work_name(), self.bos_book_code(), cv ); }
                             self.index_data.insert(cv, entry);
                             // context.pop();
                         }
@@ -562,7 +597,8 @@ impl InternalBibleBookSectionIndex {
                             current_verse_num_str.as_str(),
                             i as u16,
                             context.clone());
-                        if have_strict_checking_flag() || cfg!(debug_assertions) { assert!(!self.index_data.contains_key(&cv), "Losing data: {cv}"); }
+                        if have_strict_checking_flag() || cfg!(debug_assertions) {
+                            assert!(!self.index_data.contains_key(&cv), "Losing {} {} initial section index data: {}", self.work_name(), self.bos_book_code(), cv ); }
                         self.index_data.insert(cv, entry);
                         context.clear();
                     }
@@ -938,6 +974,7 @@ impl InternalBibleBookSectionIndex {
         let mut have_1_1 = false; // Surely we only need one of these???
         let mut last_end: usize = 0;
         for (cv, index_entry) in &self.index_data {
+            // println!("Validating {} {} section index {} entry: {}", self.work_name(), self.bos_book_code(), cv, index_entry);
             if cv.chapter()=="-1" && cv.verse()=="0" { have_m1_0 = true; }
             if cv.chapter()=="1" && cv.verse()=="0" { have_1_0 = true; }
             if cv.chapter()=="1" && (cv.verse()=="1" || cv.verse_int().unwrap()==1) { have_1_1 = true; } // Could be a verse bridge, e.g., '1-2'
@@ -976,17 +1013,18 @@ impl InternalBibleBookSectionIndex {
                 //         }
                 //     }
                 
-                // Check that the segment finishes with an end marker
-                let final_marker_in_entry = self.line_entries.get(index_entry.start_index() + index_entry.entry_count() as usize - 1).map(|e| e.marker()).unwrap_or("N/A");
-                if !is_end_marker(final_marker_in_entry) && cv.verse() != "0" {
-                    // println!("Entry for {} {} {} is at index {} with end marker '{}'", self.work_name(), self.bos_book_code(), cv, entry.entry_index(), final_marker_in_entry);
-                    // assert!(cv.verse()=="0" || is_end_marker(final_marker_in_entry),
-                    //     "Validating {} {} CV index entry for {} expected last entry to be an end marker but found marker '{}'",
-                    //     self.work_name(), self.bos_book_code(), cv, final_marker_in_entry);
-                    issues.push(format!(
-                        "{} {} section index entry for {} expected last entry to be an end marker but found marker '{}'",
-                        self.work_name(), self.bos_book_code(), cv, final_marker_in_entry
-                    ));
+                if !index_entry.reason_marker().contains("ms1") { // Check that the segment finishes with an end marker
+                    let final_marker_in_entry = self.line_entries.get(index_entry.start_index() + index_entry.entry_count() as usize - 1).map(|e| e.marker()).unwrap_or("N/A");
+                    if !is_end_marker(final_marker_in_entry) && cv.verse() != "0" {
+                        // println!("Entry for {} {} {} is at index {} with end marker '{}'", self.work_name(), self.bos_book_code(), cv, entry.entry_index(), final_marker_in_entry);
+                        // assert!(cv.verse()=="0" || is_end_marker(final_marker_in_entry),
+                        //     "Validating {} {} CV index entry for {} expected last entry to be an end marker but found marker '{}'",
+                        //     self.work_name(), self.bos_book_code(), cv, final_marker_in_entry);
+                        issues.push(format!(
+                            "{} {} section index entry for {} expected last entry to be an end marker but found marker '{}'",
+                            self.work_name(), self.bos_book_code(), cv, final_marker_in_entry
+                        ));
+                        }
                     }
                 }
                 last_end = index_entry.end_index();
@@ -1035,9 +1073,9 @@ impl PendingSection {
         if have_strict_checking_flag() || cfg!(debug_assertions) {
             println!("      Wanting to close pending {} {} section with {}:{} at {} with {}:[{}]",
                 start_cv, self.start_index, end_chapter, end_verse, end_index, self.reason, context.join(", "));
-            assert!(end_index > self.start_index,
+            assert!(end_index > self.start_index || self.reason.contains("ms1"),
                 "Attempting to close {} start_index={} section at end_index={}", start_cv, self.start_index, end_index);
-            assert!(get_small_leading_int(end_verse).unwrap() >= start_cv.verse_int().unwrap() || get_small_leading_int(end_chapter).unwrap() > start_cv.chapter_int().unwrap(),
+            assert!(get_small_leading_int(end_verse).unwrap() >= start_cv.verse_int().unwrap() || get_small_leading_int(end_chapter).unwrap() > start_cv.chapter_int().unwrap() || self.reason.contains("ms1"),
                 "Attempting to close {} section at {}:{}", start_cv, end_chapter, end_verse);
             }
         let entry = SectionIndexEntry::new(
@@ -1322,19 +1360,24 @@ mod tests {
         let mut section_index = InternalBibleBookSectionIndex::new("PQR", "JOB");
         section_index.build(entries).unwrap();
 
-        assert_eq!(section_index.len(), 3);
+        assert_eq!(section_index.len(), 4);
         let section_reasons: Vec<_> = section_index.index_data.iter().map(|(_, entry)| entry.reason_marker().to_string()).collect();
-        assert_eq!(section_reasons, vec!["Headers", "ms1/c", "s1"]);
+        assert_eq!(section_reasons, vec!["Headers", "ms1/c", "s1/c", "s1"]);
 
         let second_section = section_index.index_data.get_index(1).unwrap();
-        assert_eq!(second_section.0.to_string(), "1:1");
+        assert_eq!(second_section.0.to_string(), "1:0");
         assert_eq!(second_section.1.start_index(), 5);
-        assert_eq!(second_section.1.end_index(), 14);
+        assert_eq!(second_section.1.end_index(), 8);
 
         let third_section = section_index.index_data.get_index(2).unwrap();
-        assert_eq!(third_section.0.to_string(), "1:2");
-        assert_eq!(third_section.1.start_index(), 15);
-        assert_eq!(third_section.1.end_index(), 21);
+        assert_eq!(third_section.0.to_string(), "1:1");
+        assert_eq!(third_section.1.start_index(), 9);
+        assert_eq!(third_section.1.end_index(), 14);
+
+        let fourth_section = section_index.index_data.get_index(3).unwrap();
+        assert_eq!(fourth_section.0.to_string(), "1:2");
+        assert_eq!(fourth_section.1.start_index(), 15);
+        assert_eq!(fourth_section.1.end_index(), 21);
     }
 
     #[test]
@@ -1693,7 +1736,7 @@ mod tests {
         let options = crate::processing::ProcessLinesOptions::default();
         let processed_line_entries = crate::processing::process_lines(raw_lines, "HAG", "OET-RV", &options);
 
-        // println!("OET-RV HAG processed_line_entries = {}", processed_line_entries);
+        // println!("OET-RV HAG {} processed_line_entries = {}", processed_line_entries.len(), processed_line_entries);
         // OET-RV HAG processed_line_entries = InternalBibleEntryList:
         //     0/ id = "HAG - Open English Translation…ders' Version (OET-RV) v0.1.03"
         //     1/ usfm = "3.0"
@@ -1965,10 +2008,10 @@ mod tests {
     }
 
     #[test]
-    fn test_oet_rv_malachi_section_index_build() {
-        // Note that OET-RV Malachi has 3 section headings inside verse boundaries XXXX WRONG!!! This test can eventually be deleted
+    fn test_oet_rv_daniel_section_index_build() {
+        // Note that OET-RV Daniel is our smallest book with ms1 section headings (as well as s1 headings of course)
         set_strict_checking_flag( true );
-        let content = include_str!("../../../../Tests/DataFilesForTests/OET-RV/OET-RV_MAL.ESFM");
+        let content = include_str!("../../../../Tests/DataFilesForTests/OET-RV/OET-RV_DAN.ESFM");
         let mut raw_lines = Vec::new();
         for line in content.lines() {
             let (marker, text) = match line.split_once(' ') {
@@ -1980,417 +2023,448 @@ mod tests {
         }
 
         let options = crate::processing::ProcessLinesOptions::default();
-        let processed_line_entries = crate::processing::process_lines(raw_lines, "MAL", "OET-RV", &options);
+        let processed_line_entries = crate::processing::process_lines(raw_lines, "DAN", "OET-RV", &options);
 
-        // println!("OET-RV MAL processed_line_entries = {}", processed_line_entries);
-        //     OET-RV MAL processed_line_entries = InternalBibleEntryList:
-        //         0/ id = "MAL - Open English Translation…ders' Version (OET-RV) v0.1.05"
+        // println!("OET-RV DAN {} processed_line_entries = {}", processed_line_entries.len(), processed_line_entries);
+        //     OET-RV DAN 1540 processed_line_entries = InternalBibleEntryList:
+        //         0/ id = "DAN - Open English Translation…ders' Version (OET-RV) v0.1.09"
         //         1/ usfm = "3.0"
         //         2/ ide = "UTF-8"
-        //         3/ rem = "ESFM v0.6 MAL"
+        //         3/ rem = "ESFM v0.6 DAN"
         //         4/ rem = "WORDTABLE OET-LV_OT_word_table.tsv"
         //         5/ headers = ""
-        //         6/ h = "Malaki"
-        //         7/ toc1 = "Malaki"
-        //         8/ toc2 = "Malaki"
-        //         9/ toc3 = "Mal."
-        //         10/ mt1 = "Malaki"
-        //         11/ mt2 = "(Malachi)"
+        //         6/ h = "Daniel"
+        //         7/ toc1 = "Daniel"
+        //         8/ toc2 = "Daniel"
+        //         9/ toc3 = "Dan."
+        //         10/ mt1 = "Daniel"
+        //         11/ mt3 = "(or Daniyyel)"
         //         12/ ¬headers = ""
         //         13/ intro = ""
         //         14/ is1 = "Introduction"
-        //         15/ ip = "This document records some of … and to restore his agreement."
-        //         16/ iot = "Main components of this account"
-        //         17/ io1 = "The sins of the Israelis 1:1–2:16"
-        //         18/ io1 = "God's judgement and mercy 2:17–4:6"
-        //         19/ ¬iot = ""
-        //         20/ rem = "This is still a very early loo…dvance before using in public."
-        //         21/ ¬is1 = "21"
-        //         22/ ie = ""
-        //         23/ ¬intro = ""
-        //         24/ chapters = ""
-        //         25/ c = "1"
-        //         26/ p = ""
-        //         27/ c# = "1"
-        //         28/ v = "1"
-        //         29/ v~ = "This is a message¦380162 that …ve to Malaki for the Israelis:"
-        //         30/ ¬v = "1"
-        //         31/ ¬p = ""
-        //         32/ v= = "2"
-        //         33/ s1 = "Yahweh's love for the Israelis"
-        //         34/ rem = "/s1 The Lord's Love for Israel…om; The Lord's Love for Israel"
-        //         35/ p = ""
-        //         36/ v = "2"
-        //         37/ v~ = "“I have loved you all,” says Y…e you shown your love for us?”"
-        //         38/ ¬p = ""
-        //         39/ p = ""
-        //         40/ v~ = "“Wasn't Esaw¦380181 Yacob's¦38…. “Yet I've¦380171 loved Yacob" + extras
-        //         41/ ¬v = "2"
-        //         42/ v = "3"
-        //         43/ v~ = "and ≈rejected Esaw. I've¦38019…2 to the wild jackals¦380203.”"
-        //         44/ ¬v = "3"
-        //         45/ ¬p = ""
-        //         46/ p = ""
-        //         47/ v = "4"
-        //         48/ v~ = "If Esaw's descendants in Edom¦…is forever¦380233 angry with.’"
-        //         49/ ¬v = "4"
-        //         50/ ¬p = ""
-        //         51/ p = ""
-        //         52/ v = "5"
-        //         53/ v~ = "Your own eyes¦380235 will see¦…el's¦380243 borders¦380242.’ ”"
-        //         54/ ¬v = "5"
-        //         55/ ¬p = ""
-        //         56/ ¬s1 = ""
-        //         57/ v= = "6"
-        //         58/ s1 = "Second-class sacrifices"
-        //         59/ rem = "/s1 The Lord Reprimands the Pr…; Corruption of the Priesthood"
-        //         60/ p = ""
-        //         61/ v = "6"
-        //         62/ v~ = "“A son honours his father, and…ts¦380267 who despise my name."
+        //         15/ ip = "This document is about Daniel …adrak, Meyshak, and Avednego)."
+        //         16/ ip = "God's revelations which Daniel…uld happen in the ‘end-times’."
+        //         17/ ip = "One of the themes of this docu…e also looks after his people."
+        //         18/ ip = "This document about Daniel was…from the Phoenician alphabet.)"
+        //         19/ iot = "Main components of this account"
+        //         20/ io1 = "God's help for Daniel and his friends 1:1–6:28"
+        //         21/ io1 = "God's revelations to Daniel through visions 7:1–12:13"
+        //         22/ io2 = "a. The four creatures 7:1-28"
+        //         23/ io2 = "b. The ram and the goat 8:1–9:27"
+        //         24/ io2 = "c. The heavenly messenger 10:1–11:45"
+        //         25/ io2 = "d. The time of the end 12:1-13"
+        //         26/ ¬iot = ""
+        //         27/ rem = "This is still a very early loo…dvance before using in public."
+        //         28/ ¬is1 = "28"
+        //         29/ ie = ""
+        //         30/ ¬intro = ""
+        //         31/ chapters = ""
+        //         32/ c = "1"
+        //         33/ v= = "1"
+        //         34/ ms1 = "The account about Daniel and his friends"
+        //         35/ mr = "(1:1–6:28)"
+        //         36/ s1 = "Daniel and his friends in Babylon"
+        //         37/ rem = "/s1 Daniel in Nebuchadnezzar's…lon; Daniel and his companions"
+        //         38/ p = ""
+        //         39/ c# = "1"
+        //         40/ v = "1"
+        //         41/ v~ = "In the third year¦356354 of Ye…and¦356367 besieged @the city." + extras
+        //         42/ ¬v = "1"
+        //         43/ v = "2"
+        //         44/ v~ = "After two years, the master¦35…n his god's temple storerooms." + extras
+        //         45/ ¬v = "2"
+        //         46/ ¬p = ""
+        //         47/ p = ""
+        //         48/ v = "3"
+        //         49/ v~ = "Some time later, King¦356399 N…ome of the prominent families."
+        //         50/ ¬v = "3"
+        //         51/ v = "4"
+        //         52/ v~ = "They had to be good-looking yo…d literature of the Chaldeans,"
+        //         53/ ¬v = "4"
+        //         54/ v = "5"
+        //         55/ v~ = "and king assigned¦356442 a dai…ing the king's¦356461 service."
+        //         56/ ¬v = "5"
+        //         57/ v = "6"
+        //         58/ v~ = "Among the ≈young men from Yehu…el, and¦356470 Azaryah¦356470,"
+        //         59/ ¬v = "6"
+        //         60/ v = "7"
+        //         61/ v~ = "≈but¦356472 @Ashpenaz ≈named t…¦356472 Avednego respectively."
+        //         62/ ¬v = "7"
         //         63/ ¬p = ""
         //         64/ p = ""
-        //         65/ v~ = "“But¦380248 you say, ‘How have we despised your name?’"
-        //         66/ ¬v = "6"
-        //         67/ v = "7"
-        //         68/ v~ = "By offering polluted food on¦3…0287 can just be disrespected."
-        //         69/ ¬v = "7"
-        //         70/ v = "8"
-        //         71/ v~ = "Don't¦380297 you think it's wr…ommander¦380317 Yahweh¦380316." + extras
-        //         72/ ¬v = "8"
-        //         73/ ¬p = ""
-        //         74/ p = ""
-        //         75/ v = "9"
-        //         76/ v~ = "≈So¦380319 now bring you reque…inging second-class offerings?"
-        //         77/ ¬v = "9"
-        //         78/ ¬p = ""
-        //         79/ p = ""
-        //         80/ v = "10"
-        //         81/ v~ = "“Yeah, if only there¦380349 wa…380357 ≈that you all bring me."
-        //         82/ ¬v = "10"
-        //         83/ v = "11"
-        //         84/ v~ = "People in other countries from…ommander¦380388 Yahweh¦380387."
-        //         85/ ¬v = "11"
-        //         86/ v = "12"
-        //         87/ v~ = "“But¦380392 you all are dishon… treated with¦380393 contempt."
-        //         88/ ¬v = "12"
-        //         89/ v = "13"
-        //         90/ v~ = "You all also say, ‘How tiresom… those from you?” says Yahweh."
-        //         91/ ¬v = "13"
-        //         92/ v = "14"
-        //         93/ v~ = "“May the cheats be cursed¦3804…ted among the nations¦380447.”"
-        //         94/ ¬v = "14"
-        //         95/ ¬p = ""
-        //         96/ ¬s1 = "1"
-        //         97/ ¬c = "1"
-        //         98/ c = "2"
-        //         99/ v= = "1"
-        //         100/ s1 = "A warning for the priests"
-        //         101/ rem = "/s1 Admonition for the Priests; A Warning for the Priests"
+        //         65/ v = "8"
+        //         66/ v~ = "≈However Daniel ≈decided that …z to ≈eat an alternative diet."
+        //         67/ ¬v = "8"
+        //         68/ v = "9"
+        //         69/ v~ = "≈Now God ≈had caused the chief…ike and¦356514 respect Daniel,"
+        //         70/ ¬v = "9"
+        //         71/ v = "10"
+        //         72/ v~ = "≈but¦356519 he ≈queried, “I'm …356552 if the king got angry.”"
+        //         73/ ¬v = "10"
+        //         74/ ¬p = ""
+        //         75/ p = ""
+        //         76/ v = "11"
+        //         77/ v~ = "≈So¦356555 Daniel asked the st…356561 over @the four of them,"
+        //         78/ ¬v = "11"
+        //         79/ v = "12"
+        //         80/ v~ = "“Please test your¦356576 serva… water¦356586 to drink¦356587,"
+        //         81/ ¬v = "12"
+        //         82/ v = "13"
+        //         83/ v~ = "then¦356589 after that¦356598,…t decision from the evidence.”"
+        //         84/ ¬v = "13"
+        //         85/ ¬p = ""
+        //         86/ p = ""
+        //         87/ v = "14"
+        //         88/ v~ = "≈So¦356605 the steward ≈agreed…09 started ≈the ten-day trial."
+        //         89/ ¬v = "14"
+        //         90/ v = "15"
+        //         91/ v~ = "At the end of the ten¦356615 d… the king's¦356629 fancy food,"
+        //         92/ ¬v = "15"
+        //         93/ v = "16"
+        //         94/ v~ = "≈so after that, the steward ju…e choice food and¦356631 wine."
+        //         95/ ¬v = "16"
+        //         96/ ¬p = ""
+        //         97/ p = ""
+        //         98/ v = "17"
+        //         99/ v~ = "≈So¦356643 God gave¦356646 tho…ams¦356660 and visions¦356659."
+        //         100/ ¬v = "17"
+        //         101/ ¬p = ""
         //         102/ p = ""
-        //         103/ c# = "2"
-        //         104/ v = "1"
-        //         105/ v~ = "Now¦380453 you priests¦380453,…mand¦380451 is for all of you:"
-        //         106/ ¬v = "1"
-        //         107/ v = "2"
-        //         108/ v~ = "Army-commander¦380471 Yahweh¦3…nternalising ‘my instructions."
-        //         109/ ¬v = "2"
-        //         110/ v = "3"
-        //         111/ v~ = "Listen, I'm about¦380491 to re… be taken¦380503 away with it."
-        //         112/ ¬v = "3"
-        //         113/ v = "4"
-        //         114/ v~ = "That's so you'll all know¦3805…ommander¦380521 Yahweh¦380520." + extras
-        //         115/ ¬v = "4"
-        //         116/ ¬p = ""
-        //         117/ p = ""
-        //         118/ v = "5"
-        //         119/ v~ = "“My agreement with @your ances… and ≈honoured my name¦380535." + extras
-        //         120/ ¬v = "5"
-        //         121/ v = "6"
-        //         122/ v~ = "≈They taught the people what w…any people to stop disobeying."
-        //         123/ ¬v = "6"
-        //         124/ v = "7"
-        //         125/ v~ = "≈Yes, priests¦380559 should pa…eh's¦380568 messengers¦380567."
-        //         126/ ¬v = "7"
-        //         127/ ¬p = ""
-        //         128/ p = ""
-        //         129/ v = "8"
-        //         130/ v~ = "But¦380573 you all have turned…ommander¦380586 Yahweh¦380585."
-        //         131/ ¬v = "8"
-        //         132/ v = "9"
-        //         133/ v~ = "“So¦380588 that's why I've¦380…07 matters¦380598 of the law.”"
-        //         134/ ¬v = "9"
-        //         135/ ¬p = ""
-        //         136/ ¬s1 = ""
-        //         137/ v= = "10"
-        //         138/ s1 = "The people have been unfaithful"
-        //         139/ rem = "/s1 A Call to Faithfulness; Th…People's Unfaithfulness to God"
-        //         140/ p = ""
-        //         141/ v = "10"
-        //         142/ v~ = "Don't¦380610 we all have one f…1 our¦380613 ancestors¦380624?"
-        //         143/ ¬v = "10"
-        //         144/ v = "11"
-        //         145/ v~ = "Our nation of Yehudah¦380627 (… women who worship pagan gods."
-        //         146/ ¬v = "11"
-        //         147/ v = "12"
-        //         148/ v~ = "May Yahweh, the one who is awa… army-commander¦380658 Yahweh."
-        //         149/ ¬v = "12"
-        //         150/ ¬p = ""
-        //         151/ p = ""
-        //         152/ v = "13"
-        //         153/ v~ = "Secondly¦380666, you cover¦380…678 what you all bring to him."
-        //         154/ ¬v = "13"
-        //         155/ v = "14"
-        //         156/ v~ = "≈So¦380682 you ≈ask, “Why not?… and¦380682 despite your vows."
-        //         157/ ¬v = "14"
-        //         158/ v = "15"
-        //         159/ v~ = "Didn't @Yahweh make you and yo…u married when you were young."
-        //         160/ ¬v = "15"
-        //         161/ ¬p = ""
-        //         162/ p = ""
-        //         163/ v = "16"
-        //         164/ v~ = "“Indeed, I hate divorce,” says…d don't¦380743 be unfaithful.”"
-        //         165/ ¬v = "16"
-        //         166/ ¬p = ""
-        //         167/ ¬s1 = ""
-        //         168/ v= = "17"
-        //         169/ s1 = "Judgement day is coming"
-        //         170/ rem = "/s1 The Day of Judgment; The Day of Judgment Is Near"
-        //         171/ p = ""
-        //         172/ v = "17"
-        //         173/ v~ = "You've all wearied Yahweh with…god¦380767 of justice¦380768?”"
-        //         174/ ¬v = "17"
-        //         175/ ¬p = ""
-        //         176/ ¬c = "2"
-        //         177/ c = "3"
-        //         178/ rem = "/s1 The Coming Day of Judgment; The Coming Messenger"
-        //         179/ p = ""
-        //         180/ c# = "3"
-        //         181/ v = "1"
-        //         182/ v~ = "“Listen, I'm about to send my …ommander¦380799 Yahweh¦380798." + extras
-        //         183/ ¬v = "1"
-        //         184/ v = "2"
-        //         185/ v~ = "≈But¦380801 who could survive …e the cleaners' powerful soap?" + extras
-        //         186/ ¬v = "2"
-        //         187/ v = "3"
-        //         188/ v~ = "@Yahweh will act as a refiner … to *him that are ≈acceptable."
-        //         189/ ¬v = "3"
-        //         190/ v = "4"
-        //         191/ v~ = "After that, the offerings¦3808…d as in previous years¦380845."
-        //         192/ ¬v = "4"
-        //         193/ ¬p = ""
-        //         194/ p = ""
-        //         195/ v = "5"
-        //         196/ v~ = "This is what army-commander¦38…hose who ≈refuse to honour me."
-        //         197/ ¬v = "5"
-        //         198/ ¬p = ""
-        //         199/ ¬s1 = ""
-        //         200/ v= = "6"
-        //         201/ s1 = "Giving a tenth"
-        //         202/ rem = "/s1 The Payment of Tithes; Robbing God; A Call to Repentance"
-        //         203/ p = ""
-        //         204/ v = "6"
-        //         205/ v~ = "“I am Yahweh¦380876 and¦380879…380882 haven't been destroyed."
-        //         206/ ¬v = "6"
-        //         207/ v = "7"
-        //         208/ v~ = "Ever since¦380886 the time¦380… can we¦380901 return to you?’"
-        //         209/ rem = "/s1 Don't rob God"
-        //         210/ ¬v = "7"
-        //         211/ v = "8"
-        //         212/ v~ = "Can a human rob God¦380905? Ye… plus¦380910 offerings¦380914."
-        //         213/ ¬v = "8"
-        //         214/ v = "9"
-        //         215/ v~ = "You're¦380919 all cursed¦38091…e¦380923 nation¦380922 of you."
-        //         216/ ¬v = "9"
-        //         217/ v = "10"
-        //         218/ v~ = "Bring¦380925 the full tenth in…owing blessing¦380954 for you." + extras
-        //         219/ ¬v = "10"
-        //         220/ v = "11"
-        //         221/ v~ = "I'll¦380968 rebuke¦380961 the …ommander¦380980 Yahweh¦380979." + extras
-        //         222/ ¬v = "11"
-        //         223/ v = "12"
-        //         224/ v~ = "“Then¦380983 all the other cou…ommander¦380995 Yahweh¦380994."
-        //         225/ ¬v = "12"
-        //         226/ ¬p = ""
-        //         227/ ¬s1 = ""
-        //         228/ v= = "13"
-        //         229/ s1 = "God promises mercy for some"
-        //         230/ rem = "/s1 The righteous triumphant; God's Promise of Mercy"
-        //         231/ p = ""
-        //         232/ v = "13"
-        //         233/ v~ = "“Your words¦381000 against me … among ourselves against you?’"
-        //         234/ ¬v = "13"
-        //         235/ v = "14"
-        //         236/ v~ = "You've all said¦381009, ‘It's …ommander¦381024 Yahweh¦381023?"
-        //         237/ ¬v = "14"
-        //         238/ v = "15"
-        //         239/ v~ = "≈It seems that arrogant¦381029…et nothing happens to them.’ ”"
-        //         240/ rem = "/s1 The Reward of the Faithful; The Lord's Promise of Mercy"
-        //         241/ ¬v = "15"
+        //         103/ v = "18"
+        //         104/ v~ = "At the end of @the three years…o King¦356667 Nevukadnetstsar." + extras
+        //         105/ ¬v = "18"
+        //         106/ v = "19"
+        //         107/ v~ = "The king talked with each of t… in the king's¦356687 service—"
+        //         108/ ¬v = "19"
+        //         109/ v = "20"
+        //         110/ v~ = "in every matter¦356690 of wisd… entire¦356702 kingdom¦356709."
+        //         111/ ¬v = "20"
+        //         112/ v = "21"
+        //         113/ v~ = "Daniel continued serving there…of King¦356718 Koresh (Cyrus)."
+        //         114/ ¬v = "21"
+        //         115/ ¬p = ""
+        //         116/ ¬s1 = ""
+        //         117/ ¬c = "1"
+        //         118/ c = "2"
+        //         119/ v= = "1"
+        //         120/ s1 = "Nevukadnetstsar's dream"
+        //         121/ rem = "/s1 Daniel's wisdom; Nebuchadnezzar's Dream"
+        //         122/ p = ""
+        //         123/ c# = "2"
+        //         124/ v = "1"
+        //         125/ v~ = "Back in the second year¦356721…ng him unable to sleep¦356730."
+        //         126/ ¬v = "1"
+        //         127/ v = "2"
+        //         128/ v~ = "*He summoned the magicians¦356…5 in front¦356746 of the king."
+        //         129/ ¬v = "2"
+        //         130/ v = "3"
+        //         131/ v~ = "“I've¦356753 had a dream¦35675…s ≈anxious to understand *it.”"
+        //         132/ ¬v = "3"
+        //         133/ v = "4"
+        //         134/ v~ = "The ≈astrologers spoke¦356761 …ou the interpretation¦356772.”"
+        //         135/ ¬v = "4"
+        //         136/ ¬p = ""
+        //         137/ p = ""
+        //         138/ v = "5"
+        //         139/ v~ = "“≈I've already made my decisio…6790 made into a rubbish heap."
+        //         140/ ¬v = "5"
+        //         141/ v = "6"
+        //         142/ v~ = "But¦356794 if you all explain …dream and its interpretation.”"
+        //         143/ ¬v = "6"
+        //         144/ ¬p = ""
+        //         145/ p = ""
+        //         146/ v = "7"
+        //         147/ v~ = "“Let¦356814 the king¦356814 te…ve the interpretation¦356818.”"
+        //         148/ ¬v = "7"
+        //         149/ ¬p = ""
+        //         150/ p = ""
+        //         151/ v = "8"
+        //         152/ v~ = "“I know for certain¦356826 tha…≈However, I've made up my mind"
+        //         153/ ¬v = "8"
+        //         154/ v = "9"
+        //         155/ v~ = "that if you all don't¦356847 ≈…me its interpretation¦356871.”"
+        //         156/ ¬v = "9"
+        //         157/ ¬p = ""
+        //         158/ p = ""
+        //         159/ v = "10"
+        //         160/ v~ = "“There's no one ≈in the whole …oger to do that before¦356877!"
+        //         161/ ¬v = "10"
+        //         162/ v = "11"
+        //         163/ v~ = "What¦356924 you're requesting,… dreamt—only the gods¦356926.”"
+        //         164/ ¬v = "11"
+        //         165/ v = "12"
+        //         166/ v~ = "≈That angered the king¦356939,…ise men¦356946 to be executed."
+        //         167/ ¬v = "12"
+        //         168/ ¬p = ""
+        //         169/ p = ""
+        //         170/ v = "13"
+        //         171/ v~ = "≈When¦356949 the decree¦356949… friends¦356955 were included."
+        //         172/ rem = "/s1 God Shows Daniel What the Dream Means"
+        //         173/ ¬v = "13"
+        //         174/ v = "14"
+        //         175/ v~ = "Aryok¦356964 was the captain o…se and¦356963 prudent caution."
+        //         176/ ¬v = "14"
+        //         177/ ¬p = ""
+        //         178/ p = ""
+        //         179/ v = "15"
+        //         180/ v~ = "He asked the king's commander … ≈explained what had happened,"
+        //         181/ ¬v = "15"
+        //         182/ v = "16"
+        //         183/ v~ = "≈so¦356998 Daniel¦357003 went …interpretation¦357009 to *him."
+        //         184/ ¬v = "16"
+        //         185/ ¬p = ""
+        //         186/ p = ""
+        //         187/ rem = "/s1 God Reveals Nebuchadnezzar's Dream"
+        //         188/ v = "17"
+        //         189/ v~ = "Then Daniel went¦357017 back t…, Misha'el, and Azaryah¦357020"
+        //         190/ ¬v = "17"
+        //         191/ v = "18"
+        //         192/ v~ = "≈so they¦357038 ≈might beg for…he Babylonian wise men¦357044."
+        //         193/ ¬v = "18"
+        //         194/ v = "19"
+        //         195/ v~ = "Then the mystery¦357053 was re…d¦357058 of the heavens¦357059"
+        //         196/ ¬v = "19"
+        //         197/ v = "20"
+        //         198/ v~ = "saying¦357063, “Let God's name…nd power¦357078 belong to him."
+        //         199/ ¬v = "20"
+        //         200/ v = "21"
+        //         201/ v~ = "He moves the times¦357086 and … those who have understanding."
+        //         202/ ¬v = "21"
+        //         203/ v = "22"
+        //         204/ v~ = "He reveals¦357100 the deep and…e light¦357106 lives with him."
+        //         205/ ¬v = "22"
+        //         206/ v = "23"
+        //         207/ v~ = "Oh God¦357113 of my ancestors¦…ng¦357132 is wanting to know.”"
+        //         208/ ¬v = "23"
+        //         209/ ¬p = ""
+        //         210/ ¬s1 = ""
+        //         211/ v= = "24"
+        //         212/ s1 = "Daniel explains the king's dream"
+        //         213/ rem = "/s1 Daniel Tells the King the …t; Daniel Interprets the Dream"
+        //         214/ p = ""
+        //         215/ v = "24"
+        //         216/ v~ = "So Daniel went to Aryok¦357143…nd its interpretation¦357164.”"
+        //         217/ ¬v = "24"
+        //         218/ ¬p = ""
+        //         219/ p = ""
+        //         220/ v = "25"
+        //         221/ v~ = "Aryok¦357170 quickly took Dani…etation¦357191 of your dream.”"
+        //         222/ ¬v = "25"
+        //         223/ ¬p = ""
+        //         224/ p = ""
+        //         225/ v = "26"
+        //         226/ v~ = "“Are you able to tell me the d… (also called Belteshatstsar)."
+        //         227/ ¬v = "26"
+        //         228/ ¬p = ""
+        //         229/ p = ""
+        //         230/ v = "27"
+        //         231/ v~ = "“No wise men, enchanters, magi…has demanded,” replied Daniel."
+        //         232/ ¬v = "27"
+        //         233/ v = "28"
+        //         234/ v~ = "“However, there¦357232 is a go…e you were in your bed¦357250:"
+        //         235/ ¬v = "28"
+        //         236/ v = "29"
+        //         237/ v~ = "Oh¦357258 king¦357258, ≈as you…d you what is going to happen."
+        //         238/ ¬v = "29"
+        //         239/ v = "30"
+        //         240/ v~ = "As for me, this mystery¦357289…aw in¦357279 your mind¦357302."
+        //         241/ ¬v = "30"
         //         242/ ¬p = ""
         //         243/ p = ""
-        //         244/ v = "16"
-        //         245/ v~ = "Then those who ≈still respecte…noured his¦381054 name¦381058."
-        //         246/ ¬v = "16"
-        //         247/ v = "17"
-        //         248/ v~ = "“They'll be mine,” says¦381062…punish his son who ≈obeys him."
-        //         249/ ¬v = "17"
-        //         250/ v = "18"
-        //         251/ v~ = "Then¦381081 once again¦381081 …8 and #those who don't¦381090."
-        //         252/ ¬v = "18"
-        //         253/ ¬p = ""
-        //         254/ ¬s1 = "3"
-        //         255/ ¬c = "3"
-        //         256/ c = "4"
-        //         257/ v= = "1"
-        //         258/ s1 = "Be ready for future judgement"
-        //         259/ rem = "/s1 The Day of the Lord; The C…ing; The Great Day of the Lord"
+        //         244/ v = "31"
+        //         245/ v~ = "“What you were looking at, ≈yo…you—a terrifying¦357323 sight."
+        //         246/ ¬v = "31"
+        //         247/ v = "32"
+        //         248/ v~ = "The statue's¦357326 head¦35732…ghs¦357337 were bronze¦357339,"
+        //         249/ ¬v = "32"
+        //         250/ v = "33"
+        //         251/ v~ = "its legs were made of iron, an… combination of iron and clay."
+        //         252/ ¬v = "33"
+        //         253/ v = "34"
+        //         254/ v~ = "You continued looking until¦35…and it smashed them to pieces."
+        //         255/ ¬v = "34"
+        //         256/ v = "35"
+        //         257/ v~ = "Then the iron, the clay, the b…filled¦357409 the whole world."
+        //         258/ ¬v = "35"
+        //         259/ ¬p = ""
         //         260/ p = ""
-        //         261/ c# = "4"
-        //         262/ v = "1"
-        //         263/ v~ = "“≈Yes, listen, the day that bu…leaving any roots or branches."
-        //         264/ ¬v = "1"
-        //         265/ v = "2"
-        //         266/ v~ = "But for you who respect my nam…calves let out of their stall,"
-        //         267/ ¬v = "2"
-        //         268/ v = "3"
-        //         269/ v~ = "and you'll all trample down th…,” says army-commander Yahweh."
-        //         270/ ¬v = "3"
-        //         271/ ¬p = ""
-        //         272/ p = ""
-        //         273/ v = "4"
-        //         274/ v~ = "“≈Be sure to obey the law that…—the statutes and the rulings."
-        //         275/ ¬v = "4"
-        //         276/ ¬p = ""
-        //         277/ p = ""
-        //         278/ v = "5"
-        //         279/ v~ = "Listen, I'll send the prophet … fearful day of *my judgement." + extras
-        //         280/ ¬v = "5"
-        //         281/ v = "6"
-        //         282/ v~ = "He'll ≈restore harmony between…th with complete destruction.”"
-        //         283/ ¬v = "6"
-        //         284/ ¬p = ""
-        //         285/ ¬s1 = ""
-        //         286/ ¬c = "4"
-        //         287/ ¬chapters = ""
+        //         261/ v = "36"
+        //         262/ v~ = "“That¦357420 was the dream¦357…ing¦357420 its¦357416 meaning:"
+        //         263/ ¬v = "36"
+        //         264/ v = "37"
+        //         265/ v~ = "You¦357425, ≈your majesty, are…¦357429 of the heavens¦357430."
+        //         266/ ¬v = "37"
+        //         267/ v = "38"
+        //         268/ v~ = "Wherever people live, he's ≈pl…tue's gold¦357463 head¦357461."
+        //         269/ ¬v = "38"
+        //         270/ v = "39"
+        //         271/ v~ = "≈But¦357465 another less promi…7484 after¦357465 that¦357480."
+        //         272/ ¬v = "39"
+        //         273/ v = "40"
+        //         274/ v~ = "Then¦357486 there'll be a four…se others into ≈broken pieces."
+        //         275/ ¬v = "40"
+        //         276/ v = "41"
+        //         277/ v~ = "And as you saw the feet¦357513…542 with¦357535 the soft clay."
+        //         278/ ¬v = "41"
+        //         279/ v = "42"
+        //         280/ v~ = "As the feet¦357547 were partly…trong¦357559 and partly ≈weak."
+        //         281/ ¬v = "42"
+        //         282/ v = "43"
+        //         283/ v~ = "As¦357583 you¦357566 saw¦35756… doesn't ≈integrate with clay."
+        //         284/ ¬v = "43"
+        //         285/ v = "44"
+        //         286/ v~ = "In the days¦357593 of those ki… it will stand forever¦357618."
+        //         287/ ¬v = "44"
+        //         288/ v = "45"
+        //         289/ v~ = "Just as you saw¦357625 that a …357652 is trustworthy¦357651.”"
+        //         290/ ¬v = "45"
+        //         291/ ¬p = ""
+        //         292/ ¬s1 = ""
+        //         293/ v= = "46"
+        //         294/ s1 = "Daniel is rewarded by the king"
+        //         295/ rem = "/s1 Daniel and His Friends Pro… Nebuchadnezzar Rewards Daniel"
+        //         296/ p = ""
+        //         297/ v = "46"
+        //         298/ v~ = "Then King¦357656 Nevukadnetsts…e¦357665 be offered up to him."
+        //         299/ ¬v = "46"
+        //         … (1540 total entries)
 
-        let mut section_index = InternalBibleBookSectionIndex::new("OET-RV", "MAL");
+        let mut section_index = InternalBibleBookSectionIndex::new("OET-RV", "DAN");
         section_index.build(processed_line_entries.clone()).unwrap();
-        
-        // It should give the following eleven entries:
-        //     0/ ('-1', '0') InternalBibleBookSectionIndexEntry object: (inclusive) endCV=-1:12 ix=0–12 (cnt=13) Headers='MAL'
-        //     1/ ('-1', '14') InternalBibleBookSectionIndexEntry object: (inclusive) endCV=-1:22 ix=14–22 (cnt=9) is1='Introduction'
-        //     2/ ('1', '1') InternalBibleBookSectionIndexEntry object: (inclusive) endCV=1:1 ix=24–30 (cnt=7) c='Malaki 1' ctxt=["chapters", "c"]
-        //     3/ ('1', '2') InternalBibleBookSectionIndexEntry object: (inclusive) endCV=1:5 ix=31–54 (cnt=24) s1='Yahweh's love for the Israelis' ctxt=["chapters", "c"]
-        //     4/ ('1', '6') InternalBibleBookSectionIndexEntry object: (inclusive) endCV=1:14 ix=55–94 (cnt=40) s1='Second-class sacrifices' ctxt=["chapters", "c"]
-        //     5/ ('2', '1') InternalBibleBookSectionIndexEntry object: (inclusive) endCV=2:9 ix=95–132 (cnt=38) s1/c='A warning for the priests' ctxt=["chapters", "c"]
-        //     6/ ('2', '10') InternalBibleBookSectionIndexEntry object: (inclusive) endCV=2:16 ix=133–162 (cnt=30) s1='The people have been unfaithful' ctxt=["chapters", "c"]
-        //     7/ ('2', '17') InternalBibleBookSectionIndexEntry object: (inclusive) endCV=3:5 ix=163–193 (cnt=31) s1='Judgement day is coming' ctxt=["chapters", "c"]
-        //     8/ ('3', '6') InternalBibleBookSectionIndexEntry object: (inclusive) endCV=3:12 ix=194–220 (cnt=27) s1='Giving a tenth' ctxt=["chapters", "c"]
-        //     9/ ('3', '13') InternalBibleBookSectionIndexEntry object: (inclusive) endCV=3:18 ix=221–247 (cnt=27) s1='God promises mercy for some' ctxt=["chapters", "c"]
-        //     10/ ('4', '1') InternalBibleBookSectionIndexEntry object: (inclusive) endCV=4:6 ix=248–277 (cnt=30) s1/c='Be ready for future judgement' ctxt=["chapters", "c"]
 
-        assert_eq!(section_index.len(), 11);
+        // for (ee,(cv,entry)) in section_index.index_data.iter().enumerate() { println!("{}/ {} {}", ee, cv, entry); }
+        // It should give the following 26 entries:
+        //     0/ -1:0 SectionEntry(ends -1:12 lines 0-12 Headers "DAN" [])
+        //     1/ -1:14 SectionEntry(ends -1:30 lines 14-30 is1 "Introduction" [])
+        //     2/ 1:0 SectionEntry(ends 0:0 lines 32-0 ms1/c "The account about Daniel and his friends" [chapters, c])
+        //     3/ 1:1 SectionEntry(ends 1:21 lines 36-117 s1/c "Daniel and his friends in Babylon" [chapters, c])
+        //     4/ 2:1 SectionEntry(ends 2:23 lines 118-210 s1/c "Nevukadnetstsar's dream" [chapters, c])
+        //     5/ 2:24 SectionEntry(ends 2:45 lines 211-292 s1 "Daniel explains the king's dream" [chapters, c])
+        //     6/ 2:46 SectionEntry(ends 2:49 lines 293-311 s1 "Daniel is rewarded by the king" [chapters, c])
+        //     7/ 3:1 SectionEntry(ends 3:7 lines 312-340 s1/c "The command to worship the statue" [chapters, c])
+        //     8/ 3:8 SectionEntry(ends 3:18 lines 341-383 s1 "Daniel's three friends get tattled on" [chapters, c])
+        //     9/ 3:19 SectionEntry(ends 3:30 lines 384-440 s1 "Shadrak, Meyshak, and Avednego thrown into the fire" [chapters, c])
+        //     10/ 4:1 SectionEntry(ends 4:18 lines 441-526 s1/c "Nevukadnetstsar's second dream" [chapters, c])
+        //     11/ 4:19 SectionEntry(ends 4:33 lines 527-589 s1 "The saving/explaining of Daniel of dream of King" [chapters, c])
+        //     12/ 4:34 SectionEntry(ends 4:37 lines 590-610 s1 "Nevukadnetstsar praises God" [chapters, c])
+        //     13/ 5:1 SectionEntry(ends 5:31 lines 611-741 s1/c "The writing on the wall" [chapters, c])
+        //     14/ 6:1 SectionEntry(ends 6:28 lines 742-863 s1/c "Daniel gets fed to the lions" [chapters, c])
+        //     15/ 7:0 SectionEntry(ends 0:0 lines 864-0 ms1/c "Daniel's visions" [chapters, c])
+        //     16/ 7:1 SectionEntry(ends 7:14 lines 867-937 s1/c "Daniel's vision of four creatures" [chapters, c])
+        //     17/ 7:15 SectionEntry(ends 7:28 lines 938-997 s1 "The meaning of the visions" [chapters, c])
+        //     18/ 8:1 SectionEntry(ends 8:14 lines 998-1055 s1/c "Daniel's sheep and goat vision" [chapters, c])
+        //     19/ 8:15 SectionEntry(ends 8:27 lines 1056-1109 s1 "Gavri'el explains Daniel's vision" [chapters, c])
+        //     20/ 9:1 SectionEntry(ends 9:19 lines 1110-1180 s1/c "Daniel prays for his people" [chapters, c])
+        //     21/ 9:20 SectionEntry(ends 9:27 lines 1181-1213 s1 "Gavri'el explains God's revelation" [chapters, c])
+        //     22/ 10:1 SectionEntry(ends 11:1 lines 1214-1309 s1/c "God's terrifying revelation to Daniel" [chapters, c])
+        //     23/ 11:2 SectionEntry(ends 11:20 lines 1310-1383 s1 "The kings of Egypt and Syria" [chapters, c])
+        //     24/ 11:21 SectionEntry(ends 11:45 lines 1384-1475 s1 "The evil Syrian king" [chapters, c])
+        //     25/ 12:1 SectionEntry(ends 12:13 lines 1476-1538 s1/c "The ending of time" [chapters, c])
+
+        assert_eq!(section_index.len(), 26);
         let sections: Vec<_> = section_index.index_data.iter().map(|(_, entry)| entry.reason_marker().to_string()).collect();
-        assert_eq!(sections, vec!["Headers", "is1", "c", "s1", "s1", "s1/c", "s1", "s1", "s1", "s1", "s1/c"]);
+        assert_eq!(sections, vec!["Headers", "is1",
+                                    "ms1/c", "s1/c", "s1/c", "s1", "s1", "s1/c", "s1", "s1", "s1/c", "s1", "s1", "s1/c", "s1/c",
+                                    "ms1/c", "s1/c", "s1", "s1/c", "s1", "s1/c", "s1", "s1/c", "s1", "s1", "s1/c"]);
 
-        // 0 -1:0 Headers='MAL'
+        // 0 -1:0 Headers='DAN'
         let (cv0, entry0) = section_index.index_data.get_index(0).unwrap();
         assert_eq!(cv0.to_string(), "-1:0");
         assert_eq!(entry0.end_cv().to_string(), "-1:12");
         assert_eq!(entry0.start_index(), 0);
         assert_eq!(entry0.end_index(), 12); // ends at '¬headers'
         assert_eq!(entry0.reason_marker(), "Headers");
-        assert_eq!(entry0.section_name(), "MAL");
+        assert_eq!(entry0.section_name(), "DAN");
 
         // 1 -1:13 is1='Introduction'
         let (cv1, entry1) = section_index.index_data.get_index(1).unwrap();
         assert_eq!(cv1.to_string(), "-1:14");
-        assert_eq!(entry1.end_cv().to_string(), "-1:23");
+        assert_eq!(entry1.end_cv().to_string(), "-1:30");
         assert_eq!(entry1.start_index(), 14);
-        assert_eq!(entry1.end_index(), 23);
+        assert_eq!(entry1.end_index(), 30);
         assert_eq!(entry1.reason_marker(), "is1");
         assert_eq!(entry1.section_name(), "Introduction");
 
-        // 2 1:1 chapter one start
+        // 2 1:10 ms1='The account about Daniel and his friends'
         let (cv2, entry2) = section_index.index_data.get_index(2).unwrap();
-        assert_eq!(cv2.to_string(), "1:1");
-        assert_eq!(entry2.end_cv().to_string(), "1:1");
-        assert_eq!(entry2.start_index(), 25); // c
-        assert_eq!(entry2.end_index(), 31); // ¬p
-        assert_eq!(entry2.reason_marker(), "c");
-        assert_eq!(entry2.section_name(), "Malaki 1");
+        assert_eq!(cv2.to_string(), "1:0");
+        assert_eq!(entry2.end_cv().to_string(), "0:0"); // dummy
+        assert_eq!(entry2.start_index(), 32); // c
+        assert_eq!(entry2.end_index(), 35);
+        assert_eq!(entry2.reason_marker(), "ms1/c");
+        assert_eq!(entry2.section_name(), "The account about Daniel and his friends");
 
-        // 3 1:2 s1='Yahweh's love for the Israelis'
+        // 3 1:1 s1='Daniel and his friends in Babylon'
         let (cv3, entry3) = section_index.index_data.get_index(3).unwrap();
-        assert_eq!(cv3.to_string(), "1:2");
-        assert_eq!(entry3.end_cv().to_string(), "1:5");
-        assert_eq!(entry3.start_index(), 32); // v=
-        assert_eq!(entry3.end_index(), 56);
-        assert_eq!(entry3.reason_marker(), "s1");
-        assert_eq!(entry3.section_name(), "Yahweh's love for the Israelis");
+        assert_eq!(cv3.to_string(), "1:1");
+        assert_eq!(entry3.end_cv().to_string(), "1:21");
+        assert_eq!(entry3.start_index(), 36); // s1
+        assert_eq!(entry3.end_index(), 117);
+        assert_eq!(entry3.reason_marker(), "s1/c");
+        assert_eq!(entry3.section_name(), "Daniel and his friends in Babylon");
 
-        // 4 1:6 s1='Second-class sacrifices'
+        // 4 2:1 s1='Nevukadnetstsar's dream'
         let (cv4, entry4) = section_index.index_data.get_index(4).unwrap();
-        assert_eq!(cv4.to_string(), "1:6");
-        assert_eq!(entry4.end_cv().to_string(), "1:14");
-        assert_eq!(entry4.start_index(), 57);
-        assert_eq!(entry4.end_index(), 97);
-        assert_eq!(entry4.reason_marker(), "s1");
-        assert_eq!(entry4.section_name(), "Second-class sacrifices");
+        assert_eq!(cv4.to_string(), "2:1");
+        assert_eq!(entry4.end_cv().to_string(), "2:23");
+        assert_eq!(entry4.start_index(), 118);
+        assert_eq!(entry4.end_index(), 210);
+        assert_eq!(entry4.reason_marker(), "s1/c");
+        assert_eq!(entry4.section_name(), "Nevukadnetstsar's dream");
 
-        // 5 2:1 s1='A warning for the priests'
-        let (cv5, entry5) = section_index.index_data.get_index(5).unwrap();
-        assert_eq!(cv5.to_string(), "2:1");
-        assert_eq!(entry5.end_cv().to_string(), "2:9");
-        assert_eq!(entry5.start_index(), 98);
-        assert_eq!(entry5.end_index(), 136);
-        assert_eq!(entry5.reason_marker(), "s1/c");
-        assert_eq!(entry5.section_name(), "A warning for the priests");
+        // // 5 2:1 s1='A warning for the priests'
+        // let (cv5, entry5) = section_index.index_data.get_index(5).unwrap();
+        // assert_eq!(cv5.to_string(), "2:1");
+        // assert_eq!(entry5.end_cv().to_string(), "2:9");
+        // assert_eq!(entry5.start_index(), 98);
+        // assert_eq!(entry5.end_index(), 136);
+        // assert_eq!(entry5.reason_marker(), "s1/c");
+        // assert_eq!(entry5.section_name(), "A warning for the priests");
 
-        // 6 2:10 s1='The people have been unfaithful'
-        let (cv6, entry6) = section_index.index_data.get_index(6).unwrap();
-        assert_eq!(cv6.to_string(), "2:10");
-        assert_eq!(entry6.end_cv().to_string(), "2:16");
-        assert_eq!(entry6.start_index(), 137);
-        assert_eq!(entry6.end_index(), 167);
-        assert_eq!(entry6.reason_marker(), "s1");
-        assert_eq!(entry6.section_name(), "The people have been unfaithful");
+        // // 6 2:10 s1='The people have been unfaithful'
+        // let (cv6, entry6) = section_index.index_data.get_index(6).unwrap();
+        // assert_eq!(cv6.to_string(), "2:10");
+        // assert_eq!(entry6.end_cv().to_string(), "2:16");
+        // assert_eq!(entry6.start_index(), 137);
+        // assert_eq!(entry6.end_index(), 167);
+        // assert_eq!(entry6.reason_marker(), "s1");
+        // assert_eq!(entry6.section_name(), "The people have been unfaithful");
 
-        // 7 2:19 s1='Judgement day is coming'
-        let (cv7, entry7) = section_index.index_data.get_index(7).unwrap();
-        assert_eq!(cv7.to_string(), "2:17");
-        assert_eq!(entry7.end_cv().to_string(), "3:5");
-        assert_eq!(entry7.start_index(), 168);
-        assert_eq!(entry7.end_index(), 199);
-        assert_eq!(entry7.reason_marker(), "s1");
-        assert_eq!(entry7.section_name(), "Judgement day is coming");
+        // // 7 2:19 s1='Judgement day is coming'
+        // let (cv7, entry7) = section_index.index_data.get_index(7).unwrap();
+        // assert_eq!(cv7.to_string(), "2:17");
+        // assert_eq!(entry7.end_cv().to_string(), "3:5");
+        // assert_eq!(entry7.start_index(), 168);
+        // assert_eq!(entry7.end_index(), 199);
+        // assert_eq!(entry7.reason_marker(), "s1");
+        // assert_eq!(entry7.section_name(), "Judgement day is coming");
 
-        // 8 3:6 s1='Giving a tenth'
-        let (cv8, entry8) = section_index.index_data.get_index(8).unwrap();
-        assert_eq!(cv8.to_string(), "3:6");
-        assert_eq!(entry8.end_cv().to_string(), "3:12");
-        assert_eq!(entry8.start_index(), 200);
-        assert_eq!(entry8.end_index(), 227);
-        assert_eq!(entry8.reason_marker(), "s1");
-        assert_eq!(entry8.section_name(), "Giving a tenth");
+        // // 8 3:6 s1='Giving a tenth'
+        // let (cv8, entry8) = section_index.index_data.get_index(8).unwrap();
+        // assert_eq!(cv8.to_string(), "3:6");
+        // assert_eq!(entry8.end_cv().to_string(), "3:12");
+        // assert_eq!(entry8.start_index(), 200);
+        // assert_eq!(entry8.end_index(), 227);
+        // assert_eq!(entry8.reason_marker(), "s1");
+        // assert_eq!(entry8.section_name(), "Giving a tenth");
 
-        // 9 3:13 s1='God promises mercy for some'
-        let (cv9, entry9) = section_index.index_data.get_index(9).unwrap();
-        assert_eq!(cv9.to_string(), "3:13");
-        assert_eq!(entry9.end_cv().to_string(), "3:18");
-        assert_eq!(entry9.start_index(), 228);
-        assert_eq!(entry9.end_index(), 255);
-        assert_eq!(entry9.reason_marker(), "s1");
-        assert_eq!(entry9.section_name(), "God promises mercy for some");
+        // // 9 3:13 s1='God promises mercy for some'
+        // let (cv9, entry9) = section_index.index_data.get_index(9).unwrap();
+        // assert_eq!(cv9.to_string(), "3:13");
+        // assert_eq!(entry9.end_cv().to_string(), "3:18");
+        // assert_eq!(entry9.start_index(), 228);
+        // assert_eq!(entry9.end_index(), 255);
+        // assert_eq!(entry9.reason_marker(), "s1");
+        // assert_eq!(entry9.section_name(), "God promises mercy for some");
 
-        // 10 4:1 s1='Be ready for future judgement'
-        let (cv10, entry10) = section_index.index_data.get_index(10).unwrap();
-        assert_eq!(cv10.to_string(), "4:1");
-        assert_eq!(entry10.end_cv().to_string(), "4:6");
-        assert_eq!(entry10.start_index(), 256);
-        assert_eq!(entry10.end_index(), 286);
-        assert_eq!(entry10.reason_marker(), "s1/c");
-        assert_eq!(entry10.section_name(), "Be ready for future judgement");
+        // // 10 4:1 s1='Be ready for future judgement'
+        // let (cv10, entry10) = section_index.index_data.get_index(10).unwrap();
+        // assert_eq!(cv10.to_string(), "4:1");
+        // assert_eq!(entry10.end_cv().to_string(), "4:6");
+        // assert_eq!(entry10.start_index(), 256);
+        // assert_eq!(entry10.end_index(), 286);
+        // assert_eq!(entry10.reason_marker(), "s1/c");
+        // assert_eq!(entry10.section_name(), "Be ready for future judgement");
     }
 
     #[test]
@@ -2411,7 +2485,7 @@ mod tests {
         let options = crate::processing::ProcessLinesOptions::default();
         let processed_line_entries = crate::processing::process_lines(raw_lines, "SA2", "OET-RV", &options);
 
-        println!("OET-RV SA2 processed_line_entries = {}", processed_line_entries);
+        // println!("OET-RV SA2 {} processed_line_entries = {}", processed_line_entries.len(), processed_line_entries);
         //         OET-RV SA2 added c12 line_entry 'v=' = '15b'
         //         OET-RV SA2 added c12 line_entry 'v=' = '15b'
         //         OET-RV SA2 added c12 line_entry 'v=' = '24b'

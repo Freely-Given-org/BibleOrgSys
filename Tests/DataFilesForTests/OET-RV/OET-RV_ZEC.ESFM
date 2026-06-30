@@ -1,4 +1,4 @@
-\id ZEC - Open English Translation—Readers' Version (OET-RV) v0.1.06
+\id ZEC - Open English Translation—Readers' Version (OET-RV) v0.1.08
 \usfm 3.0
 \ide UTF-8
 \rem ESFM v0.6 ZEC
@@ -35,7 +35,7 @@
 \v 7 \add ≈About three months later\add*, Yahweh¦376455 \add ≈spoke again through\add* the prophet¦376465 Zekaryah (\add Zechariah¦376458\add* son of Iddo's¦376464 son Berekyah¦376461) saying,
 \v 8 “I \add ≈had a vision\add* in the night¦376470, and \add ≈was surprised to see\add* a man¦376473 riding¦376474 on¦376484 a red horse¦376477,\x + \xo 1:8a: \xt Rev 6:4.\x* and then he was standing¦376480 among the myrtle¦376482 trees¦376482 that¦376483 are in the valley, and behind¦376485 him there were red, reddish-brown, and white¦376489 horses¦376486.”\x + \xo 1:8b: \xt Rev 6:2.\x*
 \v 9 I \add ≈asked¦376491\add*, “What are these things, my master¦376495?”
-\p Then¦376491 \add ≈that\add* \add heavenly\add* messenger¦376498 who talked with¦376500 me told me, “I'll¦376502 show you¦376502 what those things are.”
+\p Then¦376491 \add ≈that\add* \add heavenly\add* messenger¦376498 who talked with¦376500 me told me, “I'll¦376502 show¦376502 you¦376502 what those things are.”
 \p
 \v 10 Then¦376508 the man¦376509 who stood among the myrtle¦376513 trees¦376513 answered¦376508 and¦376515 said¦376515, “Those¦376518 are the ones that Yahweh¦376519 has sent¦376518 out to roam throughout the world.”
 \p
@@ -151,8 +151,8 @@
 \v 6 “What is it?” I \add ≈asked¦377469\add*.
 \p And he said, “That's the measuring bin¦377475 that's coming.” Then¦377469 he \add ≈continued¦377473\add*, “That's their¦377479 eye¦377479\f + \fr 5:6 \ft Some ancient translations have ‘iniquity’ here, but we've stayed with the Hebrew.\f* across the whole land.”
 \p
-\v 7 Then¦377484, wow, a lead covering¦377485 was lifted off and¦377488 there was a woman¦377489 sitting¦377491 inside the measuring bin.
-\v 8 He said¦377495, “This \add >woman\add* is ‘wickedness¦377497’.” Then¦377495 he \add ≈pushed\add* her \add back\add* inside the measuring bin, then¦377495 \add quickly\add* pressed¦377504 the \add ≈heavy\add* lead \add cover back\add* over its opening.
+\v 7 Then¦377484, wow, a lead¦377486 covering¦377485 was lifted off and¦377488 there was a woman¦377489 sitting¦377491 inside the measuring bin.
+\v 8 He said¦377495, “This \add >woman\add* is ‘wickedness¦377497’.” Then¦377495 he \add ≈pushed\add* her \add back\add* inside the measuring bin, then¦377495 \add quickly\add* pressed¦377504 the \add ≈heavy\add* lead¦377508 \add cover back\add* over its opening.
 \p
 \v 9 Then I \add ≈looked up\add* \add again\add* and wow, I saw¦377516 two¦377518 women¦377519 with¦377522 wings like stork's¦377526 wings, flying on¦377522 the wind towards us, and they¦377523 lifted the measuring bin up \add ≈into\add* the sky.
 \p
@@ -165,11 +165,11 @@
 \p
 \v 1 Then I turned and \add ≈looked up\add* and wow, I saw¦377568 four¦377570 chariots¦377571 coming¦377572 out from between¦377573 two¦377574 bronze¦377578 mountains.
 \v 2 The first¦377581 chariot \add was being pulled by\add* red horses, the second¦377585 by black¦377587 horses,\x + \xo 6:2: a \xt Rev 6:4; \xo b \xt Rev 6:5.\x*
-\v 3 the third¦377590 by white¦377592 horses, and¦377589 the fourth¦377594 by \add ≈spotted gray\add* horses.\x + \xo 6:3: \xt Rev 6:2.\x*
+\v 3 the third¦377590 by white¦377592 horses, and¦377589 the fourth¦377594 by \add ≈spotted grey\add* horses.\x + \xo 6:3: \xt Rev 6:2.\x*
 \p
 \v 4 I \add ≈asked\add* the messenger¦377603 who had talked with¦377605 me, “What are those, my master¦377609?”
 \v 5 “Those are four¦377616 winds¦377617 of the heavens¦377618 that¦377619 go¦377619 out from where they were, ahead of the master¦377623 of the whole world,” he answered¦377611.\x + \xo 6:5: \xt Rev 7:1.\x*
-\v 6 “The chariot pulled by black¦377632 horses will go north¦377637, the one pulled by white¦377638 horses will go west, and the one pulled by \add ≈spotted gray\add* horses will go south¦377648.”
+\v 6 “The chariot pulled by black¦377632 horses will go north¦377637, the one pulled by white¦377638 horses will go west, and the one pulled by \add ≈spotted grey\add* horses will go south¦377648.”
 \v 7 The strong¦377650 \add ?horses¦377650\add* went out and wanted¦377652 to go and roam over the earth, and he said, “Go and roam over the earth.” and they went to roam over the earth.
 \v 8 Then¦377664 \add @the messenger\add* called¦377664 out and¦377664 told me, “Look at the ones that¦377670 are going¦377670 out to the north country. They will appease my spirit in the north country.”
 \s1 The crowning of Yehoshua
@@ -177,7 +177,7 @@
 \p
 \v 9 Then Yahweh's¦377686 message¦377684 \add came\add* to me, saying,
 \v 10 “Take \add the offering\add* from the exiles¦377692 that Heldai¦377693, Toviyah, and Yedayah¦377697 \add are bringing\add*, and go this same day and take it into Yoshiyah's house¦377703 (Tsefanyah's son, who has come from Babylon¦377711).
-\v 11 Then¦377713 take¦377713 the gold¦377716 and silver¦377714, and make a crown¦377718 and place it on¦377720 the head¦377720 of the high¦377726 priest¦377725, Yehoshua (Yehotsadak's son)
+\v 11 Then¦377713 take¦377713 the gold¦377716 and silver¦377714, and make¦377717 a crown¦377718 and place it on¦377720 the head¦377720 of the high¦377726 priest¦377725, Yehoshua (Yehotsadak's son)
 \v 12 and tell him, ‘Commander-in-chief Yahweh¦377733 says¦377732:
 \m Look¦377747, a man¦377738 whose name¦377740 is ‘Branch¦377739’ will grow from his place¦377741, and he will build¦377743 Yahweh's¦377733 temple¦377746.\x + \xo 6:12: \xt Jer 23:5; 33:15; Zech 3:8.\x*
 \v 13 \add ≈Yes,\add* he will build¦377753 Yahweh's¦377757 temple¦377756, and he will \add ≈radiate splendour\add* and will sit and rule on his throne. He'll be a priest¦377768 on his throne, and peace¦377773 \add ≈will emanate from the interaction of both¦377776 of those roles\add*.
@@ -253,7 +253,7 @@
 \rem /s1 Judgment on Neighbouring Nations; Judah's triumph over her enemies; An Oracle; Judgment on Israel's Enemies; Judgment against Israel's Enemies
 \rem /d
 \p
-\v 1 This is a declaration of Yahweh's¦378475 message¦378473 concerning the \add Syrian\add* Hadrak \add ≈region¦378476\add* and \add focussing on\add* Damascus¦378478 \add city\add*, because¦378480 the eyes of all humanity¦378483, \add ≈including¦378478\add* all of Yisrael's¦378486 tribes¦378485, are toward Yahweh.\x + \xo 9:1: \xt Isa 17:1-3; Jer 49:23-27; Amos 1:3-5.\x*
+\v 1 This is a declaration of Yahweh's¦378475 message¦378473 concerning the \add Syrian\add* Hadrak \add ≈region¦378476\add* and \add focusing on\add* Damascus¦378478 \add city\add*, because¦378480 the eyes of all humanity¦378483, \add ≈including¦378478\add* all of Yisrael's¦378486 tribes¦378485, are toward Yahweh.\x + \xo 9:1: \xt Isa 17:1-3; Jer 49:23-27; Amos 1:3-5.\x*
 \v 2 It's also \add about\add* the Hamat¦378490 \add region which\add* borders¦378491 on¦378493 Tsor \add (Tyre¦378494)\add* and¦378495 Tsidon \add (Sidon¦378495)\add* which is very wise.
 \v 3 Tsor¦378501 has built¦378500 herself a stronghold and heaped¦378504 up silver¦378506 like dust and refined gold¦378508 like mud in the streets¦378510.
 \v 4 Listen, my master¦378513 will dispossess her and throw her wealth¦378517 into the sea¦378516, and she'll be consumed¦378520 by fire¦378519.
@@ -280,7 +280,7 @@
 \rem /s1 The Restoration of God's People
 \q1
 \v 11 You \add people of Yerushalem\add*, because of the blood¦378635 of my agreement¦378637 with¦378635 you,
-\q1 I'll¦378638 set your¦378637 prisoners¦378639 free from that¦378642 pit without water¦378643 in¦378635 it.\x + \xo 9:11: \xt Exo 24:8.\x*
+\q1 I'll¦378638 set¦378638 your¦378637 prisoners¦378639 free from that¦378642 pit without water¦378643 in¦378635 it.\x + \xo 9:11: \xt Exo 24:8.\x*
 \q1
 \v 12 You prisoners¦378648 with hope, return \add ≈back inside the walls\add*.
 \q1 Even today I'm declaring that I will return double to you,
@@ -289,8 +289,8 @@
 \q1 ≈I have filled my quiver with Efrayim.
 \q1 Tsiyyon \add (Zion¦378668)\add*, I've roused¦378666 your sons, against your sons, Greece¦378672,
 \q1 and Tsiyyon, I've made you like a warrior's¦378675 sword¦378674.”
-\q1
 \rem /s1 The Lord Will Appear
+\q1
 \v 14 Then¦378677 Yahweh will appear¦378679 to them,
 \q1 and his arrow¦378682 will \add ≈shoot\add* out like lightning¦378681,
 \q1 because my master¦378683 Yahweh will \add ≈sound\add* the trumpet¦378685
@@ -305,7 +305,7 @@
 \q1
 \v 16 Then¦378710 on that day¦378713, their¦378712 god¦378712 Yahweh¦378711 will rescue¦378710 them,
 \q2 as the flock¦378715 of his people¦378716.
-\q1 They're the jewels of a crown¦378720 that will sparkle over his land.
+\q1 They're the jewels of a crown¦378720 that will sparkle over his land¦378724.
 \q1
 \v 17 How good and how beautiful¦378732 they'll be.
 \q1 The young men will flourish on grain¦378733
@@ -324,11 +324,11 @@
 \p
 \v 3 “\add ≈I'm angry with¦378809\add* the shepherds¦378786—it's the leaders¦378791 that I'll¦378792 punish.
 \q1 Commander-in-chief Yahweh¦378796 will also attend to his flock¦378800—the house¦378803 of Yehudah¦378804,
-\q1 and make them like his warhorse in¦378809 battle¦378809.
+\q1 and make¦378805 them like his warhorse in¦378809 battle¦378809.
 \q1
 \v 4 The \add building's\add* cornerstone¦378812 will come from Yehudah.
 \q1 ≈From him will come the tent peg,
-\q1 from him will come the war bow,
+\q1 from him will come the war¦378817 bow,
 \q1 ≈from him will come every¦378820 \add ≈one of their strong leaders\add*.
 \q1
 \v 5 They'll be like warriors¦378826 in¦378828 battle¦378830
@@ -400,7 +400,7 @@
 \v 8 Then¦379058 I destroyed the three¦379061 shepherds¦379062—in¦379063 one month¦379063 I became impatient¦379065 with¦379063 them, and¦379058 they also hated me.
 \v 9 \add ≈So¦379074\add* I said¦379074 to the owners, “I won't¦379075 work for you¦379077 any longer as a shepherd¦379076. The sheep that are dying¦379078—let them die¦379079. The sheep that are being¦379080 destroyed—let them be destroyed. Let the sheep that remain \add ≈start eating each other\add*.”
 \p
-\v 10 Then¦379090 I took¦379090 my staff¦379093 \add named\add* ‘Favour’ and¦379097 broke¦379097 it to break¦379099 the agreement¦379102 that¦379103 I'd made with \add ≈all of my tribes\add*.
+\v 10 Then¦379090 I took¦379090 my staff¦379093 \add named\add* ‘Favour’ and¦379097 broke¦379097 it to break¦379099 the agreement¦379102 that¦379103 I'd made¦379104 with \add ≈all of my tribes\add*.
 \v 11 \add ≈So¦379111\add* the agreement was broken¦379111 on that day¦379112, and the ones in the flock¦379117 who were suffering the most and who were watching¦379118 me, knew¦379114 that Yahweh¦379123 had spoken.
 \v 12 Then¦379126 I told them, “If it¦379130 seems good¦379130 to you¦379131, \add ≈give¦379132\add* me my wages, but¦379126 if not, don't¦379136 \add ≈bother\add*.” So¦379126 they¦379139 \add ≈paid me thirty¦379143 silver¦379144 coins\add*.\x + \xo 11:12-13: \xt Mat 27:9-10.\x*
 \p
@@ -420,12 +420,12 @@
 \rem /d
 \p
 \v 1 This is a declaration of Yahweh's¦379250 message¦379248 concerning Yisrael¦379253—a declaration of Yahweh, who stretched¦379257 out the skies and laid the foundation¦379259 of the earth¦379260, who forms¦379261 the human¦379264 spirit¦379262 \add ≈that's inside people\add*,
-\v 2 “Listen, I'm about¦379270 to make Yerushalem into a cup causing all the nations surrounding her to stagger around¦379280. It will also be like that for Yehudah¦379284 during the siege¦379286 against Yerushalem.
+\v 2 “Listen, I'm about¦379270 to make¦379270 Yerushalem into a cup causing all the nations surrounding her to stagger around¦379280. It will also be like that for Yehudah¦379284 during the siege¦379286 against Yerushalem.
 \v 3 \add ≈At that time\add*, I'll¦379295 make Yerushalem¦379298 into a heavy stone for all the peoples¦379303. Anyone trying to lift that stone will hurt himself very much, and¦379291 all the nations¦379312 in¦379292 the world will gather¦379309 against that city.
 \v 4 This is Yahweh's¦379319 declaration: \add ≈At that time\add*, I will strike every horse with confusion and its rider¦379325 with madness¦379326. I'll open my eyes¦379334 over the Yehudah¦379330 \add ≈region\add*, but¦379325 I'll strike every horse \add ≈from other countries\add* with blindness¦379339.
 \v 5 Then¦379341 the leaders of Yehudah¦379343 will \add ≈say¦379341 to themselves¦379344\add*, ‘The inhabitants¦379347 of Yerushalem¦379348 are our strength¦379345 because of their god¦379351, Commander-in-chief Yahweh¦379349.’
 \p
-\v 6 \add ≈At that time\add*, I will make the leaders of Yehudah¦379359 like firepots among wood and like a flaming torch¦379363 among standing grain¦379365, because they'll devour all the surrounding peoples¦379377 on their right¦379369 and on their left. Yerushalem¦379380 will again¦379381 live in¦379362 her own place¦379382.”
+\v 6 \add ≈At that time\add*, I will make¦379355 the leaders of Yehudah¦379359 like firepots among wood and like a flaming torch¦379363 among standing grain¦379365, because they'll devour all the surrounding peoples¦379377 on their right¦379369 and on their left. Yerushalem¦379380 will again¦379381 live in¦379362 her own place¦379382.”
 \s1 Saving Yerushalem's inhabitants
 \p
 \v 7 Yahweh¦379387 will save¦379386 Yehudah's¦379391 tents¦379390 first¦379392, so that the honour of David's¦379400 \add ≈descendants\add* and the honour of Yerushalem's¦379403 inhabitants¦379402 won't¦379394 be greater¦379396 than the rest of Yehudah.
@@ -433,7 +433,7 @@
 \v 9 “On that day¦379429 I will begin to destroy¦379432 all the nations¦379437 that \add ≈fight\add* against Yerushalem¦379441.”
 \rem /s1 Mourning for the One They Pierced; Mourning for the Pierced One
 \p
-\v 10 But¦379443 I will pour out a spirit¦379452 of compassion and pleading on David's¦379447 \add ≈descendants\add* and the inhabitants¦379450 of Yerushalem¦379451, so they will look¦379455 on me—the one they've pierced¦379460. They'll mourn for me, as one mourns for an only son—they will wail bitterly¦379467 for him like those who wail after the death of a firstborn¦379472 son.\x + \xo 12:10: \xt Yhn 19:37; Rev 1:7.\x*
+\v 10 But¦379443 I will pour¦379443 out a spirit¦379452 of compassion and pleading on David's¦379447 \add ≈descendants\add* and the inhabitants¦379450 of Yerushalem¦379451, so they will look¦379455 on me—the one they've pierced¦379460. They'll mourn¦379461 for me, as one mourns for an only son—they will wail bitterly¦379467 for him like those who wail after the death of a firstborn¦379472 son.\x + \xo 12:10: \xt Yhn 19:37; Rev 1:7.\x*
 \v 11 On that day¦379474 the wailing in Yerushalem¦379478 will be like the wailing at¦379478 Hadad¦379480-Rimmon¦379482 in the Megiddo¦379484 plain¦379483.
 \v 12 The land will mourn¦379486, each clan separate from other clans. The clan of David's¦379494 \add ≈descendants\add* will be separate and their wives will be separate from the men. The clan of Nathan's¦379501 \add ≈descendants\add* will be separate and their wives will \add also\add* be separate from the men.
 \v 13 The clan of Levi's¦379509 \add ≈descendants\add* will be separate and their wives will be separate from the men. The clan of the Shimeites will be separate and their wives will \add also\add* be separate from the men.
@@ -459,23 +459,23 @@
 \q1 because I'll¦379658 turn my hand¦379659 against the lowly \add >ones\add*.\x + \xo 13:7: \xt Mat 26:31; Mrk 14:27.\x*
 \q1
 \v 8 Yahweh¦379670 declares: Then¦379664 it'll come about that throughout all the land,
-\q1 that two-thirds of it will be cut off.
+\q1 that two-thirds of it will be cut¦379675 off.
 \q1 Those people will \add ≈die\add*—only one-third will remain there.
 \q1
 \v 9 I'll bring¦379681 that third¦379684 through the fire¦379685 and refine them like silver¦379690 is refined.
 \q1 ≈I'll test them like gold¦379695 is tested¦379692.
-\q1 They will call \add ≈out to me for help\add*,
+\q1 They will call¦379698 \add ≈out to me for help\add*,
 \q1 and I'll answer¦379701 them saying, ‘This is my people¦379704.’
 \q1 and they'll say, ‘Yahweh¦379708 is my god¦379709.’ ”
 \c 14
 \s1 God appears and reigns
 \rem /s1 Jerusalem and the Nations; The Lord Will Rule the Earth; Future Warfare and Final Victory; The Lord Comes and Reigns
 \p
-\v 1 Listen, a day¦379713 is coming¦379715 for Yahweh¦379716, when your¦379719 plunder¦379718 will be divided¦379717 \add ≈right in¦379719 front of you¦379718\add*,
+\v 1 Listen¦379712, a day¦379713 is coming¦379715 for Yahweh¦379716, when your¦379719 plunder¦379718 will be divided¦379717 \add ≈right in¦379719 front of you¦379718\add*,
 \v 2 because I will assemble every country to battle¦379731 against Yerushalem¦379730 and the city will be captured¦379732. The houses¦379735 will be plundered¦379734 and the women¦379736 raped. Half of the city will \add ≈be led away\add* into captivity, but¦379721 the remainder of the people¦379744 won't¦379745 be \add ≈evicted\add* from the city.
 \v 3 Then¦379751 Yahweh¦379752 will go¦379751 out and¦379751 fight against¦379754 those¦379755 nations¦379754 like when he fights on¦379754 the day¦379761 of battle¦379762.
 \v 4 On that¦379774 day¦379766, his¦379793 feet¦379765 will stand¦379764 on the Mt. of Olives, which¦379774 is just east of Yerushalem¦379778. The Mt. of Olives will be split¦379780 in half between the east and the west by a very great¦379787 valley¦379786, and half of the mountain will go back toward the north¦379792 and half toward the south¦379795.
-\v 5 Then you all will flee down the valley between Yahweh's¦379821 mountains, because¦379801 the valley between those mountains will reach¦379803 to Azel¦379809. You will flee just like you fled from the earthquake¦379814 in¦379815 the days¦379815 of Yehudah's¦379819 King¦379817 Uzziyah. Then my god¦379822 Yahweh will come¦379820 and¦379797 all the holy \add >ones\add* will be with¦379815 him.
+\v 5 Then you all will flee down the valley between Yahweh's¦379821 mountains, because¦379801 the valley between those mountains will reach¦379803 to Azel¦379809. You will flee just like you fled¦379812 from the earthquake¦379814 in¦379815 the days¦379815 of Yehudah's¦379819 King¦379817 Uzziyah. Then my god¦379822 Yahweh will come¦379820 and¦379797 all the holy \add >ones\add* will be with¦379815 him.
 \v 6 On that day¦379829, there'll be no light¦379834—\add ≈precious things will freeze together\add*.
 \v 7 On that day (known¦379844 only to Yahweh¦379845), there'll no longer be day or night, \add ≈because it'll stay light¦379858 at ‘night’\add*.
 \p

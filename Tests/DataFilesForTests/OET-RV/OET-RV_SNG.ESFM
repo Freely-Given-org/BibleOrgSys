@@ -1,4 +1,4 @@
-\id SNG - Open English Translation—Readers' Version (OET-RV) v0.1.04
+\id SNG - Open English Translation—Readers' Version (OET-RV) v0.1.05
 \usfm 3.0
 \ide UTF-8
 \rem ESFM v0.6 SNG
@@ -54,7 +54,7 @@
 \q1
 \v 7 Declare to me, you who my \add ≈heart\add* loves¦282160.
 \q1 Where do you graze¦282163?
-\q1 Where do you make \add @your flocks\add* lie down at¦282166 noontime?
+\q1 Where do you make¦282165 \add @your flocks\add* lie down at¦282166 noontime?
 \q1 Why should I be like a woman who covers herself beside your companions' flocks?
 \sp The groom
 \q1
@@ -62,8 +62,8 @@
 \q1 \add ≈follow\add* the footprints¦282184 of the flock¦282185,
 \q1 and¦282186 graze your¦282189 young¦282189 goats¦282189 beside the shepherds' tents.
 \b
-\q1
 \rem /s1 Colloquy of Bridegroom, Friends, and Bride
+\q1
 \v 9 I liken¦282198 you¦282198, my darling¦282199,
 \q2 to a mare \add walking\add* among¦282196 Far'oh's \add (Pharaoh's¦282197)\add* \add stallions hitched to\add* chariots¦282196.
 \q1
@@ -71,7 +71,7 @@
 \q1 ≈Your neck \add ≡is beautiful\add* with necklaces.
 \sp Yerushalem's young women
 \q1
-\v 11 We'll make gold¦282208 earrings
+\v 11 We'll make¦282209 gold¦282208 earrings
 \q1 ≈with silver¦282214 studs¦282213.
 \sp The bride
 \q1
@@ -120,13 +120,13 @@
 \q1 ^and his right¦282320 arm embraces¦282321 me.
 \q1
 \v 7 \add ≈Promise me, you young women¦282325\add* from Yerushalem¦282326
-\q1 by the female gazelles¦282327 or the does in¦282327 the countryside¦282330,
+\q1 by the female gazelles¦282327 or the does¦282329 in¦282327 the countryside¦282330,
 \q1 don't awaken¦282333 or stir love¦282340 until¦282341 \add ≈it's the right time\add*.
 \s1 The second song
 \rem /s1 The Second Song; Springtime Rhapsody
 \sp The bride
 \q1
-\v 8 Listen, my dearest¦282346 is coming¦282350,
+\v 8 Listen¦282347, my dearest¦282346 is coming¦282350,
 \q1 leaping¦282351 over the mountains¦282354,
 \q1 ≈jumping over the hills¦282358.
 \q1
@@ -139,7 +139,7 @@
 \q1 “Stand up, my darling¦282387, my beauty¦282388, and come¦282389,
 \q1
 \v 11 because, look, the winter¦282396 is over.
-\q1 The rain has passed—
+\q1 The¦282395 rain has passed—
 \q1 ≈it went away.
 \q1
 \v 12 Blossoms have appeared¦282405 across the land.
@@ -166,7 +166,7 @@
 \v 16 My dearest belongs to me and¦282470 I belong to him—
 \q1 the \add man\add* grazing¦282472 among¦282473 the lilies¦282473.
 \q1
-\v 17 Until¦282475 the \add ≈daylight arrives\add* and¦282478 the shadows¦282479 flee, turn¦282480.
+\v 17 Until¦282475 the \add ≈daylight arrives\add* and¦282478 the shadows¦282479 flee¦282478, turn¦282480.
 \q1 My¦282486 dearest¦282486 resembles a gazelle¦282487 or a young¦282489 stag on the \add ≈rugged\add* mountains¦282493.
 \c 3
 \rem /s1 Love's Dream
@@ -189,7 +189,7 @@
 \q1 ≈and to the room¦282552 of the woman who conceived¦282553 me.
 \q1
 \v 5 I \add ≈strongly advise\add* you, \add ≈young women¦282557\add* of Yerushalem¦282558,
-\q1 by the female gazelles¦282559 or the does in¦282559 the countryside¦282562,
+\q1 by the female gazelles¦282559 or the does¦282561 in¦282559 the countryside¦282562,
 \q1 don't awaken¦282565 or stir love¦282572 until¦282573 it¦282574 pleases¦282574.
 \s1 The third song
 \rem /s1 The Groom and His Party Approach; The Third Song
@@ -204,10 +204,10 @@
 \v 8 Each of them is studied in war and holding a sword.
 \q1 Each one has his sword at¦282614 his thigh¦282612 against¦282613 the dangers in the nights¦282614.
 \q1
-\v 9 King¦282623 Shelomoh¦282624 had a \add ≈chair carried on poles\add* made for himself
+\v 9 King¦282623 Shelomoh¦282624 had a \add ≈chair carried on poles\add* made¦282621 for himself
 \q1 from the trees from Lebanon¦282626.
 \q1
-\v 10 Its posts were made of silver¦282630, its back, gold¦282632, \add and\add* its seat¦282633, purple¦282634 cloth.
+\v 10 Its posts were made¦282629 of silver¦282630, its back, gold¦282632, \add and\add* its seat¦282633, purple¦282634 cloth.
 \q1 Its interior¦282635 was decorated with love by Yerushalem's¦282639 young women¦282638.
 \q1
 \v 11 Go out and look, young women¦282644 of Tsiyyon¦282645, at King¦282646 Shelomoh.
@@ -235,7 +235,7 @@
 \v 5 Your two breasts¦282714 are like two fawns¦282716—
 \q1 twins¦282717 of a gazelle¦282718 grazing among¦282720 the lilies¦282720.
 \q1
-\v 6 Until¦282722 the \add ≈daylight arrives\add* and the shadows¦282726 flee,
+\v 6 Until¦282722 the \add ≈daylight arrives\add* and the shadows¦282726 flee¦282725,
 \q1 I¦282727 myself will go¦282727 to the mountain¦282731 of myrrh¦282732
 \q1 ≈and to the hill¦282731 of frankincense¦282736.
 \q1
@@ -308,7 +308,7 @@
 \v 4 My dearest stretched out his hand¦282935 through the hole
 \q1 and my stomach \add ≈tightened when I saw\add* him.
 \q1
-\v 5 I got myself up to open to my dearest and my hands¦282947 dripped with myrrh.
+\v 5 I got myself up to open¦282945 to my dearest and my hands¦282947 dripped with myrrh.
 \q1 My fingers¦282951 dripped with flowing¦282953 myrrh on the arm of the bolt.
 \q1
 \v 6 I opened¦282958 \add the door\add* to my dearest,
@@ -325,8 +325,8 @@
 \q1 if you find my dearest, what will you tell him?
 \q1 \add ≡Tell him\add* that I'm sick with love¦283003.
 \sp Yerushalem's young women
-\q1
 \rem /s1 Colloquy of Friends and Bride
+\q1
 \v 9 Most beautiful¦283010 among¦283011 women¦283011, how is your dearest better than another darling?
 \q1 What is your dearest more than another, that you¦283017 adjure¦283017 us like that?
 \sp The bride
@@ -473,7 +473,7 @@
 \q1 If I found¦283427 you outside¦283428, I would kiss¦283429 you.
 \q1 Yes, they wouldn't despise¦283436 me.
 \q1
-\v 2 I would lead you.
+\v 2 I would lead¦283439 you.
 \q1 I would bring¦283440 you to my mother's¦283444 house¦283443—she¦283445 who taught¦283445 me.
 \q1 I would have you drink¦283446 some spiced¦283448 wine,
 \q1 ≈\add and\add* some of my pomegranate¦283450 juice¦283449.

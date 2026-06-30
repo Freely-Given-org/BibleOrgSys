@@ -5,8 +5,8 @@
 \rem WORDTABLE OET-LV_OT_word_table.tsv
 \rem The parsed Hebrew text used to create this file is Copyright © 2019 by https://hb.openscriptures.org
 \rem Our English glosses are released CC0 by https://Freely-Given.org
-\rem ESFM file created 2026-04-24 11:38 by extract_glossed_OSHB_OT_to_ESFM v1.0
-\rem USFM file edited by ScriptedBibleEditor v0.35
+\rem ESFM file created 2026-06-24 17:21 by extract_glossed_OSHB_OT_to_ESFM v1.0.4
+\rem ESFM file edited by ScriptedBibleEditor v0.8.2 using ScriptedOTUpdates
 \h ˊEzrāʼ
 \toc1 ˊEzrāʼ
 \toc2 ˊEzrāʼ
@@ -65,7 +65,7 @@
 \v 35 the¦217662_descendants¦217662_of¦217662 Şənāʼāh¦217663 three¦217664_of¦217664 thousand(s)¦217665 and¦217666÷six¦217666 hundred(s)¦217667 and¦217668=thirty¦217668.
 \v 36 the¦217671÷priests¦217671 the¦217672_descendants¦217672_of¦217672 Yədaˊ\sup yāh\sup*/(Jedaiah)¦217673 of¦217674÷the¦217674_house¦217674_of¦217674 of¦217675_Yēshūˊa/(Jeshua)¦217675 nine¦217676 hundred(s)¦217677 seventy¦217678 and¦217679÷three¦217679.
 \v 37 the¦217682_descendants¦217682_of¦217682 ʼImmēr¦217683 one¦217684_thousand¦217684 fifty¦217685 and¦217686÷two¦217686.
-\v 38 the¦217689_descendants¦217689_of¦217689 Fashḩūr¦217690 one¦217691_thousand¦217691 two¦217692_hundred¦217692 forty¦217693 and¦217694=seven¦217694.
+\v 38 the¦217689_descendants¦217689_of¦217689 Pashḩūr¦217690 one¦217691_thousand¦217691 two¦217692_hundred¦217692 forty¦217693 and¦217694=seven¦217694.
 \v 39 the¦217697_descendants¦217697_of¦217697 Ḩārim¦217698 one¦217699_thousand¦217699 and¦217700=seven¦217700 teen¦217701.
 \v 40 the¦217704÷Lēviyyiy¦217704 the¦217705_descendants¦217705_of¦217705 Yēshūˊa¦217707 and¦217708÷Qadmī\sup ʼēl\sup*¦217708 of¦217709÷the¦217709_sons¦217709_of¦217709 of¦217710_Hōdav\sup yāh\sup*¦217710 seventy¦217711 and¦217712÷four¦217712.
 \v 41 the¦217715÷singers¦217715 the¦217716_descendants¦217716_of¦217716 ʼĀşāf¦217717 one¦217718_hundred¦217718 twenty¦217719 and¦217720÷eight¦217720.
@@ -290,7 +290,7 @@
 \v 19 And¦221609÷they¦221609_gave¦221609 hand¦221610_of¦221610÷their¦221610 to¦221611÷send¦221611_out¦221611 wives¦221612_of¦221612÷their¦221612 and¦221613_\add being¦221613\add*÷guilty¦221613 a¦221614_ram¦221614_of¦221614 \add +the¦221616\add*_flock¦221616 on¦221617 guilt¦221619_of¦221619÷their¦221619.
 \v 20 and¦221622÷of¦221622÷the¦221622_sons¦221622_of¦221622 ʼImmēr¦221623 Ḩₐnānī¦221624 and¦221625÷Zəⱱad\sup yāh\sup*¦221625.
 \v 21 and¦221628÷of¦221628÷the¦221628_sons¦221628_of¦221628 Ḩārim¦221629 Maˊₐsē\sup yāh\sup*¦221630 and¦221631÷ʼĒliy\sup yāh\sup*¦221631 and¦221632÷Shəmaˊ\sup yāh\sup*¦221632 and¦221633÷Yəḩī\sup ʼēl\sup*/(Yəˊī\sup ʼēl\sup*/(Jehiel))¦221633 and¦221634÷ˊUzziy\sup yāh\sup*¦221634.
-\v 22 And¦221636÷of¦221636÷the¦221636_sons¦221636_of¦221636 Fashḩūr¦221637 ʼElyəhōˊēynay¦221638 Maˊₐsē\sup yāh\sup*¦221639 Ishmael¦221640 Nətan\sup ʼēl\sup*¦221641 Yōzāⱱād/(Jozabad)¦221642 and¦221643÷Eleasah¦221643.
+\v 22 And¦221636÷of¦221636÷the¦221636_sons¦221636_of¦221636 Pashḩūr¦221637 ʼElyəhōˊēynay¦221638 Maˊₐsē\sup yāh\sup*¦221639 Ishmael¦221640 Nətan\sup ʼēl\sup*¦221641 Yōzāⱱād/(Jozabad)¦221642 and¦221643÷Eleasah¦221643.
 \v 23 and¦221646=from¦221646 the¦221648÷Lēviyyiy¦221648 Yōzāⱱād¦221649 and¦221650÷Shimˊī¦221650 and¦221651÷Qēlā\sup yāh\sup*¦221651 it¦221652 \add +is¦221653\add*_Qəlīţāʼ¦221653 Pətaḩ\sup yāh\sup*¦221654 Yəhūdāh/(Judah)¦221655 and¦221656÷ʼElīˊezer¦221656.
 \v 24 and¦221659=from¦221659 the¦221661÷singers¦221661 ʼElyāshiyⱱ¦221662 and¦221663=from¦221663 the¦221665÷gatekeepers¦221665 Shallūm¦221666 and¦221667÷Ţelem¦221667 and¦221668÷ʼŪrī¦221668.
 \v 25 and¦221671÷of¦221671÷Yisrā\sup ʼēl\sup*/(Israel)¦221671 from¦221672=(the)¦221672_sons¦221672 of¦221673_Farˊosh/(Parosh)¦221673 Rmə\sup yāh\sup*¦221674 and¦221675÷Yizziy\sup yāh\sup*/(Izziah)¦221675 and¦221676÷Malkīy\sup yāh\sup*¦221676 and¦221677÷Miyyāmin¦221677 and¦221678÷ʼElˊāzār¦221678 and¦221679÷Malkīy\sup yāh\sup*¦221679 and¦221680÷Bənā\sup yāh\sup*¦221680.

@@ -1,4 +1,4 @@
-\id JHN - Open English Translation—Readers' Version (OET-RV) V0.2.64
+\id JHN - Open English Translation—Readers' Version (OET-RV) V0.2.69
 \usfm 3.0
 \ide UTF-8
 \rem ESFM v0.6 JHN
@@ -31,9 +31,9 @@
 \s1 The arrival of the true light
 \rem /s1 The Word Became Flesh; The Word of Life; The coming of Christ; Christ, the Eternal Word
 \p
-\v 1 In the beginning¦62339 was the message,\f + \fr 1:1 \ft TD: This passage is complex to translate because the message was also the messenger—that is, Yeshua came not only to teach about getting saved, but also to become the actual way to be saved!\f* and the message was with God, and the message was \add and is\add* God.
+\v 1 In the beginning¦62339 was the message,\f + \fr 1:1 \ft TD: This passage is complex to translate because the message was also the messenger—that is, Yeshua came not only to teach about getting saved, but also to become the actual pathway to be saved!\f* and the message was with God, and the message was \add and is\add* God.
 \v 2 He, \add the message\add*, was with \nd God¦62362\nd* \add even\add* at the creation¦62359 \add of the universe\add*.
-\v 3 Everything came into existence through¦62364 the messenger\f + \fr 1:3 \ft Lit. him.\f*—\add ≈there's not even one thing that came into existence that wasn't made by\add* him.
+\v 3 Everything came into existence through¦62364 \add @the messenger\add*\f + \fr 1:3 \ft Lit. him.\f*—\add ≈there's not even one thing that came into existence that wasn't made by\add* him.
 \v 4 He holds life, and that life is the light¦62387 of humankind.
 \v 5 And that light¦62392 is shining¦62396 in the darkness, and¦62390 darkness cannot overcome him.
 \p
@@ -108,17 +108,17 @@
 \p
 \v 43 The following¦63146 day¦63129, \nd Yeshua\nd* wanted¦63131 to go to Galilee¦63137. He found Philip¦63140 and¦63141 told him¦63143, “\wj Follow me!\wj*”
 \v 44 Philip¦63151 was from the town¦63156 of Bethsaida¦63153 where Andrew¦63158 and¦63159 Peter¦63160 lived.
-\v 45 Philip then found \nd Nathanael¦63164\nd* and told him¦63167, “We've¦63177 found the one that Mosheh and the prophets¦63176 wrote¦63169 about in the Scriptures. He's \nd Yeshua\nd* from \nd Nazareth¦63187\nd*.”
+\v 45 Philip then found Nathanael¦63164 and told him¦63167, “We've¦63177 found the one that Mosheh and the prophets¦63176 wrote¦63169 about in the Scriptures. He's \nd Yeshua\nd* from \nd Nazareth¦63187\nd*.”
 \p
-\v 46 And \nd Nathanael¦63191\nd* said¦63189, “Does anything good¦63196 come from \nd Nazareth¦63193\nd*?”
+\v 46 And Nathanael¦63191 said¦63189, “Does anything good¦63196 come from \nd Nazareth¦63193\nd*?”
 \p So¦63188 Philip¦63202 answered, “Well, come and¦63204 see¦63205 \add for yourself\add*.”
 \p
-\v 47 \nd Yeshua\nd* saw¦63206 \nd Nathanael¦63212\nd* approaching and¦63216 said¦63217, “\wj Ah, this is an honest Israeli¦63224.\wj*”
+\v 47 \nd Yeshua\nd* saw¦63206 Nathanael¦63212 approaching and¦63216 said¦63217, “\wj Ah, this is an honest Israeli¦63224.\wj*”
 \p
-\v 48 But¦63239 \nd Nathanael¦63232\nd* queried him, “Where do you know \em me\em* from?”
+\v 48 But¦63239 Nathanael¦63232 queried him, “Where do you know \em me\em* from?”
 \p And \nd Yeshua\nd* replied, “\wj Actually I saw¦63251 you under¦63248 that fig¦63250 tree¦63250 before Philip¦63245 had even called you.\wj*”
 \p
-\v 49 \nd Nathanael¦63255\nd* exclaimed, “Great teacher! You \em are\em* God's son! You're the king¦63271 of Yisrael!”
+\v 49 Nathanael¦63255 exclaimed, “Great teacher! You \em are\em* God's son! You're the king¦63271 of Yisrael!”
 \p
 \v 50 \nd Yeshua\nd* responded¦63279, “\wj So you believe¦63293 this because I said that I had seen you under the fig¦63291 tree¦63291. You'll get to see much greater¦63294 things than that!\wj*”
 \v 51 \x + \xo 1:51: \xt Gen 28:12.\x*And he continued, “\wj Honestly, I'm telling all of you: you'll be seeing¦63309 the sky opened¦63312 up and God's messengers¦63315 going¦63318 up and coming¦63320 down on me—humanity's child.\wj*”
@@ -299,7 +299,7 @@
 \v 45 \x + \xo 4:45: \xt Yhn 2:23.\x*When he got to Galilee¦65485, the people accepted him, having¦65492 seen¦65492 everything that he'd done at the feast in Yerushalem because¦65505 they had also been down there.
 \rem /s1 Jesus Heals an Official's Son
 \p
-\v 46 \x + \xo 4:46: \xt Yhn 2:1-11.\x*So¦65535 he went¦65514 again to Cana¦65525 there in Galilee¦65528 where¦65529 he had made the water¦65533 into wine. Now there was a royal¦65540 official¦65540 there, whose¦65541 son in Capernaum¦65546 was ill.
+\v 46 \x + \xo 4:46: \xt Yhn 2:1-11.\x*So¦65535 he went¦65514 again to Cana¦65525 there in Galilee¦65528 where¦65529 he had made¦65530 the water¦65533 into wine. Now there was a royal¦65540 official¦65540 there, whose¦65541 son in Capernaum¦65546 was ill.
 \v 47 When the official heard¦65548 that \nd Yeshua\nd* was coming¦65552 up from Yudea¦65556 to Galilee¦65559, he went¦65560 and asked him if he would come¦65569 and heal¦65572 his¦65573 son who was dying¦65578.
 \v 48 \nd Yeshua\nd* said¦65579 to him¦65584, “\wj You people won't¦65586 believe¦65594 unless you see¦65591 miracles and other marvels.\wj*”
 \p
@@ -331,7 +331,7 @@
 \p However, this was the weekly rest day.
 \v 10 \x + \xo 5:10: \xt Neh 13:19; Jer 17:21.\x*So¦65937 the religious leaders said¦65936 to the man, “Hey! It's against the law for you to carry your¦65953 bedding¦65952 on the rest day¦65943!”
 \p
-\v 11 But¦65974 the man answered¦65957, “The man who made me better told me to pick up my bedroll and¦65974 start walking¦65975.”
+\v 11 But¦65974 the man answered¦65957, “The man who made¦65961 me better told me to pick up my bedroll and¦65974 start walking¦65975.”
 \p
 \v 12 “Oh. Who was it that told you¦65986 to take that stuff and¦65992 start walking¦65993?”
 \p
@@ -339,7 +339,7 @@
 \p
 \v 14 Later on, \nd Yeshua\nd* found the man in the temple¦66027 and told him, “\wj Look¦66032, you're better now so don't go on sinning¦66036, because you don't want anything worse¦66039 to happen to you.\wj*”
 \p
-\v 15 The man¦66049 then went¦66045 and¦66050 told the leaders that it was \nd Yeshua\nd* who had made him¦66066 better.
+\v 15 The man¦66049 then went¦66045 and¦66050 told the leaders that it was \nd Yeshua\nd* who had made¦66064 him¦66066 better.
 \rem /s1 Life Through the Son; Jesus Claims to Be the Son of God
 \v 16 As a result, the leaders started harassing \nd Yeshua\nd* because he had done this on a rest day¦66090.
 \v 17 But¦66104 Yeshua just replied, “\wj My¦66100 father¦66099 is working today, and¦66104 so I'm also working.\wj*”
@@ -717,7 +717,7 @@
 \s1 The Pharisees can't accept the healing of the blind man
 \p
 \v 13 Then they brought the man¦71081 who had been blind¦71081 to the Pharisees.
-\v 14 Now, it¦71082 had been the Rest Day when \nd Yeshua\nd* had made the slurry and¦71095 enabled him¦71097 to see,
+\v 14 Now, it¦71082 had been the Rest Day when \nd Yeshua\nd* had made¦71092 the slurry and¦71095 enabled him¦71097 to see,
 \v 15 and because of this, some in the Pharisee party¦71107 asked him how it was that now he could see. And he answered, “Well, he put a slurry on my¦71118 eyes¦71122 and when I washed¦71125 them, I could see.”
 \p
 \v 16 “Well clearly that man is not from \nd God¦71142\nd*,” some of them said, “because¦71145 he doesn't respect the Rest Day.”
@@ -860,7 +860,7 @@
 \s1 Yeshua is the resurrection and the life
 \rem /s1 Jesus the Resurrection and the Life; Jesus Comforts the Sisters
 \p
-\v 17 So¦72889 when they eventually arrived, \nd Lazarus¦72891\nd* body had already¦72900 been in the burial chamber for four¦72899 days¦72901.
+\v 17 So¦72889 when they eventually arrived, Lazarus¦72891 body had already¦72900 been in the burial chamber for four¦72899 days¦72901.
 \v 18 The village of Bethany¦72911 was less than three kilometres from Yerushalem,
 \v 19 so many of the Yudeans from there had come¦72927 out to console¦72937 Martha¦72932 and¦72933 Maria¦72935 after the death of their¦72940 brother¦72941.
 \p
@@ -921,7 +921,7 @@
 \v 52 and¦73604 not only for this nation¦73608, but¦73610 for all of God's children¦73614 scattered¦73619 around the world to become united.)
 \p
 \v 53 As a result, from that day¦73629 on they decided that Yeshua needed to be executed.
-\v 54 Because of that, \nd Yeshua\nd* no longer¦73640 walked around Yudea in public¦73641, but¦73646 went¦73647 out to the town¦73659 of Ephraim¦73657 out in the wilderness¦73655 and¦73660 stayed there¦73637 with his followers.
+\v 54 Because of that, \nd Yeshua\nd* no longer¦73640 walked around Yudea in public¦73641, but¦73646 went¦73647 out to the town¦73659 of Efraim¦73657 out in the wilderness¦73655 and¦73660 stayed there¦73637 with his followers.
 \rem /s1 The Passover in Jerusalem
 \p
 \v 55 At that time, the Jewish Passover celebrations were approaching, and¦73678 many people from the regions¦73687 went¦73679 to Yerushalem ahead of the celebrations to purify¦73695 themselves¦73696.
@@ -1105,7 +1105,7 @@
 \v 6 And \nd Yeshua\nd* answered, “\wj \+em I am\+em* the path¦75785 and the truth¦75788 and the life¦75791. No one can get to the father¦75796 except¦75797 via me.\wj*
 \v 7 \wj If you had all known me, you would also have known my¦75808 father¦75807, and from now on you do know him and have seen him.\wj*”
 \p
-\v 8 So Philip said¦75822, “\nd Master¦75826\nd*, show us the father¦75830 and¦75831 that'll be enough for us.”
+\v 8 So Philip said¦75822, “\nd Master¦75826\nd*, show¦75827 us the father¦75830 and¦75831 that'll be enough for us.”
 \p
 \v 9 “\wj I've been with you all for quite some time¦75840,\wj*” \nd Yeshua\nd* replied, “\wj and yet you still don't¦75846 \+add even\+add* know me, Philip¦75849.\wj*
 \v 10 \wj You don't believe¦75867 that I am in the father and the father is in me. These things that I've been telling you all, I don't \+add just\+add* make them up myself¦75889, but¦75874 the father who lives in me is doing¦75900 what he wants.\wj*
@@ -1303,7 +1303,7 @@
 \v 17 But the servant¦78684 girl¦78684 who was watching the door challenged Peter¦78689, “Aren't you also one of the followers of that man¦78698?”
 \p “No, I'm not,” he responded.
 \p
-\v 18 Meanwhile the servants and attendants¦78711 had made a fire¦78712 and were standing around it¦78716 warming themselves¦78718, and Peter¦78725 also went and stood there to warm himself¦78730.
+\v 18 Meanwhile the servants and attendants¦78711 had made¦78713 a fire¦78712 and were standing around it¦78716 warming themselves¦78718, and Peter¦78725 also went and stood there to warm himself¦78730.
 \s1 Annas tries to interrogate Yeshua
 \rem /s1 The High Priest Questions Jesus
 \r (Mat. 26:59-66; Mark 14:69-72; Luke 22:58-62)
@@ -1325,7 +1325,7 @@
 \v 25 Simon¦78849 Peter¦78850 was still standing by the fire warming¦78853 himself¦78853 when he was asked, “Aren't you also one of his¦78863 followers?”
 \p But¦78848 he denied it, saying, “No, I'm not.”
 \p
-\v 26 One of the servants of the chief¦78880 priest¦78880 who was a relative¦78881 of the man whose ear¦78887 Peter¦78885 had cut off said¦78874, “Didn't I see you¦78890 in the garden¦78894 with that Yeshua?”
+\v 26 One of the servants of the chief¦78880 priest¦78880 who was a relative¦78881 of the man whose ear¦78887 Peter¦78885 had cut¦78884 off said¦78874, “Didn't I see you¦78890 in the garden¦78894 with that Yeshua?”
 \p
 \v 27 But¦78902 Peter¦78901 again¦78897 denied it, and¦78902 just then a rooster¦78904 crowed¦78905.
 \s1 Pilate interrogates Yeshua
@@ -1464,7 +1464,7 @@
 \v 13 They spoke to her¦80443, “Woman¦80445, why are you¦80447 crying?”
 \p “Because¦80453 they've taken away my¦80457 \nd master¦80456\nd*,” she replied, “and¦80458 I don't¦80459 know where¦80461 they've put him¦80464.”
 \p
-\v 14 \nd Then\nd* she turned¦80468 back around and saw \nd Yeshua\nd* standing there, but¦80472 she didn't¦80479 realise who it was.
+\v 14 Then she turned¦80468 back around and saw \nd Yeshua\nd* standing there, but¦80472 she didn't¦80479 realise who it was.
 \v 15 \nd Yeshua\nd* asked her, “\wj Woman¦80490, why are you crying? Who are you looking¦80494 for¦80494?\wj*”
 \p Maria assumed he might be the gardener¦80500, so she answered, “Mister¦80504, if you took the body, tell me where¦80515 you put it and I'll¦80520 get it taken away \add for you\add*.”
 \p
@@ -1481,7 +1481,7 @@
 \v 19 On Sunday evening¦80604 \nd Yeshua's\nd* apprentices¦80620 had met together and had the doors¦80615 locked because¦80622 they were afraid of the Jewish leaders, but¦80613 Yeshua arrived and stood¦80631 in the middle of the room and said¦80636, “\wj Peace¦80638 to you¦80639 all.\wj*”
 \v 20 Then¦80640 he showed¦80644 them his hands¦80648 and his side¦80651 and they were so happy now that they had seen¦80659 the \nd master¦80661\nd*.
 \v 21 \nd Yeshua\nd* continued¦80662, “\wj Peace¦80669 to you all. Now I'm sending¦80677 you all out just like the father¦80675 sent¦80672 me out.\wj*”
-\v 22 Then¦80681 he breathed¦80684 on them and¦80681 said¦80683, “\wj Receive¦80689 the holy \+nd spirit¦80690\+nd*.\wj*
+\v 22 Then¦80681 he breathed¦80684 on \add <them\add* and¦80681 said¦80683, “\wj Receive¦80689 \+add the\+add* holy \+nd spirit¦80690\+nd*.\wj*
 \v 23 \x + \xo 20:23: \xt Mat 16:19; 18:18.\x*\wj If you forgive¦80696 anyone's sins¦80698, then they'll be forgiven¦80699 but if you withhold forgiveness, then it will be withheld.\wj*”
 \s1 Thomas sees the evidence for himself
 \rem /s1 Jesus and Thomas; Jesus Appears to Thomas
@@ -1506,11 +1506,11 @@
 \rem /s1 Jesus Appears to Seven Disciples; Jesus and the Miraculous Catch of Fish
 \p
 \v 1 After¦80962 all this, \nd Yeshua\nd* revealed himself again¦80968 to his apprentices¦80973 at Lake Galilee. It happened like this:
-\v 2 Simon Peter¦80986, Thomas¦80988 nicknamed ‘Twin’, \nd Nathanael¦80993\nd* from Cana¦80998 in Galilee¦81000, the sons¦81002 of Zebedee¦81006, and two¦81015 other¦81009 apprentices¦81012 had gathered together¦80984
+\v 2 Simon Peter¦80986, Thomas¦80988 nicknamed ‘Twin’, Nathanael¦80993 from Cana¦80998 in Galilee¦81000, the sons¦81002 of Zebedee¦81006, and two¦81015 other¦81009 apprentices¦81012 had gathered together¦80984
 \v 3 \x + \xo 21:3: \xt Luk 5:5.\x*when Simon Peter¦81020 said that he was going¦81021 fishing¦81022 and the others said that they'd join him.
 \p So they went¦81031 off and got in the boat¦81038, but¦81033 they didn't catch anything that night¦81044.
 \p
-\v 4 \nd When\nd* the dawn was approaching, \nd Yeshua\nd* was standing there on the shore¦81061, but¦81051 they didn't¦81062 know that it¦81070 was him.
+\v 4 When the dawn was approaching, \nd Yeshua\nd* was standing there on the shore¦81061, but¦81051 they didn't¦81062 know that it¦81070 was him.
 \v 5 He called out, “\wj Hey, young fellas. Don't¦81079 you¦81082 have any fish¦81081?\wj*”
 \p “None.” they answered¦81083.
 \p

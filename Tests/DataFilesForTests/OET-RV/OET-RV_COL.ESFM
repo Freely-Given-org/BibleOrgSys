@@ -1,4 +1,4 @@
-\id COL - Open English Translation—Readers' Version (OET-RV) v0.1.55
+\id COL - Open English Translation—Readers' Version (OET-RV) v0.1.57
 \usfm 3.0
 \ide UTF-8
 \rem ESFM v0.6 COL
@@ -13,7 +13,7 @@
 \ip This letter of Paul was written to the believers in Colossae, a town in Asia Minor (also called Anatolia, now part of modern Turkey) that's almost 500km overland east of Ephesus. Paul had not yet visited Colossae, but he was very concerned for them and he had sent helpers from Ephesus.
 \ip Paul had heard that there were false teachers influencing the believers there in Colossae. They taught that if a person wants to be saved and wants to deepen their faith in God, it's not sufficient to have faith in the messiah because they said that it's necessary to obey other restrictions and customs as well as worshipping angels.
 \ip So Paul wrote to the believers there in Colossae and explained the truth concerning Yeshua the messiah. He told them that it's Yeshua who made everything around us, therefore he's greater than the angels and other unseen powers. He also saw the godliness of his father, and there's no other source of life for believers other than him. So then it's necessary that the believers don't follow human customs and traditions, but rather, it's necessary that they simply follow the messiah.
-\ip It should be noted here that this letter, like most of the scriptures, was dictated to a scribe (See 2 Thess 3:17), so it was an oral letter, quite different from our modern letters which we edit with word-processing software, adding a word back in a previous sentence, combining two short sentences, or breaking an over-long sentence. Oral letters tend to contain a lot of \it run-on sentences\it* where the thoughts keep flowing without a break, thus 1:3-8 and 1:9-16 are considered by most Greek experts to be long sentences (like this one is 😀), however for us as readers, sentences with around a hundred words in them are very difficult for us to absorb, hence this \em Reader's Version\em* breaks those long Greek sentences into a number of smaller sentences, in fact, this kind of adjustment is regularly done throughout the Bible by all major English translations in order to make them easier for us to read, but the disadvantage is that we can sometimes lose whatever the connection was between the consecutive thoughts. The \em OET\em* tries to be more transparent about such adjustments by placing the \em Literal Version\em* right beside this text so that the serious student can compare the two.
+\ip It should be noted here that this letter, like most of the scriptures, was dictated to a scribe (See 2 Thess 3:17), so it was an oral letter, quite different from our modern letters which we edit with word-processing software, adding a word back in a previous sentence, combining two short sentences, or breaking an over-long sentence. Oral letters tend to contain a lot of \it run-on sentences\it* where the thoughts keep flowing without a break, thus 1:3-8 and 1:9-16 are considered by most Greek experts to be long sentences (like this one is 😀), however for us as readers, sentences with around a hundred words in them are very difficult for us to absorb, hence this \em Readers' Version\em* breaks those long Greek sentences into a number of smaller sentences, in fact, this kind of adjustment is regularly done throughout the Bible by all major English translations in order to make them easier for us to read, but the disadvantage is that we can sometimes lose whatever the connection was between the consecutive thoughts. The \em OET\em* tries to be more transparent about such adjustments by placing the \em Literal Version\em* right beside this text so that the serious student can compare the two.
 \iot Main components of Paul's letter
 \io1 Introduction \ior 1:1-14\ior*
 \io1 The work of the messiah \ior 1:15–2:19\ior*
@@ -35,8 +35,8 @@
 \v 4 after having heard¦132574 about your¦132577 faith¦132576 in \nd Messiah¦132580 Yeshua¦132581\nd* and the love¦132584 that you have for all godly people
 \v 5 which arose because¦132592 of your hope in a heavenly¦132600 reward. You all previously¦132602 heard¦132602 about that¦132595 in the message of the truth¦132607—the good message
 \v 6 that's in you and that's bearing¦132622 fruit¦132622 in the world¦132619 and growing, just like it did among¦132627 all of you from the day¦132631 that you heard¦132632 \add it\add* and knew¦132634 about the grace¦132636 of \nd God¦132638\nd* in truth¦132640.
-\v 7 \x + \xo 1:7: \xt Col 4:12; Phm 23.\x*You all learnt¦132643 that from Epaphras¦132645, our dearly loved fellow¦132648 slave who's our faithful¦132653 servant¦132657 of the \nd messiah¦132659\nd*,
-\v 8 and he's the one who made your¦132665 love¦132666 in the \nd spirit¦132668\nd* evident¦132662 to us.
+\v 7 \x + \xo 1:7: \xt Col 4:12; Phm 23.\x*You all learnt¦132643 that from Epafras¦132645, our dearly loved fellow¦132648 slave who's our faithful¦132653 servant¦132657 of the \nd messiah¦132659\nd*,
+\v 8 and he's the one who made¦132662 your¦132665 love¦132666 in the \nd spirit¦132668\nd* evident¦132662 to us.
 \rem /s1 The supremacy of Christ
 \p
 \v 9 It's because of that that we haven't stopped praying¦132681 from the time that we heard¦132676 it¦132676, and requesting¦132683 that you all would be filled¦132685 with the knowledge¦132687 of his¦132690 will in all wisdom¦132693 and spiritual¦132696 insight¦132695,
@@ -87,7 +87,7 @@
 \p
 \v 11 It wasn't just human hands that circumcised you by \add cutting off part of the body¦133327\add*, but \nd Messiah¦133336\nd* circumcised you all by cutting you away from your sinful acts.
 \v 12 \x + \xo 2:12: \xt Rom 6:4.\x*You all were buried¦133337 with him when you were immersed \add in water\add*, and you came back to life with him when you came up \add from the water\add*, through¦133348 faith¦133350 in God's working¦133352 which gave him life after death.
-\v 13 \x + \xo 2:13: \xt Eph 2:1-5.\x*You all were dead¦133363 in your disobedience and¦133361 because your bodies were ‘uncircumcised¦133370’. Then¦133361 he made us alive¦133374 together¦133374 with him after he forgave us for all our disobedience.
+\v 13 \x + \xo 2:13: \xt Eph 2:1-5.\x*You all were dead¦133363 in your disobedience and¦133361 because your bodies were ‘uncircumcised¦133370’. Then¦133361 he made¦133374 us alive¦133374 together¦133374 with him after he forgave us for all our disobedience.
 \v 14 \x + \xo 2:14: \xt Eph 2:15.\x*He erased the writing that¦133394 listed the charges against¦133389 us and so it was removed—nailed¦133405 to the \add execution¦133408\add* post.
 \v 15 He had disarmed¦133409 the rulers¦133411 and authorities¦133414 and publicly¦133418 exposed¦133416 them, because he had won the victory over them \add ?≈on the post\add*.\f + \fr 2:15 \ft The meaning of the Greek ‘ἐν αὐτῷ’ literally ‘in it/him’ isn't clear here and leads to two common translations: a/ ‘on/in him’, or as we have chosen (interpreting the ‘it’ to be referring back to ‘σταυρῷ’ ‘execution post’ from the previous verse), ‘on the post’.\f*
 \p
@@ -150,7 +150,7 @@
 \rem /s1 Further Instructions; An Encouragement for Prayer
 \p
 \v 2 Persevere in prayer¦134007, keeping watch¦134010 and being thankful¦134014.
-\v 3 Pray together¦134017 for us as well that¦134039 \nd God¦134023\nd* would open a door¦134027 for us \add to share\add* the message¦134029—to tell \add about\add* the mystery¦134034 of the \nd messiah¦134037\nd*. That's also why I'm in chains—
+\v 3 Pray together¦134017 for us as well that¦134039 \nd God¦134023\nd* would open¦134025 a door¦134027 for us \add to share\add* the message¦134029—to tell \add about\add* the mystery¦134034 of the \nd messiah¦134037\nd*. That's also why I'm in chains—
 \v 4 so that I can explain the mystery whenever I have an opportunity to speak¦134049.
 \p
 \v 5 \x + \xo 4:5: \xt Eph 5:16.\x*Use wisdom¦134051 as you all walk¦134052 towards¦134053 non-believers, using the time¦134057 wisely.
@@ -165,7 +165,7 @@
 \v 10 \x + \xo 4:10: a \xt Acts 19:29; 27:2; Phm 24; \xo b \xt Acts 12:12,25; 13:13; 15:37-39.\x*My¦134133 fellow¦134132 prisoner, Aristarchus¦134130, sends his greetings¦134128 along with Barnabas' cousin¦134137, Mark¦134135. You've already received¦134141 instructions about that, so accept him if he arrives \add there\add*.
 \v 11 Yeshua who's nicknamed Yustus¦134154 also sends his greetings. These guys are from strict Jewish backgrounds, but¦134150 they're \add my\add* only fellow-workers for God's kingdom¦134165 who became an encouragement¦134171 to me.
 \p
-\v 12 \x + \xo 4:12: \xt Col 1:7; Phm 23.\x*Epaphras sends his greetings¦134172. He's \add another\add* one from your¦134176 place and a slave¦134178 of \nd messiah¦134179 Yeshua\nd* who always¦134181 prays for you that you will stand mature¦134192 and fully¦134194 confident in all of God's will.
+\v 12 \x + \xo 4:12: \xt Col 1:7; Phm 23.\x*Epafras¦134174 sends his greetings¦134172. He's \add another\add* one from your¦134176 place and a slave¦134178 of \nd messiah¦134179 Yeshua\nd* who always¦134181 prays for you that you will stand mature¦134192 and fully¦134194 confident in all of God's will.
 \v 13 I can assure you that he has strong concerns for you all, as well as those in Laodicea¦134214 and in Hierapolis¦134218.
 \v 14 \x + \xo 4:14: a \xt 2Tim 4:11; Phm 24; \xo b \xt 2Tim 4:10; Phm 24.\x*The dear doctor¦134223 Luke greets¦134219 you¦134220 all, as does Demas¦134227.
 \p

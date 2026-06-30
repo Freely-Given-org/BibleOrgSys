@@ -1,4 +1,4 @@
-\id DAN - Open English Translation—Readers' Version (OET-RV) v0.1.08
+\id DAN - Open English Translation—Readers' Version (OET-RV) v0.1.09
 \usfm 3.0
 \ide UTF-8
 \rem ESFM v0.6 DAN
@@ -24,8 +24,9 @@
 \rem This is still a very early look into the unfinished text of the Open English Translation of the Bible. Please double-check the text in advance before using in public.
 \ie
 \c 1
-\ms1 The account about Daniel and his friends (1:1–6:28)
-\s1 Daniel and the friends his there to Babylon
+\ms1 The account about Daniel and his friends
+\mr (1:1–6:28)
+\s1 Daniel and his friends in Babylon
 \rem /s1 Daniel in Nebuchadnezzar's Court; The Young Men at Nebuchadnezzar's Court; Four Young Israelites at the Babylonian Court; Daniel's Training in Babylon; Daniel and his companions
 \p
 \v 1 In the third year¦356354 of Yehudah's¦356360 King Yehoyakim's reign¦356356, Babylon's¦356365 King Nevukadnetstsar \add (Nebuchadnezzar¦356362)\add* came¦356361 to Yerushalem¦356366 \add (Jerusalem)\add* and¦356367 besieged \add @the city\add*.\x + \xo 1:1: \xt 2Ki 24:1; 2Ch 36:5-7.\x*
@@ -108,7 +109,7 @@
 \v 31 “What you were looking at, \add ≈your¦357321 majesty\add*, was an incredible, huge¦357314 statue¦357315. It was heavy and \add ≈shone brightly\add* as it stood \add there\add* \add ≈in front¦357321 of\add* you—a terrifying¦357323 sight.
 \v 32 The statue's¦357326 head¦357327 was made of pure gold¦357330, its chest¦357332 and arms were silver¦357335, its belly¦357336 and thighs¦357337 were bronze¦357339,
 \v 33 its legs were made of iron, and its feet¦357344 were \add ≈a combination\add* of iron and clay.
-\v 34 You continued looking until¦357356 a stone¦357359 was \add ≈supernaturally\add* cut out \add from a mountain\add*, and it \add tumbled down and\add* struck¦357364 the statue¦357365 on¦357363 its feet¦357368 of iron and clay, and it smashed them to pieces.
+\v 34 You continued looking until¦357356 a stone¦357359 was \add ≈supernaturally\add* cut¦357358 out \add from a mountain\add*, and it \add tumbled down and\add* struck¦357364 the statue¦357365 on¦357363 its feet¦357368 of iron and clay, and it smashed them to pieces.
 \v 35 Then the iron, the clay, the bronze¦357380, the silver¦357381, and the gold¦357382 were crushed all at the same time and became like the \add ≈small pieces of dry straw at harvest time in\add* the summer¦357389. Then the wind¦357392 carried¦357390 them away so that no trace of them could be found¦357398, \add ≈but¦357382\add* the stone¦357400 that struck¦357404 the statue¦357405 became a huge¦357408 mountain¦357407 that then filled¦357409 the whole world.
 \p
 \v 36 “That¦357420 was the dream¦357415, and¦357416 \add now\add* we'll tell the king¦357420 its¦357416 meaning:
@@ -118,13 +119,13 @@
 \v 40 Then¦357486 there'll be a fourth¦357487 kingdom¦357486 that's strong¦357490 as iron—because¦357494 iron crushes¦357503 and¦357486 shatters¦357497 all things. Like an iron \add sledge-hammer\add* that smashes things into pieces, it will smash all those others into \add ≈broken\add* pieces.
 \v 41 And as you saw the feet¦357513 and toes¦357514, \add ≈a mixture of iron and potter's¦357521 clay\add*, it will be a divided¦357526 kingdom¦357525—some of the iron's strength¦357530 will be in¦357535 it, just as you saw iron mixed¦357542 with¦357535 the soft clay.
 \v 42 As the feet¦357547 were partly iron and partly clay, so that kingdom¦357557 will be partly strong¦357559 and partly \add ≈weak\add*.
-\v 43 As you¦357566 saw¦357566 the iron mixed¦357568 with soft clay, so \add ≈various peoples will make alliances with each other\add*, but¦357575 they won't¦357575 \add ≈stick together\add* just as iron doesn't \add ≈integrate\add* with clay.
+\v 43 As¦357583 you¦357566 saw¦357566 the iron mixed¦357568 with soft clay, so \add ≈various peoples will make alliances with each other\add*, but¦357575 they won't¦357575 \add ≈stick together\add* just as iron doesn't \add ≈integrate\add* with clay.
 \v 44 In the days¦357593 of those kings¦357595, the god¦357598 of the heavens¦357599 will establish a kingdom that¦357601 will never be destroyed¦357604 or \add ≈taken over by others\add*. It will crush all those kingdoms¦357615 and¦357593 put an end to them, \add ≈but¦357593\add* it will stand forever¦357618.
-\v 45 Just as you saw¦357625 that a stone¦357629 was \add ≈supernaturally\add* cut out of the mountain¦357627, and that it crushed¦357634 the iron, the bronze¦357636, the clay, the silver¦357638, and the gold¦357639, the \add ≈powerful\add* God¦357640 has revealed to the king¦357643 what will happen \add ≈in¦357633 the future\add*. The dream¦357650 is true, and its interpretation¦357652 is trustworthy¦357651.”
+\v 45 Just as you saw¦357625 that a stone¦357629 was \add ≈supernaturally\add* cut¦357628 out of the mountain¦357627, and that it crushed¦357634 the iron, the bronze¦357636, the clay, the silver¦357638, and the gold¦357639, the \add ≈powerful\add* God¦357640 has revealed to the king¦357643 what will happen \add ≈in¦357633 the future\add*. The dream¦357650 is true, and its interpretation¦357652 is trustworthy¦357651.”
 \s1 Daniel is rewarded by the king
 \rem /s1 Daniel and His Friends Promoted; The King Rewards Daniel; Nebuchadnezzar Rewards Daniel
 \p
-\v 46 Then King¦357656 Nevukadnetstsar fell \add ≈to his knees with his face¦357661 to the ground to worship\add* Daniel, and he commanded that a \add burnt\add* offering¦357664 and incense¦357665 be offered up to him.
+\v 46 Then King¦357656 Nevukadnetstsar fell¦357658 \add ≈to his knees with his face¦357661 to the ground to worship\add* Daniel, and he commanded that a \add burnt\add* offering¦357664 and incense¦357665 be offered up to him.
 \v 47 The king said to Daniel, “It's true that your god¦357678 is the god of gods¦357681 and the master of masters, and the one who reveals mysteries, because you've¦357687 been able to reveal this mystery.”
 \v 48 Then the king¦357693 gave Daniel high honours and gave him many great gifts¦357696, and he made him ruler¦357702 over the whole province¦357706 of Babylon and chief¦357708 supervisor over all of Babylon's¦357707 wise men¦357714.
 \v 49 Daniel \add ≈asked¦357718 the king to appoint¦357722\add* Shadrak¦357728 \add (Hananyah)\add*, Meyshak \add (Misha'el)\add*, and¦357717 Avednego \add (Azaryah)\add* over the administration¦357724 of the Babylonian province¦357726, \add ≈but¦357717\add* Daniel remained at¦357733 the king's court¦357733.
@@ -132,7 +133,7 @@
 \s1 The command to worship the statue
 \rem /s1 Nebuchadnezzar Commands Everyone to Worship a Gold Statue; The fiery furnace; Nebuchadnezzar's Gold Statue; The Image of Gold and the Fiery Furnace; The Golden Image
 \p
-\v 1 King¦357738 Nevukadnetstsar \add (Nebuchadnezzar¦357737)\add* had a gold¦357743 statue made that stood nearly thirty metres high and was almost three metres wide, and it¦357750 was erected on¦357751 the Dura plain¦357751 in¦357751 the Babylonian province¦357753.
+\v 1 King¦357738 Nevukadnetstsar \add (Nebuchadnezzar¦357737)\add* had a gold¦357743 statue made¦357739 that stood nearly thirty metres high and was almost three metres wide, and it¦357750 was erected on¦357751 the Dura plain¦357751 in¦357751 the Babylonian province¦357753.
 \v 2 Then¦357756 King¦357757 Nevukadnetstsar sent¦357758 for the \add ≈various levels of\add* governors¦357763, the counsellors¦357764, the treasurers¦357765, the judges¦357766, the magistrates¦357767, and¦357756 all the provincial¦357770 officials, to all come¦357771 to the dedication¦357772 of the statue¦357773 that¦357774 \add *he'd\add* erected.
 \v 3 \add ≈So all those officials assembled in front of the statue that¦357793 the king¦357796 had set up, ready\add* for the dedication¦357791.
 \v 4 Then¦357805 the herald¦357805 loudly proclaimed¦357806, “You¦357810 peoples¦357810, nations¦357811, and¦357812 languages¦357812 are commanded
@@ -144,12 +145,12 @@
 \p
 \v 8 \add ≈But¦357901\add* some Chaldean¦357900 \add astrologers\add* \add ≈went to the king to make trouble for\add* the Jews¦357904.
 \v 9 They reported to King¦357909 Nevukadnetstsar, “Long live the king.
-\v 10 Oh¦357916 king¦357916, you've made a decree¦357918 that every¦357920 man who hears the sound¦357926 of the \add ≈musical¦357937 instruments\add*, must¦357925 bow down and worship¦357939 the gold¦357941 statue¦357940,
+\v 10 Oh¦357916 king¦357916, you've made¦357917 a decree¦357918 that every¦357920 man who hears the sound¦357926 of the \add ≈musical¦357937 instruments\add*, must¦357925 bow down and worship¦357939 the gold¦357941 statue¦357940,
 \v 11 \add ≈but¦357943\add* anyone who doesn't bow and¦357949 worship¦357949 will be thrown¦357950 into a fiery furnace¦357953.
 \v 12 \add Now,\add* there are certain Jews who you've appointed¦357962 over the administration¦357966 of the province¦357967 of Babylon¦357968: Shadrak¦357969, Meyshak, and Avednego. These men, \add ≈your majesty\add*, \add ≈don't take any notice of\add* you: they don't serve your gods¦357982, or worship the gold¦357987 statue¦357986 that¦357988 you've set up.”
 \p
 \v 13 Then Nevukadnetstsar in¦357996 a furious¦357997 rage¦357996 commanded that Shadrak¦358000 \add (Hananyah)\add*, Meyshak \add (Misha'el)\add*, and Avednego \add (Azaryah)\add* be \add ≈arrested\add*. Then \add *they\add* were brought¦358007 to the king¦358009
-\v 14 \add ≈who questioned\add* them, “Shadrak¦358016, Meyshak, and Avednego, is it true that you won't¦358021 serve my gods¦358020 or worship the gold¦358025 statue¦358024 that I set up?
+\v 14 \add ≈who questioned\add* them, “Shadrak¦358016, Meyshak, and Avednego, is it true that you won't¦358021 serve my gods¦358020 or worship the gold¦358025 statue¦358024 that I set¦358027 up?
 \v 15 Now if you're ready¦358034, as soon as you hear¦358039 the \add ≈musical instruments\add* of music, if you all bow down and worship¦358054 the statue¦358055 I \add ≈erected\add*, \add ≈everything will be okay\add*. But¦358048 if you don't¦358060, you'll immediately be thrown¦358065 into a blazing¦358070 hot furnace¦358068. \add ≈Then what god¦358074 could rescue¦358077 you from my punishment\add*?”
 \p
 \v 16 “Oh Nevukadnetstsar,” \add *the three of them\add* answered the king¦358088, “we¦358093 don't¦358090 need to answer \add that last question\add*.
@@ -162,7 +163,7 @@
 \v 20 and commanded \add ≈some of his top warriors¦358170\add* to tie up Shadrak¦358178, Meyshak, and Avednego and then¦358170 to throw¦358182 them into the blazing¦358185 furnace¦358183.
 \v 21 \add ≈So while still fully dressed even with¦358191 their turbans¦358195 still on¦358191,\add* they¦358190 were tied up and thrown¦358197 into the middle of the furnace¦358200 where the fire¦358201 was blazing¦358202.
 \v 22 \add Unfortunately\add*, because¦358206 of the king's insistent command, the furnace¦358214 was extremely hot and the flames¦358227 killed¦358225 the men¦358217 who \add ≈threw them in\add*,
-\v 23 \add ≈but¦358231\add* Shadrak¦358234, Meyshak, and¦358236 Avednego fell into the \add ≈roaring flames¦358243 while still securely tied up\add*.
+\v 23 \add ≈but¦358231\add* Shadrak¦358234, Meyshak, and¦358236 Avednego fell¦358238 into the \add ≈roaring flames¦358243 while still securely tied up\add*.
 \p
 \v 24 Then King¦358250 Nevukadnetstsar was startled and jumped up and asked his counsellors¦358256, “Wasn't it three¦358259 \add ≈who were tied up\add* that were thrown¦358260 \add there\add* into the middle of the fire¦358263?
 \p “Certainly, \add ≈your majesty\add*,” they replied.
@@ -178,7 +179,7 @@
 \p
 \v 30 Then the king¦358442 \add ≈gave\add* Shadrak¦358444 \add (Hananyah)\add*, Meyshak \add (Misha'el)\add*, and¦358446 Avednego \add (Azaryah)\add* \add ≈more important positions in¦358448 Babylon¦358449 province¦358448 than they had before\add*.
 \c 4
-\s1 The second dream of King Nevukadnetstsar
+\s1 Nevukadnetstsar's second dream
 \rem /s1 Nebuchadnezzar's Dream of a Tree; Nebuchadnezzar's Second Dream; Nebuchadnezzar's madness; Nebuchadnezzar's Dream about a Tree
 \p
 \v 1 King Nevukadnetstsar \add (Nebuchadnezzar¦358501)\add* \add sent this message\add* to all people groups, nations, and languages that live all over the world:
@@ -272,7 +273,7 @@
 \v 18 “As for you, \add ≈your majesty\add*, the highest god¦359657 gave¦359664 the kingship, power, honour¦359662, and majesty, to your father¦359666 Nevukadnetstsar.
 \v 19 Because of \add >that\add* power, all peoples¦359676, nations¦359677, and ethnic \add groups\add* trembled¦359680 and \add ≈were afraid¦359682 when his¦359685 army approached\add*. He killed whoever he wanted, and he kept alive those he wanted. He \add ≈promoted\add* whoever he wanted, and he humiliated \add ≈others when he wanted to\add*.
 \v 20 But¦359711 when \add ≈he became proud¦359716 and stubborn\add* and started acting presumptuously¦359716, he was \add ≈disqualified\add* from the throne¦359720, and his \add ≈splendid reputation was deflated\add*.
-\v 21 He was driven \add ≈right out of the community\add*, and \add ≈he started behaving like\add* an animal¦359735—he \add ended up\add* living¦359742 with wild donkeys¦359741 and eating grass¦359743 like a cow. \add He slept on¦359760 the ground, and in¦359760 the morning\add* his body¦359748 was wet with dew, until¦359750 he \add finally\add* recognized that the highest god¦359757 is ruler over \add ≈all\add* mankind¦359761 and that he \add ≈appoints¦359766 whoever he wants as leaders over the kingdoms¦359760\add*.
+\v 21 He was driven \add ≈right out of the community\add*, and \add ≈he started behaving like\add* an animal¦359735—he \add ended up\add* living¦359742 with wild¦359741 donkeys¦359741 and eating grass¦359743 like a cow. \add He slept on¦359760 the ground, and in¦359760 the morning\add* his body¦359748 was wet with dew, until¦359750 he \add finally\add* recognized that the highest god¦359757 is ruler over \add ≈all\add* mankind¦359761 and that he \add ≈appoints¦359766 whoever he wants as leaders over the kingdoms¦359760\add*.
 \p
 \v 22 “Yet you, Belshatstsar, his son, haven't humbled \add ≈yourself despite already knowing all that\add*.
 \v 23 \add On the contrary\add*, you've¦359791 \add ≈proudly promoted\add* yourself¦359791 \add ≈as being greater than\add* the master¦359787 of the heavens¦359789. \add ≈You brought¦359796 the temple cups in¦359808 here\add* and you and your nobles¦359801, your wives¦359804 and your concubines¦359805, have drunk wine from them. You praised¦359826 the gods¦359809 \add ≈made from\add* silver¦359810 and gold¦359812, bronze¦359813, iron, wood, and stone¦359816, which can't¦359818 see, or hear¦359823, or know \add >anything\add*, yet you haven't honoured the god¦359827 \add ≈who decides your future and every breath¦359830 that you take\add*.
@@ -286,7 +287,7 @@
 \li1
 \v 28 \bd Divided\bd*: Your kingdom¦359881 has been divided and given¦359882 to \add the\add* Medes¦359883 and \add the\add* Persians.”
 \p
-\v 29 Then Belshatstsar \add ≈gave an order\add*, and they \add ≈placed a purple¦359892 robe over Daniel's shoulders\add* and a gold¦359897 chain¦359893 was \add ≈placed\add* around his neck, and a proclamation¦359901 was made that he would \add now\add* be the third\add -highest\add* ruler¦359906 in¦359908 the kingdom¦359908.
+\v 29 Then Belshatstsar \add ≈gave an order\add*, and they \add ≈placed a purple¦359892 robe over Daniel's shoulders\add* and a gold¦359897 chain¦359893 was \add ≈placed\add* around his neck, and a proclamation¦359901 was made¦359901 that he would \add now\add* be the third\add -highest\add* ruler¦359906 in¦359908 the kingdom¦359908.
 \p
 \v 30 \add However,\add* the Chaldean King¦359914 Belshatstsar was killed¦359912 that \add ≈very\add* night¦359911,
 \v 31 and Dareyavesh \add (Darius)\add* the Mede \add ≈became the new ruler at an age of\add* around sixty-two.
@@ -317,13 +318,13 @@
 \v 15 \add ≈However, the group of men returned\add* to the king and said, “You know, \add ≈your majesty\add*, that it's a law of the Medes and Persians, that no rule or law that the king establishes can be changed.”
 \p
 \v 16 \add ≈So\add* the king gave an order, and Daniel was brought in and the king responded¦360305 and told \add *him\add*, “May your god, who you serve continually, save you.” Then Daniel was thrown \add down\add* into the lions' den.
-\v 17 A stone was brought¦360331 and laid over the opening of the den, and the king sealed it with his own signet ring and with the signet rings of his nobles so that \add ≈no one could sneak Daniel out\add*.
+\v 17 A stone was brought¦360331 and laid over the opening of the den¦360334, and the king sealed it with his own signet ring and with the signet rings of his nobles so that \add ≈no one could sneak Daniel out\add*.
 \v 18 Then the king¦360362 went to his palace and spent the night \add ≈without eating\add*. \add ≈He refused all\add* entertainment, and \add ≈he couldn't sleep\add*.
 \s2 Daniel's saved from the lions
 \rem /s1 Daniel Saved from the Lions
 \p
 \v 19 Then¦360376 the king¦360376 got up at dawn, and \add ≈hurried out\add* to the lions' den.
-\v 20 As he \add ≈approached\add* the den, he called out in¦360392 a worried voice, “Daniel, Daniel, servant of the living god. Has your god, who you serve continually, been able to save you from the lions¦360399?”
+\v 20 As he \add ≈approached\add* the den¦360396, he called out in¦360392 a worried voice, “Daniel, Daniel, servant of the living god. Has your god, who you serve continually, been able to save you from the lions¦360399?”
 \p
 \v 21 “\add ≈Long live\add* the king¦360410,” Daniel \add ≈called back\add*.
 \v 22 “My god sent his angel and shut the lions' mouths, and they haven't hurt me, because \add ≈he saw that I wasn't guilty of anything\add*. Also, \add ≈your majesty\add*, I haven't \add ≈wronged you in any way\add*.”
@@ -337,6 +338,8 @@
 \p
 \v 28 \add ≈So\add* Daniel prospered during the reign of Dareyavesh and during the reign of Koresh \add (Cyrus)\add* the Persian.
 \c 7
+\ms1 Daniel's visions
+\mr (7:1–12:13)
 \s1 Daniel's vision of four creatures
 \rem /s1 Daniel's Vision of Four Beasts; Daniel's Vision of the Four Beasts; Visions of the Four Beasts; Daniel's visions; Daniel's Dream of Four Beasts
 \p
@@ -376,7 +379,7 @@
 \p
 \v 19 \add ≈But¦361027 I¦361006 still wanted to know¦361007 more\add* about the fourth¦361011 creature that¦361012 was different¦361015 from all the others, absolutely dreadful, with its iron teeth¦361022 and bronze¦361030 claws¦361027, and which¦361012 devoured¦361031, then crushed and trampled¦361036 down with its feet¦361034 what was left.
 \v 20 \add ≡I also wanted to know\add* about¦361038 the ten¦361041 horns on¦361043 its head¦361043, and the other horn that came¦361046 up later, with¦361043 three¦361053 \add other\add* horns falling. That horn had eyes¦361056 and a mouth¦361058 that said amazing things, and it¦361046 looked \add ≈stronger\add* than the others.
-\v 21 I¦361068 kept watching, and that horn was waging war with those followers and \add ≈gaining over\add* them\x + \xo 7:21: \xt Rev 13:7.\x*
+\v 21 I¦361068 kept watching, and that horn was waging war¦361072 with those followers and \add ≈gaining over\add* them\x + \xo 7:21: \xt Rev 13:7.\x*
 \v 22 until the ancient¦361083 \add one\add* arrived and \add ≈judged¦361085 in favour¦361087 of his followers\add*. Then the time¦361089 arrived when \add *they\add* took¦361092 possession¦361092 of the kingdom¦361091.\x + \xo 7:22: \xt Rev 20:4.\x*
 \p
 \v 23 Then he said¦361096:
@@ -416,7 +419,7 @@
 \v 16 Then¦361495 I heard¦361495 a human voice¦361496 call out from the Ulai¦361500 \add canal\add*, “Gavri'el \add (Gabriel¦361503)\add*, \add ≈help that\add* man \add to be able to\add* understand the vision¦361508.”\x + \xo 8:16: \xt Luk 1:19,26.\x*
 \v 17 So¦361510 he came \add over\add* near where¦361512 I stood, \add ≈but¦361510\add* I was frightened and¦361510 fell \add ≈to my knees with¦361513 my face¦361518 to the ground\add*. \add ≈However,\add* he said to me, “You, human¦361524 male, that vision¦361529 \add ≈concerns\add* the end \add of the world\add*.”
 \p
-\v 18 While he was speaking¦361531 with me, I fell into a \add ≈trance\add* with my face¦361536 \add still\add* on¦361531 the ground¦361537. Then¦361531 he touched¦361538 me and¦361531 made me stand¦361541 \add ≈up\add*
+\v 18 While he was speaking¦361531 with me, I fell into a \add ≈trance\add* with my face¦361536 \add still\add* on¦361531 the ground¦361537. Then¦361531 he touched¦361538 me and¦361531 made¦361541 me stand¦361541 \add ≈up\add*
 \v 19 and¦361546 he said, “\add ≈Listen\add*, I'm going to \add ≈tell\add* you what will happen \add ≈towards the end\add* of \add God's\add* indignation¦361554, because¦361555 it refers¦361556 to the appointed¦361556 time¦361556 of the end.
 \p
 \v 20 The ram that¦361560 you¦361562 saw¦361562 with the two¦361564 horns¦361564 represents the kings¦361565 of Media¦361566 and¦361567 Persia¦361567,
@@ -425,7 +428,7 @@
 \p
 \v 23 At the latter end¦361594 of their rule, when the transgressors¦361597 have reached¦361596 their limit, a \add ≈defiant\add* king¦361599 who understands¦361603 riddles, will \add ≈come to power\add*.
 \v 24 His power will increase, but¦361606 it won't¦361608 be his own power. He \add ≈bring about horrific destruction\add*, and he'll succeed¦361612 in¦361609 what he does. He'll destroy powerful men and \add ≈some of God's\add* people¦361616.
-\v 25 \add ≈Using\add* his cunning¦361622, he'll prosper¦361623 \add ≈by being deceitful¦361624\add*. He'll \add ≈be proud of\add* himself¦361627, and¦361620 will destroy¦361629 many while they're \add ≈living peacefully\add*. He will even \add ≈attack\add* the prince of princes, \add ≈but it's him who'll\add* be broken¦361639, but not by human \add ≈strength\add*.
+\v 25 \add ≈Using\add* his cunning¦361622, he'll prosper¦361623 \add ≈by being deceitful¦361624\add*. He'll \add ≈be proud of\add* himself¦361627, and¦361620 will destroy¦361629 many while they're \add ≈living peacefully\add*. He will even \add ≈attack\add* the prince¦361633 of princes¦361635, \add ≈but it's him who'll\add* be broken¦361639, but not by human \add ≈strength\add*.
 \v 26 That vision of the evenings¦361642 and¦361641 mornings¦361643 that¦361644 has been told is true. \add ≈But¦361641 lock\add* the vision \add ≈away\add* \add for now\add*, because¦361651 it refers¦361652 to the \add ≈distant\add* future.”
 \p
 \v 27 Then I, Daniel, was overwhelmed and lay sick¦361658 for days¦361659. Then I got up, and went¦361661 about¦361661 the king's business, \add ≈but¦361655\add* I was appalled¦361666 at the vision¦361669 and \add ≈didn't¦361670 really understand¦361671\add* it.
@@ -433,7 +436,7 @@
 \s1 Daniel prays for his people
 \rem /s1 Daniel Prays for His People; Daniel's Prayer; Daniel's Prayer for the People; Daniel's Prayer for His People; Interpreting Daniel's prophecy
 \p
-\v 1 \add It was when\add* Dareyavesh (\add Darius¦361676,\add* the son of Ahashverosh, a descendant¦361680 of the Medes¦361681) was made king¦361683 over the realm of the Chaldeans \add (perhaps better known by Westerners as Babylonians)\add*,
+\v 1 \add It was when\add* Dareyavesh (\add Darius¦361676,\add* the son of Ahashverosh, a descendant¦361680 of the Medes¦361681) was made¦361683 king¦361683 over the realm of the Chaldeans \add (perhaps better known by Westerners as Babylonians)\add*,
 \v 2 and during that first year¦361688 of his reign¦361690 that I, Daniel, understood from the \add sacred\add* books¦361694 that Yahweh¦361701 \add ≈had told\add* the prophet¦361705 Yirmeyah \add (Jeremiah)\add* that Yerushalem¦361708 \add ≈city\add* would be \add ≈destroyed and remain in¦361694 ruins¦361707\add* for seventy¦361709 years¦361696.\x + \xo 9:2: \xt Jer 25:11; 29:10.\x*
 \p
 \v 3 Then¦361712 I turned¦361712 my \add ≈focus\add* to the Lord God, to \add ≈make my requests known to\add* him, \add ≈as I\add* fasted, \add wore\add* sackcloth¦361724, and¦361712 \add ≈sprinkled myself with¦361723\add* ashes¦361725.
@@ -450,7 +453,7 @@
 \v 13 As it's written¦361892 in¦361893 the Mosheh's¦361894 law, \add ≈we've undergone\add* all that calamity¦361898, yet we haven't \add ≈tried to earn\add* our god Yahweh'a favour our god by turning¦361911 away from our \add ≈disobedience\add* and giving¦361913 attention¦361913 to your¦361914 truth¦361914.
 \v 14 Therefore Yahweh kept¦361916 \add ≈pondering the need for\add* calamity¦361920 and then¦361916 \add eventually\add* brought¦361921 it on¦361937 us, because¦361923 our god¦361927 Yahweh is \add ≈always does what is right¦361925\add* and \add yet\add* we haven't obeyed \add ≈what he said\add*.
 \p
-\v 15 “Now, my master¦361941, our god¦361942, who \add ≈used his amazing power to bring his\add* people¦361947 out of Egypt¦361949, and have made a \add ≈reputation¦361955\add* for yourself¦361954 \add ≈which stands until today\add*, we have sinned¦361958 \add against you¦361944 and\add* been wicked¦361959.
+\v 15 “Now, my master¦361941, our god¦361942, who \add ≈used his amazing power to bring his\add* people¦361947 out of Egypt¦361949, and have made¦361952 a \add ≈reputation¦361955\add* for yourself¦361954 \add ≈which stands until today\add*, we have sinned¦361958 \add against you¦361944 and\add* been wicked¦361959.
 \v 16 My master¦361961, \add ≈because you always do what is right¦361964\add*, turn¦361965 your anger¦361968 from your city¦361970 Yerushalem—your holy mountain¦361972, because Yerushalem and your people¦361980 have become¦361981 an object of scorn to all those around¦361984 us due to our \add own\add* sins¦361976, \add ≈as well as those of our predecessors\add*.
 \v 17 So¦361986 now, our god¦361989, listen¦361988 to the prayer¦361992 of your servant¦361993 and¦361986 to his pleas for mercy. For¦361989 your sake, my master¦362004, \add ≈show favour to your devastated\add* sanctuary¦362001.
 \v 18 My god¦362007, turn your ear¦362009 and listen¦362010. Open your eyes¦362013 and see¦362014 our \add ≈terrible state\add* \add here in exile\add*, and \add the state of\add* the city¦362016 that¦362017 is called¦362019 by your name¦362020. We aren't¦362024 \add ≈asking all this because we're good enough to deserve it¦362019\add*, but¦362010 because of your extensive mercy.
@@ -465,8 +468,8 @@
 \p
 \v 24 \add ≈It's been decreed¦362129 that there'll be 490\add* \add years\add* for your people¦362132 and your holy city¦362136, to stop the transgression¦362139, to put an end¦362140 to sin¦362142, to \add ≈pay the price\add* for \add ≈disobedience\add*, to bring¦362146 in righteousness¦362147 \add ≈that will then last forever¦362148\add*, to seal up vision¦362150 and prophecy¦362151, and to anoint¦362152 the most holy place¦362153. NEEDS MORE WORK
 \v 25 Know and understand¦362157 that from the issuing of the \add ≈command\add* to restore¦362162 and build Yerushalem¦362164 until¦362165 an anointed¦362167 one (a prince¦362168) \add comes\add*, there will be 49 \add years\add* and 434 \add years\add*. It'll be built¦362175 again with¦362178 a plaza and a moat, but¦362156 in¦362178 distressing¦362178 times¦362179.
-\v 26 After those 434 \add years\add*, the anointed¦362186 one will be \add ≈killed\add* and \add ≈be left with\add* nothing¦362187. The \add ≈followers of that coming¦362194\add* prince¦362193 will destroy the city¦362189 and the sanctuary¦362190. Its¦362192 end will come¦362194 with a flood¦362196, and then¦362181 there'll¦362187 be war until the end \add ≈with much destruction having been decreed\add*.
-\v 27 He'll make a firm agreement¦362204 with many \add people\add* for seven¦362206 \add years\add*. In the middle¦362208 of \add *that time\add*, he'll put an end to \add #sacrifices and¦362203 offerings¦362213\add*. On the wing of abominations¦362216 will come one who makes desolate, until the complete¦362220 destruction¦362220 that is decreed¦362221 is poured¦362222 out on the desolator.”\x + \xo 9:27: \xt Dan 11:31; 12:11; Mat 24:15; Mrk 13:14.\x* NEEDS MORE WORK
+\v 26 After those 434 \add years\add*, the anointed¦362186 one will be \add ≈killed\add* and \add ≈be left with\add* nothing¦362187. The \add ≈followers of that coming¦362194\add* prince¦362193 will destroy¦362191 the city¦362189 and the sanctuary¦362190. Its¦362192 end will come¦362194 with a flood¦362196, and then¦362181 there'll¦362187 be war¦362199 until the end \add ≈with much destruction having been decreed\add*.
+\v 27 He'll make¦362203 a firm agreement¦362204 with many \add people\add* for seven¦362206 \add years\add*. In the middle¦362208 of \add *that time\add*, he'll put an end to \add #sacrifices and¦362203 offerings¦362213\add*. On the wing of abominations¦362216 will come one who makes desolate, until the complete¦362220 destruction¦362220 that is decreed¦362221 is poured¦362222 out on the desolator.”\x + \xo 9:27: \xt Dan 11:31; 12:11; Mat 24:15; Mrk 13:14.\x* NEEDS MORE WORK
 \c 10
 \s1 God's terrifying revelation to Daniel
 \rem /s1 The angel's revelation; Conflict of Nations and Heavenly Powers; Daniel's Vision of a Man; Daniel's Vision by the Tigris River; Daniel's Vision of a Messenger
@@ -515,7 +518,7 @@
 \v 6 After some years¦362718, they'll \add ≈forge\add* an alliance¦362719—the daughter¦362720 of the southern¦362723 king will come to the northern¦362728 \add (Syrian)\add* king to make an agreement. But¦362717 she \add ≈won't be able to retain¦362733 her power¦362734\add*, and he \add ≈won't be able to continue in his strength¦362743\add*. She'll be \add ≈handed over\add*, along with¦362744 her attendants¦362741 and her child¦362742, and \add @the man\add* who supported¦362743 her in those¦362741 times¦362744.
 \v 7 \add ≈But¦362746 one of her¦362748 relatives\add* will \add ≈step up to become the southern king\add*. He will \add ≈attack\add* the army of the northern¦362757 king and¦362746 \add ≈invade\add* his fortress¦362755, defeating them.
 \v 8 He'll also take¦362774 their gods¦362763 away to Egypt¦362775 as plunder, along with¦362773 their cast metal¦362766 images¦362766 and their precious¦362770 gold¦362772 and silver¦362771 utensils. Then¦362762 he'll stay away from the northern¦362780 king¦362779 for several years¦362777.
-\v 9 Then¦362782 \add ?@that northern king\add* will come into the southern¦362785 king's region¦362789, but¦362782 will return¦362786 \add again\add* to his own land.
+\v 9 Then¦362782 \add ?@that northern king\add* will come into the southern¦362785 king's region¦362789, but¦362782 will return¦362786 \add again\add* to his own land¦362789.
 \p
 \v 10 \add ≈However,\add* his sons¦362791 will assemble¦362794 a \add ≈huge¦362797 army\add* and wage war. It will keep coming and overflow¦362800 like a flood and pass¦362801 through¦362801, and will carry the war as far as his fortress¦362807 again¦362802.
 \v 11 Then¦362810 the southern¦362812 \add (Egyptian)\add* king will be furious and go out and fight¦362814 against the northern¦362819 \add (Syrian)\add* king \add ≈who'll assemble a large army, but¦362810 that large army will be defeated\add*.
@@ -524,11 +527,11 @@
 \v 13 Then¦362837 the northern¦362839 \add (Syrian)\add* king¦362838 will again¦362837 \add ≈assemble a huge army\add*, \add ≈even larger¦362852 than previously\add*. \add ≈After a few\add* years¦362848, he'll \add ≈certainly¦362850 want to attack with¦362851 a huge well-equipped\add* army.
 \v 14 In those¦362857 times¦362856, many will \add try to\add* \add ≈rebel\add* against the southern¦362863 \add (Egyptian)\add* king¦362862. Men of violence¦362866 from among your¦362867 people¦362867 \add (Yisrael)\add* will \add also\add* \add ≈rebel\add* in¦362856 order¦362869 to fulfill¦362869 the vision¦362870, but¦362856 they'll \add all\add* \add ≈fail\add*.
 \v 15 Then¦362873 the northern¦362875 king¦362874 will come¦362873, heap up siege ramps, and¦362873 capture¦362878 a fortified¦362880 city¦362879. The forces¦362881 of the south¦362882, not even their¦362886 best troops¦362885, \add ≈will have enough strength¦362888 to be able to resist them\add*.
-\v 16 \add ≈So¦362891 the invader will be able to do¦362891 whatever he wants\add*—no one will stand \add ≈against¦362897\add* him. \add @The northern king\add* will stand in¦362903 the beautiful¦362901 land \add of Yisrael\add*, \add ≈ready to destroy¦362902 it\add*.
+\v 16 \add ≈So¦362891 the invader will be able to do¦362891 whatever he wants\add*—no one will stand \add ≈against¦362897\add* him. \add @The northern king\add* will stand in¦362903 the beautiful¦362901 land¦362899 \add of Yisrael\add*, \add ≈ready to destroy¦362902 it\add*.
 \p
 \v 17 He'll \add ≈make the decision to use\add* the strength¦362909 of his entire¦362910 kingdom¦362912 to \add ≈invade\add*. He'll forge an agreement, \add ≈yet\add* he'll give¦362918 him \add ≈a daughter¦362916\add* \add as a wife in¦362909 order\add* to ruin it, \add ≈but¦362905\add* it won't¦362922 \add ≈work\add* or be to his advantage.
 \v 18 \add ≈After that\add*, he'll \add ≈focus on\add* the coastlands¦362933 and¦362929 will capture¦362934 many, \add ≈but¦362929\add* a commander¦362937 will end¦362936 his insolence against him—\add in fact\add* he'll cause his insolence to \add ≈bounce\add* back upon him.
-\v 19 Then¦362945 he'll \add ≈focus his attention on\add* the fortresses¦362947 in his own land, \add ≈but¦362945\add* he'll stumble¦362949 and fall and \add ≈drop off the scene\add*.
+\v 19 Then¦362945 he'll \add ≈focus his attention on\add* the fortresses¦362947 in his own land¦362948, \add ≈but¦362945\add* he'll stumble¦362949 and fall¦362950 and \add ≈drop off the scene\add*.
 \p
 \v 20 Then¦362954 \add ≈another man will succeed\add* \add @the northern king\add* \add and¦362954\add* he'll send¦362958 a tax collector \add to Yerushalem\add* \add ≈so he can make his kingdom¦362961 more prosperous, but¦362954\add* in a few days¦362962 he will be broken¦362964, although not in anger¦362966 or in battle¦362968.
 \s1 The evil Syrian king
@@ -536,7 +539,7 @@
 \p
 \v 21 In his place¦362973, a despicable¦362974 person \add ≈without any royal lineage will come to power\add*. He'll come unexpectedly and¦362970 will seize¦362983 the \add northern (Syrian)\add* kingdom by intrigue¦362985.
 \v 22 The overflowing forces¦362987 will be swept¦362989 away before¦362990 him¦362990 and broken¦362991, and also the prince¦362993 of the agreement¦362994.
-\v 23 After an alliance¦362998 is made with him, he'll act deceitfully¦363001 then¦362996 he'll go¦363002 up and¦362996 become¦363003 powerful¦363003 with a small¦363004 number of people.
+\v 23 After an alliance¦362998 is made¦362998 with him, he'll act¦363000 deceitfully¦363001 then¦362996 he'll go¦363002 up and¦362996 become¦363003 powerful¦363003 with a small¦363004 number of people.
 \v 24 He'll come into the richest¦363009 parts¦363009 of the province¦363010 in¦363009 a time of peace¦363008, and he'll do what neither his fathers nor his fathers' fathers did. He will \add ≈distribute\add* plunder¦363020, booty¦363021, and possessions among them. He'll make plans¦363028 against¦363025 fortresses, but¦363009 only for a time.
 \p
 \v 25 He'll \add ≈use his courage¦363035 and¦363033 power to raise a large army\add* against the southern \add (Egyptian)\add* king. The southern king will \add ≈amass an exceedingly large, powerful army to respond in¦363040 battle¦363045\add*, but¦363033 he won't¦363053 be able to \add ≈make headway\add* because¦363055 plots will be devised against him.
@@ -546,7 +549,7 @@
 \p
 \v 29 At the appointed¦363103 time \add the northern (Syrian) king\add* will come back into the south¦363106, \add ≈but¦363105 he won't¦363107 be successful like he had been the previous time\add*.
 \v 30 Ships will come against him from Kittum \add (Cyprus¦363116)\add*, and he'll withdraw¦363118 \add ≈in fear\add*. He'll be angry about the holy agreement and will take action¦363125. He'll come back and \add ≈take the advice of\add* those¦363130 who forsake the holy agreement.
-\v 31 \add ≈Some of his forces¦363134 will attack and defile\add* the sanctuary¦363138 fortress¦363139. They'll \add ≈prevent\add* the regular¦363141 burnt¦363141 \add #offerings\add*, and they'll set up \add ≈something revolting\add* that¦363144 causes \add people to be\add* \add ≈appalled\add*.\x + \xo 11:31: \xt Dan 9:27; 12:11; Mat 24:15; Mrk 13:14.\x*
+\v 31 \add ≈Some of his forces¦363134 will attack and defile\add* the sanctuary¦363138 fortress¦363139. They'll \add ≈prevent\add* the regular¦363141 burnt¦363141 \add #offerings\add*, and they'll set¦363142 up \add ≈something revolting\add* that¦363144 causes \add people to be\add* \add ≈appalled\add*.\x + \xo 11:31: \xt Dan 9:27; 12:11; Mat 24:15; Mrk 13:14.\x*
 \v 32 \add ≈Using flattery¦363149,\add* he¦363148 will corrupt \add ≈others who oppose\add* the agreement¦363147, \add ≈But¦363146\add* the people¦363150 who know¦363151 their god¦363152 will be strong and¦363146 will take¦363154 action¦363154.
 \v 33 Those among the people¦363157 and¦363156 have insight¦363156 will \add ≈teach others\add*, \add ≈But¦363156\add* they'll \add ≈be killed in¦363161 battle or burnt\add* \add during the attacks, or\add* \add ≈be plundered¦363164 for several days¦363165 or taken captive¦363163\add*.
 \v 34 When¦363167 they fall, they'll receive a little¦363170 help¦363169. Many will join themselves¦363171 with¦363167 them in¦363167 hypocrisy¦363174.
@@ -556,11 +559,11 @@
 \v 36 The \add northern (Syrian)\add* king will \add ≈do whatever he wants\add*. He'll boast and \add ≈claim to be greater than any\add* god, and he'll \add ≈say terrible\add* things against¦363203 the god¦363202 of gods¦363205, . He'll be successful¦363208 until¦363209 the indignation¦363212 is accomplished, because¦363213 \add ≈everything¦363200 will happen just as it's already been determined¦363214\add*.\x + \xo 11:36: a \xt 2Th 2:3-4; \xo b \xt Rev 13:5-6.\x*
 \v 37 He won't¦363221 pay any attention to his ancestors' gods¦363219, or to the one desired¦363225 by women¦363226, or for that matter, to any other god¦363231, because¦363234 he'll \add ≈think he's better than everyone and¦363217 everything else\add*.
 \v 38 Instead of those, he'll honour the god of fortresses—a god his ancestors¦363251 \add ≈had never even heard of\add*. He'll honour \add that¦363247 god\add* with gold and silver¦363254, and with precious¦363257 stones¦363255 and treasures.
-\v 39 He'll take action against the strongest¦363261 fortresses¦363260 with¦363272 the help of a foreign¦363265 god¦363264. He'll increasingly¦363269 honour¦363270 those who acknowledge¦363267 him and will make them influential leaders, and he'll divide¦363274 up the land for a price¦363275.
+\v 39 He'll take action against the strongest¦363261 fortresses¦363260 with¦363272 the help of a foreign¦363265 god¦363264. He'll increasingly¦363269 honour¦363270 those who acknowledge¦363267 him and will make¦363271 them influential leaders, and he'll divide¦363274 up the land¦363273 for a price¦363275.
 \rem /s1 The Time of the End
 \p
 \v 40 At the time of the end, the southern¦363282 \add (Egyptian)\add* king will attack \add @the northern king\add*, \add ≈but¦363277 that\add* northern \add (Syrian)\add* king will \add ≈fight back agressively\add* with chariots¦363287 and horsemen¦363288, and with many ships¦363289. He'll \add ≈invade\add* \add several\add* countries¦363292 \add like how a flood¦363293\add* overflows¦363293 then¦363277 passes through¦363294.
-\v 41 He will come¦363296 into the beautiful¦363298 land \add of Yisrael\add*, \add ≈killing\add* many, \add ≈but¦363296\add* Edom¦363304, Moab¦363305, and¦363296 the \add ≈bulk of the Ammonites\add* will escape¦363302 from his \add ≈power¦363303\add*.
+\v 41 He will come¦363296 into the beautiful¦363298 land¦363297 \add of Yisrael\add*, \add ≈killing\add* many, \add ≈but¦363296\add* Edom¦363304, Moab¦363305, and¦363296 the \add ≈bulk of the Ammonites\add* will escape¦363302 from his \add ≈power¦363303\add*.
 \v 42 \add @That northern king\add* will \add ≈invade other\add* countries¦363312, and¦363310 \add even\add* Egypt¦363314 \add ≈won't¦363315 miss out\add*.
 \v 43 He'll \add ≈accumulate\add* the treasures¦363320 of gold¦363321 and of silver¦363322, and \add ≈everything in Egypt¦363325 that's valuable\add*, and then¦363319 the Libyans¦363326 and the Cushites will be in his footsteps.
 \v 44 \add ≈But¦363330\add* reports¦363330 \add coming in¦363335\add* from the east and the north¦363333 will terrify him¦363331, and he'll go¦363334 out to \add ≈fight furiously and kill¦363337 many\add*.

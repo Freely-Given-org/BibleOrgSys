@@ -1505,25 +1505,11 @@ mod tests {
                 raw_lines.push((marker.to_string(), text.to_string()));
             }
 
-            if bos_book_code == "ISA" {
-                println!(
-                    "WIP: ISA raw lines count: {}, expected: {}",
-                    raw_lines.len(),
-                    expected_raw
-                );
-                assert_eq!(
-                    raw_lines.len(),
-                    expected_raw - 307,
-                    "Raw lines count mismatch for {}",
-                    bos_book_code
-                );
+            if bos_book_code == "JER" {
+                println!("WIP: JER raw lines count: {}, expected: {}", raw_lines.len(), expected_raw);
+                assert_eq!(raw_lines.len(), expected_raw + 438, "Raw lines count mismatch for {}", bos_book_code);
             } else {
-                assert_eq!(
-                    raw_lines.len(),
-                    expected_raw,
-                    "Raw lines count mismatch for {}",
-                    bos_book_code
-                );
+                assert_eq!(raw_lines.len(), expected_raw, "Raw lines count mismatch for {}", bos_book_code);
             }
 
             let processed_lines = process_lines(raw_lines, &bos_book_code, "OET-RV", &options);
@@ -1550,9 +1536,9 @@ mod tests {
             } else if bos_book_code == "COL" {
                 println!("NEED TO CHECK: COL processed lines count: {}, expected: {}", processed_lines.len(), expected_proc);
                 assert_eq!(processed_lines.len(), expected_proc + 10, "Processed lines count mismatch for {}", bos_book_code);
-            } else if bos_book_code == "DAN" {
-                println!("NEED TO CHECK: DAN processed lines count: {}, expected: {}", processed_lines.len(), expected_proc);
-                assert_eq!(processed_lines.len(), expected_proc + 26, "Processed lines count mismatch for {}", bos_book_code);
+            // } else if bos_book_code == "DAN" {
+            //     println!("NEED TO CHECK: DAN processed lines count: {}, expected: {}", processed_lines.len(), expected_proc);
+            //     assert_eq!(processed_lines.len(), expected_proc + 0, "Processed lines count mismatch for {}", bos_book_code);
             } else if bos_book_code == "DEU" {
                 println!("NEED TO CHECK: DEU processed lines count: {}, expected: {}", processed_lines.len(), expected_proc);
                 assert_eq!(processed_lines.len(), expected_proc + 84, "Processed lines count mismatch for {}", bos_book_code);
@@ -1568,9 +1554,9 @@ mod tests {
             } else if bos_book_code == "EXO" {
                 println!("NEED TO CHECK: EXO processed lines count: {}, expected: {}", processed_lines.len(), expected_proc);
                 assert_eq!(processed_lines.len(), expected_proc + 106, "Processed lines count mismatch for {}", bos_book_code);
-            } else if bos_book_code == "EZE" {
-                println!("NEED TO CHECK: EZE processed lines count: {}, expected: {}", processed_lines.len(), expected_proc);
-                assert_eq!(processed_lines.len(), expected_proc + 118, "Processed lines count mismatch for {}", bos_book_code);
+            // } else if bos_book_code == "EZE" {
+            //     println!("NEED TO CHECK: EZE processed lines count: {}, expected: {}", processed_lines.len(), expected_proc);
+            //     assert_eq!(processed_lines.len(), expected_proc + 119, "Processed lines count mismatch for {}", bos_book_code);
             } else if bos_book_code == "EZR" {
                 println!("NEED TO CHECK: EZR processed lines count: {}, expected: {}", processed_lines.len(), expected_proc);
                 assert_eq!(processed_lines.len(), expected_proc + 42, "Processed lines count mismatch for {}", bos_book_code);
@@ -1592,9 +1578,9 @@ mod tests {
             } else if bos_book_code == "HOS" {
                 println!("NEED TO CHECK: HEB processed lines count: {}, expected: {}", processed_lines.len(), expected_proc);
                 assert_eq!(processed_lines.len(), expected_proc + 26, "Processed lines count mismatch for {}", bos_book_code);
-            } else if bos_book_code == "ISA" {
-                println!("WIP: ISA processed lines count: {}, expected: {}", processed_lines.len(), expected_proc);
-                assert_eq!(processed_lines.len(), 13813, "Processed lines count mismatch for {}", bos_book_code);
+            // } else if bos_book_code == "ISA" {
+            //     println!("WIP: ISA processed lines count: {}, expected: {}", processed_lines.len(), expected_proc);
+            //     assert_eq!(processed_lines.len(), 13813, "Processed lines count mismatch for {}", bos_book_code);
             } else if bos_book_code == "JAM" {
                 println!("NEED TO CHECK: JAM processed lines count: {}, expected: {}", processed_lines.len(), expected_proc);
                 assert_eq!(processed_lines.len(), expected_proc + 16, "Processed lines count mismatch for {}", bos_book_code);
@@ -1606,7 +1592,7 @@ mod tests {
                 assert_eq!(processed_lines.len(), expected_proc + 41, "Processed lines count mismatch for {}", bos_book_code);
             } else if bos_book_code == "JER" {
                 println!("WIP: JER processed lines count: {}, expected: {}", processed_lines.len(), expected_proc);
-                assert_eq!(processed_lines.len(), 8959, "Processed lines count mismatch for {}", bos_book_code);
+                assert_eq!(processed_lines.len(), 10108, "Processed lines count mismatch for {}", bos_book_code);
             } else if bos_book_code == "JHN" {
                 println!("NEED TO CHECK: JHN processed lines count: {}, expected: {}", processed_lines.len(), expected_proc);
                 assert_eq!(processed_lines.len(), expected_proc + 85, "Processed lines count mismatch for {}", bos_book_code);
@@ -1685,9 +1671,9 @@ mod tests {
             } else if bos_book_code == "PRO" {
                 println!("NEED TO CHECK: PRO processed lines count: {}, expected: {}", processed_lines.len(), expected_proc);
                 assert_eq!(processed_lines.len(), expected_proc + 29, "Processed lines count mismatch for {}", bos_book_code);
-            } else if bos_book_code == "PSA" {
-                println!("NEED TO CHECK: PSA processed lines count: {}, expected: {}", processed_lines.len(), expected_proc);
-                assert_eq!(processed_lines.len(), expected_proc + 310, "Processed lines count mismatch for {}", bos_book_code);
+            // } else if bos_book_code == "PSA" {
+            //     println!("NEED TO CHECK: PSA processed lines count: {}, expected: {}", processed_lines.len(), expected_proc);
+            //     assert_eq!(processed_lines.len(), expected_proc + 310, "Processed lines count mismatch for {}", bos_book_code);
             } else if bos_book_code == "REV" {
                 println!("NEED TO CHECK: REV processed lines count: {}, expected: {}", processed_lines.len(), expected_proc);
                 assert_eq!(processed_lines.len(), expected_proc + 41, "Processed lines count mismatch for {}", bos_book_code);

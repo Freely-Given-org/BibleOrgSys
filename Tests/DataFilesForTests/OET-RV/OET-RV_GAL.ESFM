@@ -1,4 +1,4 @@
-\id GAL - Open English Translation—Readers' Version (OET-RV) v0.1.60
+\id GAL - Open English Translation—Readers' Version (OET-RV) v0.1.63
 \usfm 3.0
 \ide UTF-8
 \rem ESFM v0.6 GAL
@@ -96,7 +96,7 @@
 \p
 \v 1 You foolish¦126367 Galatians¦126368, who tricked you¦126370 into changing? You know that \nd Yeshua\nd* the \nd messiah¦126380\nd* was publicly¦126381 known to have been executed¦126384 \add by being nailed to\add*\x + \xo 3:1: \xt Jhn 20:25.\x* a post.
 \v 2 So I just want to ask you one thing: did you receive¦126397 the \nd spirit¦126396\nd* by obeying all the rules, or was it by faith¦126401 when you heard?
-\v 3 So aren't you being foolish¦126403? Having¦126405 begun¦126405 in the \nd spirit¦126406\nd*, now you \add people\add* are focussing back on bodily discipline.
+\v 3 So aren't you being foolish¦126403? Having¦126405 begun¦126405 in the \nd spirit¦126406\nd*, now you \add people\add* are focusing back on bodily discipline.
 \v 4 You vainly endured so many things—it was vain wasn't it?
 \v 5 So¦126419 the one who gave the \nd spirit¦126423\nd* to you and worked miracles¦126426 among¦126427 you, did all that come about from obeying the rules or by the faith¦126438 that came from hearing¦126437 \add the good message\add*?
 \s1 The spreading of Abraham's blessing
@@ -106,11 +106,11 @@
 \v 8 \x + \xo 3:8: \xt Gen 12:3.\x*The \add writers of the\add* scriptures¦126464 foresaw¦126461 that \nd God¦126473\nd* was going to make non-Jews guiltless through faith¦126467 when he promised to Abraham¦126476 that all the nations¦126483 would be blessed¦126478 through him,
 \v 9 so those who have faith¦126487 \add that Yeshua is the messiah\add* will be blessed just as Abraham¦126492 was blessed for believing¦126491 \add God\add*.
 \p
-\v 10 All those who strive to be saved by obeying the law are under¦126499 a curse, because¦126503 it's written that ‘everyone is cursed who doesn't live by and fulfil everything that's been written down in the law scroll¦126519’.\x + \xo 3:10: \xt Deu 27:26 (LXX).\x*
+\v 10 All those who strive to be saved by obeying the law are under¦126499 a curse¦126500, because¦126503 it's written that ‘everyone is cursed who doesn't live by and fulfil everything that's been written down in the law scroll¦126519’.\x + \xo 3:10: \xt Deu 27:26 (LXX).\x*
 \v 11 It's clear that the law can't make anyone¦126529 guiltless \add ≈in \+nd God\+nd*'s view\add*, because¦126535 \add it's written that\add* ‘those who are guiltless will live by faith¦126539’.\x + \xo 3:11: \xt Hab 2:4.\x*
 \v 12 And the law doesn't produce faith¦126547, but¦126548 ‘the person who obeys these things is the one who will live’.\x + \xo 3:12: \xt Lev 18:5.\x*
 \p
-\v 13 The \nd messiah¦126557\nd* saved us from the law's curse by becoming¦126565 the curse for our sake, because¦126569 it's written¦126570, ‘\nd anyone¦126557\nd* who's hung on a tree¦126577 is cursed’.\x + \xo 3:13: \xt Deu 21:23.\x*
+\v 13 The \nd messiah¦126557\nd* saved us from the law's curse by becoming¦126565 the curse for our sake, because¦126569 it's written¦126570, ‘anyone¦126557 who's hung on a tree¦126577 is cursed’.\x + \xo 3:13: \xt Deu 21:23.\x*
 \v 14 He \add paid the price for us\add* so that the blessing¦126583 for Abraham¦126585 would also reach the non-Jews through the \nd messiah¦126588 Yeshua\nd* and we'd \add all\add* be able to receive¦126598 the \nd spirit¦126597\nd* through faith¦126601.
 \s1 The law didn't annul the promise
 \rem /s1 The Law and the Promise; The Law and God's Promises; The Promise to Abraham
@@ -126,7 +126,7 @@
 \rem /s1 The Purpose of the Law
 \p
 \v 21 So¦126725 does the law oppose God's promises¦126729? Certainly not, because¦126735 if the law was able to give¦126741 life¦126741, you could become¦126733 guiltless by obeying the law.
-\v 22 The scriptures¦126757 \add explain that\add* \nd everyone¦126768\nd* is imprisoned¦126755 by sin¦126761 so that by faith¦126766 in \nd Yeshua\nd* the \nd messiah¦126768\nd*, the promise¦126764 could be granted to those who believe¦126771.
+\v 22 The scriptures¦126757 \add explain that\add* everyone¦126768 is imprisoned¦126755 by sin¦126761 so that by faith¦126766 in \nd Yeshua\nd* the \nd messiah¦126768\nd*, the promise¦126764 could be granted to those who believe¦126771.
 \p
 \v 23 Before faith could come, we were guarded¦126780 under¦126778 the law—imprisoned¦126782 so that faith could be revealed¦126787.
 \rem /s1 God's Children through Faith
@@ -135,7 +135,7 @@
 \rem /s1 Sons of God
 \p
 \v 26 So you're all \nd God\nd*'s children through¦126815 faith¦126817 in the \nd messiah¦126819\nd*, \nd Yeshua\nd*,
-\v 27 because¦126823 \nd everyone¦126825\nd* who's been immersed¦126826 \add to obey\add* the messiah is now cloaked in the messiah.
+\v 27 because¦126823 everyone¦126825 who's been immersed¦126826 \add to obey\add* the messiah is now cloaked in the messiah.
 \v 28 So there's no Jew or Greek¦126835, no slave¦126839 or free person, no male or female¦126846, because¦126849 you're all \add identified\add* as being in the \nd messiah¦126854\nd*, \nd Yeshua\nd*.
 \v 29 \x + \xo 3:29: \xt Rom 4:13.\x*And if you're in the \nd messiah¦126860\nd*, then¦126858 you're now Abraham's descendant, and¦126858 so you're heirs¦126870 of that promise¦126869.
 \c 4
@@ -197,7 +197,7 @@
 \p
 \v 2 What's more, I, Paul¦127369 would add that if you \add men\add* got circumcised¦127374, then the \nd messiah¦127375\nd* wouldn't be of any benefit¦127378.
 \v 3 I'll say it again¦127381 clearly: every¦127382 man¦127383 who \add gets himself\add* circumcised¦127384 has put himself in debt to obeying all of the law.
-\v 4 You were released¦127392 from the \nd messiah¦127395\nd* when you moved to trusting in the law in order to be right with God—you fell away from grace¦127401 at that point.
+\v 4 You were released¦127392 from the \nd messiah¦127395\nd* when you moved to trusting in the law in order to be right with God—you fell¦127402 away from grace¦127401 at that point.
 \v 5 We who are in the \nd spirit¦127405\nd* are eagerly¦127411 waiting¦127411 for the righteousness¦127409 that we're expecting to receive by faith¦127407,
 \v 6 because¦127413 in the \nd messiah¦127414 Yeshua¦127415\nd*, it's not circumcision¦127417 that achieves anything¦127418, nor uncircumcision¦127421, but¦127422 faith¦127423 worked out through¦127424 love¦127425.
 \p
@@ -218,7 +218,7 @@
 \p
 \v 16 I'll tell you: allow yourselves to be led by the \nd spirit¦127555\nd*, and¦127558 then your earthly desires¦127559 won't¦127562 triumph,
 \v 17 \x + \xo 5:17: \xt Rom 7:15-23.\x*because¦127579 our earthly desires oppose the spirit, and the spirit opposes our earthly desires—they oppose each other, so that's why you end up doing¦127591 things that you didn't¦127585 really want to do.
-\v 18 But if you're being¦127595 led by the \nd spirit¦127594\nd* then you're not \add trying to earn your way to God by\add* obeying all of Mosheh's rules.
+\v 18 But if you're being¦127595 led¦127595 by the \nd spirit¦127594\nd* then you're not \add trying to earn your way to God by\add* obeying all of Mosheh's rules.
 \p
 \v 19 The actions that¦127609 come from our earthly desires include: sexual¦127612 immorality¦127612, impurity¦127613, sensuality,
 \v 20 idolatry¦127615, sorcery¦127616, hostility, strife¦127618, jealousies¦127620, rages¦127622, selfish¦127623 ambitions¦127623, arguing, divisions,
@@ -226,8 +226,8 @@
 \rem /s1 The Fruit of the Spirit
 \p
 \v 22 But the end result of having \add God's\add* \nd spirit¦127655\nd* is \add to show\add* love¦127657, joy¦127658, peace¦127659, patience¦127660, kindness¦127661, goodness¦127662, faith¦127663,
-\v 23 gentleness¦127664, and self-control—none \add of Mosheh's laws\add* are against¦127666 any of these!
-\v 24 \nd And\nd* for the \nd messiah¦127676 Yeshua\nd*'s \add apprentices\add*, earthly desires¦127686 need to be executed¦127680 on a post, along with their passions¦127683 and¦127684 lusts.
+\v 23 gentleness¦127664, and self-control—none \add of Mosheh's\add* laws are against¦127666 any of these!
+\v 24 And for the \nd messiah¦127676 Yeshua\nd*'s \add apprentices\add*, earthly desires¦127686 need to be executed¦127680 on a post, along with their passions¦127683 and¦127684 lusts.
 \v 25 If we're \add being led\add* by \add God's\add* spirit in our living¦127688, then we should also be aligning¦127692 \add our values\add* by the spirit.
 \v 26 We have to take care not to become¦127694 conceited¦127695, not to provoke¦127697 each other, and not to envy each other.
 \c 6

@@ -1,4 +1,4 @@
-\id 1CH - Open English Translation—Readers' Version (OET-RV) v0.1.16
+\id 1CH - Open English Translation—Readers' Version (OET-RV) v0.1.20
 \usfm 3.0
 \ide UTF-8
 \rem ESFM v0.6 CH1
@@ -47,7 +47,7 @@
 \v 11 Mitsrayim was the ancestor of the Lud, the Anam¦187134, the Lehab¦187137, the Naftuh¦187140,
 \v 12 the Patrus¦187144, the Kasluh, and¦187142 the Kaftor¦187154 people groups. (The Philistines¦187151 descended from the Kasluh people group.)
 \v 13 Kanaan's¦187157 first¦187162 son was Tsidon, and then \add ≈he¦187158 was also the ancestor of the Hittites\add*,
-\v 14 the Yebusites¦187169, the Amorites¦187172, the Girgashites¦187174,
+\v 14 the Yevusites¦187169, the Amorites¦187172, the Girgashites¦187174,
 \v 15 the Hivites¦187178, the Arkites¦187181, the Sinites¦187184,
 \v 16 the Arvadites¦187188, the Zemarites¦187191, and¦187186 the Hamatites¦187194.
 \rem /s1 Descendants of Shem
@@ -134,7 +134,7 @@
 \v 4 His daughter-in-law Tamar¦187643 had \add twin boys named\add* Perets and Zerah¦187652, so altogether Yehudah¦187656 had five¦187657 sons¦187655.
 \p
 \v 5 Perets's sons¦187660 were Hetsron and¦187664 Hamul¦187664.
-\v 6 Zerah¦187668 had five¦187675 sons¦187667: Zimri¦187669, Eytan, Heyman, Kalkol¦187672, and Dara¦187673.
+\v 6 Zerah¦187668 had five¦187675 sons¦187667: Zimri¦187669, Eytan¦187670, Heman¦187671, Kalkol¦187672, and Dara¦187673.
 \v 7 \add Zimri had a son named Karmi.\add* Karmi had a son named Akar who brought trouble¦187681 into Yisrael¦187682 \add ≈by violating a ban\add* on¦187685 devoted¦187685 things¦187685.\x + \xo 2:7: \xt Josh 7:1.\x*
 \v 8 Eytan's¦187689 son was Azaryah¦187690.
 \s1 King David's ancestors
@@ -343,7 +343,7 @@
 \rem /s1 The Tribes East of the Jordan; The Armies of the Eastern Tribes
 \p
 \v 18 There were 44,760 warriors¦189359 descended¦189346 from strong men¦189359 in the tribes of Reuven¦189348 and Gad and the \add eastern\add* half of the tribe of Menashsheh¦189353. They all carried¦189360 shields¦189361 and swords¦189362, and bows and arrows, and were all trained¦189365 to fight in battles.
-\v 19 They went to war against the Hagrites¦189381, Yetur¦189382, Nafish¦189383, and¦189377 Nodav,
+\v 19 They went to war¦189378 against the Hagrites¦189381, Yetur¦189382, Nafish¦189383, and¦189377 Nodav,
 \v 20 and were helped¦189386 because they called out to God in the battle¦189396. \add ≈So¦189386\add* with¦189389 God answering¦189397 their prayers¦189397 because of their trust¦189401 in him, they \add ≈were able to defeat\add* the Hagrites¦189390 and their \add ≈allies\add*.
 \v 21 They captured¦189404 their livestock¦189405, including¦189409 50,000 camels¦189406, 250,000 sheep¦189409, and¦189404 2,000 donkeys¦189413, as well as 100,000 people,
 \v 22 because¦189425 many were killed \add ≈as a result of God's assistance\add*. Then they lived¦189428 in that \add ≈area\add* until¦189430 the exile¦189432.
@@ -519,7 +519,7 @@
 \v 9 Altogether, their clans had 20,200 strong warriors listed in their genealogy¦190772.
 \p
 \v 10 Yediael's¦190785 son was Bilhan. Bilhan's¦190786 sons were Yeush¦190789, Benyamin¦190791, Ehud¦190792, Kenaanah¦190793, Zetan¦190794, Tarshish¦190795, and Ahishahar¦190796.
-\v 11 All those descendants of Yediael¦190802 were \add ≈clan leaders\add* and strong warriors, having 17,200 men ready to go to war.
+\v 11 All those descendants of Yediael¦190802 were \add ≈clan leaders\add* and strong warriors, having 17,200 men ready to go to war¦190813.
 \p
 \v 12 The Shuppites¦190816 and Huppites were descendants of Ir, \add and\add* the Hushites were descendants of Aher¦190822.
 \s1 The descendants of Naftali (Naphtali)
@@ -715,7 +715,7 @@
 \s4 Full kingdom
 \r (1 Sam. 31:1-13)
 \p
-\v 1 \add ≈Now\add* the Philistines fought¦192200 against¦192201 Yisrael¦192201, and the Israeli¦192205 men fled \add ≈away\add* from the Philistines, and \add ≈many were killed\add* on¦192201 Mt¦192210. Gilboa¦192211.
+\v 1 \add ≈Now\add* the Philistines fought¦192200 against¦192201 Yisrael¦192201, and the Israeli¦192205 men fled¦192202 \add ≈away\add* from the Philistines, and \add ≈many were killed\add* on¦192201 Mt¦192210. Gilboa¦192211.
 \v 2 Then¦192213 the Philistines¦192214 pursued¦192213 Shaul¦192216 and his sons, and \add *they\add* \add ≈killed¦192219\add* \add his\add* sons Yonatan, Avinadav, and Malki-Shua¦192231.
 \v 3 The battle¦192236 against Shaul¦192239 was very fierce, \add ≈and¦192235 then¦192235\add* the archers spotted him and¦192235 wounded¦192243 him.
 \v 4 Then¦192248 Shaul said to his equipment carrier, “Draw your sword and pierce¦192257 me with¦192258 it, so those uncircumcised¦192262 \add Philistines\add* \add ^can't come here\add* and torture me.” But¦192248 his equipment carrier was very scared and wasn't willing¦192268 to do it, so Shaul took \add &his\add* sword and fell onto it.
@@ -755,7 +755,7 @@
 \v 10 The¦192647 following were the leaders of David's¦192633 powerful warriors¦192631 who, together with¦192636 all of Yisrael¦192641, strengthened his kingdom¦192636 and¦192629 established him¦192642 as king¦192642, \add ≈just as\add* Yahweh¦192644 had said.
 \v 11 \add ≈So\add* these¦192650 are David's¦192654 powerful¦192652 warriors: Yashaveam (a Hakmonite \add and\add* the leader of the thirty), who once \add ≈used\add* his spear¦192667 against three¦192670 hundred¦192672 men in¦192674 a single battle and killed them all.
 \v 12 Next was Eleazar¦192678 (an Ahohite¦192682, son of Dodo¦192681) who was one of the \add top\add* three¦192684 powerful¦192685 warriors.
-\v 13 He was with¦192693 David¦192692 at¦192693 Pas-Dammim \add ≈when\add* the Philistines had assembled there¦192698 for battle¦192700 \add ≈near\add* a part of the countryside¦192703 \add ≈where barley¦192705 was growing\add*. \add ≈At first, the Israelis¦192706\add* fled from the Philistines,
+\v 13 He was with¦192693 David¦192692 at¦192693 Pas-Dammim \add ≈when\add* the Philistines had assembled there¦192698 for battle¦192700 \add ≈near\add* a part of the countryside¦192703 \add ≈where barley¦192705 was growing\add*. \add ≈At first, the Israelis¦192706\add* fled¦192707 from the Philistines,
 \v 14 \add ≈but¦192711 then¦192711\add* they took¦192711 their¦192711 stand¦192711 in¦192712 the middle¦192712 of the \add ≈barley\add* and¦192711 \add ≈proceeded to defeat\add* the Philistines¦192719 \add ≈as\add* Yahweh¦192721 saved¦192720 them through a stunning victory¦192722.
 \p
 \v 15 Then¦192725 three¦192726 of that top thirty¦192729 went¦192725 down to David¦192736, near the rock¦192733 at¦192744 Adullam's¦192740 cave. \add ≈Meanwhile,\add* Philistines¦192742 had encamped¦192743 in¦192744 the Refaim¦192745 Valley.
@@ -894,7 +894,7 @@
 \s4 Full kingdom
 \r (2 Sam. 2:11-16)
 \p
-\v 1 \add ≈One day\add* King¦194080 Hiram from Tsor \add (Tyre¦194082)\add* sent¦194077 messengers¦194083 to David¦194086, along with cedar¦194088 timber and \add ≈stone¦194089 masons and carpenters\add* to build¦194093 a house¦194095 for him.
+\v 1 \add ≈One day\add* King¦194080 Huram¦194078 from Tsor \add (Tyre¦194082)\add* sent¦194077 messengers¦194083 to David¦194086, along with cedar¦194088 timber and \add ≈stone¦194089 masons and carpenters\add* to build¦194093 a house¦194095 for him.
 \v 2 \add By then¦194097\add* David¦194098 \add ≈had realised\add* that Yahweh had established¦194101 him¦194101 as king¦194103 over Yisrael—that his kingdom¦194111 was \add ≈being made more prominent\add* for the sake of \add @Yahweh's\add* people¦194113 Yisrael.
 \p
 \v 3 Then¦194123 David¦194118 took¦194117 more wives¦194120 in¦194121 Yerushalem¦194121 and \add *he\add* fathered¦194122 more sons¦194125 and daughters¦194126.
@@ -1014,7 +1014,7 @@
 \v 15 Remember¦194944 his agreement¦194946 forever¦194945—
 \q1 ≈the \add ≈instructions¦194948 that¦194948 he gave\add* to a thousand¦194949 generations¦194950,
 \q1
-\v 16 \add ≡the agreement\add* that he¦194953 \add ≈made\add* with Abraham¦194956,\x + \xo 16:16: a \xt Gen 12:7; \xo b \xt Gen 26:3.\x*
+\v 16 \add ≡the agreement\add* that he¦194953 \add ≈made¦194953\add* with Abraham¦194956,\x + \xo 16:16: a \xt Gen 12:7; \xo b \xt Gen 26:3.\x*
 \q1 ≈and¦194957 his promise to Yitshak¦194958.
 \q1
 \v 17 He established it¦194960 as a law for Yakov\x + \xo 16:17-18: \xt Gen 28:13.\x*—
@@ -1112,7 +1112,7 @@
 \v 6 \add ≈As I travelled with all the Israelis¦195385\add*, \add ≈did¦195380 I ever complain to any of Yisrael's leaders\add* who I'd commanded¦195387 to shepherd¦195388 my people¦195391, \add ≈and ask them\add*, ‘Why haven't you¦195396 \add people\add* built¦195396 a house¦195398 out of cedar¦195399 for me?’ ”
 \p
 \v 7 “\add ≈So¦195401 now you should tell\add* my servant¦195405 David¦195406 that Commander-in-chief¦195411 Yahweh¦195410 says¦195409 this: I¦195412 myself took¦195413 you from the pasture¦195416, from behind the sheep¦195420, to be a leader over my people¦195424, Yisrael¦195425.
-\v 8 I've always been with¦195429 you wherever¦195430 you've gone, and I've \add ≈defeated all your¦195438 enemies¦195437 who were attacking you\add*, and I'll¦195439 \add ≈make you famous like some of the greatest¦195443 people in¦195429 the world\add*.
+\v 8 I've always been with¦195429 you wherever¦195430 you've gone, and I've \add ≈defeated all your¦195438 enemies¦195437 who were attacking you\add*, and I'll¦195439 \add ≈make¦195439 you famous like some of the greatest¦195443 people in¦195429 the world\add*.
 \v 9 I'll choose a place for my people¦195449, Yisrael¦195450, and I'll plant¦195451 them, and they'll settle \add @in that place\add* and \add ≈not need to be fearful again¦195456\add*. \add ≈Violent groups won't¦195454 continue to trouble them like they did in the past\add*,
 \v 10 \add ≈ever since I first put heroes and¦195467 leaders\add* over my people¦195473, Yisrael¦195474. Then¦195467 I'll¦195475 humble all your enemies¦195480. \add ≈In addition¦195467\add*, I declare¦195481 to you that Yahweh¦195487 will build¦195484 \add ≈a dynasty\add* for you.
 \v 11 \add ≈When¦195489 your time on earth is up, and it's time to join your deceased ancestors¦195497\add*, then¦195489 I'll¦195498 raise¦195498 up one of your sons¦195505 and establish¦195506 his kingdom¦195509.
@@ -1149,7 +1149,7 @@
 \v 2 Then¦195808 he¦195808 \add ≈attacked and defeated¦195808\add* Moav, and the Moavites became servants to David¦195815—\add ≈taking him\add* \add regular\add* tribute¦195817.
 \p
 \v 3 Next David¦195820 \add ≈attacked and¦195819 defeated¦195819\add* King¦195824 Hadadezer¦195823 of Tsovah-Hamat¦195827, when \add ≈that king¦195824 had tried enforce his control\add* at¦195828 the Euphrates¦195833 \add River\add*.
-\v 4 David captured¦195835 1,000 chariots, 7,000 horsemen, and¦195835 20,000 foot-soldiers from him. And David hamstrung¦195847 all but¦195835 one hundred¦195856 of the chariot¦195853 \add horses¦195853\add*.
+\v 4 David captured¦195835 1,000 chariots, 7,000 horsemen¦195842, and¦195835 20,000 foot-soldiers from him. And David hamstrung¦195847 all but¦195835 one hundred¦195856 of the chariot¦195853 \add horses¦195853\add*.
 \p
 \v 5 When¦195859 the Arameans¦195868 \add (or, Syrians¦195860)\add* came¦195859 from Damascus¦195861 to help¦195862 King¦195864 Hadadezer¦195863, David¦195867 killed 22,000 of them.
 \v 6 Then¦195875 David \add ≈established forces\add* in¦195877 the Aramean \add town\add* of Damascus¦195878, and¦195875 the Arameans¦195877 became servants to David, \add ≈taking him\add* \add regular\add* tribute¦195884. \add ≈So¦195875\add* Yahweh¦195886 \add ≈helped\add* David \add ≈wherever¦195889\add* he¦195890 went¦195890.
@@ -1177,7 +1177,7 @@
 \v 1 \add ≈Some time later\add*, the Ammonite King¦196099 Nahash¦196098 died¦196097 and his¦196105 son \add Hanun\add* \add ≈became¦196103 their king¦196099\add*,
 \v 2 and¦196107 David said, “I'll¦196109 show loyal commitment to Nahash's¦196118 son Hanun, because¦196119 his father \add ≈was good to me\add*.” \add ≈So¦196107\add* David sent messengers¦196127 to comfort him concerning his father's \add death\add*. \add ≈However,\add* when David's¦196108 servants¦196133 \add ≈entered Ammonite territory¦196137\add* to comfort Hanun,
 \v 3 the Ammonite leaders¦196147 \add ≈asked their new king\add*, “\add ≈Do you think that\add* David's¦196153 \add really\add* sending comforters¦196162 to honour¦196152 your¦196157 father? \add ≈Wouldn't it be more likely that he sent¦196160 his servants¦196170 to explore¦196165 and¦196146 spy out the land in¦196157 order to overthrow¦196166 you\add*?”
-\v 4 \add ≈So\add* \add King\add* Hanun¦196175 took¦196174 David's¦196179 servants¦196178 and \add had their beards\add* shaved¦196180 off, plus¦196174 he cut \add ≈off the bottom half of their robes¦196184 to expose their\add* buttocks¦196188, and then he sent¦196189 them \add ≈home\add*.
+\v 4 \add ≈So\add* \add King\add* Hanun¦196175 took¦196174 David's¦196179 servants¦196178 and \add had their beards\add* shaved¦196180 off, plus¦196174 he cut¦196181 \add ≈off the bottom half of their robes¦196184 to expose their\add* buttocks¦196188, and then he sent¦196189 them \add ≈home\add*.
 \v 5 \add ≈Some people¦196191 quickly informed David¦196193 what had happened\add*, so he sent \add messengers\add* to meet the men (because¦196199 they were very much humiliated¦196203) and¦196191 to tell them, “Stay \add there\add* in¦196208 Yeriho \add (Jericho)\add* until¦196209 your beards¦196213 grow \add out\add*, then¦196191 return¦196214 \add here\add*.”
 \p
 \v 6 \add ≈By then¦196216\add*, the Ammonites \add ≈realised¦196216 that they'd greatly insulted\add* \add King\add* David¦196223, \add ≈so\add* \add King\add* Hanun¦196225 and the Ammonites sent¦196224 thirty tonnes of silver¦196231 to hire chariots¦196243 and horsemen¦196244 from Aram-Naharayim, Aram-Maakah, and Tsovah.
@@ -1191,20 +1191,20 @@
 \v 12 Yoav told them, “If the Arameans¦196334 are too strong for me, then you \add ≈can come to rescue me\add*. \add ≈But¦196329\add* if the Ammonites \add ≈start to gain on you\add*, then I'll¦196345 \add come to\add* rescue you.
 \v 13 We must¦196358 be strong¦196347 and fight hard to defend our people¦196351 and our cities¦196353 \add ≈that belong to\add* our god¦196354. Yahweh¦196355 will do¦196358 \add ≈what he considers to be\add* good¦196356.”
 \p
-\v 14 \add ≈So¦196360\add* Yoav \add ≈advanced his¦196370 troops to attack the Arameans, but¦196360 the Arameans fled away from them\add*.
+\v 14 \add ≈So¦196360\add* Yoav \add ≈advanced his¦196370 troops to attack the Arameans, but¦196360 the Arameans fled¦196369 away from them\add*.
 \v 15 \add ≈When¦196372\add* the Ammonites saw¦196374 that the Arameans¦196378 had fled, \add ≈they also fled from Avshai and¦196372 withdrew into\add* the city¦196387, \add ≈so\add* Yoav went¦196386 back to Yerushalem¦196390.
 \p
 \v 16 \add ≈When the Arameans\add* saw¦196393 that¦196405 they were defeated¦196396 \add ≈by\add* Yisrael¦196398, they sent¦196399 messengers¦196400 to bring \add ≈more Arameans from across the Euphrates river¦196407, led by\add* Shofak, the commander¦196409 of Hadadezer's¦196412 army.
 \v 17 \add ≈When¦196415\add* that was reported to David¦196416, he gathered¦196417 all of Yisrael¦196422 and¦196415 crossed the Yordan¦196424. They¦196430 positioned themselves against the Arameans¦196432, who then¦196415 fought¦196434 against them.
-\v 18 \add ≈But¦196437 the Arameans¦196438 fled away from the Israelis\add*, and David¦196442 killed seven¦196444 thousand chariot¦196446 \add drivers\add* and forty¦196447 thousand men on foot¦196450, as well as killing Shofak, their army commander¦196453.
-\v 19 When¦196458 Hadadezer's¦196460 servants¦196459 saw¦196458 that \add ≈Yisrael¦196464 had defeated¦196462 them\add*, they made peace¦196465 with David¦196468 and¦196458 \add ≈became¦196469 his subjects¦196469, so\add* Aram¦196473 \add (Syria¦196473)\add* wasn't willing¦196472 to help¦196474 the Ammonites¦196479 \add militarily\add* any more.
+\v 18 \add ≈But¦196437 the Arameans¦196438 fled¦196437 away from the Israelis\add*, and David¦196442 killed seven¦196444 thousand chariot¦196446 \add drivers\add* and forty¦196447 thousand men on foot¦196450, as well as killing Shofak, their army commander¦196453.
+\v 19 When¦196458 Hadadezer's¦196460 servants¦196459 saw¦196458 that \add ≈Yisrael¦196464 had defeated¦196462 them\add*, they made¦196465 peace¦196465 with David¦196468 and¦196458 \add ≈became¦196469 his subjects¦196469, so\add* Aram¦196473 \add (Syria¦196473)\add* wasn't willing¦196472 to help¦196474 the Ammonites¦196479 \add militarily\add* any more.
 \c 20
 \s1 David captures Rabbah
 \rem /s1 Siege and Capture of Rabbah; David Captures Rabbah; The Capture of Rabbah
 \s4 Full kingdom
 \r (2 Sam. 12:26-31)
 \p
-\v 1 \add ≈Then, in the spring, when kings¦196490 often march out to war\add*, Yoav led the army out for war, and he devastated the Ammonites' land. Then he reached \add the capital,\add* Rabbah, and he besieged it while David¦196510 stayed in Yerushalem¦196512. Yoav \add ≈defeated\add* Rabbah and \add ≈demolished the city\add*.\x + \xo 20:1: \xt 2Sam 11:1.\x*
+\v 1 \add ≈Then, in the spring, when kings¦196490 often march out to war\add*, Yoav led the army out for war, and he devastated the Ammonites' land¦196501. Then he reached \add the capital,\add* Rabbah, and he besieged it while David¦196510 stayed in Yerushalem¦196512. Yoav \add ≈defeated\add* Rabbah and \add ≈demolished the city\add*.\x + \xo 20:1: \xt 2Sam 11:1.\x*
 \v 2 Then¦196520 David¦196521 took their¦196526 king's crown off his head—it was gold¦196534 with¦196535 a valuable gemstone set in¦196535 it, and¦196520 \add ≈weighed¦196531 thirty kilograms\add*. He¦196542 put \add @the crown\add* on¦196535 his own head, plus¦196529 he took a very large amount of plunder¦196543 out of the city¦196544.
 \v 3 Then¦196549 they took all the people out of the city and \add ≈forced them to work\add* with saws, iron picks¦196558, and axes¦196560. David¦196563 did that¦196552 to the people from all the Ammonite cities¦196565, then¦196549 he returned¦196569 to Yerushalem¦196574 with his army.
 \s1 Battles against Gittites
@@ -1250,7 +1250,7 @@
 \v 14 \add ≈So¦196951\add* Yahweh¦196952 \add ≈sent a disease\add* throughout Yisrael¦196954, and¦196951 seventy¦196957 thousand¦196958 Israeli¦196956 men \add ≈died\add*.
 \v 15 Then¦196961 God sent¦196961 a messenger to destroy Yerushalem¦196966, and \add ≈while the disease was still spreading,\add* Yahweh \add ≈looked down\add* and relented about the tragedy, and he told the destroying messenger, “Enough! Now \add ≈stop what you're doing\add*.” Now Yahweh's¦196970 messenger \add happened to be\add* standing¦196984 at the threshing¦196987 floor¦196987 belonging to Ornan¦196988 the Yevusite.
 \p
-\v 16 \add As\add* David \add ≈looked up\add*, he saw¦196997 Yahweh's¦197001 messenger¦197000 standing¦197002 between the earth¦197004 and the heavens¦197006, holding his sword¦197007 stretched¦197010 out over Yerushalem¦197013. Then David and the elders¦197016, who were \add all\add* dressed in¦197018 sackcloth¦197018, fell \add ≈to their knees and bowed their faces¦197021 to the ground\add*.
+\v 16 \add As\add* David \add ≈looked up\add*, he saw¦196997 Yahweh's¦197001 messenger¦197000 standing¦197002 between the earth¦197004 and the heavens¦197006, holding his sword¦197007 stretched¦197010 out over Yerushalem¦197013. Then David and the elders¦197016, who were \add all\add* dressed in¦197018 sackcloth¦197018, fell¦197014 \add ≈to their knees and bowed their faces¦197021 to the ground\add*.
 \v 17 Then¦197023 David¦197024 \add ≈asked\add* God¦197046, “Wasn't it me myself who said to count¦197031 the people? It's me who \add ≈disobeyed and clearly did what was wrong¦197039\add*, but these¦197041 sheep¦197042, what have they done? Yahweh¦197045 my god¦197046, please¦197048 \add ≈direct your punishment\add* against me and \add ≈my extended family\add*, but \add ≈don't¦197028 continue this\add* plague¦197055 on¦197032 your people.”
 \rem /s1 David's Altar and Sacrifice; David Builds an Altar
 \p
@@ -1262,7 +1262,7 @@
 \p
 \v 23 “My master¦197154 the king¦197155, take¦197150 \add ≈anything you want\add*,” Ornan¦197146 \add ≈replied\add*. “Listen, I'll donate the cattle for the burnt¦197161 offerings¦197161, and the threshing¦197162 sledges¦197162 for firewood, and the wheat¦197164 for the offering¦197165—all \add ≈at¦197157 no charge\add*.”
 \p
-\v 24 “No, I'll¦197177 most definitely pay the full price¦197178,” King¦197170 David¦197171 \add ≈responded¦197169\add*. “I couldn't offer a burnt¦197189 offering¦197189 to Yahweh¦197187 \add ≈if it hadn't cost me anything\add*.”
+\v 24 “No, I'll¦197177 most definitely pay the full price¦197178,” King¦197170 David¦197171 \add ≈responded¦197169\add*. “I couldn't offer¦197188 a burnt¦197189 offering¦197189 to Yahweh¦197187 \add ≈if it hadn't cost me anything\add*.”
 \v 25 \add ≈So¦197192\add* David¦197193 paid Ornan¦197194 six¦197199 hundred¦197200 gold¦197197 pieces for \add &his\add* place¦197195,
 \v 26 and he built¦197202 an altar to Yahweh there¦197203 and offered burnt offerings and peace¦197209 offerings on it. He called¦197210 to Yahweh, and \add @Yahweh\add* answered¦197214 him with¦197215 fire¦197215 from the heavens¦197218 on that altar with the burnt offering.
 \p
@@ -1272,7 +1272,7 @@
 \s4 Full kingdom
 \p
 \v 28 When David¦197236 saw¦197235 that Yahweh¦197240 had answered¦197239 him at¦197235 Ornan¦197242 the Yevusite's threshing¦197241 floor¦197241, he sacrificed¦197244 there¦197245.
-\v 29 \add ≈At that time¦197256\add*, Yahweh's¦197248 \add sacred¦197247\add* tent¦197247 that Mosheh¦197252 \add (Moses¦197252)\add* had made in¦197253 the wilderness¦197253, and¦197254 the altar¦197254 for burnt¦197255 sacrifices, were \add ≈on¦197253 a hill used for worship near\add* Gibeon¦197259 \add city\add*.
+\v 29 \add ≈At that time¦197256\add*, Yahweh's¦197248 \add sacred¦197247\add* tent¦197247 that Mosheh¦197252 \add (Moses¦197252)\add* had made¦197251 in¦197253 the wilderness¦197253, and¦197254 the altar¦197254 for burnt¦197255 sacrifices, were \add ≈on¦197253 a hill used for worship near\add* Gibeon¦197259 \add city\add*.
 \v 30 David¦197264 wasn't able to go¦197265 there to \add ≈ask God's direction\add* because¦197269 he was terrified¦197270 of Yahweh's¦197274 messenger's¦197273 sword¦197272.
 \c 22
 \p
@@ -1281,7 +1281,7 @@
 \rem /s1 Preparations for the Temple; Preparation for the temple; Preparations for Building the Temple; David Prepares to Build the Temple
 \s4 Full kingdom
 \p
-\v 2 Then David¦197292 said¦197291 to gather¦197293 the foreigners who \add ≈lived\add* in Israel¦197299, and he assigned \add ≈them the job of\add* hewing out cut stones¦197303 to build¦197305 the residence¦197296 for God.
+\v 2 Then David¦197292 said¦197291 to gather¦197293 the foreigners who \add ≈lived\add* in Yisrael¦197299, and he assigned \add ≈them the job of\add* hewing out cut¦197302 stones¦197303 to build¦197305 the residence¦197296 for God.
 \v 3 He¦197317 prepared¦197316 a large quantity of iron for the door \add ≈hinges and¦197309 fittings\add*, so much brass that it couldn't be weighed¦197321,
 \v 4 and innumerable cedar logs that the Tsidonians and the Tsorians \add (Sidonians¦197329 and Tyrians¦197330)\add* brought¦197328 in for David¦197334.
 \v 5 David said¦197337, “My son Shelomoh \add (Solomon¦197339)\add* is young and not capable, and the house¦197343 to be built¦197344 for Yahweh¦197345 must¦197354 be \add ≈impressive for the sake of his reputation¦197349\add* and honour¦197350 everywhere, \add so\add* I'll¦197354 prepare for it now.” \add ≈So\add* David did a lot of preparation before \add ≈he died\add*.
@@ -1307,7 +1307,7 @@
 \c 23
 \rem /s1 Families of the Levites and Their Functions; Duties of the Levites; The Levites
 \p
-\v 1 \add ≈By then David¦197644 was old and coming to the end of his life\add*, and he¦197645 made his son Shelomoh \add (Solomon¦197651)\add* king¦197648 of Yisrael¦197655.\x + \xo 23:1: \xt 1Ki 1:1-40.\x*
+\v 1 \add ≈By then David¦197644 was old and coming to the end of his life\add*, and he¦197645 made¦197648 his son Shelomoh \add (Solomon¦197651)\add* king¦197648 of Yisrael¦197655.\x + \xo 23:1: \xt 1Ki 1:1-40.\x*
 \s1 The Levite families and their assignments
 \rem /s1 The Work of the Levites
 \s4 Full kingdom
@@ -1419,7 +1419,7 @@
 \rem /s1 The Temple Musicians; Duties of the Musicians; The Singers
 \s4 Full kingdom
 \p
-\v 1 Then David¦198382 and the army chiefs allocated the \add musical\add* service to the sons of Asaf¦198387, Heyman, and Yedutun—the ones prophesying¦198390 with harps¦198394, with lyres¦198393, and with cymbals¦198395. \add ≈This is a list of the men¦198398 they chose for that work¦198385\add*:
+\v 1 Then David¦198382 and the army chiefs allocated the \add musical\add* service to the sons of Asaf¦198387, Heman¦198388, and Yedutun—the ones prophesying¦198390 with harps¦198394, with lyres¦198393, and with cymbals¦198395. \add ≈This is a list of the men¦198398 they chose for that work¦198385\add*:
 \li1
 \v 2 From Asaf's¦198403 sons: Zakkur, Yosef¦198405, Netanyah, and Asarelah¦198407. They were supervised by Asaf, who prophesied¦198414 \add ≈under the king's direction\add*.
 \li1
@@ -1484,7 +1484,7 @@
 \rem /s1 The Gatekeepers; Duties of the Gatekeepers; The Temple Guards
 \s4 Full kingdom
 \p
-\v 1 These were the division¦198717 of the gatekeepers¦198718:
+\v 1 These were the divisions¦198717 of the gatekeepers¦198718:
 \li1 From the Korahites: Kore's¦198723 son Meshelemyah¦198720 (Kore was one of Asaf's¦198727 sons¦198726),
 \li1
 \v 2 Meshelemyah's \add seven\add* sons¦198730 (in order): Zekaryah, Yediael¦198733, Zebadyah¦198735, Yatniel,
@@ -1636,18 +1636,18 @@
 \rem /s1 Solomon Instructed to Build the Temple; David's Instructions for the Temple; David's Plans for the Temple; David's Instructions to Solomon
 \s4 Full kingdom
 \p
-\v 1 \add ≈Now\add* David¦199668 called all Yisrael's leaders to assemble¦199667 in Yerushalem¦199706: the tribal leaders, the leaders of the \add various\add* divisions¦199678 that served¦199679 the king, the commanders of army units of thousands¦199684 and of hundreds¦199686, and the supervisors of all the property¦199690 and cattle belonging to the king and his sons, along with the tops officials, and the warriors¦199699 including¦199667 \add ≈their powerful heroes\add*.
+\v 1 \add ≈Now\add* David¦199668 called all of Yisrael's leaders to assemble¦199667 in Yerushalem¦199706: the tribal leaders, the leaders of the \add various\add* divisions¦199678 that served¦199679 the king, the commanders of army units of thousands¦199684 and of hundreds¦199686, and the supervisors of all the property¦199690 and cattle belonging to the king and his sons, along with the top officials, and the warriors¦199699, including¦199667 \add ≈their powerful heroes\add*.
 \p
-\v 2 Then¦199708 King¦199710 David¦199709 stood up and spoke, “Listen to me, my brothers¦199716 and my people¦199717, I had in my heart¦199721 to put up a building for the box containing Yahweh's¦199728 covenant¦199726 to rest in. It's the footstool¦199729 of our god's feet of our god and I've made preparations¦199732 to start building,\x + \xo 28:2-7: \xt 2Sam 7:1-16; 1Ch 17:1-14.\x*
-\v 3 but¦199735 God¦199735 told me that I wouldn't be the one to build¦199740 a house¦199741 to \add ≈honour him\add* because¦199743 I've \add ≈been involved in a lot of war and¦199747 killings\add*.
+\v 2 Then¦199708 King¦199710 David¦199709 stood up and spoke, “Listen to me, my brothers¦199716 and my people¦199717, I wanted in my heart¦199721 to put up a building for the box containing Yahweh's¦199728 agreement¦199726 to rest in. It's the footstool¦199729 for our god's feet, and I've made preparations¦199732 to start building,\x + \xo 28:2-7: \xt 2Sam 7:1-16; 1Ch 17:1-14.\x*
+\v 3 but¦199735 God¦199735 told me that I wouldn't be the one to build¦199740 a house¦199741 to \add ≈honour him\add*, because¦199743 I've \add ≈been involved in a lot of war and¦199747 killings\add*.
 \p
-\v 4 “Yet Yisrael's god¦199752 Yahweh¦199751 chose me from all of my father's family to be king over Yisrael forever¦199764, because¦199765 he chose a leader¦199768 from \add the tribe of\add* Yehudah¦199766, my father' tribe, and¦199750 among the sons of my father, with¦199754 me he was pleased¦199776 to make king over all Israel¦199753.
+\v 4 “Yet Yisrael's god¦199752 Yahweh¦199751 chose me from all of my father's family to be king over Yisrael forever¦199764, because¦199765 he chose a leader¦199768 from \add the tribe of\add* Yehudah¦199766, my father's tribe, and¦199750 among my father's sons, he was pleased¦199776 to make me king over all of Yisrael¦199753.
 \v 5 Then¦199784 out of the many sons that he's given¦199790 me, he chose¦199793 my son Shelomoh \add (Solomon¦199794)\add* to \add ≈be the next king to rule his kingdom¦199800 of\add* Yisrael¦199804.
 \p
-\v 6 “Then¦199806 he told me, ‘Your son Shelomoh is the one who will build¦199812 my temple and the courtyards¦199814 \add around it\add*, because¦199815 I've¦199817 chosen¦199817 him to be like my son and I'll¦199822 be like a father¦199825 to him.
+\v 6 “Then¦199806 he told me, ‘Your son Shelomoh is the one who'll build¦199812 my temple and the courtyards¦199814 \add around it\add*, because¦199815 I've¦199817 chosen¦199817 him to be like my son, and I'll¦199822 be like a father¦199825 to him.
 \v 7 I'll¦199827 establish¦199827 his kingdom¦199830 forever¦199833, if he's diligent at following my instructions and¦199827 \add obeying\add* my judgements¦199839, like he is at present.’
 \p
-\v 8 “\add ≈So¦199843\add* now, in \add ≈front\add* of all Yisrael¦199847, Yahweh's¦199850 assembly¦199848, and in the ears¦199851 of our god, \add I challenge you all to discover and obey\add* all the commands¦199857 of your god Yahweh so that you'll all possess¦199861 the good¦199865 land and you'll all leave¦199866 your sons after¦199868 you to inherit¦199866 it forever¦199871.
+\v 8 “\add ≈So¦199843\add* now, in \add ≈front\add* of all of Yisrael¦199847, Yahweh's¦199850 assembly¦199848, and in the hearing¦199851 of our god, \add I challenge you all to discover and obey\add* all of your god Yahweh's commands¦199857, so that you'll all possess¦199861 the good¦199865 land, and you'll leave¦199866 your sons after¦199868 you to inherit¦199866 it forever¦199871.
 \p
 \v 9 “And you, Shelomoh my son, \add ≈follow\add* your father's god¦199881 and serve¦199883 him with a whole heart¦199884 and with a willing¦199887 life, because¦199888 Yahweh¦199893 \add ≈looks into\add* all hearts¦199891, and understands¦199898 all \add ≈your motives\add*. If you look for him, he'll \add make sure\add* you find him, but¦199874 if you abandon¦199906 him, he'll reject¦199907 you forever¦199908.
 \v 10 You can now see that you need to be strong¦199922 and get busy, because¦199913 Yahweh¦199915 has chosen¦199916 you to erect a building¦199918 to be his sanctuary¦199921.”
@@ -1655,24 +1655,24 @@
 \v 11 Then David¦199927 gave the plans for \add the temple\add* to his son Shelomoh, \add including¦199926 plans\add* for its porch¦199933, its houses¦199936, its treasuries¦199937, its upper¦199938 rooms and its inner¦199940 rooms, and the \add ≈room to contain the sacred box\add*.
 \v 12 \add He also handed over\add* the plans he envisioned for the temple courtyards¦199950, all the surrounding apartments, all the treasuries, and¦199944 all the storerooms for sacred¦199962 things¦199962.
 \v 13 \add He included instructions\add* for the divisions¦199964 of the priests¦199965 and Levites¦199966, for all the \add ≈services required to operate the temple, and for all the equipment and utensils needed for all that\add*.
-\v 14 \add David had determined\add* the weight of gold¦199984 and silver¦199992 would be needed to make all the necessary items that would be used in¦199983 the regular temple functions,
+\v 14 \add David had determined\add* the weight of gold¦199984 and silver¦199992 that would be needed to make all the necessary items that would be used in¦199983 the regular temple functions,
 \v 15 \add including¦200003\add* the gold lampstands and lamps and the silver¦200011 lampstands and lamps,
 \v 16 and the gold¦200021 for the display tables, and the silver for the silver tables.
 \v 17 \add ≈Also¦200031\add* the pure gold meat forks¦200031 and the jugs and basins¦200032, and the weights of the gold and silver¦200042 bowls.
-\v 18 Then¦200047 the weight¦200051 of refined¦200050 gold for the incense¦200048 altar¦200047, and¦200047 for making the winged creatures that¦200056 spread¦200056 out across the top of the box \add ≈containing\add* Yahweh's¦200063 agreement¦200061,
-\v 19 \add saying\add*, “I've written down all those plans \add ≈with¦200066 Yahweh's¦200068 direction as he gave me instructions for what has to be done\add*.”
-\v 20 Then David¦200077 told his son Shelomoh, “Be strong¦200080 and courageous¦200081, and \add ≈get going\add*. Don't¦200083 be afraid¦200085 or discouraged¦200088 because¦200089 Yahweh God¦200091, my god, is with you. He won't leave you and he won't abandon¦200097 you until¦200098 all the work¦200104 of \add ≈constructing\add* Yahweh's¦200090 residence \add ≈and the necessary equipment\add* is finished¦200100.
-\v 21 Listen, the divisions¦200110 of the priests¦200111 and the Levites¦200112 for all the service of the god's house¦200116 and all the \add ≈skilled¦200125 workmen will be backing you in¦200119 all the work¦200115\add*. The officials¦200129 and all the people¦200132 are \add ≈ready to follow your instructions\add*.”
+\v 18 Then¦200047 the weight¦200051 of refined¦200050 gold for the incense¦200048 altar¦200047, and¦200047 for making the winged creatures that¦200056 spread¦200056 out across the top of the box \add ≈containing\add* Yahweh's¦200063 agreement¦200061.
+\v 19 \add He said\add*, “I've written down all those plans \add ≈following Yahweh's¦200068 direction, as he gave me instructions for what has to be done\add*.”
+\v 20 Then David¦200077 told his son Shelomoh, “Be strong¦200080 and courageous¦200081, and \add ≈get going\add*. Don't¦200083 be afraid¦200085 or discouraged¦200088, because¦200089 Yahweh God¦200091, my god, is with you. He won't leave you and he won't abandon¦200097 you before¦200098 all the work¦200104 of \add ≈constructing\add* Yahweh's¦200090 residence \add ≈and the necessary equipment\add* is finished¦200100.
+\v 21 Listen, the divisions¦200110 of the priests¦200111 and the Levites¦200112 for all the work in God's house¦200116, and all the \add ≈skilled¦200125 workmen, will be backing you¦200118 in¦200119 all the work¦200115\add*. The officials¦200129 and all the people¦200132 are \add ≈ready to follow your¦200135 instructions\add*.”
 \c 29
 \s1 Donations for the temple
 \rem /s1 Gifts for Building the Temple; Solomon succeeds David as king; Offerings for Building the Temple
 \s4 Full kingdom
 \p
-\v 1 Then King¦200140 David¦200139 told the entire assembly¦200143, “My son Shelomoh \add (Solomon¦200144)\add* \add ≈has been chosen¦200147 by God himself\add*. He's young and tender, and \add ≈it's a huge¦200154 job\add* because¦200155 the temple¦200158 isn't¦200156 being built for people, but¦200138 for Yahweh¦200160 God.\x + \xo 29:1-2: \xt 1Ch 22:5.\x*
-\v 2 \add ≈I've¦200166 used all my resources to provide a plentiful supply of materials\add* for my god's residence: the gold for the gold things, and the silver for the silver things, the bronze for the bronze things, the iron for the iron things, the wood for the wooden parts, onyx stones for inlays, antimony¦200187 stones and colourful¦200188 things, and all the rare stones and alabaster¦200194 stones.
+\v 1 Then King¦200140 David¦200139 told the entire assembly¦200143, “My son Shelomoh \add (Solomon¦200144)\add* \add ≈has been chosen¦200147 by God himself\add*. He's young and tender, and \add ≈it's a huge¦200154 job\add*, because¦200155 the temple¦200158 isn't¦200156 being built for people, but¦200138 for Yahweh¦200160 God.\x + \xo 29:1-2: \xt 1Ch 22:5.\x*
+\v 2 \add ≈I've¦200166 used all my resources to provide a plentiful supply of materials\add* for my god's residence: the gold for the gold things, and the silver for the silver things, the bronze for the bronze things, the iron for the iron things, the wood for the wooden parts, onyx stones for inlays, antimony¦200187 stones and colourful¦200188 things, and all the rare stones, and alabaster¦200194 stones.
 \v 3 What's more, because¦200198 I'm excited to have my god's residence \add built\add*, I've donated my own personal gold¦200205 and¦200206 silver¦200206 on¦200198 top of everything else that I've prepared¦200214 for the sacred¦200216 temple:
 \v 4 100 tonnes of gold and 2,500 tonnes of refined¦200229 silver¦200228 for overlaying¦200230 the buildings' walls¦200231,
-\v 5 \add as well as\add* gold for the gold things, silver for the silver things, and for everything \add ≈to be made\add* by the craftsmen¦200242. \add ≈So\add* who is willing today, \add ≈to commit themselves\add* to making¦200244 a contribution¦200244 towards Yahweh's¦200248 work?
+\v 5 \add as well as\add* gold for the gold things, silver for the silver things, and for everything the craftsmen¦200242 \add ≈are going to make\add*. \add ≈So\add* who's willing \add ≈to commit themselves\add* today to making¦200244 a contribution¦200244 towards Yahweh's¦200248 work?
 \p
 \v 6 Then¦200256 the family¦200252 leaders and the leaders of the \add ≈tribes¦200255\add*, and the \add ≈various levels of military\add* commanders¦200257, and the king's¦200262 \add ≈construction overseers\add*, \add all\add* contributed¦200250 willingly¦200250.
 \v 7 They¦200268 donated \add a total of\add* 170 tonnes of gold and 100kg of gold coins, 350 tonnes of silver¦200276, 600 tonnes of bronze¦200280, and 3,400 tonnes of iron for the \add ≈temple\add* construction,
@@ -1682,34 +1682,34 @@
 \rem /s1 David's Prayer of Praise; David's Praise to God; David Praises God; David's Prayer
 \s4 Full kingdom
 \p
-\v 10 Then \add King\add* David¦200324 blessed Yahweh in \add ≈front of\add* the entire¦200329 assembly¦200331, saying, “Blessed are you¦200335, Yahweh, God¦200337 of Yisrael¦200338, our¦200339 father¦200339, from the ages past and until the ages to come.
-\v 11 Greatness and the power¦200348, beauty and splendour¦200349 and majesty¦200351 \add all belong\add* to you, Yahweh, as indeed does everything¦200354 in¦200355 the heavens¦200355 and on¦200355 the earth¦200356. The kingdom¦200359 and \add ≈supreme leadership\add* \add all belongs\add* to you, Yahweh.\x + \xo 29:11: \xt Mat 6:13.\x*
-\v 12 Wealth and \add prestige comes from you\add*, and you rule over everything. \add ≈You have the power¦200372 and strength and control\add* to make \add people\add* great¦200375 and to strengthen everyone,
+\v 10 Then \add King\add* David¦200324 blessed Yahweh in \add ≈front of\add* the entire¦200329 assembly¦200331, saying, “You¦200335 are blessed, Yahweh, Yisrael's¦200338 god¦200337, our¦200339 father¦200339, \add ≈for all time, both past and future\add*.
+\v 11 Greatness, power¦200348, beauty, splendour¦200349, and majesty¦200351 \add all belong\add* to you, Yahweh, as indeed does everything¦200354 in¦200355 the heavens¦200355 and on¦200355 the earth¦200356. The kingdom¦200359 and \add ≈supreme leadership\add* \add all belong\add* to you, Yahweh.\x + \xo 29:11: \xt Mat 6:13.\x*
+\v 12 Wealth and \add prestige comes from you\add*, and you rule over everything. \add ≈You have the power¦200372 and strength¦200373 and control\add* to make \add people\add* great¦200375 and to strengthen everyone,
 \v 13 \add ≈so\add* now, our god¦200380, we're thanking¦200381 you and¦200379 praising¦200384 your¦200386 beautiful name¦200385.
 \p
 \v 14 But¦200388 who am I, and who are my people¦200392, that we should \add ≈be in a position to be able\add* to donate freely like this? \add ≈Yes,\add* everything¦200402 comes from you, and \add ≈we've simply given¦200404 back from what you gave¦200404 to us\add*,
-\v 15 because we're \add just\add* strangers on the earth \add ≈in your¦200411 eyes\add*, and foreign guests like all our ancestors¦200415. Our time¦200418 on the earth is like a shadow¦200416 \add ≈without any permanence\add*.
-\v 16 Yahweh¦200425 our god¦200426, all this abundance¦200428 that¦200430 we have \add ≈collected\add* in order to build¦200432 a house¦200435 for you, for your holy name¦200436, \add ≈originally it came from you and it all belongs¦200441 to you\add* \add anyway\add*.
-\v 17 \add ≈Yes\add* I know¦200444, my god¦200445, that you examine our hearts and you're¦200447 pleased¦200451 \add ≈when we do what is right\add*. I have freely offered all these¦200458 \add gifts\add* \add ≈as I strive to do what is right\add*, and now \add ≈I'm also happy to\add* see your people¦200460 to freely offer \add gifts\add* to you.
-\v 18 Yahweh¦200470, the god¦200471 of our ancestors¦200475 Abraham¦200472, Yitshak \add (Isaac¦200473)\add*, and Yisrael¦200474 \add (Israel¦200474)\add*, \add help your¦200483 people¦200483 continue to desire to do things like this forever¦200479, and help them remain loyal to you¦200486\add*.
-\v 19 \add ≈Also¦200488,\add* give¦200490 my son Shelomoh \add (Solomon)\add* a \add ≈sincere desire\add* to follow your instructions, your testimonies¦200495, and your regulations¦200496, and to do¦200497 \add ≈everything¦200498 needed\add* to build¦200499 the temple¦200500 \add ≈following all my preparation¦200503 work\add*.”
+\v 15 because we're \add just\add* strangers on the earth \add ≈in your¦200411 eyes\add*, and foreign guests, like all our ancestors¦200415. Our time¦200418 on the earth is like a shadow¦200416 \add ≈without any permanence\add*.
+\v 16 Yahweh¦200425 our god¦200426, all this abundance¦200428 that¦200430 we've \add ≈collected\add* in order to build¦200432 a house¦200435 for you, for your holy name¦200436, \add ≈originally came from you, and it¦200439 all belongs¦200441 to you\add* \add anyway\add*.
+\v 17 \add ≈Yes\add* I know¦200444, my god¦200445, that you examine our hearts, and you're¦200447 pleased¦200451 \add ≈when we do what's right\add*. I've¦200455 freely offered all these¦200458 \add gifts\add* \add ≈as I strive to do what's right\add*, and now \add ≈I'm also happy to\add* see your people¦200460 freely offer \add gifts\add* to you.
+\v 18 Yahweh¦200470, god¦200471 of our ancestors¦200475 Abraham¦200472, Yitshak \add (Isaac¦200473)\add*, and Yisrael¦200474 \add (Israel¦200474)\add*, \add help your¦200483 people¦200483 continue to desire to do things like this forever¦200479, and help them remain loyal to you¦200486\add*.
+\v 19 \add ≈Also¦200488,\add* give¦200490 my son Shelomoh \add (Solomon)\add* a \add ≈sincere desire\add* to follow your instructions, your decrees¦200495, and your regulations¦200496, and to do¦200497 \add ≈everything¦200498 needed\add* to build¦200499 the temple¦200500 \add ≈following all my preparation¦200503 work\add*.”
 \p
-\v 20 Then David¦200507 told all the assembled \add people\add*, “Bless your¦200517 god¦200517 Yahweh.” and the entire¦200519 assembly blessed¦200511 Yahweh, the god of their¦200524 ancestors¦200524. Then they bowed¦200525 down to \add ≈honour\add* \add both\add* Yahweh and the king¦200528.
+\v 20 Then David¦200507 told all the assembled \add people\add*, “Bless your¦200517 god¦200517 Yahweh,” and the entire¦200519 assembly blessed¦200511 Yahweh, their¦200524 ancestors'¦200524 god. Then they bowed¦200525 down to \add ≈honour\add* \add both\add* Yahweh and the king¦200528.
 \rem /s1 Solomon Named as King; Solomon Acknowledged as King
 \p
-\v 21 Then¦200530 they offered sacrifices to Yahweh, and sacrificed burnt¦200535 offerings to Yahweh on the following day: 1,000 bulls¦200540, 1,000 rams, 1,000 lambs¦200544, plus¦200534 their¦200546 drink¦200546 offerings and sacrifices for all Yisrael¦200551 in abundance.
+\v 21 Then¦200530 they offered sacrifices to Yahweh, and sacrificed burnt¦200535 offerings to Yahweh on the following day: 1,000 bulls¦200540, 1,000 rams, 1,000 lambs¦200544, plus¦200534 their¦200546 drink¦200546 offerings and sacrifices for all of Yisrael¦200551 in abundance.
 \v 22 They ate¦200553 and drank¦200554 \add ≈in¦200559 Yahweh's honour\add* that day¦200557 with¦200559 great¦200560 celebration.
 \rem /s1 Solomon Anointed King
-\p Then¦200553 they rededicated David's¦200566 son Shelomoh \add (Solomon¦200563)\add* as king¦200561, and anointed¦200567 him¦200567 as leader \add ≈on¦200559 Yahweh's behalf\add* and Tsadok¦200570 as priest¦200571.
-\v 23 Shelomoh¦200574 sat¦200573 on Yahweh's¦200578 throne¦200577 as king¦200580 \add ≈replacing\add* his father¦200584 David¦200583, and he prospered¦200585 and all Yisrael¦200590 listened¦200586 to him.\x + \xo 29:23: \xt 1Ki 2:12.\x*
-\v 24 All the leaders¦200594 and¦200592 the mighty¦200595 warriors¦200595, as well as all the sons¦200599 of King David¦200601, \add ≈pledged allegiance to\add* King Shelomoh.
-\v 25 Yahweh¦200609 made Shelomoh exceedingly great¦200608 in the eyes¦200614 of all Yisrael, and¦200618 bestowed a kingdom on him¦200631, the majesty¦200620 of which¦200622 hadn't previously been on any king¦200630 over Yisrael.
+\p Then¦200553 they rededicated David's¦200566 son Shelomoh \add (Solomon¦200563)\add* as king¦200561, and anointed¦200567 him¦200567 as leader \add ≈on¦200559 Yahweh's behalf\add*, and Tsadok¦200570 as priest¦200571.
+\v 23 Shelomoh¦200574 sat¦200573 on Yahweh's¦200578 throne¦200577 as king¦200580, \add ≈replacing\add* his father¦200584 David¦200583, and he prospered¦200585, and all of Yisrael¦200590 listened¦200586 to him.\x + \xo 29:23: \xt 1Ki 2:12.\x*
+\v 24 All the leaders¦200594 and¦200592 the mighty¦200595 warriors¦200595, as well as all of King David's¦200601 sons¦200599, \add ≈pledged allegiance to\add* King Shelomoh.
+\v 25 Yahweh¦200609 made¦200608 Shelomoh exceedingly great¦200608 in the eyes¦200614 of all the Israelis¦200615, and¦200618 bestowed a kingdom on him¦200631, the majesty¦200620 of which¦200622 hadn't previously been on any king¦200630 over Yisrael¦200617.
 \s1 The story of David's kingdom
 \rem /s1 The Death of David; Summary of David's Reign
 \s4 Full kingdom
 \p
-\v 26 Yishay's¦200640 \add (Jesse's)\add* son David¦200637 was the king who ruled all Yisrael¦200646 \add (Israel¦200646)\add*
+\v 26 Yishay's¦200640 \add (Jesse's)\add* son David¦200637 was the king who ruled all of Yisrael¦200646 \add (Israel¦200646)\add*,
 \v 27 and he ruled for forty¦200654 years: from Hevron city for seven¦200658 years, and then¦200648 thirty-three years from Yerushalem¦200660.\x + \xo 29:27: \xt 2Sam 5:4-5; 1Ch 3:4.\x*
 \v 28 He \add ≈lived a long life with¦200666\add* riches and splendour, and died¦200665 at¦200666 a good¦200667 old age. Then¦200665 his¦200675 son Shelomoh \add (Solomon¦200673)\add* \add ≈replaced him¦200675 as king\add*.
-\v 29 \add The records\add* of \add ≈everything done by\add* King¦200679 David¦200678, \add ≈from the beginning to his end\add*, were written¦200683 by the prophets¦200693 Shemuel \add (Samuel¦200687)\add*, Natan¦200692 \add (Nathan¦200692)\add*, and¦200677 Gad¦200697.
+\v 29 \add The records\add* of \add ≈everything King¦200679 David¦200678 did\add*, \add ≈from the beginning to his end\add*, were written¦200683 by the prophets¦200693 Shemuel \add (Samuel¦200687)\add*, Natan¦200692 \add (Nathan¦200692)\add*, and¦200677 Gad¦200697.
 \v 30 They \add ≈wrote\add* about his powerful¦200704 rule, and all the things that¦200706 happened to him and to the Israeli people, and in the kingdoms¦200715 of \add ≈other countries while he was ruling Yisrael¦200711\add*.
