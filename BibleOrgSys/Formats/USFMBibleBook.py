@@ -43,10 +43,10 @@ from BibleOrgSys.Bible import Bible, BibleBook
 import usfm_markers_py
 
 
-LAST_MODIFIED_DATE = '2025-06-27' # by RJH
+LAST_MODIFIED_DATE = '2025-07-01' # by RJH
 SHORT_PROGRAM_NAME = "USFMBibleBook"
 PROGRAM_NAME = "USFM Bible book handler"
-PROGRAM_VERSION = '0.66'
+PROGRAM_VERSION = '0.67'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -113,6 +113,9 @@ class USFMBibleBook( BibleBook ):
             # print( f"\n\ndoAddLine( '{addMarker}', '{addText}' ) for {self.workName} {self.BBB} {C}:{V}" )
 
             marker, text = addMarker, addText.replace( '~', ' ' ) # NBSP = Non-breaking space
+            # TODO: Why do these next two lines not catch ULT JER ???
+            assert not marker.startswith('zaln-e'), f"{self.workName} {self.BBB} {C}:{V} {marker=} shouldn't begin a line"
+            if marker.startswith('zaln-e'): print( f"{self.workName} {self.BBB} {C}:{V} {marker=} shouldn't begin a line" ); ALWAYS_STOP
             if self.workName in ('ULT','UST'): # unfoldingWord uses braces to indicate added text
                 text = text.replace( '{', '\\add ' ).replace( '}', '\\add*' )
 
@@ -170,6 +173,9 @@ class USFMBibleBook( BibleBook ):
             debuggingThisFunction = DEBUGGING_THIS_MODULE or False # (99 if self.BBB=='NEH' and C=='1' else False)
             # if self.BBB=='NEH' and C=='1' and V=='2': assert False, "We want to stop here"
             fnPrint( debuggingThisFunction, f"'{self.workName}' {self.BBB}_{C}:{V} handleUWEncoding( {givenMarker}={givenText!r}\n              level={variables['level']}, aText='{variables['text']}', aWords='{variables['words']}' )…" )
+            # TODO: Why do these next two lines not catch ULT JER ???
+            assert not givenMarker.startswith('zaln-e'), f"{self.workName} {self.BBB} {C}:{V} {givenMarker=} shouldn't begin a line"
+            if givenMarker.startswith('zaln-e'): print( f"{self.workName} {self.BBB} {C}:{V} {givenMarker=} shouldn't begin a line" ); ALWAYS_STOP
             if variables['text']:
                 assert variables['text'].startswith( 'x-strong="' )
                 assert variables['text'].endswith( '"' )
@@ -297,7 +303,7 @@ class USFMBibleBook( BibleBook ):
                         variables['level'] += 1
                         if variables['level'] > variables['maxLevel']: variables['maxLevel'] = variables['level']
                         if variables['level'] > MAX_EXPECTED_NESTING_LEVELS:
-                            logging.critical( f"findInternalStarts exceeded max nesting levels ({MAX_EXPECTED_NESTING_LEVELS}) at {self.BBB}_{C}:{V} {marker}='{text}'" )
+                            logging.critical( f"findInternalStarts exceeded max nesting levels ({MAX_EXPECTED_NESTING_LEVELS}) at {self.workName} {self.BBB}_{C}:{V} {marker}='{text[:100]}'" )
                         dPrint( 'Never', debuggingThisFunction, f"      findInternalStarts: Increased level to {variables['level']}" )
                         variables['text'] += ('|' if variables['text'] else '') \
                                     + text[ixAlignmentStart+9:ixAlignmentStartEnding].strip() # Can still be a space after the |
@@ -359,7 +365,7 @@ class USFMBibleBook( BibleBook ):
                     #dPrint( 'Never', debuggingThisFunction, f"      Decreased level to {variables['level']}" )
                     #assert variables['level'] >= 0
                 elif '\\zaln-e' in text:
-                    logging.critical( f"Not enough zaln-e markers (expected {variables['level']}) in {marker}={text}" )
+                    logging.critical( f"Not enough {self.workName} {self.BBB} zaln-e markers (expected {variables['level']}) in {marker}={text}" )
                     assert False, "We want to stop here" # Not enough zaln-e markers
                 else: # end marker(s) must be on a following line
                     #dPrint( 'Quiet', debuggingThisFunction, self.wordName, self.BBB, C, V, "words3a", variables['words'] )
@@ -599,7 +605,7 @@ class USFMBibleBook( BibleBook ):
                     else:
                         #dPrint( 'Never', debuggingThisFunction, 'USFM Para Markers', BibleOrgSysGlobals.USFMParagraphMarkers )
                         logging.critical( f"Programming error ¬ZALN: USFMBibleBook.load() lost '{self.workName}' {self.BBB}_{C}:{V} text after {lastMarker}='{lastText}': {marker}='{text}'" )
-                        if self.doExtraChecking or DEBUGGING_THIS_MODULE: assert False, "We want to stop here"
+                        if self.doExtraChecking or DEBUGGING_THIS_MODULE: assert False, f"USFMBibleBook.load( {filename} ) for {self.workName}' {self.BBB}_{C}:{V} needs to stop here because of lost ¬ZALN"
                 elif marker in ('tc1','tc2','tc3','tc4','tc5'):
                     # and (lastMarker in ('v', 'XXXp~', 'q','pi','qm','li') or lastMarker in BibleOrgSysGlobals.USFMParagraphMarkers):
                     dPrint( 'Info', DEBUGGING_THIS_MODULE, f"HereTC with {lastMarker}='{lastText}' now {marker}='{text}'" )

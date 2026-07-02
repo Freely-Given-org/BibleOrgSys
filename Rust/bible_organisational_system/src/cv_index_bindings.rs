@@ -680,21 +680,21 @@ impl PyCVIndexEntry {
     /// Create a new CV index entry.
     ///
     /// Args:
-    ///     entry_index: The starting index into the entry list
+    ///     start_index: The starting index into the entry list
     ///     entry_count: Number of entries for this C:V
     ///     context: Optional list of context markers
     #[new]
-    #[pyo3(signature = (entry_index, entry_count, context=None))]
-    fn new(entry_index: u16, entry_count: u16, context: Option<Vec<String>>) -> Self {
+    #[pyo3(signature = (start_index, entry_count, context=None))]
+    fn new(start_index: u32, entry_count: u8, context: Option<Vec<String>>) -> Self {
         let ctx = context.unwrap_or_default().into_iter().map(|s| s.into()).collect();
         Self {
-            inner: CVIndexEntry::new(entry_index, entry_count, ctx),
+            inner: CVIndexEntry::new(start_index, entry_count, ctx),
         }
     }
 
-    fn __getnewargs__(&self) -> (usize, u16, Option<Vec<String>>) {
+    fn __getnewargs__(&self) -> (usize, u8, Option<Vec<String>>) {
         (
-            self.inner.entry_index(),
+            self.inner.start_index(),
             self.inner.entry_count(),
             Some(self.inner.context().iter().map(|s| s.to_string()).collect()),
         )
@@ -704,19 +704,19 @@ impl PyCVIndexEntry {
 
     /// Get the starting entry index.
     #[getter(entryIndex)]
-    fn entry_index(&self) -> usize {
-        self.inner.entry_index()
+    fn start_index(&self) -> usize {
+        self.inner.start_index()
     }
 
     /// Get the entry count for this C:V.
     #[getter(entryCount)]
-    fn entry_count(&self) -> u16 {
+    fn entry_count(&self) -> u8 {
         self.inner.entry_count()
     }
 
     /// Get the index one past the last entry for this C:V.
-    fn next_entry_index(&self) -> usize {
-        self.inner.next_entry_index()
+    fn next_start_index(&self) -> usize {
+        self.inner.next_start_index()
     }
 
     /// Get the context markers.
@@ -729,16 +729,16 @@ impl PyCVIndexEntry {
 
     /// Get the entry index
     fn getEntryIndex(&self) -> usize {
-        self.inner.entry_index()
+        self.inner.start_index()
     }
 
     /// Get the next entry index
     fn getNextEntryIndex(&self) -> usize {
-        self.inner.next_entry_index()
+        self.inner.next_start_index()
     }
 
     /// Get the entry count
-    fn getEntryCount(&self) -> u16 {
+    fn getEntryCount(&self) -> u8 {
         self.inner.entry_count()
     }
 
@@ -755,7 +755,7 @@ impl PyCVIndexEntry {
 
     fn __getitem__(&self, py: Python<'_>, key_index: isize) -> PyResult<Py<PyAny>> {
         match key_index {
-            0 => Ok(self.inner.entry_index().into_pyobject(py)?.into_any().unbind()),
+            0 => Ok(self.inner.start_index().into_pyobject(py)?.into_any().unbind()),
             1 => Ok(self.inner.entry_count().into_pyobject(py)?.into_any().unbind()),
             2 => Ok(self.context().into_pyobject(py)?.into_any().unbind()),
             _ => Err(PyIndexError::new_err("Index out of range")),
@@ -765,9 +765,9 @@ impl PyCVIndexEntry {
     fn __repr__(&self) -> String {
         format!(
             "InternalBibleBookCVIndexEntry object: ix={} cnt={} ixE={}{}",
-            self.inner.entry_index(),
+            self.inner.start_index(),
             self.inner.entry_count(),
-            self.inner.next_entry_index(),
+            self.inner.next_start_index(),
             if self.inner.context().is_empty() {
                 String::new()
             } else {
@@ -1003,13 +1003,7 @@ impl PyInternalBibleBookCVIndex {
             .map_err(|e| PyValueError::new_err(e.to_string()))
     }
 
-    // /// Validate the index structure.
-    // fn validate<'py>(&self, _py: Python<'py>) -> Vec<String> {
-    //     self.inner.validate()
-    // }
-
     // === camelCase methods (Python backward compat, accept tuples) ===
-
     /// Build the CV index from processed entries
     fn makeBookCVIndex<'py>(&mut self, _py: Python<'py>, entries: &PyInternalBibleEntryList) -> PyResult<()> {
         verbosity_println!(3, "Building CV index for {} {} from {} entries…", self.inner.work_name(), self.inner.bos_book_code(), entries.__len__());
@@ -1079,19 +1073,19 @@ impl PyInternalBibleBookCVIndex {
         let next_cv = ChapterVerse::new(&next_c, "0");
 
         let end_index = if let Some(next_entry) = self.inner.get_index_entry(&next_cv) {
-            next_entry.entry_index()
+            next_entry.start_index()
         } else if chapter == "-1" {
             // For intro, try chapter 1
             let cv1 = ChapterVerse::new("1", "0");
             self.inner
                 .get_index_entry(&cv1)
-                .map(|e| e.entry_index())
+                .map(|e| e.start_index())
                 .unwrap_or(self.inner.entries().len())
         } else {
             self.inner.entries().len()
         };
 
-        let entries = self.inner.entries().slice(first_entry.entry_index(), end_index);
+        let entries = self.inner.entries().slice(first_entry.start_index(), end_index);
         debug_assert!(entries.last().map(|e| e.is_end_marker()).unwrap_or(false), "Last entry in chapter should be end marker not {:?}", entries.last().map(|e| e.marker()));
         Ok((PyInternalBibleEntryList::from(entries), context))
     }
@@ -1186,7 +1180,6 @@ pub fn py_build_bible_cv_indexes<'py>(
     Ok(dict)
 }
 
-
 #[cfg(test)]
 mod tests {
 
@@ -1195,8 +1188,8 @@ mod tests {
     use std::io::{BufRead, BufReader};
 
     #[test]
-    #[ignore = "Test not finished yet"]
-    fn test_oet_lv_haggai_processing() {
+    // #[ignore = "Test not finished yet"]
+    fn test_oet_lv_haggai_cv_indexing() {
         let file_path = "../../Tests/DataFilesForTests/OET-LV/OET-LV_HAG.ESFM";
         let file = File::open(file_path).expect("Could not open OET-LV Haggai ESFM file");
         let reader = BufReader::new(file);
@@ -1218,13 +1211,13 @@ mod tests {
         // Results should match test_data/OET-LV_HAG_rawLines.txt
         let original_count = raw_lines.len();
         // println!("Original lines read: {}", original_count);
-        assert_eq!(original_count, 57, "Expected 57 raw lines in Haggai ESFM file");
+        assert_eq!(original_count, 57, "Expected 57 raw lines in Haggai OET-LV ESFM file");
 
         let options = crate::processing::ProcessLinesOptions::default();
         let processed = crate::processing::process_lines(raw_lines, "HAG", "OET-LV", &options);
         // println!("Final OET-LV Haggai processed line entries: {}", processed.len());
 
-        let mut _index  = PyInternalBibleBookCVIndex::new("OET-LV", "HAG");
+        let cv_index  = PyInternalBibleBookCVIndex::new("OET-LV", "HAG");
         println!("This test is UNFINISHED: CV index building and lookup not yet implemented for OET-LV Haggai");
         // index.build(pyo3::Python::<'_>, &PyInternalBibleEntryList::from(processed.clone())).expect("Failed to build CV index for OET-LV Haggai");
 

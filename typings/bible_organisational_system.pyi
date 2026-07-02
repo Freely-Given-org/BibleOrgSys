@@ -735,13 +735,13 @@ class CVIndexEntry:
     Supports both snake_case properties and camelCase getter methods.
     """
     def __init__(
-        self, entry_index: int, entry_count: int, context: list[str] | None = None
+        self, start_index: int, entry_count: int, context: list[str] | None = None
     ) -> None:
         """
         Create a new CV index entry.
 
         Args:
-        entry_index: The starting index into the entry list
+        start_index: The starting index into the entry list
         entry_count: Number of entries for this C:V
         context: Optional list of context markers
         """
@@ -755,7 +755,7 @@ class CVIndexEntry:
     def entryCount(self) -> int:
         """Get the entry count for this C:V."""
 
-    def next_entry_index(self) -> int:
+    def next_start_index(self) -> int:
         """Get the index one past the last entry for this C:V."""
 
     @property
@@ -931,7 +931,7 @@ class InternalBibleBookSectionIndexEntry:
         end_c: str,
         end_v: str,
         start_ix: int,
-        end_ix: int,
+        entry_count: int,
         reason_marker: str,
         section_name: str,
         context_list: list[str] | None = None,
@@ -943,7 +943,7 @@ class InternalBibleBookSectionIndexEntry:
         endC: End chapter number string
         endV: End verse number string
         startIx: Start entry index
-        endIx: End entry index (inclusive)
+        entryCount: Number of entries in the section
         reasonMarker: Marker that started this section
         sectionName: Section heading text
         contextList: Optional list of context markers

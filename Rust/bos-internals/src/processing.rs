@@ -192,13 +192,14 @@ pub fn line_fix_and_move_extras_out(
     let mut final_clean = final_adj.trim_start().to_string();
     static MARKER_RE: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"\\\+?[a-z0-9]{1,6}(?:\*| )?").unwrap());
     final_clean = MARKER_RE.replace_all(&final_clean, "").to_string();
-    assert!(
-        !final_clean.contains('\\'),
-        "line_fix_and_move_extras_out {}: Clean text should not contain backslashes after marker removal: '{}' from '{}'",
-        line_location,
-        final_clean,
-        text
-    );
+    if final_clean.contains('\\') {
+        if have_strict_checking_flag() || cfg!(debug_assertions) {
+            panic!("line_fix_and_move_extras_out {}: Clean text should not contain backslashes after marker removal: '{}' from '{}'",
+            line_location, final_clean, text);
+        } else {
+            errors.push(format!("{} Clean text contains backslashes after marker removal: '{}' from '{}'", line_location, final_clean, text));
+        }
+    }
 
     (final_adj, final_clean, extras)
 }

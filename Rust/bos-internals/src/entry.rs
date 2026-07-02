@@ -6,9 +6,10 @@
 
 use compact_str::CompactString;
 
+use crate::bos_markers::{ExtraType, custom_content, custom_nesting, is_end_marker};
 use crate::entry_extras::InternalBibleExtraList;
 use crate::error::ValidationError;
-use crate::bos_markers::{ExtraType, custom_content, custom_nesting, is_end_marker};
+use crate::have_strict_checking_flag;
 
 /// Represents an "extra" element that was extracted from the main text flow.
 ///
@@ -273,16 +274,18 @@ impl InternalBibleEntry {
         let binding = clean_text.clone().into();
         let clean_text = binding.trim();
 
-        assert!(!marker.clone().into().is_empty(), "Marker cannot be empty");
-        assert!(!marker.clone().into().contains('\\') && !marker.clone().into().contains(' ') && !marker.clone().into().contains('*'), "Invalid character in marker: '{}'", marker.clone().into());
-        assert!(clean_text.is_empty() || clean_text.trim() == clean_text, "clean_text cannot have leading whitespace: '{}'", clean_text);
-        assert!(!adjusted_text.clone().into().contains('\n') && !adjusted_text.clone().into().contains('\r'), "Newlines in adjusted_text: '{}'", adjusted_text.clone().into());
-        assert!(!clean_text.contains('\n') && !clean_text.contains('\r'), "Newlines in clean_text: '{}'", clean_text);
-        assert!(!clean_text.contains('\\'), "Backslash in clean_text: '{}'", clean_text);
-        assert!(!original_text.clone().into().contains('\n') && !original_text.clone().into().contains('\r'), "Newlines in original_text: '{}'", original_text.clone().into());
-        // assert!((!["c", "v"].contains(&marker.clone().into().as_str()) && marker.clone().into().chars().nth(0) != Some('¬') && original_text.clone().into().contains('\\'))
-        //         || (clean_text == original_text.clone().into().trim_start() && adjusted_text.clone().into() == original_text.clone().into()),
-        //     "For simple markers and end markers, or for simple text, clean_text and adjusted_text must match original_text. Got marker '{}' with clean_text: '{}', adjusted_text: '{}', original_text: '{}'", marker.clone().into(), clean_text, adjusted_text.clone().into(), original_text.clone().into());
+        if have_strict_checking_flag() || cfg!(debug_assertions) {
+            assert!(!marker.clone().into().is_empty(), "Marker cannot be empty");
+            assert!(!marker.clone().into().contains('\\') && !marker.clone().into().contains(' ') && !marker.clone().into().contains('*'), "Invalid character in marker: '{}'", marker.clone().into());
+            assert!(clean_text.is_empty() || clean_text.trim() == clean_text, "clean_text cannot have leading whitespace: '{}'", clean_text);
+            assert!(!adjusted_text.clone().into().contains('\n') && !adjusted_text.clone().into().contains('\r'), "Newlines in adjusted_text: '{}'", adjusted_text.clone().into());
+            assert!(!clean_text.contains('\n') && !clean_text.contains('\r'), "Newlines in clean_text: '{}'", clean_text);
+            assert!(!clean_text.contains('\\'), "Backslash in clean_text: '{}'", clean_text);
+            assert!(!original_text.clone().into().contains('\n') && !original_text.clone().into().contains('\r'), "Newlines in original_text: '{}'", original_text.clone().into());
+            // assert!((!["c", "v"].contains(&marker.clone().into().as_str()) && marker.clone().into().chars().nth(0) != Some('¬') && original_text.clone().into().contains('\\'))
+            //         || (clean_text == original_text.clone().into().trim_start() && adjusted_text.clone().into() == original_text.clone().into()),
+            //     "For simple markers and end markers, or for simple text, clean_text and adjusted_text must match original_text. Got marker '{}' with clean_text: '{}', adjusted_text: '{}', original_text: '{}'", marker.clone().into(), clean_text, adjusted_text.clone().into(), original_text.clone().into());
+        }
 
         Self {
             marker: marker.into(),
