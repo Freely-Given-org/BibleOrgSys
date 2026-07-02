@@ -38,9 +38,9 @@ pub struct SectionIndexEntry {
     /// Verse where this section ends.
     end_verse_num_str: CompactString,
     /// Index of the first entry for this section.
-    start_index: u16,
-    /// Index of the last entry for this section (inclusive).
-    end_index: u16,
+    start_index: u32,
+    /// Number of entries in this section (inclusive).
+    entry_count: u16,
     /// The marker that started this section (e.g., "Headers", "is1", "s1", "c", "c/s1").
     /// Note that "c/s1" should only occur for Psalms (where each chapter is automatically a new section)
     reason_marker: CompactString,
@@ -55,8 +55,8 @@ impl SectionIndexEntry {
     pub fn new(
         end_chapter: impl Into<CompactString>,
         end_verse: impl Into<CompactString>,
-        start_index: u16,
-        end_index: u16,
+        start_index: u32,
+        entry_count: u16,
         reason_marker: impl Into<CompactString>,
         section_name: impl Into<String>,
         context: Vec<CompactString>,
@@ -65,7 +65,7 @@ impl SectionIndexEntry {
             end_chapter_num_str: end_chapter.into(),
             end_verse_num_str: end_verse.into(),
             start_index,
-            end_index,
+            entry_count,
             reason_marker: reason_marker.into(),
             section_name: section_name.into(),
             context,
@@ -98,13 +98,13 @@ impl SectionIndexEntry {
     /// Get the ending entry index (inclusive).
     #[inline]
     pub fn end_index(&self) -> usize {
-        self.end_index as usize
+        self.start_index as usize + self.entry_count as usize - 1
     }
 
     /// Get the count of entries in this section.
     #[inline]
     pub fn entry_count(&self) -> usize {
-        (self.end_index + 1 - self.start_index) as usize
+        self.entry_count as usize
     }
 
     /// Get the marker that started this section.
@@ -138,7 +138,7 @@ impl std::fmt::Display for SectionIndexEntry {
             "SectionEntry(ends {} lines {}-{} {} {:?} [{}])",
             self.end_cv(),
             self.start_index,
-            self.end_index,
+            self.entry_count,
             self.reason_marker,
             self.section_name,
             self.context.join(", "),
@@ -237,7 +237,7 @@ impl InternalBibleBookSectionIndex {
 
         Ok(self
             .line_entries
-            .slice(entry.start_index as usize, (entry.end_index + 1) as usize))
+            .slice(entry.start_index as usize, (entry.end_index() + 1) as usize))
     }
 
     /// Get section entries with context markers.
@@ -256,7 +256,7 @@ impl InternalBibleBookSectionIndex {
 
         let entries = self
             .line_entries
-            .slice(entry.start_index as usize, (entry.end_index + 1) as usize);
+            .slice(entry.start_index as usize, (entry.end_index() + 1) as usize);
         Ok((entries, entry.context.clone()))
     }
 
@@ -339,7 +339,7 @@ impl InternalBibleBookSectionIndex {
         let mut book_name = String::new();
         let mut had_section_heading_since_chapters = false;
         let mut just_had_ms1 = false;
-        // let mut last_bridge_entry_index: Option<u16> = None;
+        // let mut last_bridge_start_index: Option<u16> = None;
         // let mut last_bridge_verse_num_str: Option<CompactString> = None;
 
         for (i, line_entry) in self.line_entries.iter().enumerate() {
@@ -404,11 +404,11 @@ impl InternalBibleBookSectionIndex {
                         println!("    build {} section index at {} {} {}:{} has v= = '{}' followed by '{}' so need to start new index entry here",
                                 self.work_name(), i, self.bos_book_code(), current_chapter_num_str, current_verse_num_str, special_verse_num, next_marker);
                     }
-                    let this_start_index = i as u16 - {if last_marker=="c" {1} else {0}};
+                    let this_start_index = i as u32 - {if last_marker=="c" {1} else {0}};
                     // current_verse_num_str = CompactString::from(special_verse_num);
                     let mut finishing_verse_num_str = CompactString::from(last_verse_num_str.clone());
                     if current_verse_num_str.contains("b") { finishing_verse_num_str = CompactString::from(current_verse_num_str.replace("b", "a")); }
-                    // last_bridge_entry_index = Some(i as u16);
+                    // last_bridge_start_index = Some(i as u32);
                     // last_bridge_verse_num_str = Some(CompactString::from(verse_num));
                     // if let Some(section) = pending.as_mut() {
                     //     if section.start_cv.is_none() {
@@ -430,7 +430,7 @@ impl InternalBibleBookSectionIndex {
                                     current_verse_num_str.as_str(),
                                 ));
                             }
-                            let mut end_idx = (i as u16).saturating_sub(1);
+                            let mut end_idx = (i as u32).saturating_sub(1);
                             for _ in 0..4 {
                                 if have_strict_checking_flag() || cfg!(debug_assertions) {
                                     println!("      Finding end of previous section that started at {}: {} marker = {}", this_pending_section.start_index, end_idx, self.line_entries.get(end_idx as usize).clone().unwrap().marker());
@@ -480,7 +480,7 @@ impl InternalBibleBookSectionIndex {
                 let (cv, new_ms1_entry) = pending.take().unwrap().into_closed(
                     "0",
                     "0",
-                    (i - 1) as u16,
+                    (i - 1) as u32,
                     context.clone());
                 assert!(new_ms1_entry.reason_marker().contains("ms1"));
                 let this_verse_num_str = String::from(cv.verse());
@@ -493,7 +493,7 @@ impl InternalBibleBookSectionIndex {
                 // New s1 section starts at this section marker
                 pending = Some(PendingSection {
                     start_cv: Some(ChapterVerse::new(current_chapter_num_str.as_str(),  this_verse_num_str)),
-                    start_index: i as u16,
+                    start_index: i as u32,
                     reason: CompactString::from( if current_verse_num_str=="0" { if process_chapters_as_section_breaks {"c/s1"} else {"s1/c"} } else {"s1"}),
                     name: line_entry.clean_text().to_string(),
                     // has_content: false
@@ -503,15 +503,14 @@ impl InternalBibleBookSectionIndex {
 
             else if marker == "c" {
                 let mut next_relevant_marker = "";
-                if !process_chapters_as_section_breaks {
-                    for adder in 1..9 { // Look at what's ahead
-                        if ["v","v="].contains(&self.line_entries.get(i+adder).unwrap().marker()) {
-                            next_relevant_marker = self.line_entries.get(i+adder).unwrap().marker();
-                            break;
-                        }
+                for adder in 1..9 { // Look at what's ahead
+                    // println!("   After c, adder={} marker={}", adder, self.line_entries.get(i+adder).unwrap().marker());
+                    if ["v","v="].contains(&self.line_entries.get(i+adder).unwrap().marker()) {
+                        next_relevant_marker = self.line_entries.get(i+adder).unwrap().marker();
+                        break;
                     }
                 }
-                if next_relevant_marker != "v=" // If it's v=, we'll handle that on the next loop instead
+                if next_relevant_marker != "v=" // If it's v=, we'll handle that on the next loop instead unless we're doing a book like Psalms where we treat chapters as section breaks
                 && (!had_section_heading_since_chapters || process_chapters_as_section_breaks) {
                     if have_strict_checking_flag() || cfg!(debug_assertions) {
                         println!("    build {} {} section index at {} {}:{} has c followed by '{}' so need to start new index entry here",
@@ -519,14 +518,14 @@ impl InternalBibleBookSectionIndex {
                     }
                     // Close previous section and start new one.
                     if let Some(mut this_pending_section) = pending.take() {
-                        if i as u16 > this_pending_section.start_index {
+                        if i as u32 > this_pending_section.start_index {
                             if this_pending_section.start_cv.is_none() {
                                 this_pending_section.start_cv = Some(ChapterVerse::new(
                                     current_chapter_num_str.as_str(),
                                     current_verse_num_str.as_str(),
                                 ));
                             }
-                            let mut end_idx = (i as u16).saturating_sub(1);
+                            let mut end_idx = (i as u32).saturating_sub(1);
                             let mut found_end_marker = false;
                             for _ in 0..4 {
                                 if is_end_marker(self.line_entries.get(end_idx as usize).clone().unwrap().marker()) {
@@ -535,14 +534,16 @@ impl InternalBibleBookSectionIndex {
                                 }
                                 end_idx = end_idx.saturating_sub(1);
                             }
-                            if !found_end_marker { end_idx = (i as u16).saturating_sub(1); } // Go back to where we where
+                            if !found_end_marker { end_idx = (i as u32).saturating_sub(1); } // Go back to where we where
                             let (cv, entry) = this_pending_section.into_closed(
                                 last_chapter_num_str.as_str(),
                                 last_verse_num_str.as_str(),
                                 end_idx,
                                 context.clone());
                             if have_strict_checking_flag() || cfg!(debug_assertions) {
-                                assert!(!self.index_data.contains_key(&cv), "Losing {} {} section index data: {}", self.work_name(), self.bos_book_code(), cv ); }
+                                assert!(!self.index_data.contains_key(&cv), "Losing {} {} section index data: {}\nwith previous entry={:?}\nand {} entry={:?}",
+                                        self.work_name(), self.bos_book_code(), cv, self.index_data.last(), cv, self.index_data.get(&cv));
+                                }
                             self.index_data.insert(cv, entry);
                             // context.pop();
                         }
@@ -555,6 +556,8 @@ impl InternalBibleBookSectionIndex {
                             break;
                         }
                     }
+                    // println!("    build {} {} section index at {} {}:{} has c followed by '{}' so starting new index entry at {}",
+                    //     self.work_name(), self.bos_book_code(), i, current_chapter_num_str, current_verse_num_str, next_relevant_marker, start_idx);
                     pending = Some(PendingSection {
                         start_cv: Some(ChapterVerse::new(current_chapter_num_str.as_str(),
                                                             if current_verse_num_str=="0" {"1"} else {current_verse_num_str.as_str()})),
@@ -575,7 +578,7 @@ impl InternalBibleBookSectionIndex {
         //         let (cv, entry) = previously_pending_section.into_closed(
         //             current_chapter_num_str.as_str(),
         //             current_verse_num_str.as_str(),
-        //             i as u16,
+        //             i as u32,
         //             context.clone(),
         //         );
         //     self.index_data.insert(cv, entry);
@@ -591,11 +594,11 @@ impl InternalBibleBookSectionIndex {
                         //         current_verse_num_str.as_str(),
                         //     ));
                         // }
-                        // let end_idx = (i as u16).saturating_sub(1);
+                        // let end_idx = (i as u32).saturating_sub(1);
                         let (cv, entry) = previously_pending_section.into_closed(
                             current_chapter_num_str.as_str(),
                             current_verse_num_str.as_str(),
-                            i as u16,
+                            i as u32,
                             context.clone());
                         if have_strict_checking_flag() || cfg!(debug_assertions) {
                             assert!(!self.index_data.contains_key(&cv), "Losing {} {} initial section index data: {}", self.work_name(), self.bos_book_code(), cv ); }
@@ -620,7 +623,7 @@ impl InternalBibleBookSectionIndex {
                     //             current_verse_num_str.as_str(),
                     //         ));
                     //     }
-                    //     let end_idx = (i as u16).saturating_sub(1);
+                    //     let end_idx = (i as u32).saturating_sub(1);
                     //     let (cv, entry) = section.into_closed(
                     //         last_chapter_num_str.as_str(),
                     //         last_verse_num_str.as_str(),
@@ -646,22 +649,22 @@ impl InternalBibleBookSectionIndex {
                         //         current_verse_num_str.as_str(),
                         //     ));
                         // }
-                        // let end_idx = (i as u16).saturating_sub(1);
-                        if i as u16 > previous_pending_section.start_index {
+                        // let end_idx = (i as u32).saturating_sub(1);
+                        if i as u32 > previous_pending_section.start_index {
                             let (cv, current_pending_section) = previous_pending_section.into_closed(
                                 last_chapter_num_str.as_str(),
                                 last_verse_num_str.as_str(),
-                                (i - 1) as u16,
+                                (i - 1) as u32,
                                 context.clone(),
                             );
                             if have_strict_checking_flag() || cfg!(debug_assertions) {
                                 assert!(!self.index_data.contains_key(&cv), "Losing data: {cv}");
-                                assert_eq!(cv.verse().parse::<u16>(), Ok(current_pending_section.start_index));
+                                assert_eq!(cv.verse().parse::<u32>(), Ok(current_pending_section.start_index));
                                 if current_chapter_num_str != "-1" {
-                                    assert_eq!(last_verse_num_str.parse::<u16>(), Ok(current_pending_section.end_index),
+                                    assert_eq!(last_verse_num_str.parse::<u16>(), Ok(current_pending_section.entry_count),
                                                 "build {} {} section index loop {} with {} section index entries already, failed with {} {}\nfrom {}",
                                             self.work_name(), self.bos_book_code(), i, self.index_data.len(),
-                                            last_verse_num_str, current_pending_section.end_index, self.line_entries);
+                                            last_verse_num_str, current_pending_section.entry_count, self.line_entries);
                                 }
                             }
                             self.index_data.insert(cv, current_pending_section);
@@ -683,11 +686,11 @@ impl InternalBibleBookSectionIndex {
                         //         current_verse_num_str.as_str(),
                         //     ));
                         // }
-                        // let end_idx = (i as u16).saturating_sub(1);
+                        // let end_idx = (i as u32).saturating_sub(1);
                         let (cv, entry) = previously_pending_section.into_closed(
                             current_chapter_num_str.as_str(),
                             current_verse_num_str.as_str(),
-                            i as u16,
+                            i as u32,
                             context.clone(),
                         );
                         assert!(["is1","Headers"].contains(&entry.reason_marker()));
@@ -721,7 +724,7 @@ impl InternalBibleBookSectionIndex {
             //                         current_verse_num_str.as_str(),
             //                     ));
             //                 }
-            //                 let end_idx = (i as u16).saturating_sub(1);
+            //                 let end_idx = (i as u32).saturating_sub(1);
             //                 let end_v_intro;
             //                 let (end_ch, end_v) = if was_intro {
             //                     end_v_intro = end_idx.to_string();
@@ -763,7 +766,7 @@ impl InternalBibleBookSectionIndex {
             //                     current_verse_num_str.as_str(),
             //                 ));
             //             }
-            //             let end_idx = (i as u16).saturating_sub(1);
+            //             let end_idx = (i as u32).saturating_sub(1);
             //             let (cv, entry) = section.into_closed("-1", &end_idx.to_string(), end_idx, context.clone());
             //             self.index_data.insert(cv, entry);
             //             context.clear();
@@ -785,7 +788,7 @@ impl InternalBibleBookSectionIndex {
             //         section.start_index = i.try_into().unwrap(); // Update start_index to heading
             //     } else if marker != "c"
             //         && is_section_marker(marker)
-            //         && last_bridge_entry_index.is_some_and(|idx| idx + 1 == i as u16)
+            //         && last_bridge_start_index.is_some_and(|idx| idx + 1 == i as u32)
             //         {
             //         // A bridge verse immediately before this section heading should define the section start.
             //         if let Some(mut section) = pending.take() {
@@ -795,7 +798,7 @@ impl InternalBibleBookSectionIndex {
             //                     current_verse_num_str.as_str(),
             //                 ));
             //             }
-            //             let end_idx = (i as u16).saturating_sub(1);
+            //             let end_idx = (i as u32).saturating_sub(1);
             //             let (cv, entry) = section.into_closed(
             //                 last_chapter_num_str.as_str(),
             //                 last_verse_num_str.as_str(),
@@ -805,7 +808,7 @@ impl InternalBibleBookSectionIndex {
             //             self.index_data.insert(cv, entry);
             //             context.clear();
             //         }
-            //         let start_index = last_bridge_entry_index.take().unwrap_or(i as u16);
+            //         let start_index = last_bridge_start_index.take().unwrap_or(i as u32);
             //         let bridge_verse = last_bridge_verse_num_str.as_deref().unwrap_or(current_verse_num_str.as_str());
             //         pending = Some(PendingSection {
             //             start_cv: Some(ChapterVerse::new(
@@ -826,7 +829,7 @@ impl InternalBibleBookSectionIndex {
             //                     current_verse_num_str.as_str(),
             //                 ));
             //             }
-            //             let end_idx = (i as u16).saturating_sub(1);
+            //             let end_idx = (i as u32).saturating_sub(1);
             //             let (cv, entry) = section.into_closed(
             //                 last_chapter_num_str.as_str(),
             //                 last_verse_num_str.as_str(),
@@ -848,7 +851,7 @@ impl InternalBibleBookSectionIndex {
             // } else if marker == "v" {
             //     let verse_num = entry.clean_text();
             //     current_verse_num_str = CompactString::from(verse_num);
-            //     last_bridge_entry_index = None;
+            //     last_bridge_start_index = None;
             //     last_bridge_verse_num_str = None;
             //     if let Some(section) = pending.as_mut() {
             //         if section.start_cv.is_none() {
@@ -905,7 +908,7 @@ impl InternalBibleBookSectionIndex {
             ));
         }
         // Don't include the ¬chapters line in the final section
-        let mut end_idx = (self.line_entries.len() as u16).saturating_sub(1);
+        let mut end_idx = (self.line_entries.len() as u32).saturating_sub(1);
         if self.line_entries.get(end_idx as usize).clone().unwrap().marker() == "¬chapters" {
              end_idx = end_idx.saturating_sub(1); // Go back to the one before
              assert!(is_end_marker(self.line_entries.get(end_idx as usize).clone().unwrap().marker()));
@@ -986,7 +989,7 @@ impl InternalBibleBookSectionIndex {
                 self.work_name, self.bos_book_code, cv.verse(), cv);
 
             if index_entry.start_index() < last_end {
-                issues.push(format!("{} {} {}: entry_index {} < previous end {}",
+                issues.push(format!("{} {} {}: start_index {} < previous end {}",
                     self.work_name(), self.bos_book_code(), cv, index_entry.start_index(), last_end));
             }
 
@@ -995,9 +998,9 @@ impl InternalBibleBookSectionIndex {
                     "Unexpected {} {} start index of {} for {} entry: {}",
                     self.work_name, self.bos_book_code, index_entry.start_index(), cv, index_entry);
                 if !["Headers","is1"].contains(&index_entry.reason_marker()) {
-                    assert_eq!(index_entry.end_verse_num_str().parse::<usize>(), Ok(index_entry.end_index()),
+                    assert_eq!(index_entry.end_verse_num_str().parse::<usize>(), Ok(index_entry.entry_count()),
                         "Unexpected {} {} end index of {} for {} entry: {}\nfrom {}",
-                        self.work_name, self.bos_book_code, index_entry.end_index(), cv, index_entry, line_entries);
+                        self.work_name, self.bos_book_code, index_entry.entry_count(), cv, index_entry, line_entries);
                 }
             }
             
@@ -1016,7 +1019,7 @@ impl InternalBibleBookSectionIndex {
                 if !index_entry.reason_marker().contains("ms1") { // Check that the segment finishes with an end marker
                     let final_marker_in_entry = self.line_entries.get(index_entry.start_index() + index_entry.entry_count() as usize - 1).map(|e| e.marker()).unwrap_or("N/A");
                     if !is_end_marker(final_marker_in_entry) && cv.verse() != "0" {
-                        // println!("Entry for {} {} {} is at index {} with end marker '{}'", self.work_name(), self.bos_book_code(), cv, entry.entry_index(), final_marker_in_entry);
+                        // println!("Entry for {} {} {} is at index {} with end marker '{}'", self.work_name(), self.bos_book_code(), cv, entry.start_index(), final_marker_in_entry);
                         // assert!(cv.verse()=="0" || is_end_marker(final_marker_in_entry),
                         //     "Validating {} {} CV index entry for {} expected last entry to be an end marker but found marker '{}'",
                         //     self.work_name(), self.bos_book_code(), cv, final_marker_in_entry);
@@ -1027,7 +1030,7 @@ impl InternalBibleBookSectionIndex {
                         }
                     }
                 }
-                last_end = index_entry.end_index();
+                last_end = index_entry.entry_count();
             }
 
         assert!(have_m1_0 || line_entries.get(0).unwrap().marker()=="chapters", // i.e., no preliminary markers at all!!!
@@ -1054,7 +1057,7 @@ impl InternalBibleBookSectionIndex {
 struct PendingSection {
     /// `None` when the start CV isn't known yet (heading appeared before first verse).
     start_cv: Option<ChapterVerse>,
-    start_index: u16,
+    start_index: u32,
     reason: CompactString,
     name: String,
     // Whether this section has had actual content (text) yet.
@@ -1066,7 +1069,7 @@ impl PendingSection {
         self,
         end_chapter: &str,
         end_verse: &str,
-        end_index: u16,
+        end_index: u32,
         context: Vec<CompactString>,
     ) -> (ChapterVerse, SectionIndexEntry) {
         let start_cv = self.start_cv.expect("section closed before start CV was resolved");
@@ -1082,7 +1085,7 @@ impl PendingSection {
             end_chapter,
             end_verse,
             self.start_index,
-            end_index,
+            (end_index - self.start_index + 1) as u16,
             self.reason,
             self.name,
             context,
@@ -1124,7 +1127,9 @@ impl std::fmt::Display for InternalBibleBookSectionIndex {
 #[cfg(test)]
 
 mod tests {
-    use super::*;
+    use core::panic;
+
+use super::*;
     use crate::entry::InternalBibleEntry;
     use crate::set_strict_checking_flag;
     
@@ -1194,7 +1199,7 @@ mod tests {
     #[test]
     fn test_build_sample_gen_section_index() {
         set_strict_checking_flag( true );
-        let mut section_index = InternalBibleBookSectionIndex::new("XSV", "GEN");
+        let mut section_index = InternalBibleBookSectionIndex::new("XAV", "GEN");
         section_index.build(create_sample_gen_test_entries()).unwrap();
         log::trace!("Index1:{}", section_index);
         assert!(section_index.is_indexed());
@@ -1930,6 +1935,7 @@ mod tests {
         let mut section_index = InternalBibleBookSectionIndex::new("OET-RV", "HAG");
         section_index.build(processed_line_entries).unwrap();
 
+        // for (ee,(cv,entry)) in section_index.index_data.iter().enumerate() { println!("{}/ {} {}", ee, cv, entry); }
         // It should give the following seven entries:
         //    0 -1:0 InternalBibleBookSectionIndexEntry object: (inclusive) endCV=-1:12 ix=0–12 (cnt=13) Headers='HAG'
         //    1 -1:13 InternalBibleBookSectionIndexEntry object: (inclusive) endCV=-1:22 ix=13–22 (cnt=10) is1='Introduction'
@@ -2799,6 +2805,7 @@ mod tests {
         let mut section_index = InternalBibleBookSectionIndex::new("OET-RV", "SA2");
         section_index.build(processed_line_entries.clone()).unwrap();
         
+        // for (ee,(cv,entry)) in section_index.index_data.iter().enumerate() { println!("{}/ {} {}", ee, cv, entry); }
         // It should give the following 52 entries:
         //         OET-RV SA2 added c12 line_entry 'v=' = '15b'
         //         OET-RV SA2 added c12 line_entry 'v=' = '24b'
@@ -2918,6 +2925,621 @@ mod tests {
         assert_eq!(entry22.end_index(), 1393);
         assert_eq!(entry22.reason_marker(), "s1");
         assert_eq!(entry22.section_name(), "David's son dies");
+
+        // // 6 2:10 s1='The people have been unfaithful'
+        // let (cv6, entry6) = section_index.index_data.get_index(6).unwrap();
+        // assert_eq!(cv6.to_string(), "2:10");
+        // assert_eq!(entry6.end_cv().to_string(), "2:16");
+        // assert_eq!(entry6.start_index(), 133);
+        // assert_eq!(entry6.end_index(), 162);
+        // assert_eq!(entry6.reason_marker(), "s1");
+        // assert_eq!(entry6.section_name(), "The people have been unfaithful");
+
+        // // 7 2:19 s1='Judgement day is coming'
+        // let (cv7, entry7) = section_index.index_data.get_index(7).unwrap();
+        // assert_eq!(cv7.to_string(), "2:17");
+        // assert_eq!(entry7.end_cv().to_string(), "3:5");
+        // assert_eq!(entry7.start_index(), 163);
+        // assert_eq!(entry7.end_index(), 193);
+        // assert_eq!(entry7.reason_marker(), "s1");
+        // assert_eq!(entry7.section_name(), "Judgement day is coming");
+
+        // // 8 3:6 s1='Giving a tenth'
+        // let (cv8, entry8) = section_index.index_data.get_index(8).unwrap();
+        // assert_eq!(cv8.to_string(), "3:6");
+        // assert_eq!(entry8.end_cv().to_string(), "3:12");
+        // assert_eq!(entry8.start_index(), 194);
+        // assert_eq!(entry8.end_index(), 220);
+        // assert_eq!(entry8.reason_marker(), "s1");
+        // assert_eq!(entry8.section_name(), "Giving a tenth");
+
+        // // 9 3:13 s1='God promises mercy for some'
+        // let (cv9, entry9) = section_index.index_data.get_index(9).unwrap();
+        // assert_eq!(cv9.to_string(), "3:13");
+        // assert_eq!(entry9.end_cv().to_string(), "3:18");
+        // assert_eq!(entry9.start_index(), 221);
+        // assert_eq!(entry9.end_index(), 247);
+        // assert_eq!(entry9.reason_marker(), "s1");
+        // assert_eq!(entry9.section_name(), "God promises mercy for some");
+    }
+
+    #[test]
+    fn test_oet_rv_psalms_section_index_build() {
+        // Note that OET-RV Psalms has five main sections (ms1 and mr) plus d fields
+        set_strict_checking_flag( true );
+        let content = include_str!("../../../../Tests/DataFilesForTests/OET-RV/OET-RV_PSA.ESFM");
+        let mut raw_lines = Vec::new();
+        for line in content.lines() {
+            let (marker, text) = match line.split_once(' ') {
+                Some((m, t)) => (m, t),
+                None => (line, ""),
+            };
+            let marker = marker.strip_prefix('\\').unwrap_or(marker);
+            raw_lines.push((marker.to_string(), text.to_string()));
+        }
+
+        let options = crate::processing::ProcessLinesOptions::default();
+        let processed_line_entries = crate::processing::process_lines(raw_lines, "PSA", "OET-RV", &options);
+
+        // println!("OET-RV PSA {} processed_line_entries = {}", processed_line_entries.len(), processed_line_entries);
+        //     OET-RV PSA 22,583 processed_line_entries = InternalBibleEntryList:
+        //         0/ id = "PSA - Open English Translation…aders' Version (OET-RV) v0.3.2"
+        //         1/ usfm = "3.0"
+        //         2/ ide = "UTF-8"
+        //         3/ rem = "ESFM v0.6 PSA"
+        //         4/ rem = "WORDTABLE OET-LV_OT_word_table.tsv"
+        //         5/ headers = ""
+        //         6/ h = "Songs"
+        //         7/ toc1 = "Songs"
+        //         8/ toc2 = "Songs"
+        //         9/ toc3 = "Songs"
+        //         10/ mt1 = "Songs"
+        //         11/ ¬headers = ""
+        //         12/ intro = ""
+        //         13/ is1 = "Introduction"
+        //         14/ ip = "This collection of Songs inclu…, read, or chanted with music."
+        //         15/ ip = "There are many classes of the …n behalf of the entire nation."
+        //         16/ ip = "Seven of these songs/poems are…ongest Song 119, and Song 145."
+        //         17/ ip = "Yeshua (Jesus) and other contr…h worship since the beginning."
+        //         18/ ip = "The one hundred and fifty song…ded into five sub-collections."
+        //         19/ iot = "Main components of this collection"
+        //         20/ io1 = "Songs 1–41"
+        //         21/ io1 = "Songs 42–72"
+        //         22/ io1 = "Songs 73–89"
+        //         23/ io1 = "Songs 90–106"
+        //         24/ io1 = "Songs 107–150"
+        //         25/ ¬iot = ""
+        //         26/ im = "There are a hundred and fifty …piness and trusting, and hope."
+        //         27/ rem = "This is still a very early loo…dvance before using in public."
+        //         28/ ¬is1 = "28"
+        //         29/ ie = ""
+        //         30/ cl¤ = "Song"
+        //         31/ ¬intro = ""
+        //         32/ chapters = ""
+        //         33/ c = "1"
+        //         34/ v= = "1"
+        //         35/ ms1 = "First collection"
+        //         36/ mr = "(Songs 1–41)"
+        //         37/ s1 = "Wicked and godly roads"
+        //         38/ rem = "/s1 True Happiness; The Two Ways"
+        //         39/ p = ""
+        //         40/ c# = "1"
+        //         41/ v = "1"
+        //         42/ v~ = "A person will reap the benefits"
+        //         43/ ¬p = ""
+        //         44/ q2 = ""
+        //         45/ v~ = "if they don't take advice¦243189 from wicked¦243190 people,"
+        //         46/ ¬q2 = ""
+        //         47/ q2 = ""
+        //         48/ v~ = "and don't stand¦243194 ≈around where sinners¦243192 ≈go,"
+        //         49/ ¬q2 = ""
+        //         50/ q2 = ""
+        //         51/ v~ = "and don't sit and join all the scoffers."
+        //         52/ ¬q2 = ""
+        //         53/ ¬v = "1"
+        //         54/ q1 = ""
+        //         55/ v = "2"
+        //         56/ v~ = "Instead, they enjoy Yahweh's¦243203 instructions"
+        //         57/ ¬q1 = ""
+        //         58/ q2 = ""
+        //         59/ v~ = "and think about them day¦243207 and night¦243208."
+        //         60/ ¬q2 = ""
+        //         61/ ¬v = "2"
+        //         62/ q1 = ""
+        //         63/ v = "3"
+        //         64/ v~ = "Those people are like trees th…nted¦243212 by a stream¦243215" + extras
+        //         65/ ¬q1 = ""
+        //         66/ q2 = ""
+        //         67/ v~ = "and which¦243217 produce¦24321…fruit¦243218 in season¦243221."
+        //         68/ ¬q2 = ""
+        //         69/ q1 = ""
+        //         70/ v~ = "Their leaves don't¦243223 wither¦243225,"
+        //         71/ ¬q1 = ""
+        //         72/ q2 = ""
+        //         73/ v~ = "and they prosper in everything they do." + extras
+        //         74/ ¬q2 = ""
+        //         75/ ¬v = "3"
+        //         76/ b = ""
+        //         77/ q1 = ""
+        //         78/ v = "4"
+        //         79/ v~ = "But wicked¦243235 people won't prosper—"
+        //         80/ ¬q1 = ""
+        //         81/ q1 = ""
+        //         82/ v~ = "they're like straw that¦243240…blown away by the wind¦243243."
+        //         83/ ¬q1 = ""
+        //         84/ ¬v = "4"
+        //         85/ q1 = ""
+        //         86/ v = "5"
+        //         87/ v~ = "The wicked¦243252 people won't…1 when God judges¦243253 them,"
+        //         88/ ¬q1 = ""
+        //         89/ q1 = ""
+        //         90/ v~ = "and sinners¦243254 won't be ab…f all the godly¦243256 people,"
+        //         91/ ¬q1 = ""
+        //         92/ ¬v = "5"
+        //         93/ q1 = ""
+        //         94/ v = "6"
+        //         95/ v~ = "because Yahweh¦243261 knows th…chosen by godly¦243263 people,"
+        //         96/ ¬q1 = ""
+        //         97/ q1 = ""
+        //         98/ v~ = "but¦243264 the path of wicked¦…3265 people will be destroyed."
+        //         99/ ¬v = "6"
+        //         100/ ¬q1 = ""
+        //         101/ ¬s1 = ""
+        //         102/ ¬c = "1"
+        //         103/ c = "2"
+        //         104/ v= = "1"
+        //         105/ s1 = "God's chosen king"
+        //         106/ rem = "/s1 God's Promise to His Anointed; God's Chosen King"
+        //         107/ q1 = ""
+        //         108/ c# = "2"
+        //         109/ v = "1"
+        //         110/ v~ = "Why do nations¦243270 make plans," + extras
+        //         111/ ¬q1 = ""
+        //         112/ q2 = ""
+        //         113/ v~ = "≈and¦243271 people¦243271 grou…s devise¦243272 empty schemes?"
+        //         114/ ¬q2 = ""
+        //         115/ ¬v = "1"
+        //         116/ q1 = ""
+        //         117/ v = "2"
+        //         118/ v~ = "The kings¦243278 of this world…3276 their¦243276 stand¦243276"
+        //         119/ ¬q1 = ""
+        //         120/ q2 = ""
+        //         121/ v~ = "≈and the rulers¦243281 collabo…weh¦243287 and his chosen one,"
+        //         122/ ¬q2 = ""
+        //         123/ ¬v = "2"
+        //         124/ q1 = ""
+        //         125/ v = "3"
+        //         126/ v~ = "saying, “Let's break their chains off us."
+        //         127/ ¬q1 = ""
+        //         128/ q1 = ""
+        //         129/ v~ = "≈Let's throw¦243296 off their ropes¦243298.”"
+        //         130/ ¬q1 = ""
+        //         131/ ¬v = "3"
+        //         132/ q1 = ""
+        //         133/ v = "4"
+        //         134/ v~ = "The one who sits¦243300 in¦243… heavens¦243301 laughs¦243302."
+        //         135/ ¬q1 = ""
+        //         136/ q1 = ""
+        //         137/ v~ = "≈The master¦243303 ridicules them."
+        //         138/ ¬q1 = ""
+        //         139/ ¬v = "4"
+        //         140/ q1 = ""
+        //         141/ v = "5"
+        //         142/ v~ = "Then he'll speak¦243309 to them in his anger¦243311,"
+        //         143/ ¬q1 = ""
+        //         144/ q1 = ""
+        //         145/ v~ = "≈and¦243312 terrify¦243313 them in his fury."
+        //         146/ ¬q1 = ""
+        //         147/ ¬v = "5"
+        //         148/ q1 = ""
+        //         149/ v = "6"
+        //         150/ v~ = "Yahweh says, “I myself have pl… Tsiyyon¦243320 (Zion¦243320)—"
+        //         151/ ¬q1 = ""
+        //         152/ q2 = ""
+        //         153/ v~ = "the hill¦243321 I've¦243316 chosen to be my holy place.”"
+        //         154/ ¬q2 = ""
+        //         155/ ¬v = "6"
+        //         156/ q1 = ""
+        //         157/ v = "7"
+        //         158/ v~ = "I'll¦243325 explain Yahweh's¦243328 decree¦243327." + extras
+        //         159/ ¬q1 = ""
+        //         160/ q1 = ""
+        //         161/ v~ = "He told me, “You're my son. To…'ve¦243335 become your father."
+        //         162/ ¬q1 = ""
+        //         163/ ¬v = "7"
+        //         164/ q1 = ""
+        //         165/ v = "8"
+        //         166/ v~ = "Ask me and I'll¦243339 give th…u for your inheritance¦243341."
+        //         167/ ¬q1 = ""
+        //         168/ q1 = ""
+        //         169/ v~ = "≈The whole world will be owned by you."
+        //         170/ ¬q1 = ""
+        //         171/ ¬v = "8"
+        //         172/ q1 = ""
+        //         173/ v = "9"
+        //         174/ v~ = "You'll break¦243347 those nations with¦243348 an iron bar." + extras
+        //         175/ ¬q1 = ""
+        //         176/ q1 = ""
+        //         177/ v~ = "≈You'll smash¦243352 them to pieces like a clay pot.”"
+        //         178/ ¬q1 = ""
+        //         179/ ¬v = "9"
+        //         180/ b = ""
+        //         181/ q1 = ""
+        //         182/ v = "10"
+        //         183/ v~ = "So¦243354 act¦243356 wisely all you kings¦243355."
+        //         184/ ¬q1 = ""
+        //         185/ q1 = ""
+        //         186/ v~ = "≈Be warned all you rulers¦243358 of the earth¦243359."
+        //         187/ ¬q1 = ""
+        //         188/ ¬v = "10"
+        //         189/ q1 = ""
+        //         190/ v = "11"
+        //         191/ v~ = "Serve¦243361 Yahweh¦243364 with¦243365 fear¦243365."
+        //         192/ ¬q1 = ""
+        //         193/ q1 = ""
+        //         194/ v~ = "Be happy for his goodness but¦…e¦243367 because of his power."
+        //         195/ ¬q1 = ""
+        //         196/ ¬v = "11"
+        //         197/ q1 = ""
+        //         198/ v = "12"
+        //         199/ v~ = "Honour the son or he might get angry¦243374"
+        //         200/ ¬q1 = ""
+        //         201/ q2 = ""
+        //         202/ v~ = "and you'll perish¦243376 on the way¦243377."
+        //         203/ ¬q2 = ""
+        //         204/ q1 = ""
+        //         205/ v~ = "His severe¦243382 anger¦243382 can ignite any moment¦243381."
+        //         206/ ¬q1 = ""
+        //         207/ q1 = ""
+        //         208/ v~ = "Everyone who goes to him to be safe will reap the benefits."
+        //         209/ ¬v = "12"
+        //         210/ ¬q1 = ""
+        //         211/ ¬s1 = ""
+        //         212/ ¬c = "2"
+        //         213/ c = "3"
+        //         214/ v= = "1"
+        //         215/ s1 = "A prayer when under attack"
+        //         216/ rem = "/s1 Trust in God under Adversity; Morning Prayer for Help"
+        //         217/ c# = "3"
+        //         218/ d = "A song by David¦243390 when he…son Avshalom (Absalom¦243394)."
+        //         219/ q1 = ""
+        //         220/ v = "1"
+        //         221/ v~ = "Yahweh¦243398, how did I get so many enemies?"
+        //         222/ ¬q1 = ""
+        //         223/ q1 = ""
+        //         224/ v~ = "≈Many people are rising¦243404 up against¦243405 me."
+        //         225/ ¬q1 = ""
+        //         226/ ¬v = "1"
+        //         227/ q1 = ""
+        //         228/ v = "2"
+        //         229/ v~ = "Many people are talking¦243409 about me,"
+        //         230/ ¬q1 = ""
+        //         231/ q1 = ""
+        //         232/ v~ = "≡saying that God¦243414 won't¦…rumental¦243415 break¦243415.)" + extras
+        //         233/ ¬q1 = ""
+        //         234/ ¬v = "2"
+        //         235/ b = ""
+        //         236/ q1 = ""
+        //         237/ v = "3"
+        //         238/ v~ = "≈But¦243418 you, Yahweh¦243419…otect me like a shield¦243420."
+        //         239/ ¬q1 = ""
+        //         240/ q1 = ""
+        //         241/ v~ = "≈You honour¦243422 and encourage me."
+        //         242/ ¬q1 = ""
+        //         243/ ¬v = "3"
+        //         244/ q1 = ""
+        //         245/ v = "4"
+        //         246/ v~ = "I¦243431 called¦243431 out with my voice to Yahweh¦243430,"
+        //         247/ ¬q1 = ""
+        //         248/ q1 = ""
+        //         249/ v~ = "and¦243432 he¦243432 answered¦…rumental¦243435 break¦243435.)"
+        //         250/ ¬q1 = ""
+        //         251/ ¬v = "4"
+        //         252/ b = ""
+        //         253/ q1 = ""
+        //         254/ v = "5"
+        //         255/ v~ = "I laid down and¦243440 slept¦243440."
+        //         256/ ¬q1 = ""
+        //         257/ q1 = ""
+        //         258/ v~ = "I awoke¦243441, because¦243442…weh¦243443 sustains¦243444 me."
+        //         259/ ¬q1 = ""
+        //         260/ ¬v = "5"
+        //         261/ q1 = ""
+        //         262/ v = "6"
+        //         263/ v~ = "I¦243449 won't¦243447 be afrai…sands¦243450 of people¦243451—"
+        //         264/ ¬q1 = ""
+        //         265/ q1 = ""
+        //         266/ v~ = "those all around¦243453 who've…tand¦243454 against¦243455 me."
+        //         267/ ¬q1 = ""
+        //         268/ ¬v = "6"
+        //         269/ b = ""
+        //         270/ q1 = ""
+        //         271/ v = "7"
+        //         272/ v~ = "≈Take action, Yahweh¦243459."
+        //         273/ ¬q1 = ""
+        //         274/ q1 = ""
+        //         275/ v~ = "≈Save me, my god¦243462."
+        //         276/ ¬q1 = ""
+        //         277/ q1 = ""
+        //         278/ v~ = "≈Yes, you've slapped all my enemies¦243470 on the cheek—"
+        //         279/ ¬q1 = ""
+        //         280/ q1 = ""
+        //         281/ v~ = "you've broken¦243474 the teeth…2 of the wicked¦243473 people."
+        //         282/ ¬q1 = ""
+        //         283/ ¬v = "7"
+        //         284/ q1 = ""
+        //         285/ v = "8"
+        //         286/ v~ = "Salvation belongs to Yahweh¦243477."
+        //         287/ ¬q1 = ""
+        //         288/ q1 = ""
+        //         289/ v~ = "Your blessing¦243482 goes to y…rumental¦243483 break¦243483.)"
+        //         290/ ¬v = "8"
+        //         291/ ¬q1 = ""
+        //         292/ ¬s1 = ""
+        //         293/ ¬c = "3"
+        //         294/ c = "4"
+        //         295/ v= = "1"
+        //         296/ s1 = "A night-time prayer"
+        //         297/ rem = "/s1 Confident Plea for Deliver…emies; Evening Prayer for Help"
+        //         298/ c# = "4"
+        //         299/ d = "For the musical director¦24348…ged¦243486 instruments¦243486."
+        //         … (22,583 total entries)
+
+        let mut section_index = InternalBibleBookSectionIndex::new("OET-RV", "PSA");
+        section_index.build(processed_line_entries.clone()).unwrap();
+        
+        // for (ee,(cv,entry)) in section_index.index_data.iter().enumerate() { println!("{}/ {} {}", ee, cv, entry); }
+        // It should give the following 178 entries:
+        //     0/ -1:0 SectionEntry(ends -1:11 lines 0-11 Headers "PSA" [])
+        //     1/ -1:13 SectionEntry(ends -1:31 lines 13-31 is1 "Introduction" [])
+        //     2/ 1:0 SectionEntry(ends 0:0 lines 33-36 c/ms1 "First collection" [chapters, c])
+        //     3/ 1:1 SectionEntry(ends 1:6 lines 37-102 c/s1 "Wicked and godly roads" [chapters, c])
+        //     4/ 2:1 SectionEntry(ends 2:12 lines 103-212 c/s1 "God's chosen king" [chapters, c])
+        //     5/ 3:1 SectionEntry(ends 3:8 lines 213-293 c/s1 "A prayer when under attack" [chapters, c])
+        //     6/ 4:1 SectionEntry(ends 4:8 lines 294-372 c/s1 "A night-time prayer" [chapters, c])
+        //     7/ 5:1 SectionEntry(ends 5:12 lines 373-499 c/s1 "A prayer for protection" [chapters, c])
+        //     8/ 6:1 SectionEntry(ends 6:10 lines 500-593 c/s1 "A prayer in time of distress" [chapters, c])
+        //     9/ 7:1 SectionEntry(ends 7:17 lines 594-758 c/s1 "A prayer for justice" [chapters, c])
+        //     10/ 8:1 SectionEntry(ends 8:9 lines 759-841 c/s1 "God's splendour and mankind's status" [chapters, c])
+        //     11/ 9:1 SectionEntry(ends 9:20 lines 842-1021 c/s1 "Thanking Yahweh for his justice" [chapters, c])
+        //     12/ 10:1 SectionEntry(ends 10:18 lines 1022-1192 c/s1 "A prayer for relief from bullies" [chapters, c])
+        //     13/ 11:1 SectionEntry(ends 11:7 lines 1193-1263 c/s1 "Trusting God for fair process" [chapters, c])
+        //     14/ 12:1 SectionEntry(ends 12:8 lines 1264-1345 c/s1 "The requesting of God" [chapters, c])
+        //     15/ 13:1 SectionEntry(ends 13:6 lines 1346-1403 c/s1 "A prayer for help" [chapters, c])
+        //     16/ 14:1 SectionEntry(ends 14:7 lines 1404-1480 c/s1 "Responding to evil people" [chapters, c])
+        //     17/ 15:1 SectionEntry(ends 15:5 lines 1481-1537 c/s1 "Who does Yahweh like?" [chapters, c])
+        //     18/ 16:1 SectionEntry(ends 16:11 lines 1538-1639 c/s1 "Yahweh is my security" [chapters, c])
+        //     19/ 17:1 SectionEntry(ends 17:15 lines 1640-1796 c/s1 "A prayer for protection" [chapters, c])
+        //     20/ 18:1 SectionEntry(ends 18:50 lines 1797-2247 c/s1 "David's song of victory" [chapters, c])
+        //     21/ 19:1 SectionEntry(ends 19:14 lines 2248-2390 c/s1 "God's splendour displayed" [chapters, c])
+        //     22/ 20:1 SectionEntry(ends 20:9 lines 2391-2476 c/s1 "A prayer for victory" [chapters, c])
+        //     23/ 21:1 SectionEntry(ends 21:13 lines 2477-2588 c/s1 "Praise for victory" [chapters, c])
+        //     24/ 22:1 SectionEntry(ends 22:31 lines 2589-2868 c/s1 "A cry of pain then a praise song" [chapters, c])
+        //     25/ 23:1 SectionEntry(ends 23:6 lines 2869-2930 c/s1 "Protected and blessed by the shepherd" [chapters, c])
+        //     26/ 24:1 SectionEntry(ends 24:10 lines 2931-3033 c/s1 "God the powerful King" [chapters, c])
+        //     27/ 25:1 SectionEntry(ends 25:22 lines 3034-3242 c/s1 "The praying so that get to teach" [chapters, c])
+        //     28/ 26:1 SectionEntry(ends 26:12 lines 3243-3346 c/s1 "A prayer of a godly person" [chapters, c])
+        //     29/ 27:1 SectionEntry(ends 27:14 lines 3347-3487 c/s1 "A prayer of praise" [chapters, c])
+        //     30/ 28:1 SectionEntry(ends 28:9 lines 3488-3585 c/s1 "Prayer of requesting" [chapters, c])
+        //     31/ 29:1 SectionEntry(ends 29:11 lines 3586-3681 c/s1 "The incredible power of God's voice" [chapters, c])
+        //     32/ 30:1 SectionEntry(ends 30:12 lines 3682-3788 c/s1 "Thanking Yahweh after sickness" [chapters, c])
+        //     33/ 31:1 SectionEntry(ends 31:24 lines 3789-4030 c/s1 "Trusting Yahweh despite enemies" [chapters, c])
+        //     34/ 32:1 SectionEntry(ends 32:11 lines 4031-4138 c/s1 "Admitting sin and requesting forgiveness" [chapters, c])
+        //     35/ 33:1 SectionEntry(ends 33:22 lines 4139-4312 c/s1 "A praise song" [chapters, c])
+        //     36/ 34:1 SectionEntry(ends 34:22 lines 4313-4524 c/s1 "Praising Yahweh's goodness together" [chapters, c])
+        //     37/ 35:1 SectionEntry(ends 35:28 lines 4525-4771 c/s1 "Requesting Yahweh's help" [chapters, c])
+        //     38/ 36:1 SectionEntry(ends 36:12 lines 4772-4880 c/s1 "Wicked people and Yahweh's goodness" [chapters, c])
+        //     39/ 37:1 SectionEntry(ends 37:40 lines 4881-5249 c/s1 "The endings of godly and wicked people" [chapters, c])
+        //     40/ 38:1 SectionEntry(ends 38:22 lines 5250-5439 c/s1 "The requesting of person suffering" [chapters, c])
+        //     41/ 39:1 SectionEntry(ends 39:13 lines 5440-5570 c/s1 "The telling of sin of person suffering" [chapters, c])
+        //     42/ 40:1 SectionEntry(ends 40:17 lines 5571-5737 c/s1 "A song praising Yahweh" [chapters, c])
+        //     43/ 41:1 SectionEntry(ends 41:13 lines 5738-5861 c/s1 "A prayer for healing" [chapters, c])
+        //     44/ 42:0 SectionEntry(ends 0:0 lines 5862-5864 c/ms1 "Second collection" [chapters, c])
+        //     45/ 42:1 SectionEntry(ends 42:11 lines 5865-5979 c/s1 "Hope when depressed" [chapters, c])
+        //     46/ 43:1 SectionEntry(ends 43:5 lines 5980-6045 c/s1 "The requesting at time of conflict" [chapters, c])
+        //     47/ 44:1 SectionEntry(ends 44:26 lines 6046-6258 c/s1 "A prayer for help" [chapters, c])
+        //     48/ 45:1 SectionEntry(ends 45:17 lines 6259-6408 c/s1 "A royal wedding song" [chapters, c])
+        //     49/ 46:1 SectionEntry(ends 46:11 lines 6409-6510 c/s1 "God's right here" [chapters, c])
+        //     50/ 47:1 SectionEntry(ends 47:9 lines 6511-6593 c/s1 "God the king of entire world" [chapters, c])
+        //     51/ 48:1 SectionEntry(ends 48:14 lines 6594-6731 c/s1 "Yerushalem, God's city" [chapters, c])
+        //     52/ 49:1 SectionEntry(ends 49:20 lines 6732-6914 c/s1 "Trusting in wealth is foolishness" [chapters, c])
+        //     53/ 50:1 SectionEntry(ends 50:23 lines 6915-7124 c/s1 "The true/correct worshipping" [chapters, c])
+        //     54/ 51:1 SectionEntry(ends 51:19 lines 7125-7293 c/s1 "A prayer for forgiveness" [chapters, c])
+        //     55/ 52:1 SectionEntry(ends 52:9 lines 7294-7379 c/s1 "God's judgement and mercy" [chapters, c])
+        //     56/ 53:1 SectionEntry(ends 53:6 lines 7380-7457 c/s1 "Fools and human wickedness" [chapters, c])
+        //     57/ 54:1 SectionEntry(ends 54:7 lines 7458-7524 c/s1 "God is my helper" [chapters, c])
+        //     58/ 55:1 SectionEntry(ends 55:23 lines 7525-7725 c/s1 "A prayer for a person betrayed by a friend" [chapters, c])
+        //     59/ 56:1 SectionEntry(ends 56:13 lines 7726-7838 c/s1 "The praying due trusting of God" [chapters, c])
+        //     60/ 57:1 SectionEntry(ends 57:11 lines 7839-7946 c/s1 "A prayer for protection from predators" [chapters, c])
+        //     61/ 58:1 SectionEntry(ends 58:11 lines 7947-8042 c/s1 "Punishment for the wicked" [chapters, c])
+        //     62/ 59:1 SectionEntry(ends 59:17 lines 8043-8210 c/s1 "A prayer for safety" [chapters, c])
+        //     63/ 60:1 SectionEntry(ends 60:12 lines 8211-8326 c/s1 "A prayer for military help" [chapters, c])
+        //     64/ 61:1 SectionEntry(ends 61:8 lines 8327-8398 c/s1 "A prayer for protection" [chapters, c])
+        //     65/ 62:1 SectionEntry(ends 62:12 lines 8399-8520 c/s1 "Trusting in God" [chapters, c])
+        //     66/ 63:1 SectionEntry(ends 63:11 lines 8521-8622 c/s1 "Staying close to God" [chapters, c])
+        //     67/ 64:1 SectionEntry(ends 64:10 lines 8623-8719 c/s1 "Trusting God for protection" [chapters, c])
+        //     68/ 65:1 SectionEntry(ends 65:13 lines 8720-8864 c/s1 "Praising and thanking God" [chapters, c])
+        //     69/ 66:1 SectionEntry(ends 66:20 lines 8865-9041 c/s1 "Praising and thanking God" [chapters, c])
+        //     70/ 67:1 SectionEntry(ends 67:7 lines 9042-9108 c/s1 "A song thanking God" [chapters, c])
+        //     71/ 68:1 SectionEntry(ends 68:35 lines 9109-9441 c/s1 "A song of victory" [chapters, c])
+        //     72/ 69:1 SectionEntry(ends 69:36 lines 9442-9752 c/s1 "A request for help" [chapters, c])
+        //     73/ 70:1 SectionEntry(ends 70:5 lines 9753-9798 c/s1 "A prayer for help" [chapters, c])
+        //     74/ 71:1 SectionEntry(ends 71:24 lines 9799-10003 c/s1 "Prayer for long-term protection" [chapters, c])
+        //     75/ 72:1 SectionEntry(ends 72:20 lines 10004-10185 c/s1 "A prayer to bless the king" [chapters, c])
+        //     76/ 73:0 SectionEntry(ends 0:0 lines 10186-10188 c/ms1 "Third collection" [chapters, c])
+        //     77/ 73:1 SectionEntry(ends 73:28 lines 10189-10424 c/s1 "The need for justice" [chapters, c])
+        //     78/ 74:1 SectionEntry(ends 74:23 lines 10425-10619 c/s1 "Requesting God's help" [chapters, c])
+        //     79/ 75:1 SectionEntry(ends 75:10 lines 10620-10710 c/s1 "God the judge" [chapters, c])
+        //     80/ 76:1 SectionEntry(ends 76:12 lines 10711-10817 c/s1 "God is victorious" [chapters, c])
+        //     81/ 77:1 SectionEntry(ends 77:20 lines 10818-11003 c/s1 "God's leadership" [chapters, c])
+        //     82/ 78:1 SectionEntry(ends 78:72 lines 11004-11632 c/s1 "God's past goodness" [chapters, c])
+        //     83/ 79:1 SectionEntry(ends 79:13 lines 11633-11753 c/s1 "A prayer for national restoration" [chapters, c])
+        //     84/ 80:1 SectionEntry(ends 80:19 lines 11754-11916 c/s1 "A prayer for national restoration" [chapters, c])
+        //     85/ 81:1 SectionEntry(ends 81:16 lines 11917-12058 c/s1 "Thanking God for relief" [chapters, c])
+        //     86/ 82:1 SectionEntry(ends 82:8 lines 12059-12133 c/s1 "God the defender" [chapters, c])
+        //     87/ 83:1 SectionEntry(ends 83:18 lines 12134-12282 c/s1 "Praying for victory over enemies" [chapters, c])
+        //     88/ 84:1 SectionEntry(ends 84:12 lines 12283-12395 c/s1 "Longing to be in Yahweh's courtyards" [chapters, c])
+        //     89/ 85:1 SectionEntry(ends 85:13 lines 12396-12510 c/s1 "Prayer for national peace" [chapters, c])
+        //     90/ 86:1 SectionEntry(ends 86:17 lines 12511-12663 c/s1 "God's great love" [chapters, c])
+        //     91/ 87:1 SectionEntry(ends 87:7 lines 12664-12724 c/s1 "Praising Tsiyyon (Zion)" [chapters, c])
+        //     92/ 88:1 SectionEntry(ends 88:18 lines 12725-12888 c/s1 "A depressed cry for help" [chapters, c])
+        //     93/ 89:1 SectionEntry(ends 89:52 lines 12889-13320 c/s1 "To be sung my the goodness of God" [chapters, c])
+        //     94/ 90:0 SectionEntry(ends 0:0 lines 13321-13323 c/ms1 "Fourth collection" [chapters, c])
+        //     95/ 90:1 SectionEntry(ends 90:17 lines 13324-13480 c/s1 "The people and the god" [chapters, c])
+        //     96/ 91:1 SectionEntry(ends 91:16 lines 13481-13624 c/s1 "God our protector" [chapters, c])
+        //     97/ 92:1 SectionEntry(ends 92:15 lines 13625-13757 c/s1 "A praise song" [chapters, c])
+        //     98/ 93:1 SectionEntry(ends 93:5 lines 13758-13815 c/s1 "The god King" [chapters, c])
+        //     99/ 94:1 SectionEntry(ends 94:23 lines 13816-14014 c/s1 "God the judge of all" [chapters, c])
+        //     100/ 95:1 SectionEntry(ends 95:11 lines 14015-14119 c/s1 "A praise song" [chapters, c])
+        //     101/ 96:1 SectionEntry(ends 96:13 lines 14120-14240 c/s1 "Praise God—he deserves it" [chapters, c])
+        //     102/ 97:1 SectionEntry(ends 97:12 lines 14241-14355 c/s1 "God's splendour" [chapters, c])
+        //     103/ 98:1 SectionEntry(ends 98:9 lines 14356-14438 c/s1 "Praising the master" [chapters, c])
+        //     104/ 99:1 SectionEntry(ends 99:9 lines 14439-14537 c/s1 "The holiness of our god" [chapters, c])
+        //     105/ 100:1 SectionEntry(ends 100:5 lines 14538-14591 c/s1 "Let's thank and praise Yahweh" [chapters, c])
+        //     106/ 101:1 SectionEntry(ends 101:8 lines 14592-14666 c/s1 "A good king's pledge" [chapters, c])
+        //     107/ 102:1 SectionEntry(ends 102:28 lines 14667-14901 c/s1 "Prayer for relief from troubles" [chapters, c])
+        //     108/ 103:1 SectionEntry(ends 103:22 lines 14902-15092 c/s1 "Yahweh's goodness" [chapters, c])
+        //     109/ 104:1 SectionEntry(ends 104:35 lines 15093-15400 c/s1 "Praising the creator" [chapters, c])
+        //     110/ 105:1 SectionEntry(ends 105:45 lines 15401-15771 c/s1 "Yahweh's faithfulness" [chapters, c])
+        //     111/ 106:1 SectionEntry(ends 106:48 lines 15772-16193 c/s1 "Yahweh's goodness" [chapters, c])
+        //     112/ 107:0 SectionEntry(ends 0:0 lines 16194-16196 c/ms1 "Fifth collection" [chapters, c])
+        //     113/ 107:1 SectionEntry(ends 107:43 lines 16197-16551 c/s1 "Thanking for God's goodness" [chapters, c])
+        //     114/ 108:1 SectionEntry(ends 108:13 lines 16552-16667 c/s1 "Praise, then prayer for victory" [chapters, c])
+        //     115/ 109:1 SectionEntry(ends 109:31 lines 16668-16929 c/s1 "My god help me" [chapters, c])
+        //     116/ 110:1 SectionEntry(ends 110:7 lines 16930-16996 c/s1 "Yahweh and his chosen king" [chapters, c])
+        //     117/ 111:1 SectionEntry(ends 111:10 lines 16997-17114 c/s1 "Praise for what Yahweh's done" [chapters, c])
+        //     118/ 112:1 SectionEntry(ends 112:10 lines 17115-17232 c/s1 "The blessing for a godly person" [chapters, c])
+        //     119/ 113:1 SectionEntry(ends 113:9 lines 17233-17311 c/s1 "Praising Yahweh's goodness" [chapters, c])
+        //     120/ 114:1 SectionEntry(ends 114:8 lines 17312-17382 c/s1 "Praising God's past miracles" [chapters, c])
+        //     121/ 115:1 SectionEntry(ends 115:18 lines 17383-17545 c/s1 "Trust in Yahweh" [chapters, c])
+        //     122/ 116:1 SectionEntry(ends 116:19 lines 17546-17710 c/s1 "Praise Yahweh who rescued me" [chapters, c])
+        //     123/ 117:1 SectionEntry(ends 117:2 lines 17711-17736 c/s1 "Praising Yahweh's commitment to us" [chapters, c])
+        //     124/ 118:1 SectionEntry(ends 118:29 lines 17737-17978 c/s1 "Not ending the love of God" [chapters, c])
+        //     125/ 119:1 SectionEntry(ends 119:8 lines 17979-18049 c/s1 "Obeying Yahweh's instructions" [chapters, c])
+        //     126/ 119:9 SectionEntry(ends 119:16 lines 18050-18118 s1 "Internalising Yahweh's principles" [chapters, c])
+        //     127/ 119:17 SectionEntry(ends 119:24 lines 18119-18187 s1 "Pleased to obey Yahweh's instructions" [chapters, c])
+        //     128/ 119:25 SectionEntry(ends 119:32 lines 18188-18256 s1 "Choosing Yahweh's way" [chapters, c])
+        //     129/ 119:33 SectionEntry(ends 119:40 lines 18257-18325 s1 "Prayer for guidance" [chapters, c])
+        //     130/ 119:41 SectionEntry(ends 119:48 lines 18326-18394 s1 "Trusting Yahweh's instructions" [chapters, c])
+        //     131/ 119:49 SectionEntry(ends 119:56 lines 18395-18463 s1 "Comforted by Yahweh's principles" [chapters, c])
+        //     132/ 119:57 SectionEntry(ends 119:64 lines 18464-18532 s1 "The loving of Law of God" [chapters, c])
+        //     133/ 119:65 SectionEntry(ends 119:72 lines 18533-18601 s1 "The purpose of Yahweh's instructions" [chapters, c])
+        //     134/ 119:73 SectionEntry(ends 119:80 lines 18602-18673 s1 "The justice of Yahweh's instructions" [chapters, c])
+        //     135/ 119:81 SectionEntry(ends 119:88 lines 18674-18742 s1 "Requesting Yahweh's intervention" [chapters, c])
+        //     136/ 119:89 SectionEntry(ends 119:96 lines 18743-18805 s1 "Trusting in Yahweh's principles" [chapters, c])
+        //     137/ 119:97 SectionEntry(ends 119:104 lines 18806-18874 s1 "Appreciating Yahweh's principles" [chapters, c])
+        //     138/ 119:105 SectionEntry(ends 119:112 lines 18875-18940 s1 "The peace/prosperity from law of God" [chapters, c])
+        //     139/ 119:113 SectionEntry(ends 119:120 lines 18941-19009 s1 "Safety in Yahweh's instructions" [chapters, c])
+        //     140/ 119:121 SectionEntry(ends 119:128 lines 19010-19078 s1 "Obeying Yahweh's instructions" [chapters, c])
+        //     141/ 119:129 SectionEntry(ends 119:136 lines 19079-19147 s1 "Wanting to obey Yahweh's instructions" [chapters, c])
+        //     142/ 119:137 SectionEntry(ends 119:144 lines 19148-19216 s1 "Yahweh demands obedience" [chapters, c])
+        //     143/ 119:145 SectionEntry(ends 119:152 lines 19217-19285 s1 "Calling to be rescued" [chapters, c])
+        //     144/ 119:153 SectionEntry(ends 119:160 lines 19286-19354 s1 "Calling to be rescued" [chapters, c])
+        //     145/ 119:161 SectionEntry(ends 119:168 lines 19355-19423 s1 "Obeying Yahweh's instructions" [chapters, c])
+        //     146/ 119:169 SectionEntry(ends 119:176 lines 19424-19493 s1 "A prayer for help" [chapters, c])
+        //     147/ 120:1 SectionEntry(ends 120:7 lines 19494-19560 c/s1 "Asking Yahweh for peace" [chapters, c])
+        //     148/ 121:1 SectionEntry(ends 121:8 lines 19561-19632 c/s1 "Yahweh our protector" [chapters, c])
+        //     149/ 122:1 SectionEntry(ends 122:9 lines 19633-19708 c/s1 "Wanting peace for Yerushalem" [chapters, c])
+        //     150/ 123:1 SectionEntry(ends 123:4 lines 19709-19752 c/s1 "Praying to see mercy" [chapters, c])
+        //     151/ 124:1 SectionEntry(ends 124:8 lines 19753-19823 c/s1 "Thanking for Yahweh's protection" [chapters, c])
+        //     152/ 125:1 SectionEntry(ends 125:5 lines 19824-19875 c/s1 "Against wicked rulers" [chapters, c])
+        //     153/ 126:1 SectionEntry(ends 126:6 lines 19876-19935 c/s1 "The cheerful harvest" [chapters, c])
+        //     154/ 127:1 SectionEntry(ends 127:5 lines 19936-19987 c/s1 "Children are a blessing" [chapters, c])
+        //     155/ 128:1 SectionEntry(ends 128:6 lines 19988-20043 c/s1 "Prosperity for those who honour Yahweh" [chapters, c])
+        //     156/ 129:1 SectionEntry(ends 129:8 lines 20044-20119 c/s1 "Praying against haters of Tsiyyon" [chapters, c])
+        //     157/ 130:1 SectionEntry(ends 130:8 lines 20120-20193 c/s1 "Yahweh can redeem us" [chapters, c])
+        //     158/ 131:1 SectionEntry(ends 131:3 lines 20194-20225 c/s1 "Explaing inner peace" [chapters, c])
+        //     159/ 132:1 SectionEntry(ends 132:18 lines 20226-20377 c/s1 "Yahweh's resting place in Tsiyyon" [chapters, c])
+        //     160/ 133:1 SectionEntry(ends 133:3 lines 20378-20415 c/s1 "Living peacefully together" [chapters, c])
+        //     161/ 134:1 SectionEntry(ends 134:3 lines 20416-20445 c/s1 "Lift your hands and bless Yahweh" [chapters, c])
+        //     162/ 135:1 SectionEntry(ends 135:21 lines 20446-20638 c/s1 "A praise song" [chapters, c])
+        //     163/ 136:1 SectionEntry(ends 136:26 lines 20639-20856 c/s1 "A song of thankfulness" [chapters, c])
+        //     164/ 137:1 SectionEntry(ends 137:9 lines 20857-20941 c/s1 "Mourning Yerushalem's destruction" [chapters, c])
+        //     165/ 138:1 SectionEntry(ends 138:8 lines 20942-21027 c/s1 "A prayer of thankfulness" [chapters, c])
+        //     166/ 139:1 SectionEntry(ends 139:24 lines 21028-21237 c/s1 "God's care and total knowledge" [chapters, c])
+        //     167/ 140:1 SectionEntry(ends 140:13 lines 21238-21359 c/s1 "A prayer for protection" [chapters, c])
+        //     168/ 141:1 SectionEntry(ends 141:10 lines 21360-21462 c/s1 "Accepting correction" [chapters, c])
+        //     169/ 142:1 SectionEntry(ends 142:7 lines 21463-21533 c/s1 "A prayer for protection" [chapters, c])
+        //     170/ 143:1 SectionEntry(ends 143:12 lines 21534-21658 c/s1 "A prayer to be rescued" [chapters, c])
+        //     171/ 144:1 SectionEntry(ends 144:15 lines 21659-21807 c/s1 "The thanking due to victory" [chapters, c])
+        //     172/ 145:1 SectionEntry(ends 145:21 lines 21808-22007 c/s1 "A praise song" [chapters, c])
+        //     173/ 146:1 SectionEntry(ends 146:10 lines 22008-22110 c/s1 "Praise Yahweh the liberator" [chapters, c])
+        //     174/ 147:1 SectionEntry(ends 147:20 lines 22111-22293 c/s1 "Praise Yahweh who's in control" [chapters, c])
+        //     175/ 148:1 SectionEntry(ends 148:14 lines 22294-22431 c/s1 "Praise Yahweh everyone" [chapters, c])
+        //     176/ 149:1 SectionEntry(ends 149:9 lines 22432-22518 c/s1 "A song of praise" [chapters, c])
+        //     177/ 150:1 SectionEntry(ends 150:6 lines 22519-22581 c/s1 "Praise Yahweh everyone" [chapters, c])
+
+        assert_eq!(section_index.len(), 178);
+        let sections: Vec<_> = section_index.index_data.iter().map(|(_, entry)| entry.reason_marker().to_string()).collect();
+        assert_eq!(sections, vec!["Headers", "is1",
+                    "c/ms1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1",
+                    "c/ms1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1",
+                    "c/ms1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1",
+                    "c/ms1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1",
+                    "c/ms1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "s1", "s1", "s1", "s1", "s1", "s1", "s1", "s1", "s1", "s1", "s1", "s1", "s1", "s1", "s1", "s1", "s1", "s1", "s1", "s1", "s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1", "c/s1"]);
+ 
+        // 0 -1:0 Headers='SA2'
+        let (cv0, entry0) = section_index.index_data.get_index(0).unwrap();
+        assert_eq!(cv0.to_string(), "-1:0");
+        assert_eq!(entry0.end_cv().to_string(), "-1:11");
+        assert_eq!(entry0.start_index(), 0);
+        assert_eq!(entry0.end_index(), 11); // ends at '¬headers'
+        assert_eq!(entry0.reason_marker(), "Headers");
+        assert_eq!(entry0.section_name(), "PSA");
+
+        // 1 -1:13 is1='Introduction'
+        let (cv1, entry1) = section_index.index_data.get_index(1).unwrap();
+        assert_eq!(cv1.to_string(), "-1:13");
+        assert_eq!(entry1.end_cv().to_string(), "-1:31");
+        assert_eq!(entry1.start_index(), 13);
+        assert_eq!(entry1.end_index(), 31);
+        assert_eq!(entry1.reason_marker(), "is1");
+        assert_eq!(entry1.section_name(), "Introduction");
+
+        // 2 1:0 ms1='First collection'
+        let (cv2, entry2) = section_index.index_data.get_index(2).unwrap();
+        assert_eq!(cv2.to_string(), "1:0");
+        assert_eq!(entry2.end_cv().to_string(), "0:0");
+        assert_eq!(entry2.start_index(), 33); // c
+        assert_eq!(entry2.end_index(), 36); // mr
+        assert_eq!(entry2.reason_marker(), "c/ms1");
+        assert_eq!(entry2.section_name(), "First collection");
+
+        // 2 1:1 s1='Wicked and godly roads'
+        let (cv3, entry3) = section_index.index_data.get_index(3).unwrap();
+        assert_eq!(cv3.to_string(), "1:1");
+        assert_eq!(entry3.end_cv().to_string(), "1:6");
+        assert_eq!(entry3.start_index(), 37); // s1
+        assert_eq!(entry3.end_index(), 102); // ¬c
+        assert_eq!(entry3.reason_marker(), "c/s1");
+        assert_eq!(entry3.section_name(), "Wicked and godly roads");
+
+        // 3 2:1 s1='God's chosen king'
+        let (cv4, entry4) = section_index.index_data.get_index(4).unwrap();
+        assert_eq!(cv4.to_string(), "2:1");
+        assert_eq!(entry4.end_cv().to_string(), "2:12");
+        assert_eq!(entry4.start_index(), 103); // v=
+        assert_eq!(entry4.end_index(), 212);
+        assert_eq!(entry4.reason_marker(), "c/s1");
+        assert_eq!(entry4.section_name(), "God's chosen king");
+
+        // 4 42:0 ms1='Second collection'
+        let (cv44, entry44) = section_index.index_data.get_index(44).unwrap();
+        assert_eq!(cv44.to_string(), "42:0");
+        assert_eq!(entry44.end_cv().to_string(), "0:0");
+        assert_eq!(entry44.start_index(), 5862);
+        assert_eq!(entry44.end_index(), 5864);
+        assert_eq!(entry44.reason_marker(), "c/ms1");
+        assert_eq!(entry44.section_name(), "Second collection");
+
+        // 5 42:1 s1='Hope when depressed'
+        let (cv45, entry45) = section_index.index_data.get_index(45).unwrap();
+        assert_eq!(cv45.to_string(), "42:1");
+        assert_eq!(entry45.end_cv().to_string(), "42:11");
+        assert_eq!(entry45.start_index(), 5865); // s1
+        assert_eq!(entry45.end_index(), 5979);
+        assert_eq!(entry45.reason_marker(), "c/s1");
+        assert_eq!(entry45.section_name(), "Hope when depressed");
 
         // // 6 2:10 s1='The people have been unfaithful'
         // let (cv6, entry6) = section_index.index_data.get_index(6).unwrap();

@@ -41,33 +41,33 @@ impl PySectionIndexEntry {
     ///     endC: End chapter number string
     ///     endV: End verse number string
     ///     startIx: Start entry index
-    ///     endIx: End entry index (inclusive)
+    ///     entryCount: Number of entries in the section
     ///     reasonMarker: Marker that started this section
     ///     sectionName: Section heading text
     ///     contextList: Optional list of context markers
     #[new]
-    #[pyo3(signature = (end_c, end_v, start_ix, end_ix, reason_marker, section_name, context_list=None))]
+    #[pyo3(signature = (end_c, end_v, start_ix, entry_count, reason_marker, section_name, context_list=None))]
     fn new(
         end_c: &str,
         end_v: &str,
-        start_ix: u16,
-        end_ix: u16,
+        start_ix: u32,
+        entry_count: u16,
         reason_marker: &str,
         section_name: &str,
         context_list: Option<Vec<String>>,
     ) -> Self {
         let ctx = context_list.unwrap_or_default().into_iter().map(|s| s.into()).collect();
         Self {
-            inner: SectionIndexEntry::new(end_c, end_v, start_ix, end_ix, reason_marker, section_name, ctx),
+            inner: SectionIndexEntry::new(end_c, end_v, start_ix, entry_count, reason_marker, section_name, ctx),
         }
     }
 
-    fn __getnewargs__(&self) -> (String, String, u16, u16, String, String, Option<Vec<String>>) {
+    fn __getnewargs__(&self) -> (String, String, u32, u16, String, String, Option<Vec<String>>) {
         (
             self.inner.end_chapter_num_str().to_string(),
             self.inner.end_verse_num_str().to_string(),
-            self.inner.start_index() as u16,
-            self.inner.end_index() as u16,
+            self.inner.start_index() as u32,
+            self.inner.entry_count() as u16,
             self.inner.reason_marker().to_string(),
             self.inner.section_name().to_string(),
             Some(self.inner.context().iter().map(|s| s.to_string()).collect()),
@@ -87,13 +87,13 @@ impl PySectionIndexEntry {
     }
 
     #[getter]
-    fn startIx(&self) -> usize {
-        self.inner.start_index()
+    fn startIx(&self) -> u32 {
+        self.inner.start_index() as u32
     }
 
     #[getter]
     fn endIx(&self) -> usize {
-        self.inner.end_index()
+        self.inner.start_index() + self.inner.entry_count() - 1
     }
 
     #[getter]
@@ -128,7 +128,7 @@ impl PySectionIndexEntry {
 
     /// Get end entry index (inclusive).
     fn getEndIndex(&self) -> usize {
-        self.inner.end_index()
+        self.inner.start_index() + self.inner.entry_count() - 1
     }
 
     /// Get entry count (endIx + 1 - startIx).
@@ -158,7 +158,7 @@ impl PySectionIndexEntry {
             0 => Ok(self.inner.end_chapter_num_str().into_pyobject(py)?.into_any().unbind()),
             1 => Ok(self.inner.end_verse_num_str().into_pyobject(py)?.into_any().unbind()),
             2 => Ok(self.inner.start_index().into_pyobject(py)?.into_any().unbind()),
-            3 => Ok(self.inner.end_index().into_pyobject(py)?.into_any().unbind()),
+            3 => Ok(self.inner.entry_count().into_pyobject(py)?.into_any().unbind()),
             4 => Ok(self.inner.reason_marker().into_pyobject(py)?.into_any().unbind()),
             5 => Ok(self.inner.section_name().into_pyobject(py)?.into_any().unbind()),
             6 => {
@@ -175,8 +175,8 @@ impl PySectionIndexEntry {
             self.inner.end_chapter_num_str(),
             self.inner.end_verse_num_str(),
             self.inner.start_index(),
-            self.inner.end_index(),
             self.inner.entry_count(),
+            self.inner.end_index(),
             self.inner.reason_marker(),
             self.inner.section_name(),
             if self.inner.context().is_empty() {
@@ -413,4 +413,49 @@ pub fn py_build_bible_section_indexes<'py>(
         dict.set_item(bbb, Bound::new(py, PyInternalBibleBookSectionIndex { inner: index })?)?;
     }
     Ok(dict)
+}
+
+#[cfg(test)]
+mod tests {
+
+    use super::*;
+    use std::fs::File;
+    use std::io::{BufRead, BufReader};
+
+    #[test]
+    // #[ignore = "Test not finished yet"]
+    fn test_oet_rv_haggai_section_indexing() {
+        let file_path = "../../Tests/DataFilesForTests/OET-RV/OET-RV_HAG.ESFM";
+        let file = File::open(file_path).expect("Could not open OET-RV Haggai ESFM file");
+        let reader = BufReader::new(file);
+
+        let mut raw_lines = Vec::new();
+        for line in reader.lines() {
+            let line = line.expect("Could not read line");
+            if line.trim().is_empty() {
+                continue;
+            }
+            let (marker, text) = match line.split_once(' ') {
+                Some((m, t)) => (m, t),
+                None => (line.as_str(), ""),
+            };
+            let marker = marker.strip_prefix('\\').unwrap_or(marker);
+            raw_lines.push((marker.to_string(), text.to_string()));
+        }
+        
+        // Results should match test_data/OET-RV_HAG_rawLines.txt
+        let original_count = raw_lines.len();
+        // println!("Original lines read: {}", original_count);
+        assert_eq!(original_count, 81, "Expected 81 raw lines in Haggai OET-RV ESFM file");
+
+        let options = crate::processing::ProcessLinesOptions::default();
+        let processed = crate::processing::process_lines(raw_lines, "HAG", "OET-RV", &options);
+        // println!("Final OET-RV Haggai processed line entries: {}", processed.len());
+
+        let section_index  = PyInternalBibleBookSectionIndex::new("OET-RV", "HAG");
+        println!("This test is UNFINISHED: Section index building and lookup not yet implemented for OET-RV Haggai");
+        // section_index.build(pyo3::Python::<'_>, &PyInternalBibleEntryList::from(processed.clone())).expect("Failed to build section index for OET-RV Haggai");
+
+        // let _ = index.getChapterEntriesWithContext("-1").expect("Failed to get chapter entries with context for Haggai intro");
+    }
 }

@@ -43,7 +43,7 @@ import BibleOrgSys.BibleOrgSysGlobals as BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2026-06-30' # by RJH
+LAST_MODIFIED_DATE = '2026-07-01' # by RJH
 SHORT_PROGRAM_NAME = "OldBiblicalEnglish"
 PROGRAM_NAME = "OpenBibleData English Language Handling functions"
 PROGRAM_VERSION = '0.97'
@@ -551,7 +551,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
                 ((' avaricious',' auaricis'),' avaricious/greedy'),
             (('Auen',),'Aven'),((' avengeth',' auengeth'),' avengeth/avenges'),((' aueng',' aueg'),' aveng'),
                 ((' auerse',),' averse'),
-            (('Auoyde',),'Avoid'),((' auoyd',' auoid'),' avoid'),
+            (('Auoyde','Avoyde'),'Avoid'),((' auoyd',' auoid'),' avoid'),
         (('Awaye ',),'Away '),((' awaye',' awaie',' awei',' awey',),' away'),((' awai.',),' away.'),
     ((' backes',' backis'),' backs'),((' backe ',' bak '),' back '),((' backe,',' bak,'),' back,'),((' backe.',),' back.'),((' backe?',),' back?'),((' backe:',),' back:'),((' bak;',),' back;'),
                 (('bacbitiden',),'backbiting'), (('backewarde','backeward','backwarde','bacward'),'backward'),
@@ -922,7 +922,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
             ((' kunnyng',' connynge',' cunnyng'),' cunning'),
             ((' cuppis',' cuppe',),' cup'),
             ((' keuered',),' cured'),
-                (('Cursid',),'Cursed'),((' cursiden',' curside',' cursid'),' cursed'),((' curseth',' cursseth',' cursith'),' curseth/curses'),((' cursyngi',' cursynge',),' cursing'),
+                (('Cursid',),'Cursed'),((' cursedest',' cursedst',' cursidist',' cursiden',' curside',' cursid'),' cursed'),((' curseth',' cursseth',' cursith'),' curseth/curses'),((' cursyngi',' cursynge',),' cursing'),
                 ((' curtayne',' curtaine'),' curtain'),
             ((' cuschen',),' cushion'),
                 ((' customes',),' customs'),((' custome ',),' custom '),((' custum',),' custom'),((' custome,',),' custom,'),
@@ -1051,7 +1051,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
             ((' doores',' dores',' doris'),' doors'),((' doore',' dore'),' door'),
             ((' dost ',' doest ',' doist '),' dost/do '),((' doist;',),' dost/do;'),
             ((' doublid',),' doubled'),((' dubble',),' double'),
-                ((' douteful,',),' doubtful,'), (('Doubtlesse',),'Doubtless'),((' doubtlesse',' doutlesse',' doutles'),' doubtless'), ((' doutide',),' doubted'), ((' doute ',),' doubt '),((' doute,',),' doubt,'),((' doute)',),' doubt)'),
+                ((' douteful,',),' doubtful,'), (('Doubtlesse',),'Doubtless'),((' doubtlesse',' doutlesse',' doutles'),' doubtless'), ((' douteth',),' doubteth/doubts'),((' doutide',),' doubted'), ((' doute ',),' doubt '),((' doute,',),' doubt,'),((' doute)',),' doubt)'),
                 ((' dowe ',' dow '),' dough '),((' douy',),' dough'),((' dow,',),' dough,'),((' dow;',),' dough;'),
             (('Doue',),'Dove'),((' dowue',' doue'),' dove'),
             ((' downe ',' doune ',' doun '),' down '),((' downe,',' doun,'),' down,'),((' downe.',' doun.'),' down.'),((' downe:',),' down:'),((' doun;',),' down;'),((' downe)',),' down)'), (('downewarde','downwarde','downeward','dounward'),'downward'),

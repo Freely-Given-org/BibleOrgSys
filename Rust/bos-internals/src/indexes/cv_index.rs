@@ -9,6 +9,7 @@ use indexmap::IndexMap;
 // use log::trace;
 
 use bos_books_codes::is_chapter_verse_book;
+use num_format::Locale::ne;
 use crate::bos_markers::{regular_nesting, custom_nesting, is_end_marker};
 use crate::chapter_verse::ChapterVerse;
 use crate::entry_lists::InternalBibleEntryList;
@@ -24,9 +25,9 @@ use crate::{have_strict_checking_flag, verbosity_println};
 #[derive(Debug, Clone, PartialEq, Eq, rkyv::Archive, rkyv::Serialize, rkyv::Deserialize)]
 pub struct CVIndexEntry {
     /// Index of the first entry for this C:V in the entry list.
-    entry_index: u16,
+    start_index: u32,
     /// Number of entries for this C:V.
-    entry_count: u16,
+    entry_count: u8,
     /// Context markers that were open at this point (e.g., `["chapters", "c", "p"]`).
     context: Vec<CompactString>,
 }
@@ -34,9 +35,9 @@ pub struct CVIndexEntry {
 impl CVIndexEntry {
     /// Create a new CV index entry.
     #[inline]
-    pub fn new(entry_index: u16, entry_count: u16, context: Vec<CompactString>) -> Self {
+    pub fn new(start_index: u32, entry_count: u8, context: Vec<CompactString>) -> Self {
         Self {
-            entry_index,
+            start_index,
             entry_count,
             context,
         }
@@ -44,20 +45,20 @@ impl CVIndexEntry {
 
     /// Get the starting entry index.
     #[inline]
-    pub fn entry_index(&self) -> usize {
-        self.entry_index as usize
+    pub fn start_index(&self) -> usize {
+        self.start_index as usize
     }
 
     /// Get the entry count for this C:V.
     #[inline]
-    pub fn entry_count(&self) -> u16 {
+    pub fn entry_count(&self) -> u8 {
         self.entry_count
     }
 
     /// Get the index one past the last entry for this C:V.
     #[inline]
-    pub fn next_entry_index(&self) -> usize {
-        self.entry_index as usize + self.entry_count as usize
+    pub fn next_start_index(&self) -> usize {
+        self.start_index as usize + self.entry_count as usize
     }
 
     /// Get the context markers.
@@ -72,7 +73,7 @@ impl std::fmt::Display for CVIndexEntry {
         write!(
             f,
             "CVIndexEntry(idx={}, count={}, ctx={:?})",
-            self.entry_index, self.entry_count, self.context
+            self.start_index, self.entry_count, self.context
         )
     }
 }
@@ -190,9 +191,9 @@ impl InternalBibleBookCVIndex {
         // Try direct lookup first
         if let Some(entry) = self.index_data.get(cv) {
             if have_strict_checking_flag() || cfg!(debug_assertions) {
-                self.validate_entries_for_verse(cv, &self.line_entries.slice(entry.entry_index(), entry.next_entry_index()));
+                self.validate_entries_for_verse(cv, &self.line_entries.slice(entry.start_index(), entry.next_start_index()));
             }
-            return Ok(self.line_entries.slice(entry.entry_index(), entry.next_entry_index()));
+            return Ok(self.line_entries.slice(entry.start_index(), entry.next_start_index()));
         }
 
         if strict {
@@ -209,11 +210,11 @@ impl InternalBibleBookCVIndex {
                     && start <= desired_v
                     && desired_v <= end
                 {
-                    return Ok(self.line_entries.slice(entry.entry_index(), entry.next_entry_index()));
+                    return Ok(self.line_entries.slice(entry.start_index(), entry.next_start_index()));
                 }
                 // Check verse lists (e.g., "5,6,7")
                 if key.is_verse_list() && key.contains_verse(desired_v) {
-                    return Ok(self.line_entries.slice(entry.entry_index(), entry.next_entry_index()));
+                    return Ok(self.line_entries.slice(entry.start_index(), entry.next_start_index()));
                 }
             }
         }
@@ -242,7 +243,7 @@ impl InternalBibleBookCVIndex {
 
         // Try direct lookup
         if let Some(entry) = self.index_data.get(cv) {
-            let entries = self.line_entries.slice(entry.entry_index(), entry.next_entry_index());
+            let entries = self.line_entries.slice(entry.start_index(), entry.next_start_index());
             if have_strict_checking_flag() || cfg!(debug_assertions) {
                 self.validate_entries_for_verse(cv, &entries);
             }
@@ -252,7 +253,7 @@ impl InternalBibleBookCVIndex {
             if complete && cv.verse() == "1" {
                 let cv0 = ChapterVerse::new(cv.chapter(), "0");
                 if let Some(entry0) = self.index_data.get(&cv0) {
-                    let mut combined = self.line_entries.slice(entry0.entry_index(), entry0.next_entry_index());
+                    let mut combined = self.line_entries.slice(entry0.start_index(), entry0.next_start_index());
                     combined.extend(&entries);
                     return Ok((combined, context));
                 }
@@ -270,7 +271,7 @@ impl InternalBibleBookCVIndex {
 
         for (key, entry) in &self.index_data {
             if key.chapter() == cv.chapter() && key.contains_verse(desired_v) {
-                let entries = self.line_entries.slice(entry.entry_index(), entry.next_entry_index());
+                let entries = self.line_entries.slice(entry.start_index(), entry.next_start_index());
                 return Ok((entries, entry.context.clone()));
             }
         }
@@ -351,10 +352,10 @@ impl InternalBibleBookCVIndex {
         let end_index = self
             .index_data
             .get(&next_cv)
-            .map(|e| e.entry_index())
+            .map(|e| e.start_index())
             .unwrap_or(self.line_entries.len());
 
-        Ok(self.line_entries.slice(start_entry.entry_index(), end_index))
+        Ok(self.line_entries.slice(start_entry.start_index(), end_index))
     }
 
     /// Get the CV index entry for a specific reference.
@@ -422,6 +423,8 @@ impl InternalBibleBookCVIndex {
             if have_strict_checking_flag() || cfg!(debug_assertions) {
                 assert!(!marker.is_empty() && !marker.contains('\\'), "Entry marker should not be empty and should not contain a backslash: found '{}'", marker);
             }
+            let next_marker = self.line_entries.get(i+1).and_then(|entry| Some(entry.marker())).unwrap_or_default();
+
             if marker == "c" {
                 next_chapter = CompactString::from(line_entry.clean_text());
                 next_verse = CompactString::from("0");
@@ -435,7 +438,7 @@ impl InternalBibleBookCVIndex {
                 next_verse = CompactString::from(i.to_string());
                 is_cv_start = true;
             } else if crate::bos_markers::paragraph_markers::is_paragraph(marker)
-                || ["b","list","v="].contains(&marker)  // v= precedes s1, etc.
+                || ["b","list","v="].contains(&marker)  // v= precedes s1, ms1, is1, etc.
                 || crate::bos_markers::heading_markers::is_heading(marker)
                 || crate::bos_markers::major_section_markers::is_major_section(marker)
             { // Any of the above could be (but not necessarily) preliminaries to a new verse
@@ -459,10 +462,12 @@ impl InternalBibleBookCVIndex {
                 }
             }
 
-            if is_cv_start && (next_chapter != current_chapter || next_verse != current_verse) {
+            if is_cv_start
+            && (next_chapter != current_chapter || next_verse != current_verse)
+            && !["ms1","ms2","ms3","mr"].contains(&next_marker) {
                 // Finish previous CV
                 let cv = ChapterVerse::new(current_chapter.as_str(), current_verse.as_str());
-                let line_entry_count = (i - current_start_line_index) as u16;
+                let line_entry_count = (i - current_start_line_index) as u8;
                 // // Double-check that all verse markers in this range have the same verse number (to catch any inconsistencies)
                 // for entry in self.entries.slice(current_start, i) {
                 //     if entry.marker() == "v" || entry.marker() == "v=" || entry.marker() == "¬v" {
@@ -472,8 +477,8 @@ impl InternalBibleBookCVIndex {
                 //     }
                 // }
                 let current_end_line_index = i - 1;
-                verbosity_println!(4, "    At {} about to append CV entry: {} {}+{} [{}] with celi={} lsli={} leli={}",
-                            i, cv, current_start_line_index, line_entry_count, current_context.join(", "), current_end_line_index, last_start_line_index, last_end_line_index);
+                verbosity_println!(4, "  At {} {}:{} with {}:{} '{}' then '{}' about to append CV entry {}: {} {}+{} [{}] with celi={} lsli={} leli={}",
+                            i, current_chapter, current_verse, next_chapter, next_verse, marker, next_marker, self.index_data.len(), cv, current_start_line_index, line_entry_count, current_context.join(", "), current_end_line_index, last_start_line_index, last_end_line_index);
                 if have_strict_checking_flag() || cfg!(debug_assertions) {
                     assert!(current_start_line_index > last_start_line_index || current_start_line_index==0,
                             "{} {} {}:{} CV index entry {} start is backwards: previous start was {}, now {} (+{}-1= {})",
@@ -488,15 +493,18 @@ impl InternalBibleBookCVIndex {
                             self.work_name(), self.bos_book_code(), current_chapter, current_verse, self.index_data.len(),
                             last_end_line_index, current_start_line_index, line_entry_count, current_end_line_index);
                     if current_chapter != "-1" && current_verse != "0" {
-                        assert!(is_end_marker(self.line_entries.get(current_end_line_index).unwrap().marker()),
-                                "{} {} {}:{} CV index entry expected to finish with an end marker, not '{}'",
-                                self.work_name(), self.bos_book_code(), current_chapter, current_verse,
-                                self.line_entries.get(current_end_line_index).unwrap().marker());
+                        assert!(is_end_marker(self.line_entries.get(current_end_line_index).unwrap().marker())
+                                || ["ms1","ms2","ms3","mr"].contains(&self.line_entries.get(current_end_line_index).unwrap().marker()),
+                                    "{} {} {}:{} CV index entry expected to finish with an end marker, not '{}'",
+                                    self.work_name(), self.bos_book_code(), current_chapter, current_verse,
+                                    self.line_entries.get(current_end_line_index).unwrap().marker());
                     }
-                    // assert!(!self.index_data.contains_key(&cv), "About to lose existing index entry for {}", cv);
+                }
+                if have_strict_checking_flag() || cfg!(debug_assertions) {
+                    assert!(!self.index_data.contains_key(&cv), "About to lose existing index entry for {}", cv);
                 }
                 self.index_data
-                    .insert(cv, CVIndexEntry::new(current_start_line_index as u16, line_entry_count, current_context.clone()));
+                    .insert(cv, CVIndexEntry::new(current_start_line_index as u32, line_entry_count, current_context.clone()));
                 last_start_line_index = current_start_line_index;
                 last_end_line_index = current_end_line_index;
 
@@ -526,7 +534,7 @@ impl InternalBibleBookCVIndex {
 
         // Finish last CV
         let cv = ChapterVerse::new(current_chapter.as_str(), current_verse.as_str());
-        let line_entry_count = (self.line_entries.len() - current_start_line_index) as u16;
+        let line_entry_count = (self.line_entries.len() - current_start_line_index) as u8;
         let current_end_line_index = current_start_line_index + line_entry_count as usize - 1;
         if have_strict_checking_flag() || cfg!(debug_assertions) {
             assert!(current_start_line_index > last_end_line_index || current_start_line_index==0,
@@ -539,7 +547,7 @@ impl InternalBibleBookCVIndex {
                     last_end_line_index, current_start_line_index, line_entry_count, current_end_line_index);
             assert!(!self.index_data.contains_key(&cv), "At end, about to lose existing index entry for {}", cv);
             }
-        self.index_data.insert(cv, CVIndexEntry::new(current_start_line_index as u16, line_entry_count, current_context));
+        self.index_data.insert(cv, CVIndexEntry::new(current_start_line_index as u32, line_entry_count, current_context));
         self.indexed = true;
 
         if have_strict_checking_flag() || cfg!(debug_assertions) {
@@ -617,12 +625,12 @@ impl InternalBibleBookCVIndex {
                     self.work_name, self.bos_book_code, cv.verse(), cv);
             }
             
-            if entry.entry_index() < last_end_index {
-                issues.push(format!("{} {} {}: entry_index {} < previous end {}",
-                    self.work_name(), self.bos_book_code(), cv, entry.entry_index(), last_end_index));
+            if entry.start_index() < last_end_index {
+                issues.push(format!("{} {} {}: start_index {} < previous end {}",
+                    self.work_name(), self.bos_book_code(), cv, entry.start_index(), last_end_index));
             }
 
-            let verse_entries = self.line_entries.slice(entry.entry_index(), entry.next_entry_index());
+            let verse_entries = self.line_entries.slice(entry.start_index(), entry.next_start_index());
             self.validate_entries_for_verse(cv, &verse_entries);
 
             if cv.chapter() != "-1"  {
@@ -637,9 +645,11 @@ impl InternalBibleBookCVIndex {
                         }
                     }
                 
-                let final_marker_in_entry = self.line_entries.get(entry.entry_index() + entry.entry_count() as usize - 1).map(|e| e.marker()).unwrap_or("N/A");
-                if !is_end_marker(final_marker_in_entry) && cv.verse() != "0" {
-                    // println!("Entry for {} {} {} is at index {} with end marker '{}'", self.work_name(), self.bos_book_code(), cv, entry.entry_index(), final_marker_in_entry);
+                let final_marker_in_entry = self.line_entries.get(entry.start_index() + entry.entry_count() as usize - 1).map(|e| e.marker()).unwrap_or("N/A");
+                if !is_end_marker(final_marker_in_entry) && cv.verse() != "0"
+                    && !["ms1","ms2","ms3","mr"].contains(&final_marker_in_entry)
+                 {
+                    // println!("Entry for {} {} {} is at index {} with end marker '{}'", self.work_name(), self.bos_book_code(), cv, entry.start_index(), final_marker_in_entry);
                     // assert!(cv.verse()=="0" || is_end_marker(final_marker_in_entry),
                     //     "Validating {} {} CV index entry for {} expected last entry to be an end marker but found marker '{}'",
                     //     self.work_name(), self.bos_book_code(), cv, final_marker_in_entry);
@@ -649,7 +659,7 @@ impl InternalBibleBookCVIndex {
                     ));
                     }
                 }
-            last_end_index = entry.next_entry_index();
+            last_end_index = entry.next_start_index();
         }
 
         // Check that all entries are covered
@@ -763,22 +773,22 @@ mod tests {
         assert!(cv_index.contains(&ChapterVerse::new("2", "1")));
 
         // Intro
-        assert_eq!(cv_index.get_index_entry(&ChapterVerse::new("-1", "0")).unwrap().entry_index(), 0);
+        assert_eq!(cv_index.get_index_entry(&ChapterVerse::new("-1", "0")).unwrap().start_index(), 0);
         assert_eq!(cv_index.get_index_entry(&ChapterVerse::new("-1", "0")).unwrap().entry_count(), 1);
-        assert_eq!(cv_index.get_index_entry(&ChapterVerse::new("-1", "1")).unwrap().entry_index(), 1);
+        assert_eq!(cv_index.get_index_entry(&ChapterVerse::new("-1", "1")).unwrap().start_index(), 1);
         assert_eq!(cv_index.get_index_entry(&ChapterVerse::new("-1", "1")).unwrap().entry_count(), 1);
 
         // 1:0
-        assert_eq!(cv_index.get_index_entry(&ChapterVerse::new("1", "0")).unwrap().entry_index(), 5);
+        assert_eq!(cv_index.get_index_entry(&ChapterVerse::new("1", "0")).unwrap().start_index(), 5);
         assert_eq!(cv_index.get_index_entry(&ChapterVerse::new("1", "0")).unwrap().entry_count(), 1);
         assert_eq!(cv_index.get_index_entry(&ChapterVerse::new("1", "0")).unwrap().context(), ["chapters"]);
 
         // 1:1
-        assert_eq!(cv_index.get_index_entry(&ChapterVerse::new("1", "1")).unwrap().entry_index(), 6);
+        assert_eq!(cv_index.get_index_entry(&ChapterVerse::new("1", "1")).unwrap().start_index(), 6);
         assert_eq!(cv_index.get_index_entry(&ChapterVerse::new("1", "1")).unwrap().entry_count(), 5);
 
         // 2:0
-        assert_eq!(cv_index.get_index_entry(&ChapterVerse::new("2", "0")).unwrap().entry_index(), 20);
+        assert_eq!(cv_index.get_index_entry(&ChapterVerse::new("2", "0")).unwrap().start_index(), 20);
         assert_eq!(cv_index.get_index_entry(&ChapterVerse::new("2", "0")).unwrap().entry_count(), 1);
 
         assert!(cv_index.len() == 11);
@@ -820,19 +830,19 @@ mod tests {
         assert!(cv_index.is_indexed());
 
         // 6:1
-        assert_eq!(cv_index.get_index_entry(&ChapterVerse::new("6", "1")).unwrap().entry_index(), 3);
+        assert_eq!(cv_index.get_index_entry(&ChapterVerse::new("6", "1")).unwrap().start_index(), 3);
         assert_eq!(cv_index.get_index_entry(&ChapterVerse::new("6", "1")).unwrap().entry_count(), 3);
 
         // 6:2
-        assert_eq!(cv_index.get_index_entry(&ChapterVerse::new("6", "2")).unwrap().entry_index(), 6);
+        assert_eq!(cv_index.get_index_entry(&ChapterVerse::new("6", "2")).unwrap().start_index(), 6);
         assert_eq!(cv_index.get_index_entry(&ChapterVerse::new("6", "2")).unwrap().entry_count(), 3);
 
         // 6:3
-        assert_eq!(cv_index.get_index_entry(&ChapterVerse::new("6", "3")).unwrap().entry_index(), 9);
+        assert_eq!(cv_index.get_index_entry(&ChapterVerse::new("6", "3")).unwrap().start_index(), 9);
         assert_eq!(cv_index.get_index_entry(&ChapterVerse::new("6", "3")).unwrap().entry_count(), 3);
 
         // 6:4
-        assert_eq!(cv_index.get_index_entry(&ChapterVerse::new("6", "4")).unwrap().entry_index(), 12);
+        assert_eq!(cv_index.get_index_entry(&ChapterVerse::new("6", "4")).unwrap().start_index(), 12);
         assert_eq!(cv_index.get_index_entry(&ChapterVerse::new("6", "4")).unwrap().entry_count(), 4);
 
         assert_eq!(cv_index.len(), 7);
@@ -908,97 +918,97 @@ mod tests {
         let (cv0, entry0) = cv_index.index_data.get_index(0).unwrap();
         assert_eq!(cv0.to_string(), "-1:0");
         assert_eq!(entry0.context(), Vec::<CompactString>::new());
-        assert_eq!(entry0.entry_index(), 0);
+        assert_eq!(entry0.start_index(), 0);
         assert_eq!(entry0.entry_count(), 1);
-        assert_eq!(cv_index.line_entries[entry0.entry_index()].marker(), "id");
+        assert_eq!(cv_index.line_entries[entry0.start_index()].marker(), "id");
 
         // 10 -1:10 ctxt=['headers']
         let (cv10, entry10) = cv_index.index_data.get_index(10).unwrap();
         assert_eq!(cv10.to_string(), "-1:10");
         assert_eq!(entry10.context(), ["headers"]);
-        assert_eq!(entry10.entry_index(), 10);
+        assert_eq!(entry10.start_index(), 10);
         assert_eq!(entry10.entry_count(), 1);
-        assert_eq!(cv_index.line_entries[entry10.entry_index()].marker(), "h");
+        assert_eq!(cv_index.line_entries[entry10.start_index()].marker(), "h");
 
         // 15 -1:15 ctxt=['headers']
         let (cv15, entry15) = cv_index.index_data.get_index(15).unwrap();
         assert_eq!(cv15.to_string(), "-1:15");
         assert_eq!(entry15.context(), ["headers"]);
-        assert_eq!(entry15.entry_index(), 15);
+        assert_eq!(entry15.start_index(), 15);
         assert_eq!(entry15.entry_count(), 1);
-        assert_eq!(cv_index.line_entries[entry15.entry_index()].marker(), "ie");
+        assert_eq!(cv_index.line_entries[entry15.start_index()].marker(), "ie");
 
         // 16 -1:16 ctxt=['headers']
         let (cv16, entry16) = cv_index.index_data.get_index(16).unwrap();
         assert_eq!(cv16.to_string(), "-1:16");
         assert_eq!(entry16.context(), ["headers"]);
-        assert_eq!(entry16.entry_index(), 16);
+        assert_eq!(entry16.start_index(), 16);
         assert_eq!(entry16.entry_count(), 1);
-        assert_eq!(cv_index.line_entries[entry16.entry_index()].marker(), "¬headers");
+        assert_eq!(cv_index.line_entries[entry16.start_index()].marker(), "¬headers");
 
         // 17 -1:17 ctxt=['headers']
         let (cv17, entry17) = cv_index.index_data.get_index(17).unwrap();
         assert_eq!(cv17.to_string(), "-1:17");
         assert_eq!(entry17.context(), Vec::<CompactString>::new());
-        assert_eq!(entry17.entry_index(), 17);
+        assert_eq!(entry17.start_index(), 17);
         assert_eq!(entry17.entry_count(), 1);
-        assert_eq!(cv_index.line_entries[entry17.entry_index()].marker(), "chapters");
+        assert_eq!(cv_index.line_entries[entry17.start_index()].marker(), "chapters");
 
         // 18 1:0 ctxt=['chapters']
         let (cv18, entry18) = cv_index.index_data.get_index(18).unwrap();
         assert_eq!(cv18.to_string(), "1:0");
         assert_eq!(entry18.context(), ["chapters"]);
-        assert_eq!(entry18.entry_index(), 18);
+        assert_eq!(entry18.start_index(), 18);
         assert_eq!(entry18.entry_count(), 1);
 
         // 19 1:1 ctxt=['chapters', 'c']
         let (cv19, entry19) = cv_index.index_data.get_index(19).unwrap();
         assert_eq!(cv19.to_string(), "1:1");
         assert_eq!(entry19.context(), ["chapters", "c"]);
-        assert_eq!(entry19.entry_index(), 19);
+        assert_eq!(entry19.start_index(), 19);
         assert_eq!(entry19.entry_count(), 5);
-        assert_eq!(cv_index.line_entries[entry19.entry_index()+entry19.entry_count() as usize-1].marker(), "¬v");
+        assert_eq!(cv_index.line_entries[entry19.start_index()+entry19.entry_count() as usize-1].marker(), "¬v");
 
         // 20 1:2 ctxt=['chapters', 'c']
         let (cv20, entry20) = cv_index.index_data.get_index(20).unwrap();
         assert_eq!(cv20.to_string(), "1:2");
         assert_eq!(entry20.context(), ["chapters", "c"]);
-        assert_eq!(entry20.entry_index(), 24);
+        assert_eq!(entry20.start_index(), 24);
         assert_eq!(entry20.entry_count(), 3);
 
         // 33 1:15 ctxt=['chapters', 'c']
         let (cv33, entry33) = cv_index.index_data.get_index(33).unwrap();
         assert_eq!(cv33.to_string(), "1:15");
         assert_eq!(entry33.context(), ["chapters", "c"]);
-        assert_eq!(entry33.entry_index(), 63);
+        assert_eq!(entry33.start_index(), 63);
         assert_eq!(entry33.entry_count(), 4);
 
         // 34 2:0 ctxt=['chapters']
         let (cv34, entry34) = cv_index.index_data.get_index(34).unwrap();
         assert_eq!(cv34.to_string(), "2:0");
         assert_eq!(entry34.context(), ["chapters"]);
-        assert_eq!(entry34.entry_index(), 67);
+        assert_eq!(entry34.start_index(), 67);
         assert_eq!(entry34.entry_count(), 1);
 
         // 35 2:1 ctxt=['chapters', 'c']
         let (cv35, entry35) = cv_index.index_data.get_index(35).unwrap();
         assert_eq!(cv35.to_string(), "2:1");
         assert_eq!(entry35.context(), ["chapters", "c"]);
-        assert_eq!(entry35.entry_index(), 68);
+        assert_eq!(entry35.start_index(), 68);
         assert_eq!(entry35.entry_count(), 5);
 
         // 36 2:2 ctxt=['chapters', 'c']
         let (cv36, entry36) = cv_index.index_data.get_index(36).unwrap();
         assert_eq!(cv36.to_string(), "2:2");
         assert_eq!(entry36.context(), ["chapters", "c"]);
-        assert_eq!(entry36.entry_index(), 73);
+        assert_eq!(entry36.start_index(), 73);
         assert_eq!(entry36.entry_count(), 3);
 
         // 57 2:23 ctxt=['chapters', 'c']
         let (cv57, entry57) = cv_index.index_data.get_index(57).unwrap();
         assert_eq!(cv57.to_string(), "2:23");
         assert_eq!(entry57.context(), ["chapters", "c"]);
-        assert_eq!(entry57.entry_index(), 136);
+        assert_eq!(entry57.start_index(), 136);
         assert_eq!(entry57.entry_count(), 5);
     }
 
@@ -1020,7 +1030,7 @@ mod tests {
         let processed_line_entries = process_lines(raw_lines, "HAG", "OET-RV", &options);
         // println!("OET-RV HAG Processed lines markers = {}", processed_line_entries.iter().map(|e| e.marker()).collect::<Vec<_>>().join(", "));
 
-        // println!("OET-RV HAG processed_line_entries = {}", processed_line_entries);
+        // println!("OET-RV HAG {} processed_line_entries = {}", processed_line_entries.len(), processed_line_entries);
         //     OET-RV HAG processed_line_entries = InternalBibleEntryList:
         //         0/ id = "HAG - Open English Translation…ders' Version (OET-RV) v0.1.03"
         //         1/ usfm = "3.0"
@@ -1220,7 +1230,7 @@ mod tests {
         let mut cv_index = InternalBibleBookCVIndex::new("OET-RV", "HAG");
         cv_index.build(processed_line_entries).unwrap();
 
-        // println!("OET-RV HAG cv index_entries = {}", cv_index);
+        // println!("OET-RV HAG {} cv index_entries = {}", cv_index.len(), cv_index);
         //     OET-RV HAG cv index_entries = InternalBibleBookCVIndex(OET-RV HAG):
         //     64 CV entries
         //     -1:0: CVIndexEntry(idx=0, count=1, ctx=[])
@@ -1288,48 +1298,48 @@ mod tests {
         //     2:22: CVIndexEntry(idx=184, count=3, ctx=["chapters", "c", "p"])
         //     2:23: CVIndexEntry(idx=187, count=7, ctx=["chapters", "c", "p"])
 
-        // It should give the following 63 entries (as per ../../test_data/OET-RV_HAG_CV_index.txt):
+        // It should give the following 63 entries (as per ../../test_data/OET-RV_HAG_CV_index.txt): (plus one more now)
         assert_eq!(cv_index.len(), 64, "Expected 64 CV index entries but found {}: {}", cv_index.len(), cv_index);
 
         // 0 -1:0 Headers='HAG'
         let (cv0, entry0) = cv_index.index_data.get_index(0).unwrap();
         assert_eq!(cv0.to_string(), "-1:0");
-        assert_eq!(entry0.entry_index(), 0);
+        assert_eq!(entry0.start_index(), 0);
         assert_eq!(entry0.entry_count(), 1);
         assert_eq!(entry0.context(), Vec::<CompactString>::new());
 
         // 10 -1:10 ctxt=['headers']
         let (cv10, entry10) = cv_index.index_data.get_index(10).unwrap();
         assert_eq!(cv10.to_string(), "-1:10");
-        assert_eq!(entry10.entry_index(), 10);
+        assert_eq!(entry10.start_index(), 10);
         assert_eq!(entry10.entry_count(), 1);
         assert_eq!(entry10.context(), ["headers"]);
 
         // 23 1:0 ctxt=['chapters']
         let (cv24, entry24) = cv_index.index_data.get_index(24).unwrap();
         assert_eq!(cv24.to_string(), "1:0");
-        assert_eq!(entry24.entry_index(), 24);
+        assert_eq!(entry24.start_index(), 24);
         assert_eq!(entry24.entry_count(), 1);
         assert_eq!(entry24.context(), ["chapters"]);
 
         // 24 1:1 ctxt=['chapters', 'c']
         let (cv25, entry25) = cv_index.index_data.get_index(25).unwrap();
         assert_eq!(cv25.to_string(), "1:1");
-        assert_eq!(entry25.entry_index(), 25);
+        assert_eq!(entry25.start_index(), 25);
         assert_eq!(entry25.entry_count(), 8);
         assert_eq!(entry25.context(), ["chapters", "c"]);
 
         // 25 1:2 ctxt=['chapters', 'c', 'p']
         let (cv26, entry26) = cv_index.index_data.get_index(26).unwrap();
         assert_eq!(cv26.to_string(), "1:2");
-        assert_eq!(entry26.entry_index(), 33);
+        assert_eq!(entry26.start_index(), 33);
         assert_eq!(entry26.entry_count(), 4);
         assert_eq!(entry26.context(), ["chapters", "c", "p"]);
 
         // 26 1:3 ctxt=['chapters', 'c']
         let (cv27, entry27) = cv_index.index_data.get_index(27).unwrap();
         assert_eq!(cv27.to_string(), "1:3");
-        assert_eq!(entry27.entry_index(), 37);
+        assert_eq!(entry27.start_index(), 37);
         assert_eq!(entry27.entry_count(), 5);
         assert_eq!(entry27.context(), ["chapters", "c"]);
 
@@ -1337,7 +1347,7 @@ mod tests {
         let (cv39, entry39) = cv_index.index_data.get_index(39).unwrap();
         // println!("cv38: {}, entry38: {} then {:#?}", cv38, entry38, index.get_verse_entries(&ChapterVerse::new("1", "15"), true));
         assert_eq!(cv39.to_string(), "1:15");
-        assert_eq!(entry39.entry_index(), 86);
+        assert_eq!(entry39.start_index(), 86);
         // println!("processed line at index 87: {}", index.entries().get(87).unwrap());
         // println!("processed line at index 88: {}", index.entries().get(88).unwrap());
         assert_eq!(entry39.entry_count(), 6);
@@ -1346,37 +1356,535 @@ mod tests {
         // 39 2:0 ctxt=['chapters']
         let (cv40, entry40) = cv_index.index_data.get_index(40).unwrap();
         assert_eq!(cv40.to_string(), "2:0");
-        assert_eq!(entry40.entry_index(), 92);
+        assert_eq!(entry40.start_index(), 92);
         assert_eq!(entry40.entry_count(), 1);
         assert_eq!(entry40.context(), ["chapters"]);
 
         // 40 2:1 ctxt=['chapters', 'c']
         let (cv41, entry41) = cv_index.index_data.get_index(41).unwrap();
         assert_eq!(cv41.to_string(), "2:1");
-        assert_eq!(entry41.entry_index(), 93);
+        assert_eq!(entry41.start_index(), 93);
         assert_eq!(entry41.entry_count(), 8);
         assert_eq!(entry41.context(), ["chapters", "c"]);
 
         // 41 2:2 ctxt=['chapters', 'c', 'p']
         let (cv42, entry42) = cv_index.index_data.get_index(42).unwrap();
         assert_eq!(cv42.to_string(), "2:2");
-        assert_eq!(entry42.entry_index(), 101);
+        assert_eq!(entry42.start_index(), 101);
         assert_eq!(entry42.entry_count(), 3);
         assert_eq!(entry42.context(), ["chapters", "c", "p"]);
 
         // 42 2:3 ctxt=['chapters', 'c', 'p']
         let (cv43, entry43) = cv_index.index_data.get_index(43).unwrap();
         assert_eq!(cv43.to_string(), "2:3");
-        assert_eq!(entry43.entry_index(), 104);
+        assert_eq!(entry43.start_index(), 104);
         assert_eq!(entry43.entry_count(), 3);
         assert_eq!(entry43.context(), ["chapters", "c", "p"]);
 
         // 62 2:23 ctxt=['chapters', 'c', 'p']
         let (cv63, entry63) = cv_index.index_data.get_index(63).unwrap();
         assert_eq!(cv63.to_string(), "2:23");
-        assert_eq!(entry63.entry_index(), 187);
+        assert_eq!(entry63.start_index(), 187);
         assert_eq!(entry63.entry_count(), 7);
         assert_eq!(entry63.context(), ["chapters", "c", "p"]);
+    }
+
+    #[test]
+    fn test_oet_rv_psalms_cv_index_build() { // This has lots of d fields, plus five ms1,mr sets
+        set_strict_checking_flag( true );
+        let content = include_str!("../../../../Tests/DataFilesForTests/OET-RV/OET-RV_PSA.ESFM");
+        let mut raw_lines = Vec::new();
+        for line in content.lines() {
+            let (marker, text) = match line.split_once(' ') {
+                Some((m, t)) => (m, t),
+                None => (line, ""),
+            };
+            let marker = marker.strip_prefix('\\').unwrap_or(marker);
+            raw_lines.push((marker.to_string(), text.to_string()));
+        }
+
+        let options = ProcessLinesOptions::default();
+        let processed_line_entries = process_lines(raw_lines, "PSA", "OET-RV", &options);
+        // println!("OET-RV PSA Processed lines markers = {}", processed_line_entries.iter().map(|e| e.marker()).collect::<Vec<_>>().join(", "));
+
+        // println!("OET-RV PSA {} processed_line_entries = {}", processed_line_entries.len(), processed_line_entries);
+        //     OET-RV PSA 22,583 processed_line_entries = InternalBibleEntryList:
+        //         0/ id = "PSA - Open English Translation…aders' Version (OET-RV) v0.3.2"
+        //         1/ usfm = "3.0"
+        //         2/ ide = "UTF-8"
+        //         3/ rem = "ESFM v0.6 PSA"
+        //         4/ rem = "WORDTABLE OET-LV_OT_word_table.tsv"
+        //         5/ headers = ""
+        //         6/ h = "Songs"
+        //         7/ toc1 = "Songs"
+        //         8/ toc2 = "Songs"
+        //         9/ toc3 = "Songs"
+        //         10/ mt1 = "Songs"
+        //         11/ ¬headers = ""
+        //         12/ intro = ""
+        //         13/ is1 = "Introduction"
+        //         14/ ip = "This collection of Songs inclu…, read, or chanted with music."
+        //         15/ ip = "There are many classes of the …n behalf of the entire nation."
+        //         16/ ip = "Seven of these songs/poems are…ongest Song 119, and Song 145."
+        //         17/ ip = "Yeshua (Jesus) and other contr…h worship since the beginning."
+        //         18/ ip = "The one hundred and fifty song…ded into five sub-collections."
+        //         19/ iot = "Main components of this collection"
+        //         20/ io1 = "Songs 1–41"
+        //         21/ io1 = "Songs 42–72"
+        //         22/ io1 = "Songs 73–89"
+        //         23/ io1 = "Songs 90–106"
+        //         24/ io1 = "Songs 107–150"
+        //         25/ ¬iot = ""
+        //         26/ im = "There are a hundred and fifty …piness and trusting, and hope."
+        //         27/ rem = "This is still a very early loo…dvance before using in public."
+        //         28/ ¬is1 = "28"
+        //         29/ ie = ""
+        //         30/ cl¤ = "Song"
+        //         31/ ¬intro = ""
+        //         32/ chapters = ""
+        //         33/ c = "1"
+        //         34/ v= = "1"
+        //         35/ ms1 = "First collection"
+        //         36/ mr = "(Songs 1–41)"
+        //         37/ s1 = "Wicked and godly roads"
+        //         38/ rem = "/s1 True Happiness; The Two Ways"
+        //         39/ p = ""
+        //         40/ c# = "1"
+        //         41/ v = "1"
+        //         42/ v~ = "A person will reap the benefits"
+        //         43/ ¬p = ""
+        //         44/ q2 = ""
+        //         45/ v~ = "if they don't take advice¦243189 from wicked¦243190 people,"
+        //         46/ ¬q2 = ""
+        //         47/ q2 = ""
+        //         48/ v~ = "and don't stand¦243194 ≈around where sinners¦243192 ≈go,"
+        //         49/ ¬q2 = ""
+        //         50/ q2 = ""
+        //         51/ v~ = "and don't sit and join all the scoffers."
+        //         52/ ¬q2 = ""
+        //         53/ ¬v = "1"
+        //         54/ q1 = ""
+        //         55/ v = "2"
+        //         56/ v~ = "Instead, they enjoy Yahweh's¦243203 instructions"
+        //         57/ ¬q1 = ""
+        //         58/ q2 = ""
+        //         59/ v~ = "and think about them day¦243207 and night¦243208."
+        //         60/ ¬q2 = ""
+        //         61/ ¬v = "2"
+        //         62/ q1 = ""
+        //         63/ v = "3"
+        //         64/ v~ = "Those people are like trees th…nted¦243212 by a stream¦243215" + extras
+        //         65/ ¬q1 = ""
+        //         66/ q2 = ""
+        //         67/ v~ = "and which¦243217 produce¦24321…fruit¦243218 in season¦243221."
+        //         68/ ¬q2 = ""
+        //         69/ q1 = ""
+        //         70/ v~ = "Their leaves don't¦243223 wither¦243225,"
+        //         71/ ¬q1 = ""
+        //         72/ q2 = ""
+        //         73/ v~ = "and they prosper in everything they do." + extras
+        //         74/ ¬q2 = ""
+        //         75/ ¬v = "3"
+        //         76/ b = ""
+        //         77/ q1 = ""
+        //         78/ v = "4"
+        //         79/ v~ = "But wicked¦243235 people won't prosper—"
+        //         80/ ¬q1 = ""
+        //         81/ q1 = ""
+        //         82/ v~ = "they're like straw that¦243240…blown away by the wind¦243243."
+        //         83/ ¬q1 = ""
+        //         84/ ¬v = "4"
+        //         85/ q1 = ""
+        //         86/ v = "5"
+        //         87/ v~ = "The wicked¦243252 people won't…1 when God judges¦243253 them,"
+        //         88/ ¬q1 = ""
+        //         89/ q1 = ""
+        //         90/ v~ = "and sinners¦243254 won't be ab…f all the godly¦243256 people,"
+        //         91/ ¬q1 = ""
+        //         92/ ¬v = "5"
+        //         93/ q1 = ""
+        //         94/ v = "6"
+        //         95/ v~ = "because Yahweh¦243261 knows th…chosen by godly¦243263 people,"
+        //         96/ ¬q1 = ""
+        //         97/ q1 = ""
+        //         98/ v~ = "but¦243264 the path of wicked¦…3265 people will be destroyed."
+        //         99/ ¬v = "6"
+        //         100/ ¬q1 = ""
+        //         101/ ¬s1 = ""
+        //         102/ ¬c = "1"
+        //         103/ c = "2"
+        //         104/ v= = "1"
+        //         105/ s1 = "God's chosen king"
+        //         106/ rem = "/s1 God's Promise to His Anointed; God's Chosen King"
+        //         107/ q1 = ""
+        //         108/ c# = "2"
+        //         109/ v = "1"
+        //         110/ v~ = "Why do nations¦243270 make plans," + extras
+        //         111/ ¬q1 = ""
+        //         112/ q2 = ""
+        //         113/ v~ = "≈and¦243271 people¦243271 grou…s devise¦243272 empty schemes?"
+        //         114/ ¬q2 = ""
+        //         115/ ¬v = "1"
+        //         116/ q1 = ""
+        //         117/ v = "2"
+        //         118/ v~ = "The kings¦243278 of this world…3276 their¦243276 stand¦243276"
+        //         119/ ¬q1 = ""
+        //         120/ q2 = ""
+        //         121/ v~ = "≈and the rulers¦243281 collabo…weh¦243287 and his chosen one,"
+        //         122/ ¬q2 = ""
+        //         123/ ¬v = "2"
+        //         124/ q1 = ""
+        //         125/ v = "3"
+        //         126/ v~ = "saying, “Let's break their chains off us."
+        //         127/ ¬q1 = ""
+        //         128/ q1 = ""
+        //         129/ v~ = "≈Let's throw¦243296 off their ropes¦243298.”"
+        //         130/ ¬q1 = ""
+        //         131/ ¬v = "3"
+        //         132/ q1 = ""
+        //         133/ v = "4"
+        //         134/ v~ = "The one who sits¦243300 in¦243… heavens¦243301 laughs¦243302."
+        //         135/ ¬q1 = ""
+        //         136/ q1 = ""
+        //         137/ v~ = "≈The master¦243303 ridicules them."
+        //         138/ ¬q1 = ""
+        //         139/ ¬v = "4"
+        //         140/ q1 = ""
+        //         141/ v = "5"
+        //         142/ v~ = "Then he'll speak¦243309 to them in his anger¦243311,"
+        //         143/ ¬q1 = ""
+        //         144/ q1 = ""
+        //         145/ v~ = "≈and¦243312 terrify¦243313 them in his fury."
+        //         146/ ¬q1 = ""
+        //         147/ ¬v = "5"
+        //         148/ q1 = ""
+        //         149/ v = "6"
+        //         150/ v~ = "Yahweh says, “I myself have pl… Tsiyyon¦243320 (Zion¦243320)—"
+        //         151/ ¬q1 = ""
+        //         152/ q2 = ""
+        //         153/ v~ = "the hill¦243321 I've¦243316 chosen to be my holy place.”"
+        //         154/ ¬q2 = ""
+        //         155/ ¬v = "6"
+        //         156/ q1 = ""
+        //         157/ v = "7"
+        //         158/ v~ = "I'll¦243325 explain Yahweh's¦243328 decree¦243327." + extras
+        //         159/ ¬q1 = ""
+        //         160/ q1 = ""
+        //         161/ v~ = "He told me, “You're my son. To…'ve¦243335 become your father."
+        //         162/ ¬q1 = ""
+        //         163/ ¬v = "7"
+        //         164/ q1 = ""
+        //         165/ v = "8"
+        //         166/ v~ = "Ask me and I'll¦243339 give th…u for your inheritance¦243341."
+        //         167/ ¬q1 = ""
+        //         168/ q1 = ""
+        //         169/ v~ = "≈The whole world will be owned by you."
+        //         170/ ¬q1 = ""
+        //         171/ ¬v = "8"
+        //         172/ q1 = ""
+        //         173/ v = "9"
+        //         174/ v~ = "You'll break¦243347 those nations with¦243348 an iron bar." + extras
+        //         175/ ¬q1 = ""
+        //         176/ q1 = ""
+        //         177/ v~ = "≈You'll smash¦243352 them to pieces like a clay pot.”"
+        //         178/ ¬q1 = ""
+        //         179/ ¬v = "9"
+        //         180/ b = ""
+        //         181/ q1 = ""
+        //         182/ v = "10"
+        //         183/ v~ = "So¦243354 act¦243356 wisely all you kings¦243355."
+        //         184/ ¬q1 = ""
+        //         185/ q1 = ""
+        //         186/ v~ = "≈Be warned all you rulers¦243358 of the earth¦243359."
+        //         187/ ¬q1 = ""
+        //         188/ ¬v = "10"
+        //         189/ q1 = ""
+        //         190/ v = "11"
+        //         191/ v~ = "Serve¦243361 Yahweh¦243364 with¦243365 fear¦243365."
+        //         192/ ¬q1 = ""
+        //         193/ q1 = ""
+        //         194/ v~ = "Be happy for his goodness but¦…e¦243367 because of his power."
+        //         195/ ¬q1 = ""
+        //         196/ ¬v = "11"
+        //         197/ q1 = ""
+        //         198/ v = "12"
+        //         199/ v~ = "Honour the son or he might get angry¦243374"
+        //         200/ ¬q1 = ""
+        //         201/ q2 = ""
+        //         202/ v~ = "and you'll perish¦243376 on the way¦243377."
+        //         203/ ¬q2 = ""
+        //         204/ q1 = ""
+        //         205/ v~ = "His severe¦243382 anger¦243382 can ignite any moment¦243381."
+        //         206/ ¬q1 = ""
+        //         207/ q1 = ""
+        //         208/ v~ = "Everyone who goes to him to be safe will reap the benefits."
+        //         209/ ¬v = "12"
+        //         210/ ¬q1 = ""
+        //         211/ ¬s1 = ""
+        //         212/ ¬c = "2"
+        //         213/ c = "3"
+        //         214/ v= = "1"
+        //         215/ s1 = "A prayer when under attack"
+        //         216/ rem = "/s1 Trust in God under Adversity; Morning Prayer for Help"
+        //         217/ c# = "3"
+        //         218/ d = "A song by David¦243390 when he…son Avshalom (Absalom¦243394)."
+        //         219/ q1 = ""
+        //         220/ v = "1"
+        //         221/ v~ = "Yahweh¦243398, how did I get so many enemies?"
+        //         222/ ¬q1 = ""
+        //         223/ q1 = ""
+        //         224/ v~ = "≈Many people are rising¦243404 up against¦243405 me."
+        //         225/ ¬q1 = ""
+        //         226/ ¬v = "1"
+        //         227/ q1 = ""
+        //         228/ v = "2"
+        //         229/ v~ = "Many people are talking¦243409 about me,"
+        //         230/ ¬q1 = ""
+        //         231/ q1 = ""
+        //         232/ v~ = "≡saying that God¦243414 won't¦…rumental¦243415 break¦243415.)" + extras
+        //         233/ ¬q1 = ""
+        //         234/ ¬v = "2"
+        //         235/ b = ""
+        //         236/ q1 = ""
+        //         237/ v = "3"
+        //         238/ v~ = "≈But¦243418 you, Yahweh¦243419…otect me like a shield¦243420."
+        //         239/ ¬q1 = ""
+        //         240/ q1 = ""
+        //         241/ v~ = "≈You honour¦243422 and encourage me."
+        //         242/ ¬q1 = ""
+        //         243/ ¬v = "3"
+        //         244/ q1 = ""
+        //         245/ v = "4"
+        //         246/ v~ = "I¦243431 called¦243431 out with my voice to Yahweh¦243430,"
+        //         247/ ¬q1 = ""
+        //         248/ q1 = ""
+        //         249/ v~ = "and¦243432 he¦243432 answered¦…rumental¦243435 break¦243435.)"
+        //         250/ ¬q1 = ""
+        //         251/ ¬v = "4"
+        //         252/ b = ""
+        //         253/ q1 = ""
+        //         254/ v = "5"
+        //         255/ v~ = "I laid down and¦243440 slept¦243440."
+        //         256/ ¬q1 = ""
+        //         257/ q1 = ""
+        //         258/ v~ = "I awoke¦243441, because¦243442…weh¦243443 sustains¦243444 me."
+        //         259/ ¬q1 = ""
+        //         260/ ¬v = "5"
+        //         261/ q1 = ""
+        //         262/ v = "6"
+        //         263/ v~ = "I¦243449 won't¦243447 be afrai…sands¦243450 of people¦243451—"
+        //         264/ ¬q1 = ""
+        //         265/ q1 = ""
+        //         266/ v~ = "those all around¦243453 who've…tand¦243454 against¦243455 me."
+        //         267/ ¬q1 = ""
+        //         268/ ¬v = "6"
+        //         269/ b = ""
+        //         270/ q1 = ""
+        //         271/ v = "7"
+        //         272/ v~ = "≈Take action, Yahweh¦243459."
+        //         273/ ¬q1 = ""
+        //         274/ q1 = ""
+        //         275/ v~ = "≈Save me, my god¦243462."
+        //         276/ ¬q1 = ""
+        //         277/ q1 = ""
+        //         278/ v~ = "≈Yes, you've slapped all my enemies¦243470 on the cheek—"
+        //         279/ ¬q1 = ""
+        //         280/ q1 = ""
+        //         281/ v~ = "you've broken¦243474 the teeth…2 of the wicked¦243473 people."
+        //         282/ ¬q1 = ""
+        //         283/ ¬v = "7"
+        //         284/ q1 = ""
+        //         285/ v = "8"
+        //         286/ v~ = "Salvation belongs to Yahweh¦243477."
+        //         287/ ¬q1 = ""
+        //         288/ q1 = ""
+        //         289/ v~ = "Your blessing¦243482 goes to y…rumental¦243483 break¦243483.)"
+        //         290/ ¬v = "8"
+        //         291/ ¬q1 = ""
+        //         292/ ¬s1 = ""
+        //         293/ ¬c = "3"
+        //         294/ c = "4"
+        //         295/ v= = "1"
+        //         296/ s1 = "A night-time prayer"
+        //         297/ rem = "/s1 Confident Plea for Deliver…emies; Evening Prayer for Help"
+        //         298/ c# = "4"
+        //         299/ d = "For the musical director¦24348…ged¦243486 instruments¦243486."
+        //         … (22,583 total entries)
+
+        let mut cv_index = InternalBibleBookCVIndex::new("OET-RV", "HAG");
+        cv_index.build(processed_line_entries).unwrap();
+
+        // println!("OET-RV PSA {} cv index_entries = {}", cv_index.len(), cv_index);
+        //     OET-RV PSA 2644 cv index_entries = InternalBibleBookCVIndex(OET-RV HAG):
+        //     -1:0: CVIndexEntry(idx=0, count=1, ctx=[])
+        //     -1:1: CVIndexEntry(idx=1, count=1, ctx=[])
+        //     -1:2: CVIndexEntry(idx=2, count=1, ctx=[])
+        //     -1:3: CVIndexEntry(idx=3, count=1, ctx=[])
+        //     -1:4: CVIndexEntry(idx=4, count=1, ctx=[])
+        //     -1:5: CVIndexEntry(idx=5, count=1, ctx=[])
+        //     -1:6: CVIndexEntry(idx=6, count=1, ctx=["headers"])
+        //     -1:7: CVIndexEntry(idx=7, count=1, ctx=["headers"])
+        //     -1:8: CVIndexEntry(idx=8, count=1, ctx=["headers"])
+        //     -1:9: CVIndexEntry(idx=9, count=1, ctx=["headers"])
+        //     -1:10: CVIndexEntry(idx=10, count=1, ctx=["headers"])
+        //     -1:11: CVIndexEntry(idx=11, count=1, ctx=["headers"])
+        //     -1:12: CVIndexEntry(idx=12, count=1, ctx=[])
+        //     -1:13: CVIndexEntry(idx=13, count=1, ctx=["intro"])
+        //     -1:14: CVIndexEntry(idx=14, count=1, ctx=["intro"])
+        //     -1:15: CVIndexEntry(idx=15, count=1, ctx=["intro"])
+        //     -1:16: CVIndexEntry(idx=16, count=1, ctx=["intro"])
+        //     -1:17: CVIndexEntry(idx=17, count=1, ctx=["intro"])
+        //     -1:18: CVIndexEntry(idx=18, count=1, ctx=["intro"])
+        //     -1:19: CVIndexEntry(idx=19, count=1, ctx=["intro"])
+        //     -1:20: CVIndexEntry(idx=20, count=1, ctx=["intro", "iot"])
+        //     -1:21: CVIndexEntry(idx=21, count=1, ctx=["intro", "iot"])
+        //     -1:22: CVIndexEntry(idx=22, count=1, ctx=["intro", "iot"])
+        //     -1:23: CVIndexEntry(idx=23, count=1, ctx=["intro", "iot"])
+        //     -1:24: CVIndexEntry(idx=24, count=1, ctx=["intro", "iot"])
+        //     -1:25: CVIndexEntry(idx=25, count=1, ctx=["intro", "iot"])
+        //     -1:26: CVIndexEntry(idx=26, count=1, ctx=["intro"])
+        //     -1:27: CVIndexEntry(idx=27, count=1, ctx=["intro"])
+        //     -1:28: CVIndexEntry(idx=28, count=1, ctx=["intro"])
+        //     -1:29: CVIndexEntry(idx=29, count=1, ctx=["intro"])
+        //     -1:30: CVIndexEntry(idx=30, count=1, ctx=["intro"])
+        //     -1:31: CVIndexEntry(idx=31, count=1, ctx=["intro"])
+        //     -1:32: CVIndexEntry(idx=32, count=1, ctx=[])
+        //     1:0: CVIndexEntry(idx=33, count=1, ctx=["chapters"])
+        //     1:1: CVIndexEntry(idx=34, count=20, ctx=["chapters", "c"])
+        //     1:2: CVIndexEntry(idx=54, count=8, ctx=["chapters", "c", "ms1"])
+        //     1:3: CVIndexEntry(idx=62, count=14, ctx=["chapters", "c", "ms1"])
+        //     1:4: CVIndexEntry(idx=76, count=9, ctx=["chapters", "c", "ms1"])
+        //     1:5: CVIndexEntry(idx=85, count=8, ctx=["chapters", "c", "ms1"])
+        //     1:6: CVIndexEntry(idx=93, count=10, ctx=["chapters", "c", "ms1"])
+        //     2:0: CVIndexEntry(idx=103, count=1, ctx=["chapters", "ms1"])
+        //     2:1: CVIndexEntry(idx=104, count=12, ctx=["chapters", "ms1", "c"])
+        //     2:2: CVIndexEntry(idx=116, count=8, ctx=["chapters", "ms1", "c"])
+        //     2:3: CVIndexEntry(idx=124, count=8, ctx=["chapters", "ms1", "c"])
+        //     2:4: CVIndexEntry(idx=132, count=8, ctx=["chapters", "ms1", "c"])
+        //     2:5: CVIndexEntry(idx=140, count=8, ctx=["chapters", "ms1", "c"])
+        //     2:6: CVIndexEntry(idx=148, count=8, ctx=["chapters", "ms1", "c"])
+        //     2:7: CVIndexEntry(idx=156, count=8, ctx=["chapters", "ms1", "c"])
+        //     2:8: CVIndexEntry(idx=164, count=8, ctx=["chapters", "ms1", "c"])
+        //     2:9: CVIndexEntry(idx=172, count=8, ctx=["chapters", "ms1", "c"])
+        //     2:10: CVIndexEntry(idx=180, count=9, ctx=["chapters", "ms1", "c"])
+        //     2:11: CVIndexEntry(idx=189, count=8, ctx=["chapters", "ms1", "c"])
+        //     2:12: CVIndexEntry(idx=197, count=16, ctx=["chapters", "ms1", "c"])
+        //     3:0: CVIndexEntry(idx=213, count=1, ctx=["chapters", "ms1"])
+        //     3:1: CVIndexEntry(idx=214, count=13, ctx=["chapters", "ms1", "c"])
+        //     3:2: CVIndexEntry(idx=227, count=8, ctx=["chapters", "ms1", "c"])
+        //     3:3: CVIndexEntry(idx=235, count=9, ctx=["chapters", "ms1", "c"])
+        //     3:4: CVIndexEntry(idx=244, count=8, ctx=["chapters", "ms1", "c"])
+        //     3:5: CVIndexEntry(idx=252, count=9, ctx=["chapters", "ms1", "c"])
+        //     3:6: CVIndexEntry(idx=261, count=8, ctx=["chapters", "ms1", "c"])
+        //     3:7: CVIndexEntry(idx=269, count=15, ctx=["chapters", "ms1", "c"])
+        //     3:8: CVIndexEntry(idx=284, count=10, ctx=["chapters", "ms1", "c"])
+        //     4:0: CVIndexEntry(idx=294, count=1, ctx=["chapters", "ms1"])
+        //     4:1: CVIndexEntry(idx=295, count=16, ctx=["chapters", "ms1", "c"])
+        //     4:2: CVIndexEntry(idx=311, count=9, ctx=["chapters", "ms1", "c"])
+        //     4:3: CVIndexEntry(idx=320, count=9, ctx=["chapters", "ms1", "c"])
+        //     4:4: CVIndexEntry(idx=329, count=9, ctx=["chapters", "ms1", "c"])
+        //     4:5: CVIndexEntry(idx=338, count=8, ctx=["chapters", "ms1", "c"])
+        //     4:6: CVIndexEntry(idx=346, count=9, ctx=["chapters", "ms1", "c"])
+        //     4:7: CVIndexEntry(idx=355, count=8, ctx=["chapters", "ms1", "c"])
+        //     4:8: CVIndexEntry(idx=363, count=10, ctx=["chapters", "ms1", "c"])
+        //     5:0: CVIndexEntry(idx=373, count=1, ctx=["chapters", "ms1"])
+        //     5:1: CVIndexEntry(idx=374, count=13, ctx=["chapters", "ms1", "c"])
+        //     5:2: CVIndexEntry(idx=387, count=8, ctx=["chapters", "ms1", "c"])
+        //     5:3: CVIndexEntry(idx=395, count=9, ctx=["chapters", "ms1", "c"])
+        //     ...
+
+        // It should give the following entries (as per ../../test_data/OET-RV_PSA_CV_index.txt):
+        assert_eq!(cv_index.len(), 2644, "Expected 2644 CV index entries but found {}: {}", cv_index.len(), cv_index);
+
+        // 0 -1:0 Headers='PSA'
+        let (cv0, entry0) = cv_index.index_data.get_index(0).unwrap();
+        assert_eq!(cv0.to_string(), "-1:0");
+        assert_eq!(entry0.start_index(), 0);
+        assert_eq!(entry0.entry_count(), 1);
+        assert_eq!(entry0.context(), Vec::<CompactString>::new());
+        assert_eq!(cv_index.get_verse_entries(cv0, true).unwrap().get(0).unwrap().marker(), "id");
+
+        // 10 -1:10 ctxt=['headers']
+        let (cv10, entry10) = cv_index.index_data.get_index(10).unwrap();
+        assert_eq!(cv10.to_string(), "-1:10");
+        assert_eq!(entry10.start_index(), 10);
+        assert_eq!(entry10.entry_count(), 1);
+        assert_eq!(entry10.context(), ["headers"]);
+
+        // 33 1:0 ctxt=['chapters']
+        let (cv33, entry33) = cv_index.index_data.get_index(33).unwrap();
+        assert_eq!(cv33.to_string(), "1:0");
+        assert_eq!(entry33.start_index(), 33);
+        assert_eq!(entry33.entry_count(), 4); // NOTE: Should include the ms1
+        assert_eq!(entry33.context(), ["chapters"]);
+        assert_eq!(cv_index.get_verse_entries(cv33, true).unwrap().get(0).unwrap().marker(), "c");
+        assert_eq!(cv_index.get_verse_entries(cv33, true).unwrap().get(1).unwrap().marker(), "v=");
+
+        // 34 1:1 ctxt=['chapters', 'c']
+        let (cv34, entry34) = cv_index.index_data.get_index(34).unwrap();
+        assert_eq!(cv34.to_string(), "1:1");
+        assert_eq!(entry34.start_index(), 37);
+        assert_eq!(entry34.entry_count(), 17); // Many q1/2 fields starting and stopping
+        assert_eq!(entry34.context(), ["chapters", "c", "ms1"]);
+
+        // 35 1:2 ctxt=['chapters', 'c', 'p']
+        let (cv35, entry35) = cv_index.index_data.get_index(35).unwrap();
+        assert_eq!(cv35.to_string(), "1:2");
+        assert_eq!(entry35.start_index(), 54);
+        assert_eq!(entry35.entry_count(), 8);
+        assert_eq!(entry35.context(), ["chapters", "c", "ms1"]);
+
+        // // 26 1:3 ctxt=['chapters', 'c']
+        // let (cv27, entry27) = cv_index.index_data.get_index(27).unwrap();
+        // assert_eq!(cv27.to_string(), "1:3");
+        // assert_eq!(entry27.start_index(), 37);
+        // assert_eq!(entry27.entry_count(), 5);
+        // assert_eq!(entry27.context(), ["chapters", "c"]);
+
+        // // 38 1:15 ctxt=['chapters', 'c', 'p']
+        // let (cv39, entry39) = cv_index.index_data.get_index(39).unwrap();
+        // // println!("cv38: {}, entry38: {} then {:#?}", cv38, entry38, index.get_verse_entries(&ChapterVerse::new("1", "15"), true));
+        // assert_eq!(cv39.to_string(), "1:15");
+        // assert_eq!(entry39.start_index(), 86);
+        // // println!("processed line at index 87: {}", index.entries().get(87).unwrap());
+        // // println!("processed line at index 88: {}", index.entries().get(88).unwrap());
+        // assert_eq!(entry39.entry_count(), 6);
+        // assert_eq!(entry39.context(), ["chapters", "c", "p"]);
+
+        // // 39 2:0 ctxt=['chapters']
+        // let (cv40, entry40) = cv_index.index_data.get_index(40).unwrap();
+        // assert_eq!(cv40.to_string(), "2:0");
+        // assert_eq!(entry40.start_index(), 92);
+        // assert_eq!(entry40.entry_count(), 1);
+        // assert_eq!(entry40.context(), ["chapters"]);
+
+        // // 40 2:1 ctxt=['chapters', 'c']
+        // let (cv41, entry41) = cv_index.index_data.get_index(41).unwrap();
+        // assert_eq!(cv41.to_string(), "2:1");
+        // assert_eq!(entry41.start_index(), 93);
+        // assert_eq!(entry41.entry_count(), 8);
+        // assert_eq!(entry41.context(), ["chapters", "c"]);
+
+        // // 41 2:2 ctxt=['chapters', 'c', 'p']
+        // let (cv42, entry42) = cv_index.index_data.get_index(42).unwrap();
+        // assert_eq!(cv42.to_string(), "2:2");
+        // assert_eq!(entry42.start_index(), 101);
+        // assert_eq!(entry42.entry_count(), 3);
+        // assert_eq!(entry42.context(), ["chapters", "c", "p"]);
+
+        // // 42 2:3 ctxt=['chapters', 'c', 'p']
+        // let (cv43, entry43) = cv_index.index_data.get_index(43).unwrap();
+        // assert_eq!(cv43.to_string(), "2:3");
+        // assert_eq!(entry43.start_index(), 104);
+        // assert_eq!(entry43.entry_count(), 3);
+        // assert_eq!(entry43.context(), ["chapters", "c", "p"]);
+
+        // // 62 2:23 ctxt=['chapters', 'c', 'p']
+        // let (cv63, entry63) = cv_index.index_data.get_index(63).unwrap();
+        // assert_eq!(cv63.to_string(), "2:23");
+        // assert_eq!(entry63.start_index(), 187);
+        // assert_eq!(entry63.entry_count(), 7);
+        // assert_eq!(entry63.context(), ["chapters", "c", "p"]);
     }
 
     #[test]
