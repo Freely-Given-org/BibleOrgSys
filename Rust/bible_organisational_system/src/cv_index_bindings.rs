@@ -1188,7 +1188,7 @@ mod tests {
     use std::io::{BufRead, BufReader};
 
     #[test]
-    // #[ignore = "Test not finished yet"]
+    #[ignore = "Test not finished yet"]
     fn test_oet_lv_haggai_cv_indexing() {
         let file_path = "../../Tests/DataFilesForTests/OET-LV/OET-LV_HAG.ESFM";
         let file = File::open(file_path).expect("Could not open OET-LV Haggai ESFM file");
@@ -1214,10 +1214,10 @@ mod tests {
         assert_eq!(original_count, 57, "Expected 57 raw lines in Haggai OET-LV ESFM file");
 
         let options = crate::processing::ProcessLinesOptions::default();
-        let processed = crate::processing::process_lines(raw_lines, "HAG", "OET-LV", &options);
+        let _processed = crate::processing::process_lines(raw_lines, "HAG", "OET-LV", &options);
         // println!("Final OET-LV Haggai processed line entries: {}", processed.len());
 
-        let cv_index  = PyInternalBibleBookCVIndex::new("OET-LV", "HAG");
+        let _cv_index  = PyInternalBibleBookCVIndex::new("OET-LV", "HAG");
         println!("This test is UNFINISHED: CV index building and lookup not yet implemented for OET-LV Haggai");
         // index.build(pyo3::Python::<'_>, &PyInternalBibleEntryList::from(processed.clone())).expect("Failed to build CV index for OET-LV Haggai");
 

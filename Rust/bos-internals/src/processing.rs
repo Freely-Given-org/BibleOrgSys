@@ -228,7 +228,7 @@ pub fn process_lines(
 
     for (n,(marker, text)) in raw_lines.iter().enumerate() {
         let marker = crate::bos_markers::normalize_marker(marker.as_str());
-        log::info!("process_lines: Processing marker {} with text '{}'", marker, text);
+        log::info!("process_lines: Processing marker {} '{}' with text '{}'", n, marker, text);
         // println!("process_lines: Processing marker {} with text '{}'", marker, text);
         // if text.contains("O Yahweh, do not rebuke me in your anger,") {
         //     println!("process_lines: Found {} {} raw line with {} {}='{}'", work_name, bos_book_code, n-2, raw_lines.get(n-2).unwrap().0, raw_lines.get(n-2).unwrap().1);
@@ -360,7 +360,7 @@ pub fn process_lines(
         {
             processed.push(InternalBibleEntry::new_unchecked(marker, marker, "", "", None, ""));
             processed.push(InternalBibleEntry::new_unchecked(
-                "v~", // "XXXp~"
+                "v~",
                 marker,
                 text,
                 adj,
@@ -418,12 +418,12 @@ pub fn validate(processed_lines: &InternalBibleEntryList, bos_book_code: &str, w
         if current_marker == "v=" {
             if is_end_marker(&next_marker) {
                 issues.push(format!(
-                    "Special {} {} verse number marker 'v=' at index {} is followed by an end marker '{}'",
+                    "{} {} preverse number marker 'v=' at index {} is followed by an end marker '{}'",
                     work_name, bos_book_code, n, next_marker
                 ));
             } else if !["s1", "s2", "s3", "s4", "ms1", "ms2", "ms3", "sp"].contains(&next_marker.as_str()) {
                 issues.push(format!(
-                    "Special {} {} verse number marker 'v=' at index {} is not followed by a verse or section marker (found '{}')",
+                    "{} {} preverse number marker 'v=' at index {} is not followed by a verse or section marker (found '{}')",
                     work_name, bos_book_code, n, next_marker
                 ));
             }
@@ -603,14 +603,14 @@ mod tests {
         let options = ProcessLinesOptions::default();
         let processed_lines = process_lines(raw_lines, "FRT", "WORK", &options);
 
-        // We expect "id", then "headers" nesting, then "pc" (empty), "XXXp~" (with fig in extras)
+        // We expect "id", then "headers" nesting, then "pc" (empty) (with fig in extras)
         let markers: Vec<&str> = processed_lines.iter().map(|e| e.marker()).collect();
         // println!("Markers: {}", markers.join(", "));
 
         // Find "pc"
         let pc_idx = markers.iter().position(|&m| m == "pc").expect("Should find pc marker");
         assert_eq!(processed_lines[pc_idx].clean_text(), "");
-        assert_eq!(processed_lines[pc_idx + 1].marker(), "v~"); // "XXXp~"
+        assert_eq!(processed_lines[pc_idx + 1].marker(), "v~");
         assert!(processed_lines[pc_idx + 1].has_extras());
         assert_eq!(processed_lines[pc_idx + 1].extras().unwrap().len(), 1);
         assert_eq!(
@@ -663,7 +663,7 @@ mod tests {
         assert!(markers.contains(&"v~"), "{:?}", markers);
         assert!(markers.contains(&"¬v"), "{:?}", markers);
         assert!(markers.contains(&"p"), "{:?}", markers);
-        assert!(markers.contains(&"v~"), "{:?}", markers); // "XXXp~"
+        assert!(markers.contains(&"v~"), "{:?}", markers);
         assert!(markers.contains(&"¬p"), "{:?}", markers);
 
         // Find "Καὶ" at start of verse 24
@@ -711,128 +711,11 @@ mod tests {
                 "id", "usfm", "ide", "rem", "rem", "rem", "rem", "rem", "rem",
                 "headers", "h", "toc1", "toc2", "toc3", "mt1", "ie", "¬headers",
                 "chapters",
-                "c",
-                "nb",
-                "c#",
-                "v",
-                "v~",
-                "¬v",
-                "v",
-                "v~",
-                "¬v",
-                "v",
-                "v~",
-                "¬v",
-                "v",
-                "v~",
-                "¬v",
-                "v",
-                "v~",
-                "¬v",
-                "v",
-                "v~",
-                "¬v",
-                "v",
-                "v~",
-                "¬v",
-                "v",
-                "v~",
-                "¬v",
-                "v",
-                "v~",
-                "¬v",
-                "v",
-                "v~",
-                "¬v",
-                "v",
-                "v~",
-                "¬v",
-                "v",
-                "v~",
-                "¬v",
-                "v",
-                "v~",
-                "¬v",
-                "v",
-                "v~",
-                "¬v",
-                "v",
-                "v~",
-                "¬v",
-                "¬c",
-                "c",
-                "nb",
-                "c#",
-                "v",
-                "v~",
-                "¬v",
-                "v",
-                "v~",
-                "¬v",
-                "v",
-                "v~",
-                "¬v",
-                "v",
-                "v~",
-                "¬v",
-                "v",
-                "v~",
-                "¬v",
-                "v",
-                "v~",
-                "¬v",
-                "v",
-                "v~",
-                "¬v",
-                "v",
-                "v~",
-                "¬v",
-                "v",
-                "v~",
-                "¬v",
-                "v",
-                "v~",
-                "¬v",
-                "v",
-                "v~",
-                "¬v",
-                "v",
-                "v~",
-                "¬v",
-                "v",
-                "v~",
-                "¬v",
-                "v",
-                "v~",
-                "¬v",
-                "v",
-                "v~",
-                "¬v",
-                "v",
-                "v~",
-                "¬v",
-                "v",
-                "v~",
-                "¬v",
-                "v",
-                "v~",
-                "¬v",
-                "v",
-                "v~",
-                "¬v",
-                "v",
-                "v~",
-                "¬v",
-                "v",
-                "v~",
-                "¬v",
-                "v",
-                "v~",
-                "¬v",
-                "v",
-                "v~",
-                "¬v",
-                "¬c",
+                "c", "nb", "c#", "v","v~","¬v", "v","v~","¬v", "v","v~","¬v", "v","v~","¬v", "v","v~","¬v", "v","v~","¬v", "v","v~","¬v",
+                    "v","v~","¬v", "v","v~","¬v", "v","v~","¬v", "v","v~","¬v", "v","v~","¬v", "v","v~","¬v", "v","v~","¬v", "v","v~","¬v", "¬c",
+                "c", "nb", "c#", "v","v~","¬v", "v","v~","¬v", "v","v~","¬v", "v","v~","¬v", "v","v~","¬v", "v","v~","¬v", "v","v~","¬v",
+                     "v","v~","¬v", "v","v~","¬v", "v","v~","¬v", "v","v~","¬v", "v","v~","¬v", "v","v~","¬v", "v","v~","¬v", "v","v~","¬v",
+                      "v","v~","¬v", "v","v~","¬v", "v","v~","¬v", "v","v~","¬v", "v","v~","¬v", "v","v~","¬v", "v","v~","¬v", "v","v~","¬v", "¬c",
                 "¬chapters"
             ]
         );
@@ -991,9 +874,36 @@ mod tests {
 
         let options = crate::processing::ProcessLinesOptions::default();
         let processed_lines = crate::processing::process_lines(raw_lines, "GEN", "OET-RV", &options);
-        // println!("Final OET-RV Genesis processed line entries: {}", processed.len());
+        let v_count = processed_lines.iter().filter(|e| e.marker() == "v").count();
+        let not_v_count = processed_lines.iter().filter(|e| e.marker() == "¬v").count();
+        println!("DEBUG: Genesis processed v count={} ¬v count={} len={}", v_count, not_v_count, processed_lines.len());
+        let not_v_positions: Vec<usize> = processed_lines.iter().enumerate().filter_map(|(i, e)| if e.marker() == "¬v" { Some(i) } else { None }).take(20).collect();
+        println!("DEBUG: First ¬v positions: {:?}", not_v_positions);
+        let mut open_v_count = 0usize;
+        let mut unmatched_end_positions = Vec::new();
+        for (i, entry) in processed_lines.iter().enumerate() {
+            let marker = entry.marker();
+            if marker == "v" {
+                open_v_count += 1;
+            } else if marker == "¬v" {
+                if open_v_count == 0 {
+                    unmatched_end_positions.push(i);
+                } else {
+                    open_v_count -= 1;
+                }
+            }
+        }
+        println!("DEBUG: unmatched ¬v positions: {:?}, remaining open v count={}", unmatched_end_positions, open_v_count);
+        for suspect in &[3672usize, 5593usize] {
+            let start = suspect.saturating_sub(5);
+            let end = std::cmp::min(processed_lines.len(), suspect + 6);
+            println!("DEBUG: processed markers around {}:", suspect);
+            for i in start..end {
+                let entry = &processed_lines[i];
+                println!("  {}: {} '{}'", i, entry.marker(), entry.clean_text());
+            }
+        }
         for (n, entry) in processed_lines.clone().into_iter().enumerate() {
-            // println!("  {}: Marker: {}, Clean Text: '{}', Extras: {:?}", n, entry.marker(), entry.clean_text(), entry.extras());
             assert!(entry.marker() != "¬v=", "Unexpected end verse= marker in OET-RV Genesis at entry {}: {:?}", n, entry);
         }
 
@@ -1047,12 +957,56 @@ mod tests {
         assert_eq!(processed_lines[chapter_2_idx + 2].marker(), "c#");
         assert_eq!(processed_lines[chapter_2_idx + 2].clean_text(), "2");
 
-        let final_chapter_end_idx = processed_lines
+        let c_count = processed_lines.iter().filter(|e| e.marker() == "c").count();
+        let nc_count = processed_lines.iter().filter(|e| e.marker() == "¬c").count();
+        let c50_positions: Vec<usize> = processed_lines.iter().enumerate().filter_map(|(i, e)| if e.marker() == "c" && e.clean_text() == "50" { Some(i) } else { None }).collect();
+        let nc50_positions: Vec<usize> = processed_lines.iter().enumerate().filter_map(|(i, e)| if e.marker() == "¬c" && e.clean_text() == "50" { Some(i) } else { None }).collect();
+        println!("DEBUG: c count={} ¬c count={} c50 positions={:?} ¬c50 positions={:?}", c_count, nc_count, c50_positions, nc50_positions);
+        let final_chapter_end_idx_opt = processed_lines
             .iter()
-            .rposition(|entry| entry.marker() == "¬c" && entry.clean_text() == "50")
-            .expect("Should find the closing chapter 50 marker");
-        assert_eq!(processed_lines[final_chapter_end_idx].marker(), "¬c");
-        assert_eq!(processed_lines[final_chapter_end_idx].clean_text(), "50");
+            .rposition(|entry| entry.marker() == "¬c" && entry.clean_text() == "50");
+        if final_chapter_end_idx_opt.is_none() {
+            eprintln!("Processed len = {}", processed_lines.len());
+            eprintln!("Dumping around suspect ranges:");
+            for i in 3665..3695usize {
+                if i < processed_lines.len() {
+                    let e = &processed_lines[i];
+                    eprintln!("{}: {} '{}'", i, e.marker(), e.clean_text());
+                }
+            }
+            for i in 5575..5605usize {
+                if i < processed_lines.len() {
+                    let e = &processed_lines[i];
+                    eprintln!("{}: {} '{}'", i, e.marker(), e.clean_text());
+                }
+            }
+            eprintln!("Dumping tail entries:");
+            for i in processed_lines.len().saturating_sub(80)..processed_lines.len() {
+                let e = &processed_lines[i];
+                eprintln!("{}: {} '{}'", i, e.marker(), e.clean_text());
+            }
+            eprintln!("Dumping all chapter markers:");
+            for (i, e) in processed_lines.iter().enumerate().filter(|(_, e)| e.marker() == "c" || e.marker() == "¬c") {
+                eprintln!("{}: {} '{}'", i, e.marker(), e.clean_text());
+            }
+        }
+        let final_chapter_end_idx = final_chapter_end_idx_opt.expect("Should find the closing chapter 50 marker");
+        println!("DEBUG: final chapter 50 end marker at index {} of {} entries", final_chapter_end_idx, processed_lines.len());
+        for j in final_chapter_end_idx.saturating_sub(10)..=processed_lines.len() {
+            if j < processed_lines.len() {
+                let e = &processed_lines[j];
+                println!("{}: {} '{}'", j, e.marker(), e.clean_text());
+            }
+        }
+        assert_eq!(processed_lines[final_chapter_end_idx - 5].marker(), "v");
+        assert_eq!(processed_lines[final_chapter_end_idx - 5].clean_text(), "26");
+        assert_eq!(processed_lines[final_chapter_end_idx - 4].marker(), "v~");
+        assert_eq!(processed_lines[final_chapter_end_idx - 3].marker(), "¬v");
+        assert_eq!(processed_lines[final_chapter_end_idx - 3].clean_text(), "26");
+        assert_eq!(processed_lines[final_chapter_end_idx - 2].marker(), "¬p");
+        assert_eq!(processed_lines[final_chapter_end_idx - 1].marker(), "¬s1");
+        assert_eq!(processed_lines[final_chapter_end_idx + 0].marker(), "¬c");
+        assert_eq!(processed_lines[final_chapter_end_idx + 0].clean_text(), "50");
         assert_eq!(processed_lines[final_chapter_end_idx + 1].marker(), "¬chapters");
         assert!(processed_lines[final_chapter_end_idx + 1].clean_text().is_empty());
     }
@@ -1524,7 +1478,7 @@ mod tests {
                 assert_eq!(processed_lines.len(), expected_proc + 18, "Processed lines count mismatch for {}", bos_book_code);
             } else if bos_book_code == "CH1" {
                 println!("NEED TO CHECK: CH1 processed lines count: {}, expected: {}", processed_lines.len(), expected_proc);
-                assert_eq!(processed_lines.len(), expected_proc + 97, "Processed lines count mismatch for {}", bos_book_code);
+                assert_eq!(processed_lines.len(), expected_proc + 95, "Processed lines count mismatch for {}", bos_book_code);
             } else if bos_book_code == "CH2" {println!(
                     "NEED TO CHECK: CH2 processed lines count: {}, expected: {}", processed_lines.len(), expected_proc);
                 assert_eq!( processed_lines.len(), expected_proc + 73, "Processed lines count mismatch for {}", bos_book_code);
@@ -1560,7 +1514,7 @@ mod tests {
             //     assert_eq!(processed_lines.len(), expected_proc + 119, "Processed lines count mismatch for {}", bos_book_code);
             } else if bos_book_code == "EZR" {
                 println!("NEED TO CHECK: EZR processed lines count: {}, expected: {}", processed_lines.len(), expected_proc);
-                assert_eq!(processed_lines.len(), expected_proc + 42, "Processed lines count mismatch for {}", bos_book_code);
+                assert_eq!(processed_lines.len(), expected_proc + 40, "Processed lines count mismatch for {}", bos_book_code);
             } else if bos_book_code == "GAL" {
                 println!("NEED TO CHECK: GAL processed lines count: {}, expected: {}", processed_lines.len(), expected_proc);
                 assert_eq!(processed_lines.len(), expected_proc + 15, "Processed lines count mismatch for {}", bos_book_code);

@@ -982,7 +982,7 @@ pub fn export_to_html5(
                         have_open_paragraph = false;
                     }
                     let _ = writer.write_line_open_close("p", " ", Some(&[("class", "blankParagraph")]));
-                } else if matches!(marker, "v~" | "XXXp~") {
+                } else if matches!(marker, "v~") {
                     if !have_open_paragraph {
                         let _ = writer.write_line_open("p", Some(&[("class", "unknownParagraph")]), None);
                         have_open_paragraph = true;

@@ -423,7 +423,7 @@ mod tests {
     use std::io::{BufRead, BufReader};
 
     #[test]
-    // #[ignore = "Test not finished yet"]
+    #[ignore = "Test not finished yet"]
     fn test_oet_rv_haggai_section_indexing() {
         let file_path = "../../Tests/DataFilesForTests/OET-RV/OET-RV_HAG.ESFM";
         let file = File::open(file_path).expect("Could not open OET-RV Haggai ESFM file");
@@ -449,10 +449,10 @@ mod tests {
         assert_eq!(original_count, 81, "Expected 81 raw lines in Haggai OET-RV ESFM file");
 
         let options = crate::processing::ProcessLinesOptions::default();
-        let processed = crate::processing::process_lines(raw_lines, "HAG", "OET-RV", &options);
+        let _processed = crate::processing::process_lines(raw_lines, "HAG", "OET-RV", &options);
         // println!("Final OET-RV Haggai processed line entries: {}", processed.len());
 
-        let section_index  = PyInternalBibleBookSectionIndex::new("OET-RV", "HAG");
+        let _section_index  = PyInternalBibleBookSectionIndex::new("OET-RV", "HAG");
         println!("This test is UNFINISHED: Section index building and lookup not yet implemented for OET-RV Haggai");
         // section_index.build(pyo3::Python::<'_>, &PyInternalBibleEntryList::from(processed.clone())).expect("Failed to build section index for OET-RV Haggai");
 

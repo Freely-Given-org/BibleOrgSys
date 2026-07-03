@@ -9,7 +9,7 @@ use indexmap::IndexMap;
 // use log::trace;
 
 use bos_books_codes::is_chapter_verse_book;
-use num_format::Locale::ne;
+// use num_format::Locale::ne;
 use crate::bos_markers::{regular_nesting, custom_nesting, is_end_marker};
 use crate::chapter_verse::ChapterVerse;
 use crate::entry_lists::InternalBibleEntryList;
@@ -494,14 +494,16 @@ impl InternalBibleBookCVIndex {
                             last_end_line_index, current_start_line_index, line_entry_count, current_end_line_index);
                     if current_chapter != "-1" && current_verse != "0" {
                         assert!(is_end_marker(self.line_entries.get(current_end_line_index).unwrap().marker())
-                                || ["ms1","ms2","ms3","mr"].contains(&self.line_entries.get(current_end_line_index).unwrap().marker()),
-                                    "{} {} {}:{} CV index entry expected to finish with an end marker, not '{}'",
+                                || ["ms1","ms2","ms3","mr","rem"].contains(&self.line_entries.get(current_end_line_index).unwrap().marker()),
+                                    "{} {} {}:{} CV index entry expected to finish with an end marker, not '{}' from {}",
                                     self.work_name(), self.bos_book_code(), current_chapter, current_verse,
-                                    self.line_entries.get(current_end_line_index).unwrap().marker());
+                                    self.line_entries.get(current_end_line_index).unwrap().marker(),
+                                    self.line_entries.get(current_end_line_index).unwrap());
                     }
                 }
                 if have_strict_checking_flag() || cfg!(debug_assertions) {
-                    assert!(!self.index_data.contains_key(&cv), "About to lose existing index entry for {}", cv);
+                    assert!(!self.index_data.contains_key(&cv), "About to lose existing {} {} CV index entry for {}",
+                            self.work_name(), self.bos_book_code(), cv);
                 }
                 self.index_data
                     .insert(cv, CVIndexEntry::new(current_start_line_index as u32, line_entry_count, current_context.clone()));
@@ -545,7 +547,7 @@ impl InternalBibleBookCVIndex {
                     "{} {} {}:{} final CV index entry end is wrong: finished at {}, now {}+{}-1= {}",
                     self.work_name(), self.bos_book_code(), current_chapter, current_verse,
                     last_end_line_index, current_start_line_index, line_entry_count, current_end_line_index);
-            assert!(!self.index_data.contains_key(&cv), "At end, about to lose existing index entry for {}", cv);
+            assert!(!self.index_data.contains_key(&cv), "At end, about to lose existing {} {} CV index entry for {}", self.work_name(), self.bos_book_code(), cv);
             }
         self.index_data.insert(cv, CVIndexEntry::new(current_start_line_index as u32, line_entry_count, current_context));
         self.indexed = true;
@@ -647,7 +649,7 @@ impl InternalBibleBookCVIndex {
                 
                 let final_marker_in_entry = self.line_entries.get(entry.start_index() + entry.entry_count() as usize - 1).map(|e| e.marker()).unwrap_or("N/A");
                 if !is_end_marker(final_marker_in_entry) && cv.verse() != "0"
-                    && !["ms1","ms2","ms3","mr"].contains(&final_marker_in_entry)
+                    && !["ms1","ms2","ms3","mr","rem"].contains(&final_marker_in_entry)
                  {
                     // println!("Entry for {} {} {} is at index {} with end marker '{}'", self.work_name(), self.bos_book_code(), cv, entry.start_index(), final_marker_in_entry);
                     // assert!(cv.verse()=="0" || is_end_marker(final_marker_in_entry),

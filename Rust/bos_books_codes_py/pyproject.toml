@@ -4,7 +4,7 @@ build-backend = "maturin"
 
 [project]
 name = "bos_books_codes_py"
-requires-python = ">=3.13"
+requires-python = ">=3.12"
 classifiers = [
     "Programming Language :: Rust",
     "Programming Language :: Python :: Implementation :: CPython",

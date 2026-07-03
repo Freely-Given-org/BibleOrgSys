@@ -30,6 +30,7 @@ CHANGELOG:
     2022-06-10 Make uw alignment loading more robust to handle formatting errors
     2025-05-30 Handled /tc1 on new line (after /tr) which was being completely lost
     2025-06-24 Improved some error handling for invalid markers
+    2026-07-02 Try to make uW handling more robust
 """
 from typing import Any
 import os
@@ -43,10 +44,10 @@ from BibleOrgSys.Bible import Bible, BibleBook
 import usfm_markers_py
 
 
-LAST_MODIFIED_DATE = '2025-07-01' # by RJH
+LAST_MODIFIED_DATE = '2026-07-02' # by RJH
 SHORT_PROGRAM_NAME = "USFMBibleBook"
 PROGRAM_NAME = "USFM Bible book handler"
-PROGRAM_VERSION = '0.67'
+PROGRAM_VERSION = '0.68'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -381,7 +382,7 @@ class USFMBibleBook( BibleBook ):
             #dPrint( 'Quiet', debuggingThisFunction, "rawLines", self._rawLines[-4:] )
             if 'zaln' in text: # error because we have no open levels
                 logging.critical( f"Why is zaln in '{self.BBB}' {marker}='{text}' with no open levels" )
-            if marker == 'INLINE': # then we need to supply a remaining marker
+            if marker=='INLINE' and text: # then we need to supply a remaining marker
                 dPrint( 'Never', debuggingThisFunction, f"handleUWEncoding: Find a new marker to replace {marker}='{text}'" )
                 # if text.startswith( '\\w ' ) \
                 # or text[1:].startswith( '\\w ' ): # There may be preceding punctuation (actually, maybe something like ', “\w Then...')

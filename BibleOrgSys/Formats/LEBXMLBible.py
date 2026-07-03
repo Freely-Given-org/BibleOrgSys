@@ -32,6 +32,7 @@ CHANGELOG:
     2025-05-14 Put floor characters around idioms
     2025-05-23 Fix space before Selah inside list items in Psalms, fix bug inserting tails that were None
     2026-06-21 Handle XML Block
+    2026-07-03 Fixed some lost verse text in single-chapter books like OBA
 """
 import logging
 import os
@@ -47,10 +48,10 @@ from BibleOrgSys.Bible import Bible, BibleBook
 import bos_books_codes_py
 
 
-LAST_MODIFIED_DATE = '2026-06-22' # by RJH
+LAST_MODIFIED_DATE = '2026-07-03' # by RJH
 SHORT_PROGRAM_NAME = "LEBXMLBible"
 PROGRAM_NAME = "LEB XML Bible format handler"
-PROGRAM_VERSION = '0.30'
+PROGRAM_VERSION = '0.31'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -721,7 +722,13 @@ class LEBXMLBible( Bible ):
                 try: C,V = bits[-1].split( ':' )
                 except ValueError: # if there's no colon
                     # I think this is a random LEB encoding fault like '<p><verse-number id="Ge 2">2</verse-number><verse-number id="Ge 2:1">1</verse-number> And heaven...'
-                    continue
+                    # OR a verse in a single chapter book
+                    if bos_books_codes_py.is_single_chapter_book(thisBook.BBB):
+                        assert bits[-1].isdigit()
+                        C, V = "1", bits[-1]
+                    else:
+                        logging.critical( f"LEB {thisBook.BBB} Skipping {verseID=}" )
+                        continue
                 assert subelement.text.strip() == subelement.text
                 self.state['V'] = subelement.text
                 if subelement.text == 'title':
