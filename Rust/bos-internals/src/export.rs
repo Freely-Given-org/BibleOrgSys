@@ -246,7 +246,7 @@ fn process_note(
                 }
                 Some("fr") => {
                     origin = info.text.to_string();
-                    origin_cv = origin.trim().to_string();
+                    origin_cv = origin.clone();
                     if origin_cv.ends_with(':') || origin_cv.ends_with('.') {
                         origin_cv.pop();
                     }
