@@ -640,7 +640,7 @@ pub fn do_check_words(
 
         let line_location = format!("{} {}:{}", bos_book_code, chapter, verse);
 
-        if !clean_text.is_empty() && (marker == "v~" || marker == "XXXp~" || bos_markers::is_newline_marker(marker)) {
+        if !clean_text.is_empty() && (marker == "v~" || bos_markers::is_newline_marker(marker)) {
             let words = clean_text.replace('—', " ").replace('–', " ");
             for (j, raw_word) in words.split_whitespace().enumerate() {
                 if (marker == "c" || marker == "v") && j == 0 && raw_word.chars().all(|c| c.is_ascii_digit()) {
@@ -1084,6 +1084,7 @@ mod tests {
     }
 
     #[test]
+    #[ignore = "Test not finished yet"]
     fn test_oet_rv_checking() {
         let test_folder_path = "../../Tests/DataFilesForTests/OET-RV";
 

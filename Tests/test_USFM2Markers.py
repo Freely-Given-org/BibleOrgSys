@@ -145,7 +145,7 @@ class USFM2MarkersTests( unittest.TestCase ):
             self.assertTrue( self.UMs.is_newline_marker(simpleMarker) )
         for numberableMarker in ( 'h', 'q', 'ili', ):
             self.assertTrue( self.UMs.is_newline_marker(numberableMarker) )
-        for numberedMarker in ( 'q1', 'q2', 'q3', 's1', 'ili1', 'ili2', 'ili3', ):
+        for numberedMarker in ( 'q1', 'q2', 'q3', 's1', 'ili1', 'ili2' ):
             self.assertTrue( self.UMs.is_newline_marker(numberedMarker) )
         for deprecatedMarker in ( 'ps','pdi','pde', ):
             self.assertTrue( self.UMs.is_newline_marker(deprecatedMarker) )
@@ -165,7 +165,7 @@ class USFM2MarkersTests( unittest.TestCase ):
             self.assertFalse( self.UMs.isInternalMarker(simpleMarker) )
         for numberableMarker in ( 'h', 'q', 'ili', ):
             self.assertFalse( self.UMs.isInternalMarker(numberableMarker) )
-        for numberedMarker in ( 'h', 'q1', 'q2', 'q3', 's1', 'ili1', 'ili2', 'ili3', ):
+        for numberedMarker in ( 'h', 'q1', 'q2', 'q3', 's1', 'ili1', 'ili2' ):
             self.assertFalse( self.UMs.isInternalMarker(numberedMarker) )
         for badMarker in ( 'H', 'y', 'Q1', 'q5', 'toc4', 'x*', '\\p', ):
             self.assertFalse( self.UMs.isInternalMarker(badMarker) )
@@ -181,7 +181,7 @@ class USFM2MarkersTests( unittest.TestCase ):
             self.assertFalse( self.UMs.isDeprecatedMarker(simpleMarker) )
         for numberableMarker in ( 'h', 'q', 'ili', ):
             self.assertFalse( self.UMs.isDeprecatedMarker(numberableMarker) )
-        for numberedMarker in ( 'h', 'q1', 'q2', 'q3', 's1', 'ili1', 'ili2', 'ili3', ):
+        for numberedMarker in ( 'h', 'q1', 'q2', 'q3', 's1', 'ili1', 'ili2' ):
             self.assertFalse( self.UMs.isDeprecatedMarker(numberedMarker) )
         for badMarker in ( 'H', 'y', 'Q1', 'q5', 'toc4', 'x*', '\\p', ):
             self.assertFalse( self.UMs.isDeprecatedMarker(badMarker) )
@@ -195,7 +195,7 @@ class USFM2MarkersTests( unittest.TestCase ):
             self.assertFalse( self.UMs.isCompulsoryMarker(simpleMarker) )
         for numberableMarker in ( 'q', 'ili', ):
             self.assertFalse( self.UMs.isCompulsoryMarker(simpleMarker) )
-        for numberedMarker in ( 'q1', 'q2', 'q3', 's1', 'ili1', 'ili2', 'ili3', ):
+        for numberedMarker in ( 'q1', 'q2', 'q3', 's1', 'ili1', 'ili2' ):
             self.assertFalse( self.UMs.isCompulsoryMarker(numberedMarker) )
         for badMarker in ( 'H', 'y', 'Q1', 'q5', 'toc4', 'x*', '\\p', ):
             self.assertFalse( self.UMs.isCompulsoryMarker(badMarker) )
@@ -205,7 +205,7 @@ class USFM2MarkersTests( unittest.TestCase ):
         """ Test the isNumberableMarker function. """
         for simpleMarker in ( 's', 'q', 'ili', ):
             self.assertTrue( self.UMs.isNumberableMarker(simpleMarker) )
-        for numberedMarker in ( 'q1', 'q2', 'q3', 's1', 'ili1', 'ili2', 'ili3', ):
+        for numberedMarker in ( 'q1', 'q2', 'q3', 's1', 'ili1', 'ili2' ):
             self.assertTrue( self.UMs.isNumberableMarker(numberedMarker) )
         for simpleMarker in ( 'h', 'p', 'b', 'toc1', 'f', 'ft', 'x', 'xq', 'em', ):
             self.assertFalse( self.UMs.isNumberableMarker(simpleMarker) )
@@ -217,7 +217,7 @@ class USFM2MarkersTests( unittest.TestCase ):
         """ Test the isNestingMarker function. """
         for simpleMarker in ( 'it', 'nd', 'bk', 'em', 'wj', ):
             self.assertTrue( self.UMs.isNestingMarker(simpleMarker) )
-        for numberedMarker in ( 'q1', 'q2', 'q3', 's1', 'ili1', 'ili2', 'ili3', ):
+        for numberedMarker in ( 'q1', 'q2', 'q3', 's1', 'ili1', 'ili2' ):
             self.assertFalse( self.UMs.isNestingMarker(numberedMarker) )
         for simpleMarker in ( 'h', 's', 'q', 'ili', 'p', 'b', 'toc1', 'f', 'ft', 'x', 'xq', ):
             self.assertFalse( self.UMs.isNestingMarker(simpleMarker) )
@@ -227,7 +227,7 @@ class USFM2MarkersTests( unittest.TestCase ):
 
     def test_2090_isPrinted( self ):
         """ Test the isPrinted function. """
-        for numberedMarker in ( 'q1', 'q2', 'q3', 's1', 'ili1', 'ili2', 'ili3', ):
+        for numberedMarker in ( 'q1', 'q2', 'q3', 's1', 'ili1', 'ili2' ):
             self.assertTrue( self.UMs.isPrinted(numberedMarker) )
         for simpleMarker in ( 'p', 'b', 'toc1', 'f', 'ft', 'x', 'xq', 'em', ):
             self.assertTrue( self.UMs.isPrinted(simpleMarker) )
@@ -241,7 +241,7 @@ class USFM2MarkersTests( unittest.TestCase ):
         """ Test the getMarkerClosureType function. """
         for simpleMarker in ( 'f', 'ft', 'x', 'xq', 'em', 'wj', 'ndx', ):
             self.assertTrue( self.UMs.getMarkerClosureType(simpleMarker) in ('A','O',) )
-        for numberedMarker in ( 'q1', 'q2', 'q3', 's1', 'ili1', 'ili2', 'ili3', ):
+        for numberedMarker in ( 'q1', 'q2', 'q3', 's1', 'ili1', 'ili2' ):
             self.assertTrue( self.UMs.getMarkerClosureType(numberedMarker) == 'N' )
         for simpleMarker in ( 'id', 'ide', 'sts', 'rem', 'periph', ):
             self.assertTrue( self.UMs.getMarkerClosureType(simpleMarker) == 'N' )
@@ -255,7 +255,7 @@ class USFM2MarkersTests( unittest.TestCase ):
             self.assertTrue( self.UMs.getMarkerContentType(simpleMarker) == 'A' )
         for simpleMarker in ( 'p', ):
             self.assertTrue( self.UMs.getMarkerContentType(simpleMarker) == 'S' )
-        for numberedMarker in ( 's1', 'ili1', 'ili2', 'ili3', ):
+        for numberedMarker in ( 's1', 'ili1', 'ili2' ):
             self.assertTrue( self.UMs.getMarkerContentType(numberedMarker) == 'A' )
         for numberedMarker in ( 'q1', 'q2', 'q3', ):
             self.assertTrue( self.UMs.getMarkerContentType(numberedMarker) == 'S' )
@@ -269,7 +269,7 @@ class USFM2MarkersTests( unittest.TestCase ):
         """ Test the to_raw_marker function. """
         for simpleMarker in ( 'h', 'q', 'p', 'c', 'b', 'v', 'toc1', 'em', ):
             self.assertEqual( self.UMs.to_raw_marker(simpleMarker), simpleMarker )
-        for numberedMarker in ( 'q1', 'q2', 'q3', 's1', 'ili1', 'ili2', 'ili3', ):
+        for numberedMarker in ( 'q1', 'q2', 'q3', 's1', 'ili1', 'ili2' ):
             self.assertEqual( self.UMs.to_raw_marker(numberedMarker), numberedMarker[:-1] )
         for badMarker in ( 'H', 'y', 'Q1', 'q5', 'toc4', 'x*', '\\p', ):
             self.assertRaises( KeyError, self.UMs.to_raw_marker, badMarker )
@@ -281,7 +281,7 @@ class USFM2MarkersTests( unittest.TestCase ):
             self.assertEqual( self.UMs.to_standard_marker(simpleMarker), simpleMarker )
         for numberableMarker in ( 'q', 'ili', ):
             self.assertEqual( self.UMs.to_standard_marker(numberableMarker), numberableMarker+'1' )
-        for numberedMarker in ( 'q1', 'q2', 'q3', 's1', 'ili1', 'ili2', 'ili3', ):
+        for numberedMarker in ( 'q1', 'q2', 'q3', 's1', 'ili1', 'ili2' ):
             self.assertEqual( self.UMs.to_standard_marker(numberedMarker), numberedMarker )
         for badMarker in ( 'H', 'y', 'Q1', 'q5', 'toc4', 'x*', '\\p', ):
             self.assertRaises( KeyError, self.UMs.to_standard_marker, badMarker )
@@ -289,7 +289,7 @@ class USFM2MarkersTests( unittest.TestCase ):
 
     def test_2130_markerOccursIn( self ):
         """ Test the markerOccursIn function. """
-        for marker in ( 'h', 's', 'q', 'ili', 'q1', 'q2', 'q3', 's1', 'ili1', 'ili2', 'ili3', 'p', 'b', 'toc1', 'f', 'ft', 'x', 'xq', 'em', ):
+        for marker in ( 'h', 's', 'q', 'ili', 'q1', 'q2', 'q3', 's1', 'ili1', 'ili2', 'p', 'b', 'toc1', 'f', 'ft', 'x', 'xq', 'em', ):
             result = self.UMs.markerOccursIn( marker )
             self.assertTrue( isinstance( result , str ) )
         for badMarker in ( 'H', 'y', 'Q1', 'q5', 'toc4', 'x*', '\\p', ):
@@ -298,7 +298,7 @@ class USFM2MarkersTests( unittest.TestCase ):
 
     def test_2140_getMarkerEnglishName( self ):
         """ Test the getMarkerEnglishName function. """
-        for marker in ( 'h', 's', 'q', 'ili', 'q1', 'q2', 'q3', 's1', 'ili1', 'ili2', 'ili3', 'p', 'b', 'toc1', 'f', 'ft', 'x', 'xq', 'em', ):
+        for marker in ( 'h', 's', 'q', 'ili', 'q1', 'q2', 'q3', 's1', 'ili1', 'ili2', 'p', 'b', 'toc1', 'f', 'ft', 'x', 'xq', 'em', ):
             result = self.UMs.getMarkerEnglishName( marker )
             self.assertTrue( isinstance( result , str ) )
             self.assertTrue( result ) # Mustn't be blank
@@ -308,7 +308,7 @@ class USFM2MarkersTests( unittest.TestCase ):
 
     def test_2150_getMarkerDescription( self ):
         """ Test the getMarkerDescription function. """
-        for marker in ( 'h', 's', 'q', 'ili', 'q1', 'q2', 'q3', 's1', 'ili1', 'ili2', 'ili3', 'p', 'b', 'toc1', 'f', 'ft', 'x', 'xq', 'em', ):
+        for marker in ( 'h', 's', 'q', 'ili', 'q1', 'q2', 'q3', 's1', 'ili1', 'ili2', 'p', 'b', 'toc1', 'f', 'ft', 'x', 'xq', 'em', ):
             result = self.UMs.getMarkerDescription( marker )
             if result is not None:
                 self.assertTrue( isinstance( result , str ) )

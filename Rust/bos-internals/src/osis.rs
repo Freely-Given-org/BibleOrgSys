@@ -117,7 +117,10 @@ fn parse_header(content: &str) -> HashMap<String, String> {
                         current_tag = String::from_utf8_lossy(e.name().as_ref()).to_string();
                     }
                     Ok(Event::Text(e)) => {
-                        let text = e.unescape().map(|c| c.into_owned()).unwrap_or_default();
+                        let decoded = e.decode().unwrap_or_default(); // 1. Decode the raw bytes into a string slice or Cow<str>
+                        let text = quick_xml::escape::unescape(&decoded)
+                            .map(|c| c.into_owned())
+                            .unwrap_or_default(); // 2. Unescape the decoded string using the standalone escape module
                         if !current_tag.is_empty() {
                             metadata.insert(current_tag.clone(), text);
                         }
@@ -246,7 +249,10 @@ fn parse_osis_slice(slice: &str, initial_bbb: Option<&str>) -> Vec<(String, Stri
                 }
             }
             Ok(Event::Text(e)) => {
-                let text = e.unescape().map(|c| c.into_owned()).unwrap_or_default();
+                let decoded = e.decode().unwrap_or_default(); // 1. Decode the raw bytes into a string slice or Cow<str>
+                let text = quick_xml::escape::unescape(&decoded)
+                    .map(|c| c.into_owned())
+                    .unwrap_or_default(); // 2. Unescape the decoded string using the standalone escape module
                 let cleaned = clean_text(&text);
                 if !cleaned.is_empty() {
                     state.current_text.push_str(&cleaned);
@@ -379,7 +385,10 @@ fn parse_osis_single_threaded(content: &str) -> HashMap<String, Vec<(String, Str
                 }
             }
             Ok(Event::Text(e)) => {
-                let text = e.unescape().map(|c| c.into_owned()).unwrap_or_default();
+                let decoded = e.decode().unwrap_or_default(); // 1. Decode the raw bytes into a string slice or Cow<str>
+                let text = quick_xml::escape::unescape(&decoded)
+                    .map(|c| c.into_owned())
+                    .unwrap_or_default(); // 2. Unescape the decoded string using the standalone escape module
                 let cleaned = clean_text(&text);
                 if !cleaned.is_empty() {
                     state.current_text.push_str(&cleaned);

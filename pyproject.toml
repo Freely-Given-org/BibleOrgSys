@@ -1,9 +1,9 @@
 [project]
 name = "bibleorgsys"
-version = "0.3.3"
+version = "0.3.5"
 description = "Bible Organisational System — load, check, and/or export Bible files/folders"
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = ">=3.12"
 license = "GPL-3.0-or-later"
 authors = [
     { name = "Robert Hunt", email = "Freely.Given.org+BOS@gmail.com" },
@@ -20,7 +20,7 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 dependencies = [
-    "bibleorgsys-rust>=0.3.3",
+    "bibleorgsys-rust>=0.3.5",
     "bos_books_codes_py>=0.6.3",
     "usfm_markers_py>=0.3.0",
     "requests>=2.34.2",
@@ -30,6 +30,7 @@ dependencies = [
 [tool.uv]
 exclude-newer = "7 days"
 environments = [
+    "python_version == '3.12'",
     "python_version == '3.13'",
     "python_version == '3.14'"
 ]

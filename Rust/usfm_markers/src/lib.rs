@@ -25,7 +25,7 @@ pub static USFM_ALL_TITLE_MARKERS: &[&str] = &[ "mt","mt1","mt2","mt3","mt4", "m
 /// Markers used specifically in introductions.
 pub static USFM_INTRODUCTION_PARAGRAPH_MARKERS: &[&str] = &[ "ip","ipi", "im","imi", "ipq","imq","ipr",
                             "iq","iq1","iq2","iq3","iq4",
-                           "iot", "io","io1","io2","io3","io4", "ili","ili1","ili2","ili3","ili4",
+                           "iot", "io","io1","io2","io3","io4", "ili","ili1","ili2",
                            "iex","iqt" ]; // Doesn't include ie
 
 /// All introduction markers including titles and headings.
@@ -33,7 +33,7 @@ pub static USFM_ALL_INTRODUCTION_MARKERS: &[&str] = &[
     "imt","imt1","imt2","imt3","imt4", "imte","imte1","imte2","imte3","imte4",
     "is","is1","is2","is3","is4", "ip","ipi", "im","imi", "ipq","imq","ipr",
     "iq","iq1","iq2","iq3","iq4",
-    "iot", "io","io1","io2","io3","io4", "ili","ili1","ili2","ili3","ili4",
+    "iot", "io","io1","io2","io3","io4", "ili","ili1","ili2",
     "iex","iqt"
 ];
 
@@ -50,7 +50,7 @@ pub static USFM_BIBLE_PARAGRAPH_MARKERS: &[&str] = &[ "p","pc","pr", "m","mi", "
 pub static USFM_ALL_BIBLE_PARAGRAPH_MARKERS: &[&str] = &[
     "ip","ipi", "im","imi", "ipq","imq","ipr",
     "iq","iq1","iq2","iq3","iq4",
-    "iot", "io","io1","io2","io3","io4", "ili","ili1","ili2","ili3","ili4",
+    "iot", "io","io1","io2","io3","io4", "ili","ili1","ili2",
     "iex","iqt",
     "p","pc","pr", "m","mi", "pm","pmo","pmc","pmr", "cls",
     "pi","pi1","pi2","pi3","pi4", "ph","ph1","ph2","ph3","ph4",
@@ -65,7 +65,7 @@ pub static USFM_PRECHAPTER_MARKERS: &[&str] = &[
     "imt","imt1","imt2","imt3","imt4", "imte","imte1","imte2","imte3","imte4",
     "is","is1","is2","is3","is4", "ip","ipi", "im","imi", "ipq","imq","ipr",
     "iq","iq1","iq2","iq3","iq4",
-    "iot", "io","io1","io2","io3","io4", "ili","ili1","ili2","ili3","ili4",
+    "iot", "io","io1","io2","io3","io4", "ili","ili1","ili2",
     "iex","iqt", "ie"
 ];
 
@@ -75,7 +75,7 @@ pub static USFM_ALL_MARKERS: &[&str] = &[
     "imt","imt1","imt2","imt3","imt4", "imte","imte1","imte2","imte3","imte4",
     "is","is1","is2","is3","is4", "ip","ipi", "im","imi", "ipq","imq","ipr",
     "iq","iq1","iq2","iq3","iq4",
-    "iot", "io","io1","io2","io3","io4", "ili","ili1","ili2","ili3","ili4",
+    "iot", "io","io1","io2","io3","io4", "ili","ili1","ili2",
     "iex","iqt", "ie",
 
     "ms","ms1","ms2","ms3", "mr","sr",
@@ -101,7 +101,7 @@ pub static USFM_PRINTABLE_MARKERS: &[&str] = &[
     "imt","imt1","imt2","imt3","imt4", "imte","imte1","imte2","imte3","imte4",
     "is","is1","is2","is3","is4", "ip","ipi", "im","imi", "ipq","imq","ipr",
     "iq","iq1","iq2","iq3","iq4",
-    "iot", "io","io1","io2","io3","io4", "ili","ili1","ili2","ili3","ili4",
+    "iot", "io","io1","io2","io3","io4", "ili","ili1","ili2",
     "iex","iqt",
     "s","s1","s2","s3","s4", "qa", "qc",
     "p","pc","pr", "m","mi", "pm","pmo","pmc","pmr", "cls",

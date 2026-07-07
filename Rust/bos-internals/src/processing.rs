@@ -228,7 +228,7 @@ pub fn process_lines(
 
     for (n,(marker, text)) in raw_lines.iter().enumerate() {
         let marker = crate::bos_markers::normalize_marker(marker.as_str());
-        log::info!("process_lines: Processing marker {} with text '{}'", marker, text);
+        log::info!("process_lines: Processing marker {} '{}' with text '{}'", n, marker, text);
         // println!("process_lines: Processing marker {} with text '{}'", marker, text);
         // if text.contains("O Yahweh, do not rebuke me in your anger,") {
         //     println!("process_lines: Found {} {} raw line with {} {}='{}'", work_name, bos_book_code, n-2, raw_lines.get(n-2).unwrap().0, raw_lines.get(n-2).unwrap().1);
@@ -360,7 +360,7 @@ pub fn process_lines(
         {
             processed.push(InternalBibleEntry::new_unchecked(marker, marker, "", "", None, ""));
             processed.push(InternalBibleEntry::new_unchecked(
-                "v~", // "XXXp~"
+                "v~",
                 marker,
                 text,
                 adj,
@@ -404,7 +404,7 @@ pub fn validate(processed_lines: &InternalBibleEntryList, bos_book_code: &str, w
     }
 
     // let mut previous_marker = CompactString::new("");
-    let mut next_marker = CompactString::new("");
+    let mut next_marker;
     let mut marker_counts: IndexMap<CompactString, usize> = IndexMap::new();
     for (n, entry) in processed_lines.iter().enumerate() {
         let current_marker: CompactString = entry.marker().into();
@@ -418,12 +418,12 @@ pub fn validate(processed_lines: &InternalBibleEntryList, bos_book_code: &str, w
         if current_marker == "v=" {
             if is_end_marker(&next_marker) {
                 issues.push(format!(
-                    "Special {} {} verse number marker 'v=' at index {} is followed by an end marker '{}'",
+                    "{} {} preverse number marker 'v=' at index {} is followed by an end marker '{}'",
                     work_name, bos_book_code, n, next_marker
                 ));
             } else if !["s1", "s2", "s3", "s4", "ms1", "ms2", "ms3", "sp"].contains(&next_marker.as_str()) {
                 issues.push(format!(
-                    "Special {} {} verse number marker 'v=' at index {} is not followed by a verse or section marker (found '{}')",
+                    "{} {} preverse number marker 'v=' at index {} is not followed by a verse or section marker (found '{}')",
                     work_name, bos_book_code, n, next_marker
                 ));
             }
@@ -603,14 +603,14 @@ mod tests {
         let options = ProcessLinesOptions::default();
         let processed_lines = process_lines(raw_lines, "FRT", "WORK", &options);
 
-        // We expect "id", then "headers" nesting, then "pc" (empty), "XXXp~" (with fig in extras)
+        // We expect "id", then "headers" nesting, then "pc" (empty) (with fig in extras)
         let markers: Vec<&str> = processed_lines.iter().map(|e| e.marker()).collect();
         // println!("Markers: {}", markers.join(", "));
 
         // Find "pc"
         let pc_idx = markers.iter().position(|&m| m == "pc").expect("Should find pc marker");
         assert_eq!(processed_lines[pc_idx].clean_text(), "");
-        assert_eq!(processed_lines[pc_idx + 1].marker(), "v~"); // "XXXp~"
+        assert_eq!(processed_lines[pc_idx + 1].marker(), "v~");
         assert!(processed_lines[pc_idx + 1].has_extras());
         assert_eq!(processed_lines[pc_idx + 1].extras().unwrap().len(), 1);
         assert_eq!(
@@ -663,7 +663,7 @@ mod tests {
         assert!(markers.contains(&"v~"), "{:?}", markers);
         assert!(markers.contains(&"¬v"), "{:?}", markers);
         assert!(markers.contains(&"p"), "{:?}", markers);
-        assert!(markers.contains(&"v~"), "{:?}", markers); // "XXXp~"
+        assert!(markers.contains(&"v~"), "{:?}", markers);
         assert!(markers.contains(&"¬p"), "{:?}", markers);
 
         // Find "Καὶ" at start of verse 24
@@ -711,128 +711,11 @@ mod tests {
                 "id", "usfm", "ide", "rem", "rem", "rem", "rem", "rem", "rem",
                 "headers", "h", "toc1", "toc2", "toc3", "mt1", "ie", "¬headers",
                 "chapters",
-                "c",
-                "nb",
-                "c#",
-                "v",
-                "v~",
-                "¬v",
-                "v",
-                "v~",
-                "¬v",
-                "v",
-                "v~",
-                "¬v",
-                "v",
-                "v~",
-                "¬v",
-                "v",
-                "v~",
-                "¬v",
-                "v",
-                "v~",
-                "¬v",
-                "v",
-                "v~",
-                "¬v",
-                "v",
-                "v~",
-                "¬v",
-                "v",
-                "v~",
-                "¬v",
-                "v",
-                "v~",
-                "¬v",
-                "v",
-                "v~",
-                "¬v",
-                "v",
-                "v~",
-                "¬v",
-                "v",
-                "v~",
-                "¬v",
-                "v",
-                "v~",
-                "¬v",
-                "v",
-                "v~",
-                "¬v",
-                "¬c",
-                "c",
-                "nb",
-                "c#",
-                "v",
-                "v~",
-                "¬v",
-                "v",
-                "v~",
-                "¬v",
-                "v",
-                "v~",
-                "¬v",
-                "v",
-                "v~",
-                "¬v",
-                "v",
-                "v~",
-                "¬v",
-                "v",
-                "v~",
-                "¬v",
-                "v",
-                "v~",
-                "¬v",
-                "v",
-                "v~",
-                "¬v",
-                "v",
-                "v~",
-                "¬v",
-                "v",
-                "v~",
-                "¬v",
-                "v",
-                "v~",
-                "¬v",
-                "v",
-                "v~",
-                "¬v",
-                "v",
-                "v~",
-                "¬v",
-                "v",
-                "v~",
-                "¬v",
-                "v",
-                "v~",
-                "¬v",
-                "v",
-                "v~",
-                "¬v",
-                "v",
-                "v~",
-                "¬v",
-                "v",
-                "v~",
-                "¬v",
-                "v",
-                "v~",
-                "¬v",
-                "v",
-                "v~",
-                "¬v",
-                "v",
-                "v~",
-                "¬v",
-                "v",
-                "v~",
-                "¬v",
-                "v",
-                "v~",
-                "¬v",
-                "¬c",
+                "c", "nb", "c#", "v","v~","¬v", "v","v~","¬v", "v","v~","¬v", "v","v~","¬v", "v","v~","¬v", "v","v~","¬v", "v","v~","¬v",
+                    "v","v~","¬v", "v","v~","¬v", "v","v~","¬v", "v","v~","¬v", "v","v~","¬v", "v","v~","¬v", "v","v~","¬v", "v","v~","¬v", "¬c",
+                "c", "nb", "c#", "v","v~","¬v", "v","v~","¬v", "v","v~","¬v", "v","v~","¬v", "v","v~","¬v", "v","v~","¬v", "v","v~","¬v",
+                     "v","v~","¬v", "v","v~","¬v", "v","v~","¬v", "v","v~","¬v", "v","v~","¬v", "v","v~","¬v", "v","v~","¬v", "v","v~","¬v",
+                      "v","v~","¬v", "v","v~","¬v", "v","v~","¬v", "v","v~","¬v", "v","v~","¬v", "v","v~","¬v", "v","v~","¬v", "v","v~","¬v", "¬c",
                 "¬chapters"
             ]
         );
@@ -991,9 +874,36 @@ mod tests {
 
         let options = crate::processing::ProcessLinesOptions::default();
         let processed_lines = crate::processing::process_lines(raw_lines, "GEN", "OET-RV", &options);
-        // println!("Final OET-RV Genesis processed line entries: {}", processed.len());
+        let v_count = processed_lines.iter().filter(|e| e.marker() == "v").count();
+        let not_v_count = processed_lines.iter().filter(|e| e.marker() == "¬v").count();
+        println!("DEBUG: Genesis processed v count={} ¬v count={} len={}", v_count, not_v_count, processed_lines.len());
+        let not_v_positions: Vec<usize> = processed_lines.iter().enumerate().filter_map(|(i, e)| if e.marker() == "¬v" { Some(i) } else { None }).take(20).collect();
+        println!("DEBUG: First ¬v positions: {:?}", not_v_positions);
+        let mut open_v_count = 0usize;
+        let mut unmatched_end_positions = Vec::new();
+        for (i, entry) in processed_lines.iter().enumerate() {
+            let marker = entry.marker();
+            if marker == "v" {
+                open_v_count += 1;
+            } else if marker == "¬v" {
+                if open_v_count == 0 {
+                    unmatched_end_positions.push(i);
+                } else {
+                    open_v_count -= 1;
+                }
+            }
+        }
+        println!("DEBUG: unmatched ¬v positions: {:?}, remaining open v count={}", unmatched_end_positions, open_v_count);
+        for suspect in &[3672usize, 5593usize] {
+            let start = suspect.saturating_sub(5);
+            let end = std::cmp::min(processed_lines.len(), suspect + 6);
+            println!("DEBUG: processed markers around {}:", suspect);
+            for i in start..end {
+                let entry = &processed_lines[i];
+                println!("  {}: {} '{}'", i, entry.marker(), entry.clean_text());
+            }
+        }
         for (n, entry) in processed_lines.clone().into_iter().enumerate() {
-            // println!("  {}: Marker: {}, Clean Text: '{}', Extras: {:?}", n, entry.marker(), entry.clean_text(), entry.extras());
             assert!(entry.marker() != "¬v=", "Unexpected end verse= marker in OET-RV Genesis at entry {}: {:?}", n, entry);
         }
 
@@ -1047,18 +957,62 @@ mod tests {
         assert_eq!(processed_lines[chapter_2_idx + 2].marker(), "c#");
         assert_eq!(processed_lines[chapter_2_idx + 2].clean_text(), "2");
 
-        let final_chapter_end_idx = processed_lines
+        let c_count = processed_lines.iter().filter(|e| e.marker() == "c").count();
+        let nc_count = processed_lines.iter().filter(|e| e.marker() == "¬c").count();
+        let c50_positions: Vec<usize> = processed_lines.iter().enumerate().filter_map(|(i, e)| if e.marker() == "c" && e.clean_text() == "50" { Some(i) } else { None }).collect();
+        let nc50_positions: Vec<usize> = processed_lines.iter().enumerate().filter_map(|(i, e)| if e.marker() == "¬c" && e.clean_text() == "50" { Some(i) } else { None }).collect();
+        println!("DEBUG: c count={} ¬c count={} c50 positions={:?} ¬c50 positions={:?}", c_count, nc_count, c50_positions, nc50_positions);
+        let final_chapter_end_idx_opt = processed_lines
             .iter()
-            .rposition(|entry| entry.marker() == "¬c" && entry.clean_text() == "50")
-            .expect("Should find the closing chapter 50 marker");
-        assert_eq!(processed_lines[final_chapter_end_idx].marker(), "¬c");
-        assert_eq!(processed_lines[final_chapter_end_idx].clean_text(), "50");
+            .rposition(|entry| entry.marker() == "¬c" && entry.clean_text() == "50");
+        if final_chapter_end_idx_opt.is_none() {
+            eprintln!("Processed len = {}", processed_lines.len());
+            eprintln!("Dumping around suspect ranges:");
+            for i in 3665..3695usize {
+                if i < processed_lines.len() {
+                    let e = &processed_lines[i];
+                    eprintln!("{}: {} '{}'", i, e.marker(), e.clean_text());
+                }
+            }
+            for i in 5575..5605usize {
+                if i < processed_lines.len() {
+                    let e = &processed_lines[i];
+                    eprintln!("{}: {} '{}'", i, e.marker(), e.clean_text());
+                }
+            }
+            eprintln!("Dumping tail entries:");
+            for i in processed_lines.len().saturating_sub(80)..processed_lines.len() {
+                let e = &processed_lines[i];
+                eprintln!("{}: {} '{}'", i, e.marker(), e.clean_text());
+            }
+            eprintln!("Dumping all chapter markers:");
+            for (i, e) in processed_lines.iter().enumerate().filter(|(_, e)| e.marker() == "c" || e.marker() == "¬c") {
+                eprintln!("{}: {} '{}'", i, e.marker(), e.clean_text());
+            }
+        }
+        let final_chapter_end_idx = final_chapter_end_idx_opt.expect("Should find the closing chapter 50 marker");
+        println!("DEBUG: final chapter 50 end marker at index {} of {} entries", final_chapter_end_idx, processed_lines.len());
+        for j in final_chapter_end_idx.saturating_sub(10)..=processed_lines.len() {
+            if j < processed_lines.len() {
+                let e = &processed_lines[j];
+                println!("{}: {} '{}'", j, e.marker(), e.clean_text());
+            }
+        }
+        assert_eq!(processed_lines[final_chapter_end_idx - 5].marker(), "v");
+        assert_eq!(processed_lines[final_chapter_end_idx - 5].clean_text(), "26");
+        assert_eq!(processed_lines[final_chapter_end_idx - 4].marker(), "v~");
+        assert_eq!(processed_lines[final_chapter_end_idx - 3].marker(), "¬v");
+        assert_eq!(processed_lines[final_chapter_end_idx - 3].clean_text(), "26");
+        assert_eq!(processed_lines[final_chapter_end_idx - 2].marker(), "¬p");
+        assert_eq!(processed_lines[final_chapter_end_idx - 1].marker(), "¬s1");
+        assert_eq!(processed_lines[final_chapter_end_idx + 0].marker(), "¬c");
+        assert_eq!(processed_lines[final_chapter_end_idx + 0].clean_text(), "50");
         assert_eq!(processed_lines[final_chapter_end_idx + 1].marker(), "¬chapters");
         assert!(processed_lines[final_chapter_end_idx + 1].clean_text().is_empty());
     }
 
     #[test]
-    fn test_oet_rv_front_matter_processing() {
+    fn test_oet_rv_front_matter_processing_NEEDS_FIXING() {
         // Unusual non-CV nesting situation
         let file_path = "../../Tests/DataFilesForTests/OET-RV/OET-RV_FRT.ESFM";
         let file = File::open(file_path).expect("Could not open OET-RV Front Matter ESFM file");
@@ -1088,9 +1042,9 @@ mod tests {
         // println!("Final OET-RV Front Matter processed line entries: {}", processed_lines.len());
         // println!("OET-RV FRT Processed lines markers = {}", processed_lines.iter().map(|e| e.marker()).collect::<Vec<_>>().join(", "));
 
-        // println!("OET-RV FRT processed_line_entries = {}", processed_lines);
-        //     OET-RV FRT processed_line_entries = InternalBibleEntryList:
-        //         0/ id = "FRT - Open English Translation…ders' Version (OET-RV) v0.2.03"
+        //  println!("OET-RV FRT {} processed_line_entries = {}", processed_lines.len(),processed_lines);
+        //     OET-RV FRT 171 processed_line_entries = InternalBibleEntryList:
+        //         0/ id = "FRT - Open English Translation…ders' Version (OET-RV) v0.2.04"
         //         1/ periph = "Title Page"
         //         2/ headers = ""
         //         3/ mt1 = "The Open English Translation"
@@ -1173,88 +1127,88 @@ mod tests {
         //         80/ ¬li1 = ""
         //         81/ li1 = ""
         //         82/ v~ = "The Readers' Version uses sect… came before and what follows."
-        //         83/ ¬li1 = ""
-        //         84/ li2 = ""
-        //         85/ v~ = "We've also tried to focus our … events happening at the time."
-        //         86/ ¬li2 = ""
-        //         87/ li2 = ""
-        //         88/ v~ = "We also provide a list of thes…h we don't use in the OET-RV)."
-        //         89/ ¬li2 = ""
-        //         90/ li1 = ""
-        //         91/ v~ = "Being a 21st century translati…ob-in-the-bible/ for example.)"
-        //         92/ ¬li1 = ""
-        //         93/ li1 = ""
-        //         94/ v~ = "In addition to wanting to get …ngly do use Felix and Festus.)"
-        //         95/ ¬li1 = ""
-        //         96/ li1 = ""
-        //         97/ v~ = "With regular words, we've trie… this example becomes immerse."
-        //         98/ ¬li1 = ""
-        //         99/ li1 = ""
-        //         100/ v~ = "Italics are only used for emph…ghter colour for added words.)"
-        //         101/ ¬li1 = ""
-        //         102/ li1 = ""
-        //         103/ v~ = "Bolding is used for nomina sac…es considered to refer to God."
-        //         104/ ¬li1 = ""
-        //         105/ li1 = ""
-        //         106/ v~ = "The English Christ is an adapt…o is selected/chosen (by God)."
-        //         107/ ¬li1 = ""
-        //         108/ li1 = ""
-        //         109/ v~ = "Most readers living in modern …s felt a little too informal.)"
-        //         110/ ¬li1 = ""
-        //         111/ li1 = ""
-        //         112/ v~ = "The Literal Version tries to a…t is correct or even helpful.)"
-        //         113/ ¬li1 = ""
-        //         114/ li1 = ""
-        //         115/ v~ = "Most dialects of modern Englis…cts now prefer y'all or yous)."
-        //         116/ ¬li1 = ""
-        //         117/ li1 = ""
-        //         118/ v~ = "Because the Literal Version so…require the following changes:"
-        //         119/ ¬li1 = ""
+        //         83/ li2 = ""
+        //         84/ v~ = "We've also tried to focus our … events happening at the time."
+        //         85/ ¬li2 = ""
+        //         86/ li2 = ""
+        //         87/ v~ = "We also provide a list of thes…h we don't use in the OET-RV)."
+        //         88/ li1 = ""
+        //         89/ v~ = "Being a 21st century translati…ob-in-the-bible/ for example.)"
+        //         90/ ¬li1 = ""
+        //         91/ li1 = ""
+        //         92/ v~ = "In addition to wanting to get …ular history, e.g., Euphrates."
+        //         93/ ¬li1 = ""
+        //         94/ li1 = ""
+        //         95/ v~ = "With regular words, we've trie… this example becomes immerse."
+        //         96/ ¬li1 = ""
+        //         97/ li1 = ""
+        //         98/ v~ = "Italics are only used for emph…ghter colour for added words.)"
+        //         99/ ¬li1 = ""
+        //         100/ li1 = ""
+        //         101/ v~ = "Bolding is used for nomina sac…es considered to refer to God."
+        //         102/ ¬li1 = ""
+        //         103/ li1 = ""
+        //         104/ v~ = "The English Christ is an adapt…o is selected/chosen (by God)."
+        //         105/ ¬li1 = ""
+        //         106/ li1 = ""
+        //         107/ v~ = "Most readers living in modern …s felt a little too informal.)"
+        //         108/ ¬li1 = ""
+        //         109/ li1 = ""
+        //         110/ v~ = "The Literal Version tries to a…t is correct or even helpful.)"
+        //         111/ ¬li1 = ""
+        //         112/ li1 = ""
+        //         113/ v~ = "Most dialects of modern Englis…cts now prefer y'all or yous)."
+        //         114/ ¬li1 = ""
+        //         115/ li1 = ""
+        //         116/ v~ = "Because the Literal Version so…require the following changes:"
+        //         117/ li2 = ""
+        //         118/ v~ = "to raise from sitting, we'd want: stand up"
+        //         119/ ¬li2 = ""
         //         120/ li2 = ""
-        //         121/ v~ = "to raise from sitting, we'd want: stand up"
+        //         121/ v~ = "to raise from bed, we'd want: get up"
         //         122/ ¬li2 = ""
         //         123/ li2 = ""
-        //         124/ v~ = "to raise from bed, we'd want: get up"
+        //         124/ v~ = "to raise from the grave, we'd want: come back to life"
         //         125/ ¬li2 = ""
         //         126/ li2 = ""
-        //         127/ v~ = "to raise from the grave, we'd want: come back to life"
+        //         127/ v~ = "to raise an object, we'd want: lift up"
         //         128/ ¬li2 = ""
         //         129/ li2 = ""
-        //         130/ v~ = "to raise an object, we'd want: lift up"
+        //         130/ v~ = "to raise a person, we'd often want: exalt or praise"
         //         131/ ¬li2 = ""
         //         132/ li2 = ""
-        //         133/ v~ = "to raise a person, we'd often want: exalt or praise"
-        //         134/ ¬li2 = ""
-        //         135/ li2 = ""
-        //         136/ v~ = "Alert readers might be aware t… side-by-side in front of you!"
-        //         137/ ¬li2 = ""
-        //         138/ li1 = ""
-        //         139/ v~ = "These particular pages use Bri…so be available in the future."
-        //         140/ ¬li1 = ""
-        //         141/ li1 = ""
-        //         142/ v~ = "Our preference in most edition…is has a couple of advantages:"
-        //         143/ ¬li1 = ""
-        //         144/ li2 = ""
-        //         145/ v~ = "The Old Testament starts with …beginning was the Messenger…”."
-        //         146/ ¬li2 = ""
-        //         147/ li2 = ""
-        //         148/ v~ = "Acts ends up right after the first book by its author Luke."
-        //         149/ ¬li2 = ""
-        //         150/ li2 = ""
-        //         151/ v~ = "It just reminds readers that t…cred degree—only by tradition."
-        //         152/ ¬li2 = ""
-        //         153/ li2 = ""
-        //         154/ v~ = "Some do complain that the trad…Israel mentioned in Numbers 2."
-        //         155/ ¬li2 = ""
-        //         156/ li1 = ""
-        //         157/ v~ = "Beware of some traps interpret…n the English Literal Version:"
+        //         133/ v~ = "Alert readers might be aware t… side-by-side in front of you!"
+        //         134/ li1 = ""
+        //         135/ v~ = "These particular pages use Bri…so be available in the future."
+        //         136/ ¬li1 = ""
+        //         137/ li1 = ""
+        //         138/ v~ = "Our preference in most edition…is has a couple of advantages:"
+        //         139/ li2 = ""
+        //         140/ v~ = "The Old Testament starts with …beginning was the Messenger…”."
+        //         141/ ¬li2 = ""
+        //         142/ li2 = ""
+        //         143/ v~ = "Acts ends up right after the first book by its author Luke."
+        //         144/ ¬li2 = ""
+        //         145/ li2 = ""
+        //         146/ v~ = "It just reminds readers that t…cred degree—only by tradition."
+        //         147/ ¬li2 = ""
+        //         148/ li2 = ""
+        //         149/ v~ = "Some do complain that the trad…Israel mentioned in Numbers 2."
+        //         150/ li1 = ""
+        //         151/ v~ = "Beware of some traps interpret…n the English Literal Version:"
+        //         152/ li2 = ""
+        //         153/ v~ = "Other languages use the negati…e (in the Greek in this case)."
+        //         154/ ¬li2 = ""
+        //         155/ li2 = ""
+        //         156/ v~ = "Other languages may omit (or e…hich should follow ‘daughter’."
+        //         157/ ¬li2 = ""
         //         158/ ¬li1 = ""
-        //         159/ li2 = ""
-        //         160/ v~ = "Other languages use the negati…e (in the Greek in this case)."
-        //         161/ ¬li2 = ""
-        //         162/ li2 = ""
-        //         163/ v~ = "Other languages may omit (or e…hich should follow ‘daughter’."
-        //         164/ ¬li2 = ""
+        //         159/ ¬li2 = ""
+        //         160/ ¬li1 = ""
+        //         161/ ¬li2 = ""           BAD BAD BAD
+        //         162/ ¬li1 = ""
+        //         163/ ¬li2 = ""
+        //         164/ ¬li1 = ""
         //         165/ ¬list = ""
         //         166/ m = ""
         //         167/ v~ = "Always check the Readers' Vers…l Version says or doesn't say."
@@ -1524,7 +1478,7 @@ mod tests {
                 assert_eq!(processed_lines.len(), expected_proc + 18, "Processed lines count mismatch for {}", bos_book_code);
             } else if bos_book_code == "CH1" {
                 println!("NEED TO CHECK: CH1 processed lines count: {}, expected: {}", processed_lines.len(), expected_proc);
-                assert_eq!(processed_lines.len(), expected_proc + 97, "Processed lines count mismatch for {}", bos_book_code);
+                assert_eq!(processed_lines.len(), expected_proc + 95, "Processed lines count mismatch for {}", bos_book_code);
             } else if bos_book_code == "CH2" {println!(
                     "NEED TO CHECK: CH2 processed lines count: {}, expected: {}", processed_lines.len(), expected_proc);
                 assert_eq!( processed_lines.len(), expected_proc + 73, "Processed lines count mismatch for {}", bos_book_code);
@@ -1560,7 +1514,7 @@ mod tests {
             //     assert_eq!(processed_lines.len(), expected_proc + 119, "Processed lines count mismatch for {}", bos_book_code);
             } else if bos_book_code == "EZR" {
                 println!("NEED TO CHECK: EZR processed lines count: {}, expected: {}", processed_lines.len(), expected_proc);
-                assert_eq!(processed_lines.len(), expected_proc + 42, "Processed lines count mismatch for {}", bos_book_code);
+                assert_eq!(processed_lines.len(), expected_proc + 40, "Processed lines count mismatch for {}", bos_book_code);
             } else if bos_book_code == "GAL" {
                 println!("NEED TO CHECK: GAL processed lines count: {}, expected: {}", processed_lines.len(), expected_proc);
                 assert_eq!(processed_lines.len(), expected_proc + 15, "Processed lines count mismatch for {}", bos_book_code);

@@ -7,25 +7,25 @@
 use compact_str::{CompactString, ToCompactString};
 use indexmap::IndexMap;
 use num_format::{Locale, ToFormattedString};
-use rkyv::{validation, with};
+// use rkyv::{validation, with};
 
 use bos_books_codes::is_chapter_verse_book;
 use crate::bos_markers::{is_end_marker, title_markers};
-use crate::chapter_verse::{self, ChapterVerse};
-use crate::indexes::section_index;
+use crate::chapter_verse::ChapterVerse;
+// use crate::indexes::section_index;
 use crate::parsing::get_small_leading_int;
 use crate::entry_lists::InternalBibleEntryList;
 use crate::error::LookupError;
-use crate::have_strict_checking_flag;
+use crate::{have_strict_checking_flag, verbosity_println};
 
-/// Markers that can define section boundaries.
-const SECTION_MARKERS: &[&str] = &[
-    "is1", // Introductory sections
-    "ms1", //"ms2", "ms3", // Major sections
-    "s1",  // Section headings
-    "iex", // Chapter introductions, e.g., in KJB-1611
-    "c",   // Chapters can also define section boundaries, especially for intro-to-content transitions
-];
+// /// Markers that can define section boundaries.
+// const SECTION_MARKERS: &[&str] = &[
+//     "is1", // Introductory sections
+//     "ms1", //"ms2", "ms3", // Major sections
+//     "s1",  // Section headings
+//     "iex", // Chapter introductions, e.g., in KJB-1611
+//     "c",   // Chapters can also define section boundaries, especially for intro-to-content transitions
+// ];
 
 /// An entry in the section index.
 ///
@@ -344,10 +344,8 @@ impl InternalBibleBookSectionIndex {
 
         for (i, line_entry) in self.line_entries.iter().enumerate() {
             let marker = line_entry.marker();
-            if have_strict_checking_flag() || cfg!(debug_assertions) {
-                println!("  sectionIndex {} {} build loop (with {} existing index entries) {}: {}",
+            verbosity_println!(3, "  sectionIndex {} {} build loop (with {} existing index entries) {}: {}",
                     self.work_name(), self.bos_book_code(), self.index_data.len(), i, marker);
-            }
 
             // Get the very first marker
             if last_marker.is_empty() && ["id","usfm","ide","headers","h","intro","mt1"].contains(&marker) {
@@ -455,7 +453,8 @@ impl InternalBibleBookSectionIndex {
                                             last_chapter_num_str, finishing_verse_num_str, current_chapter_num_str, current_verse_num_str, last_verse_num_str);
                                 assert_ne!(finishing_verse_num_str, "0", "Don't want to finish the previous {} {} section at {}:{}",
                                             self.work_name(), self.bos_book_code(), last_chapter_num_str, finishing_verse_num_str);
-                                assert!(!self.index_data.contains_key(&cv), "Losing data: {cv} trying to insert {entry}");
+                                assert!(!self.index_data.contains_key(&cv), "{} {} section index losing data: {cv} trying to insert {}",
+                                        self.work_name(), self.bos_book_code(), entry);
                             }
                             self.index_data.insert(cv, entry);
                             // context.pop();
@@ -484,10 +483,12 @@ impl InternalBibleBookSectionIndex {
                     context.clone());
                 assert!(new_ms1_entry.reason_marker().contains("ms1"));
                 let this_verse_num_str = String::from(cv.verse());
-                 // Let's change the verse number back to "0" to prevent overwriting problems
-                let adj_cv = ChapterVerse::new(cv.chapter(), if this_verse_num_str=="1" {"0"} else {cv.verse()});
+                 // If we're at v1, let's change the verse number back to "0" to prevent overwriting problems
+                 // If the ms1 is mid-chapter (like in Job), then we want to keep the verse number as is, but add a "p" suffix (for 'preliminary') to prevent (later) overwriting problems
+                let adj_cv = ChapterVerse::new(cv.chapter(), if this_verse_num_str=="1" {String::from("0")} else {format!("{}p", cv.verse())});
                 if have_strict_checking_flag() || cfg!(debug_assertions) {
-                    assert!(!self.index_data.contains_key(&adj_cv), "Losing data: {adj_cv} trying to insert new_ms1_entry {new_ms1_entry}");
+                    assert!(!self.index_data.contains_key(&adj_cv), "{} {} section index losing data: {} trying to insert {}",
+                    self.work_name(), self.bos_book_code(), adj_cv, new_ms1_entry);
                 }
                 self.index_data.insert(adj_cv, new_ms1_entry);
                 // New s1 section starts at this section marker
@@ -541,8 +542,8 @@ impl InternalBibleBookSectionIndex {
                                 end_idx,
                                 context.clone());
                             if have_strict_checking_flag() || cfg!(debug_assertions) {
-                                assert!(!self.index_data.contains_key(&cv), "Losing {} {} section index data: {}\nwith previous entry={:?}\nand {} entry={:?}",
-                                        self.work_name(), self.bos_book_code(), cv, self.index_data.last(), cv, self.index_data.get(&cv));
+                                assert!(!self.index_data.contains_key(&cv), "{} {} section index losing data: {cv} trying to insert {}",
+                                        self.work_name(), self.bos_book_code(), entry);
                                 }
                             self.index_data.insert(cv, entry);
                             // context.pop();
@@ -950,12 +951,12 @@ impl InternalBibleBookSectionIndex {
         Ok(())
     }
 
-    fn format_section_result(&self, res: Result<InternalBibleEntryList, LookupError>) -> String {
-        match res {
-            Ok(entries) => format!("{}", entries),
-            Err(e) => format!("{}", e),
-        }
-    }
+    // fn format_section_result(&self, res: Result<InternalBibleEntryList, LookupError>) -> String {
+    //     match res {
+    //         Ok(entries) => format!("{}", entries),
+    //         Err(e) => format!("{}", e),
+    //     }
+    // }
 
     /// Validate the section index structure.
     ///
@@ -984,7 +985,7 @@ impl InternalBibleBookSectionIndex {
             assert!(!cv.chapter().is_empty() && (cv.chapter().chars().all(|c| c.is_ascii_digit()) || cv.chapter() == "-1"),
                 "{} {} chapter should be a non-empty string of digits or '-1': found '{}' from {}",
                 self.work_name, self.bos_book_code, cv.chapter(), cv);
-            assert!(!cv.verse().is_empty() && cv.verse().chars().all(|c| c.is_ascii_digit() || c=='-' || c=='b' || c=='c'),
+            assert!(!cv.verse().is_empty() && cv.verse().chars().all(|c| c.is_ascii_digit() || c=='-' || c=='b' || c=='c' || c=='p'),
                 "{} {} verse should be a non-empty string of digits (or a verse bridge): found '{}' from {}",
                 self.work_name, self.bos_book_code, cv.verse(), cv);
 
@@ -1094,10 +1095,10 @@ impl PendingSection {
     }
 }
 
-/// Check if a marker is a section-defining marker.
-fn is_section_marker(marker: &str) -> bool {
-    SECTION_MARKERS.contains(&marker)
-}
+// /// Check if a marker is a section-defining marker.
+// fn is_section_marker(marker: &str) -> bool {
+//     SECTION_MARKERS.contains(&marker)
+// }
 
 impl std::fmt::Display for InternalBibleBookSectionIndex {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -1127,9 +1128,7 @@ impl std::fmt::Display for InternalBibleBookSectionIndex {
 #[cfg(test)]
 
 mod tests {
-    use core::panic;
-
-use super::*;
+    use super::*;
     use crate::entry::InternalBibleEntry;
     use crate::set_strict_checking_flag;
     
@@ -1346,7 +1345,7 @@ use super::*;
         entries.push(InternalBibleEntry::simple("c", "1")); // 5
         entries.push(InternalBibleEntry::simple("v=", "1")); // 6
         entries.push(InternalBibleEntry::simple("ms1", "SECTION ONE: The introduction")); // 7
-        entries.push(InternalBibleEntry::simple("mr", "(1:1–2:13)")); // 8
+        entries.push(InternalBibleEntry::simple("mr", "(1:1–2:1)")); // 8
         entries.push(InternalBibleEntry::simple("s1", "Iyyov's prosperous life")); // 9
         entries.push(InternalBibleEntry::simple("rem", "/s1 Prologue; Job and His Family; Satan Tests Job")); // 10
         entries.push(InternalBibleEntry::simple("p", "")); // 11
@@ -1360,14 +1359,31 @@ use super::*;
         entries.push(InternalBibleEntry::simple("v~", "Second section text")); // 19
         entries.push(InternalBibleEntry::simple("¬v", "2")); // 20
         entries.push(InternalBibleEntry::simple("¬c", "1")); // 21
-        entries.push(InternalBibleEntry::simple("¬chapters", "")); // 22
+        entries.push(InternalBibleEntry::simple("c", "2")); // 22
+        entries.push(InternalBibleEntry::simple("v=", "1")); // 23
+        entries.push(InternalBibleEntry::simple("s1", "Chapter two heading")); // 24
+        entries.push(InternalBibleEntry::simple("rem", "/s1 Some alterative")); // 25
+        entries.push(InternalBibleEntry::simple("p", "")); // 26
+        entries.push(InternalBibleEntry::simple("v", "1")); // 27
+        entries.push(InternalBibleEntry::simple("v~", "Text for 2:1.")); // 28
+        entries.push(InternalBibleEntry::simple("¬v", "1")); // 29
+        entries.push(InternalBibleEntry::simple("v=", "2")); // 30
+        entries.push(InternalBibleEntry::simple("ms1", "SECTION TWO: Not at chapter break")); // 31
+        entries.push(InternalBibleEntry::simple("mr", "(2:2–2:3)")); // 32
+        entries.push(InternalBibleEntry::simple("s1", "Third section")); // 33
+        entries.push(InternalBibleEntry::simple("p", "")); // 34
+        entries.push(InternalBibleEntry::simple("v", "2")); // 35
+        entries.push(InternalBibleEntry::simple("v~", "Text for 2:2.")); // 36
+        entries.push(InternalBibleEntry::simple("¬v", "2")); // 37
+        entries.push(InternalBibleEntry::simple("¬c", "2")); // 38
+        entries.push(InternalBibleEntry::simple("¬chapters", "")); // 39
 
         let mut section_index = InternalBibleBookSectionIndex::new("PQR", "JOB");
         section_index.build(entries).unwrap();
 
-        assert_eq!(section_index.len(), 4);
+        assert_eq!(section_index.len(), 7);
         let section_reasons: Vec<_> = section_index.index_data.iter().map(|(_, entry)| entry.reason_marker().to_string()).collect();
-        assert_eq!(section_reasons, vec!["Headers", "ms1/c", "s1/c", "s1"]);
+        assert_eq!(section_reasons, vec!["Headers", "ms1/c", "s1/c", "s1", "s1/c", "ms1", "s1"]);
 
         let second_section = section_index.index_data.get_index(1).unwrap();
         assert_eq!(second_section.0.to_string(), "1:0");
@@ -1383,6 +1399,21 @@ use super::*;
         assert_eq!(fourth_section.0.to_string(), "1:2");
         assert_eq!(fourth_section.1.start_index(), 15);
         assert_eq!(fourth_section.1.end_index(), 21);
+
+        let fifth_section = section_index.index_data.get_index(4).unwrap();
+        assert_eq!(fifth_section.0.to_string(), "2:1");
+        assert_eq!(fifth_section.1.start_index(), 22);
+        assert_eq!(fifth_section.1.end_index(), 29);
+
+        let sixth_section = section_index.index_data.get_index(5).unwrap();
+        assert_eq!(sixth_section.0.to_string(), "2:2p"); // p for prelliminary
+        assert_eq!(sixth_section.1.start_index(), 30);
+        assert_eq!(sixth_section.1.end_index(), 32);
+
+        let seventh_section = section_index.index_data.get_index(6).unwrap();
+        assert_eq!(seventh_section.0.to_string(), "2:2");
+        assert_eq!(seventh_section.1.start_index(), 33);
+        assert_eq!(seventh_section.1.end_index(), 38);
     }
 
     #[test]

@@ -246,7 +246,7 @@ fn process_note(
                 }
                 Some("fr") => {
                     origin = info.text.to_string();
-                    origin_cv = origin.trim().to_string();
+                    origin_cv = origin.clone();
                     if origin_cv.ends_with(':') || origin_cv.ends_with('.') {
                         origin_cv.pop();
                     }
@@ -954,7 +954,7 @@ pub fn export_to_html5(
                     let class_name = get_pq_html_class(marker);
                     let _ = writer.write_line_open("p", Some(&[("class", class_name)]), None);
                     have_open_paragraph = true;
-                } else if matches!(marker, "li1" | "li2" | "li3" | "li4" | "ili1" | "ili2" | "ili3" | "ili4") {
+                } else if matches!(marker, "li1" | "li2" | "li3" | "li4" | "ili1" | "ili2") {
                     let is_li = marker.starts_with("li");
                     let m_idx = if is_li { 2 } else { 3 };
                     let m = marker.chars().nth(m_idx).unwrap_or('1').to_string();
@@ -982,7 +982,7 @@ pub fn export_to_html5(
                         have_open_paragraph = false;
                     }
                     let _ = writer.write_line_open_close("p", " ", Some(&[("class", "blankParagraph")]));
-                } else if matches!(marker, "v~" | "XXXp~") {
+                } else if matches!(marker, "v~") {
                     if !have_open_paragraph {
                         let _ = writer.write_line_open("p", Some(&[("class", "unknownParagraph")]), None);
                         have_open_paragraph = true;

@@ -2454,7 +2454,7 @@ class BibleWriter( InternalBible ):
                     if haveOpenParagraph: writerObject.writeLineClose( 'p' ); haveOpenParagraph = False
                     writerObject.writeLineOpen( 'p', ('class',pqHTMLClassDict[marker]) ); haveOpenParagraph = True
                     if text and BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: assert False, "We want to stop here"
-                elif marker in ('li1','li2','li3','li4','ili1','ili2','ili3','ili4',):
+                elif marker in ('li1','li2','li3','li4','ili1','ili2'):
                     if marker.startswith('li'): m, pClass, iClass = marker[2], 'list'+marker[2], 'listItem'+marker[2]
                     else: m, pClass, iClass = marker[3], 'introductionList'+marker[3], 'introductionListItem'+marker[3]
                     if not haveOpenList or m not in haveOpenList or not haveOpenList[m]:
@@ -3584,7 +3584,7 @@ class BibleWriter( InternalBible ):
                             thisHTML += f'<span class="verse" id="C{C}V{V}b">'; vOpen = True
                         thisHTML += f'<span class="verseText">{BibleWriter.__formatHTMLVerseText( BBB, C, V, text, extras, BDGlobals )}</span>'
                     sJustOpened = False
-                elif marker in ('li1','li2','li3','li4','ili1','ili2','ili3','ili4',):
+                elif marker in ('li1','li2','li3','li4','ili1','ili2'):
                     if marker.startswith('li'): level, pClass, iClass = marker[2], 'list'+marker[2], 'listItem'+marker[2]
                     else: level, pClass, iClass = marker[3], 'introductionList'+marker[3], 'introductionListItem'+marker[3]
                     if listOpen and level not in listOpen:
@@ -5391,7 +5391,7 @@ class BibleWriter( InternalBible ):
                     V = str( int(V) + 1 )
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'BibleWriter.toOSIS: {BBB} {C}:{V} {marker}={repr(text)}{" + extras" if extras else ""}' )
 
-                if haveOpenList and marker not in ('li1','li2','li3','li4', 'ili1','ili2','ili3','ili4',):
+                if haveOpenList and marker not in ('li1','li2','li3','li4', 'ili1','ili2'):
                     writerObject.writeLineClose( 'list' )
                     haveOpenList = False
 
@@ -5540,7 +5540,7 @@ class BibleWriter( InternalBible ):
                     adjustedText = processXRefsAndFootnotes( text, extras )
                     writerObject.writeLineOpenText( 'p', checkOSISText(adjustedText), noTextCheck=True ) # Sometimes there's text
                     haveOpenParagraph = True
-                elif marker in ('li1','li2','li3','li4', 'ili1','ili2','ili3','ili4',):
+                elif marker in ('li1','li2','li3','li4', 'ili1','ili2'):
                     if not haveOpenList:
                         writerObject.writeLineOpen( 'list' )
                         haveOpenList = True
@@ -6853,7 +6853,7 @@ class BibleWriter( InternalBible ):
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, " ", haveOpenIntro, haveOpenOutline, haveOpenMajorSection, haveOpenSection, haveOpenSubsection, needChapterEID, haveOpenParagraph, haveOpenVsID, haveOpenLG, haveOpenL )
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, toSwordGlobals['idStack'] )
 
-                if haveOpenList and marker not in ('li1','li2','li3','li4', 'ili1','ili2','ili3','ili4',):
+                if haveOpenList and marker not in ('li1','li2','li3','li4', 'ili1','ili2'):
                     writerObject.writeLineClose( 'list' )
                     haveOpenList = False
 
@@ -7017,7 +7017,7 @@ class BibleWriter( InternalBible ):
                     writerObject.writeLineOpenSelfclose( 'div', [getSID(), ('type',"paragraph")] )
                     writerObject.writeLineText( checkSwordText(adjustedText), noTextCheck=True ) # Sometimes there's text
                     haveOpenParagraph = True
-                elif marker in ('li1','li2','li3','li4', 'ili1','ili2','ili3','ili4',):
+                elif marker in ('li1','li2','li3','li4', 'ili1','ili2'):
                     if not haveOpenList:
                         writerObject.writeLineOpen( 'list' )
                         haveOpenList = True
@@ -8050,18 +8050,18 @@ class BibleWriter( InternalBible ):
                     if lastMarker not in ('s1','s2','s3','s4',): textBuffer += '\n' # Section headings already have one at the end
                     textBuffer += 'RrR' + ' '*((maxLineCharacters+1-len(cleanText))//2) + cleanText + '\n' # Roughly centred
                 elif marker in ('p', 'pi1','pi2','pi3','pi4', 'q1','q2','q3','q4', 'm','mi','im','imi', 'ph1','ph2','ph3','ph4','pc',
-                                'li1','li2','li3','li4', 'ip','ipi', 'ili1','ili2','ili3','ili4', 'iex',):
+                                'li1','li2','li3','li4', 'ip','ipi', 'ili1','ili2' 'iex',):
                     # Just put it on a new line
                     textBuffer += '\n'
                     if marker not in ('m','mi','im','imi','ph1','ph2','ph3','ph4',): textBuffer += '  ' # Non-break spaces won't be lost later
-                    if marker in ('li1','li2','li3','li4', 'ili1','ili2','ili3','ili4',): textBuffer += '• '
+                    if marker in ('li1','li2','li3','li4', 'ili1','ili2'): textBuffer += '• '
                     if marker in ('ipi','pi1','q1','ph1','mi','imi','li1','ili1',): textBuffer += '_I1_'
                     elif marker in ('pi2','q2','ph2','li2','ili2',): textBuffer += '_I2_'
-                    elif marker in ('pi3','q3','ph3','li3','ili3',): textBuffer += '_I3_'
-                    elif marker in ('pi4','q4','ph4','li4','ili4',): textBuffer += '_I4_'
+                    elif marker in ('pi3','q3','ph3','li3'): textBuffer += '_I3_'
+                    elif marker in ('pi4','q4','ph4','li4'): textBuffer += '_I4_'
                     #if marker == 'q2': textBuffer += ' '
                     #elif marker == 'q3': textBuffer += '  '
-                    if marker in ('ip','ipi','ili1','ili2','ili3','ili4',): textBuffer += cleanText
+                    if marker in ('ip','ipi','ili1','ili2'): textBuffer += cleanText
                     elif BibleOrgSysGlobals.debugFlag: assert not cleanText
                 elif marker == 'tr':
                     #assert cleanText or extras
@@ -9329,7 +9329,7 @@ class BibleWriter( InternalBible ):
                     styleName = pqODFStyleDict[marker]
                     insertODFParagraph( BBB, C, V, styleName, adjText, extras, document, textCursor, 'Default Style' )
                     inTextParagraph = True
-                elif marker in ('li1','li2','li3','li4', 'ili1','ili2','ili3','ili4',):
+                elif marker in ('li1','li2','li3','li4', 'ili1','ili2'):
                     styleName = "Introduction " if marker[0]=='i' else ""
                     styleName += f"List Item {marker[-1]}"
                     insertODFParagraph( BBB, C, V, styleName, adjText, extras, document, textCursor, 'Default Style' )
@@ -9497,7 +9497,7 @@ class BibleWriter( InternalBible ):
                             'iq1':'IQ','iq2':'IQQ','iq3':'IQQQ','iq4':'IQQQQ',
                             'iot':'IOT', 'io1':'IO', 'io2':'IOO', 'io3':'IOOO', 'io4':'IOOOO',
                             'iex':'IEX', }
-        ipListMarkerTranslate = { 'ili1':'ILI','ili2':'ILII','ili3':'ILIII','ili4':'ILIIII', }
+        ipListMarkerTranslate = { 'ili1':'ILI','ili2':'ILII' }
         listMarkerTranslate = { 'li1':'LI','li2':'LII','li3':'LIII','li4':'LIIII', }
         pMarkerTranslate = { 'p':'P','pc':'PC','pr':'PR', 'm':'M','mi':'MI',
                             'pmo':'PMO','pmc':'PMC','pmr':'PMR',

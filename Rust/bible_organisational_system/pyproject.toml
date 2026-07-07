@@ -5,7 +5,7 @@ build-backend = "maturin"
 [project]
 name = "bibleorgsys-rust"
 dynamic = ["version"]  # Tells Python to look elsewhere for the version
-requires-python = ">=3.13"
+requires-python = ">=3.12"
 classifiers = [
     "Programming Language :: Rust",
     "Programming Language :: Python :: Implementation :: CPython",
@@ -19,7 +19,7 @@ features = ["pyo3/extension-module"]
 format = ["uvx ruff format", "uvx ruff check --select I --fix"]
 
 [tool.rylai.output]
-python_version = "3.13"
+python_version = "3.14"
 add_header = true
 all_include_private = false
 
