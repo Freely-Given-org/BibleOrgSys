@@ -16,7 +16,7 @@ use crate::chapter_verse::ChapterVerse;
 use crate::parsing::get_small_leading_int;
 use crate::entry_lists::InternalBibleEntryList;
 use crate::error::LookupError;
-use crate::have_strict_checking_flag;
+use crate::{have_strict_checking_flag, verbosity_println};
 
 // /// Markers that can define section boundaries.
 // const SECTION_MARKERS: &[&str] = &[
@@ -344,10 +344,8 @@ impl InternalBibleBookSectionIndex {
 
         for (i, line_entry) in self.line_entries.iter().enumerate() {
             let marker = line_entry.marker();
-            if have_strict_checking_flag() || cfg!(debug_assertions) {
-                println!("  sectionIndex {} {} build loop (with {} existing index entries) {}: {}",
+            verbosity_println!(3, "  sectionIndex {} {} build loop (with {} existing index entries) {}: {}",
                     self.work_name(), self.bos_book_code(), self.index_data.len(), i, marker);
-            }
 
             // Get the very first marker
             if last_marker.is_empty() && ["id","usfm","ide","headers","h","intro","mt1"].contains(&marker) {

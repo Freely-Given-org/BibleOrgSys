@@ -26,7 +26,7 @@ pretty_assertions = "1.4"
 log = "0.4"
 pyo3-log = "0.13"
 pyo3 = { version = "0.29.0", features = ["extension-module", "abi3-py312", "generate-import-lib"] }
-quick-xml = "0.37"
+quick-xml = "0.41.0"
 regex = "1.12"
 rayon = "1.10"
 ureq = { version = "3.0", features = ["rustls"] }

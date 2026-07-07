@@ -358,7 +358,7 @@ f'''\nInternalBibleBook cleanUWalignments: Have {len(cleanedAlignmentList):,} al
 OUR_HEADING_MARKERS = ( 's','s1','s2','s3','s4', 'sr', 'is','is1','is2','is3','is4', 'mr', 'qa', 'qc' ) # Usually only one line
 OUR_HEADING_BLOCK_MARKERS = ( 'ms','ms1','ms2','ms3','ms4' ) # Stay open for many chapters/verses
 OUR_INTRO_OUTLINE_MARKERS = ( 'io','io1','io2','io3','io4' )
-OUR_INTRO_LIST_MARKERS = ( 'ili','ili1','ili2','ili3','ili4' )
+OUR_INTRO_LIST_MARKERS = ( 'ili','ili1','ili2', )
 OUR_MAIN_TEXT_LIST_MARKERS = ( 'li','li1','li2','li3','li4' )
 
 

@@ -18,6 +18,8 @@ use std::collections::HashMap;
 use indexmap::IndexMap;
 use usfm_markers::normalize_marker;
 
+use crate::bos_markers::intro_list_markers::is_intro_list;
+use crate::bos_markers::main_text_list_markers::is_main_text_list;
 use crate::bos_markers::{
     heading_markers, intro_list_markers, intro_outline_markers, introduction_markers, is_end_marker,
     main_text_list_markers, paragraph_markers
@@ -156,7 +158,7 @@ pub fn add_preverse_markers_before_headings(entries: InternalBibleEntryList, wor
 }
 
 /// (Debug) Validate the processed lines for common issues and return a list of error messages.
-pub fn validate_preverse_marker_insertions(processed_lines: &InternalBibleEntryList) -> Vec<String> {
+fn validate_preverse_marker_insertions(processed_lines: &InternalBibleEntryList) -> Vec<String> {
     let mut issues = Vec::new();
 
     if processed_lines.is_empty() {
@@ -1283,9 +1285,9 @@ pub fn add_nesting_markers(
     // No automatic deduping here; keep generated markers as-is so logic must be correct.
 
     if have_strict_checking_flag() || cfg!(debug_assertions) {
-        let validation_results = validate_nesting(&new_lines, bos_book_code, work_name);
+        let validation_results = validate_nesting(&new_lines);
         if !validation_results.is_empty() {
-            eprintln!("add_nesting_markers validation for {} {} produced {} issues:", work_name, bos_book_code, validation_results.len());
+            eprintln!("add_nesting_markers() validation for {} {} produced {} issues:", work_name, bos_book_code, validation_results.len());
             for issue in &validation_results {
                 eprintln!("  - {}", issue);
             }
@@ -1297,25 +1299,25 @@ pub fn add_nesting_markers(
 }
 
 /// (Debug) Validate the processed lines for common issues and return a list of error messages.
-pub fn validate_nesting(processed_lines: &InternalBibleEntryList, bos_book_code: &str, work_name: &str) -> Vec<String> {
+fn validate_nesting(processed_lines: &InternalBibleEntryList) -> Vec<String> {
     let mut issues = Vec::new();
 
     if processed_lines.is_empty() {
-        issues.push(format!("No {} {} processed_lines entries to validate", work_name, bos_book_code));
+        issues.push("No processed_lines entries to validate".to_string());
         return issues;
     }
 
     // let mut previous_marker = CompactString::new("");
-    let mut _next_marker = CompactString::new("");
+    let mut next_marker;
     let mut marker_counts: IndexMap<CompactString, usize> = IndexMap::new();
     let (mut c, mut v)= ("0", "0");
     for (n, entry) in processed_lines.iter().enumerate() {
         let current_marker: CompactString = entry.marker().into();
         *marker_counts.entry(current_marker.clone()).or_insert(0) += 1;
         if n < processed_lines.len() - 1 {
-            _next_marker = processed_lines[n + 1].marker().into();
+            next_marker = processed_lines[n + 1].marker().into();
         } else {
-            _next_marker = CompactString::new("");
+            next_marker = CompactString::new("");
         }
 
         if current_marker == "c" {
@@ -1325,26 +1327,32 @@ pub fn validate_nesting(processed_lines: &InternalBibleEntryList, bos_book_code:
             v = entry.clean_text();
         }
         else if current_marker == "v=" {
-            if is_end_marker(&_next_marker) {
+            if is_end_marker(&next_marker) {
                 issues.push(format!(
-                    "{} {} preverse number marker 'v=' at index {} after {}:{} is followed by an end marker '{}'",
-                    work_name, bos_book_code, n, c, v, _next_marker));
-            } else if !["s1", "s2", "s3", "s4", "ms1", "ms2", "ms3", "sp"].contains(&_next_marker.as_str()) {
+                    "Preverse number marker 'v=' at index {} after {}:{} is followed by an end marker '{}'",
+                    n, c, v, next_marker));
+            } else if !["s1", "s2", "s3", "s4", "ms1", "ms2", "ms3", "sp"].contains(&next_marker.as_str()) {
                 issues.push(format!(
-                    "{} {} preverse number marker 'v=' at index {} after {}:{} is not followed by a verse or section marker (found '{}')",
-                    work_name, bos_book_code, n, c, v, _next_marker));
+                    "Preverse number marker 'v=' at index {} after {}:{} is not followed by a verse or section marker (found '{}')",
+                    n, c, v, next_marker));
             }
         }
-        else if current_marker == "v~" && _next_marker == "v" {
+        else if current_marker == "v~" && next_marker == "v" {
             issues.push(format!(
-                "Missing {} {} verse end marker '¬v' at index {} after {}:{} (found 'v' = '{}')",
-                work_name, bos_book_code, n, c, v, processed_lines[n + 1].clean_text()));
+                "Missing verse end marker '¬v' at index {} after {}:{} (found 'v' = '{}')",
+                n, c, v, processed_lines[n + 1].clean_text()));
         }
-        // else if is_end_marker(&current_marker) && previous_marker == "v=" {
-        //     issues.push(format!(
-        //         "Preverse 'v=' marker at index {} after {}:{} is followed by an end marker '{}'",
-        //         n-1, c, v, current_marker));
-        // }
+        else if (is_main_text_list(&current_marker) || is_intro_list(&current_marker))
+        && is_end_marker(&next_marker) {
+            issues.push(format!(
+                "List marker '{}' at index {} after {}:{} is followed by an end marker '{}'",
+                current_marker, n, c, v, next_marker));
+        }
+        else if current_marker == "¬li1" && next_marker == "¬li2" {
+            issues.push(format!(
+                "Closed list entries in the wrong order at index {} after {}:{} with '¬li1' followed by '¬li2'",
+                n, c, v));
+        }
 
         // previous_marker = current_marker;
     }
@@ -1355,8 +1363,8 @@ pub fn validate_nesting(processed_lines: &InternalBibleEntryList, bos_book_code:
             let start_marker: CompactString = marker.chars().skip(1).collect();
             if count != marker_counts.get(&start_marker).unwrap_or(&0) {
                 issues.push(format!(
-                    "{} {} end marker '{}' has {} entries but its corresponding start marker has {} from [{}]",
-                    work_name, bos_book_code, marker, count, marker_counts.get(&start_marker).unwrap_or(&0),
+                    "Marker '{}' has {} entries but its corresponding start marker has {} from [{}]",
+                    marker, count, marker_counts.get(&start_marker).unwrap_or(&0),
                     processed_lines.iter().filter_map(|e| Some(e.marker())).collect::<Vec<_>>().join(", ")));
             }
         }

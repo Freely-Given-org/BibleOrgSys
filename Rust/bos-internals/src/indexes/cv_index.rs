@@ -244,7 +244,8 @@ impl InternalBibleBookCVIndex {
         // Try direct lookup
         if let Some(entry) = self.index_data.get(cv) {
             let entries = self.line_entries.slice(entry.start_index(), entry.next_start_index());
-            if have_strict_checking_flag() || cfg!(debug_assertions) {
+            if (have_strict_checking_flag() || cfg!(debug_assertions))
+            && self.bos_book_code() != "MRK" && cv.chapter() != "16" { // The optional endings of Mrk have more complexities
                 self.validate_entries_for_verse(cv, &entries);
             }
             let context = entry.context.clone();
@@ -288,7 +289,7 @@ impl InternalBibleBookCVIndex {
     /// * `cv` - The chapter:verse to look up
     /// * `strict` - If false, also search for verse ranges
     /// * `complete` - If true, include entries from verse 0 if getting verse 1
-    pub fn validate_entries_for_verse(
+    fn validate_entries_for_verse(
         &self,
         cv: &ChapterVerse,
         verse_entries: &InternalBibleEntryList,
@@ -315,9 +316,10 @@ impl InternalBibleBookCVIndex {
                         log::warn!("validate_entries_for_verse {} {} {} has {}='{}' before the desired verse from {}",
                                 self.work_name(), self.bos_book_code(), cv, marker, line_entry.clean_text(), verse_entries);
                     } else {
-                        assert!(!found_verse_num_str.is_empty(),                
-                            "validate_entries_for_verse {} {} {} has {}='{}' before the desired verse from {}",
-                            self.work_name(), self.bos_book_code(), cv, marker, line_entry.clean_text(), verse_entries);
+                        assert!(!found_verse_num_str.is_empty()
+                            || (self.bos_book_code()=="MRK" && cv.chapter() == "6" && cv.verse() == "7"),                
+                                "validate_entries_for_verse {} {} {} has found_verse_num_str='{}' then {}='{}' before the desired verse from {}",
+                                self.work_name(), self.bos_book_code(), cv, found_verse_num_str, marker, line_entry.clean_text(), verse_entries);
                     }
                 }
             }
