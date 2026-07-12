@@ -75,7 +75,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
     ((' an hors ',),' a horse '), # Wycl Tob 6:17
     ((' as flex',),' as flax'), # Wycl Isa 43:17
     (('at euen ','at even ',),'at evening '),(('at euen,','at even,',),'at evening,'),(('at euen.','at even.',),'at evening.'),(('at euen:','at even:',),'at evening:'),
-        (('vntill Euen,','until even,','until euen,'),'until evening,'),(('vntyll euen.','vntill euen.','vntil euen.'),'until evening.'),(('until euen:',),'until evening:'),
+        (('vntill Euen,','until even,','until euen,'),'until evening,'),(('vntyll euen.','vntill euen.','vntil euen.','vnto euen.'),'until evening.'),(('until euen:',),'until evening:'),
         (('unto even?','vnto euen?'),'until evening?'), # KJB Exo 18:14
         ((' was eue,',),' was evening,'), # Mrk 11:11
         ((' when Euen ',),' when evening '), # Mrk 6:47
@@ -193,7 +193,6 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
     (('them <span class="add_KJB-1611">that</span> prophecie',),'them <span class="add_KJB-1611">that</span> prophesy'),
         (('them that prophecie',),'them that prophesy'),
     (('vntyll ye euen.','vntyll the euen.','vntill the euen.','vntil the euen.','vnto the euen.'),'until the evening.'),(('vntyll the euen:','vntil the euen:','vnto the euen:','vntill ye euen:'),'until the evening:'), # Gnva Lev 17:15
-    (('vnto euen.',),'until evening.'), # Gnva Exo 18:13
     (('when the Euen ',),'when the Evening '),(('when the euen ','when the even '),'when the evening '),
 
     # Four words to four words
@@ -525,7 +524,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
                 ((' apte ',),' apt '),
         (('archaungel',),'archangel'), ((' archeris',),' archers'),
             (('Aryse',),'Arise'),((' aryse',),' arise'),
-            (('Ark ','Arcke ','Arke ',),'Ark/Box '),(('Ark,','Arke,'),'Ark/Box,'),(('Ark.','Arke.'),'Ark/Box.'),((' arcke',' arke'),' ark/box '),((' ark ',),' ark/box '),#((' arke,',),' ark/box,'),((' arke:',),' ark/box:'),
+            (('Ark ','Arcke ','Arke ',),'Ark/Box '),(('Ark,','Arke,'),'Ark/Box,'),(('Ark.','Arke.'),'Ark/Box.'),((' arcke',' arke'),' ark/box'),((' ark ',),' ark/box '),#((' arke,',),' ark/box,'),((' arke:',),' ark/box:'),
             ((' arme ',),' arm '),((' arme,',),' arm,'),((' arme.',),' arm.'),((' arme?',),' arm?'),((' arme:',),' arm:'),((' arme;',),' arm;'),((' arme)',),' arm)'),
                 ((' armorie,',),' armoury,'), ((' armuris',),' armours'),
                 ((' armes',),' arms'), ((' armie ',' armye '),' army '),((' armie,',),' army,'),((' armie.',),' army.'),((' armie?',),' army?'),((' armie:',),' army:'),
@@ -697,7 +696,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
                 ((' brokun',' breken'),' broken'), ((' braken ',' brak '),' broke '),((' brak,',),' broke,'),
                 ((' brookes',' brokes'),' brooks'),((' brooke ',),' brook '),((' brooke,',),' brook,'),((' brooke.',),' brook.'),
                 ((' brodel ',' bordel '),' brothel ' ), ((' brothir',),' brother' ),
-                ((' broughtest',),' broughtest/brought'), ((' broughte ','brouyte','broughe'),' brought '),(('brouyten','brouyt'),'brought'),
+                ((' broughtest',),' broughtest/brought'), (('broughte ','brouyte ','broughe '),'brought '),(('brouyten','brouyt'),'brought'),
                 ((' browne',),' brown'),
             ((' brussed',' brused'),' bruised'),
                 ((' bruite',),' brute'),
