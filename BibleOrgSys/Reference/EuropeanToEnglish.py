@@ -43,7 +43,7 @@ import BibleOrgSys.BibleOrgSysGlobals as BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2026-07-09' # by RJH
+LAST_MODIFIED_DATE = '2026-07-10' # by RJH
 SHORT_PROGRAM_NAME = "EuropeanToEnglish"
 PROGRAM_NAME = "OpenBibleData European Language Handling functions"
 PROGRAM_VERSION = '0.96'
@@ -55,7 +55,7 @@ DEBUGGING_THIS_MODULE = False
 GERMAN_WORD_MAP = (
     # Fix typos
     (' nicht,vor ',' not, to '),
-    (' zu m ',' for_the '), # zum 
+    (' zu m ',' for_the '), # zum
 
     # These few have to be at the top
     (' an,',' to/along,'),
@@ -451,7 +451,7 @@ GERMAN_WORD_MAP = (
                     (' betrogener',' deceived'),(' betrogen',' cheated'),
                     ('Betrübten','afflicted_one(s)'),('betrübest','saddened'),(' betrübet',' saddened'),('betrübten','saddened'),(' betrübt',' saddened'),
                         (' betrügen',' deceive/defraud'),(' betrüge',' cheat'), ('betrügliche','fraudulent'),(' betrügt',' cheats/deceives'),
-                (' betteln',' beg'),(' bettelte',' begged'), ('Betten','beds'),('Bette','bed'),('Bettlein','bed'),('Bett','bed'), 
+                (' betteln',' beg'),(' bettelte',' begged'), ('Betten','beds'),('Bette','bed'),('Bettlein','bed'),('Bett','bed'),
             (' beugen',' bend/submit'),(' beuget',' bends/submits'), ('Beutel','bag/purse'),('Beute','spoils/prey'),
             (' bewahren',' preserve/keep/retain'),(' bewahret',' preserved/kept/retained'), ('Bewahre','Preserve/Keep/Retain'),(' bewahre',' preserve/keep/retain'),
                     ('bewähret','proven'),('bewährten','proven'),
@@ -1678,7 +1678,7 @@ GERMAN_WORD_MAP = (
                 ('Körbe','baskets'),('Korbe','baskets'),('Korb ','basket '),
                     ('Kornhaufen','grain_pile'),('Kornhäuser','granaries'),('Körnlein','grain'), ('Korn','grain'),
             ('Kost ','cost(n) '),(' kostet',' costs(v)'),
-                ('köstlichem','delicious'),('köstlichen','delicious'),('köstlicher','delicious'),('köstliches','delicious'),('köstliche','delicious'),('köstlich','delicious'), 
+                ('köstlichem','delicious'),('köstlichen','delicious'),('köstlicher','delicious'),('köstliches','delicious'),('köstliche','delicious'),('köstlich','delicious'),
             ('Kot','faeces/filth'),
         ('Kräften ','strength/power '),(' kräftigen',' strong'),(' kräftig',' strong'),('Kraft','strength/power'),
                 (' krähete',' crowed'),(' krähet',' crows'),
@@ -3711,7 +3711,7 @@ LATIN_WORD_MAP = (
                     ('ædificii','buildings'),('ædificium','building'),
                 (' æditui',' edited'),
         (' ægros',' sick'), ('ægrotationum','of_illness'),
-            ('Ægypti','of_Egypt'),('Ægypto','to_Egypt'), ('Ægyptum','Egypt'),('Ægyptus','Egypt'),
+            ('Ægyptii','Egyptians'),('Ægypti','of_Egypt'),('Ægypto','to_Egypt'), ('Ægyptum','Egypt'),('Ægyptus','Egypt'),
         ('æmulatio','competition/rivalry'),
         (' ænea',' brass'),(' æneum',' brass'), ('ænigmata','riddles'),
         ('æquabitur','it_will_be_equal'),(' æquæ',' equally'),(' æqualem',' equal'),(' æquali',' equal'),(' æqua',' equal'),(' æque',' equally'),(' æquo',' equal'),
@@ -4218,6 +4218,7 @@ LATIN_WORD_MAP = (
                                     (' conversatio ',' conversation '),(' conversatio.',' conversation.'),(' conversa ',' converted '),
                             ('conversionem','conversion'),('conversione','conversion'), ('conversio ','conversion '),('conversio,','conversion,'),('conversio.','conversion.'),(' conversio:',' conversion:'),('conversio<','conversion<'),
                                 (' conversis',' converted'), (' conversi ',' converted '),(' conversi,',' converted,'),(' conversi.',' converted.'),(' conversi:',' converted:'),
+                                (' conversos',' converts'),
                                 (' conversum',' converted'),(' conversus',' turned_around'),
                             ('convertamur','let\'s_turn'),(' convertam',' I_will_convert'),('convertantur','they_are_converted'),(' convertar',' I_will_convert'),('convertatur','be_converted'),
                                 ('convertebantur','they_were_converting'),
@@ -4860,6 +4861,7 @@ LATIN_WORD_MAP = (
                 ('Expletis','You(pl)_are_complete'),(' expletum',' completed'),
                     (' explicans',' explaining'),(' explicat',' explains'),
                     ('exploratores','scouts'),('exploratoribus','explorers'),('exploratorum','explorers'),('exploraverunt','they_explored'),
+                        ('exploretur','to_be_explored'),
                 ('Expoliavi','I_stripped'),
                         (' exponens',' expounding'),(' exponere',' to_explain'),('exponitur','is_explained'),(' exponit',' explains'),(' exponunt',' they_explain'),
                         (' exposuit',' explained'),
@@ -4984,7 +4986,7 @@ LATIN_WORD_MAP = (
             (' finem',' the_end'),(' finibus',' borders'),(' finies',' you_will_finish'),(' finietur',' will_end'),(' finita',' finished'),
                 (' fingit',' he/she_imagines'),
                 ('Finis ','End '),(' finis ',' end/limit '),(' finis,',' end/limit,'), ('Finis.','End/Limit.'),(' finis.',' end/limit.'), (' finis?',' end/limit?'),(' finis:',' end/limit:'),(' finis;',' end/limit;'),(' finis<',' end/limit<'), # Protect 'Finish' & 'finish'
-            ('firmamento','firmament'),('firmamentum','firmament/support'), (' firmaret',' would_strengthen'), (' firmavit',' he_established'),
+            ('firmamento','firmament'),('firmamentum','firmament/support'), (' firmaret',' would_strengthen'), (' firmata',' established'),(' firmavit',' he_established'),
                 ('Firmetur','It_will_be_established'),(' firmetur',' be_strengthened'),
                 (' firmitate',' firmness'),(' firmius',' more_firmly'),
             (' fistulæ',' flutes'),
@@ -5231,7 +5233,7 @@ LATIN_WORD_MAP = (
                 (' honor',' honour/respect(n)'),
             (' horam',' an_hour'),(' horarum',' hours'),(' hora',' hour'),
                 (' hordeaceos',' barley'),(' hordei',' barley'),(' hordeum',' barley'),
-                (' horreis',' barns'),
+                (' horrea',' barns'),(' horreis',' barns'),
                 (' hortatur',' encourages'), (' hortis',' the_garden'),('hortorum','of_the_gardens'),(' horto',' garden'),(' hortum',' garden'),(' hortus',' garden'),
                 (' horum',' of_these'),
             (' hostes',' enemies'),
@@ -5494,7 +5496,7 @@ LATIN_WORD_MAP = (
                         (' interibit',' will_perish'), (' interierunt',' they_died'), ('Interiora','Interior'),(' interiora',' interior'),('interiorem','interior'),('interiores','interior'),('interioris','interior'),('interiori','interior'), ('interirent','they_would_perish'),(' interire',' to_perish'), (' interitum',' destruction'),(' interitus',' destruction'),(' interitu',' destruction'),(' interius',' inside'),
                         ('intermissum','a_break'),
                         (' interna ',' internal '), ('internecionem','extermination'),
-                        ('interpres','interpreter'),('interpretantur','they_interpret'),('interpretationem','interpretation'),(' interpretatio ',' interpretation '),(' interpretatum',' interpreted'),(' interpretatur',' interprets'),
+                        ('interpres','interpreter'),('interpretantur','they_interpret'),('interpretationem','interpretation'),(' interpretatio ',' interpretation '),(' interpretatum',' interpreted'),(' interpretatur',' interprets'),(' interpretum',' interpreter'),
                         ('interrogabant','they_asked'),('interrogabat','he_asked'),('Interrogabo','I_will_ask'),(' interrogant',' they_ask'),(' interrogare',' to_ask'),('interrogationem','question'),('interrogatio','question(n)'),('interrogatur','is_asked'),(' interrogat',' asks'),('interrogaverunt','they_asked'),('interrogavit','asked'),
                             ('interruptio','interruption'),
                         ('Iterum','Again'),('Ite','Go'),
@@ -5563,14 +5565,14 @@ LATIN_WORD_MAP = (
                 ('irascaris','you_get_angry'),(' irascar',' to_be_angry'),('irasceris','you_are_angry'),(' irascetur',' he_will_be_angry'),(' irascitur',' is_angry'), (' iras',' anger'),
                 (' iratus',' angry'),
                 (' ira',' anger/rage'),
-            (' irent',' they_would_go'),
+            (' irent',' they_would_go'),(' iret',' go'),
             (' irridebant',' they_were_laughing'),
                     (' irriget',' irrigate/water(v)'),(' irrigua',' irrigated'),(' irriguus',' irrigated'),
                     ('irrisoribus','mockers'),
                     (' irritabo',' I_will_irritate'),(' irritandum',' to_be_irritated'),('irritaverunt','they_irritated'),(' irritum',' void/nothingness'),
                 (' irruente',' rushing'),('irruerent','they_rushed_in'),('irruerunt','they_rushed'),(' irrue',' rushed'),
                     (' irruit',' rushes'),
-        ('Isaiæ','Isaiah'),('Isaias','Isaiah'),('Isaia ','Isaiah '),
+        ('Isaiæ','Isaiah'),('Isaias','Isaiah'),('Isaia ','Isaiah '),('Isaia.','Isaiah.'),('Isaia:','Isaiah:'),
                 ('Isræl','Israel'),('Israël','Israel'),
             (' issent',' they_had_come'),
             (' istæ',' these'),(' istam',' that_(one)'),(' istas',' these'), ('Ista','This'),(' ista',' these_(ones)'),
@@ -5873,7 +5875,7 @@ LATIN_WORD_MAP = (
                     (' malis',' bad_things'),
                     ('malitiæ','of_malice'),('malitiam','malice'),(' malitia',' malice/vice'),
                     (' mali ',' evil '),(' mali,',' evil,'),(' mali.',' evil.'),(' mali:',' evil:'),(' mali;',' evil;'), # Destroys English 'malice'
-                (' malleus',' hammer'),
+                (' mallens',' preferring'), (' malleus',' hammer'),
                 ('malogranata','pomegranate'), ('malorumque','and_evil(pl)'),(' malorum',' of_evil'), (' malo',' I_prefer'),
                 ('maluerint','they_preferred'),('maluerunt','they_preferred'), (' malum',' evil'),(' malus',' bad'),#(' malum,',' evil,'),
             (' mammæ',' mother'),(' mammam',' mum'),(' mammarum',' breasts'),
@@ -6148,7 +6150,7 @@ LATIN_WORD_MAP = (
             (' nervum',' nerve'),('Nervus','Nerve'),
             (' nesciens',' unaware'),('nescientes','unaware'), ('nescierit','will_not_know'), ('Nescierunt','They_did_not_know'),('nescierunt','they_did_not_know'), ('nescies','you_will_not_know'),(' nescio',' I_don\'t_know'),(' nesciret',' would_not_know'),(' nescire',' not_knowing'),(' nescis',' you_don\'t_know'), ('Nescitis','You_don\'t_know'),('nescitis','you_don\'t_know'), (' nescit',' doesn\'t_know'),(' nesciunt',' they_don\'t_know'),(' nescius',' ignorant'),
         (' nido',' nest'),(' nidum',' a_nest'),
-            (' nihilo',' by_no_means'), ('Nihilque','And_nothing'),('nihilque','and_nothing'), ('nihilum','nothing'), ('Nihil','Nothing'),(' nihil',' nothing'),
+            ('nihilominus','nevertheless/however'),(' nihilo',' by_no_means'), ('Nihilque','And_nothing'),('nihilque','and_nothing'), ('nihilum','nothing'), ('Nihil','Nothing'),(' nihil',' nothing'),
             (' nimiæ',' too_much'),(' nimiam',' too_much'),(' nimia',' excessive'),(' nimio',' too_much'),(' nimis',' too_much'),
             ('Nisi ','Unless '),(' nisi ',' except '),
             ('nitebantur','they_were_striving'),(' niteris',' you_shine'),(' nitidiores',' more_polished'),(' nitidius',' brighter'),(' nititur',' relies'),
@@ -6659,7 +6661,7 @@ LATIN_WORD_MAP = (
                                     ('prædicarent','they_would_preach'),('prædicaretis','you_would_preach'),('prædicare','to_preach'),('prædicari','to_preach'),
                                     ('prædicata','preached'),('prædicate','preach'),('prædicationem','preaching'),('prædicatione','preaching'),('prædicationis','preaching'),(' prædicatio',' preaching'),(' prædicatores',' preachers'),('prædicatoribus','preachers'),('prædicatorum','preachers'),('prædicaturi','about_to_preach'),('prædicatur','is_preached'),(' prædicat',' preach'),
                                     ('prædicaverunt','they_preached'),(' prædicavit',' preached'),
-                                ('prædicitur','it_is_predicted'),(' prædicit',' predicts'), 
+                                ('prædicitur','it_is_predicted'),(' prædicit',' predicts'),
                                 (' prædico',' I_preach'),
                                 (' prædicta',' aforementioned'),('prædictæ','aforementioned'),(' prædictis',' aforementioned'),(' prædictum',' aforementioned'),
                                 (' prædicunt',' they_preach'),
@@ -7015,7 +7017,7 @@ LATIN_WORD_MAP = (
             (' rei ',' of_the_thing '),(' rei,',' of_the_thing,'),(' rei.',' of_the_thing.'),
             (' relegatus',' exiled'),
                 (' relicta',' abandoned'),(' relictæ',' abandoned'),(' relictis',' abandoned'),(' relicto',' leaving'),(' relictum',' left_behind'),('relicturum','about_to_leave'),(' relictus',' abandoned'),
-                (' religionem',' religion'),(' religionis',' religion'), (' religio ',' religion '),(' religio,',' religion,'),(' religio.',' religion.'),
+                (' religionem',' religion'),(' religione',' religion'),(' religionis',' religion'), (' religio ',' religion '),(' religio,',' religion,'),(' religio.',' religion.'),
                 ('relinquatur','be_left_behind'),('relinquens','leaving'), ('Relinquentes','Leaving'),('relinquentes','leaving'), ('relinqueris','you_will_be_left_behind'),('relinquetur','will_be_left'),(' relinquet',' will_leave'), (' relinquimur',' we_are_left'),(' relinquit',' leaves'), (' relinquunt',' they_leave'),
                 ('reliquam','the_rest'),(' reliqua',' the_rest'),
                     (' reliquerit',' left_behind'),('Reliquerunt','They_left'),
@@ -7254,7 +7256,7 @@ LATIN_WORD_MAP = (
                 (' sectanda',' to_be_followed'),(' sectatur',' is_followed'),
                 (' secum',' with_him'),
                     ('secundæ','secondly'),('secundam','second'),('Secunda','Second'),(' secunda',' the_second'),(' secundi',' second'), ('Secundo','Secondly'),(' secundo',' secondly'), ('Secundum','After/Second'),('secundum','after/second'), (' secundus',' after/second'),
-                        ('securibus','axes'),('securis','axe'),('securitas','security'),('securitatem','security'),('securitate','security'),('securius','safer'),(' securi ',' securely '),(' securi,',' securely,'), (' securus',' secure'),
+                        ('securibus','axes'),('securis','axe'),('securitas','security'),('securitatem','security'),('securitate','security'),('securius','safer'),(' securi ',' securely '),(' securi,',' securely,'), (' securos',' secure'),(' securus',' secure'),
                         (' secus',' otherwise/wrongly'),
                         (' secuta',' followed'),(' secuti',' followed'),(' secutus',' followed'),
             ('Sed ','But '),(' sed ',' but '),(' sed,',' but,'),(' sed:',' but:'),
@@ -7325,7 +7327,7 @@ LATIN_WORD_MAP = (
                         (' servata',' saved'),(' servaturam',' will_save'),(' servatur',' is_kept'),(' servatus',' saved'),(' servat',' keeps'),
                             ('servaverunt','they_kept'),
                                 ('servavitque','and_kept'),(' servavit',' he_kept'), (' servavi',' I_saved'),
-                        (' serva ',' serve/female_slave '),(' serva,',' serve/female_slave,'),
+                        (' serva ',' serve/female_slave '),(' serva,',' serve/female_slave,'),(' serva.',' serve/female_slave.'),
                     (' servetis',' you_keep'),(' servet',' keep'),
                     (' serviant',' serve'),(' serviat',' serve'),
                         (' serviens',' servant'),('servientes','servants'),(' servienti',' to_the_servant'),(' servient',' will_serve'),(' servieris',' you_will_serve'),('servierit','served'),(' servierunt',' they_served'),(' servietis',' you_will_serve'),(' serviet',' will_serve'),
@@ -7859,7 +7861,7 @@ LATIN_WORD_MAP = (
             (' vagari',' to_wander'),(' vaginam',' sheath/vagina'), (' vagi',' wander'),
             (' valde',' very_much'),
                 ('valeamus','let\'s_be_healthy'),(' valeant',' goodbye'),(' valeat',' may_it_be_good'), (' valebit',' it_will_be_good'),(' valebunt',' they_will_be_fine'), (' valens',' strong/powerful'), ('valentes','strong'),(' valent',' they_are_strong'),(' valeo',' be_well'),(' valet',' is_valid'),
-                ('vallatæ','fenced'),('vallatus','fenced_off'),
+                ('vallante','fenced'),('vallatæ','fenced'),('vallatus','fenced_off'),
                     ('vallem','the_valley'),(' valles',' valleys'),
                         (' valle ',' valley '),(' valle,',' valley,'),(' valle.',' valley.'),(' valle:',' valley:'),
                     (' vallibus',' valleys'),(' vallis',' valley'),
@@ -7891,8 +7893,8 @@ LATIN_WORD_MAP = (
                     ('vendiderit','sold'),(' vendidit',' sold'),(' venditores',' sellers'),(' vendit',' sells'),
                 (' venefici',' poisoned'),
                     ('venena','poisons'),
-                    ('venerabantur','they_worshipped'),('venerabilis','venerable/reverent/worthy'),(' venerant',' they_came'),(' venerat',' had_come'),('venerint','they_came'),(' veneris',' you_come'),('veneritis','you_come'),(' venerit',' will_have_placed'), ('Veneruntque','And_they_came'),('veneruntque','and_they_came'), ('Venerunt','They_came'),('venerunt','they_came'),
-                (' veniant',' they_come'),(' veniam',' I_will_come'),(' venias',' come'),('Veniat','Let_him/it_come'),(' veniat',' let_him_come'),(' venia',' forgiveness'),
+                    ('venerabantur','they_worshipped'),('venerabilis','venerable/reverent/worthy'),('venerantur','they_worship'),(' venerant',' they_came'),(' venerat',' had_come'),('venerint','they_came'),(' veneris',' you_come'),('veneritis','you_come'),(' venerit',' will_have_placed'), ('Veneruntque','And_they_came'),('veneruntque','and_they_came'), ('Venerunt','They_came'),('venerunt','they_came'),
+                (' veniamus',' let\'s_come'),(' veniant',' they_come'),(' veniam',' I_will_come'),(' venias',' come'),('Veniat','Let_him/it_come'),(' veniat',' let_him_come'),(' venia',' forgiveness'),
                     (' veniebant',' they_were_coming'),(' veniebat',' he_was_coming'),(' veniens',' coming'),('venientem','coming'),('venientes','coming'), ('Veniente','Coming'),(' veniente',' coming'),('venientibus','coming'),('venientis','coming'),('venientium','of_those_who_come'), ('Venient','They_will_come'),(' venient',' they_will_come'), (' venies',' you_will_come'), ('Veniet','He_will_come'),(' veniet',' will_come'),
                     ('Venimus','We_came'),(' venimus',' we_came'),
                     (' venirent',' they_would_come'),(' veniret',' would_come'),(' venire',' to_come'),
