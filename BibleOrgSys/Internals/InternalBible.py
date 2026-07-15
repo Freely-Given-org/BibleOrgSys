@@ -83,10 +83,10 @@ from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
 import bos_books_codes_py
 
 
-LAST_MODIFIED_DATE = '2026-05-25' # by RJH
+LAST_MODIFIED_DATE = '2026-07-14' # by RJH
 SHORT_PROGRAM_NAME = "InternalBible"
 PROGRAM_NAME = "Internal Bible handler"
-PROGRAM_VERSION = '0.94'
+PROGRAM_VERSION = '0.95'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -987,17 +987,17 @@ class InternalBible:
             filename = self.getAName( abbrevFirst=True )
         if filename is None:
             filename = self.objectTypeString
-            
+
         if filename.endswith('.BOSBible'):
             return self.pickleFast( folderpath )
-            
+
         if BibleOrgSysGlobals.debugFlag:
             assert filename
             # assert not filename.endswith( '.pickle' )
         if not filename.endswith( '.pickle' ):
             filename = f'{BibleOrgSysGlobals.makeSafeFilename( filename )}.pickle'
         vPrint( 'Info', DEBUGGING_THIS_MODULE, f"pickle: Saving {self.objectNameString} to {filename if folderpath is None else os.path.join( folderpath, filename )}…" )
-        
+
         try: del self.XMLTree # No need to hold onto this XML source code
         except AttributeError: pass
         try: del self.genericBOS # This is unpicklable for some reason
@@ -1026,31 +1026,31 @@ class InternalBible:
         Writes the object to a fast .BOSBible hybrid container using Rust and lightweight pickle.
         """
         fnPrint( DEBUGGING_THIS_MODULE, f"pickleFast( {folderpath!r} )" )
-        
+
         from BibleOrgSys import BibleOrgSysGlobals
         if folderpath is None:
              folderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_CACHE_FOLDERPATH
-        
+
         container_name = f"{BibleOrgSysGlobals.makeSafeFilename(self.getAName(abbrevFirst=True))}.BOSBible"
         container_path = Path(folderpath, container_name)
-        
+
         vPrint('Info', DEBUGGING_THIS_MODULE, f"pickleFast: Saving {self.objectNameString} to {container_path}…")
-        
+
         if not container_path.exists():
             container_path.mkdir(parents=True)
-            
+
         # 1. Save books separately using fast Rust path
         books_folder = container_path / "Books"
         if not books_folder.exists():
             books_folder.mkdir()
-            
+
         for bbb, book in self.books.items():
             book_file = books_folder / f"{bbb}.bin"
             book.saveFast(str(book_file))
-            
+
         # 2. Save the "shell" (metadata and class attributes)
         metadata_file = container_path / "BibleInfo.pickle"
-        
+
         # Create a light copy of __dict__, excluding books and large objects
         metadata = self.__dict__.copy()
         if 'books' in metadata: del metadata['books']
@@ -1059,7 +1059,7 @@ class InternalBible:
         # Remove any _rawLines or _processedLines that might be in the main object (unlikely but safe)
         for k in list(metadata.keys()):
             if k.startswith('_'): del metadata[k]
-        
+
         import pickle
         try:
             with open(metadata_file, 'wb') as f:
@@ -1079,11 +1079,11 @@ class InternalBible:
         """
         container_path = Path(container_path)
         metadata_file = container_path / "BibleInfo.pickle"
-        
+
         if not metadata_file.exists():
             logging.error(f"InternalBible.unpickleFast: Metadata file not found at {metadata_file}")
             return None
-            
+
         import pickle
         try:
             with open(metadata_file, 'rb') as f:
@@ -1091,7 +1091,7 @@ class InternalBible:
         except Exception as err:
             logging.error(f"InternalBible.unpickleFast: Failed to load metadata: {err}")
             return None
-            
+
         klass = data['class']
         # Create a new instance without calling __init__
         obj = klass.__new__(klass)
@@ -1100,7 +1100,7 @@ class InternalBible:
         obj.triedLoadingBook = {}
         obj.bookNeedsReloading = {}
         obj.availableBBBs = set()
-        
+
         # Identify available books
         books_folder = container_path / "Books"
         if books_folder.exists():
@@ -1108,7 +1108,7 @@ class InternalBible:
                 bbb = f.stem
                 obj.availableBBBs.add(bbb)
                 obj.bookNeedsReloading[bbb] = True
-        
+
         # Override loadBook to use the fast container
         def fastLoadBook( self_obj, BBB:str, filename=None ):
              if BBB in self_obj.books: return
@@ -1128,12 +1128,12 @@ class InternalBible:
 
         import types
         obj.loadBook = types.MethodType(fastLoadBook, obj)
-        
+
         # Store source info
         obj.sourceFilepath = container_path
         obj.sourceFolder = container_path.parent
         obj.isFastFormat = True
-        
+
         return obj
     # end of InternalBible.unpickleFast
 
@@ -1365,22 +1365,22 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
         from bible_organisational_system import discoverBible
 
         vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Running multi-core discover on {self.name}…" )
-        
+
         # Collect entries for all books
         booksEntries = {}
         for BBB in self.books:
             if not self.books[BBB]._processedFlag:
                 self.books[BBB].processLines()
             booksEntries[BBB] = self.books[BBB]._processedLines
-        
+
         # Call Rust implementation
         rustResults = discoverBible(booksEntries)
-        
+
         # Convert Rust results to Python format
         self.discoveryResults = {}
         for bbb, bkResults in rustResults.books.items():
             self.discoveryResults[bbb] = bkResults # This is now a dict from Rust getter
-            
+
         self.discoveryResults['ALL'] = rustResults.all.to_dict()
 
         if self.objectTypeString == 'PTX8':
@@ -2393,7 +2393,8 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
         fnPrint( DEBUGGING_THIS_MODULE, f"InternalBible.getContextVerseData( {BCVReference} ) for {self.name}" )
 
         if isinstance( BCVReference, tuple ): BBB = BCVReference[0]
-        else: BBB = BCVReference.getBBB() # Assume it's a SimpleVerseKey object
+        elif isinstance( BCVReference, SimpleVerseKey ): BBB = BCVReference.getBBB()
+        else: BBB = BCVReference.split('_',1)[0] # Assume it's a string
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, " ", BBB in self.books )
         self.loadBookIfNecessary( BBB )
         if BBB in self.books:
