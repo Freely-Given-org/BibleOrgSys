@@ -43,7 +43,7 @@ import BibleOrgSys.BibleOrgSysGlobals as BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2026-07-18' # by RJH
+LAST_MODIFIED_DATE = '2026-07-19' # by RJH
 SHORT_PROGRAM_NAME = "EuropeanToEnglish"
 PROGRAM_NAME = "OpenBibleData European Language Handling functions"
 PROGRAM_VERSION = '0.96'
@@ -4230,7 +4230,7 @@ LATIN_WORD_MAP = (
                             ('Convertimini','You_are_converted'),('convertimini','conversion'),('convertissem','I_would_have_converted'),('convertit','he_turned'),('converti ','converted '),
                             ('convertuntur','are_converted'),
                         ('convivemus','we_will_live_together'), (' convivii',' banquet'),(' convivium',' banquet'),
-                        (' convocata',' summoned'),(' convocatis',' summoned'), (' convoluta',' rolled_up'),
+                        (' convocabo',' I_will_call'),(' convocata',' summoned'),(' convocatis',' summoned'), (' convoluta',' rolled_up'),
                         (' convulsa',' convulsed'),
             (' cooperatores',' collaborators'), (' coopertum',' covered'),
             (' cophino',' basket'),
@@ -4248,6 +4248,7 @@ LATIN_WORD_MAP = (
                 (' corrigere',' to_correct'), (' corrigiam',' I_will_correct_you'),(' corrigit',' corrects'),(' corrigi',' to_be_corrected'),
                         ('corripere','to_reprimand'),('corripiam','I_will_correct'), ('corripiemur','we_will_be_punished'), ('corripientur','they_will_be_punished'),
                             ('corripitur','is_reprimanded'),(' corripit',' reprimands'),
+                            ('corripiuntur','they_are_being_punished'),
                     ('corroboravit','he_strengthened'),
                     (' corruentes',' collapsing'),(' corruent',' they_will_collapse'),(' corruerunt',' they_collapsed'),(' corrues',' you_will_fall'),('corruetis','you_will_fall'),(' corruet',' will_collapse'),
                         ('corruisti','you_have_fallen'),
@@ -4727,7 +4728,7 @@ LATIN_WORD_MAP = (
                 (' elisos',' broken'),(' elisus',' knocked_out'),
             ('eloquentiæ','eloquence'),(' eloquia',' words'),(' eloquium',' speech'),
         (' emamus',' we_buy'),(' emant',' buy'),(' emat',' buy'),
-            (' emendare',' to_improve'),(' ementes',' buyers'),(' emerunt',' they_bought'),
+            (' emendare',' to_improve'),(' emendari',' to_be_corrected'), (' ementes',' buyers'),(' emerunt',' they_bought'),
             (' eminebant',' they_were_prominent'),(' eminentiores',' more_prominent'), (' emisit',' sent'),(' emisi',' I_sent'),(' emissa',' sent'),(' emittet',' will_send'), (' emit',' buys'),
             (' emolumentum',' profit'),
             (' emptionis',' purchase'),(' emptio',' purchase'),
@@ -6293,6 +6294,7 @@ LATIN_WORD_MAP = (
             (' olei',' oil'),(' oleo',' with_oil'), (' olera',' vegetables'),(' oleribus',' vegetables'), ('Oleum ','Oil '),(' oleum',' oil'),
             (' olim',' formerly/once'),
                 (' olivæ',' olives'),('Olivam','Olive_tree'),(' olivarum',' olives'), (' oliva',' olive'),
+            (' ollam',' pot'),
         (' omisit',' omitted'),(' omissis',' omitted'),
             ('omnemque','and_all'), ('Omnem ','Everything '),(' omnem',' all'), ('Omnes ','All_of_them '),(' omnes',' everyone'), ('Omne','Everything'),(' omne',' everything'),
                 ('Omnia ','Everything '),(' omnia',' everything'), #(' omnia,',' everything,'),(' omnia:',' everything:'),
@@ -6367,7 +6369,8 @@ LATIN_WORD_MAP = (
                 (' paleas',' straw'),(' paleis',' straw'),
                 (' pallio',' cloak'),(' pallium ',' cloak '),
                 (' palmæ',' palm_trees'),(' palmam',' palm_tree'),(' palmarum',' palm_trees'),(' palma',' palm_tree'),(' palmites',' palm_trees'),
-            (' panem',' bread/food'), (' panes',' bread/food'),
+            (' pandetur',' be_opened'),
+                (' panem',' bread/food'), (' panes',' bread/food'),
                 (' panibus',' bread'),(' panis',' bread/food'),
                 (' pannis',' cloth'),(' pannos',' cloths'),(' pannus',' cloth'),
                 (' panum',' bread/food'),
@@ -6462,7 +6465,7 @@ LATIN_WORD_MAP = (
                             (' percussor',' striker'),
                             (' percussus',' struck'),
                         ('percuteretque','and_would_strike'),('percuteretur','would_be_beaten'),(' percuteret',' would_hit'),(' percutere',' to_strike'),(' percute',' strike'),
-                            (' percutiam',' I_will_strike'),('percutiebant','they_were_hitting'),(' percutiens',' striking'),(' percutienti',' striking'), ('Percutiet','He_will_strike'),(' percutiet',' will_strike'), (' percutite',' strike'),(' percutit',' strikes'),('percutiunt','they_strike'),
+                            (' percutiam',' I_will_strike'),('percutiebant','they_were_hitting'),(' percutiens',' striking'),(' percutiente',' striking'),(' percutienti',' striking'), ('Percutiet','He_will_strike'),(' percutiet',' will_strike'), (' percutite',' strike'),(' percutit',' strikes'),('percutiunt','they_strike'),
                 (' perdam',' I_will_destroy'),(' perdas',' lose'),(' perdat',' destroy'),
                 (' perdendas',' to_be_destroyed'),(' perdendi',' to_destroy'),(' perdendum',' to_be_destroyed'),(' perdentur',' they_will_be_destroyed'), (' perderent',' they_would_destroy'),(' perderet',' would_destroy'),(' perdere',' to_lose'), ('Perdet','It_will_destroy'),(' perdet',' will_destroy'),
                     (' perdiderit',' will_lose'),('perdiderunt','they_lost'),(' perdidit',' lost'), ('Perditio','Destruction'),('perditionem','destruction'),('perditione','destruction'),('perditionis','of_destruction'),(' perditio',' destruction'),(' perditus',' lost(aj)'), (' perdit',' loses'),
