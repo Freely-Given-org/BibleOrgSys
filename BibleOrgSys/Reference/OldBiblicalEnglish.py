@@ -43,7 +43,7 @@ import BibleOrgSys.BibleOrgSysGlobals as BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2026-07-22' # by RJH
+LAST_MODIFIED_DATE = '2026-07-23' # by RJH
 SHORT_PROGRAM_NAME = "OldBiblicalEnglish"
 PROGRAM_NAME = "OpenBibleData English Language Handling functions"
 PROGRAM_VERSION = '0.97'
@@ -1639,7 +1639,8 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
             ((' lewdnesse ',' lewdnes '),' lewdness '),((' lewdnesse.',),' lewdness.'), ((' lewde ',),' lewd '),
         ((' liberall ',),' liberal '), (('lyberte','libertie'),'liberty'), ((' librarie ',),' library '),
             ((' licke ',),' lick '),
-            ((' lyers',' liers'),' liars'),((' lier',' lyer'),' liar'), ((' lieden',' lyed'),' lied'),((' lieth',' lyeth',' lyith'),' lieth/lies'),((' ligynge',' lyinge',' lyenge',' lyege'),' lying'),((' lyes ',),' lies '),((' lyes,',),' lies,'),((' lyes.',),' lies.'),((' lyes?',),' lies?'),((' lyes:',),' lies:'),((' lyes)',),' lies)'),((' lye ',),' lie '),((' lye,',),' lie,'),((' lye.',),' lie.'),
+            ((' lyers',' liers'),' liars'),((' lier',' lyer'),' liar'),
+                ((' lieden',' lyed'),' lied'),((' liest',' lyest'),' liest/lie'),((' lieth',' lyeth',' lyith'),' lieth/lies'),((' ligynge',' lyinge',' lyenge',' lyege'),' lying'),((' lyes ',),' lies '),((' lyes,',),' lies,'),((' lyes.',),' lies.'),((' lyes?',),' lies?'),((' lyes:',),' lies:'),((' lyes)',),' lies)'),((' lye ',),' lie '),((' lye,',),' lie,'),((' lye.',),' lie.'),
             ((' lyffe',' lyfe',' lijf',' liif'),' life'),
                 ((' lyfted',),' lifted'),((' lifteth',' lyfteth'),' lifteth/lifts'),((' liftynge',' liftinge'),' lifting'), (('Lyft',),'Lift'),((' lifte ',' lyfte '),' lift '),((' lyft',),' lift'),
             ((' lightlyge',),' lightly'),
