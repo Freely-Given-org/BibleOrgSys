@@ -3233,7 +3233,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
     (('Matthewe','Mathew','Matheu'),'Matthew'), # Mrk 3:18
     (('Medeis',),'Medes'),
     (('Nephthali','Neptalym','Nephtali'),'Naphtali'),
-        (('Nabuchodonosor','Nebukadnezar','Nabugodonosor','Nebuchadnezar'),'Nebuchadnezzar'),
+        (('Nabuchodonosor','Nabugodonosor','Nebuchadnezar'),'Nebuchadnezzar'),
         (('Nineueh','Niniue','Nynyue','Nineue',),'Nineveh'),(('Nineve,',),'Nineveh,'),(('Ninive.','Nineve.'),'Nineveh.'),
     (('Petre','Petir'),'Peter'),
     (('SALOMON',),'SOLOMON'),(('Salomon',),'Solomon'),
