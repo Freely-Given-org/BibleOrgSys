@@ -43,7 +43,7 @@ import BibleOrgSys.BibleOrgSysGlobals as BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2026-07-21' # by RJH
+LAST_MODIFIED_DATE = '2026-07-22' # by RJH
 SHORT_PROGRAM_NAME = "OldBiblicalEnglish"
 PROGRAM_NAME = "OpenBibleData English Language Handling functions"
 PROGRAM_VERSION = '0.97'
@@ -3233,7 +3233,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
     (('Matthewe','Mathew','Matheu'),'Matthew'), # Mrk 3:18
     (('Medeis',),'Medes'),
     (('Nephthali','Neptalym','Nephtali'),'Naphtali'),
-        (('Nabuchodonosor','Nebukadnezar','Nabugodonosor'),'Nebuchadnezzar'),
+        (('Nabuchodonosor','Nebukadnezar','Nabugodonosor','Nebuchadnezar'),'Nebuchadnezzar'),
         (('Nineueh','Niniue','Nynyue','Nineue',),'Nineveh'),(('Nineve,',),'Nineveh,'),(('Ninive.','Nineve.'),'Nineveh.'),
     (('Petre','Petir'),'Peter'),
     (('SALOMON',),'SOLOMON'),(('Salomon',),'Solomon'),
