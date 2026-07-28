@@ -43,7 +43,7 @@ import BibleOrgSys.BibleOrgSysGlobals as BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2026-07-23' # by RJH
+LAST_MODIFIED_DATE = '2026-07-27' # by RJH
 SHORT_PROGRAM_NAME = "OldBiblicalEnglish"
 PROGRAM_NAME = "OpenBibleData English Language Handling functions"
 PROGRAM_VERSION = '0.97'
@@ -1682,7 +1682,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
             ((' louelynesse',),' loveliness'),((' louely',),' lovely'), ((' louyeris',),' lovers'),((' louer',),' lover'), ((' louyden',' loueden',' louede',' loued',' louyde',' louyd'),' loved'),((' loveth',' loueth'),' loveth/loves'),((' lovest',' louedist',' louest'),' lovest/love'),((' louinge',' louynge',' louyng',' louing'),' loving'),
                 (('Loue ',),'Love '),(('Loue,',),'Love,'), ((' loues',),' loves'),((' louen ',' loue '),' love '),((' loue,',),' love,'),((' loue.',),' love.'),((' loue?',),' love?'),((' loue:',),' love:'),((' loue)',),' love)'),
             ((' lowe ',),' low '),((' lowe,',),' low,'),((' lowe.',),' low.'),((' lowe?',),' low?'),((' lowe:',),' low:'),
-                ((' lowere ',),' lower '),
+                ((' lowere ',),' lower '),((' lowere.',),' lower.'),
         ((' lucke ',),' luck '),
             ((' lumpe ',),' lump '),
             ((' lustfuli',),' lustfully'), ((' lustily',' lustyly'),' lustily/vigorously'), ((' lustes',),' lusts'),
@@ -2925,7 +2925,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
         ((' broydered',' broidered',' broydred',' broidred'),' embroidered'), # Eze 26:16
             ((' broyder',),' embroider'), # Gnva 2Chr 2:14
         ((' burres',),' burrs/thorns'), # Hos 9:6
-        (('buschementis',),'ambushes'), # Lam 4:19
+        (('buyschementis','buschementis'),'ambushes'), # Jdg 20:36, Lam 4:19
         ((' byssus',),' fine-linen'), # Drby & SLT 2Chr 2:14
         ((' byworde ',),' byword '), # Eze 18:3
     ((' capret',),' she-goat'), # Sng 4:5
