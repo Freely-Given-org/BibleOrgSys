@@ -31,6 +31,7 @@ CHANGELOG:
     2025-05-30 Handled /tc1 on new line (after /tr) which was being completely lost
     2025-06-24 Improved some error handling for invalid markers
     2026-07-02 Try to make uW handling more robust
+    2026-08-07 Try to make uW handling more robust again
 """
 from typing import Any
 import os
@@ -44,10 +45,10 @@ from BibleOrgSys.Bible import Bible, BibleBook
 import usfm_markers_py
 
 
-LAST_MODIFIED_DATE = '2026-07-02' # by RJH
+LAST_MODIFIED_DATE = '2026-08-07' # by RJH
 SHORT_PROGRAM_NAME = "USFMBibleBook"
 PROGRAM_NAME = "USFM Bible book handler"
-PROGRAM_VERSION = '0.68'
+PROGRAM_VERSION = '0.69'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -117,7 +118,14 @@ class USFMBibleBook( BibleBook ):
             # TODO: Why do these next two lines not catch ULT JER ???
             assert not marker.startswith('zaln-e'), f"{self.workName} {self.BBB} {C}:{V} {marker=} shouldn't begin a line"
             if marker.startswith('zaln-e'): print( f"{self.workName} {self.BBB} {C}:{V} {marker=} shouldn't begin a line" ); ALWAYS_STOP
-            if self.workName in ('ULT','UST'): # unfoldingWord uses braces to indicate added text
+            if self.workName in ('ULT','UST'): # Try to fix some common inconsistencies
+                # Move closing punctuation outside closing alignment markers (there can be many in a row)
+                while '.\zaln-e\*' in text: text = text.replace( '.\zaln-e\*', '\zaln-e\*.' )
+                while ',\zaln-e\*' in text: text = text.replace( ',\zaln-e\*', '\zaln-e\*,' )
+                # unfoldingWord uses braces to indicate added text
+                # but they often open and close on different lines so try to automagically fix that
+                if text.count('{') > text.count('}'): text = f'{text}\\add*'
+                elif text.count('}') > text.count('{'): text = f'\\add {text}'
                 text = text.replace( '{', '\\add ' ).replace( '}', '\\add*' )
 
             if '\\' in text: # Check the markers inside the lines (in case they're newLine markers)
@@ -186,7 +194,8 @@ class USFMBibleBook( BibleBook ):
                     variables['words'] = variables['words'].rstrip() # Shouldn't really be necessary
                 #assert variables['words'].startswith( '\\w ' ) # Not currently true (e.g., might have verse number)
                 dPrint( 'Verbose', debuggingThisFunction, f"{self.workName} {self.BBB}_{C}:{V} words={variables['words']}=")
-                dPrint( 'Verbose', debuggingThisFunction, f"-1={variables['words'][-1]} -2={variables['words'][-2]}" )
+                try: dPrint( 'Verbose', debuggingThisFunction, f"-1={variables['words'][-1]} -2={variables['words'][-2]}" )
+                except IndexError: pass
                 # dPrint( 'Quiet', debuggingThisFunction, f"-5:-1={variables['words'][-5:-1]} -6:-2={variables['words'][-6:-2]}" )
                 if variables['words'].endswith( '"\\w**' ):
                     vPrint( 'Quiet', debuggingThisFunction, "Drop final double asterisk!!!! (for Hindi IRV ???)")
@@ -197,7 +206,7 @@ class USFMBibleBook( BibleBook ):
                     or variables['words'][-1] in BibleOrgSysGlobals.TRAILING_WORD_PUNCT_CHARS)
                         and variables['words'][-5:-1] == '"\\w*' ) \
                 or (variables['words'][-1] in BibleOrgSysGlobals.TRAILING_WORD_PUNCT_CHARS
-                    and variables['words'][-2] in BibleOrgSysGlobals.TRAILING_WORD_PUNCT_CHARS
+                    and len(variables['words'])>1 and variables['words'][-2] in BibleOrgSysGlobals.TRAILING_WORD_PUNCT_CHARS
                     and variables['words'][-6:-2] == '"\\w*' ) ):
                         logging.critical( f"handleUWEncoding({givenMarker=} {givenText=} {variables['level']=} {variables['maxLevel']=}) got a problem at {self.BBB}_{C}:{V} with {variables['words']=}" )
                         # ['words']=' \\w the|x-occurrence="2" x-occurrences="3"\\w* {\\w head|x-occurrence="2" x-occurrences="2"\\w*|'
@@ -302,9 +311,11 @@ class USFMBibleBook( BibleBook ):
                         if debuggingThisFunction or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag: assert False, "We want to stop here" # Error messages need fixing
                     else: # self-closing was ok
                         variables['level'] += 1
-                        if variables['level'] > variables['maxLevel']: variables['maxLevel'] = variables['level']
+                        if variables['level'] > variables['maxLevel']:
+                            variables['maxLevel'] = variables['level']
                         if variables['level'] > MAX_EXPECTED_NESTING_LEVELS:
                             logging.critical( f"findInternalStarts exceeded max nesting levels ({MAX_EXPECTED_NESTING_LEVELS}) at {self.workName} {self.BBB}_{C}:{V} {marker}='{text[:100]}'" )
+                            break # TODO: what trouble does this cause ???
                         dPrint( 'Never', debuggingThisFunction, f"      findInternalStarts: Increased level to {variables['level']}" )
                         variables['text'] += ('|' if variables['text'] else '') \
                                     + text[ixAlignmentStart+9:ixAlignmentStartEnding].strip() # Can still be a space after the |
