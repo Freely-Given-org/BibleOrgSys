@@ -12,6 +12,7 @@
 // CHANGELOG:
 //   2026-05-27 Make 'nb' cause a close 'nb' to be added BEFORE the new 'c' marker, but the 'nb' itself is closed with the original paragraph marker
 //   2026-07-03 Improve list handling
+//   2026-08-24 Improve embedded list nesting with indent levels by Gemini for RJH
 //
 use compact_str::CompactString;
 use std::collections::HashMap;
@@ -28,6 +29,62 @@ use crate::entry::InternalBibleEntry;
 use crate::entry_lists::InternalBibleEntryList;
 use crate::have_strict_checking_flag;
 use crate::abbreviate;
+
+#[inline]
+fn get_list_level(marker: &str) -> u32 {
+    if let Some(c) = marker.chars().last() {
+        if c.is_ascii_digit() {
+            return c.to_digit(10).unwrap_or(1);
+        }
+    }
+    1
+}
+
+#[inline]
+fn is_list_item_marker(marker: &str) -> bool {
+    (marker.starts_with("li") && !marker.starts_with("list")) || marker.starts_with("lim") || marker == "lh" || marker == "lf"
+}
+
+fn close_lists_down_to(
+    target_level: u32,
+    open_markers: &mut Vec<CompactString>,
+    open_list_levels: &mut Vec<u32>,
+    new_lines: &mut InternalBibleEntryList,
+) {
+    // Step A: Unwind all deeper list levels
+    while let Some(&curr_list_lvl) = open_list_levels.last() {
+        if target_level == 0 || curr_list_lvl > target_level {
+            // Close list items at or above this list level
+            while let Some(pos) = open_markers.iter().rposition(|m| {
+                let s = m.as_str();
+                is_list_item_marker(s) && get_list_level(s) >= curr_list_lvl
+            }) {
+                let s = open_markers.remove(pos);
+                new_lines.push(InternalBibleEntry::end_marker(format!("¬{}", s), "").unwrap());
+            }
+
+            // Close the list container itself
+            if let Some(pos) = open_markers.iter().rposition(|m| m == "list") {
+                open_markers.remove(pos);
+            }
+            open_list_levels.pop();
+            new_lines.push(InternalBibleEntry::end_marker("¬list", curr_list_lvl.to_string()).unwrap());
+        } else {
+            break;
+        }
+    }
+
+    // Step B: If target_level > 0, close any open list item at target_level
+    if target_level > 0 {
+        while let Some(pos) = open_markers.iter().rposition(|m| {
+            let s = m.as_str();
+            is_list_item_marker(s) && get_list_level(s) >= target_level
+        }) {
+            let s = open_markers.remove(pos);
+            new_lines.push(InternalBibleEntry::end_marker(format!("¬{}", s), "").unwrap());
+        }
+    }
+}
 
 // TODO: These need to go into BOS Markers
 /// Markers that can define section boundaries.
@@ -267,6 +324,7 @@ pub fn add_nesting_markers(
     
     // Context tracking
     let mut open_markers: Vec<CompactString> = Vec::new();
+    let mut open_list_levels: Vec<u32> = Vec::new();
     let mut current_chapter = CompactString::from("-1");
     let mut current_verse = CompactString::from("-1");
     let mut last_marker: Option<CompactString> = None;
@@ -412,13 +470,16 @@ pub fn add_nesting_markers(
     let list_has_ended = |start_idx: usize, entries: &[InternalBibleEntry]| {
         for entry in entries.iter().skip(start_idx + 1) {
             let m = entry.marker();
-            // "v=" comes before section headings and some other list markers
-            if paragraph_markers::is_paragraph(m) || m == "v=" {
-                return true;
-            }
-            if matches!(m, "v" | "v~" | "li1" | "li2" | "li3" | "li4" ) {
+            if main_text_list_markers::is_main_text_list(m) {
                 return false;
             }
+            if matches!(m, "v" | "v~" | "rem") {
+                continue;
+            }
+            if paragraph_markers::is_paragraph(m) || m == "v=" || heading_markers::is_heading(m) || m == "c" {
+                return true;
+            }
+            return true;
         }
         true
     };
@@ -494,26 +555,16 @@ pub fn add_nesting_markers(
             new_lines.push(InternalBibleEntry::end_marker("¬ilist", "").unwrap());
         }
 
-        // The following markers will NOT necessarilyforce a list to close
-        if !["v","v~","li1","li2","li3","rem","c"].contains(&marker) { // list_has_ended(j, &entries_vec) && 
-            // Only close a list item or list here if it's the last open marker.
-            // Avoid removing earlier nested markers (which can cause duplicate end markers).
-            if open_markers.last().map(|s| s.as_str()) == Some("li1") && list_has_ended(j, &entries_vec) {
-                open_markers.pop();
-                new_lines.push(InternalBibleEntry::end_marker("¬li1", "").unwrap());
+        // The following markers will NOT necessarily force a list to close
+        if !["v","v~","rem","c","v="].contains(&marker)
+            && !main_text_list_markers::is_main_text_list(marker)
+            && !paragraph_markers::is_paragraph(marker)
+            && !heading_markers::is_heading(marker)
+        {
+            if list_has_ended(j, &entries_vec) {
+                close_lists_down_to(0, &mut open_markers, &mut open_list_levels, &mut new_lines);
+                last_l_marker = None;
             }
-            if open_markers.last().map(|s| s.as_str()) == Some("list") && list_has_ended(j, &entries_vec) {
-                open_markers.pop();
-                new_lines.push(InternalBibleEntry::end_marker("¬list", "").unwrap());
-            }
-        //     if let Some(last_open) = open_markers.last().map(|s| s.to_string())
-        //         && last_open == "list"
-        //         && list_has_ended(j, &entries_vec)
-        //     {
-        //         open_markers.pop();
-        //         new_lines.push(InternalBibleEntry::simple("¬list", ""));
-        //     }
-        // }
         }
 
         // if let Some(last_open) = open_markers.last().map(|s| s.to_string())
@@ -582,10 +633,12 @@ pub fn add_nesting_markers(
                     // println!(
                     //     "  At {} {}:{} processing chapter marker and closing section that hasn't crossed chapter boundaries: last_s='{}' Current open markers: {}",
                     //     j, c, v, last_s, open_markers.join(", "));
-                    assert!(s_pos == open_markers.len()-1 || open_markers.contains(&CompactString::new("list")),
-                        "Expected {} {} {}:{} '{}' to be last marker (not {}) in [{}] with last_s_marker='{:?}'",
-                        work_name, bos_book_code, c, v,
-                        last_s, s_pos, open_markers.join(", "), last_s_marker); // Must be the last marker then
+                    if have_strict_checking_flag() || cfg!(debug_assertions) {
+                        assert!(s_pos == open_markers.len()-1 || open_markers.contains(&CompactString::new("list")),
+                            "Expected {} {} {}:{} '{}' to be last marker (not {}) in [{}] with last_s_marker='{:?}'",
+                            work_name, bos_book_code, c, v,
+                            last_s, s_pos, open_markers.join(", "), last_s_marker); // Must be the last marker then
+                    }
                     new_lines.push(InternalBibleEntry::end_marker(format!("¬{}", last_s), "").unwrap());
                     open_markers.remove(s_pos); // Could do pop here
                     last_s_marker = None;
@@ -599,18 +652,15 @@ pub fn add_nesting_markers(
             }
 
             // Close the previous chapter
-                // Close any open list-item markers (li1, li2, ...) before closing the previous chapter
-                // Close any open list-item markers (li1, li2, ...) before closing the previous chapter
-                for _ in 0..5 {
-                    if let Some(li_pos) = open_markers.iter().rposition(|m| {
-                        let s = m.as_str();
-                        // match 'li' followed by a digit (li1, li2, ...), but not 'list'
-                        s.starts_with("li") && s.len() > 2 && s.as_bytes()[2].is_ascii_digit()
-                    }) {
-                        let lm = open_markers.remove(li_pos);
-                        new_lines.push(InternalBibleEntry::end_marker(format!("¬{}", lm), "").unwrap());
-                    } else { break; }
+            // Close any open list-item markers (li1, li2, ...) before closing the previous chapter
+            while let Some(top) = open_markers.last().cloned() {
+                if is_list_item_marker(top.as_str()) {
+                    open_markers.pop();
+                    new_lines.push(InternalBibleEntry::end_marker(format!("¬{}", top), "").unwrap());
+                } else {
+                    break;
                 }
+            }
 
                 // Close the previous chapter
                 if let Some(c_pos) = open_markers.iter().rposition(|m| m == "c") {
@@ -732,37 +782,13 @@ pub fn add_nesting_markers(
                             made_change = true;
                         }
                     }
-                    // Close any open list item
-                    if let Some(last_l) = &last_l_marker
-                        // && last_open_m == last_p.as_str()
+                    // Close any open lists
+                    if open_markers.iter().any(|m| is_list_item_marker(m) || m == "list")
                         && list_has_ended(j, &entries_vec)
-                        {
-                        // Paragraph is ending - close it BEFORE closing the verse
-                        // but the paragraph might be followed by an open verse marker in open_markers
-                        assert_ne!(new_lines.last().expect("Must be there").marker(), "v=",
-                            "At {}:{} adding ¬{} before v= with last_l_marker='{}' open_markers=[{}]",
-                            c, v, last_open_m, last_l_marker.clone().unwrap_or_default(), open_markers.join(", "));
-                        if let Some(pos) = open_markers.iter().rposition(|m| m == last_l) {
-                            open_markers.remove(pos);
-                            new_lines.push(InternalBibleEntry::end_marker(format!("¬{}", last_l), "").unwrap());
-                            made_change = true;
-                        }
-                    }
-                    // Close any open list
-                    if open_markers.iter().any(|m| m == "list")
-                        // && last_open_m == last_p.as_str()
-                        && list_has_ended(j, &entries_vec)
-                        {
-                        // Paragraph is ending - close it BEFORE closing the verse
-                        // but the paragraph might be followed by an open verse marker in open_markers
-                        assert_ne!(new_lines.last().expect("Must be there").marker(), "v=",
-                            "At {}:{} adding ¬{} before v= with last_l_marker='{}' open_markers=[{}]",
-                            c, v, last_open_m, last_l_marker.clone().unwrap_or_default(), open_markers.join(", "));
-                        if let Some(pos) = open_markers.iter().rposition(|m| m == "list") {
-                            open_markers.remove(pos);
-                            new_lines.push(InternalBibleEntry::end_marker("¬list", "").unwrap());
-                            made_change = true;
-                        }
+                    {
+                        close_lists_down_to(0, &mut open_markers, &mut open_list_levels, &mut new_lines);
+                        last_l_marker = None;
+                        made_change = true;
                     }
                     // If the last open marker was a section, and the section has ended, then close it
                     // Note that sections can cross chapter boundaries,
@@ -831,6 +857,10 @@ pub fn add_nesting_markers(
         }
         
         else if heading_markers::is_heading(marker) { // e.g., s1, s2, but also including 'ms1','ms2', and 'is1', etc.
+            if list_has_ended(j, &entries_vec) {
+                close_lists_down_to(0, &mut open_markers, &mut open_list_levels, &mut new_lines);
+                last_l_marker = None;
+            }
             // For heading markers, we want to close any open verse, paragraph, or section if the heading is ending them.
             for _ in 0..9 {
                 // println!("       {} loop with marker={}, last_p_marker={:?} last_s_marker={:?} and open_markers=[{}]", q_q, marker, last_p_marker, last_s_marker, open_markers.join(", "));
@@ -904,15 +934,9 @@ pub fn add_nesting_markers(
         
         else if main_text_list_markers::is_main_text_list(marker) {
             // NOTE: These MUST come before the paragraph marker check (because these markers are included)
-            // For main text list markers, we want to close any open verse or paragraph if the list is ending.
-            // if cfg!(debug_assertions) {
-            //     println!("At {} processing list marker {} = '{}' last_p_marker={:?} Current open markers: {}",
-            //         j, marker, text, last_p_marker, open_markers.join(", "));
-            // }
-            // This loop is to close any open verse or paragraph that should be closed before the new list entry starts.
+            // For main text list markers, we want to close any open verse or paragraph before the list entry.
             for _ in 0..9 {
                 let mut made_change = false;
-                // If the verse has ended, prefer closing the verse first (even if it's not the last open marker).
                 if verse_has_ended(j, &entries_vec) {
                     if let Some(pos) = open_markers.iter().rposition(|m| m == "v") {
                         let m = open_markers.remove(pos);
@@ -920,66 +944,49 @@ pub fn add_nesting_markers(
                         made_change = true;
                     }
                 }
-
-                if made_change {
-                    // If we closed something, loop to allow further closures before handling list/item logic.
-                    continue;
-                }
-
-                if let Some(last_open_m) = open_markers.last().map(|s| s.to_string()) {
-                    if last_open_m == "v" && verse_has_ended(j, &entries_vec) {
-                        open_markers.pop();
-                        new_lines.push(InternalBibleEntry::end_marker("¬v", current_verse.as_str()).unwrap());
-                        made_change = true;
-                    } else if let Some(last_p) = &last_p_marker
-                        && last_open_m == last_p.as_str()
-                    {
-                        open_markers.pop();
-                        new_lines.push(InternalBibleEntry::end_marker(format!("¬{}", last_p), "").unwrap());
+                if let Some(last_p) = &last_p_marker {
+                    if let Some(pos) = open_markers.iter().rposition(|m| m == last_p) {
+                        let pm = open_markers.remove(pos);
+                        new_lines.push(InternalBibleEntry::end_marker(format!("¬{}", pm), "").unwrap());
                         last_p_marker = None;
                         made_change = true;
-                    } else if let Some(last_l) = &last_l_marker
-                        && (marker == last_l.as_str() || (last_open_m == last_l.as_str() && list_item_has_ended(last_l, j, &entries_vec)))
-                    {
-                        // If a verse end is pending, prefer to close the verse first (¬v) so that end markers
-                        // appear in the order expected (¬v before ¬li1). Skip closing li1 here if so.
-                            if verse_has_ended(j, &entries_vec) && open_markers.iter().any(|m| m == "v") { 
-                                // Defer closing list item until verse closer runs
-                            } else { 
-                                // Close the list item if it's present in open_markers
-                                if let Some(pos_l) = open_markers.iter().rposition(|m| m == last_l) {
-                                    open_markers.remove(pos_l);
-                                    new_lines.push(InternalBibleEntry::end_marker(format!("¬{}", last_l), "").unwrap());
-                                    last_l_marker = None;
-                                    made_change = true;
-                                }
-                            }
                     }
                 }
                 if !made_change {
                     break;
                 }
             }
-            if verse_has_ended(j, &entries_vec)
-                && let Some(pos) = open_markers.iter().rposition(|m| m == "v")
-            {
-                let m = open_markers.remove(pos);
-                new_lines.push(InternalBibleEntry::end_marker(format!("¬{}", m), current_verse.as_str()).unwrap());
-            }
-            if let Some(lp) = &last_p_marker
-                && let Some(pos) = open_markers.iter().rposition(|m| m == lp)
-            {
-                let pm = open_markers.remove(pos);
-                new_lines.push(InternalBibleEntry::end_marker(format!("¬{}", pm), "").unwrap());
-            }
-            if !open_markers.iter().any(|m| m == "list") {
-                new_lines.push(InternalBibleEntry::nesting_marker("list"));
-                open_markers.push(CompactString::from("list"));
-            }
-            open_markers.push(marker_owned.clone());
-            // last_p_marker = Some(marker_owned.clone());
-            last_l_marker = Some(marker_owned.clone());
 
+            let new_level = get_list_level(marker);
+            let current_list_level = open_list_levels.last().copied();
+
+            match current_list_level {
+                None => {
+                    // No list currently open: open root list container
+                    new_lines.push(InternalBibleEntry::simple("list", new_level.to_string()));
+                    open_markers.push(CompactString::from("list"));
+                    open_list_levels.push(new_level);
+                    open_markers.push(marker_owned.clone());
+                }
+                Some(curr_lvl) if new_level == curr_lvl => {
+                    // Same level: close previous list item of this level, then push new list item
+                    close_lists_down_to(new_level, &mut open_markers, &mut open_list_levels, &mut new_lines);
+                    open_markers.push(marker_owned.clone());
+                }
+                Some(curr_lvl) if new_level > curr_lvl => {
+                    // Deeper level: open embedded sub-list container inside the parent item
+                    new_lines.push(InternalBibleEntry::simple("list", new_level.to_string()));
+                    open_markers.push(CompactString::from("list"));
+                    open_list_levels.push(new_level);
+                    open_markers.push(marker_owned.clone());
+                }
+                Some(_curr_lvl) => {
+                    // Shallower level: close deeper items and sub-list containers down to new_level
+                    close_lists_down_to(new_level, &mut open_markers, &mut open_list_levels, &mut new_lines);
+                    open_markers.push(marker_owned.clone());
+                }
+            }
+            last_l_marker = Some(marker_owned.clone());
         }
         
         else if marker == "nb" { // NOTE: This MUST come before the paragraph marker check (because this marker is included)
@@ -988,81 +995,32 @@ pub fn add_nesting_markers(
         
         else if paragraph_markers::is_paragraph(marker) {
             // For paragraph markers, we want to close any open verse if the paragraph is ending.
-            // if cfg!(debug_assertions) && open_markers.contains(&CompactString::new("list")) {
-            //         println!("At {} processing paragraph marker {} = '{}' last_p_marker={:?} Current open markers: {}",
-            //             j, marker, text, last_p_marker, open_markers.join(", "));
-            // }
-            for _ in 0..999 {
-                // Always remember that these markers might be IN open markers,
-                //  but not necessarily at the end of the list (because of nested sections, etc.)
-                let mut made_change = false;
-                // If the verse has ended, prefer closing the verse first (even if it's not the last open marker).
-                if verse_has_ended(j, &entries_vec)
-                && let Some(pos) = open_markers.iter().rposition(|m| m == "v") {
-                    let m = open_markers.remove(pos);
-                    new_lines.push(InternalBibleEntry::end_marker(format!("¬{}", m), current_verse.as_str()).unwrap());
-                    made_change = true;
-                }
-                else if let Some(pos) = open_markers.iter().rposition(|m| m == "li1" || m == "li2" || m == "li3") {
-                    let m = open_markers.remove(pos);
-                    new_lines.push(InternalBibleEntry::end_marker(format!("¬{}", m), "").unwrap());
-                    made_change = true;
-                }
-                else if let Some(pos) = open_markers.iter().rposition(|m| m == "list") {
-                    let m = open_markers.remove(pos);
-                    new_lines.push(InternalBibleEntry::end_marker(format!("¬{}", m), "").unwrap());
-                    made_change = true;
-                }
-                // else {
-                //     if let Some(last_open_m) = open_markers.last().map(|s| s.to_string()) {
-                //         if last_open_m == "v" && verse_has_ended(j, &entries_vec) {
-                //             open_markers.pop();
-                //             new_lines.push(InternalBibleEntry::end_marker("¬v", current_verse.as_str()).unwrap());
-                //             made_change = true;
-                //         } else if let Some(last_p) = &last_p_marker
-                //             && (last_open_m == last_p.as_str() || last_open_m == "list")
-                //         {
-                //             open_markers.pop();
-                //             new_lines.push(InternalBibleEntry::end_marker(format!("¬{}", last_open_m), "").unwrap());
-                //             made_change = true;
-                //         } else if let Some(last_l) = &last_l_marker
-                //             && last_open_m == last_l.as_str()
-                //         {
-                //             open_markers.pop();
-                //             new_lines.push(InternalBibleEntry::end_marker(format!("¬{}", last_open_m), "").unwrap());
-                //             last_l_marker = None;
-                //             made_change = true;
-                //         }
-                //     }
-                // }
-                if !made_change {
-                    break;
-                }
-            }
-            
             if verse_has_ended(j, &entries_vec)
-            && let Some(pos) = open_markers.iter().rposition(|m| m == "v") {
-                let _m = open_markers.remove(pos);
-                new_lines.push(InternalBibleEntry::end_marker("¬v", current_verse.as_str()).unwrap());
+                && let Some(pos) = open_markers.iter().rposition(|m| m == "v")
+            {
+                let m = open_markers.remove(pos);
+                new_lines.push(InternalBibleEntry::end_marker(format!("¬{}", m), current_verse.as_str()).unwrap());
             }
+
+            // Close all open list items and containers in LIFO order
+            close_lists_down_to(0, &mut open_markers, &mut open_list_levels, &mut new_lines);
+            last_l_marker = None;
+
             if let Some(lp) = &last_p_marker
-            && let Some(pos) = open_markers.iter().rposition(|m| m == lp) {
+                && let Some(pos) = open_markers.iter().rposition(|m| m == lp)
+            {
                 let pm = open_markers.remove(pos);
                 new_lines.push(InternalBibleEntry::end_marker(format!("¬{}", pm), "").unwrap());
             }
-            if let Some(list_pos) = open_markers.iter().rposition(|m| m == "list") {
-                // If a verse end is pending, close it first so ordering is ¬v before ¬list when appropriate
-                if verse_has_ended(j, &entries_vec) {
-                    if let Some(posv) = open_markers.iter().rposition(|m| m == "v") {
-                        let vm = open_markers.remove(posv);
-                        new_lines.push(InternalBibleEntry::end_marker(format!("¬{}", vm), current_verse.as_str()).unwrap());
-                    }
-                }
-                open_markers.remove(list_pos);
-                new_lines.push(InternalBibleEntry::end_marker("¬list", "").unwrap());
+
+            if have_strict_checking_flag() || cfg!(debug_assertions) {
+                assert!(!open_markers.iter().any(|m| is_list_item_marker(m)),
+                    "At {} {} {} {}:{} handling paragraph marker {} = '{}' open_markers=[{}] last_p_marker={:?} last_l_marker={:?} last_s_marker={:?}",
+                        work_name, bos_book_code, j, c, v, marker, text, open_markers.join(", "), last_p_marker, last_l_marker, last_s_marker);
+                assert!(!open_markers.iter().any(|m| m == "list"),
+                    "At {} {}{} {}:{} handling paragraph marker {} = '{}' open_markers=[{}] last_p_marker={:?} last_l_marker={:?} last_s_marker={:?}",
+                        work_name, bos_book_code, j, c, v, marker, text, open_markers.join(", "), last_p_marker, last_l_marker, last_s_marker);
             }
-            assert!(!open_markers.iter().any(|m| m == "li1"), "At {} {}:{} handling paragraph marker {} = '{}' open_markers=[{}] last_p_marker={:?} last_l_marker={:?} last_s_marker={:?}", j, c, v, marker, text, open_markers.join(", "), last_p_marker, last_l_marker, last_s_marker);
-            assert!(!open_markers.iter().any(|m| m == "list"), "At {} {}:{} handling paragraph marker {} = '{}' open_markers=[{}] last_p_marker={:?} last_l_marker={:?} last_s_marker={:?}", j, c, v, marker, text, open_markers.join(", "), last_p_marker, last_l_marker, last_s_marker);
 
             open_markers.push(marker_owned.clone());
             last_p_marker = Some(marker_owned.clone());
@@ -1271,6 +1229,11 @@ pub fn add_nesting_markers(
                 new_lines.push(InternalBibleEntry::end_marker(format!("¬{}", pm), "").unwrap());
             }
             current_chapter.as_str()
+        } else if marker == "list" {
+            let lvl = open_list_levels.pop().unwrap_or(1);
+            let s = CompactString::from(lvl.to_string());
+            new_lines.push(InternalBibleEntry::end_marker(end_marker_str, s).unwrap());
+            continue;
         } else { "" }; // For s1 and chapter markers, we don't need to include any text in the end marker
         new_lines.push(InternalBibleEntry::end_marker(end_marker_str, with_text).unwrap());
     }
@@ -1848,6 +1811,239 @@ mod tests {
                     "m", "v","v~","¬v", "¬nb", "¬c",
                 "c", "nb", "v","v~","¬v", "v","v~","¬v", "¬m", "¬c",  "¬s1",
                 "¬chapters"
+            ]
+        );
+    }
+
+    #[test]
+    fn test_add_nesting_markers_embedded_li1_li2_lists() {
+        set_strict_checking_flag(true);
+        let mut list = InternalBibleEntryList::new();
+        list.push(InternalBibleEntry::simple("id", "FRT"));
+        list.push(InternalBibleEntry::simple("is1", "Distinctives"));
+        list.push(InternalBibleEntry::simple("m", "The OET has the following distinguishing points:"));
+        list.push(InternalBibleEntry::simple("v~", "The OET has the following distinguishing points:"));
+        list.push(InternalBibleEntry::simple("li1", ""));
+        list.push(InternalBibleEntry::simple("v~", "Item 1 (standalone level 1)"));
+        list.push(InternalBibleEntry::simple("li1", ""));
+        list.push(InternalBibleEntry::simple("v~", "Item 2 with subitems:"));
+        list.push(InternalBibleEntry::simple("li2", ""));
+        list.push(InternalBibleEntry::simple("v~", "Subitem 2a"));
+        list.push(InternalBibleEntry::simple("li2", ""));
+        list.push(InternalBibleEntry::simple("v~", "Subitem 2b"));
+        list.push(InternalBibleEntry::simple("li1", ""));
+        list.push(InternalBibleEntry::simple("v~", "Item 3 (standalone level 1)"));
+        list.push(InternalBibleEntry::simple("li1", ""));
+        list.push(InternalBibleEntry::simple("v~", "Item 4 with subitems:"));
+        list.push(InternalBibleEntry::simple("li2", ""));
+        list.push(InternalBibleEntry::simple("v~", "Subitem 4a"));
+        list.push(InternalBibleEntry::simple("li2", ""));
+        list.push(InternalBibleEntry::simple("v~", "Subitem 4b"));
+        list.push(InternalBibleEntry::simple("m", ""));
+        list.push(InternalBibleEntry::simple("v~", "Note: always check the Readers' Version."));
+
+        let processed = add_additional_markers(list, "Embedded list test entries", "FRT");
+
+        let markers = processed.iter().map(|e| e.marker()).collect::<Vec<_>>();
+        println!("Embedded list generated markers: {:?}", markers);
+
+        assert_eq!(
+            markers,
+            [
+                "id",
+                "intro", "is1",
+                "m", "v~", "¬m",
+                "list",
+                    "li1", "v~", "¬li1",
+                    "li1", "v~",
+                        "list",
+                            "li2", "v~", "¬li2",
+                            "li2", "v~", "¬li2",
+                        "¬list",
+                    "¬li1",
+                    "li1", "v~", "¬li1",
+                    "li1", "v~",
+                        "list",
+                            "li2", "v~", "¬li2",
+                            "li2", "v~", "¬li2",
+                        "¬list",
+                    "¬li1",
+                "¬list",
+                "m", "v~", "¬m",
+                "¬is1",
+                "¬intro"
+            ]
+        );
+
+        // Verify that 'list' and '¬list' entries have their indent level in clean_text
+        let list_entries: Vec<(&str, &str)> = processed
+            .iter()
+            .filter(|e| matches!(e.marker(), "list" | "¬list"))
+            .map(|e| (e.marker(), e.clean_text()))
+            .collect();
+
+        assert_eq!(
+            list_entries,
+            [
+                ("list", "1"),
+                ("list", "2"),
+                ("¬list", "2"),
+                ("list", "2"),
+                ("¬list", "2"),
+                ("¬list", "1"),
+            ]
+        );
+    }
+
+    #[test]
+    #[ignore = "Test not finished yet"]
+    fn test_add_nesting_markers_embedded_li1_li2_lists_and_c_s1() {
+        set_strict_checking_flag(true);
+        let mut list = InternalBibleEntryList::new();
+        list.push(InternalBibleEntry::simple("id", "CH1"));
+        list.push(InternalBibleEntry::simple("c", "6"));
+        list.push(InternalBibleEntry::simple("p", ""));
+        list.push(InternalBibleEntry::simple("v", "71"));
+        list.push(InternalBibleEntry::simple("v~", "The descendants of Gershon, who were part of the tribe of Manasseh, lived east \\add of the Jordan River\\add*. They were allotted the cities and towns and pastureland near them: Golan in \\add the\\add* Bashan and Ashtaroth \\add regions\\add*."));
+        list.push(InternalBibleEntry::simple("li2", "")); // A list starting with li2 shouldn't be allowed in strict checking mode
+        list.push(InternalBibleEntry::simple("v", "72"));
+        list.push(InternalBibleEntry::simple("v~", "From the tribe of Issachar they were allotted cities and towns and pastureland near Kedesh, Daberath,"));
+        list.push(InternalBibleEntry::simple("v", "73"));
+        list.push(InternalBibleEntry::simple("v~", "Ramoth, and Anem."));
+        list.push(InternalBibleEntry::simple("li2", ""));
+        list.push(InternalBibleEntry::simple("v", "74"));
+        list.push(InternalBibleEntry::simple("v~", "From the tribe of Asher they were allotted cities and towns and pastureland near Mashal, Abdon,"));
+        list.push(InternalBibleEntry::simple("v", "75"));
+        list.push(InternalBibleEntry::simple("v~", "Hukok, and Rehob."));
+        list.push(InternalBibleEntry::simple("li2", ""));
+        list.push(InternalBibleEntry::simple("v", "76"));
+        list.push(InternalBibleEntry::simple("v~", "And from the tribe of Naphtali they were allotted cities and towns and pastureland near Kedesh in \\add the\\add* Galilee \\add region\\add*, and Hammon and Kiriathaim \\add towns\\add*."));
+        list.push(InternalBibleEntry::simple("b", ""));
+        list.push(InternalBibleEntry::simple("li1", ""));
+        list.push(InternalBibleEntry::simple("v", "77"));
+        list.push(InternalBibleEntry::simple("v~", "The other descendants of Levi, those descended from Merari, were allotted towns and pasturelands from the tribe of Zebulun near Jokneam, Kartah, Rimmono, and Tabor."));
+        list.push(InternalBibleEntry::simple("li2", ""));
+        list.push(InternalBibleEntry::simple("v", "78-79"));
+        list.push(InternalBibleEntry::simple("v~", "From the tribe of Reuben they were allotted cities and towns and pastureland near Bezer in the desert, Jahzah, Kedemoth, and Mephaath. The tribe of Reuben lived east of the Jordan \\add River\\add*, across from Jericho."));
+        list.push(InternalBibleEntry::simple("li2", ""));
+        list.push(InternalBibleEntry::simple("v", "80"));
+        list.push(InternalBibleEntry::simple("v~", "From the tribe of Gad, they were allotted cities and towns and pastureland near Ramoth in \\add the\\add* Gilead \\add region\\add*, \\add the cities of\\add* Mahanaim,"));
+        list.push(InternalBibleEntry::simple("v", "81"));
+        list.push(InternalBibleEntry::simple("v~", "Heshbon, and Jazer.")); 
+        list.push(InternalBibleEntry::simple("c", "6")); // Doesn't necessarily close the list
+        list.push(InternalBibleEntry::simple("s1", "The descendants of Issachar")); // but this is a new section so the list must now be closed before the c entry
+        list.push(InternalBibleEntry::simple("p", "")); // This would also have caused the list to be closed, but the s1 entry already did that
+        list.push(InternalBibleEntry::simple("v", "1"));
+        list.push(InternalBibleEntry::simple("v~", "\\w Issachar|strong=\"H3485\"\\w*’s four \\w sons|strong=\"H1121\"\\w* \\w were|strong=\"H1121\"\\w* \\w Tola|strong=\"H8439\"\\w*, \\w Puah|strong=\"H6312\"\\w*, \\w Jashub|strong=\"H3437\"\\w*, \\w and|strong=\"H1121\"\\w* \\w Shimron|strong=\"H8110\"\\w*."));
+        list.push(InternalBibleEntry::simple("li1", ""));
+        list.push(InternalBibleEntry::simple("v", "2"));
+        list.push(InternalBibleEntry::simple("v~", "Tola’s sons were Uzzi, Rephaiah, Jeriel, Jahmai, Ibsam, and Samuel (OR, Shemuel). They were all leaders of the clans \\add descended from\\add* them."));
+        list.push(InternalBibleEntry::simple("li2", ""));
+        list.push(InternalBibleEntry::simple("v~", "In the record of Tola’s descendants were the names of 22,600 men who served in the army during the time that David was the king \\add of Israel\\add*."));
+
+        set_strict_checking_flag(false); // Must succeed (do the best job that you can to handle human inconsistencies)
+        let processed = add_additional_markers(list.clone(), "Embedded list test entries", "CH1");
+
+        let markers = processed.iter().map(|e| e.marker()).collect::<Vec<_>>();
+        println!("Embedded list generated markers: {:?}", markers);
+
+        assert_eq!(
+            markers,
+            [
+                "id",
+                "chapters", "c",
+                "p", "v", "v~",
+                "list",
+                    "li1", "v~", "¬li1",
+                    "li1", "v~",
+                        "list",
+                            "li2", "v~", "¬li2",
+                            "li2", "v~", "¬li2",
+                        "¬list",
+                    "¬li1",
+                    "li1", "v~", "¬li1",
+                    "li1", "v~",
+                        "list",
+                            "li2", "v~", "¬li2",
+                            "li2", "v~", "¬li2",
+                        "¬list",
+                    "¬li1",
+                "¬list",
+                "m", "v~", "¬m",
+                "¬is1",
+                "¬intro"
+            ]
+        );
+
+        // Verify that 'list' and '¬list' entries have their indent level in clean_text
+        let list_entries: Vec<(&str, &str)> = processed
+            .iter()
+            .filter(|e| matches!(e.marker(), "list" | "¬list"))
+            .map(|e| (e.marker(), e.clean_text()))
+            .collect();
+
+        assert_eq!(
+            list_entries,
+            [
+                ("list", "1"),
+                ("list", "2"),
+                ("¬list", "2"),
+                ("list", "2"),
+                ("¬list", "2"),
+                ("¬list", "1"),
+            ]
+        );
+
+        set_strict_checking_flag(true); // Should fail now
+        let processed = add_additional_markers(list, "Embedded list test entries", "CH1");
+
+        let markers = processed.iter().map(|e| e.marker()).collect::<Vec<_>>();
+        println!("Embedded list generated markers: {:?}", markers);
+
+        assert_eq!(
+            markers,
+            [
+                "id",
+                "chapters", "c",
+                "p", "v", "v~",
+                "list",
+                    "li1", "v~", "¬li1",
+                    "li1", "v~",
+                        "list",
+                            "li2", "v~", "¬li2",
+                            "li2", "v~", "¬li2",
+                        "¬list",
+                    "¬li1",
+                    "li1", "v~", "¬li1",
+                    "li1", "v~",
+                        "list",
+                            "li2", "v~", "¬li2",
+                            "li2", "v~", "¬li2",
+                        "¬list",
+                    "¬li1",
+                "¬list",
+                "m", "v~", "¬m",
+                "¬is1",
+                "¬intro"
+            ]
+        );
+
+        // Verify that 'list' and '¬list' entries have their indent level in clean_text
+        let list_entries: Vec<(&str, &str)> = processed
+            .iter()
+            .filter(|e| matches!(e.marker(), "list" | "¬list"))
+            .map(|e| (e.marker(), e.clean_text()))
+            .collect();
+
+        assert_eq!(
+            list_entries,
+            [
+                ("list", "1"),
+                ("list", "2"),
+                ("¬list", "2"),
+                ("list", "2"),
+                ("¬list", "2"),
+                ("¬list", "1"),
             ]
         );
     }

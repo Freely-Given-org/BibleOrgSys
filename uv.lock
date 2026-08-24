@@ -24,7 +24,7 @@ members = [
 
 [[package]]
 name = "bibleorgsys"
-version = "0.3.5"
+version = "0.3.6"
 source = { editable = "." }
 dependencies = [
     { name = "bibleorgsys-rust", marker = "python_full_version < '3.15'" },
