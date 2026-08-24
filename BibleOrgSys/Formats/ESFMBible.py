@@ -72,16 +72,17 @@ from bible_organisational_system import InternalBibleEntryList, InternalBibleEnt
 from BibleOrgSys.Bible import Bible
 
 
-LAST_MODIFIED_DATE = '2026-04-12' # by RJH
+LAST_MODIFIED_DATE = '2026-07-25' # by RJH
 SHORT_PROGRAM_NAME = "ESFMBible"
 PROGRAM_NAME = "ESFM Bible handler"
-PROGRAM_VERSION = '0.77'
+PROGRAM_VERSION = '0.78'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
 
 
-filenameEndingsToAccept = ('.ESFM',) # Must be UPPERCASE here
+FILENAME_ENDINGS_TO_ACCEPT = ('.ESFM',) # Must be UPPERCASE here
+ESFM_WORD_NUMBER_REGEX = re.compile( '¦[1-9][0-9]{0,5}' ) # 1..6 digits (not actually used in this module)
 
 
 
@@ -151,7 +152,7 @@ def ESFMBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=Fa
     filenameTuples = UFns.getMaximumPossibleFilenameTuples( strictCheck=strictCheck ) # Returns (BBB,filename) 2-tuples
     for BBB,fn in filenameTuples.copy(): # Only accept our specific file extensions
         acceptFlag = False
-        for fna in filenameEndingsToAccept:
+        for fna in FILENAME_ENDINGS_TO_ACCEPT:
             if fn.endswith( fna ): acceptFlag = True
         if not acceptFlag: filenameTuples.remove( (BBB,fn) )
     vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "  Confirmed:", len(filenameTuples), filenameTuples )
@@ -210,7 +211,7 @@ def ESFMBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=Fa
         filenameTuples = UFns.getMaximumPossibleFilenameTuples( strictCheck=strictCheck ) # Returns (BBB,filename) 2-tuples
         for BBB,fn in filenameTuples.copy(): # Only accept our specific file extensions
             acceptFlag = False
-            for fna in filenameEndingsToAccept:
+            for fna in FILENAME_ENDINGS_TO_ACCEPT:
                 if fn.endswith( fna ): acceptFlag = True
             if not acceptFlag: filenameTuples.remove( (BBB,fn) )
         vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "  Confirmed:", len(filenameTuples), filenameTuples )
@@ -298,7 +299,7 @@ class ESFMBible( Bible ):
                 try:
                     # Use head() to only get headers, not the file body
                     response = requests.head( bookUrl, allow_redirects=True, timeout=5 )
-                    
+
                     if response.status_code == 200:
                         # print( f"  {self.abbreviation} {BBB} file exists.")
                         self.maximumPossibleFilenameTuples.append( (BBB,bookFilename) )
@@ -679,7 +680,7 @@ class ESFMBible( Bible ):
             print( f"lookForAuxiliaryFilenames {self.abbreviation} {self.ESFMWorkData=}" )
             print( f"lookForAuxiliaryFilenames {self.abbreviation} {self.ESFMFileData=}" )
             print( f"lookForAuxiliaryFilenames {self.abbreviation} {self.ESFMWordTables=}" )
-        assert len(self.ESFMWordTables) <= 2, f"Too many ESFM word tables: ({len(self.ESFMWordTables)}) {self.ESFMWordTables.keys()=}" # OT and NT 
+        assert len(self.ESFMWordTables) <= 2, f"Too many ESFM word tables: ({len(self.ESFMWordTables)}) {self.ESFMWordTables.keys()=}" # OT and NT
     # end of ESFMBible.lookForAuxiliaryFilenames
 
 

@@ -1,6 +1,6 @@
 [project]
 name = "bibleorgsys"
-version = "0.3.5"
+version = "0.3.6"
 description = "Bible Organisational System — load, check, and/or export Bible files/folders"
 readme = "README.md"
 requires-python = ">=3.12"
@@ -20,7 +20,7 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 dependencies = [
-    "bibleorgsys-rust>=0.3.5",
+    "bibleorgsys-rust>=0.3.6",
     "bos_books_codes_py>=0.6.3",
     "usfm_markers_py>=0.3.0",
     "requests>=2.34.2",

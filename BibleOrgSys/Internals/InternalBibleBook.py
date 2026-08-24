@@ -85,10 +85,10 @@ from usfm_markers_py import to_standard_marker, get_newline_markers_list, is_new
                             USFM_BIBLE_PARAGRAPH_MARKERS, USFM_ALL_BIBLE_PARAGRAPH_MARKERS, USFM_ALL_MARKERS
 
 
-LAST_MODIFIED_DATE = '2026-06-20' # by RJH
+LAST_MODIFIED_DATE = '2026-07-13' # by RJH
 SHORT_PROGRAM_NAME = "InternalBibleBook"
 PROGRAM_NAME = "Internal Bible book handler"
-PROGRAM_VERSION = '1.0.2'
+PROGRAM_VERSION = '1.0.3'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -1311,7 +1311,7 @@ class InternalBibleBook:
             self.makeBookCVIndex()
 
         vPrint( 'Never', DEBUGGING_THIS_MODULE, f"InternalBibleBook._discover() for {self.BBB} using Rust…" )
-        
+
         rustResults = self._CVIndex.discover()
         bkDict = rustResults.to_dict()
 
@@ -1338,7 +1338,7 @@ class InternalBibleBook:
         addedUnitErrors = rustResults['errors']
 
         if addedUnitErrors: self.checkResultsDictionary['Added Unit Errors'] = addedUnitErrors
-        # paragraphReferences is now a list of 3-tuples (chapter, verse, suffix) - convert back if needed, 
+        # paragraphReferences is now a list of 3-tuples (chapter, verse, suffix) - convert back if needed,
         # but the current Python logic seems to handle them fine.
         return paragraphReferences, qReferences, sectionHeadings, sectionReferences, wordsOfJesus
     # end of InternalBibleBook.getAddedUnits
@@ -1537,7 +1537,7 @@ class InternalBibleBook:
         Runs a number of comprehensive checks on the USFM codes in this Bible book.
         """
         from bible_organisational_system import checkBook, CheckOptions, DiscoveryFlags
-        
+
         discoveryFlags = DiscoveryFlags(
             partly_done=discoveryDict.get('partlyDone', False) if discoveryDict else False,
             percentage_progress=discoveryDict.get('percentageProgress', 0.0) if discoveryDict else 0.0,
@@ -1545,7 +1545,7 @@ class InternalBibleBook:
             have_main_headings=discoveryDict.get('haveMainHeadings', False) if discoveryDict else False,
             have_introductory_text=discoveryDict.get('haveIntroductoryText', False) if discoveryDict else False
         )
-        
+
         options = CheckOptions()
         options.check_sfms = True
         options.check_words = True
@@ -1553,43 +1553,43 @@ class InternalBibleBook:
         options.check_introduction = True
         options.check_notes = True
         options.check_speech_marks = True
-        
+
         rustResults = checkBook(self._processedLines, self.BBB, self.workName, options, discoveryFlags)
-        
+
         # Process results
         for p, msg, (b, c, v) in rustResults['priority_errors']:
             self.addPriorityError(p, c, v, msg)
-            
+
         if rustResults['newline_marker_errors']:
             if 'Newline Marker Errors' not in self.checkResultsDictionary:
                 self.checkResultsDictionary['Newline Marker Errors'] = []
             self.checkResultsDictionary['Newline Marker Errors'].extend(rustResults['newline_marker_errors'])
-            
+
         if rustResults['internal_marker_errors']:
             if 'Internal Marker Errors' not in self.checkResultsDictionary:
                 self.checkResultsDictionary['Internal Marker Errors'] = []
             self.checkResultsDictionary['Internal Marker Errors'].extend(rustResults['internal_marker_errors'])
-            
+
         if rustResults['speech_mark_errors']:
             if 'Speech Mark Errors' not in self.checkResultsDictionary:
                 self.checkResultsDictionary['Speech Mark Errors'] = []
             self.checkResultsDictionary['Speech Mark Errors'].extend(rustResults['speech_mark_errors'])
-            
+
         if rustResults['word_errors']:
             if 'Word Errors' not in self.checkResultsDictionary:
                 self.checkResultsDictionary['Word Errors'] = []
             self.checkResultsDictionary['Word Errors'].extend(rustResults['word_errors'])
-            
+
         if rustResults['heading_errors']:
             if 'Heading Errors' not in self.checkResultsDictionary:
                 self.checkResultsDictionary['Heading Errors'] = []
             self.checkResultsDictionary['Heading Errors'].extend(rustResults['heading_errors'])
-            
+
         if rustResults['introduction_errors']:
             if 'Introduction Errors' not in self.checkResultsDictionary:
                 self.checkResultsDictionary['Introduction Errors'] = []
             self.checkResultsDictionary['Introduction Errors'].extend(rustResults['introduction_errors'])
-            
+
         if rustResults['note_marker_errors']:
             if 'Note Marker Errors' not in self.checkResultsDictionary:
                 self.checkResultsDictionary['Note Marker Errors'] = []
@@ -1599,36 +1599,36 @@ class InternalBibleBook:
             if 'USFMs' not in self.checkResultsDictionary: self.checkResultsDictionary['USFMs'] = {}
             self.checkResultsDictionary['USFMs']['All Newline Marker Counts'] = rustResults['newline_marker_counts']
             self.checkResultsDictionary['USFMs']['All Newline Marker Counts']['Total'] = sum(rustResults['newline_marker_counts'].values())
-            
+
         if rustResults['internal_marker_counts']:
             if 'USFMs' not in self.checkResultsDictionary: self.checkResultsDictionary['USFMs'] = {}
             self.checkResultsDictionary['USFMs']['All Text Internal Marker Counts'] = rustResults['internal_marker_counts']
             self.checkResultsDictionary['USFMs']['All Text Internal Marker Counts']['Total'] = sum(rustResults['internal_marker_counts'].values())
-            
+
         if rustResults['note_marker_counts']:
             if 'USFMs' not in self.checkResultsDictionary: self.checkResultsDictionary['USFMs'] = {}
             self.checkResultsDictionary['USFMs']['All Footnote and Cross-Reference Internal Marker Counts'] = rustResults['note_marker_counts']
             self.checkResultsDictionary['USFMs']['All Footnote and Cross-Reference Internal Marker Counts']['Total'] = sum(rustResults['note_marker_counts'].values())
-            
+
         if rustResults['functional_counts']:
             if 'USFMs' not in self.checkResultsDictionary: self.checkResultsDictionary['USFMs'] = {}
             self.checkResultsDictionary['USFMs']['Functional Marker Counts'] = rustResults['functional_counts']
 
     def doCheckCharacters( self, discoveryDict=None ) -> None:
         pass # Consolidated into doCheckSFMs
-        
+
     def doCheckSpeechMarks( self ) -> None:
         pass # Consolidated into doCheckSFMs
-        
+
     def doCheckWords( self, discoveryDict=None ) -> None:
         pass # Consolidated into doCheckSFMs
-        
+
     def doCheckHeadings( self, discoveryDict ) -> None:
         pass # Consolidated into doCheckSFMs
-        
+
     def doCheckIntroduction( self ) -> None:
         pass # Consolidated into doCheckSFMs
-        
+
     def doCheckNotes( self, discoveryDict ) -> None:
         pass # Consolidated into doCheckSFMs
 
@@ -1726,7 +1726,7 @@ class InternalBibleBook:
         If complete flag is set, try to find every reference with that verse.
         """
         fnPrint( DEBUGGING_THIS_MODULE, f"InternalBibleBook.getContextVerseData( {BCVReference} ) for {self.workName} {self.BBB}" )
-        assert self.BBB == BCVReference[0] if isinstance( BCVReference, tuple ) else BCVReference.getBBB()
+        assert self.BBB == BCVReference[0] if isinstance( BCVReference, tuple ) else BCVReference.getBBB() if isinstance( BCVReference, SimpleVerseKey ) else BCVReference.split('_',1)[0] # Assume it's a string
 
         if not self._processedFlag:
             vPrint( 'Info', DEBUGGING_THIS_MODULE, f"InternalBibleBook '{self.workName}' {self.BBB}: processing lines called from 'getContextVerseData'" )
@@ -1749,8 +1749,10 @@ class InternalBibleBook:
             C, V = BCVReference[1], BCVReference[2]
             # We ignore the 4th (suffix) field if it's present
             if BibleOrgSysGlobals.strictCheckingFlag: assert len(BCVReference)==3 or not BCVReference[3], f"{BCVReference=}"
-        else: # assume it's a SimpleVerseKey or similar
+        elif isinstance( BCVReference, SimpleVerseKey ):
             C,V = BCVReference.getCV()
+        else: # assume it's a string
+            C,V = BCVReference.split('_',1)[1].split(':')
         # try:
         verseEntryList, contextList = self._CVIndex.getVerseEntriesWithContext( (C,V), strict, complete ) # Gives a KeyError if not found
         assert isinstance( verseEntryList, InternalBibleEntryList )
