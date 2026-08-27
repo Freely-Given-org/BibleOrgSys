@@ -32,6 +32,7 @@ CHANGELOG:
     2025-06-24 Improved some error handling for invalid markers
     2026-07-02 Try to make uW handling more robust
     2026-08-07 Try to make uW handling more robust again
+    2026-08-25 Handle special cases for T4T
 """
 from typing import Any
 import os
@@ -45,10 +46,10 @@ from BibleOrgSys.Bible import Bible, BibleBook
 import usfm_markers_py
 
 
-LAST_MODIFIED_DATE = '2026-08-07' # by RJH
+LAST_MODIFIED_DATE = '2026-08-25' # by RJH
 SHORT_PROGRAM_NAME = "USFMBibleBook"
 PROGRAM_NAME = "USFM Bible book handler"
-PROGRAM_VERSION = '0.69'
+PROGRAM_VERSION = '0.70'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -120,13 +121,15 @@ class USFMBibleBook( BibleBook ):
             if marker.startswith('zaln-e'): print( f"{self.workName} {self.BBB} {C}:{V} {marker=} shouldn't begin a line" ); ALWAYS_STOP
             if self.workName in ('ULT','UST'): # Try to fix some common inconsistencies
                 # Move closing punctuation outside closing alignment markers (there can be many in a row)
-                while '.\zaln-e\*' in text: text = text.replace( '.\zaln-e\*', '\zaln-e\*.' )
-                while ',\zaln-e\*' in text: text = text.replace( ',\zaln-e\*', '\zaln-e\*,' )
+                while '.\\zaln-e\\*' in text: text = text.replace( '.\\zaln-e\\*', '\\zaln-e\\*.' )
+                while ',\\zaln-e\\*' in text: text = text.replace( ',\\zaln-e\\*', '\\zaln-e\\*,' )
                 # unfoldingWord uses braces to indicate added text
                 # but they often open and close on different lines so try to automagically fix that
                 if text.count('{') > text.count('}'): text = f'{text}\\add*'
                 elif text.count('}') > text.count('{'): text = f'\\add {text}'
                 text = text.replace( '{', '\\add ' ).replace( '}', '\\add*' )
+            elif self.workName == 'T4T':
+                text = text.replace( '<', '◄' ).replace( '>', '►' ) # Not sure why these angle brackets occur occasionally
 
             if '\\' in text: # Check the markers inside the lines (in case they're newLine markers)
                 ix = 0
@@ -386,7 +389,7 @@ class USFMBibleBook( BibleBook ):
                     variables['words'] += text if marker=='INLINE' else f' \\{marker} {text}'
                     #dPrint( 'Quiet', debuggingThisFunction, "words3b", variables['words'] )
                     dPrint( 'Never', debuggingThisFunction, f"{marker}='{text}' GOT2 variables['words']='{variables['words']}'" )
-                    assert variables['words']
+                    assert variables['words'], f"{self.workName} {self.BBB} {C}:{V} has no words variables -- does it have a \\zaln-s line that ends with '\"\\*'???"
                     assert variables['words'].count('\\w ') == variables['words'].count('\\w*')
 
             dPrint( 'Never', debuggingThisFunction, f"handleUWEncoding: Got near end1 with {marker}='{text}'" )

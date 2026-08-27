@@ -67,10 +67,10 @@ from BibleOrgSys.OriginalLanguages import Hebrew, Greek
 import bos_books_codes_py
 
 
-LAST_MODIFIED_DATE = '2026-04-26' # by RJH
+LAST_MODIFIED_DATE = '2026-08-26' # by RJH
 SHORT_PROGRAM_NAME = "CSVBible"
 PROGRAM_NAME = "CSV Bible format handler"
-PROGRAM_VERSION = '0.50'
+PROGRAM_VERSION = '0.51'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -267,6 +267,7 @@ class CSVBible( Bible ):
                             break
                 else: # no files found
                     logging.critical( _(f"CSVBible: Unable to discover a single filename in {self.sourceFolder}") )
+        self.specifiedBooks = None
     # end of CSVBible.__init__
 
 
@@ -836,7 +837,9 @@ class CSVBible( Bible ):
                 C, V = CV.split( ':', 1 )
                 vStr = V # Tells us that we need to print it
                 BBB = bos_books_codes_py.english_name_to_bos_book_code( bookName )
-                # print( f"  {BBB} {C}:{V}")
+                if self.specifiedBooks and BBB not in self.specifiedBooks: continue # Only load the requested books
+
+                # print( f"  {BBB} {C}:{V} with {self.specifiedBooks=}")
                 assert BBB, f"{n} {row[verseIdColumnName]=}"
                 fgRef = f'{BBB}_{C}:{V}'
                 if fgRef == 'MAT_1:1': wordBSBOffset = 0 # Special case for start of NT
@@ -1251,7 +1254,7 @@ class CSVBible( Bible ):
     # end of CSVBible.load
 
 
-    def loadBooks( self ):
+    def _loadBooks( self ):
         """
         Assumes self.sourceFilepath is not set
             (If not, use load() instead.)
@@ -1285,7 +1288,32 @@ class CSVBible( Bible ):
                 self.stashBook( tempBookStore[BBB] )
 
         self.doPostLoadProcessing()
+    # end of VPLBible._loadBooks
+
+
+    def loadBooks( self ):
+        """
+        Assumes self.sourceFilepath is not set
+            (If not, use load() instead.)
+
+        Finds and loads multiple source files and load book elements.
+        """
+        self.specifiedBooks = None
+        return self._loadBooks()
     # end of VPLBible.loadBooks
+
+
+    def loadSpecifiedBooks( self, desiredBookList ):
+        """
+        Assumes self.sourceFilepath is not set
+            (If not, use load() instead.)
+
+        Finds and loads multiple source files and load book elements.
+        """
+        assert desiredBookList
+        self.specifiedBooks = desiredBookList
+        return self._loadBooks()
+    # end of VPLBible.loadSpecifiedBooks
 # end of CSVBible class
 
 

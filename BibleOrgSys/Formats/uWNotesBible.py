@@ -43,6 +43,7 @@ CHANGELOG:
     2025-01-06 Try to handle some common editing errors present in uW TN files
     2025-01-13 Try to handle some more editing errors and inconsistencies present in uW TN files
     2026-05-20 Better handling of escaped square brackets
+    2026-08-26 Proper handling of escaped Unicode \\uxxxx characters in UTN note fields in the TSV
 """
 from typing import Any
 import os
@@ -56,10 +57,10 @@ from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Bible import Bible, BibleBook
 
 
-LAST_MODIFIED_DATE = '2026-05-20' # by RJH
+LAST_MODIFIED_DATE = '2026-08-26' # by RJH
 SHORT_PROGRAM_NAME = "uWNotesBible"
 PROGRAM_NAME = "unfoldingWord Bible Notes handler"
-PROGRAM_VERSION = '0.20'
+PROGRAM_VERSION = '0.21'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -686,6 +687,7 @@ class uWNotesBibleBook( BibleBook ):
             #     if ix != 0: # We must have separated multiple lines
             #         text = text[ix:] # Get the final bit of the line
             # self.addLine( marker, text ) # Call the function in the base class to save the line (or the remainder of the line if we split it above)
+            assert '\\u' not in adjusted_text, f"{originalMarker} {adjusted_text=}"
 
             self.addLine( originalMarker, adjusted_text ) # Call the function in the base class to save the line (or the remainder of the line if we split it above)
         # end of doAddLine
@@ -694,6 +696,7 @@ class uWNotesBibleBook( BibleBook ):
         fixErrors:list[str] = []
         lineCount = 0
         lastC, lastV = '-1', '0'
+        # with open( self.filepath, 'rt', encoding='unicode_escape' ) as myFile: # Automatically closes the file when done XXX messes up '\t's
         with open( self.filepath, 'rt', encoding='utf-8' ) as myFile: # Automatically closes the file when done
             for line in myFile:
                 line = line.rstrip( '\n\r' )
@@ -708,6 +711,7 @@ class uWNotesBibleBook( BibleBook ):
                     if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
                         assert line == 'Reference\tID\tTags\tSupportReference\tQuote\tOccurrence\tNote'
                     continue
+
                 # No, we have to leave the TSV escaped characters in there until later
                 # line = line.replace( '\\n', '\n' ).replace( '\\\\', '\\' ) # TSV escaped characters that could be in there
                 fields = line.split( '\t' )
@@ -717,6 +721,9 @@ class uWNotesBibleBook( BibleBook ):
                 if not ref:
                     logging.critical( f"Missing uW TN field {self.BBB} {ref=} {fieldID} {tags=} {supportReference} {quote} {occurrence} {note}" )
                     continue # ignore this (invalid) note
+                if '\\u' in note: # e.g. \\u2013 = en-dash
+                    note = note.encode('utf-8').decode('unicode_escape')
+                    assert '\\u' not in note
                 # Handle some common uW errors
                 if '–' in ref or '—' in ref: # endash or emdash
                     logging.critical( f"Bad uW TN ref field {self.BBB} {ref=} {fieldID} {tags=} {supportReference} {quote} {occurrence} {note}" )

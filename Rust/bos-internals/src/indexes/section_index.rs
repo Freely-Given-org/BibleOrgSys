@@ -517,6 +517,14 @@ impl InternalBibleBookSectionIndex {
                         println!("    build {} {} section index at {} {}:{} has c followed by '{}' so need to start new index entry here",
                             self.work_name(), self.bos_book_code(), i, current_chapter_num_str, current_verse_num_str, next_relevant_marker);
                     }
+                    // New section starts at or just before this chapter marker
+                    let mut start_idx = i;
+                    for subber in 1..=(4.min(i as usize)) { // Look at what's just behind (e.g., a chapter label that precedes its \cl-less \c)
+                        if ["cl"].contains(&self.line_entries.get(i-subber).unwrap().marker()) {
+                            start_idx = i - subber;
+                            break;
+                        }
+                    }
                     // Close previous section and start new one.
                     if let Some(mut this_pending_section) = pending.take() {
                         if i as u32 > this_pending_section.start_index {
@@ -536,6 +544,7 @@ impl InternalBibleBookSectionIndex {
                                 end_idx = end_idx.saturating_sub(1);
                             }
                             if !found_end_marker { end_idx = (i as u32).saturating_sub(1); } // Go back to where we where
+                            if end_idx >= start_idx as u32 { end_idx = (start_idx as u32).saturating_sub(1); } // Don't overlap the section that we're about to start
                             let (cv, entry) = this_pending_section.into_closed(
                                 last_chapter_num_str.as_str(),
                                 last_verse_num_str.as_str(),
@@ -547,14 +556,6 @@ impl InternalBibleBookSectionIndex {
                                 }
                             self.index_data.insert(cv, entry);
                             // context.pop();
-                        }
-                    }
-                    // New section starts at or just before this chapter marker
-                    let mut start_idx = i;
-                    for subber in 1..i { // Look at what's behind
-                        if ["cl"].contains(&self.line_entries.get(i-subber).unwrap().marker()) {
-                            start_idx = i - subber;
-                            break;
                         }
                     }
                     // println!("    build {} {} section index at {} {}:{} has c followed by '{}' so starting new index entry at {}",
@@ -1031,7 +1032,7 @@ impl InternalBibleBookSectionIndex {
                         }
                     }
                 }
-                last_end = index_entry.entry_count();
+                last_end = index_entry.end_index() + 1; // Next section has to start after this one finishes
             }
 
         assert!(have_m1_0 || line_entries.get(0).unwrap().marker()=="chapters", // i.e., no preliminary markers at all!!!
@@ -1721,6 +1722,88 @@ mod tests {
         assert_eq!(sixth_section.1.reason_marker(), "c/s1");
         assert_eq!(sixth_section.1.section_name(), "Psa 3 section heading");
         assert_eq!(sixth_section.1.context(), ["chapters","c"]);
+    }
+
+    fn create_kjb_style_psa_test_entries() -> InternalBibleEntryList {
+        // Mimics KJB-1611 Psalms: each chapter label (\cl) comes AFTER its \c
+        //  (standard USFM position), and there's a stray \cl before the first \c.
+        let mut entries = InternalBibleEntryList::new();
+
+        entries.push(InternalBibleEntry::simple("id", "KJB Test Version")); // 0
+        entries.push(InternalBibleEntry::simple("usfm", "3.0")); // 1
+        entries.push(InternalBibleEntry::simple("h", "Psalmes")); // 2
+        entries.push(InternalBibleEntry::simple("mt1", "THE BOOKE OF PSALMES")); // 3
+        entries.push(InternalBibleEntry::simple("ie", "")); // 4
+        entries.push(InternalBibleEntry::simple("cl", "CHAP.")); // 5
+
+        // Psalm 1
+        entries.push(InternalBibleEntry::simple("c", "1")); // 6
+        entries.push(InternalBibleEntry::simple("cl", "P S A L. I.")); // 7
+        entries.push(InternalBibleEntry::simple("iex", "Arguments of the first psalm.")); // 8
+        entries.push(InternalBibleEntry::simple("v", "1")); // 9
+        entries.push(InternalBibleEntry::simple("v~", "First psalm blessed is the man...")); // 10
+        entries.push(InternalBibleEntry::simple("¬v", "1")); // 11
+        entries.push(InternalBibleEntry::simple("v", "2")); // 12
+        entries.push(InternalBibleEntry::simple("v~", "First psalm but his delight is in the law...")); // 13
+        entries.push(InternalBibleEntry::simple("¬v", "2")); // 14
+
+        // Psalm 2
+        entries.push(InternalBibleEntry::simple("c", "2")); // 15
+        entries.push(InternalBibleEntry::simple("cl", "P S A L. II.")); // 16
+        entries.push(InternalBibleEntry::simple("iex", "Arguments of the second psalm.")); // 17
+        entries.push(InternalBibleEntry::simple("v", "1")); // 18
+        entries.push(InternalBibleEntry::simple("v~", "Second psalm why do the heathen rage...")); // 19
+        entries.push(InternalBibleEntry::simple("¬v", "1")); // 20
+        entries.push(InternalBibleEntry::simple("v", "2")); // 21
+        entries.push(InternalBibleEntry::simple("v~", "Second psalm the kings of the earth...")); // 22
+        entries.push(InternalBibleEntry::simple("¬v", "2")); // 23
+
+        // Psalm 3
+        entries.push(InternalBibleEntry::simple("c", "3")); // 24
+        entries.push(InternalBibleEntry::simple("cl", "P S A L. III.")); // 25
+        entries.push(InternalBibleEntry::simple("iex", "Arguments of the third psalm.")); // 26
+        entries.push(InternalBibleEntry::simple("v", "1")); // 27
+        entries.push(InternalBibleEntry::simple("v~", "Third psalm Lord how are they increased...")); // 28
+        entries.push(InternalBibleEntry::simple("¬v", "1")); // 29
+
+        entries
+    }
+
+    #[test]
+    fn test_chapter_labels_after_c_marker_dont_bleed_previous_section() {
+        // With KJB-1611-style data (each \cl after its \c, plus a stray \cl before
+        //  the first \c), sections starting at a chapter marker used to collect all
+        //  the previous chapter's content because the backwards search for a
+        //  preceding chapter label was unbounded.
+        set_strict_checking_flag( true );
+        let mut section_index = InternalBibleBookSectionIndex::new("KJB", "PSA");
+        section_index.build(create_kjb_style_psa_test_entries()).unwrap();
+        assert!(section_index.is_indexed());
+        assert_eq!(section_index.len(), 4); // Headers + three chapters/psalms
+
+        // Section for Psalm 1 (includes the stray preceding chapter label)
+        let (psa1_entries, _) = section_index.get_section_entries_with_context(&ChapterVerse::new("1", "1")).unwrap();
+        assert_eq!(psa1_entries.first().unwrap().marker(), "cl"); // the stray 'CHAP.' label
+        assert_eq!(psa1_entries.iter().filter(|e| e.marker()=="v").count(), 2);
+        assert!(psa1_entries.iter().all(|e| !e.clean_text().contains("second psalm")));
+
+        // Section for Psalm 2 must NOT contain any of Psalm 1's content
+        let (psa2_entries, _) = section_index.get_section_entries_with_context(&ChapterVerse::new("2", "1")).unwrap();
+        assert_eq!(psa2_entries.first().unwrap().marker(), "c"); // starts at its own chapter marker
+        assert!(psa2_entries.iter().any(|e| e.marker()=="cl" && e.clean_text()=="P S A L. II."));
+        assert!(psa2_entries.iter().all(|e| !e.clean_text().contains("first psalm")));
+        assert_eq!(psa2_entries.iter().filter(|e| e.marker()=="v").count(), 2);
+
+        // Section for Psalm 3 must NOT contain any of Psalm 2's content
+        let (psa3_entries, _) = section_index.get_section_entries_with_context(&ChapterVerse::new("3", "1")).unwrap();
+        assert_eq!(psa3_entries.first().unwrap().marker(), "c");
+        assert!(psa3_entries.iter().any(|e| e.marker()=="cl" && e.clean_text()=="P S A L. III."));
+        assert!(psa3_entries.iter().all(|e| !e.clean_text().contains("second psalm")));
+        assert_eq!(psa3_entries.iter().filter(|e| e.marker()=="v").count(), 1);
+
+        // Same lookups via get_section_entries must agree
+        let psa2_plain = section_index.get_section_entries(&ChapterVerse::new("2", "1")).unwrap();
+        assert_eq!(psa2_plain.len(), psa2_entries.len());
     }
 
     #[test]
