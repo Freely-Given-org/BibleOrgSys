@@ -5,6 +5,13 @@
 //!
 //! The core internals are provided by the `bos-internals` crate.
 
+/// Use a faster/scalable allocator for this cdylib's Rust allocations when the
+/// `allocator-mimalloc` cargo feature is enabled (default: off). This module
+/// holds the bulk of the in-memory Bible data, so its allocator choice matters.
+#[cfg(feature = "allocator-mimalloc")]
+#[global_allocator]
+static GLOBAL: mimalloc::MiMalloc = mimalloc::MiMalloc;
+
 pub mod cv_index_bindings;
 pub mod checking_bindings;
 pub mod discovery_bindings;

@@ -1,6 +1,6 @@
 #!/usr/bin/env -S uv run
 # -\*- coding: utf-8 -\*-
-# SPDX-License-Identifier: GPL-3.0-or-later
+# SPDX-License-Identifier: MPL-2.0
 #
 # singleton.py
 #   Last modified: 2010-12-15

@@ -18,3 +18,8 @@ rayon.workspace = true
 pyo3.workspace = true
 rkyv.workspace = true
 thiserror.workspace = true
+mimalloc = { version = "0.1", optional = true }
+
+[features]
+default = []
+allocator-mimalloc = ["dep:mimalloc"]
