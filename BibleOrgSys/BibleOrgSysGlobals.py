@@ -104,6 +104,13 @@ except ImportError:
 # Rust implementations for better memory usage and speed (drop-in replacements with camelCase API)
 from bible_organisational_system import set_rust_verbosity, set_rust_debug, set_rust_strict_checking
 
+# OBD's own Rust extension keeps a separate copy of the strict-checking static,
+# so it needs its own toggle too (only available where openbibledata_rust is installed).
+try:
+    import openbibledata_rust
+except ImportError: # Not installed (e.g., using BibleOrgSys for non-OBD purposes)
+    openbibledata_rust = None
+
 
 BOOKLIST_OT39 = [ 'GEN', 'EXO', 'LEV', 'NUM', 'DEU', 'JOS', 'JDG', 'RUT', 'SA1', 'SA2', 'KI1', 'KI2', 'CH1', 'CH2', \
         'EZR', 'NEH', 'EST', 'JOB', 'PSA', 'PRO', 'ECC', 'SNG', 'ISA', 'JER', 'LAM', 'EZE', 'DAN', \
@@ -1538,6 +1545,7 @@ def setStrictCheckingFlag( newValue=True ):
     global strictCheckingFlag
     strictCheckingFlag = newValue
     set_rust_strict_checking( strictCheckingFlag )
+    if openbibledata_rust is not None: openbibledata_rust.setStrictCheckingFlag( strictCheckingFlag )
     dPrint( 'Verbose', DEBUGGING_THIS_MODULE, f'  {strictCheckingFlag=}' )
 # end of BibleOrgSysGlobals.setStrictCheckingFlag
 
