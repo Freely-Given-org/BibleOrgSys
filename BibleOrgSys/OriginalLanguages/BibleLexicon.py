@@ -393,6 +393,23 @@ class BibleLexicon:
 # end of BibleLexicon class
 
 
+_SHARED_BIBLE_LEXICON = None # Cached instance for getBibleLexicon()
+
+def getBibleLexicon( HebrewXMLFolder=None, GreekXMLFolder=None ) -> 'BibleLexicon':
+    """
+    Return one shared, lazily-created BibleLexicon object.
+
+    Full lookups load the lexicon XML data lazily, but each instance still
+    discovers/parses what it needs on first use -- using one shared object
+    per process avoids repeated work (important when it is constructed in
+    multiple builders during the same OBD site build).
+    """
+    global _SHARED_BIBLE_LEXICON
+    if _SHARED_BIBLE_LEXICON is None:
+        _SHARED_BIBLE_LEXICON = BibleLexicon( HebrewXMLFolder, GreekXMLFolder )
+    return _SHARED_BIBLE_LEXICON
+# end of BibleLexicon.getBibleLexicon
+
 
 def briefDemo() -> None:
     """
