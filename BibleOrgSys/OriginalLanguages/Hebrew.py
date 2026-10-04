@@ -21,10 +21,10 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2024-05-27' # by RJH
+LAST_MODIFIED_DATE = '2026-10-04' # by RJH
 SHORT_PROGRAM_NAME = "Hebrew"
 PROGRAM_NAME = "Hebrew language handler"
-PROGRAM_VERSION = '0.15'
+PROGRAM_VERSION = '0.16'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -127,6 +127,15 @@ cantillationMarks = ( etnahta, segolAccent, shalshelet, zaqefQatan, zaqefGadol, 
 
 maqaf = '־'
 sofPasuq = '׃'
+
+
+# Prebuilt translation tables for the hot strip methods
+#   (built once at module load; str.translate is a single C-speed pass,
+#    byte-identical to repeated str.replace over the mark characters)
+_CANTILLATION_MARKS_TRANS = str.maketrans( '', '', ''.join( cantillationMarks ) )
+_VOWEL_POINTS_TRANS = str.maketrans( '', '', ''.join( vowelPoints ) )
+_OTHER_MARKS_TRANS = str.maketrans( '', '', ''.join( otherMarks ) )
+_OTHER_MARKS_NO_SINSHIN_TRANS = str.maketrans( '', '', ''.join( m for m in otherMarks if m not in ( sinDot, shinDot ) ) )
 
 
 # These substitutions are executed in the order given
@@ -398,8 +407,7 @@ class Hebrew():
         # else we were given some text to process
         adjustedText = givenText
         if removeMetegOrSiluq: adjustedText = self._removeMetegOrSiluq( adjustedText, asVowel=False )
-        for cantillationMark in cantillationMarks:
-            adjustedText = adjustedText.replace(cantillationMark, '')
+        adjustedText = adjustedText.translate( _CANTILLATION_MARKS_TRANS )
         if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE:
             for char in adjustedText:
                 # print( f"{ord(char)=} {unicodedata.name(char)=} {char=} {unicodedata.category(char)=} {unicodedata.bidirectional(char)=} {unicodedata.combining(char)=} {unicodedata.mirrored(char)=}" )
@@ -415,11 +423,11 @@ class Hebrew():
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"removeVowelPointing( {removeMetegOrSiluq!r}, {text} )" )
 
         if text is None: # Use our own text
-            self.currentText = self.removeVowelPointing( self.currentText ) # recursive call
+            self.currentText = self.removeVowelPointing( self.currentText, removeMetegOrSiluq=removeMetegOrSiluq ) # recursive call
             return self.currentText
         # else we were given some text to process
         if removeMetegOrSiluq: text = self._removeMetegOrSiluq( text, asVowel=True )
-        for vowelPoint in vowelPoints: text = text.replace(vowelPoint, '') # Remove the easy vowel points
+        text = text.translate( _VOWEL_POINTS_TRANS ) # Remove the easy vowel points
         return text
     # end of Hebrew.removeVowelPointing
 
@@ -432,13 +440,11 @@ class Hebrew():
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"removeOtherMarks( {text!r} )" )
 
         if text is None: # Use our own text
-            self.currentText = self.removeOtherMarks( self.currentText ) # recursive call
+            self.currentText = self.removeOtherMarks( self.currentText, removeSinShinDots=removeSinShinDots ) # recursive call
             return self.currentText
         # else we were given some text to process
         text = self.removeAllMetegOrSiluq( text )
-        for otherMark in otherMarks:
-            if removeSinShinDots or otherMark not in (sinDot, shinDot):
-                text = text.replace(otherMark, '')
+        text = text.translate( _OTHER_MARKS_TRANS if removeSinShinDots else _OTHER_MARKS_NO_SINSHIN_TRANS )
         return text
     # end of Hebrew.removeOtherMarks
 

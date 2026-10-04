@@ -17,6 +17,7 @@ Module handling Greek language particularities.
 
 CHANGELOG:
     2024-02-11 Improve assert test for left-over accents
+    2026-10-04 Use str.translate for removeAccents; fixed removeVowelPointing/removeOtherMarks dropping their flags on the no-argument recursive path
 """
 
 import unicodedata
@@ -25,10 +26,10 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2025-12-10' # by RJH
+LAST_MODIFIED_DATE = '2026-10-04' # by RJH
 SHORT_PROGRAM_NAME = "GreekLanguageHandler"
 PROGRAM_NAME = "Greek language handler"
-PROGRAM_VERSION = '0.12'
+PROGRAM_VERSION = '0.13'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -130,6 +131,11 @@ if BibleOrgSysGlobals.debugFlag: # Check that our tables have no obvious errors
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, j, letter )
         assert vowels.count(letter)==1
         assert letter not in normalConsonants
+
+# Prebuilt translation table for the hot removeAccents() method
+#   (built once at module load; str.translate is a single C-speed pass,
+#    byte-identical to the previous per-character dict lookup join)
+_GREEK_ACCENT_TRANS = str.maketrans( GREEK_ACCENT_DICT )
 
 
 # Filenames for morphgnt
@@ -237,8 +243,7 @@ class Greek():
         Doesn't cope with punctuation characters yet.
         """
         if text is None: text = self.currentText
-        resultText = ''.join( GREEK_ACCENT_DICT[someChar] if someChar in GREEK_ACCENT_DICT
-                                        else someChar for someChar in text )
+        resultText = text.translate( _GREEK_ACCENT_TRANS )
         # Check
         for cc,char in enumerate( resultText ):
             if char != ' ':
