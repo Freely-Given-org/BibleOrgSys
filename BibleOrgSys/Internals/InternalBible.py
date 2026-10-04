@@ -240,7 +240,7 @@ class InternalBible:
 
         We need this to standardise all the different Bible types.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"InternalBible.discoverProperties() for {self.objectTypeString}" )
+        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 5: fnPrint( DEBUGGING_THIS_MODULE, f"InternalBible.discoverProperties() for {self.objectTypeString}" )
         InternalBibleProperties[self.objectTypeString] = {}
 
         for myPropertyName in self.__dict__:
@@ -335,7 +335,7 @@ class InternalBible:
 
         Returns a string or None.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"InternalBible.getAName( abbrevFirst={abbrevFirst} )" )
+        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 5: fnPrint( DEBUGGING_THIS_MODULE, f"InternalBible.getAName( abbrevFirst={abbrevFirst} )" )
 
         if abbrevFirst and self.abbreviation: return self.abbreviation
 
@@ -358,7 +358,7 @@ class InternalBible:
             or already failed at loading.
         If not, tries to load the book.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"InternalBible.loadBookIfNecessary( {BBB} )" )
+        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 5: fnPrint( DEBUGGING_THIS_MODULE, f"InternalBible.loadBookIfNecessary( {BBB} )" )
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"b {self.books} tlb {self.triedLoadingBook}" )
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"bnr {self.bookNeedsReloading}" )
 
@@ -392,7 +392,7 @@ class InternalBible:
         """
         Tries to load or reload a book (perhaps because we changed it on disk).
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"InternalBible.reloadBook( {BBB} )" )
+        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 5: fnPrint( DEBUGGING_THIS_MODULE, f"InternalBible.reloadBook( {BBB} )" )
 
         #if BBB not in self.books and BBB not in self.triedLoadingBook:
         try: self.loadBook( BBB ) # Some types of Bibles have this function (so an entire Bible doesn't have to be loaded at startup)
@@ -409,7 +409,7 @@ class InternalBible:
         """
         Tries to re-index a loaded book.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"InternalBible.reProcessBook( {BBB} )" )
+        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 5: fnPrint( DEBUGGING_THIS_MODULE, f"InternalBible.reProcessBook( {BBB} )" )
         if BibleOrgSysGlobals.debugFlag:
             assert BBB in self.books
 
@@ -563,7 +563,7 @@ class InternalBible:
             Copyright, Rights
             Creator, Publisher
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"applySuppliedMetadata( {applyMetadataType} )" )
+        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 5: fnPrint( DEBUGGING_THIS_MODULE, f"applySuppliedMetadata( {applyMetadataType} )" )
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2:
             assert applyMetadataType in ( 'Project','File', 'SSF', 'PTX7','PTX8', 'OSIS', 'uW',
                                          'e-Sword-Bible','e-Sword-Commentary', 'MySword','MyBible',
@@ -864,7 +864,7 @@ class InternalBible:
 
         Returns None if nothing found.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"getSetting( {settingName} )" )
+        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 5: fnPrint( DEBUGGING_THIS_MODULE, f"getSetting( {settingName} )" )
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nSettingsDict:", self.settingsDict )
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nSupplied Metadata:", self.suppliedMetadata )
 
@@ -933,7 +933,7 @@ class InternalBible:
         Save the Bible book into our Bible object
             and update our indexes.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"stashBook( {len(bookData)} lines ) for {bookData.BBB}" )
+        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 5: fnPrint( DEBUGGING_THIS_MODULE, f"stashBook( {len(bookData)} lines ) for {bookData.BBB}" )
 
         BBB = bookData.BBB
         if BBB in self.books: # already
@@ -969,7 +969,7 @@ class InternalBible:
 
         Returns a True/False flag for success.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"pickle( {filename!r}, {folderpath!r} )" )
+        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 5: fnPrint( DEBUGGING_THIS_MODULE, f"pickle( {filename!r}, {folderpath!r} )" )
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, repr(self.objectNameString), repr(self.objectTypeString) )
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, (self.abbreviation), repr(self.name) )
         if filename is None:
@@ -1014,7 +1014,7 @@ class InternalBible:
         """
         Writes the object to a fast .BOSBible hybrid container using Rust and lightweight pickle.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"pickleFast( {folderpath!r} )" )
+        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 5: fnPrint( DEBUGGING_THIS_MODULE, f"pickleFast( {folderpath!r} )" )
 
         from BibleOrgSys import BibleOrgSysGlobals
         if folderpath is None:
@@ -1588,7 +1588,7 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
         Most of the time it's straightforward, but we also consolidate some of the headings.
         """
         # Get our recommendations for added units -- only load this once per Bible
-        fnPrint( DEBUGGING_THIS_MODULE, f"makeSectionIndex() for {self.name} Bible" )
+        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 5: fnPrint( DEBUGGING_THIS_MODULE, f"makeSectionIndex() for {self.name} Bible" )
         #dPrint( 'Info', DEBUGGING_THIS_MODULE, "makeSectionIndex1", id(self) )
         assert self.books
         # assert len(self.books) == 68
@@ -1677,7 +1677,7 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
 
         Returns a dictionary of result flags.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"InternalBible-V{PROGRAM_VERSION}.doExtensiveChecks: " + f"Doing extensive checks on {self.name} ({self.objectTypeString})" )
+        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 5: fnPrint( DEBUGGING_THIS_MODULE, f"InternalBible-V{PROGRAM_VERSION}.doExtensiveChecks: " + f"Doing extensive checks on {self.name} ({self.objectTypeString})" )
 
         if givenOutputFolderName is None:
             givenOutputFolderName = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'CheckResultFiles/' )
@@ -1909,7 +1909,7 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
                 It seems that it's only called from Biblelator BibleNotesWindow.py and BibleResourceWindows.py
         """
         from datetime import datetime
-        fnPrint( DEBUGGING_THIS_MODULE, f"makeErrorHTML( {givenOutputFolder!r}, {titlePrefix!r}, {webPageTemplate!r} )" )
+        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 5: fnPrint( DEBUGGING_THIS_MODULE, f"makeErrorHTML( {givenOutputFolder!r}, {titlePrefix!r}, {webPageTemplate!r} )" )
         #logging.info( "Doing Bible checks…" )
         #dPrint( 'Info', DEBUGGING_THIS_MODULE, "Doing Bible checks…" )
 
@@ -2330,7 +2330,7 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
         Returns the number of chapters (int) in the given book.
         Returns None if we don't have that book.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"getNumChapters( {BBB} )" )
+        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 5: fnPrint( DEBUGGING_THIS_MODULE, f"getNumChapters( {BBB} )" )
         assert len(BBB) == 3
 
         #if 'KJV' not in self.sourceFolder and BBB in self.triedLoadingBook: assert False, "We want to stop here"
@@ -2348,7 +2348,7 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
         Returns the number of verses (int) in the given book and chapter.
         Returns None if we don't have that book.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"getNumVerses( {BBB}, {C=} )" )
+        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 5: fnPrint( DEBUGGING_THIS_MODULE, f"getNumVerses( {BBB}, {C=} )" )
         assert len(BBB) == 3
 
         if not bos_books_codes_py.is_valid_bos_book_code( BBB ): raise KeyError
@@ -2379,7 +2379,7 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
         If the strict flag is not set, we try to remove any letter suffix
             and/or to search verse ranges for a match.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"InternalBible.getContextVerseData( {BCVReference} ) for {self.name}" )
+        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 5: fnPrint( DEBUGGING_THIS_MODULE, f"InternalBible.getContextVerseData( {BCVReference} ) for {self.name}" )
 
         if isinstance( BCVReference, tuple ): BBB = BCVReference[0]
         elif isinstance( BCVReference, SimpleVerseKey ): BBB = BCVReference.getBBB()
@@ -2413,7 +2413,7 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
 
         Capable of handling ranges across books, e.g., '1Sam 16:1–1Ki 2:11'
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"InternalBible.getContextVerseDataRange( {startBCVReference}, {endBCVReference}, {strict=} ) for {self.name}" )
+        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 5: fnPrint( DEBUGGING_THIS_MODULE, f"InternalBible.getContextVerseDataRange( {startBCVReference}, {endBCVReference}, {strict=} ) for {self.name}" )
 
         if isinstance( startBCVReference, tuple ): startBBB = startBCVReference[0]
         else: startBBB = startBCVReference.getBBB() # Assume it's a SimpleVerseKey object
@@ -2443,7 +2443,7 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
         Returns None if there is no information for this book.
         Raises a KeyError if there is no CV reference.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"InternalBible.getVerseDataList( {BCVReference} )" )
+        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 5: fnPrint( DEBUGGING_THIS_MODULE, f"InternalBible.getVerseDataList( {BCVReference} )" )
         result = self.getContextVerseData( BCVReference )
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  gVD", self.name, BCVReference, verseData )
         if result is None:
@@ -2473,7 +2473,7 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
 
         Raises a KeyError if the BCVReference isn't found/valid.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"InternalBible.getVerseText( {BCVReference}, {fullTextFlag=}, {includeNonCanonical=} )" )
+        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 5: fnPrint( DEBUGGING_THIS_MODULE, f"InternalBible.getVerseText( {BCVReference}, {fullTextFlag=}, {includeNonCanonical=} )" )
 
         result = self.getContextVerseData( BCVReference )
         if result is not None:
@@ -2543,7 +2543,7 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
 
         NOTE: ignoreDiacriticsFlag uses BibleOrgSysGlobals.removeAccents() which might not be general enough for all languages.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"findText( {optionsDict} )" )
+        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 5: fnPrint( DEBUGGING_THIS_MODULE, f"findText( {optionsDict} )" )
         if BibleOrgSysGlobals.debugFlag or DEBUGGING_THIS_MODULE:
             assert 'findText' in optionsDict
 
@@ -2725,7 +2725,7 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
         """
         Write the internal pseudoUSFM out directly with one file per verse.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"writeBOSBCVFiles( {outputFolderpath} )" )
+        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 5: fnPrint( DEBUGGING_THIS_MODULE, f"writeBOSBCVFiles( {outputFolderpath} )" )
 
         BBBList = []
         for BBB,bookObject in self.books.items():

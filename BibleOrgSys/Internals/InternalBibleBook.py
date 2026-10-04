@@ -366,7 +366,7 @@ class InternalBibleBook:
                 but can be a string (usually only for testing)
             BBB: book reference code
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"InternalBibleBook.__init__( {BBB} )" )
+        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 5: fnPrint( DEBUGGING_THIS_MODULE, f"InternalBibleBook.__init__( {BBB} )" )
         self.doExtraChecking = DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag
         if isinstance( parameter1, str ):
             (logging.warning if parameter1.startswith('NoneYet') else logging.critical)( f"InternalBibleBook.constructor( {BBB}, {parameter1} ): Not passed a containing Bible object" )
@@ -465,7 +465,7 @@ class InternalBibleBook:
             excerpt:
             logger: logging.critical, logging.error, logging.warning
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"InternalBibleBook.addNotice( {priority} {message} {C}:{V} {options} )" )
+        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 5: fnPrint( DEBUGGING_THIS_MODULE, f"InternalBibleBook.addNotice( {priority} {message} {C}:{V} {options} )" )
         if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag:
             assert isinstance( priority, int ) and ( 0 <= priority <= 1000 )
             assert isinstance( message, str ) and message
@@ -494,7 +494,7 @@ class InternalBibleBook:
         """
         Adds a priority error to self.checkResultsDictionary.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"InternalBibleBook.addPriorityError( {priority} {C}:{V} {errorString} )" )
+        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 5: fnPrint( DEBUGGING_THIS_MODULE, f"InternalBibleBook.addPriorityError( {priority} {C}:{V} {errorString} )" )
         if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag:
             assert isinstance( priority, int ) and ( 0 <= priority <= 100 )
             assert isinstance( errorString, str ) and errorString
@@ -656,7 +656,7 @@ class InternalBibleBook:
         No return value.
         """
         forceDebugHere = False
-        fnPrint( DEBUGGING_THIS_MODULE, f"\nInternalBibleBook.addVerseSegmentsForSword( {V=}, {text=}, {location=} )" )
+        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 5: fnPrint( DEBUGGING_THIS_MODULE, f"\nInternalBibleBook.addVerseSegmentsForSword( {V=}, {text=}, {location=} )" )
         if forceDebugHere or ( BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE ):
             assert not self._processedFlag
         ourText = text # Work on a copy so we can still print the original for error messages
@@ -1043,7 +1043,7 @@ class InternalBibleBook:
         Most of the time it's straightforward, but we also consolidate some of the headings.
         """
         from BibleOrgSys.Bible import Bible
-        fnPrint( DEBUGGING_THIS_MODULE, f"InternalBibleBook._makeBookSectionIndex() for {self.BBB}" )
+        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 5: fnPrint( DEBUGGING_THIS_MODULE, f"InternalBibleBook._makeBookSectionIndex() for {self.BBB}" )
         #dPrint( 'Info', DEBUGGING_THIS_MODULE, "_makeBookSectionIndex", id(self.containerBibleObject) )
         if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag:
             assert self._processedFlag
@@ -1066,7 +1066,7 @@ class InternalBibleBook:
     def debugPrint( self ) -> None:
         """
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"InternalBibleBook.debugPrint: {self.BBB}" )
+        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 5: fnPrint( DEBUGGING_THIS_MODULE, f"InternalBibleBook.debugPrint: {self.BBB}" )
         numLines = 50
         if '_rawLines' in self.__dict__:
             for j in range( min( numLines, len(self._rawLines) ) ):
@@ -1291,7 +1291,7 @@ class InternalBibleBook:
 
         Returns a dictionary containing the results for the book.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"_discover() for {self.BBB}" )
+        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 5: fnPrint( DEBUGGING_THIS_MODULE, f"_discover() for {self.BBB}" )
         if not self._processedFlag:
             vPrint( 'Info', DEBUGGING_THIS_MODULE, f"InternalBibleBook '{self.workName}' {self.BBB}: processing lines called from 'discover'" )
             self.processLines()
@@ -1679,7 +1679,7 @@ class InternalBibleBook:
 
         Returns None if there is no such chapter.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"InternalBibleBook.getNumVerses( {C=} )" )
+        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 5: fnPrint( DEBUGGING_THIS_MODULE, f"InternalBibleBook.getNumVerses( {C=} )" )
 
         if isinstance( C, int ): # Just double-check the parameter
             logging.debug( f"InternalBibleBook.getNumVerses() was passed an integer chapter instead of a string with {self.BBB} {C}" )
@@ -1714,7 +1714,7 @@ class InternalBibleBook:
 
         If complete flag is set, try to find every reference with that verse.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"InternalBibleBook.getContextVerseData( {BCVReference} ) for {self.workName} {self.BBB}" )
+        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 5: fnPrint( DEBUGGING_THIS_MODULE, f"InternalBibleBook.getContextVerseData( {BCVReference} ) for {self.workName} {self.BBB}" )
         assert self.BBB == BCVReference[0] if isinstance( BCVReference, tuple ) else BCVReference.getBBB() if isinstance( BCVReference, SimpleVerseKey ) else BCVReference.split('_',1)[0] # Assume it's a string
 
         if not self._processedFlag:
@@ -1764,7 +1764,7 @@ class InternalBibleBook:
         If strict is false, logs a critical error and
             returns whatever we have when we fail to find a verse (perhaps because inadequate handling of bridged verses)
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"InternalBibleBook.getContextVerseData( {startBCVReference} to {endBCVReference}) {strict=} for {self.workName} {self.BBB}" )
+        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 5: fnPrint( DEBUGGING_THIS_MODULE, f"InternalBibleBook.getContextVerseData( {startBCVReference} to {endBCVReference}) {strict=} for {self.workName} {self.BBB}" )
         assert self.BBB == startBCVReference[0] if isinstance( startBCVReference, tuple ) else startBCVReference.getBBB()
         assert self.BBB == endBCVReference[0] if isinstance( endBCVReference, tuple ) else endBCVReference.getBBB()
         # dPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  InternalBibleBook.getContextVerseData  {startBCVReference} to {endBCVReference}) {strict=} for {self.workName} {self.BBB}" )
