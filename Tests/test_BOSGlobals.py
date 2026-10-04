@@ -20,3 +20,11 @@ class BOSGlobalsTestCase(unittest.TestCase):
         self.assertEqual( BibleOrgSysGlobals.makeSafeString( '<b>bad</b>' ), '_LT_b_GT_bad_LT_/b_GT_' )
         self.assertEqual( BibleOrgSysGlobals.makeSafeString( '<b>bad</b>' ), '_LT_b_GT_bad_LT_/b_GT_' ) # cache hit, same result
         self.assertEqual( BibleOrgSysGlobals.makeSafeString( 'a<b>c' ), 'a_LT_b_GT_c' )
+
+    def test_removeAccents(self):
+        self.assertEqual( BibleOrgSysGlobals.removeAccents( '' ), '' )
+        self.assertEqual( BibleOrgSysGlobals.removeAccents( 'Matthew' ), 'Matthew' )
+        self.assertEqual( BibleOrgSysGlobals.removeAccents( 'éàü' ), 'eau' )
+        self.assertEqual( BibleOrgSysGlobals.removeAccents( 'ābrahām' ), 'abraham' )
+        self.assertEqual( BibleOrgSysGlobals.removeAccents( 'Ābrahām' ), 'Ābraham' ) # uppercase macron not in ACCENT_DICT
+        self.assertEqual( BibleOrgSysGlobals.removeAccents( 'Ælfréd' ), 'AElfred' )

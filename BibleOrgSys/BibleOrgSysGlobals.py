@@ -657,6 +657,8 @@ ACCENT_DICT = { 'À':'A','Á':'A','Â':'A','Ã':'A','Ä':'A','Å':'A','Ă':'A','
               'ý':'y','ÿ':'y',
               }
 
+_ACCENT_TRANS = str.maketrans( ACCENT_DICT )
+
 def removeAccents( someString:str ) -> str:
     """
     Remove accents from the string and return it (used for fuzzy matching)
@@ -684,8 +686,8 @@ def removeAccents( someString:str ) -> str:
     #return resultString
 
     # Try 4
-    return ''.join( ACCENT_DICT[someChar] if someChar in ACCENT_DICT else someChar for someChar in someString )
-# end of BibleOrgSysGlobals.makeSafeString
+    return someString.translate( _ACCENT_TRANS )
+# end of BibleOrgSysGlobals.removeAccents
 
 
 ##########################################################################################################
