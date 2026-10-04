@@ -614,12 +614,20 @@ def makeSafeXML( someString:str ) -> str:
 #       We don't want a malicious user to be able to gain access to the system
 #               by putting system commands into a string that's then used in a webpage or something.
 
+_MAKE_SAFE_STRING_CACHE = {}  # Memo results: the effective input set on a build is tiny (version names/abbreviations), and this is called millions of times per build.
+
 def makeSafeString( someString:str ) -> str:
     """
     Replaces potentially unsafe characters in a string to make it safe for display.
     """
     #return someString.replace('&','&amp;').replace('<','&lt;').replace('>','&gt;')
-    return someString.replace('<','_LT_').replace('>','_GT_')
+    try:
+        return _MAKE_SAFE_STRING_CACHE[someString]
+    except KeyError:
+        result = someString.replace('<','_LT_').replace('>','_GT_')
+        if len(_MAKE_SAFE_STRING_CACHE) < 10_000: # avoid unbounded growth on oddball inputs
+            _MAKE_SAFE_STRING_CACHE[someString] = result
+        return result
 # end of BibleOrgSysGlobals.makeSafeString
 
 

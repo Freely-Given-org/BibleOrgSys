@@ -13,3 +13,10 @@ class BOSGlobalsTestCase(unittest.TestCase):
         adjustments = [(36,'lazy','fat'),(0,'The','A'),(20,'jumped','tripped'),(4,'','very '),(10,'brown','orange')]
         result = BibleOrgSysGlobals.applyStringAdjustments( longText, adjustments )
         self.assertEqual( result, "A very quick orange fox tripped over the fat brown dog." )
+
+    def test_makeSafeString(self):
+        self.assertEqual( BibleOrgSysGlobals.makeSafeString( '' ), '' )
+        self.assertEqual( BibleOrgSysGlobals.makeSafeString( 'OET-RV' ), 'OET-RV' )
+        self.assertEqual( BibleOrgSysGlobals.makeSafeString( '<b>bad</b>' ), '_LT_b_GT_bad_LT_/b_GT_' )
+        self.assertEqual( BibleOrgSysGlobals.makeSafeString( '<b>bad</b>' ), '_LT_b_GT_bad_LT_/b_GT_' ) # cache hit, same result
+        self.assertEqual( BibleOrgSysGlobals.makeSafeString( 'a<b>c' ), 'a_LT_b_GT_c' )

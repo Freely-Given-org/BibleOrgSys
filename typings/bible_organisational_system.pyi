@@ -711,6 +711,12 @@ class InternalBibleEntryList:
     def to_list(self) -> list[tuple[str, str]]:
         """Get all entries as a list of tuples (marker, clean_text)."""
 
+    def plain_text(self, marker: str = "v~") -> str:
+        """
+        Return the clean text of all entries with the given marker,
+        joined with single spaces (mirrors the old OBD `getPlainText`).
+        """
+
     def __repr__(self) -> str: ...
     def __str__(self) -> str: ...
     def __getstate__(self) -> t.Any: ...
@@ -891,6 +897,16 @@ class InternalBibleBookCVIndex:
         self, cv_key: tuple[str, str], strict: bool = False, complete: bool = False
     ) -> tuple[InternalBibleEntryList, list[str]]:
         """Get verse entries with context for a (C,V) tuple key."""
+
+    def getChapterVerseEntriesWithContext(
+        self, chapter: str, strict: bool = False, complete: bool = False
+    ) -> dict[str, tuple[InternalBibleEntryList, list[str]]]:
+        """
+        Get verse entries with context for every verse in the given chapter,
+        in one call — equivalent to looping over V and calling
+        getVerseEntriesWithContext((chapter, V)) in Python (used once per
+        chapter per version instead of once per verse).
+        """
 
     def getChapterEntries(self, chapter: str) -> InternalBibleEntryList:
         """Get all entries for a chapter"""
