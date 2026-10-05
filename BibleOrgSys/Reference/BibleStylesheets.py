@@ -25,7 +25,7 @@ from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.InputOutput import SFMFile
 from usfm_markers_py import USFM_ALL_MARKERS
 
-LAST_MODIFIED_DATE = '2022-03-06' # by RJH
+LAST_MODIFIED_DATE = '2026-10-06' # by RJH
 SHORT_PROGRAM_NAME = "BibleStylesheets"
 PROGRAM_NAME = "Bible stylesheet handler"
 PROGRAM_VERSION = '0.17'
@@ -286,7 +286,8 @@ class BibleStylesheet():
         """
         from BibleOrgSys.Internals.InternalBibleBook import BOS_ALL_CUSTOM_MARKERS
         for USFMMarker, styleData in self.dataDict.items():
-            dPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"validate {USFMMarker} {styleData}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 4:
+                dPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"validate {USFMMarker} {styleData}" )
             if USFMMarker.startswith( 'Heb' ) or USFMMarker.startswith( 'WordRef' ): continue
             if USFMMarker in ( '###', ): continue # ignore
             if USFMMarker[0] == '*': USFMMarker = USFMMarker[1:] # Remove any leading asterisk for the check
@@ -299,7 +300,8 @@ class BibleStylesheet():
     def importParatextStylesheet( self, folder, filename:str, encoding:str='utf-8' ) -> None:
         """
         """
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Importing {filename} Paratext stylesheet…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Importing {filename} Paratext stylesheet…" )
         PTSS = ParatextStylesheet().load( folder, filename, encoding )
         self.name = PTSS.name
         self.filepath = PTSS.filepath
@@ -486,56 +488,75 @@ def briefDemo() -> None:
     BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     if 1: # Try the default one
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nTrying default Bible stylesheet…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nTrying default Bible stylesheet…" )
         #folder = Path( '/mnt/SSDs/Work/VirtualBox_Shared_Folder/PTStylesheets/' )
         #filename = "LD.sty"
         ss = BibleStylesheet()
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, ss )
         #ss.importParatextStylesheet( folder, filename, encoding='latin-1' )
         ss.loadDefault()
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ss )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "h style:", ss.getTKStyleDict( 'h' ) )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ss )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "h style:", ss.getTKStyleDict( 'h' ) )
         try: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "s1 font:", ss.getValue( 's1', 'font' ) )
         except KeyError: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "No s1 or font in stylesheet!" )
         try: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ss.getTKStyleDict( 'hijkl' ) )
         except KeyError: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "No hijkl in stylesheet!" )
         try: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ss.getValue( 'h', 'FontSizeImaginary' ) )
         except KeyError: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "No h or FontSizeImaginary in stylesheet!" )
-        vPrint( 'Never', DEBUGGING_THIS_MODULE, ss.dataDict )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 5:
+            vPrint( 'Never', DEBUGGING_THIS_MODULE, ss.dataDict )
 
     if 1: # Try importing one
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nTrying Bible stylesheet import…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nTrying Bible stylesheet import…" )
         folder = Path( '/mnt/SSDs/Work/VirtualBox_Shared_Folder/PTStylesheets/' )
         filename = "LD.sty"
         ss = BibleStylesheet()
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ss )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ss )
         ss.importParatextStylesheet( folder, filename, encoding='latin-1' )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ss )
-        vPrint( 'Never', DEBUGGING_THIS_MODULE, ss.dataDict )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "h style:", ss.getTKStyleDict( 'h' ) )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ss )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 5:
+            vPrint( 'Never', DEBUGGING_THIS_MODULE, ss.dataDict )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "h style:", ss.getTKStyleDict( 'h' ) )
         try: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "h FontSize:", ss.getValue( 'h', 'FontSize' ) )
         except KeyError: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "No h or FontSize in stylesheet!" )
 
     if 1: # Try a small one
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nTrying small PT stylesheet…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nTrying small PT stylesheet…" )
         folder = Path( '/mnt/SSDs/Work/VirtualBox_Shared_Folder/PTStylesheets/' )
         filename = "LD.sty"
         ss = ParatextStylesheet().load( folder, filename, encoding='latin-1' )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ss )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "h style:", ss.getDict( 'h' ) )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "h fontsize:", ss.getValue( 'h', 'FontSize' ) )
-        vPrint( 'Never', DEBUGGING_THIS_MODULE, ss.dataDict )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ss )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "h style:", ss.getDict( 'h' ) )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "h fontsize:", ss.getValue( 'h', 'FontSize' ) )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 5:
+            vPrint( 'Never', DEBUGGING_THIS_MODULE, ss.dataDict )
 
     if 1: # Try a full one
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nTrying full PT stylesheet…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nTrying full PT stylesheet…" )
         folder = Path( '/mnt/SSDs/Work/VirtualBox_Shared_Folder/PTStylesheets/' )
         filename = "usfm.sty"
         ss = ParatextStylesheet()
         ss.load( folder, filename )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ss )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "h style:", ss.getDict( 'h' ) )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "h fontsize:", ss.getValue( 'h', 'FontSize' ) )
-        vPrint( 'Never', DEBUGGING_THIS_MODULE, ss.dataDict )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ss )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "h style:", ss.getDict( 'h' ) )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "h fontsize:", ss.getValue( 'h', 'FontSize' ) )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 5:
+            vPrint( 'Never', DEBUGGING_THIS_MODULE, ss.dataDict )
 # end of BibleStylesheets.briefDemo
 
 def fullDemo() -> None:
@@ -545,56 +566,75 @@ def fullDemo() -> None:
     BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     if 1: # Try the default one
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nTrying default Bible stylesheet…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nTrying default Bible stylesheet…" )
         #folder = Path( '/mnt/SSDs/Work/VirtualBox_Shared_Folder/PTStylesheets/' )
         #filename = "LD.sty"
         ss = BibleStylesheet()
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, ss )
         #ss.importParatextStylesheet( folder, filename, encoding='latin-1' )
         ss.loadDefault()
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ss )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "h style:", ss.getTKStyleDict( 'h' ) )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ss )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "h style:", ss.getTKStyleDict( 'h' ) )
         try: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "s1 font:", ss.getValue( 's1', 'font' ) )
         except KeyError: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "No s1 or font in stylesheet!" )
         try: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ss.getTKStyleDict( 'hijkl' ) )
         except KeyError: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "No hijkl in stylesheet!" )
         try: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ss.getValue( 'h', 'FontSizeImaginary' ) )
         except KeyError: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "No h or FontSizeImaginary in stylesheet!" )
-        vPrint( 'Never', DEBUGGING_THIS_MODULE, ss.dataDict )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 5:
+            vPrint( 'Never', DEBUGGING_THIS_MODULE, ss.dataDict )
 
     if 1: # Try importing one
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nTrying Bible stylesheet import…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nTrying Bible stylesheet import…" )
         folder = Path( '/mnt/SSDs/Work/VirtualBox_Shared_Folder/PTStylesheets/' )
         filename = "LD.sty"
         ss = BibleStylesheet()
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ss )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ss )
         ss.importParatextStylesheet( folder, filename, encoding='latin-1' )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ss )
-        vPrint( 'Never', DEBUGGING_THIS_MODULE, ss.dataDict )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "h style:", ss.getTKStyleDict( 'h' ) )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ss )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 5:
+            vPrint( 'Never', DEBUGGING_THIS_MODULE, ss.dataDict )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "h style:", ss.getTKStyleDict( 'h' ) )
         try: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "h FontSize:", ss.getValue( 'h', 'FontSize' ) )
         except KeyError: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "No h or FontSize in stylesheet!" )
 
     if 1: # Try a small one
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nTrying small PT stylesheet…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nTrying small PT stylesheet…" )
         folder = Path( '/mnt/SSDs/Work/VirtualBox_Shared_Folder/PTStylesheets/' )
         filename = "LD.sty"
         ss = ParatextStylesheet().load( folder, filename, encoding='latin-1' )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ss )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "h style:", ss.getDict( 'h' ) )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "h fontsize:", ss.getValue( 'h', 'FontSize' ) )
-        vPrint( 'Never', DEBUGGING_THIS_MODULE, ss.dataDict )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ss )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "h style:", ss.getDict( 'h' ) )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "h fontsize:", ss.getValue( 'h', 'FontSize' ) )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 5:
+            vPrint( 'Never', DEBUGGING_THIS_MODULE, ss.dataDict )
 
     if 1: # Try a full one
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nTrying full PT stylesheet…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nTrying full PT stylesheet…" )
         folder = Path( '/mnt/SSDs/Work/VirtualBox_Shared_Folder/PTStylesheets/' )
         filename = "usfm.sty"
         ss = ParatextStylesheet()
         ss.load( folder, filename )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ss )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "h style:", ss.getDict( 'h' ) )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "h fontsize:", ss.getValue( 'h', 'FontSize' ) )
-        vPrint( 'Never', DEBUGGING_THIS_MODULE, ss.dataDict )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ss )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "h style:", ss.getDict( 'h' ) )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "h fontsize:", ss.getValue( 'h', 'FontSize' ) )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 5:
+            vPrint( 'Never', DEBUGGING_THIS_MODULE, ss.dataDict )
 # end of BibleStylesheets.fullDemo
 
 if __name__ == '__main__':

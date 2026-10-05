@@ -32,7 +32,7 @@ import BibleOrgSys.BibleOrgSysGlobals as BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2026-09-19' # by RJH
+LAST_MODIFIED_DATE = '2026-10-06' # by RJH
 SHORT_PROGRAM_NAME = "EuropeanToEnglish"
 PROGRAM_NAME = "OpenBibleData European Language Handling functions"
 PROGRAM_VERSION = '1.0.1'
@@ -3638,7 +3638,8 @@ def translateGerman( htmlStr:str ) -> str:
     Text in htmlStr parameter can be inside a span,
         e.g., '<span class="Wycl_verseTextChunk">ech man in his seruice, and in the offring,</span>'
     """
-    fnPrint( DEBUGGING_THIS_MODULE, f"translateGerman( ({len(htmlStr)}) )" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+        fnPrint( DEBUGGING_THIS_MODULE, f"translateGerman( ({len(htmlStr)}) )" )
 
     # Handle common exception that can't be expressed in the word table
     # if htmlStr.endswith( ' alle') or htmlStr.endswith( ' ist'): htmlStr = htmlStr[:-1] # ' alle' at end goes to 'all' and 'ist' to 'is'
@@ -9263,7 +9264,8 @@ def translateLatin( htmlStr:str ) -> str:
     Text in htmlStr parameter can be inside a span,
         e.g., '<span class="Wycl_verseTextChunk">ech man in his seruice, and in the offring,</span>'
     """
-    fnPrint( DEBUGGING_THIS_MODULE, f"translateLatin( ({len(htmlStr)}) )" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+        fnPrint( DEBUGGING_THIS_MODULE, f"translateLatin( ({len(htmlStr)}) )" )
 
     # NOTE: Didn't work because it's already html, so added back to table above with '>'
     # if html.startswith( 'et '): # Handle common exception that can't be expressed in the word table

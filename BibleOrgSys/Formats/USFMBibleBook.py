@@ -35,7 +35,7 @@ from BibleOrgSys.Bible import Bible, BibleBook
 import usfm_markers_py
 
 
-LAST_MODIFIED_DATE = '2026-08-25' # by RJH
+LAST_MODIFIED_DATE = '2026-10-06' # by RJH
 SHORT_PROGRAM_NAME = "USFMBibleBook"
 PROGRAM_NAME = "USFM Bible book handler"
 PROGRAM_VERSION = '0.70'
@@ -80,7 +80,8 @@ class USFMBibleBook( BibleBook ):
                 we don't need to worry about that here.
         """
         # DEBUGGING_THIS_MODULE = 99 if filename=='16-EZReng-t4t.usfm' else False
-        fnPrint( DEBUGGING_THIS_MODULE, f"USFMBibleBook.load( filename={filename}, folder={folder}, encoding={encoding} )…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, f"USFMBibleBook.load( filename={filename}, folder={folder}, encoding={encoding} )…" )
 
 
         def doAddLine( addMarker:str, addText:str ) -> None:
@@ -95,7 +96,8 @@ class USFMBibleBook( BibleBook ):
                     doAddLine( 'XXXp~', '\\w Simon|x-occurrence="1" x-occurrences="1"\\w*' )
                     doAddLine( 'XXXp~', '\\w of|x-occurrence="1" x-occurrences="2"\\w* \\w Cyrene|x-occurrence="1" x-occurrences="1"\\w* (\\w the|x-occurrence="1" x-occurrences="2"\\w*' )
             """
-            fnPrint( DEBUGGING_THIS_MODULE, f"doAddLine( '{addMarker}', '{addText}' )" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+                fnPrint( DEBUGGING_THIS_MODULE, f"doAddLine( '{addMarker}', '{addText}' )" )
             # assert addText.count('\\w ') == addText.count('\\w*') # Logged around line 445
             # The below is a false assumption
             #   See: \w='480|x-occurrence="1" x-occurrences="1"\w*\w th|x-occurrence="1" x-occurrences="1"\w*' after ULT KI1 6:1
@@ -173,7 +175,8 @@ class USFMBibleBook( BibleBook ):
             """
             debuggingThisFunction = DEBUGGING_THIS_MODULE or False # (99 if self.BBB=='NEH' and C=='1' else False)
             # if self.BBB=='NEH' and C=='1' and V=='2': assert False, "We want to stop here"
-            fnPrint( debuggingThisFunction, f"'{self.workName}' {self.BBB}_{C}:{V} handleUWEncoding( {givenMarker}={givenText!r}\n              level={variables['level']}, aText='{variables['text']}', aWords='{variables['words']}' )…" )
+            if (debuggingThisFunction) or BibleOrgSysGlobals.debugFlag:
+                fnPrint( debuggingThisFunction, f"'{self.workName}' {self.BBB}_{C}:{V} handleUWEncoding( {givenMarker}={givenText!r}\n              level={variables['level']}, aText='{variables['text']}', aWords='{variables['words']}' )…" )
             # TODO: Why do these next two lines not catch ULT JER ???
             assert not givenMarker.startswith('zaln-e'), f"{self.workName} {self.BBB} {C}:{V} {givenMarker=} shouldn't begin a line"
             if givenMarker.startswith('zaln-e'): print( f"{self.workName} {self.BBB} {C}:{V} {givenMarker=} shouldn't begin a line" ); ALWAYS_STOP
@@ -185,12 +188,14 @@ class USFMBibleBook( BibleBook ):
                 if not BibleOrgSysGlobals.strictCheckingFlag:
                     variables['words'] = variables['words'].rstrip() # Shouldn't really be necessary
                 #assert variables['words'].startswith( '\\w ' ) # Not currently true (e.g., might have verse number)
-                dPrint( 'Verbose', debuggingThisFunction, f"{self.workName} {self.BBB}_{C}:{V} words={variables['words']}=")
+                if (debuggingThisFunction) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 4:
+                    dPrint( 'Verbose', debuggingThisFunction, f"{self.workName} {self.BBB}_{C}:{V} words={variables['words']}=")
                 try: dPrint( 'Verbose', debuggingThisFunction, f"-1={variables['words'][-1]} -2={variables['words'][-2]}" )
                 except IndexError: pass
                 # dPrint( 'Quiet', debuggingThisFunction, f"-5:-1={variables['words'][-5:-1]} -6:-2={variables['words'][-6:-2]}" )
                 if variables['words'].endswith( '"\\w**' ):
-                    vPrint( 'Quiet', debuggingThisFunction, "Drop final double asterisk!!!! (for Hindi IRV ???)")
+                    if (debuggingThisFunction) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                        vPrint( 'Quiet', debuggingThisFunction, "Drop final double asterisk!!!! (for Hindi IRV ???)")
                     variables['words'] = variables['words'][:-1]
                 if not ( variables['words'].endswith( '"\\w*' )
                 or variables['words'].endswith( '\\w*{' ) # UST Act 1:18 (or should this have been handled earlier)
@@ -216,7 +221,8 @@ class USFMBibleBook( BibleBook ):
                 However, some alignments are discontiguous, i.e., the Heb/Grk words aren't side-by-side
                     so we have to append this alignment (with a joiner ' & ') to a previously saved alignment in this case.
                 """
-                fnPrint( debuggingThisFunction, f"  saveAlignment( {C}:{V}, '{textStr}', '{wordsStr}' ) for {self.BBB} with {len(variables['saved'])} entries…" )
+                if (debuggingThisFunction) or BibleOrgSysGlobals.debugFlag:
+                    fnPrint( debuggingThisFunction, f"  saveAlignment( {C}:{V}, '{textStr}', '{wordsStr}' ) for {self.BBB} with {len(variables['saved'])} entries…" )
                 assert '\\w' not in textStr
                 assert wordsStr.count('\\w ') == wordsStr.count('\\w*')
 
@@ -253,11 +259,13 @@ class USFMBibleBook( BibleBook ):
 
                 Returns a new marker and text with uW start alignment markers removed.
                 """
-                fnPrint( debuggingThisFunction, f"  findInternalStarts( {marker!r}, {text!r}, level={variables['level']}, aText='{variables['text']}', aWords='{variables['words']}' )…" )
+                if (debuggingThisFunction) or BibleOrgSysGlobals.debugFlag:
+                    fnPrint( debuggingThisFunction, f"  findInternalStarts( {marker!r}, {text!r}, level={variables['level']}, aText='{variables['text']}', aWords='{variables['words']}' )…" )
                 assert marker not in ('zaln-s','zaln-e')
 
                 for numFound in range( 99 ):
-                    dPrint( 'Never', debuggingThisFunction, f"    findInternalStarts: Loop {numFound} with text='{text}'" )
+                    if (debuggingThisFunction) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 5:
+                        dPrint( 'Never', debuggingThisFunction, f"    findInternalStarts: Loop {numFound} with text='{text}'" )
                     ixAlignmentStart = text.find( '\\zaln-s |' )
                     if ixAlignmentStart == -1:
                         if text.find('zaln-s') > 0:
@@ -270,7 +278,8 @@ class USFMBibleBook( BibleBook ):
                         # Usually this happens around punctuation such as Hebrew maqqef (where spaces aren't wanted)
                         # We have to process the end of the previous field first
                         assert variables['level'] > 0, f"uW alignment format error in {self.workName} {self.BBB}_{C}:{V} {variables['level']=} {marker}='{text}'"
-                        dPrint( 'Never', debuggingThisFunction, f"        findInternalStarts: Found {lookForCount} preceding level {variables['level']} end marker(s) inside line" )
+                        if (debuggingThisFunction) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 5:
+                            dPrint( 'Never', debuggingThisFunction, f"        findInternalStarts: Found {lookForCount} preceding level {variables['level']} end marker(s) inside line" )
                         assert variables['text']
                         if marker == 'INLINE': assert not variables['words']
                         text = text.replace( '\\zaln-e\\*' * lookForCount, '', 1 ) # Remove whatever we found above
@@ -290,16 +299,19 @@ class USFMBibleBook( BibleBook ):
                         # text = text[ixAlignmentEnd+9*lookForCount:] # 9=len('\zaln-e\*')
                         variables['text'] = variables['words'] = ''
                         variables['level'] = 0
-                        dPrint( 'Never', debuggingThisFunction, f"      findInternalStarts: Decreased level to {variables['level']}" )
+                        if (debuggingThisFunction) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 5:
+                            dPrint( 'Never', debuggingThisFunction, f"      findInternalStarts: Decreased level to {variables['level']}" )
                         assert variables['level'] >= 0
-                        dPrint( 'Never', debuggingThisFunction, f"      Now got rest1 text='{text}'" )
+                        if (debuggingThisFunction) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 5:
+                            dPrint( 'Never', debuggingThisFunction, f"      Now got rest1 text='{text}'" )
                         continue
                     assert 'zaln-e' not in text[:ixAlignmentStart] # Make sure our nesting isn't confused
                     ixAlignmentStartEnding = text.find( '\\*' ) # Even start marker should be (self-)closed
                     if ixAlignmentStartEnding == -1: # Wasn't self-closing
                         loadErrors.append( f"{self.BBB} {C}:{V} Unclosed '\\{marker}' Door43 custom alignment marker at beginning of line (with no text)" )
                         logging.warning( f"Unclosed '\\{marker}' Door43 custom alignment marker after {self.BBB} {C}:{V} at beginning of line (with no text)" )
-                        dPrint( 'Info', debuggingThisFunction, "The above warnings and error messages need fixing!")
+                        if (debuggingThisFunction) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 3:
+                            dPrint( 'Info', debuggingThisFunction, "The above warnings and error messages need fixing!")
                         if debuggingThisFunction or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag: assert False, "We want to stop here" # Error messages need fixing
                     else: # self-closing was ok
                         variables['level'] += 1
@@ -308,17 +320,21 @@ class USFMBibleBook( BibleBook ):
                         if variables['level'] > MAX_EXPECTED_NESTING_LEVELS:
                             logging.critical( f"findInternalStarts exceeded max nesting levels ({MAX_EXPECTED_NESTING_LEVELS}) at {self.workName} {self.BBB}_{C}:{V} {marker}='{text[:100]}'" )
                             break # TODO: what trouble does this cause ???
-                        dPrint( 'Never', debuggingThisFunction, f"      findInternalStarts: Increased level to {variables['level']}" )
+                        if (debuggingThisFunction) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 5:
+                            dPrint( 'Never', debuggingThisFunction, f"      findInternalStarts: Increased level to {variables['level']}" )
                         variables['text'] += ('|' if variables['text'] else '') \
                                     + text[ixAlignmentStart+9:ixAlignmentStartEnding].strip() # Can still be a space after the |
-                        dPrint( 'Never', debuggingThisFunction, f"      Now got alignmentText='{variables['text']}'" )
+                        if (debuggingThisFunction) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 5:
+                            dPrint( 'Never', debuggingThisFunction, f"      Now got alignmentText='{variables['text']}'" )
                         text = text[:ixAlignmentStart] + text[ixAlignmentStartEnding+2:]
-                        dPrint( 'Never', debuggingThisFunction, f"      Now got rest2 text='{text}'" )
+                        if (debuggingThisFunction) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 5:
+                            dPrint( 'Never', debuggingThisFunction, f"      Now got rest2 text='{text}'" )
 
                 #if variables['level'] > 0:
                     #variables['words'] += f'{marker} {text}'
 
-                dPrint( 'Never', debuggingThisFunction, f"    findInternalStarts returning {marker}='{text}' with lev={variables['level']}, aText='{variables['text']}', aWords='{variables['words']}'" )
+                if (debuggingThisFunction) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 5:
+                    dPrint( 'Never', debuggingThisFunction, f"    findInternalStarts returning {marker}='{text}' with lev={variables['level']}, aText='{variables['text']}', aWords='{variables['words']}'" )
                 if 'zaln-s' in text:
                     logging.critical( f"findInternalStarts() missed processing a zaln-s marker in {self.BBB}_{C}:{V} {marker}='{text}'" )
                 return marker, text
@@ -341,12 +357,14 @@ class USFMBibleBook( BibleBook ):
 
             # Look for any self-closed end-alignment milestones
             if variables['level'] > 0:
-                dPrint( 'Never', debuggingThisFunction, f"     handleUWEncoding:  Looking for {variables['level']} end marker(s)…" )
+                if (debuggingThisFunction) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 5:
+                    dPrint( 'Never', debuggingThisFunction, f"     handleUWEncoding:  Looking for {variables['level']} end marker(s)…" )
                 endMarkers = '\\zaln-e\\*' * variables['level']
                 ixEndMarkers = text.find( endMarkers )
                 assert ixEndMarkers != 0 # Not expected at the beginning of a line
                 if ixEndMarkers > 0: # Found end alignment marker(s)
-                    dPrint( 'Never', debuggingThisFunction, f"        handleUWEncoding: Found {variables['level']} end marker(s)" )
+                    if (debuggingThisFunction) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 5:
+                        dPrint( 'Never', debuggingThisFunction, f"        handleUWEncoding: Found {variables['level']} end marker(s)" )
                     assert variables['text']
                     if marker == 'INLINE': assert not variables['words']
                     adjustedText = text.replace( endMarkers, '', 1 ) # Remove whatever we found above
@@ -357,14 +375,16 @@ class USFMBibleBook( BibleBook ):
                         punctCount += 1 # Account for the punctuation or space
                     variables['words'] += adjustedText[:ixEndMarkers+punctCount] if marker=='INLINE' \
                                             else f' \\{marker} {adjustedText[:ixEndMarkers+punctCount]}'
-                    dPrint( 'Never', debuggingThisFunction, f"{marker}='{text}' GOT1 variables['words']='{variables['words']}'" )
+                    if (debuggingThisFunction) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 5:
+                        dPrint( 'Never', debuggingThisFunction, f"{marker}='{text}' GOT1 variables['words']='{variables['words']}'" )
                     assert variables['words']
                     assert variables['words'].count('\\w ') == variables['words'].count('\\w*')
                     #dPrint( 'Quiet', debuggingThisFunction, "words2", variables['words'] )
                     saveAlignment( C, V, variables['text'], variables['words'] )
                     text = text[:ixEndMarkers] + text[ixEndMarkers+len(endMarkers):] # Could be punctuation or more on the end
                     variables['text'] = variables['words'] = ''
-                    dPrint( 'Never', debuggingThisFunction, f"      handleUWEncoding: Reset level from {variables['level']} to zero" )
+                    if (debuggingThisFunction) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 5:
+                        dPrint( 'Never', debuggingThisFunction, f"      handleUWEncoding: Reset level from {variables['level']} to zero" )
                     variables['level'] = 0
                     #dPrint( 'Never', debuggingThisFunction, f"      Decreased level to {variables['level']}" )
                     #assert variables['level'] >= 0
@@ -377,16 +397,19 @@ class USFMBibleBook( BibleBook ):
                     if marker == 'INLINE': assert not variables['words']
                     variables['words'] += text if marker=='INLINE' else f' \\{marker} {text}'
                     #dPrint( 'Quiet', debuggingThisFunction, "words3b", variables['words'] )
-                    dPrint( 'Never', debuggingThisFunction, f"{marker}='{text}' GOT2 variables['words']='{variables['words']}'" )
+                    if (debuggingThisFunction) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 5:
+                        dPrint( 'Never', debuggingThisFunction, f"{marker}='{text}' GOT2 variables['words']='{variables['words']}'" )
                     assert variables['words'], f"{self.workName} {self.BBB} {C}:{V} has no words variables -- does it have a \\zaln-s line that ends with '\"\\*'???"
                     assert variables['words'].count('\\w ') == variables['words'].count('\\w*')
 
-            dPrint( 'Never', debuggingThisFunction, f"handleUWEncoding: Got near end1 with {marker}='{text}'" )
+            if (debuggingThisFunction) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 5:
+                dPrint( 'Never', debuggingThisFunction, f"handleUWEncoding: Got near end1 with {marker}='{text}'" )
             #dPrint( 'Quiet', debuggingThisFunction, "rawLines", self._rawLines[-4:] )
             if 'zaln' in text: # error because we have no open levels
                 logging.critical( f"Why is zaln in '{self.BBB}' {marker}='{text}' with no open levels" )
             if marker=='INLINE' and text: # then we need to supply a remaining marker
-                dPrint( 'Never', debuggingThisFunction, f"handleUWEncoding: Find a new marker to replace {marker}='{text}'" )
+                if (debuggingThisFunction) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 5:
+                    dPrint( 'Never', debuggingThisFunction, f"handleUWEncoding: Find a new marker to replace {marker}='{text}'" )
                 # if text.startswith( '\\w ' ) \
                 # or text[1:].startswith( '\\w ' ): # There may be preceding punctuation (actually, maybe something like ', “\w Then...')
                 if text[0]=='\\' and text[1]!='w' and text[2]==' ': # e.g., startswith( '\\p ') or startswith( '\\q ') or startswith( '\\v ') or startswith( '\\f ')
@@ -399,7 +422,8 @@ class USFMBibleBook( BibleBook ):
             if marker == 'INLINE':
                 logging.critical( f"Programming error in {self.BBB} handleUWEncoding() with INLINE='{text}'" )
 
-            dPrint( 'Never', debuggingThisFunction, f"  handleUWEncoding returning {marker}='{text}' with level={variables['level']}, aText='{variables['text']}', aWords='{variables['words']}'" )
+            if (debuggingThisFunction) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 5:
+                dPrint( 'Never', debuggingThisFunction, f"  handleUWEncoding returning {marker}='{text}' with level={variables['level']}, aText='{variables['text']}', aWords='{variables['words']}'" )
             assert 'zaln' not in variables['text']
             assert '\\w' not in variables['text']
             assert 'zaln' not in variables['words']
@@ -422,7 +446,8 @@ class USFMBibleBook( BibleBook ):
         #         issueLinePositioningErrors = False
         # except AttributeError: pass # Don't worry about it
 
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + f"Loading {filename}…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + f"Loading {filename}…" )
         #self.BBB = BBB
         #self.isSingleChapterBook = bos_books_codes_py.is_single_chapter_book( BBB )
         self.sourceFilename = filename
@@ -499,7 +524,8 @@ class USFMBibleBook( BibleBook ):
                         if text.startswith( '\\v ' ):
                             marker, text = 'v', text[3:] # Drop s5 and adjust marker
                         else:
-                            dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"USFMBibleBook.load() {self.workName} {self.BBB} s5 {text=}" )
+                            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 1:
+                                dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"USFMBibleBook.load() {self.workName} {self.BBB} s5 {text=}" )
                             if self.doExtraChecking: assert False, "We want to stop here"
                     else: # was just whitespace
                         loadErrors.append( f"{self.BBB} {C}:{V} Removed '\\{marker}' Door43 custom marker at beginning of line (with following whitespace)" )
@@ -524,7 +550,8 @@ class USFMBibleBook( BibleBook ):
                         elif text.startswith( '{\\w ' ): # uW UST Exo 17:10 (probably bad USFM???)
                             marker = 'v~' # 'XXXp~' # Drop \ts\\* -- try a continuation paragraph???
                         else:
-                            dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"USFMBibleBook.load() {self.workName} {self.BBB} {C}:{V} ts\\* {text=}" )
+                            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 1:
+                                dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"USFMBibleBook.load() {self.workName} {self.BBB} {C}:{V} ts\\* {text=}" )
                             if self.doExtraChecking: assert False, "We want to stop here"
                     else: # was just whitespace
                         loadErrors.append( f"{self.BBB} {C}:{V} Removed '\\{marker}' Door43 chunking marker at beginning of line (with following whitespace)" )
@@ -588,13 +615,16 @@ class USFMBibleBook( BibleBook ):
                         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"HereXX with {lastMarker} now {marker}" )
                         if not lastText.endswith(' '): lastText += ' ' # Not always good to add a space, but it's their fault!
                         lastText +=  '\\' + marker + ' ' + text
-                        dPrint( 'Never', DEBUGGING_THIS_MODULE, f"USFMBibleBook.load() {self.BBB} {C} {V} Appended1a {marker}='{text}' to get combined line {lastMarker}='{lastText}'" )
+                        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 5:
+                            dPrint( 'Never', DEBUGGING_THIS_MODULE, f"USFMBibleBook.load() {self.BBB} {C} {V} Appended1a {marker}='{text}' to get combined line {lastMarker}='{lastText}'" )
                         marker = text = None # Seems to make no difference
                     elif marker=='v~' and (lastMarker in ('v', 'XXXp~', 'q','pi','qm','li') or lastMarker in BibleOrgSysGlobals.USFMParagraphMarkers):
-                        dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"HereYY with {lastMarker} now {marker}='{text}'" )
+                        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 1:
+                            dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"HereYY with {lastMarker} now {marker}='{text}'" )
                         if not lastText.endswith(' '): lastText += ' ' # Not always good to add a space, but it's their fault!
                         lastText += text
-                        vPrint( 'Never', DEBUGGING_THIS_MODULE, f"USFMBibleBook.load()  {self.BBB} {C} {V} Appended1b {marker}='{text}' to get combined line {lastMarker}='{lastText}'" )
+                        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 5:
+                            vPrint( 'Never', DEBUGGING_THIS_MODULE, f"USFMBibleBook.load()  {self.BBB} {C} {V} Appended1b {marker}='{text}' to get combined line {lastMarker}='{lastText}'" )
                         marker = text = None # Seems to make no difference
                     elif marker == 'w' and lastMarker in ('ts','sp'): # \\ts: A common unfoldingWord USFM encoding error; \\sp in Hindu SNG
                         logging.error( f"USFMBibleBook.load() '{self.workName}' {self.BBB}_{C}:{V} added new paragraph for encoding error after {lastMarker}='{lastText}': {marker}='{text}'" )
@@ -612,9 +642,11 @@ class USFMBibleBook( BibleBook ):
                         if self.doExtraChecking or DEBUGGING_THIS_MODULE: assert False, f"USFMBibleBook.load( {filename} ) for {self.workName}' {self.BBB}_{C}:{V} needs to stop here because of lost ¬ZALN"
                 elif marker in ('tc1','tc2','tc3','tc4','tc5'):
                     # and (lastMarker in ('v', 'XXXp~', 'q','pi','qm','li') or lastMarker in BibleOrgSysGlobals.USFMParagraphMarkers):
-                    dPrint( 'Info', DEBUGGING_THIS_MODULE, f"HereTC with {lastMarker}='{lastText}' now {marker}='{text}'" )
+                    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 3:
+                        dPrint( 'Info', DEBUGGING_THIS_MODULE, f"HereTC with {lastMarker}='{lastText}' now {marker}='{text}'" )
                     lastText = f"{lastText}{'' if lastText.endswith(' ') else ' '}\\{marker} {text.strip()}" # Not always good to add a space, but it's their fault! Don't do it for footnotes, though.
-                    dPrint( 'Info', DEBUGGING_THIS_MODULE, f"{self.BBB} {C} {V} AppendedTC {marker}='{text}' to get combined line {lastMarker}='{lastText}'" )
+                    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 3:
+                        dPrint( 'Info', DEBUGGING_THIS_MODULE, f"{self.BBB} {C} {V} AppendedTC {marker}='{text}' to get combined line {lastMarker}='{lastText}'" )
                     marker = text = None # Seems to make no difference
                 else:
                     #dPrint( 'Never', debuggingThisFunction, 'USFM Para Markers', BibleOrgSysGlobals.USFMParagraphMarkers )
@@ -630,7 +662,8 @@ class USFMBibleBook( BibleBook ):
                     logging.warning( f"Found '\\{marker}' note marker after {self.BBB} {C}:{V} at beginning of line (with no text)" )
                 self.addPriorityError( 26, C, V, f"Found \\{marker} note marker on new line in file" )
                 lastText =  f"{lastText}{'' if lastText.endswith(' ') else ' '}\\{marker} {text}" # Not always good to add a space, but it's their fault! Don't do it for footnotes, though.
-                dPrint( 'Never', DEBUGGING_THIS_MODULE, f"{self.BBB} {C} {V} Appended2 {marker}='{text}' to get combined line {lastMarker}='{lastText}'" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 5:
+                    dPrint( 'Never', DEBUGGING_THIS_MODULE, f"{self.BBB} {C} {V} Appended2 {marker}='{text}' to get combined line {lastMarker}='{lastText}'" )
             else: # the line begins with an unknown marker
                 # if lastMarker:
                 #     dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Add2", marker)
@@ -643,7 +676,8 @@ class USFMBibleBook( BibleBook ):
                         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"HereYY with {lastMarker} now {marker}" )
                         if not lastText.endswith(' '): lastText += ' ' # Not always good to add a space, but it's their fault!
                         lastText +=  text
-                        vPrint( 'Never', DEBUGGING_THIS_MODULE, f"{self.BBB} {C} {V} Appended3 {marker}='{text}' to get combined line {lastMarker}='{lastText}'" )
+                        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 5:
+                            vPrint( 'Never', DEBUGGING_THIS_MODULE, f"{self.BBB} {C} {V} Appended3 {marker}='{text}' to get combined line {lastMarker}='{lastText}'" )
                         marker = text = None # Seems to make no difference
                     elif marker == 'v~' and lastMarker in ('ts','sp','d'): # A common unfoldingWord USFM encoding error
                         logging.error( f"USFMBibleBook.load() '{self.workName}' {self.BBB}_{C}:{V} added new paragraph for encoding error after {lastMarker}='{lastText}': {marker}='{text}'" )
@@ -730,23 +764,30 @@ def briefDemo() -> None:
     BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     def demoFile( name, filename, folder, BBB, encoding ):
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Loading {} from {}{}…".format( BBB, filename, f" from {folder}" if BibleOrgSysGlobals.verbosityLevel > 2 else '' ) )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Loading {} from {}{}…".format( BBB, filename, f" from {folder}" if BibleOrgSysGlobals.verbosityLevel > 2 else '' ) )
         UBB = USFMBibleBook( name, BBB )
         UBB.load( filename, folder, encoding )
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  ID is {UBB.getField( 'id' )!r}" )
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  Header is {UBB.getField( 'h' )!r}" )
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  Main titles are {UBB.getField( 'mt1' )!r} and {UBB.getField( 'mt2' )!r}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  ID is {UBB.getField( 'id' )!r}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  Header is {UBB.getField( 'h' )!r}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  Main titles are {UBB.getField( 'mt1' )!r} and {UBB.getField( 'mt2' )!r}" )
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, UBB )
         UBB.validateMarkers()
         UBBVersification = UBB.getVersification()
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, UBBVersification )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, UBBVersification )
         UBBAddedUnits = UBB.getAddedUnits()
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, UBBAddedUnits )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, UBBAddedUnits )
         discoveryDict = UBB._discover()
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "discoveryDict", discoveryDict )
         UBB.checkBook()
         UBErrors = UBB.getCheckResults()
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, UBErrors )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, UBErrors )
     # end of demoFile
 
 
@@ -768,7 +809,8 @@ def briefDemo() -> None:
         name, encoding, testFolder = "Matigsalug", 'utf-8', Path( '/mnt/HDs/Matigsalug/Bible/MBTV/' ) # You can put your test folder here
         #name, encoding, testFolder = "WEB", 'utf-8', Path( '/srv/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/' ) # You can put your test folder here
         if os.access( testFolder, os.R_OK ):
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Scanning {name} from {testFolder}…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Scanning {name} from {testFolder}…" )
             fileList = USFMFilenames.USFMFilenames( testFolder ).getMaximumPossibleFilenameTuples()
             for BBB,filename in fileList:
                 demoFile( name, filename, testFolder, BBB, encoding )
@@ -792,23 +834,30 @@ def fullDemo() -> None:
     BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     def demoFile( name, filename, folder, BBB, encoding ):
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Loading {} from {}{}…".format( BBB, filename, f" from {folder}" if BibleOrgSysGlobals.verbosityLevel > 2 else '' ) )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Loading {} from {}{}…".format( BBB, filename, f" from {folder}" if BibleOrgSysGlobals.verbosityLevel > 2 else '' ) )
         UBB = USFMBibleBook( name, BBB )
         UBB.load( filename, folder, encoding )
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  ID is {UBB.getField( 'id' )!r}" )
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  Header is {UBB.getField( 'h' )!r}" )
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  Main titles are {UBB.getField( 'mt1' )!r} and {UBB.getField( 'mt2' )!r}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  ID is {UBB.getField( 'id' )!r}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  Header is {UBB.getField( 'h' )!r}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  Main titles are {UBB.getField( 'mt1' )!r} and {UBB.getField( 'mt2' )!r}" )
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, UBB )
         UBB.validateMarkers()
         UBBVersification = UBB.getVersification()
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, UBBVersification )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, UBBVersification )
         UBBAddedUnits = UBB.getAddedUnits()
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, UBBAddedUnits )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, UBBAddedUnits )
         discoveryDict = UBB._discover()
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "discoveryDict", discoveryDict )
         UBB.checkBook()
         UBErrors = UBB.getCheckResults()
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, UBErrors )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, UBErrors )
     # end of demoFile
 
 
@@ -830,7 +879,8 @@ def fullDemo() -> None:
         name, encoding, testFolder = "Matigsalug", 'utf-8', Path( '/mnt/HDs/Matigsalug/Bible/MBTV/' ) # You can put your test folder here
         #name, encoding, testFolder = "WEB", 'utf-8', Path( '/srv/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/' ) # You can put your test folder here
         if os.access( testFolder, os.R_OK ):
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Scanning {name} from {testFolder}…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Scanning {name} from {testFolder}…" )
             fileList = USFMFilenames.USFMFilenames( testFolder ).getMaximumPossibleFilenameTuples()
             for BBB,filename in fileList:
                 demoFile( name, filename, testFolder, BBB, encoding )

@@ -77,7 +77,7 @@ from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisational
 import bos_books_codes_py
 
 
-LAST_MODIFIED_DATE = '2026-05-06' # by RJH
+LAST_MODIFIED_DATE = '2026-10-06' # by RJH
 SHORT_PROGRAM_NAME = "BibleReferences"
 PROGRAM_NAME = "Bible References handler"
 PROGRAM_VERSION = '0.35'
@@ -118,7 +118,8 @@ class BibleReferenceBase:
         if punctuationSystemName and punctuationSystemName!='None' and punctuationSystemName!='Unknown': # default (if we know the punctuation system)
             assert BibleObject is None
             self.punctuationDict = self._BibleOrganisationalSystem.getPunctuationDict()
-            dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"BibleReferenceBase: punct={BOSObject.getPunctuationSystemName()}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 1:
+                dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"BibleReferenceBase: punct={BOSObject.getPunctuationSystemName()}" )
         else: # else use a very generic punctuation system
             assert BibleObject is not None
             self.punctuationDict = { 'spaceAllowedAfterBCS': 'E',
@@ -141,7 +142,8 @@ class BibleReferenceBase:
             self.getBookNameFunction = self._BibleOrganisationalSystem.getBookName
             getBookAbbreviationFunction = self._BibleOrganisationalSystem.getBookAbbreviation
             self.getBBBFromText = self._BibleOrganisationalSystem.getBBBFromText # This is the function that finds a book code from the vernacular name or abbreviation
-            dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"BibleReferenceBase: bns={BOSObject.getBooksNamesSystemName()}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 1:
+                dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"BibleReferenceBase: bns={BOSObject.getBooksNamesSystemName()}" )
         else: # else use our local functions from our deduced book names
             assert BibleObject is not None
             self.getBookNameFunction = BibleObject.getAssumedBookName # from InternalBible (which gets it from InternalBibleBook)
@@ -733,7 +735,8 @@ class BibleReferenceList( BibleReferenceBase ):
             """
             Checks the reference info then saves it as a referenceTuple in the refList.
             """
-            fnPrint( DEBUGGING_THIS_MODULE, f"BibleReferences.saveReferenceRange( startTuple={startTuple}, {BBB}, {C}:{V}, S={S}, refList={refList}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+                fnPrint( DEBUGGING_THIS_MODULE, f"BibleReferences.saveReferenceRange( startTuple={startTuple}, {BBB}, {C}:{V}, S={S}, refList={refList}" )
             if V and not S and V[-1] in ('a','b','c',): # Remove the suffix
                 S = V[-1]; V = V[:-1]
             if V=='3O': V = '30' # Fix a bug in byr-w.usfm
@@ -772,7 +775,8 @@ class BibleReferenceList( BibleReferenceBase ):
 
 
         if location is None: location = '(unknown)'
-        vPrint( 'Never', DEBUGGING_THIS_MODULE, f"BibleReferences.parseReferenceString {location!r} from {referenceString}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 5:
+            vPrint( 'Never', DEBUGGING_THIS_MODULE, f"BibleReferences.parseReferenceString {location!r} from {referenceString}" )
         assert referenceString and isinstance( referenceString, str )
         assert location and isinstance( location, str )
         haveWarnings, haveErrors, totalVerseList = False, False, []
@@ -1198,7 +1202,8 @@ class BibleReferenceList( BibleReferenceBase ):
         if len(singleVerseSet) < len(totalVerseList):
             if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE:
                 vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"BibleReferences.parseReferenceString Final status: {statusList[status]} -- got {self.referenceList!r}from {referenceString!r}\n" )
-            vPrint( 'Never', DEBUGGING_THIS_MODULE, f"BibleReferences.parseReferenceString totalVerseList is {totalVerseList}, singleVerseSet is {singleVerseSet}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 5:
+                vPrint( 'Never', DEBUGGING_THIS_MODULE, f"BibleReferences.parseReferenceString totalVerseList is {totalVerseList}, singleVerseSet is {singleVerseSet}" )
             for entry in singleVerseSet:
                 if totalVerseList.count(entry) > 1:
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, entry )
@@ -1214,9 +1219,11 @@ class BibleReferenceList( BibleReferenceBase ):
 
         Basically just returns the first result (if any) from parseReferenceString.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"BibleReferences.getFirstReference( {repr(referenceString)}, {location} )" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, f"BibleReferences.getFirstReference( {repr(referenceString)}, {location} )" )
         hE, hW, refList = self.parseReferenceString( referenceString, location )
-        vPrint( 'Never', DEBUGGING_THIS_MODULE, "gFR", hE, hW, refList )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 5:
+            vPrint( 'Never', DEBUGGING_THIS_MODULE, "gFR", hE, hW, refList )
         for something in refList: # Just return the first one
             if isinstance( something, tuple ):
                 if len(something)==4: return something
@@ -1331,7 +1338,8 @@ class BibleReferenceList( BibleReferenceBase ):
         assert BBB and len(BBB)==3
         assert C
         if not C.isdigit() and C!='-1':
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"BibleReferenceList.containsReference( {BBB}, {C}, {V}, {S} ) expected C to be digits" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"BibleReferenceList.containsReference( {BBB}, {C}, {V}, {S} ) expected C to be digits" )
         assert V # May contain a list or range here
 
         # First find out what we were given
@@ -1464,7 +1472,8 @@ class BibleAnchorReference:
 
         We could rewrite this using RegularExpressions, but would it be able to give such precise formatting error messages?
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"parseAnchorString: {self.homeTuple} passed {anchorString!r}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, f"parseAnchorString: {self.homeTuple} passed {anchorString!r}" )
         if location is None: location = '(unknown)'
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Processing {location!r} from {anchorString}" )
         assert anchorString and isinstance( anchorString, str )
@@ -1843,7 +1852,8 @@ class BibleAnchorReference:
 
         Returns True or False.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"matchesAnchorString: {self.homeTuple} passed {anchorString!r}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, f"matchesAnchorString: {self.homeTuple} passed {anchorString!r}" )
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag or DEBUGGING_THIS_MODULE:
             assert anchorString
         elif not anchorString: return False
@@ -1869,10 +1879,14 @@ class BibleAnchorReference:
                 if ',' in self.verseString:
                     bits = self.verseString.split( ',' )
                     if rV in bits: return True
-        vPrint( 'Never', DEBUGGING_THIS_MODULE, f"matchesAnchorString: {self.homeTuple} passed {anchorString!r}" )
-        vPrint( 'Never', DEBUGGING_THIS_MODULE, f"  Parsing {adjAnchorString!r}" )
-        vPrint( 'Never', DEBUGGING_THIS_MODULE, f"  From {resultList!r} got {anchorString} {haveErrors} {haveWarnings}" )
-        vPrint( 'Never', DEBUGGING_THIS_MODULE, f"  From {result!r} got {adjAnchorString}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 5:
+            vPrint( 'Never', DEBUGGING_THIS_MODULE, f"matchesAnchorString: {self.homeTuple} passed {anchorString!r}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 5:
+            vPrint( 'Never', DEBUGGING_THIS_MODULE, f"  Parsing {adjAnchorString!r}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 5:
+            vPrint( 'Never', DEBUGGING_THIS_MODULE, f"  From {resultList!r} got {anchorString} {haveErrors} {haveWarnings}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 5:
+            vPrint( 'Never', DEBUGGING_THIS_MODULE, f"  From {result!r} got {adjAnchorString}" )
         return False
     # end of BibleAnchorReference:matchesAnchorString
 # end of class BibleAnchorReference
@@ -1889,76 +1903,108 @@ def briefDemo() -> None:
     printProcessingMessages = True
 
     if 1: # test BibleSingleReference
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
         BSR = BibleSingleReference( ourBOS )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, BSR ) # Just print a summary
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nSingle Reference (good)" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, BSR ) # Just print a summary
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nSingle Reference (good)" )
         for ref in ("Mat 7:3","Mat.7:3","Mat. 7:3","Mt. 7:3","Mt.7:3","Jde 7","Jde. 7","Jde 1:7","Jde. 1:7","Job 8:4","Job. 8:4","Job8:4","Job  8:4","Lev. 8:4b"):
             if printProcessingMessages: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Processing {ref!r} reference string…" )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  From {ref!r} BSR got {BSR.parseReferenceString(ref)}" )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nSingle Reference (bad)" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  From {ref!r} BSR got {BSR.parseReferenceString(ref)}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nSingle Reference (bad)" )
         for ref in ("Intro","Mat 0:3","Mat.7:0","Mat. 77:3","Mt. 7:93","M 7:3","Mit 7:3","Mt. 7:3","Mit. 7:3","Mat. 7:3ab","Mat, 7:3","Mat. 7:3xyz5"):
             if printProcessingMessages: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Processing {ref!r} reference string…" )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  From {ref!r} BSR got {BSR.parseReferenceString(ref)}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  From {ref!r} BSR got {BSR.parseReferenceString(ref)}" )
 
     if 1: # test BibleSingleReferences
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
         BSRs = BibleSingleReferences( ourBOS )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, BSRs ) # Just print a summary
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nSingle References (good)" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, BSRs ) # Just print a summary
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nSingle References (good)" )
         for ref in ("Mat 7:3","Mat.7:3","Mat. 7:3","Mt. 7:3","Mt.7:3","Jde 7","Jde. 7","Jde 1:7","Jde. 1:7","Job 8:4","Job. 8:4","Job8:4","Job  8:4","Lev. 8:4b"):
             if printProcessingMessages: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Processing {ref!r} reference string…" )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  From {ref!r} BSRs got {BSRs.parseReferenceString(ref)}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  From {ref!r} BSRs got {BSRs.parseReferenceString(ref)}" )
         for ref in ("Mat. 7:3,7","Mat. 7:3; 4:7","Mat. 7:3,7; 4:7","Mat. 7:3,7; 4:7,9,11","Mat. 7:3; Heb. 2:2; Rev. 1:1","Mat. 7:3,7; Heb 2:2,9; Rev. 1:1","Mat. 7:3,7; 8:17; Heb 2:2,9; 4:4,7; Rev. 1:1; 1:1","Mrk. 7:3a,7b,8"):
             if printProcessingMessages: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Processing {ref!r} reference string…" )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  From {ref!r} BSRs got {BSRs.parseReferenceString(ref)}" )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nSingle References (bad)" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  From {ref!r} BSRs got {BSRs.parseReferenceString(ref)}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nSingle References (bad)" )
         for ref in ("Mat 0:3","Mat.7:0","Mat. 77:3","Mt. 7:93","M 7:3","Mit 7:3","Mt. 7:3","Mit. 7:3","Mat. 7:3ab","Mat, 7:3","Mat. 7:3xyz5"):
             if printProcessingMessages: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Processing {ref!r} reference string…" )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  From {ref!r} BSRs got {BSRs.parseReferenceString(ref)}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  From {ref!r} BSRs got {BSRs.parseReferenceString(ref)}" )
 
     if 1: # test BibleReferenceList
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
         BRL = BibleReferenceList( ourBOS )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, BRL ) # Just print a summary
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, BRL.makeReferenceString(("MAT",'7','3')), BRL.makeReferenceString(("PHM",'1','3')), BRL.makeReferenceString(("CO1",'2','1','a')), BRL.makeReferenceString(("CO2",'7')) )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, BRL ) # Just print a summary
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, BRL.makeReferenceString(("MAT",'7','3')), BRL.makeReferenceString(("PHM",'1','3')), BRL.makeReferenceString(("CO1",'2','1','a')), BRL.makeReferenceString(("CO2",'7')) )
         if 1:
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n\nSingle References for Ranges (good)" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n\nSingle References for Ranges (good)" )
             for ref in ("Mat 7:3","Mat.7:3","Mat. 7:3","Mt. 7:3","Mt.7:3","Jde 7","Jde. 7","Jde 1:7","Jde. 1:7","Job 8:4","Job. 8:4","Job8:4","Job  8:4","Lev. 8:4b", \
                         "Mat. 7:3,7","Mat. 7:3; 4:7","Mat. 7:3,7; 4:7","Mat. 7:3,7; 4:7,9,11","Mat. 7:3; Heb. 2:2; Rev. 1:1","Mat. 7:3,7; Heb 2:2,9; Rev. 1:1","Mat. 7:3,7; 8:17; Heb 2:2,9; 4:4,7; Rev. 1:1; 1:1","Mrk. 7:3a,7b,8"):
                 if printProcessingMessages: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Processing {ref!r} reference string…" )
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  From {ref!r} BRL got {BRL.parseReferenceString(ref)}" )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nSingle References for Ranges (bad)" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  From {ref!r} BRL got {BRL.parseReferenceString(ref)}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nSingle References for Ranges (bad)" )
             for ref in ("Mat 0:3","Mat.7:0","Mat. 77:3","Mt. 7:93","M 7:3","Mit 7:3","Mt. 7:3","Mit. 7:3","Mat. 7:3ab","Mat, 7:3","Mat. 7:3xyz5"):
                 if printProcessingMessages: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Processing {ref!r} reference string…" )
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  From {ref!r} BSRs got {BRL.parseReferenceString(ref)}" )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n\nSingle Ranges (good)" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  From {ref!r} BSRs got {BRL.parseReferenceString(ref)}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n\nSingle Ranges (good)" )
             for ref in ("Mat 7:3-7","Mat.7:3-11","Mat. 7:13-8:2","Mt. 7:3,5-9","Mt.7:3-4,6-9","Jde 7-8","Jde. 1-3","Jde 1:7-8","Jud. 1:1-3,5,7-9","EXO.4:14,27c-30;  5:1,4,20; 6:13,20,23,25-27a; 7:1,2,6b-10a,10,12,19,20; 8:1,2,4,8,12,13,21;"):
                 if printProcessingMessages: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Processing {ref!r} reference string…" )
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  From {ref!r} BRL got {BRL.parseReferenceString(ref)}" )
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"OSIS result is {BRL.getOSISRefList()!r}" )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nSingle Ranges (bad)" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  From {ref!r} BRL got {BRL.parseReferenceString(ref)}" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"OSIS result is {BRL.getOSISRefList()!r}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nSingle Ranges (bad)" )
             for ref in ("EXO.4:14-12; NUM.3:12-1:5; JOS.4:5-5","Mt. 7:7;"):
                 if printProcessingMessages: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Processing {ref!r} reference string…" )
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  From {ref!r} BRL got {BRL.parseReferenceString(ref)}" )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n\nNow some chapter Ranges (good)" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  From {ref!r} BRL got {BRL.parseReferenceString(ref)}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n\nNow some chapter Ranges (good)" )
             for ref in ("Dan. 5","Gen. 1-11","Act.4-7; Mat.5-7"):
                 if printProcessingMessages: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Processing {ref!r} reference string…" )
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  From {ref!r} BRL got {BRL.parseReferenceString(ref)}" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  From {ref!r} BRL got {BRL.parseReferenceString(ref)}" )
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"OSIS result is {BRL.getOSISRefList()!r}" )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nNow some chapter Ranges (bad)" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nNow some chapter Ranges (bad)" )
             for ref in ("Tit. 1:2; 1:2-7","Jer. 95","Exo. 23-99","1 Cor.9-7; 1Tim.5-7:2"):
                 if printProcessingMessages: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Processing {ref!r} reference string…" )
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  From {ref!r} BRL got {BRL.parseReferenceString(ref)}" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  From {ref!r} BRL got {BRL.parseReferenceString(ref)}" )
             for ref in ("Jhn. 3:16", "Rev. 2:1-3" ):
                 if printProcessingMessages: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Processing {ref!r} reference string…" )
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  From {ref!r} BRL got OSIS {BRL.parseToOSIS(ref)!r}" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  From {ref!r} BRL got OSIS {BRL.parseToOSIS(ref)!r}" )
         if 1:
             for ref in ("Mat. 27:15a-Mrk. 2:4b", "1Sml. 16:1-1Kngs. 2:11", "Eze. 27:12-13,22", ):
                 if printProcessingMessages: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nProcessing {ref!r} reference string…" )
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  From {ref!r} BRL got OSIS {BRL.parseToOSIS(ref)!r}" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  From {ref!r} BRL got OSIS {BRL.parseToOSIS(ref)!r}" )
                 l1, l2 = BRL.getReferenceList(), BRL.getReferenceList( expanded=True )
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "List is: ", l1 )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "List is: ", l1 )
                 if l2!=l1: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Expanded:", l2 )
         if 1:
             originalRefs = ( \
@@ -1974,30 +2020,37 @@ def briefDemo() -> None:
             for ref in fixedRefs:
                 if printProcessingMessages: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nProcessing {ref!r} reference string…" )
                 oL = BRL.parseToOSIS( ref )
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"From {ref!r}\n  BRL got OSIS {oL!r}" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"From {ref!r}\n  BRL got OSIS {oL!r}" )
                 l1, l2 = BRL.getReferenceList(), BRL.getReferenceList( expanded=True )
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "List is: ", l1 )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "List is: ", l1 )
                 #if l2!=l1: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Expanded:", l2 )
                 if oL is not None:
                     sucessFlag, hvWarnings, l3 = BRL.parseOSISReferenceString( oL )
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Now got: ", l3 )
+                    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Now got: ", l3 )
         if 1:
             for ref in ( "1Cor.3.5-1Cor.3.9", ):
                 if printProcessingMessages: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nProcessing {ref!r} OSIS reference string…" )
                 sucessFlag, hvWarnings, resultList = BRL.parseOSISReferenceString( ref )
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"From {ref!r}\n  BRL got {resultList!r}" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"From {ref!r}\n  BRL got {resultList!r}" )
                 l1, l2 = BRL.getReferenceList(), BRL.getReferenceList( expanded=True )
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "List is: ", l1 )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "List is: ", l1 )
                 if l2!=l1: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Expanded:", l2 )
 
     if 1: # test BibleAnchorReference
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
         for ourBBB, ourC, ourV, ourAnchor in ( ('GEN','17','25', '17:25'), \
                                             ('EXO','12','17-18', '12:17'), ('LEV','12','17-18', '12:18'), ('NUM','12','17', '12:17-18'), ('DEU','12','18', '12:17-18'), \
                                             ('JOS','12','17,18', '12:17'), ('JDG','12','17,18', '12:18'), ('SA1','12','17', '12:17,18'), ('SA2','12','18', '12:17,18'), \
                                             ('CH1','12','17-19', '12:18'), ('CH2','12','18', '12:17-19'), ):
             BAR = BibleAnchorReference( ourBBB, ourC, ourV )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"From {ourBBB} '{ourC}' '{ourV}' got BibleAnchorReference = {BAR}" ) # Just print a summary
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"From {ourBBB} '{ourC}' '{ourV}' got BibleAnchorReference = {BAR}" ) # Just print a summary
             result = BAR.matchesAnchorString( ourAnchor )
             if result: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"    Matched ourAnchor '{ourAnchor}'" )
             else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"    DIDN'T MATCH ourAnchor '{ourAnchor}' <--------------------- Oops!" )
@@ -2013,76 +2066,108 @@ def fullDemo() -> None:
     printProcessingMessages = True
 
     if 1: # test BibleSingleReference
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
         BSR = BibleSingleReference( ourBOS )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, BSR ) # Just print a summary
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nSingle Reference (good)" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, BSR ) # Just print a summary
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nSingle Reference (good)" )
         for ref in ("Mat 7:3","Mat.7:3","Mat. 7:3","Mt. 7:3","Mt.7:3","Jde 7","Jde. 7","Jde 1:7","Jde. 1:7","Job 8:4","Job. 8:4","Job8:4","Job  8:4","Lev. 8:4b"):
             if printProcessingMessages: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Processing {ref!r} reference string…" )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  From {ref!r} BSR got {BSR.parseReferenceString(ref)}" )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nSingle Reference (bad)" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  From {ref!r} BSR got {BSR.parseReferenceString(ref)}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nSingle Reference (bad)" )
         for ref in ("Intro","Mat 0:3","Mat.7:0","Mat. 77:3","Mt. 7:93","M 7:3","Mit 7:3","Mt. 7:3","Mit. 7:3","Mat. 7:3ab","Mat, 7:3","Mat. 7:3xyz5"):
             if printProcessingMessages: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Processing {ref!r} reference string…" )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  From {ref!r} BSR got {BSR.parseReferenceString(ref)}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  From {ref!r} BSR got {BSR.parseReferenceString(ref)}" )
 
     if 1: # test BibleSingleReferences
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
         BSRs = BibleSingleReferences( ourBOS )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, BSRs ) # Just print a summary
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nSingle References (good)" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, BSRs ) # Just print a summary
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nSingle References (good)" )
         for ref in ("Mat 7:3","Mat.7:3","Mat. 7:3","Mt. 7:3","Mt.7:3","Jde 7","Jde. 7","Jde 1:7","Jde. 1:7","Job 8:4","Job. 8:4","Job8:4","Job  8:4","Lev. 8:4b"):
             if printProcessingMessages: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Processing {ref!r} reference string…" )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  From {ref!r} BSRs got {BSRs.parseReferenceString(ref)}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  From {ref!r} BSRs got {BSRs.parseReferenceString(ref)}" )
         for ref in ("Mat. 7:3,7","Mat. 7:3; 4:7","Mat. 7:3,7; 4:7","Mat. 7:3,7; 4:7,9,11","Mat. 7:3; Heb. 2:2; Rev. 1:1","Mat. 7:3,7; Heb 2:2,9; Rev. 1:1","Mat. 7:3,7; 8:17; Heb 2:2,9; 4:4,7; Rev. 1:1; 1:1","Mrk. 7:3a,7b,8"):
             if printProcessingMessages: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Processing {ref!r} reference string…" )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  From {ref!r} BSRs got {BSRs.parseReferenceString(ref)}" )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nSingle References (bad)" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  From {ref!r} BSRs got {BSRs.parseReferenceString(ref)}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nSingle References (bad)" )
         for ref in ("Mat 0:3","Mat.7:0","Mat. 77:3","Mt. 7:93","M 7:3","Mit 7:3","Mt. 7:3","Mit. 7:3","Mat. 7:3ab","Mat, 7:3","Mat. 7:3xyz5"):
             if printProcessingMessages: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Processing {ref!r} reference string…" )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  From {ref!r} BSRs got {BSRs.parseReferenceString(ref)}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  From {ref!r} BSRs got {BSRs.parseReferenceString(ref)}" )
 
     if 1: # test BibleReferenceList
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
         BRL = BibleReferenceList( ourBOS )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, BRL ) # Just print a summary
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, BRL.makeReferenceString(("MAT",'7','3')), BRL.makeReferenceString(("PHM",'1','3')), BRL.makeReferenceString(("CO1",'2','1','a')), BRL.makeReferenceString(("CO2",'7')) )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, BRL ) # Just print a summary
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, BRL.makeReferenceString(("MAT",'7','3')), BRL.makeReferenceString(("PHM",'1','3')), BRL.makeReferenceString(("CO1",'2','1','a')), BRL.makeReferenceString(("CO2",'7')) )
         if 1:
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n\nSingle References for Ranges (good)" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n\nSingle References for Ranges (good)" )
             for ref in ("Mat 7:3","Mat.7:3","Mat. 7:3","Mt. 7:3","Mt.7:3","Jde 7","Jde. 7","Jde 1:7","Jde. 1:7","Job 8:4","Job. 8:4","Job8:4","Job  8:4","Lev. 8:4b", \
                         "Mat. 7:3,7","Mat. 7:3; 4:7","Mat. 7:3,7; 4:7","Mat. 7:3,7; 4:7,9,11","Mat. 7:3; Heb. 2:2; Rev. 1:1","Mat. 7:3,7; Heb 2:2,9; Rev. 1:1","Mat. 7:3,7; 8:17; Heb 2:2,9; 4:4,7; Rev. 1:1; 1:1","Mrk. 7:3a,7b,8"):
                 if printProcessingMessages: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Processing {ref!r} reference string…" )
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  From {ref!r} BRL got {BRL.parseReferenceString(ref)}" )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nSingle References for Ranges (bad)" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  From {ref!r} BRL got {BRL.parseReferenceString(ref)}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nSingle References for Ranges (bad)" )
             for ref in ("Mat 0:3","Mat.7:0","Mat. 77:3","Mt. 7:93","M 7:3","Mit 7:3","Mt. 7:3","Mit. 7:3","Mat. 7:3ab","Mat, 7:3","Mat. 7:3xyz5"):
                 if printProcessingMessages: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Processing {ref!r} reference string…" )
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  From {ref!r} BSRs got {BRL.parseReferenceString(ref)}" )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n\nSingle Ranges (good)" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  From {ref!r} BSRs got {BRL.parseReferenceString(ref)}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n\nSingle Ranges (good)" )
             for ref in ("Mat 7:3-7","Mat.7:3-11","Mat. 7:13-8:2","Mt. 7:3,5-9","Mt.7:3-4,6-9","Jde 7-8","Jde. 1-3","Jde 1:7-8","Jud. 1:1-3,5,7-9","EXO.4:14,27c-30;  5:1,4,20; 6:13,20,23,25-27a; 7:1,2,6b-10a,10,12,19,20; 8:1,2,4,8,12,13,21;"):
                 if printProcessingMessages: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Processing {ref!r} reference string…" )
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  From {ref!r} BRL got {BRL.parseReferenceString(ref)}" )
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"OSIS result is {BRL.getOSISRefList()!r}" )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nSingle Ranges (bad)" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  From {ref!r} BRL got {BRL.parseReferenceString(ref)}" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"OSIS result is {BRL.getOSISRefList()!r}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nSingle Ranges (bad)" )
             for ref in ("EXO.4:14-12; NUM.3:12-1:5; JOS.4:5-5","Mt. 7:7;"):
                 if printProcessingMessages: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Processing {ref!r} reference string…" )
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  From {ref!r} BRL got {BRL.parseReferenceString(ref)}" )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n\nNow some chapter Ranges (good)" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  From {ref!r} BRL got {BRL.parseReferenceString(ref)}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n\nNow some chapter Ranges (good)" )
             for ref in ("Dan. 5","Gen. 1-11","Act.4-7; Mat.5-7"):
                 if printProcessingMessages: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Processing {ref!r} reference string…" )
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  From {ref!r} BRL got {BRL.parseReferenceString(ref)}" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  From {ref!r} BRL got {BRL.parseReferenceString(ref)}" )
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"OSIS result is {BRL.getOSISRefList()!r}" )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nNow some chapter Ranges (bad)" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nNow some chapter Ranges (bad)" )
             for ref in ("Tit. 1:2; 1:2-7","Jer. 95","Exo. 23-99","1 Cor.9-7; 1Tim.5-7:2"):
                 if printProcessingMessages: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Processing {ref!r} reference string…" )
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  From {ref!r} BRL got {BRL.parseReferenceString(ref)}" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  From {ref!r} BRL got {BRL.parseReferenceString(ref)}" )
             for ref in ("Jhn. 3:16", "Rev. 2:1-3" ):
                 if printProcessingMessages: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Processing {ref!r} reference string…" )
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  From {ref!r} BRL got OSIS {BRL.parseToOSIS(ref)!r}" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  From {ref!r} BRL got OSIS {BRL.parseToOSIS(ref)!r}" )
         if 1:
             for ref in ("Mat. 27:15a-Mrk. 2:4b", "1Sml. 16:1-1Kngs. 2:11", "Eze. 27:12-13,22", ):
                 if printProcessingMessages: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nProcessing {ref!r} reference string…" )
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  From {ref!r} BRL got OSIS {BRL.parseToOSIS(ref)!r}" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  From {ref!r} BRL got OSIS {BRL.parseToOSIS(ref)!r}" )
                 l1, l2 = BRL.getReferenceList(), BRL.getReferenceList( expanded=True )
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "List is: ", l1 )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "List is: ", l1 )
                 if l2!=l1: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Expanded:", l2 )
         if 1:
             originalRefs = ( \
@@ -2098,30 +2183,37 @@ def fullDemo() -> None:
             for ref in fixedRefs:
                 if printProcessingMessages: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nProcessing {ref!r} reference string…" )
                 oL = BRL.parseToOSIS( ref )
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"From {ref!r}\n  BRL got OSIS {oL!r}" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"From {ref!r}\n  BRL got OSIS {oL!r}" )
                 l1, l2 = BRL.getReferenceList(), BRL.getReferenceList( expanded=True )
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "List is: ", l1 )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "List is: ", l1 )
                 #if l2!=l1: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Expanded:", l2 )
                 if oL is not None:
                     sucessFlag, hvWarnings, l3 = BRL.parseOSISReferenceString( oL )
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Now got: ", l3 )
+                    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Now got: ", l3 )
         if 1:
             for ref in ( "1Cor.3.5-1Cor.3.9", ):
                 if printProcessingMessages: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nProcessing {ref!r} OSIS reference string…" )
                 sucessFlag, hvWarnings, resultList = BRL.parseOSISReferenceString( ref )
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"From {ref!r}\n  BRL got {resultList!r}" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"From {ref!r}\n  BRL got {resultList!r}" )
                 l1, l2 = BRL.getReferenceList(), BRL.getReferenceList( expanded=True )
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "List is: ", l1 )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "List is: ", l1 )
                 if l2!=l1: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Expanded:", l2 )
 
     if 1: # test BibleAnchorReference
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
         for ourBBB, ourC, ourV, ourAnchor in ( ('GEN','17','25', '17:25'), \
                                             ('EXO','12','17-18', '12:17'), ('LEV','12','17-18', '12:18'), ('NUM','12','17', '12:17-18'), ('DEU','12','18', '12:17-18'), \
                                             ('JOS','12','17,18', '12:17'), ('JDG','12','17,18', '12:18'), ('SA1','12','17', '12:17,18'), ('SA2','12','18', '12:17,18'), \
                                             ('CH1','12','17-19', '12:18'), ('CH2','12','18', '12:17-19'), ):
             BAR = BibleAnchorReference( ourBBB, ourC, ourV )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"From {ourBBB} '{ourC}' '{ourV}' got BibleAnchorReference = {BAR}" ) # Just print a summary
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"From {ourBBB} '{ourC}' '{ourV}' got BibleAnchorReference = {BAR}" ) # Just print a summary
             result = BAR.matchesAnchorString( ourAnchor )
             if result: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"    Matched ourAnchor '{ourAnchor}'" )
             else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"    DIDN'T MATCH ourAnchor '{ourAnchor}' <--------------------- Oops!" )

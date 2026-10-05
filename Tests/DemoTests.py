@@ -39,7 +39,7 @@ from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Formats import USFMBible # Has to be here for unpickling in TestBib5 to work
 #dPrint( 'Info', DEBUGGING_THIS_MODULE, sys.path )
 
-LAST_MODIFIED_DATE = '2022-06-07' # by RJH
+LAST_MODIFIED_DATE = '2026-10-06' # by RJH
 SHORT_PROGRAM_NAME = "DemoTests"
 PROGRAM_NAME = "BOS+ Demo tests"
 PROGRAM_VERSION = '0.69'
@@ -166,7 +166,8 @@ def doAll( testType:str, failures:list[str], failureDetails:list[str],
         Run either fullDemo() or briefDemo() for the given module as required.
         """
         global interrupted
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n\nTesting: {moduleName}…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n\nTesting: {moduleName}…" )
         goTime = datetime.now()
         if testDemos:
             try:
@@ -1069,7 +1070,8 @@ def doAll( testType:str, failures:list[str], failureDetails:list[str],
     for swIndex,thisSwordType in enumerate( swordTypes ): # We'll do all these tests twice if possible
         if swIndex == 1: # Now do them all again for the other type
             newSwordType = thisSwordType if originalSwordType==swordTypes[0] else swordTypes[0]
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n\nNow switching from '{originalSwordType}' to '{newSwordType}' …" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n\nNow switching from '{originalSwordType}' to '{newSwordType}' …" )
             SwordResources.setSwordType( newSwordType )
         try:
             doTest( f'SwordResources {SwordResources.SwordType}', SwordResources )

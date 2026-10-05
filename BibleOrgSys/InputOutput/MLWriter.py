@@ -33,7 +33,7 @@ from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from bible_organisational_system import InternalBibleExtraList
 
 
-LAST_MODIFIED_DATE = '2026-05-17' # by RJH (Rust conversion)
+LAST_MODIFIED_DATE = '2026-10-06' # by RJH (Rust conversion)
 SHORT_PROGRAM_NAME = "MLWriter"
 PROGRAM_NAME = "XML/HTML Writer"
 PROGRAM_VERSION = '0.50'
@@ -307,7 +307,8 @@ class MLWriter:
         """
         Validate the just closed file against the given schema (pathname or URL).
         """
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Running MLWriter.validate( {schemaFilepath} ) on {self._outputType} file {self._outputFilePath}…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Running MLWriter.validate( {schemaFilepath} ) on {self._outputType} file {self._outputFilePath}…" )
 
         if self._outputType == 'XML':
             import subprocess # for running xmllint
@@ -330,7 +331,8 @@ class MLWriter:
                     checkProgramErrorOutputString = f'{self._filename}:\n{tempString}'
             xmllintError = ("No error", "Unclassified", "Error in DTD", "Validation error", "Validation error", "Error in schema compilation", "Error writing output", "Error in pattern", "Error in reader registration", "Out of memory")
             if returnCode != 0:
-                vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  WARNING: xmllint gave an error on the created {self._filename} file: {returnCode} = {xmllintError[returnCode]}" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                    vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  WARNING: xmllint gave an error on the created {self._filename} file: {returnCode} = {xmllintError[returnCode]}" )
             else: vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"  xmllint validated the xml file {self._filename}." )
             return returnCode, checkProgramOutputString, checkProgramErrorOutputString,
     # end of MLWriter.validate
@@ -362,7 +364,8 @@ def briefDemo() -> None:
         mlWr.writeLineOpen( "division", [('id','Div1'),('name','First division')] )
         mlWr.writeLineOpenClose( "text", "myText in here", ("font","favouriteFont") )
         mlWr.close()
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, mlWr ) # Just print a summary
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, mlWr ) # Just print a summary
 
     if 1: # Demo the writer object with HTML5
         import datetime
@@ -402,7 +405,8 @@ def briefDemo() -> None:
         mlWr.writeLineClose( 'footer' )
         mlWr.writeLineClose( 'body' )
         mlWr.close()
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, mlWr ) # Just print a summary
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, mlWr ) # Just print a summary
 # end of MLWriter.briefDemo
 
 def fullDemo() -> None:

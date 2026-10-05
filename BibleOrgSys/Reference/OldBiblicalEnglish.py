@@ -32,7 +32,7 @@ import BibleOrgSys.BibleOrgSysGlobals as BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2026-10-02' # by RJH
+LAST_MODIFIED_DATE = '2026-10-06' # by RJH
 SHORT_PROGRAM_NAME = "OldBiblicalEnglish"
 PROGRAM_NAME = "OpenBibleData English Language Handling functions"
 PROGRAM_VERSION = '1.0.2'
@@ -3465,7 +3465,8 @@ def moderniseEnglishWords( htmlStr:str, allowOptions:bool|None=False ) -> str:
     Text in htmlStr parameter can be inside a span,
         e.g., '<span class="Wycl_verseTextChunk">ech man in his seruice, and in the offring,</span>'
     """
-    fnPrint( DEBUGGING_THIS_MODULE, f"moderniseEnglishWords( ({len(htmlStr)}) )" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+        fnPrint( DEBUGGING_THIS_MODULE, f"moderniseEnglishWords( ({len(htmlStr)}) )" )
 
     # lastHtmlStr = htmlStr
     for oldWords,newWord in ENGLISH_WORD_MAP:

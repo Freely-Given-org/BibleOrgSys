@@ -51,7 +51,8 @@ def run():
     # See if we were successful at loading one (and only one), and if so, do the export
     if isinstance( loadedBible, Bible ): # i.e., not an error message
         loadedBible.toUSXXML() # Export as USX files (USFM inside XML)
-        vPrint( 'Quiet', False, f"\nOutput should be in {BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_USX2_Export/' )}/ folder." )
+        if (False) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', False, f"\nOutput should be in {BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_USX2_Export/' )}/ folder." )
 
     # Do the BOS close-down stuff
     BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )

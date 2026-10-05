@@ -37,7 +37,7 @@ from BibleOrgSys.Bible import Bible, BibleBook
 import bos_books_codes_py
 
 
-LAST_MODIFIED_DATE = '2026-07-03' # by RJH
+LAST_MODIFIED_DATE = '2026-10-06' # by RJH
 SHORT_PROGRAM_NAME = "LEBXMLBible"
 PROGRAM_NAME = "LEB XML Bible format handler"
 PROGRAM_VERSION = '0.31'
@@ -69,7 +69,8 @@ def LEBXMLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=
     if autoLoad is true and exactly one LEB Bible is found,
         returns the loaded LEBXMLBible object.
     """
-    fnPrint( DEBUGGING_THIS_MODULE, f"LEBXMLBibleFileCheck( {givenFolderName}, {strictCheck}, {autoLoad}, {autoLoadBooks} )" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+        fnPrint( DEBUGGING_THIS_MODULE, f"LEBXMLBibleFileCheck( {givenFolderName}, {strictCheck}, {autoLoad}, {autoLoadBooks} )" )
     if BibleOrgSysGlobals.debugFlag: assert givenFolderName and isinstance( givenFolderName, (str,Path) )
     if BibleOrgSysGlobals.debugFlag: assert autoLoad in (True,False)
 
@@ -84,7 +85,8 @@ def LEBXMLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=
     # Find all the files and folders in this folder
     # LEB is tricky coz a whole Bible can be in one file (normally), or in lots of separate (book) files
     #   and we don't want to think that 66 book files are 66 different LEB Bibles
-    vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f" LEBXMLBibleFileCheck: Looking for files in given {givenFolderName}" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 4:
+        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f" LEBXMLBibleFileCheck: Looking for files in given {givenFolderName}" )
     foundFolders, foundFiles, foundBookFiles = [], [], []
     for something in os.listdir( givenFolderName ):
         somepath = os.path.join( givenFolderName, something )
@@ -128,7 +130,8 @@ def LEBXMLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=
         lastFilenameFound = None
         numFound = 1
     if numFound:
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "LEBXMLBibleFileCheck got", numFound, givenFolderName, lastFilenameFound )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, "LEBXMLBibleFileCheck got", numFound, givenFolderName, lastFilenameFound )
         if numFound == 1 and (autoLoad or autoLoadBooks):
             ub = LEBXMLBible( givenFolderName, lastFilenameFound ) # lastFilenameFound can be None
             if autoLoadBooks: ub.loadBooks() # Load and process the file(s)
@@ -141,7 +144,8 @@ def LEBXMLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=
     foundProjects = []
     for thisFolderName in sorted( foundFolders ):
         tryFolderName = os.path.join( givenFolderName, thisFolderName+'/' )
-        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"    LEBXMLBibleFileCheck: Looking for files in {tryFolderName}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 4:
+            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"    LEBXMLBibleFileCheck: Looking for files in {tryFolderName}" )
         foundSubfolders, foundSubfiles, foundSubBookFiles = [], [], []
         try:
             for something in os.listdir( tryFolderName ):
@@ -182,7 +186,8 @@ def LEBXMLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=
         lastFilenameFound = None
         numFound = 1
     if numFound:
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "LEBXMLBibleFileCheck foundProjects", numFound, foundProjects )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, "LEBXMLBibleFileCheck foundProjects", numFound, foundProjects )
         if numFound == 1 and (autoLoad or autoLoadBooks):
             if BibleOrgSysGlobals.debugFlag: assert len(foundProjects) == 1
             ub = LEBXMLBible( foundProjects[0][0], foundProjects[0][1] ) # Folder and filename
@@ -200,7 +205,8 @@ def clean( elementText, loadErrors=None, location=None, verseMilestone=None ):
 
     If the text is None, returns None
     """
-    fnPrint( DEBUGGING_THIS_MODULE, f"LEBXMLBible.clean( '{elementText}', '{location}', {verseMilestone} )" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+        fnPrint( DEBUGGING_THIS_MODULE, f"LEBXMLBible.clean( '{elementText}', '{location}', {verseMilestone} )" )
     if loadErrors: assert isinstance( loadErrors, list )
     if location: assert isinstance( location, str )
     if verseMilestone: assert isinstance( verseMilestone, str )
@@ -252,7 +258,8 @@ class LEBXMLBible( Bible ):
         sourceFilepath can be a folder (esp. if each book is in a separate file)
             or the path of a specific file (probably containing the whole Bible -- most common)
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"LEBXMLBible.__init__( {sourceFileOrFolder}, '{givenName}', '{givenAbbreviation}', {encoding} )" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, f"LEBXMLBible.__init__( {sourceFileOrFolder}, '{givenName}', '{givenAbbreviation}', {encoding} )" )
 
          # Setup and initialise the base class first
         Bible.__init__( self )
@@ -354,7 +361,8 @@ class LEBXMLBible( Bible ):
         """
         Loads the LEB XML file or files.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, "LEBXMLBible.loadBooks()" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, "LEBXMLBible.loadBooks()" )
 
         loadErrors:list[str] = []
         # if self.possibleFilenames and len(self.possibleFilenames) > 1: # then we possibly have multiple files, probably one for each book
@@ -403,9 +411,11 @@ class LEBXMLBible( Bible ):
         Load a single source XML file and remove the header from the tree.
         Also, extracts some useful elements from the header element.
         """
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  LEBXMLBible loading {XMLFilepath}…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  LEBXMLBible loading {XMLFilepath}…" )
 
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "Resetting bookList and loadErrors")
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, "Resetting bookList and loadErrors")
         bookList:list[tuple[BibleBook,list[str]]] = []
         loadErrors:list[str] = []
 
@@ -440,9 +450,11 @@ class LEBXMLBible( Bible ):
                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
 
         if len( bookList ) == 1:
-            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"    _loadFile({XMLFilepath}) is returning {bookList[0][0].BBB} with {len(bookList[0][1])} loadErrors" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 4:
+                vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"    _loadFile({XMLFilepath}) is returning {bookList[0][0].BBB} with {len(bookList[0][1])} loadErrors" )
         else: # More than one book in this LEB file
-            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"    _loadFile({XMLFilepath}) is returning {len(bookList)} books" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 4:
+                vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"    _loadFile({XMLFilepath}) is returning {len(bookList)} books" )
         return bookList
     # end of LEBXMLBible._loadFile function
 
@@ -451,10 +463,12 @@ class LEBXMLBible( Bible ):
         """
         Extra shim function to help debugging.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"addLEBLine( {marker=}, {rest=}, ... )" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, f"addLEBLine( {marker=}, {rest=}, ... )" )
         assert isinstance( marker, str ) and marker
         assert isinstance( rest, str ) and rest != 'None', f"{marker=}, {rest=}"
-        dPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"===> Adding LEB line {marker} = '{rest}'")
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 4:
+            dPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"===> Adding LEB line {marker} = '{rest}'")
         assert 'title' not in rest, f"addLEBLine( {marker=}, {rest=}, ... )"
         alObject.addLine( marker, rest )
     # end of addLine
@@ -463,9 +477,11 @@ class LEBXMLBible( Bible ):
         """
         Extra shim function to help debugging.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"appendToLastLEBLine( {appendage=}, ... )" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, f"appendToLastLEBLine( {appendage=}, ... )" )
         assert isinstance( appendage, str ) and appendage
-        dPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"===> Appending LEB line '{appendage}'")
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 4:
+            dPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"===> Appending LEB line '{appendage}'")
         # assert 'title' not in appendage, f"appendToLastLEBLine( {appendage=}, ... )"
         alObject.appendToLastLine( appendage )
     # end of appendToLastLine
@@ -474,35 +490,40 @@ class LEBXMLBible( Bible ):
     def processTitle( self, element, loadErrors ):
         """
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"processTitle( {element}, {len(loadErrors)} )" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, f"processTitle( {element}, {len(loadErrors)} )" )
     # end of processTitle
 
 
     def processLicense( self, element, loadErrors ):
         """
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"processLicense( {element}, {len(loadErrors)} )" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, f"processLicense( {element}, {len(loadErrors)} )" )
     # end of processLicense
 
 
     def processTrademark( self, element, loadErrors ):
         """
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"processTrademark( {element}, {len(loadErrors)} )" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, f"processTrademark( {element}, {len(loadErrors)} )" )
     # end of processTrademark
 
 
     def processPreface( self, element, loadErrors ):
         """
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"processPreface( {element}, {len(loadErrors)} )" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, f"processPreface( {element}, {len(loadErrors)} )" )
     # end of processPreface
 
 
     def processBook( self, bookElement, bookList, loadErrors ):
         """
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"processBook( {bookElement}, {len(bookList)}, {len(loadErrors)} )" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, f"processBook( {bookElement}, {len(bookList)}, {len(loadErrors)} )" )
 
         location = 'processBook'
         BibleOrgSysGlobals.checkXMLNoText( bookElement, location, 'js23', loadErrors )
@@ -531,14 +552,16 @@ class LEBXMLBible( Bible ):
         # TODO: The above logic is a fallback similar to the original getBBBFromShortAbbreviation
         USFMAbbreviation = bos_books_codes_py.bos_book_code_to_usfm_abbrev( BBB )
         USFMNumber = bos_books_codes_py.bos_book_code_to_usfm_num_str( BBB )
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  It seems we have {BBB}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  It seems we have {BBB}" )
         thisBook = BibleBook( self, BBB )
         thisBook.objectNameString = 'LEB XML Bible Book object'
         thisBook.objectTypeString = 'LEB'
         thisBook.addLine( 'id', bos_books_codes_py.bos_book_code_to_usfm_abbrev(BBB) )
         thisBook.addLine( 'usfm', '3.0' )
         thisBook.addLine( 'ide', 'UTF-8' )
-        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"Appending {thisBook.BBB} and {len(loadErrors)} load errors to bookList" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 4:
+            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"Appending {thisBook.BBB} and {len(loadErrors)} load errors to bookList" )
         for bkLE in bookList:
             assert len(bkLE) == 2 # bookObject and loadErrors
             assert bkLE[0].BBB != BBB # Don't allow duplicate books
@@ -577,7 +600,8 @@ class LEBXMLBible( Bible ):
     def processChapter( self, chapterElement, thisBook, loadErrors ):
         """
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"processChapter( {chapterElement}, ..., {len(loadErrors)} ) for {thisBook.BBB}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, f"processChapter( {chapterElement}, ..., {len(loadErrors)} ) for {thisBook.BBB}" )
         assert isinstance( thisBook, BibleBook )
 
         location = 'processChapter'
@@ -644,7 +668,8 @@ class LEBXMLBible( Bible ):
         """
         Processes a block of indented paragraphs
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"processBlock( {blockElement}, ..., {len(loadErrors)} ) for {thisBook.BBB}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, f"processBlock( {blockElement}, ..., {len(loadErrors)} ) for {thisBook.BBB}" )
         assert isinstance( thisBook, BibleBook )
 
         location = 'processBlock'
@@ -669,7 +694,8 @@ class LEBXMLBible( Bible ):
         """
         Note: We also get blank paragraphs like "<p />" (which we change to /b's).
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"processParagraph( {element}, ..., {len(loadErrors)} ) for {thisBook.BBB}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, f"processParagraph( {element}, ..., {len(loadErrors)} ) for {thisBook.BBB}" )
         assert isinstance( thisBook, BibleBook )
 
         location = 'processParagraph'
@@ -811,7 +837,8 @@ class LEBXMLBible( Bible ):
     def processList( self, listElement, thisBook, loadErrors ):
         """
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"processList( {listElement}, ..., {len(loadErrors)} ) for {thisBook.BBB}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, f"processList( {listElement}, ..., {len(loadErrors)} ) for {thisBook.BBB}" )
         assert isinstance( thisBook, BibleBook )
 
         location = 'processList'
@@ -1017,7 +1044,8 @@ class LEBXMLBible( Bible ):
     def processNote( self, noteElement, thisBook, loadErrors ):
         """
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"processNote( {noteElement}, ..., {len(loadErrors)} ) for {thisBook.BBB}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, f"processNote( {noteElement}, ..., {len(loadErrors)} ) for {thisBook.BBB}" )
         assert isinstance( thisBook, BibleBook )
         assert noteElement.tag == 'note'
 
@@ -1199,7 +1227,8 @@ class LEBXMLBible( Bible ):
     def processSpan( self, spanElement, thisBook, loadErrors ):
         """
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"processSpan( {spanElement}, ..., {len(loadErrors)} ) for {thisBook.BBB}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, f"processSpan( {spanElement}, ..., {len(loadErrors)} ) for {thisBook.BBB}" )
         assert isinstance( thisBook, BibleBook )
         assert spanElement.tag == 'span'
 
@@ -1217,7 +1246,8 @@ class LEBXMLBible( Bible ):
                 if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
         assert spanStyle
         spanMarker = 'it' # TODO: Could maybe adjust this according to the style ???
-        dPrint( 'Info', DEBUGGING_THIS_MODULE, f"processSpan {spanElement.text=} {spanStyle=} {spanMarker=}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 3:
+            dPrint( 'Info', DEBUGGING_THIS_MODULE, f"processSpan {spanElement.text=} {spanStyle=} {spanMarker=}" )
         self.appendToLastLEBLine( f"{' ' if haveOutstandingSpace else ''}\\{spanMarker} {spanElement.text if spanElement.text else ''}", thisBook )
         for subelement in spanElement:
             if subelement.tag == 'note':
@@ -1253,13 +1283,17 @@ def briefDemo() -> None:
         for standardTestFolder in (
                         BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'LEBTest1/' ),
                         ):
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nStandard testfolder is: {standardTestFolder}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nStandard testfolder is: {standardTestFolder}" )
             result1 = LEBXMLBibleFileCheck( standardTestFolder )
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "LEB TestA1", result1 )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, "LEB TestA1", result1 )
             result2 = LEBXMLBibleFileCheck( standardTestFolder, autoLoad=True )
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "LEB TestA2", result2 )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, "LEB TestA2", result2 )
             result3 = LEBXMLBibleFileCheck( standardTestFolder, autoLoadBooks=True )
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "LEB TestA3", result3 )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, "LEB TestA3", result3 )
 
 
     BiblesFolderpath = Path( '/srv/Bibles/' )
@@ -1272,11 +1306,14 @@ def briefDemo() -> None:
         # Demonstrate the LEB Bible class
         #for j, testFilepath in enumerate( justOne ): # Choose testFilepaths or justOne
         for j, testFilepath in enumerate( testFilepaths, start=1 ): # Choose testFilepaths or justOne
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nB/ LEB {j}/ Demonstrating the LEB Bible class…" )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Test filepath is {testFilepath!r}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nB/ LEB {j}/ Demonstrating the LEB Bible class…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Test filepath is {testFilepath!r}" )
             oB = LEBXMLBible( testFilepath ) # Load and process the XML
             oB.load()
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, oB ) # Just print a summary
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, oB ) # Just print a summary
 
             if 1: # Test verse lookup
                 from BibleOrgSys.Reference import VerseReferences
@@ -1318,13 +1355,17 @@ def fullDemo() -> None:
 
     if 0:
         standardTestFolder = Path( '../OpenBibleData/copiedBibles/English/LogosBibleSoftware/LEB/' )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nStandard testfolder is: {standardTestFolder}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nStandard testfolder is: {standardTestFolder}" )
         result1 = LEBXMLBibleFileCheck( standardTestFolder )
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "LEB TestA1", result1 )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "LEB TestA1", result1 )
         result2 = LEBXMLBibleFileCheck( standardTestFolder, autoLoad=True )
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "LEB TestA2", result2 )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "LEB TestA2", result2 )
         result3 = LEBXMLBibleFileCheck( standardTestFolder, autoLoadBooks=True )
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "LEB TestA3", result3 )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "LEB TestA3", result3 )
 
 
     # Path is done like this so it still works when called from different levels

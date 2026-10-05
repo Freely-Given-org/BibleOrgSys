@@ -57,7 +57,7 @@ from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisational
 from BibleOrgSys.Bible import Bible, BibleBook
 
 
-LAST_MODIFIED_DATE = '2020-04-18' # by RJH
+LAST_MODIFIED_DATE = '2026-10-06' # by RJH
 SHORT_PROGRAM_NAME = "VerseViewBible"
 PROGRAM_NAME = "VerseView XML Bible format handler"
 PROGRAM_VERSION = '0.17'
@@ -85,7 +85,8 @@ def VerseViewXMLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad
     if autoLoad is true and exactly one VerseView Bible is found,
         returns the loaded VerseViewXMLBible object.
     """
-    fnPrint( DEBUGGING_THIS_MODULE, f"VerseViewXMLBibleFileCheck( {givenFolderName}, {strictCheck}, {autoLoad}, {autoLoadBooks} )" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+        fnPrint( DEBUGGING_THIS_MODULE, f"VerseViewXMLBibleFileCheck( {givenFolderName}, {strictCheck}, {autoLoad}, {autoLoadBooks} )" )
     if BibleOrgSysGlobals.debugFlag: assert givenFolderName and isinstance( givenFolderName, (str,Path) )
     if BibleOrgSysGlobals.debugFlag: assert autoLoad in (True,False,)
 
@@ -98,7 +99,8 @@ def VerseViewXMLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad
         return False
 
     # Find all the files and folders in this folder
-    vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f" VerseViewXMLBibleFileCheck: Looking for files in given {givenFolderName}" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 4:
+        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f" VerseViewXMLBibleFileCheck: Looking for files in given {givenFolderName}" )
     foundFolders, foundFiles = [], []
     for something in os.listdir( givenFolderName ):
         somepath = os.path.join( givenFolderName, something )
@@ -127,14 +129,16 @@ def VerseViewXMLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad
             if not firstLines or len(firstLines)<3: continue
             if not ( firstLines[0].startswith( '<?xml version="1.0"' ) or firstLines[0].startswith( "<?xml version='1.0'" ) ) \
             and not ( firstLines[0].startswith( '\ufeff<?xml version="1.0"' ) or firstLines[0].startswith( "\ufeff<?xml version='1.0'" ) ): # same but with BOM
-                vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"VVB (unexpected) first line was {thisFilename!r} in {firstLines}" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 4:
+                    vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"VVB (unexpected) first line was {thisFilename!r} in {firstLines}" )
                 continue
             if '<bible>' not in firstLines[1]: continue
             if '<fname>' not in firstLines[2]: continue
         lastFilenameFound = thisFilename
         numFound += 1
     if numFound:
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "VerseViewXMLBibleFileCheck got", numFound, givenFolderName, lastFilenameFound )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, "VerseViewXMLBibleFileCheck got", numFound, givenFolderName, lastFilenameFound )
         if numFound == 1 and (autoLoad and autoLoadBooks):
             ub = VerseViewXMLBible( givenFolderName, lastFilenameFound )
             if autoLoadBooks: ub.load() # Load and process the file
@@ -147,7 +151,8 @@ def VerseViewXMLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad
     foundProjects = []
     for thisFolderName in sorted( foundFolders ):
         tryFolderName = os.path.join( givenFolderName, thisFolderName+'/' )
-        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"    VerseViewXMLBibleFileCheck: Looking for files in {tryFolderName}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 4:
+            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"    VerseViewXMLBibleFileCheck: Looking for files in {tryFolderName}" )
         foundSubfolders, foundSubfiles = [], []
         try:
             for something in os.listdir( tryFolderName ):
@@ -172,7 +177,8 @@ def VerseViewXMLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad
                 if not firstLines or len(firstLines)<3: continue
                 if not ( firstLines[0].startswith( '<?xml version="1.0"' ) or firstLines[0].startswith( "<?xml version='1.0'" ) ) \
                 and not ( firstLines[0].startswith( '\ufeff<?xml version="1.0"' ) or firstLines[0].startswith( "\ufeff<?xml version='1.0'" ) ): # same but with BOM
-                    vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"VVB (unexpected) first line was {thisFilename!r} in {firstLines}" )
+                    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 4:
+                        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"VVB (unexpected) first line was {thisFilename!r} in {firstLines}" )
                     continue
                 if '<bible>' not in firstLines[1]: continue
                 if '<fname>' not in firstLines[2]: continue
@@ -180,7 +186,8 @@ def VerseViewXMLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad
             lastFilenameFound = thisFilename
             numFound += 1
     if numFound:
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "VerseViewXMLBibleFileCheck foundProjects", numFound, foundProjects )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, "VerseViewXMLBibleFileCheck foundProjects", numFound, foundProjects )
         if numFound == 1 and (autoLoad or autoLoadBooks):
             if BibleOrgSysGlobals.debugFlag: assert len(foundProjects) == 1
             ub = VerseViewXMLBible( foundProjects[0][0], foundProjects[0][1] ) # Folder and filename
@@ -229,7 +236,8 @@ class VerseViewXMLBible( Bible ):
 
         # Do a preliminary check on the readability of our file
         if not os.access( self.sourceFilepath, os.R_OK ):
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"VerseViewXMLBible: File {self.sourceFilepath!r} is unreadable" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"VerseViewXMLBible: File {self.sourceFilepath!r} is unreadable" )
 
         self.name = self.givenName
         #if self.name is None:
@@ -241,7 +249,8 @@ class VerseViewXMLBible( Bible ):
         """
         Load a single source XML file and load book elements.
         """
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Loading {self.sourceFilepath}…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Loading {self.sourceFilepath}…" )
         self.XMLTree = ElementTree().parse( self.sourceFilepath )
         if BibleOrgSysGlobals.debugFlag: assert self.XMLTree # Fail here if we didn't load anything at all
 
@@ -324,7 +333,8 @@ class VerseViewXMLBible( Bible ):
             finding chapter subelements.
         """
 
-        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "Validating XML book…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 4:
+            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "Validating XML book…" )
 
         # Process the div attributes first
         BBB = bookName = None
@@ -347,7 +357,8 @@ class VerseViewXMLBible( Bible ):
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB ); assert False, "We want to stop here"
 
         if BBB:
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Validating {BBB} {bookName}…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Validating {BBB} {bookName}…" )
             thisBook = BibleBook( self, BBB )
             thisBook.objectNameString = 'VerseView XML Bible Book object'
             thisBook.objectTypeString = 'VerseView'
@@ -359,7 +370,8 @@ class VerseViewXMLBible( Bible ):
                     BibleOrgSysGlobals.checkXMLNoTail( element, sublocation, 'al1d' )
                     self.__validateAndExtractChapter( BBB, thisBook, element )
                 else: logging.error( f"vb26 Expected to find {VerseViewXMLBible.chapterTag!r} but got {element.tag!r}" )
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Saving {BBB} into results…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Saving {BBB} into results…" )
             self.stashBook( thisBook )
     # end of VerseViewXMLBible.__validateAndExtractBook
 
@@ -516,7 +528,8 @@ class VerseViewXMLBible( Bible ):
 
         if vText: # This is the main text of the verse (follows the verse milestone)
             if '\n' in vText:
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"VerseViewXMLBible.__validateAndExtractVerse: vText {BBB} {chapterNumber}:{verseNumber} {vText!r}" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"VerseViewXMLBible.__validateAndExtractVerse: vText {BBB} {chapterNumber}:{verseNumber} {vText!r}" )
                 vText = vText.replace( '\n', ' ' )
             thisBook.addLine( 'v', verseNumber + ' ' + vText ); verseNumber = None
     # end of VerseViewXMLBible.__validateAndExtractVerse
@@ -533,9 +546,12 @@ def briefDemo() -> None:
     testFolder = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'VerseViewXML/' )
 
     if 1: # demo the file checking code
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "TestA1", VerseViewXMLBibleFileCheck( testFolder ) )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "TestA2", VerseViewXMLBibleFileCheck( testFolder, autoLoad=True ) )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "TestA3", VerseViewXMLBibleFileCheck( testFolder, autoLoadBooks=True ) )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "TestA1", VerseViewXMLBibleFileCheck( testFolder ) )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "TestA2", VerseViewXMLBibleFileCheck( testFolder, autoLoad=True ) )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "TestA3", VerseViewXMLBibleFileCheck( testFolder, autoLoadBooks=True ) )
 
 
     if 1:
@@ -545,10 +561,12 @@ def briefDemo() -> None:
                 somepath = os.path.join( testFolder, something )
                 if os.path.isfile( somepath ) and something.endswith( '.xml' ):
                     count += 1
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nH B{count}/ {something}" )
+                    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nH B{count}/ {something}" )
                     vvB = VerseViewXMLBible( testFolder, something )
                     vvB.load()
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, vvB )
+                    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, vvB )
                     if BibleOrgSysGlobals.strictCheckingFlag:
                         vvB.check()
                         #UBErrors = UB.getCheckResults()
@@ -592,9 +610,12 @@ def fullDemo() -> None:
     testFolder = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'VerseViewXML/' )
 
     if 1: # demo the file checking code
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "TestA1", VerseViewXMLBibleFileCheck( testFolder ) )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "TestA2", VerseViewXMLBibleFileCheck( testFolder, autoLoad=True ) )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "TestA3", VerseViewXMLBibleFileCheck( testFolder, autoLoadBooks=True ) )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "TestA1", VerseViewXMLBibleFileCheck( testFolder ) )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "TestA2", VerseViewXMLBibleFileCheck( testFolder, autoLoad=True ) )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "TestA3", VerseViewXMLBibleFileCheck( testFolder, autoLoadBooks=True ) )
 
 
     if 1:
@@ -604,10 +625,12 @@ def fullDemo() -> None:
                 somepath = os.path.join( testFolder, something )
                 if os.path.isfile( somepath ) and something.endswith( '.xml' ):
                     count += 1
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nH B{count}/ {something}" )
+                    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nH B{count}/ {something}" )
                     vvB = VerseViewXMLBible( testFolder, something )
                     vvB.load()
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, vvB )
+                    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, vvB )
                     if BibleOrgSysGlobals.strictCheckingFlag:
                         vvB.check()
                         #UBErrors = UB.getCheckResults()

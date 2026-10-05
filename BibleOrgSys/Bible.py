@@ -27,7 +27,7 @@ from BibleOrgSys.Internals.InternalBibleBook import InternalBibleBook
 from BibleOrgSys.BibleWriter import BibleWriter
 
 
-LAST_MODIFIED_DATE = '2025-05-15' # by RJH
+LAST_MODIFIED_DATE = '2026-10-06' # by RJH
 SHORT_PROGRAM_NAME = "BibleObjects"
 PROGRAM_NAME = "Bible object handler"
 PROGRAM_VERSION = '0.16'
@@ -117,9 +117,11 @@ def briefDemo() -> None:
     BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     # Since this is only designed to be a base class, it can't actually do much at all
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nTest Bible…" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nTest Bible…" )
     B = Bible()
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, B )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, B )
 # end of Bible.briefDemo
 
 def fullDemo() -> None:
@@ -129,9 +131,11 @@ def fullDemo() -> None:
     BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     # Since this is only designed to be a base class, it can't actually do much at all
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nTest Bible…" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nTest Bible…" )
     B = Bible()
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, B )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, B )
 
     #if 0: # No need for this here
         ## Test a single folder containing a USFM Bible
