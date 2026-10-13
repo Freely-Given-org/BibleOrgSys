@@ -27,6 +27,7 @@ Currently aware of the following Bible types:
     Sword modules (binary).
 """
 import logging
+from importlib import import_module
 import os.path
 from pathlib import Path
 
@@ -34,35 +35,6 @@ import bible_organisational_system
 
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
-from BibleOrgSys.Formats.ESFMBible import ESFMBibleFileCheck
-from BibleOrgSys.Formats.PTX8Bible import PTX8BibleFileCheck
-from BibleOrgSys.Formats.USFMBible import USFMBibleFileCheck
-from BibleOrgSys.Formats.ScriptureBurritoBible import ScriptureBurritoBibleFileCheck
-from BibleOrgSys.Formats.DBLBible import DBLBibleFileCheck
-from BibleOrgSys.Formats.USXXMLBible import USXXMLBibleFileCheck
-from BibleOrgSys.Formats.USFXXMLBible import USFXXMLBibleFileCheck
-from BibleOrgSys.Formats.OpenSongXMLBible import OpenSongXMLBibleFileCheck
-from BibleOrgSys.Formats.OSISXMLBible import OSISXMLBibleFileCheck
-from BibleOrgSys.Formats.ZefaniaXMLBible import ZefaniaXMLBibleFileCheck
-from BibleOrgSys.Formats.HaggaiXMLBible import HaggaiXMLBibleFileCheck
-from BibleOrgSys.Formats.VerseViewXMLBible import VerseViewXMLBibleFileCheck
-from BibleOrgSys.Formats.UnboundBible import UnboundBibleFileCheck
-from BibleOrgSys.Formats.DrupalBible import DrupalBibleFileCheck
-from BibleOrgSys.Formats.YETBible import YETBibleFileCheck
-from BibleOrgSys.Formats.theWordBible import theWordBibleFileCheck
-from BibleOrgSys.Formats.MySwordBible import MySwordBibleFileCheck
-from BibleOrgSys.Formats.ESwordBible import ESwordBibleFileCheck
-from BibleOrgSys.Formats.ESwordCommentary import ESwordCommentaryFileCheck
-from BibleOrgSys.Formats.MyBibleBible import MyBibleBibleFileCheck
-from BibleOrgSys.Formats.PalmDBBible import PalmDBBibleFileCheck
-from BibleOrgSys.Formats.GoBible import GoBibleFileCheck
-from BibleOrgSys.Formats.PickledBible import PickledBibleFileCheck
-from BibleOrgSys.Formats.PierceOnlineBible import PierceOnlineBibleFileCheck
-from BibleOrgSys.Formats.EasyWorshipBible import EasyWorshipBibleFileCheck
-from BibleOrgSys.Formats.SwordBible import SwordBibleFileCheck
-from BibleOrgSys.Formats.CSVBible import CSVBibleFileCheck
-from BibleOrgSys.Formats.ForgeForSwordSearcherBible import ForgeForSwordSearcherBibleFileCheck
-from BibleOrgSys.Formats.VPLBible import VPLBibleFileCheck
 #from BibleOrgSys.Formats.SwordResources import SwordInterface # What about these?
 
 
@@ -84,12 +56,18 @@ class UnknownBible:
     Class for handling an entire Bible.
     """
 
-    def __init__( self, givenPathname:Path ) -> None:
+    def __init__( self, givenPathname:Path, *, versification=None ) -> None:
         """
         Constructor: creates an empty Bible object.
         """
         if BibleOrgSysGlobals.debugFlag: assert givenPathname and isinstance( givenPathname, (str,Path) )
         self.givenFolderName = givenPathname # NOTE: givenPathname can actually be zip file for PickledBible
+        # Validate once at the loading entry point; all detected formats inherit
+        # the shared declaration API, even those without a constructor keyword.
+        self._requestedVersification = None
+        if versification is not None:
+            from BibleOrgSys.Bible import Bible
+            self._requestedVersification = Bible(versification=versification).getVersificationSystemName()
 
         # Check that the given folder is readable
         if not os.access( givenPathname, os.R_OK ):
@@ -170,40 +148,49 @@ class UnknownBible:
         
         # Mapping to actual Python file checkers for loading
         CHECKERS = {
-            'pickled Bible': PickledBibleFileCheck,
-            'theWord Bible': theWordBibleFileCheck,
-            'MySword Bible': MySwordBibleFileCheck,
-            'e-Sword Bible': ESwordBibleFileCheck,
-            'e-Sword Commentary': ESwordCommentaryFileCheck,
-            'MyBible Bible': MyBibleBibleFileCheck,
-            'PalmDB Bible': PalmDBBibleFileCheck,
-            'GoBible Bible': GoBibleFileCheck,
-            'Sword Bible': SwordBibleFileCheck,
-            'Unbound Bible': UnboundBibleFileCheck,
-            'Drupal Bible': DrupalBibleFileCheck,
-            'YET Bible': YETBibleFileCheck,
-            'ESFM Bible': ESFMBibleFileCheck,
-            'PTX8 Bible': PTX8BibleFileCheck,
-            'SB Bible': ScriptureBurritoBibleFileCheck,
-            'USFM Bible': USFMBibleFileCheck,
-            'DBL Bible': DBLBibleFileCheck,
-            'USX XML Bible': USXXMLBibleFileCheck,
-            'USFX XML Bible': USFXXMLBibleFileCheck,
-            'OSIS XML Bible': OSISXMLBibleFileCheck,
-            'OpenSong XML Bible': OpenSongXMLBibleFileCheck,
-            'Zefania XML Bible': ZefaniaXMLBibleFileCheck,
-            'Haggai XML Bible': HaggaiXMLBibleFileCheck,
-            'VerseView XML Bible': VerseViewXMLBibleFileCheck,
-            'CSV Bible': CSVBibleFileCheck,
-            'Forge Bible': ForgeForSwordSearcherBibleFileCheck,
-            'VPL Bible': VPLBibleFileCheck,
+            'pickled Bible': ('PickledBible', 'PickledBibleFileCheck'),
+            'theWord Bible': ('theWordBible', 'theWordBibleFileCheck'),
+            'MySword Bible': ('MySwordBible', 'MySwordBibleFileCheck'),
+            'e-Sword Bible': ('ESwordBible', 'ESwordBibleFileCheck'),
+            'e-Sword Commentary': ('ESwordCommentary', 'ESwordCommentaryFileCheck'),
+            'MyBible Bible': ('MyBibleBible', 'MyBibleBibleFileCheck'),
+            'PalmDB Bible': ('PalmDBBible', 'PalmDBBibleFileCheck'),
+            'GoBible Bible': ('GoBible', 'GoBibleFileCheck'),
+            'Sword Bible': ('SwordBible', 'SwordBibleFileCheck'),
+            'Unbound Bible': ('UnboundBible', 'UnboundBibleFileCheck'),
+            'Drupal Bible': ('DrupalBible', 'DrupalBibleFileCheck'),
+            'YET Bible': ('YETBible', 'YETBibleFileCheck'),
+            'ESFM Bible': ('ESFMBible', 'ESFMBibleFileCheck'),
+            'PTX8 Bible': ('PTX8Bible', 'PTX8BibleFileCheck'),
+            'SB Bible': ('ScriptureBurritoBible', 'ScriptureBurritoBibleFileCheck'),
+            'USFM Bible': ('USFMBible', 'USFMBibleFileCheck'),
+            'DBL Bible': ('DBLBible', 'DBLBibleFileCheck'),
+            'USX XML Bible': ('USXXMLBible', 'USXXMLBibleFileCheck'),
+            'USFX XML Bible': ('USFXXMLBible', 'USFXXMLBibleFileCheck'),
+            'OSIS XML Bible': ('OSISXMLBible', 'OSISXMLBibleFileCheck'),
+            'OpenSong XML Bible': ('OpenSongXMLBible', 'OpenSongXMLBibleFileCheck'),
+            'Zefania XML Bible': ('ZefaniaXMLBible', 'ZefaniaXMLBibleFileCheck'),
+            'Haggai XML Bible': ('HaggaiXMLBible', 'HaggaiXMLBibleFileCheck'),
+            'VerseView XML Bible': ('VerseViewXMLBible', 'VerseViewXMLBibleFileCheck'),
+            'CSV Bible': ('CSVBible', 'CSVBibleFileCheck'),
+            'Forge Bible': ('ForgeForSwordSearcherBible', 'ForgeForSwordSearcherBibleFileCheck'),
+            'VPL Bible': ('VPLBible', 'VPLBibleFileCheck'),
         }
 
-        checker = CHECKERS.get(best_match.format)
-        if checker:
+        checker_spec = CHECKERS.get(best_match.format)
+        if checker_spec:
+            # Detection needs no format imports. Load only the selected parser so
+            # an optional/unrelated format cannot prevent loading this Bible.
+            module_name, checker_name = checker_spec
+            checker = getattr(import_module(f'BibleOrgSys.Formats.{module_name}'), checker_name)
             # We call the Python checker but it's only for the actual loading/init now
             # since we've already done the detection.
-            return checker(best_match.path, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks)
+            result = checker(best_match.path, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks)
+            if self._requestedVersification is not None:
+                from BibleOrgSys.Internals.InternalBible import InternalBible
+                if isinstance(result, InternalBible):
+                    result.setVersificationSystem(self._requestedVersification)
+            return result
         
         return self.foundType
     # end of UnknownBible.search

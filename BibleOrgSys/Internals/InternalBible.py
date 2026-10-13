@@ -51,6 +51,7 @@ Note that this software does write some files to
 
 CHANGELOG:
     2024-01-24 add getContextVerseDataRange() function
+    2026-10-12 Add complete native and mapped passage retrieval APIs.
     2025-02-13 Changed special characters in getVerseText() function and add includeNonCanonical parameter
     2026-05-09 Upgraded to bos_books_codes_py
 """
@@ -69,10 +70,11 @@ from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint, BOOKLIST_OT3
 from bible_organisational_system import InternalBibleEntryList, InternalBibleEntry
 from BibleOrgSys.Internals.InternalBibleBook import BCV_VERSION, BOS_EXTRA_TYPES, BOS_EXTRA_MARKERS
 from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
+from BibleOrgSys.Reference.BibleVersification import BibleVersificationMixin
 import bos_books_codes_py
 
 
-LAST_MODIFIED_DATE = '2026-07-14' # by RJH
+LAST_MODIFIED_DATE = '2026-10-12' # by RJH
 SHORT_PROGRAM_NAME = "InternalBible"
 PROGRAM_NAME = "Internal Bible handler"
 PROGRAM_VERSION = '0.95'
@@ -86,7 +88,7 @@ JSON_INDENT = 0 # None gives smallest file (no newlines), then 0, 1, 2, ....
 
 InternalBibleProperties = {} # Used for diagnostic reasons
 
-class InternalBible:
+class InternalBible(BibleVersificationMixin):
     """
     Class to define and manipulate InternalBibles.
 
@@ -837,6 +839,8 @@ class InternalBible:
             logging.critical( f"Unknown {applyMetadataType!r} metadata type given to applySuppliedMetadata" )
             if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: assert False, "We want to stop here"
 
+        self._applyVersificationMetadata(applyMetadataType)
+
         if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE and BibleOrgSysGlobals.verbosityLevel>3:
             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Updated settings dict ({len(self.settingsDict)}):" )
             for key,value in sorted( self.settingsDict.items() ):
@@ -1016,7 +1020,6 @@ class InternalBible:
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 5: fnPrint( DEBUGGING_THIS_MODULE, f"pickleFast( {folderpath!r} )" )
 
-        from BibleOrgSys import BibleOrgSysGlobals
         if folderpath is None:
              folderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_CACHE_FOLDERPATH
 
@@ -1047,7 +1050,7 @@ class InternalBible:
         if 'genericBOS' in metadata: del metadata['genericBOS']
         # Remove any _rawLines or _processedLines that might be in the main object (unlikely but safe)
         for k in list(metadata.keys()):
-            if k.startswith('_'): del metadata[k]
+            if k.startswith('_') and k != '_versificationState': del metadata[k]
 
         import pickle
         try:
@@ -2392,6 +2395,44 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
             logging.warning( f"InternalBible.getContextVerseData( {BCVReference} ): {self.name} doesn't have {BBB}" )
         # return self.books[BBB].getContextVerseData( BCVReference, strict, complete )
     # end of InternalBible.getContextVerseData
+
+
+    def getPassageData(self, references, *, chapterCache=None, combineAdjacent=False):
+        """Retrieve an ordered group of native (BBB,C,V[,S]) references.
+
+        Returns a tuple of PassagePortion(reference, entries, context), fetching
+        the entire group before returning. Numeric bridges are returned once;
+        whole verses include all stored suffixes and explicit suffixes must
+        exist. Disjoint portions retain request order. combineAdjacent joins only
+        consecutive native addresses within a chapter. Entries/context are copies.
+
+        No versification declaration is needed for native access. Use the legacy
+        getContextVerseData for editorial introductions or whole books/chapters.
+        MissingPassageBookError/MissingPassageVerseError derive from KeyError.
+        An optional caller-owned chapterCache may be reused while Bible text is
+        unchanged; clear it after reload/edit and do not persist it in a pickle.
+        """
+        from BibleOrgSys.Internals.InternalBiblePassages import get_passage_data
+        return get_passage_data(self, references,
+            chapter_cache=chapterCache, combine_adjacent=combineAdjacent)
+
+
+    def getMappedPassage(self, sourceSystem, references, *, chapterCache=None, combineAdjacent=False):
+        """Map a complete external passage into this Bible and retrieve its text.
+
+        sourceSystem is a name, BibleVersificationSystem, or another Bible.
+        Returns MappedBiblePassage with .mapping (including provenance) and
+        .portions (see getPassageData). Non-exact conversions raise a specific
+        VersificationMappingError before loading text. Missing text raises
+        KeyError; an incomplete passage is never returned as a successful result.
+
+        References use the profiles' BOS book identities. Edition-specific
+        storage aliases are not inferred; adapt references explicitly and use
+        getPassageData when an import uses different physical book identities.
+        """
+        from BibleOrgSys.Internals.InternalBiblePassages import get_mapped_passage
+        return get_mapped_passage(self, sourceSystem, references,
+            chapter_cache=chapterCache, combine_adjacent=combineAdjacent)
 
 
     def getContextVerseDataRange( self, startBCVReference:SimpleVerseKey|tuple[str,str,str,str], endBCVReference:SimpleVerseKey|tuple[str,str,str,str], strict=True ) -> tuple[InternalBibleEntryList,list[str]]|None:

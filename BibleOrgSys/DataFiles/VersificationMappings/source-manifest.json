@@ -1,0 +1,87 @@
+{
+  "formatVersion": 1,
+  "upstreamRepository": "https://github.com/Copenhagen-Alliance/versification-specification",
+  "snapshotRepository": "https://github.com/Freely-Given-org/versification-specification",
+  "snapshotCommit": "519af776ab65d89a51e37f750779250f940459ef",
+  "importDate": "2026-10-12",
+  "dataLicense": "CC-BY-SA-4.0",
+  "dataLicenseURL": "https://creativecommons.org/licenses/by-sa/4.0/",
+  "modifications": "Copenhagen files are copied byte-for-byte. BOS reference choices, code crosswalk, mapping supplement, and reports are separate adaptations. No upstream executable code is bundled.",
+  "files": [
+    {
+      "path": "Copenhagen/LICENSE.md",
+      "upstreamPath": "LICENSE.md",
+      "sha256": "57524cd67ad8ba7616e756aa59f81bac0e08d3f9899adf7d07e4d9434755ed85"
+    },
+    {
+      "path": "Copenhagen/README.md",
+      "upstreamPath": "README.md",
+      "sha256": "9826fa3a47f8d1ea8f9e6d06e682cc72d93b4db9b46f48ff057e56d27f26d211"
+    },
+    {
+      "path": "Copenhagen/versification-mappings/README.md",
+      "upstreamPath": "versification-mappings/README.md",
+      "sha256": "6145737ab3a509c3a17eaab71fc2450165561fcccb8e74e17623373db911b6dc"
+    },
+    {
+      "path": "Copenhagen/versification-mappings/standard-mappings/README.md",
+      "upstreamPath": "versification-mappings/standard-mappings/README.md",
+      "sha256": "7d53b692cdb4ec1c5b1fb2827464c8ffc3d8ef1d38bf7025acaf0d8ed7fae40e"
+    },
+    {
+      "path": "Copenhagen/versification-mappings/json-schema/versification_schema.json",
+      "upstreamPath": "versification-mappings/json-schema/versification_schema.json",
+      "sha256": "c0eebb9ef70e857b4044d303cc8056ba79c99efa71ff2bfda843eff3ca3cb730"
+    },
+    {
+      "path": "Copenhagen/versification-mappings/sample-custom-mappings/one_versification.json",
+      "upstreamPath": "versification-mappings/sample-custom-mappings/one_versification.json",
+      "sha256": "9e31e3f6f52dacf14f9fb5da42e6b9a5d1ef5ac011a6b9d123c878f40a70492f"
+    },
+    {
+      "path": "Copenhagen/versification-mappings/standard-mappings/org.json",
+      "upstreamPath": "versification-mappings/standard-mappings/org.json",
+      "sha256": "3b8e065fb592100265ff9ebcea71f5376927fa03c085844f3058d463a2e9cac7"
+    },
+    {
+      "path": "Copenhagen/versification-mappings/standard-mappings/eng.json",
+      "upstreamPath": "versification-mappings/standard-mappings/eng.json",
+      "sha256": "5162023f8e0604fce96a49d7fb8cea73ef699928846d10d62210bd4882e81338"
+    },
+    {
+      "path": "Copenhagen/versification-mappings/standard-mappings/lxx.json",
+      "upstreamPath": "versification-mappings/standard-mappings/lxx.json",
+      "sha256": "90d980f784512aea00af48646c337b1f7cb97bae3023a9223155369034e466f2"
+    },
+    {
+      "path": "Copenhagen/versification-mappings/standard-mappings/vul.json",
+      "upstreamPath": "versification-mappings/standard-mappings/vul.json",
+      "sha256": "e09ea002e89aa86cdfbdd4cb69b1ff2c75070801e0648c37aef580d4fc8d06a0"
+    },
+    {
+      "path": "Copenhagen/versification-mappings/standard-mappings/rsc.json",
+      "upstreamPath": "versification-mappings/standard-mappings/rsc.json",
+      "sha256": "c4a8ce2551d4f47bd56cafcf16c5b9169997937e2161e98d1af189a1b85a5d69"
+    },
+    {
+      "path": "Copenhagen/versification-mappings/standard-mappings/rso.json",
+      "upstreamPath": "versification-mappings/standard-mappings/rso.json",
+      "sha256": "93fbb63369c22022a932acbf562961f1f53998f1edf7140bf4ccb859ad0f3a95"
+    },
+    {
+      "path": "Copenhagen/versification-mappings/standard-mappings/ethiopian_custom.json",
+      "upstreamPath": "versification-mappings/standard-mappings/ethiopian_custom.json",
+      "sha256": "353383cc407d51f8c79d7ddaf80301af79bb354c70d3780922a06733794b3898"
+    },
+    {
+      "path": "Copenhagen/versification-sniffing/README.md",
+      "upstreamPath": "versification-sniffing/README.md",
+      "sha256": "4a851d489b3979c8b1c228f6606a248b1d3d095029f492903cc640aa42d9e62f"
+    },
+    {
+      "path": "Copenhagen/versification-sniffing/rules/merged_rules.json",
+      "upstreamPath": "versification-sniffing/rules/merged_rules.json",
+      "sha256": "2a21c84ea071862937dc7e327a73196e70e1bc2285361b92afc4376413b91b51"
+    }
+  ]
+}

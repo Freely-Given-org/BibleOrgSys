@@ -1,0 +1,1763 @@
+{
+  "formatVersion": 1,
+  "version": "2",
+  "sourceSnapshot": "519af776ab65d89a51e37f750779250f940459ef",
+  "dataLicense": "CC-BY-SA-4.0",
+  "dataLicenseURL": "https://creativecommons.org/licenses/by-sa/4.0/",
+  "attribution": "BOS adaptation of Copenhagen Alliance Versification Working Group data. The sniffing rules derive from Tyndale/STEPBible TVTMS (David Instone-Brewer), credited by Copenhagen; preserve both attributions.",
+  "evidenceFile": "Copenhagen/versification-sniffing/rules/merged_rules.json",
+  "verificationSource": {
+    "name": "Open English Translation Literal Version and Readers Version",
+    "url": "https://OpenEnglishTranslation.Bible/",
+    "localFiles": "Tests/DataFilesForTests/OET-{LV,RV}/OET-{LV,RV}_{NUM,SA1,KI1,CH1,PSA,ISA,ACT}.ESFM; Tests/DataFilesForTests/YETTest/kjv-red.yet",
+    "note": "Verse contents were compared during the 2026-10-12 audit. These optional maintainer text files are not a runtime or test dependency; the verification summaries are recorded per correction. Revision 2 also records profile-data verification separately from direct OET text checks."
+  },
+  "scope": "Reviewed whole-group corrections for eng and vul in BOS book codes. Revision 2 audits all 556 Copenhagen split/merge rows, adds profile-verified corrections, and retains edition/textual/notation conflicts for review. Original Copenhagen files and reference counts are unchanged.",
+  "corrections": [
+    {
+      "id": "eng-num-26-1",
+      "system": "eng",
+      "source": [
+        "NUM 26:1"
+      ],
+      "target": [
+        "NUM 25:19",
+        "NUM 26:1"
+      ],
+      "replaceMappings": {},
+      "remainingMappings": {},
+      "reason": "The English verse joins the Hebrew plague transition and the following divine speech introduction.",
+      "evidence": {
+        "copenhagenRule": "Num.26:1-26:47",
+        "verification": "Copenhagen SubdividedVerse marks English Num.26:1 / Hebrew Num.25:19; but truncates the cross-chapter continuation. OET-LV NUM 25:19 contains the after-the-plague clause, LV 26:1 the speech introduction; OET-RV NUM 26:1 includes both. The LV footnote identifies KJB Num.26.1. Both chapter addresses are supplied explicitly, not inferred by expanding the truncated rule.",
+        "copenhagenRangeIndex": 0
+      }
+    },
+    {
+      "id": "eng-sa1-20-42",
+      "system": "eng",
+      "source": [
+        "SA1 20:42"
+      ],
+      "target": [
+        "SA1 20:42",
+        "SA1 21:1"
+      ],
+      "replaceMappings": {
+        "SA1 20:42": "SA1 21:1"
+      },
+      "remainingMappings": {},
+      "reason": "The English verse joins Jonathan's farewell covenant statement and the departure narrative.",
+      "evidence": {
+        "copenhagenRule": "1Sa.20:42-21:15",
+        "verification": "Copenhagen SubdividedVerse marks English 1Sa.20:42 / Hebrew 1Sa.20:42; but truncates the cross-chapter continuation. OET-LV SA1 20:42 contains the farewell and LV 21:1 the departure; OET-RV SA1 20:42 contains both. The LV 21:1 footnote identifies KJB 1Sam.20.42.",
+        "copenhagenRangeIndex": 0
+      }
+    },
+    {
+      "id": "eng-ki1-22-43",
+      "system": "eng",
+      "source": [
+        "KI1 22:43"
+      ],
+      "target": [
+        "KI1 22:43-44"
+      ],
+      "replaceMappings": {
+        "KI1 22:43-53": "KI1 22:44-54"
+      },
+      "remainingMappings": {
+        "KI1 22:44-53": "KI1 22:45-54"
+      },
+      "reason": "Retain both Jehoshaphat's conduct and the qualification about the high places, while preserving the subsequent numbering shift.",
+      "evidence": {
+        "copenhagenRule": "1Ki.16:28-22:41",
+        "verification": "Copenhagen SubdividedVerse explicitly gives English 1Ki.22:43 / Hebrew 1Ki.22:43-44. OET-LV KI1 22:43 and 44 contain the two clauses combined in OET-RV KI1 22:43; the LV 22:44 footnote identifies KJB 1Kgs.22.43b.",
+        "copenhagenRangeIndex": 3
+      }
+    },
+    {
+      "id": "eng-ch1-12-4",
+      "system": "eng",
+      "source": [
+        "CH1 12:4"
+      ],
+      "target": [
+        "CH1 12:4-5"
+      ],
+      "replaceMappings": {
+        "CH1 12:4-40": "CH1 12:5-41"
+      },
+      "remainingMappings": {
+        "CH1 12:5-40": "CH1 12:6-41"
+      },
+      "reason": "Retain Ishmaiah and the following names in the English verse, preserving subsequent shifts.",
+      "evidence": {
+        "copenhagenRule": "1Ch.12:4-12:40",
+        "verification": "Copenhagen SubdividedVerse explicitly gives English 1Ch.12:4 / Hebrew 1Ch.12:4-5. OET-LV CH1 12:4 names Ishmaiah and LV 12:5 continues the list; OET-RV CH1 12:4 includes both.",
+        "copenhagenRangeIndex": 0
+      }
+    },
+    {
+      "id": "eng-psa-51-title",
+      "system": "eng",
+      "source": [
+        "PSA 51:0"
+      ],
+      "target": [
+        "PSA 51:1-2"
+      ],
+      "replaceMappings": {
+        "PSA 51:0": "PSA 51:2"
+      },
+      "remainingMappings": {},
+      "reason": "The English title comprises two Hebrew numbered title verses. The first English body verse remains mapped to Hebrew verse 3.",
+      "evidence": {
+        "copenhagenRule": "Psa.51:1-51:19",
+        "verification": "Copenhagen SubdividedVerse groups Hebrew Psa.51:1-3 with English Psa.51:1 (title plus first body verse) and provides EngTitleSeparate 51:1.0-1. BOS represents the separate title as verse zero. OET-LV PSA 51:1-2 contains the two title parts; the OET-RV chapter has both in its d marker, separate from v 1. This supplement maps only the title and preserves the existing body mapping.",
+        "copenhagenRangeIndex": 0
+      }
+    },
+    {
+      "id": "eng-psa-52-title",
+      "system": "eng",
+      "source": [
+        "PSA 52:0"
+      ],
+      "target": [
+        "PSA 52:1-2"
+      ],
+      "replaceMappings": {
+        "PSA 52:0": "PSA 52:2"
+      },
+      "remainingMappings": {},
+      "reason": "The English title comprises two Hebrew numbered title verses. The first English body verse remains mapped to Hebrew verse 3.",
+      "evidence": {
+        "copenhagenRule": "Psa.52:1-52:9",
+        "verification": "Copenhagen SubdividedVerse groups Hebrew Psa.52:1-3 with English Psa.52:1 (title plus first body verse) and provides EngTitleSeparate 52:1.0-1. BOS represents the separate title as verse zero. OET-LV PSA 52:1-2 contains the two title parts; the OET-RV chapter has both in its d marker, separate from v 1. This supplement maps only the title and preserves the existing body mapping.",
+        "copenhagenRangeIndex": 0
+      }
+    },
+    {
+      "id": "eng-psa-54-title",
+      "system": "eng",
+      "source": [
+        "PSA 54:0"
+      ],
+      "target": [
+        "PSA 54:1-2"
+      ],
+      "replaceMappings": {
+        "PSA 54:0": "PSA 54:2"
+      },
+      "remainingMappings": {},
+      "reason": "The English title comprises two Hebrew numbered title verses. The first English body verse remains mapped to Hebrew verse 3.",
+      "evidence": {
+        "copenhagenRule": "Psa.54:1-54:7",
+        "verification": "Copenhagen SubdividedVerse groups Hebrew Psa.54:1-3 with English Psa.54:1 (title plus first body verse) and provides EngTitleSeparate 54:1.0-1. BOS represents the separate title as verse zero. OET-LV PSA 54:1-2 contains the two title parts; the OET-RV chapter has both in its d marker, separate from v 1. This supplement maps only the title and preserves the existing body mapping.",
+        "copenhagenRangeIndex": 0
+      }
+    },
+    {
+      "id": "eng-psa-60-title",
+      "system": "eng",
+      "source": [
+        "PSA 60:0"
+      ],
+      "target": [
+        "PSA 60:1-2"
+      ],
+      "replaceMappings": {
+        "PSA 60:0": "PSA 60:2"
+      },
+      "remainingMappings": {},
+      "reason": "The English title comprises two Hebrew numbered title verses. The first English body verse remains mapped to Hebrew verse 3.",
+      "evidence": {
+        "copenhagenRule": "Psa.60:1-60:12",
+        "verification": "Copenhagen SubdividedVerse groups Hebrew Psa.60:1-3 with English Psa.60:1 (title plus first body verse) and provides EngTitleSeparate 60:1.0-1. BOS represents the separate title as verse zero. OET-LV PSA 60:1-2 contains the two title parts; the OET-RV chapter has both in its d marker, separate from v 1. This supplement maps only the title and preserves the existing body mapping.",
+        "copenhagenRangeIndex": 0
+      }
+    },
+    {
+      "id": "eng-psa-13-5-6",
+      "system": "eng",
+      "source": [
+        "PSA 13:5-6"
+      ],
+      "target": [
+        "PSA 13:6"
+      ],
+      "replaceMappings": {
+        "PSA 13:0-5": "PSA 13:1-6"
+      },
+      "remainingMappings": {
+        "PSA 13:0": "PSA 13:1",
+        "PSA 13:1": "PSA 13:2",
+        "PSA 13:2": "PSA 13:3",
+        "PSA 13:3": "PSA 13:4",
+        "PSA 13:4": "PSA 13:5"
+      },
+      "reason": "MergedVerses in Copenhagen Psa.13:1-13:6 explicitly equates this complete eng group with the reference group. Preserve it atomically instead of losing an endpoint or treating its parts as alternative complete verses.",
+      "evidence": {
+        "copenhagenRule": "Psa.13:1-13:6",
+        "copenhagenRangeIndex": 3,
+        "sourceColumn": [
+          "English"
+        ],
+        "referenceColumn": [
+          "Hebrew"
+        ],
+        "verification": "OET-LV Psalm 13:6 includes both the trust/rejoicing clauses and the singing clause; OET-RV 13:5-6 separates them. Copenhagen MergedVerses agrees; the raw eng 0-5 shift and verse-6 identity had made either English half appear complete."
+      },
+      "sourceChapterCounts": {
+        "PSA 13": 6
+      },
+      "referenceChapterCounts": {
+        "PSA 13": 6
+      }
+    },
+    {
+      "id": "eng-isa-63-19",
+      "system": "eng",
+      "source": [
+        "ISA 63:19",
+        "ISA 64:1"
+      ],
+      "target": [
+        "ISA 63:19"
+      ],
+      "replaceMappings": {},
+      "remainingMappings": {},
+      "reason": "MergedVerses in Copenhagen Isa.63:19-64:12 explicitly equates this complete eng group with the reference group. Preserve it atomically instead of losing an endpoint or treating its parts as alternative complete verses.",
+      "evidence": {
+        "copenhagenRule": "Isa.63:19-64:12",
+        "copenhagenRangeIndex": 0,
+        "sourceColumn": [
+          "English",
+          "Latin",
+          "Greek"
+        ],
+        "referenceColumn": [
+          "Hebrew"
+        ],
+        "verification": "OET-LV Isaiah 63:19 includes both the never-ruled-us clause and the plea to tear open the heavens. OET-RV separates these as 63:19 and 64:1. Copenhagen MergedVerses agrees and eng 64:2-12 already supplies the following shift."
+      },
+      "sourceChapterCounts": {
+        "ISA 63": 19,
+        "ISA 64": 12
+      },
+      "referenceChapterCounts": {
+        "ISA 63": 19,
+        "ISA 64": 11
+      }
+    },
+    {
+      "id": "eng-act-19-40-41",
+      "system": "eng",
+      "source": [
+        "ACT 19:40-41"
+      ],
+      "target": [
+        "ACT 19:40"
+      ],
+      "replaceMappings": {},
+      "remainingMappings": {},
+      "reason": "MergedVerses in Copenhagen Act.19:40-41 explicitly equates this complete eng group with the reference group. Preserve it atomically instead of losing an endpoint or treating its parts as alternative complete verses.",
+      "evidence": {
+        "copenhagenRule": "Act.19:40-41",
+        "copenhagenRangeIndex": 0,
+        "sourceColumn": [
+          "English",
+          "Greek2"
+        ],
+        "referenceColumn": [
+          "Latin",
+          "Greek"
+        ],
+        "verification": "Copenhagen identifies English Acts 19:40-41 as Greek 19:40; eng has 41 verses and org has 40. OET-LV 19:40 contains both the speech ending and dismissal; local KJV has the dismissal separately in 19:41. OET-RV already combines these under 19:40, so that edition cannot be assumed to follow eng at this boundary."
+      },
+      "sourceChapterCounts": {
+        "ACT 19": 41
+      },
+      "referenceChapterCounts": {
+        "ACT 19": 40
+      }
+    },
+    {
+      "id": "vul-gen-50-22",
+      "system": "vul",
+      "source": [
+        "GEN 50:22"
+      ],
+      "target": [
+        "GEN 50:22-23"
+      ],
+      "replaceMappings": {
+        "GEN 50:22": "GEN 50:23"
+      },
+      "remainingMappings": {},
+      "reason": "MergedVerses in Copenhagen Gen.50:22-26 explicitly equates this complete vul group with the reference group. Preserve it atomically instead of losing an endpoint or treating its parts as alternative complete verses.",
+      "evidence": {
+        "copenhagenRule": "Gen.50:22-26",
+        "copenhagenRangeIndex": 0,
+        "sourceColumn": [
+          "Latin"
+        ],
+        "referenceColumn": [
+          "English",
+          "Hebrew",
+          "Greek"
+        ],
+        "verification": "Reviewed the named tradition column against the raw BOS profile: source/reference chapter counts, existing mapping endpoints and neighbouring shifts. The sniffing row supplies the semantic grouping; raw duplicated or final-member mappings independently corroborate its placement. This is a profile-data verification, not a collation of every translation."
+      },
+      "sourceChapterCounts": {
+        "GEN 50": 25
+      },
+      "referenceChapterCounts": {
+        "GEN 50": 26
+      }
+    },
+    {
+      "id": "vul-exo-40-13",
+      "system": "vul",
+      "source": [
+        "EXO 40:13"
+      ],
+      "target": [
+        "EXO 40:13-15"
+      ],
+      "replaceMappings": {
+        "EXO 40:13": "EXO 40:15"
+      },
+      "remainingMappings": {},
+      "reason": "MergedVerses in Copenhagen Exo.40:9-40:38 explicitly equates this complete vul group with the reference group. Preserve it atomically instead of losing an endpoint or treating its parts as alternative complete verses.",
+      "evidence": {
+        "copenhagenRule": "Exo.40:9-40:38",
+        "copenhagenRangeIndex": 4,
+        "sourceColumn": [
+          "Latin"
+        ],
+        "referenceColumn": [
+          "English",
+          "Hebrew"
+        ],
+        "verification": "Reviewed the named tradition column against the raw BOS profile: source/reference chapter counts, existing mapping endpoints and neighbouring shifts. The sniffing row supplies the semantic grouping; raw duplicated or final-member mappings independently corroborate its placement. This is a profile-data verification, not a collation of every translation."
+      },
+      "sourceChapterCounts": {
+        "EXO 40": 36
+      },
+      "referenceChapterCounts": {
+        "EXO 40": 38
+      }
+    },
+    {
+      "id": "vul-lev-26-45",
+      "system": "vul",
+      "source": [
+        "LEV 26:45"
+      ],
+      "target": [
+        "LEV 26:45-46"
+      ],
+      "replaceMappings": {
+        "LEV 26:45": "LEV 26:46"
+      },
+      "remainingMappings": {},
+      "reason": "MergedVerses in Copenhagen Lev.26:45-46 explicitly equates this complete vul group with the reference group. Preserve it atomically instead of losing an endpoint or treating its parts as alternative complete verses.",
+      "evidence": {
+        "copenhagenRule": "Lev.26:45-46",
+        "copenhagenRangeIndex": 0,
+        "sourceColumn": [
+          "Latin"
+        ],
+        "referenceColumn": [
+          "English",
+          "Hebrew",
+          "Greek"
+        ],
+        "verification": "Reviewed the named tradition column against the raw BOS profile: source/reference chapter counts, existing mapping endpoints and neighbouring shifts. The sniffing row supplies the semantic grouping; raw duplicated or final-member mappings independently corroborate its placement. This is a profile-data verification, not a collation of every translation."
+      },
+      "sourceChapterCounts": {
+        "LEV 26": 45
+      },
+      "referenceChapterCounts": {
+        "LEV 26": 46
+      }
+    },
+    {
+      "id": "vul-num-11-34",
+      "system": "vul",
+      "source": [
+        "NUM 11:34"
+      ],
+      "target": [
+        "NUM 11:34-35"
+      ],
+      "replaceMappings": {
+        "NUM 11:34": "NUM 11:35"
+      },
+      "remainingMappings": {},
+      "reason": "MergedVerses in Copenhagen Num.11:34-35 explicitly equates this complete vul group with the reference group. Preserve it atomically instead of losing an endpoint or treating its parts as alternative complete verses.",
+      "evidence": {
+        "copenhagenRule": "Num.11:34-35",
+        "copenhagenRangeIndex": 0,
+        "sourceColumn": [
+          "Latin"
+        ],
+        "referenceColumn": [
+          "English",
+          "Hebrew",
+          "Greek"
+        ],
+        "verification": "Reviewed the named tradition column against the raw BOS profile: source/reference chapter counts, existing mapping endpoints and neighbouring shifts. The sniffing row supplies the semantic grouping; raw duplicated or final-member mappings independently corroborate its placement. This is a profile-data verification, not a collation of every translation."
+      },
+      "sourceChapterCounts": {
+        "NUM 11": 34
+      },
+      "referenceChapterCounts": {
+        "NUM 11": 35
+      }
+    },
+    {
+      "id": "vul-jos-4-23-24",
+      "system": "vul",
+      "source": [
+        "JOS 4:23-24"
+      ],
+      "target": [
+        "JOS 4:23"
+      ],
+      "replaceMappings": {
+        "JOS 4:23": "JOS 4:23",
+        "JOS 4:24": "JOS 4:23"
+      },
+      "remainingMappings": {},
+      "reason": "SubdividedVerse in Copenhagen Jos.4:23-4:24 explicitly equates this complete vul group with the reference group. Preserve it atomically instead of losing an endpoint or treating its parts as alternative complete verses.",
+      "evidence": {
+        "copenhagenRule": "Jos.4:23-4:24",
+        "copenhagenRangeIndex": 0,
+        "sourceColumn": [
+          "Latin"
+        ],
+        "referenceColumn": [
+          "English",
+          "Hebrew",
+          "Greek"
+        ],
+        "verification": "Reviewed the named tradition column against the raw BOS profile: source/reference chapter counts, existing mapping endpoints and neighbouring shifts. The sniffing row supplies the semantic grouping; raw duplicated or final-member mappings independently corroborate its placement. This is a profile-data verification, not a collation of every translation."
+      },
+      "sourceChapterCounts": {
+        "JOS 4": 25
+      },
+      "referenceChapterCounts": {
+        "JOS 4": 24
+      }
+    },
+    {
+      "id": "vul-jos-5-14-15",
+      "system": "vul",
+      "source": [
+        "JOS 5:14-15"
+      ],
+      "target": [
+        "JOS 5:14"
+      ],
+      "replaceMappings": {
+        "JOS 5:14": "JOS 5:14",
+        "JOS 5:15": "JOS 5:14"
+      },
+      "remainingMappings": {},
+      "reason": "SubdividedVerse in Copenhagen Jos.5:14-6:27 explicitly equates this complete vul group with the reference group. Preserve it atomically instead of losing an endpoint or treating its parts as alternative complete verses.",
+      "evidence": {
+        "copenhagenRule": "Jos.5:14-6:27",
+        "copenhagenRangeIndex": 0,
+        "sourceColumn": [
+          "Latin"
+        ],
+        "referenceColumn": [
+          "English",
+          "Hebrew",
+          "Greek"
+        ],
+        "verification": "Reviewed the named tradition column against the raw BOS profile: source/reference chapter counts, existing mapping endpoints and neighbouring shifts. The sniffing row supplies the semantic grouping; raw duplicated or final-member mappings independently corroborate its placement. This is a profile-data verification, not a collation of every translation."
+      },
+      "sourceChapterCounts": {
+        "JOS 5": 16,
+        "JOS 6": 27
+      },
+      "referenceChapterCounts": {
+        "JOS 5": 15,
+        "JOS 6": 27
+      }
+    },
+    {
+      "id": "vul-jos-21-36",
+      "system": "vul",
+      "source": [
+        "JOS 21:36"
+      ],
+      "target": [
+        "JOS 21:36-37"
+      ],
+      "replaceMappings": {
+        "JOS 21:36": "JOS 21:37"
+      },
+      "remainingMappings": {},
+      "reason": "MergedVerses in Copenhagen Jos.21:36-21:45 explicitly equates this complete vul group with the reference group. Preserve it atomically instead of losing an endpoint or treating its parts as alternative complete verses.",
+      "evidence": {
+        "copenhagenRule": "Jos.21:36-21:45",
+        "copenhagenRangeIndex": 0,
+        "sourceColumn": [
+          "Latin"
+        ],
+        "referenceColumn": [
+          "English",
+          "Hebrew",
+          "Greek"
+        ],
+        "verification": "Reviewed the named tradition column against the raw BOS profile: source/reference chapter counts, existing mapping endpoints and neighbouring shifts. The sniffing row supplies the semantic grouping; raw duplicated or final-member mappings independently corroborate its placement. This is a profile-data verification, not a collation of every translation."
+      },
+      "sourceChapterCounts": {
+        "JOS 21": 43
+      },
+      "referenceChapterCounts": {
+        "JOS 21": 45
+      }
+    },
+    {
+      "id": "vul-jos-21-37",
+      "system": "vul",
+      "source": [
+        "JOS 21:37"
+      ],
+      "target": [
+        "JOS 21:38-39"
+      ],
+      "replaceMappings": {
+        "JOS 21:37": "JOS 21:39"
+      },
+      "remainingMappings": {},
+      "reason": "MergedVerses in Copenhagen Jos.21:36-21:45 explicitly equates this complete vul group with the reference group. Preserve it atomically instead of losing an endpoint or treating its parts as alternative complete verses.",
+      "evidence": {
+        "copenhagenRule": "Jos.21:36-21:45",
+        "copenhagenRangeIndex": 1,
+        "sourceColumn": [
+          "Latin"
+        ],
+        "referenceColumn": [
+          "English",
+          "Hebrew",
+          "Greek"
+        ],
+        "verification": "Reviewed the named tradition column against the raw BOS profile: source/reference chapter counts, existing mapping endpoints and neighbouring shifts. The sniffing row supplies the semantic grouping; raw duplicated or final-member mappings independently corroborate its placement. This is a profile-data verification, not a collation of every translation."
+      },
+      "sourceChapterCounts": {
+        "JOS 21": 43
+      },
+      "referenceChapterCounts": {
+        "JOS 21": 45
+      }
+    },
+    {
+      "id": "vul-jdg-5-31-32",
+      "system": "vul",
+      "source": [
+        "JDG 5:31-32"
+      ],
+      "target": [
+        "JDG 5:31"
+      ],
+      "replaceMappings": {
+        "JDG 5:31": "JDG 5:31",
+        "JDG 5:32": "JDG 5:31"
+      },
+      "remainingMappings": {},
+      "reason": "SubdividedVerse in Copenhagen Jdg.5:31 explicitly equates this complete vul group with the reference group. Preserve it atomically instead of losing an endpoint or treating its parts as alternative complete verses.",
+      "evidence": {
+        "copenhagenRule": "Jdg.5:31",
+        "copenhagenRangeIndex": 0,
+        "sourceColumn": [
+          "Latin"
+        ],
+        "referenceColumn": [
+          "English",
+          "Hebrew",
+          "Greek"
+        ],
+        "verification": "Reviewed the named tradition column against the raw BOS profile: source/reference chapter counts, existing mapping endpoints and neighbouring shifts. The sniffing row supplies the semantic grouping; raw duplicated or final-member mappings independently corroborate its placement. This is a profile-data verification, not a collation of every translation."
+      },
+      "sourceChapterCounts": {
+        "JDG 5": 32
+      },
+      "referenceChapterCounts": {
+        "JDG 5": 31
+      }
+    },
+    {
+      "id": "vul-jdg-21-24",
+      "system": "vul",
+      "source": [
+        "JDG 21:24"
+      ],
+      "target": [
+        "JDG 21:24-25"
+      ],
+      "replaceMappings": {
+        "JDG 21:24": "JDG 21:25"
+      },
+      "remainingMappings": {},
+      "reason": "MergedVerses in Copenhagen Jdg.21:24-25 explicitly equates this complete vul group with the reference group. Preserve it atomically instead of losing an endpoint or treating its parts as alternative complete verses.",
+      "evidence": {
+        "copenhagenRule": "Jdg.21:24-25",
+        "copenhagenRangeIndex": 0,
+        "sourceColumn": [
+          "Latin"
+        ],
+        "referenceColumn": [
+          "English",
+          "Hebrew",
+          "Greek"
+        ],
+        "verification": "Reviewed the named tradition column against the raw BOS profile: source/reference chapter counts, existing mapping endpoints and neighbouring shifts. The sniffing row supplies the semantic grouping; raw duplicated or final-member mappings independently corroborate its placement. This is a profile-data verification, not a collation of every translation."
+      },
+      "sourceChapterCounts": {
+        "JDG 21": 24
+      },
+      "referenceChapterCounts": {
+        "JDG 21": 25
+      }
+    },
+    {
+      "id": "vul-ch1-11-46",
+      "system": "vul",
+      "source": [
+        "CH1 11:46"
+      ],
+      "target": [
+        "CH1 11:46-47"
+      ],
+      "replaceMappings": {
+        "CH1 11:46": "CH1 11:47"
+      },
+      "remainingMappings": {},
+      "reason": "MergedVerses in Copenhagen 1Ch.11:46-47 explicitly equates this complete vul group with the reference group. Preserve it atomically instead of losing an endpoint or treating its parts as alternative complete verses.",
+      "evidence": {
+        "copenhagenRule": "1Ch.11:46-47",
+        "copenhagenRangeIndex": 0,
+        "sourceColumn": [
+          "Latin"
+        ],
+        "referenceColumn": [
+          "English",
+          "Hebrew",
+          "Greek"
+        ],
+        "verification": "Reviewed the named tradition column against the raw BOS profile: source/reference chapter counts, existing mapping endpoints and neighbouring shifts. The sniffing row supplies the semantic grouping; raw duplicated or final-member mappings independently corroborate its placement. This is a profile-data verification, not a collation of every translation."
+      },
+      "sourceChapterCounts": {
+        "CH1 11": 46
+      },
+      "referenceChapterCounts": {
+        "CH1 11": 47
+      }
+    },
+    {
+      "id": "vul-ch1-12-4",
+      "system": "vul",
+      "source": [
+        "CH1 12:4"
+      ],
+      "target": [
+        "CH1 12:4-5"
+      ],
+      "replaceMappings": {
+        "CH1 12:4": "CH1 12:5"
+      },
+      "remainingMappings": {},
+      "reason": "SubdividedVerse in Copenhagen 1Ch.12:4-12:40 explicitly equates this complete vul group with the reference group. Preserve it atomically instead of losing an endpoint or treating its parts as alternative complete verses.",
+      "evidence": {
+        "copenhagenRule": "1Ch.12:4-12:40",
+        "copenhagenRangeIndex": 0,
+        "sourceColumn": [
+          "English",
+          "Latin"
+        ],
+        "referenceColumn": [
+          "Hebrew",
+          "Greek"
+        ],
+        "verification": "Reviewed the named tradition column against the raw BOS profile: source/reference chapter counts, existing mapping endpoints and neighbouring shifts. The sniffing row supplies the semantic grouping; raw duplicated or final-member mappings independently corroborate its placement. This is a profile-data verification, not a collation of every translation."
+      },
+      "sourceChapterCounts": {
+        "CH1 12": 40
+      },
+      "referenceChapterCounts": {
+        "CH1 12": 41
+      }
+    },
+    {
+      "id": "vul-ch1-20-7",
+      "system": "vul",
+      "source": [
+        "CH1 20:7"
+      ],
+      "target": [
+        "CH1 20:7-8"
+      ],
+      "replaceMappings": {
+        "CH1 20:7": "CH1 20:8"
+      },
+      "remainingMappings": {},
+      "reason": "MergedVerses in Copenhagen 1Ch.20:7-8 explicitly equates this complete vul group with the reference group. Preserve it atomically instead of losing an endpoint or treating its parts as alternative complete verses.",
+      "evidence": {
+        "copenhagenRule": "1Ch.20:7-8",
+        "copenhagenRangeIndex": 0,
+        "sourceColumn": [
+          "Latin"
+        ],
+        "referenceColumn": [
+          "English",
+          "Hebrew",
+          "Greek"
+        ],
+        "verification": "Reviewed the named tradition column against the raw BOS profile: source/reference chapter counts, existing mapping endpoints and neighbouring shifts. The sniffing row supplies the semantic grouping; raw duplicated or final-member mappings independently corroborate its placement. This is a profile-data verification, not a collation of every translation."
+      },
+      "sourceChapterCounts": {
+        "CH1 20": 7
+      },
+      "referenceChapterCounts": {
+        "CH1 20": 8
+      }
+    },
+    {
+      "id": "vul-neh-3-30",
+      "system": "vul",
+      "source": [
+        "NEH 3:30"
+      ],
+      "target": [
+        "NEH 3:30-31"
+      ],
+      "replaceMappings": {
+        "NEH 3:30": "NEH 3:31"
+      },
+      "remainingMappings": {},
+      "reason": "MergedVerses in Copenhagen Neh.3:30-4:23 explicitly equates this complete vul group with the reference group. Preserve it atomically instead of losing an endpoint or treating its parts as alternative complete verses.",
+      "evidence": {
+        "copenhagenRule": "Neh.3:30-4:23",
+        "copenhagenRangeIndex": 0,
+        "sourceColumn": [
+          "Latin"
+        ],
+        "referenceColumn": [
+          "Hebrew"
+        ],
+        "verification": "Reviewed the named tradition column against the raw BOS profile: source/reference chapter counts, existing mapping endpoints and neighbouring shifts. The sniffing row supplies the semantic grouping; raw duplicated or final-member mappings independently corroborate its placement. This is a profile-data verification, not a collation of every translation."
+      },
+      "sourceChapterCounts": {
+        "NEH 3": 31,
+        "NEH 4": 23
+      },
+      "referenceChapterCounts": {
+        "NEH 3": 38,
+        "NEH 4": 17
+      }
+    },
+    {
+      "id": "vul-neh-12-33",
+      "system": "vul",
+      "source": [
+        "NEH 12:33"
+      ],
+      "target": [
+        "NEH 12:33-34"
+      ],
+      "replaceMappings": {
+        "NEH 12:33": "NEH 12:34"
+      },
+      "remainingMappings": {},
+      "reason": "MergedVerses in Copenhagen Neh.12:33-12:47 explicitly equates this complete vul group with the reference group. Preserve it atomically instead of losing an endpoint or treating its parts as alternative complete verses.",
+      "evidence": {
+        "copenhagenRule": "Neh.12:33-12:47",
+        "copenhagenRangeIndex": 0,
+        "sourceColumn": [
+          "Latin"
+        ],
+        "referenceColumn": [
+          "English",
+          "Hebrew",
+          "Greek"
+        ],
+        "verification": "Reviewed the named tradition column against the raw BOS profile: source/reference chapter counts, existing mapping endpoints and neighbouring shifts. The sniffing row supplies the semantic grouping; raw duplicated or final-member mappings independently corroborate its placement. This is a profile-data verification, not a collation of every translation."
+      },
+      "sourceChapterCounts": {
+        "NEH 12": 46
+      },
+      "referenceChapterCounts": {
+        "NEH 12": 47
+      }
+    },
+    {
+      "id": "vul-job-16-4-5",
+      "system": "vul",
+      "source": [
+        "JOB 16:4-5"
+      ],
+      "target": [
+        "JOB 16:4"
+      ],
+      "replaceMappings": {
+        "JOB 16:4": "JOB 16:4",
+        "JOB 16:5": "JOB 16:4"
+      },
+      "remainingMappings": {},
+      "reason": "SubdividedVerse in Copenhagen Job.16:4-16:22 explicitly equates this complete vul group with the reference group. Preserve it atomically instead of losing an endpoint or treating its parts as alternative complete verses.",
+      "evidence": {
+        "copenhagenRule": "Job.16:4-16:22",
+        "copenhagenRangeIndex": 0,
+        "sourceColumn": [
+          "Latin"
+        ],
+        "referenceColumn": [
+          "English",
+          "Hebrew",
+          "Greek"
+        ],
+        "verification": "Reviewed the named tradition column against the raw BOS profile: source/reference chapter counts, existing mapping endpoints and neighbouring shifts. The sniffing row supplies the semantic grouping; raw duplicated or final-member mappings independently corroborate its placement. This is a profile-data verification, not a collation of every translation."
+      },
+      "sourceChapterCounts": {
+        "JOB 16": 23
+      },
+      "referenceChapterCounts": {
+        "JOB 16": 22
+      }
+    },
+    {
+      "id": "vul-job-42-16",
+      "system": "vul",
+      "source": [
+        "JOB 42:16"
+      ],
+      "target": [
+        "JOB 42:16-17"
+      ],
+      "replaceMappings": {
+        "JOB 42:16": "JOB 42:17"
+      },
+      "remainingMappings": {},
+      "reason": "MergedVerses in Copenhagen Job.42:16-17 explicitly equates this complete vul group with the reference group. Preserve it atomically instead of losing an endpoint or treating its parts as alternative complete verses.",
+      "evidence": {
+        "copenhagenRule": "Job.42:16-17",
+        "copenhagenRangeIndex": 0,
+        "sourceColumn": [
+          "Latin"
+        ],
+        "referenceColumn": [
+          "English",
+          "Hebrew",
+          "Greek"
+        ],
+        "verification": "Reviewed the named tradition column against the raw BOS profile: source/reference chapter counts, existing mapping endpoints and neighbouring shifts. The sniffing row supplies the semantic grouping; raw duplicated or final-member mappings independently corroborate its placement. This is a profile-data verification, not a collation of every translation."
+      },
+      "sourceChapterCounts": {
+        "JOB 42": 16
+      },
+      "referenceChapterCounts": {
+        "JOB 42": 17
+      }
+    },
+    {
+      "id": "vul-psa-2-12-13",
+      "system": "vul",
+      "source": [
+        "PSA 2:12-13"
+      ],
+      "target": [
+        "PSA 2:12"
+      ],
+      "replaceMappings": {
+        "PSA 2:12": "PSA 2:12",
+        "PSA 2:13": "PSA 2:12"
+      },
+      "remainingMappings": {},
+      "reason": "SubdividedVerse in Copenhagen Psa.2:12 explicitly equates this complete vul group with the reference group. Preserve it atomically instead of losing an endpoint or treating its parts as alternative complete verses.",
+      "evidence": {
+        "copenhagenRule": "Psa.2:12",
+        "copenhagenRangeIndex": 0,
+        "sourceColumn": [
+          "Latin"
+        ],
+        "referenceColumn": [
+          "English",
+          "Hebrew",
+          "Greek"
+        ],
+        "verification": "Reviewed the named tradition column against the raw BOS profile: source/reference chapter counts, existing mapping endpoints and neighbouring shifts. The sniffing row supplies the semantic grouping; raw duplicated or final-member mappings independently corroborate its placement. This is a profile-data verification, not a collation of every translation."
+      },
+      "sourceChapterCounts": {
+        "PSA 2": 13
+      },
+      "referenceChapterCounts": {
+        "PSA 2": 12
+      }
+    },
+    {
+      "id": "vul-psa-4-9-10",
+      "system": "vul",
+      "source": [
+        "PSA 4:9-10"
+      ],
+      "target": [
+        "PSA 4:9"
+      ],
+      "replaceMappings": {
+        "PSA 4:9": "PSA 4:9",
+        "PSA 4:10": "PSA 4:9"
+      },
+      "remainingMappings": {},
+      "reason": "SubdividedVerse in Copenhagen Psa.4:1-4:8 explicitly equates this complete vul group with the reference group. Preserve it atomically instead of losing an endpoint or treating its parts as alternative complete verses.",
+      "evidence": {
+        "copenhagenRule": "Psa.4:1-4:8",
+        "copenhagenRangeIndex": 5,
+        "sourceColumn": [
+          "Latin"
+        ],
+        "referenceColumn": [
+          "Hebrew",
+          "Greek"
+        ],
+        "verification": "Reviewed the named tradition column against the raw BOS profile: source/reference chapter counts, existing mapping endpoints and neighbouring shifts. The sniffing row supplies the semantic grouping; raw duplicated or final-member mappings independently corroborate its placement. This is a profile-data verification, not a collation of every translation."
+      },
+      "sourceChapterCounts": {
+        "PSA 4": 10
+      },
+      "referenceChapterCounts": {
+        "PSA 4": 9
+      }
+    },
+    {
+      "id": "vul-psa-10-1-2",
+      "system": "vul",
+      "source": [
+        "PSA 10:1-2"
+      ],
+      "target": [
+        "PSA 11:1"
+      ],
+      "replaceMappings": {
+        "PSA 10:0-1": "PSA 11:0-1",
+        "PSA 10:2": "PSA 11:1"
+      },
+      "remainingMappings": {
+        "PSA 10:0": "PSA 11:0"
+      },
+      "reason": "SubdividedVerse in Copenhagen Psa.11:1-11:7 explicitly equates this complete vul group with the reference group. Preserve it atomically instead of losing an endpoint or treating its parts as alternative complete verses.",
+      "evidence": {
+        "copenhagenRule": "Psa.11:1-11:7",
+        "copenhagenRangeIndex": 0,
+        "sourceColumn": [
+          "Latin"
+        ],
+        "referenceColumn": [
+          "English",
+          "Hebrew"
+        ],
+        "verification": "Reviewed the named tradition column against the raw BOS profile: source/reference chapter counts, existing mapping endpoints and neighbouring shifts. The sniffing row supplies the semantic grouping; raw duplicated or final-member mappings independently corroborate its placement. This is a profile-data verification, not a collation of every translation."
+      },
+      "sourceChapterCounts": {
+        "PSA 10": 8
+      },
+      "referenceChapterCounts": {
+        "PSA 11": 7
+      }
+    },
+    {
+      "id": "vul-psa-12-1",
+      "system": "vul",
+      "source": [
+        "PSA 12:1"
+      ],
+      "target": [
+        "PSA 13:1-2"
+      ],
+      "replaceMappings": {
+        "PSA 12:0-1": "PSA 13:0-1",
+        "PSA 12:1": "PSA 13:2"
+      },
+      "remainingMappings": {
+        "PSA 12:0": "PSA 13:0"
+      },
+      "reason": "SubdividedVerse in Copenhagen Psa.13:1-13:6 explicitly equates this complete vul group with the reference group. Preserve it atomically instead of losing an endpoint or treating its parts as alternative complete verses.",
+      "evidence": {
+        "copenhagenRule": "Psa.13:1-13:6",
+        "copenhagenRangeIndex": 0,
+        "sourceColumn": [
+          "Latin"
+        ],
+        "referenceColumn": [
+          "Hebrew"
+        ],
+        "verification": "Reviewed the named tradition column against the raw BOS profile: source/reference chapter counts, existing mapping endpoints and neighbouring shifts. The sniffing row supplies the semantic grouping; raw duplicated or final-member mappings independently corroborate its placement. This is a profile-data verification, not a collation of every translation."
+      },
+      "sourceChapterCounts": {
+        "PSA 12": 6,
+        "PSA 13": 7
+      },
+      "referenceChapterCounts": {
+        "PSA 13": 6
+      }
+    },
+    {
+      "id": "vul-psa-12-2-3",
+      "system": "vul",
+      "source": [
+        "PSA 12:2-3"
+      ],
+      "target": [
+        "PSA 13:3"
+      ],
+      "replaceMappings": {
+        "PSA 12:2": "PSA 13:3",
+        "PSA 12:3": "PSA 13:3"
+      },
+      "remainingMappings": {},
+      "reason": "SubdividedVerse in Copenhagen Psa.13:1-13:6 explicitly equates this complete vul group with the reference group. Preserve it atomically instead of losing an endpoint or treating its parts as alternative complete verses.",
+      "evidence": {
+        "copenhagenRule": "Psa.13:1-13:6",
+        "copenhagenRangeIndex": 1,
+        "sourceColumn": [
+          "Latin"
+        ],
+        "referenceColumn": [
+          "Hebrew"
+        ],
+        "verification": "Reviewed the named tradition column against the raw BOS profile: source/reference chapter counts, existing mapping endpoints and neighbouring shifts. The sniffing row supplies the semantic grouping; raw duplicated or final-member mappings independently corroborate its placement. This is a profile-data verification, not a collation of every translation."
+      },
+      "sourceChapterCounts": {
+        "PSA 12": 6,
+        "PSA 13": 7
+      },
+      "referenceChapterCounts": {
+        "PSA 13": 6
+      }
+    },
+    {
+      "id": "vul-psa-43-22",
+      "system": "vul",
+      "source": [
+        "PSA 43:22"
+      ],
+      "target": [
+        "PSA 44:22-23"
+      ],
+      "replaceMappings": {
+        "PSA 43:22": "PSA 44:23"
+      },
+      "remainingMappings": {},
+      "reason": "MergedVerses in Copenhagen Psa.44:1-44:26 explicitly equates this complete vul group with the reference group. Preserve it atomically instead of losing an endpoint or treating its parts as alternative complete verses.",
+      "evidence": {
+        "copenhagenRule": "Psa.44:1-44:26",
+        "copenhagenRangeIndex": 2,
+        "sourceColumn": [
+          "Latin"
+        ],
+        "referenceColumn": [
+          "Hebrew"
+        ],
+        "verification": "Reviewed the named tradition column against the raw BOS profile: source/reference chapter counts, existing mapping endpoints and neighbouring shifts. The sniffing row supplies the semantic grouping; raw duplicated or final-member mappings independently corroborate its placement. This is a profile-data verification, not a collation of every translation."
+      },
+      "sourceChapterCounts": {
+        "PSA 43": 26
+      },
+      "referenceChapterCounts": {
+        "PSA 44": 27
+      }
+    },
+    {
+      "id": "vul-psa-55-11",
+      "system": "vul",
+      "source": [
+        "PSA 55:11"
+      ],
+      "target": [
+        "PSA 56:11-12"
+      ],
+      "replaceMappings": {
+        "PSA 55:11": "PSA 56:12"
+      },
+      "remainingMappings": {},
+      "reason": "MergedVerses in Copenhagen Psa.56:1-56:13 explicitly equates this complete vul group with the reference group. Preserve it atomically instead of losing an endpoint or treating its parts as alternative complete verses.",
+      "evidence": {
+        "copenhagenRule": "Psa.56:1-56:13",
+        "copenhagenRangeIndex": 2,
+        "sourceColumn": [
+          "Latin"
+        ],
+        "referenceColumn": [
+          "Hebrew"
+        ],
+        "verification": "Reviewed the named tradition column against the raw BOS profile: source/reference chapter counts, existing mapping endpoints and neighbouring shifts. The sniffing row supplies the semantic grouping; raw duplicated or final-member mappings independently corroborate its placement. This is a profile-data verification, not a collation of every translation."
+      },
+      "sourceChapterCounts": {
+        "PSA 55": 13
+      },
+      "referenceChapterCounts": {
+        "PSA 56": 14
+      }
+    },
+    {
+      "id": "vul-isa-63-19",
+      "system": "vul",
+      "source": [
+        "ISA 63:19",
+        "ISA 64:1"
+      ],
+      "target": [
+        "ISA 63:19"
+      ],
+      "replaceMappings": {
+        "ISA 63:19": "ISA 63:19",
+        "ISA 64:1": "ISA 63:19"
+      },
+      "remainingMappings": {},
+      "reason": "MergedVerses in Copenhagen Isa.63:19-64:12 explicitly equates this complete vul group with the reference group. Preserve it atomically instead of losing an endpoint or treating its parts as alternative complete verses.",
+      "evidence": {
+        "copenhagenRule": "Isa.63:19-64:12",
+        "copenhagenRangeIndex": 0,
+        "sourceColumn": [
+          "English",
+          "Latin",
+          "Greek"
+        ],
+        "referenceColumn": [
+          "Hebrew"
+        ],
+        "verification": "Reviewed the named tradition column against the raw BOS profile: source/reference chapter counts, existing mapping endpoints and neighbouring shifts. The sniffing row supplies the semantic grouping; raw duplicated or final-member mappings independently corroborate its placement. This is a profile-data verification, not a collation of every translation."
+      },
+      "sourceChapterCounts": {
+        "ISA 63": 19,
+        "ISA 64": 12
+      },
+      "referenceChapterCounts": {
+        "ISA 63": 19,
+        "ISA 64": 11
+      }
+    },
+    {
+      "id": "vul-jer-37-4",
+      "system": "vul",
+      "source": [
+        "JER 37:4"
+      ],
+      "target": [
+        "JER 37:4-5"
+      ],
+      "replaceMappings": {
+        "JER 37:4": "JER 37:5"
+      },
+      "remainingMappings": {},
+      "reason": "MergedVerses in Copenhagen Jer.37:1-37:21 explicitly equates this complete vul group with the reference group. Preserve it atomically instead of losing an endpoint or treating its parts as alternative complete verses.",
+      "evidence": {
+        "copenhagenRule": "Jer.37:1-37:21",
+        "copenhagenRangeIndex": 1,
+        "sourceColumn": [
+          "Latin"
+        ],
+        "referenceColumn": [
+          "English",
+          "Hebrew"
+        ],
+        "verification": "Reviewed the named tradition column against the raw BOS profile: source/reference chapter counts, existing mapping endpoints and neighbouring shifts. The sniffing row supplies the semantic grouping; raw duplicated or final-member mappings independently corroborate its placement. This is a profile-data verification, not a collation of every translation."
+      },
+      "sourceChapterCounts": {
+        "JER 37": 20
+      },
+      "referenceChapterCounts": {
+        "JER 37": 21
+      }
+    },
+    {
+      "id": "vul-eze-2-9",
+      "system": "vul",
+      "source": [
+        "EZE 2:9"
+      ],
+      "target": [
+        "EZE 2:9-10"
+      ],
+      "replaceMappings": {
+        "EZE 2:9": "EZE 2:10"
+      },
+      "remainingMappings": {},
+      "reason": "MergedVerses in Copenhagen Ezk.2:9-10 explicitly equates this complete vul group with the reference group. Preserve it atomically instead of losing an endpoint or treating its parts as alternative complete verses.",
+      "evidence": {
+        "copenhagenRule": "Ezk.2:9-10",
+        "copenhagenRangeIndex": 0,
+        "sourceColumn": [
+          "Latin"
+        ],
+        "referenceColumn": [
+          "English",
+          "Hebrew",
+          "Greek"
+        ],
+        "verification": "Reviewed the named tradition column against the raw BOS profile: source/reference chapter counts, existing mapping endpoints and neighbouring shifts. The sniffing row supplies the semantic grouping; raw duplicated or final-member mappings independently corroborate its placement. This is a profile-data verification, not a collation of every translation."
+      },
+      "sourceChapterCounts": {
+        "EZE 2": 9
+      },
+      "referenceChapterCounts": {
+        "EZE 2": 10
+      }
+    },
+    {
+      "id": "vul-hos-2-23-24",
+      "system": "vul",
+      "source": [
+        "HOS 2:23-24"
+      ],
+      "target": [
+        "HOS 2:25"
+      ],
+      "replaceMappings": {
+        "HOS 2:23": "HOS 2:25",
+        "HOS 2:24": "HOS 2:25"
+      },
+      "remainingMappings": {},
+      "reason": "SubdividedVerse in Copenhagen Hos.1:10-2:23 explicitly equates this complete vul group with the reference group. Preserve it atomically instead of losing an endpoint or treating its parts as alternative complete verses.",
+      "evidence": {
+        "copenhagenRule": "Hos.1:10-2:23",
+        "copenhagenRangeIndex": 3,
+        "sourceColumn": [
+          "Latin"
+        ],
+        "referenceColumn": [
+          "Hebrew"
+        ],
+        "verification": "Reviewed the named tradition column against the raw BOS profile: source/reference chapter counts, existing mapping endpoints and neighbouring shifts. The sniffing row supplies the semantic grouping; raw duplicated or final-member mappings independently corroborate its placement. This is a profile-data verification, not a collation of every translation."
+      },
+      "sourceChapterCounts": {
+        "HOS 2": 24
+      },
+      "referenceChapterCounts": {
+        "HOS 2": 25
+      }
+    },
+    {
+      "id": "vul-amo-6-10-11",
+      "system": "vul",
+      "source": [
+        "AMO 6:10-11"
+      ],
+      "target": [
+        "AMO 6:10"
+      ],
+      "replaceMappings": {
+        "AMO 6:10": "AMO 6:10",
+        "AMO 6:11": "AMO 6:10"
+      },
+      "remainingMappings": {},
+      "reason": "SubdividedVerse in Copenhagen Amo.6:10-6:14 explicitly equates this complete vul group with the reference group. Preserve it atomically instead of losing an endpoint or treating its parts as alternative complete verses.",
+      "evidence": {
+        "copenhagenRule": "Amo.6:10-6:14",
+        "copenhagenRangeIndex": 0,
+        "sourceColumn": [
+          "Latin"
+        ],
+        "referenceColumn": [
+          "English",
+          "Hebrew",
+          "Greek"
+        ],
+        "verification": "Reviewed the named tradition column against the raw BOS profile: source/reference chapter counts, existing mapping endpoints and neighbouring shifts. The sniffing row supplies the semantic grouping; raw duplicated or final-member mappings independently corroborate its placement. This is a profile-data verification, not a collation of every translation."
+      },
+      "sourceChapterCounts": {
+        "AMO 6": 15
+      },
+      "referenceChapterCounts": {
+        "AMO 6": 14
+      }
+    },
+    {
+      "id": "vul-mic-5-11",
+      "system": "vul",
+      "source": [
+        "MIC 5:11"
+      ],
+      "target": [
+        "MIC 5:10-11"
+      ],
+      "replaceMappings": {
+        "MIC 5:11": "MIC 5:11"
+      },
+      "remainingMappings": {},
+      "reason": "MergedVerses in Copenhagen Mic.5:1-5:15 explicitly equates this complete vul group with the reference group. Preserve it atomically instead of losing an endpoint or treating its parts as alternative complete verses.",
+      "evidence": {
+        "copenhagenRule": "Mic.5:1-5:15",
+        "copenhagenRangeIndex": 2,
+        "sourceColumn": [
+          "Latin"
+        ],
+        "referenceColumn": [
+          "Hebrew"
+        ],
+        "verification": "Reviewed the named tradition column against the raw BOS profile: source/reference chapter counts, existing mapping endpoints and neighbouring shifts. The sniffing row supplies the semantic grouping; raw duplicated or final-member mappings independently corroborate its placement. This is a profile-data verification, not a collation of every translation."
+      },
+      "sourceChapterCounts": {
+        "MIC 4": 13,
+        "MIC 5": 14
+      },
+      "referenceChapterCounts": {
+        "MIC 4": 14,
+        "MIC 5": 14
+      }
+    },
+    {
+      "id": "vul-wis-5-13-14",
+      "system": "vul",
+      "source": [
+        "WIS 5:13-14"
+      ],
+      "target": [
+        "WIS 5:13"
+      ],
+      "replaceMappings": {
+        "WIS 5:13": "WIS 5:13",
+        "WIS 5:14": "WIS 5:13"
+      },
+      "remainingMappings": {},
+      "reason": "SubdividedVerse in Copenhagen Wis.5:1-5:23# explicitly equates this complete vul group with the reference group. Preserve it atomically instead of losing an endpoint or treating its parts as alternative complete verses.",
+      "evidence": {
+        "copenhagenRule": "Wis.5:1-5:23#",
+        "copenhagenRangeIndex": 1,
+        "sourceColumn": [
+          "Latin"
+        ],
+        "referenceColumn": [
+          "English",
+          "Greek"
+        ],
+        "verification": "Reviewed the named tradition column against the raw BOS profile: source/reference chapter counts, existing mapping endpoints and neighbouring shifts. The sniffing row supplies the semantic grouping; raw duplicated or final-member mappings independently corroborate its placement. This is a profile-data verification, not a collation of every translation."
+      },
+      "sourceChapterCounts": {
+        "WIS 5": 24
+      },
+      "referenceChapterCounts": {
+        "WIS 5": 23
+      }
+    },
+    {
+      "id": "vul-wis-6-1-2",
+      "system": "vul",
+      "source": [
+        "WIS 6:1-2"
+      ],
+      "target": [
+        "WIS 6:1"
+      ],
+      "replaceMappings": {
+        "WIS 6:2-21": "WIS 6:1-20"
+      },
+      "remainingMappings": {
+        "WIS 6:3": "WIS 6:2",
+        "WIS 6:4": "WIS 6:3",
+        "WIS 6:5": "WIS 6:4",
+        "WIS 6:6": "WIS 6:5",
+        "WIS 6:7": "WIS 6:6",
+        "WIS 6:8": "WIS 6:7",
+        "WIS 6:9": "WIS 6:8",
+        "WIS 6:10": "WIS 6:9",
+        "WIS 6:11": "WIS 6:10",
+        "WIS 6:12": "WIS 6:11",
+        "WIS 6:13": "WIS 6:12",
+        "WIS 6:14": "WIS 6:13",
+        "WIS 6:15": "WIS 6:14",
+        "WIS 6:16": "WIS 6:15",
+        "WIS 6:17": "WIS 6:16",
+        "WIS 6:18": "WIS 6:17",
+        "WIS 6:19": "WIS 6:18",
+        "WIS 6:20": "WIS 6:19",
+        "WIS 6:21": "WIS 6:20"
+      },
+      "reason": "SubdividedVerse in Copenhagen Wis.6:1-6:25 explicitly equates this complete vul group with the reference group. Preserve it atomically instead of losing an endpoint or treating its parts as alternative complete verses.",
+      "evidence": {
+        "copenhagenRule": "Wis.6:1-6:25",
+        "copenhagenRangeIndex": 0,
+        "sourceColumn": [
+          "Latin"
+        ],
+        "referenceColumn": [
+          "English",
+          "Greek"
+        ],
+        "verification": "Reviewed the named tradition column against the raw BOS profile: source/reference chapter counts, existing mapping endpoints and neighbouring shifts. The sniffing row supplies the semantic grouping; raw duplicated or final-member mappings independently corroborate its placement. This is a profile-data verification, not a collation of every translation."
+      },
+      "sourceChapterCounts": {
+        "WIS 6": 27
+      },
+      "referenceChapterCounts": {
+        "WIS 6": 25
+      }
+    },
+    {
+      "id": "vul-wis-6-22-23",
+      "system": "vul",
+      "source": [
+        "WIS 6:22-23"
+      ],
+      "target": [
+        "WIS 6:21"
+      ],
+      "replaceMappings": {
+        "WIS 6:22": "WIS 6:21",
+        "WIS 6:23": "WIS 6:21"
+      },
+      "remainingMappings": {},
+      "reason": "SubdividedVerse in Copenhagen Wis.6:1-6:25 explicitly equates this complete vul group with the reference group. Preserve it atomically instead of losing an endpoint or treating its parts as alternative complete verses.",
+      "evidence": {
+        "copenhagenRule": "Wis.6:1-6:25",
+        "copenhagenRangeIndex": 2,
+        "sourceColumn": [
+          "Latin"
+        ],
+        "referenceColumn": [
+          "English",
+          "Greek"
+        ],
+        "verification": "Reviewed the named tradition column against the raw BOS profile: source/reference chapter counts, existing mapping endpoints and neighbouring shifts. The sniffing row supplies the semantic grouping; raw duplicated or final-member mappings independently corroborate its placement. This is a profile-data verification, not a collation of every translation."
+      },
+      "sourceChapterCounts": {
+        "WIS 6": 27
+      },
+      "referenceChapterCounts": {
+        "WIS 6": 25
+      }
+    },
+    {
+      "id": "vul-wis-9-18-19",
+      "system": "vul",
+      "source": [
+        "WIS 9:18-19"
+      ],
+      "target": [
+        "WIS 9:18"
+      ],
+      "replaceMappings": {
+        "WIS 9:18": "WIS 9:18",
+        "WIS 9:19": "WIS 9:18"
+      },
+      "remainingMappings": {},
+      "reason": "SubdividedVerse in Copenhagen Wis.9:1-9:18# explicitly equates this complete vul group with the reference group. Preserve it atomically instead of losing an endpoint or treating its parts as alternative complete verses.",
+      "evidence": {
+        "copenhagenRule": "Wis.9:1-9:18#",
+        "copenhagenRangeIndex": 1,
+        "sourceColumn": [
+          "Latin"
+        ],
+        "referenceColumn": [
+          "English",
+          "Greek"
+        ],
+        "verification": "Reviewed the named tradition column against the raw BOS profile: source/reference chapter counts, existing mapping endpoints and neighbouring shifts. The sniffing row supplies the semantic grouping; raw duplicated or final-member mappings independently corroborate its placement. This is a profile-data verification, not a collation of every translation."
+      },
+      "sourceChapterCounts": {
+        "WIS 9": 19
+      },
+      "referenceChapterCounts": {
+        "WIS 9": 18
+      }
+    },
+    {
+      "id": "vul-wis-11-5-6",
+      "system": "vul",
+      "source": [
+        "WIS 11:5-6"
+      ],
+      "target": [
+        "WIS 11:5"
+      ],
+      "replaceMappings": {
+        "WIS 11:5": "WIS 11:5",
+        "WIS 11:6": "WIS 11:5"
+      },
+      "remainingMappings": {},
+      "reason": "SubdividedVerse in Copenhagen Wis.11:1-11:26 explicitly equates this complete vul group with the reference group. Preserve it atomically instead of losing an endpoint or treating its parts as alternative complete verses.",
+      "evidence": {
+        "copenhagenRule": "Wis.11:1-11:26",
+        "copenhagenRangeIndex": 1,
+        "sourceColumn": [
+          "Latin"
+        ],
+        "referenceColumn": [
+          "English",
+          "Greek"
+        ],
+        "verification": "Reviewed the named tradition column against the raw BOS profile: source/reference chapter counts, existing mapping endpoints and neighbouring shifts. The sniffing row supplies the semantic grouping; raw duplicated or final-member mappings independently corroborate its placement. This is a profile-data verification, not a collation of every translation."
+      },
+      "sourceChapterCounts": {
+        "WIS 11": 27
+      },
+      "referenceChapterCounts": {
+        "WIS 11": 26
+      }
+    },
+    {
+      "id": "vul-wis-19-12",
+      "system": "vul",
+      "source": [
+        "WIS 19:12"
+      ],
+      "target": [
+        "WIS 19:12-13"
+      ],
+      "replaceMappings": {
+        "WIS 19:12": "WIS 19:13"
+      },
+      "remainingMappings": {},
+      "reason": "MergedVerses in Copenhagen Wis.19:12-19:22 explicitly equates this complete vul group with the reference group. Preserve it atomically instead of losing an endpoint or treating its parts as alternative complete verses.",
+      "evidence": {
+        "copenhagenRule": "Wis.19:12-19:22",
+        "copenhagenRangeIndex": 0,
+        "sourceColumn": [
+          "Latin"
+        ],
+        "referenceColumn": [
+          "Greek"
+        ],
+        "verification": "Reviewed the named tradition column against the raw BOS profile: source/reference chapter counts, existing mapping endpoints and neighbouring shifts. The sniffing row supplies the semantic grouping; raw duplicated or final-member mappings independently corroborate its placement. This is a profile-data verification, not a collation of every translation."
+      },
+      "sourceChapterCounts": {
+        "WIS 19": 20
+      },
+      "referenceChapterCounts": {
+        "WIS 19": 22
+      }
+    },
+    {
+      "id": "vul-wis-19-20",
+      "system": "vul",
+      "source": [
+        "WIS 19:20"
+      ],
+      "target": [
+        "WIS 19:21-22"
+      ],
+      "replaceMappings": {
+        "WIS 19:20": "WIS 19:22"
+      },
+      "remainingMappings": {},
+      "reason": "MergedVerses in Copenhagen Wis.19:12-19:22 explicitly equates this complete vul group with the reference group. Preserve it atomically instead of losing an endpoint or treating its parts as alternative complete verses.",
+      "evidence": {
+        "copenhagenRule": "Wis.19:12-19:22",
+        "copenhagenRangeIndex": 2,
+        "sourceColumn": [
+          "Latin"
+        ],
+        "referenceColumn": [
+          "Greek"
+        ],
+        "verification": "Reviewed the named tradition column against the raw BOS profile: source/reference chapter counts, existing mapping endpoints and neighbouring shifts. The sniffing row supplies the semantic grouping; raw duplicated or final-member mappings independently corroborate its placement. This is a profile-data verification, not a collation of every translation."
+      },
+      "sourceChapterCounts": {
+        "WIS 19": 20
+      },
+      "referenceChapterCounts": {
+        "WIS 19": 22
+      }
+    },
+    {
+      "id": "vul-ma2-2-18-19",
+      "system": "vul",
+      "source": [
+        "MA2 2:18-19"
+      ],
+      "target": [
+        "MA2 2:18"
+      ],
+      "replaceMappings": {
+        "MA2 2:18": "MA2 2:18",
+        "MA2 2:19": "MA2 2:18"
+      },
+      "remainingMappings": {},
+      "reason": "SubdividedVerse in Copenhagen 2Ma.2:1-2:32 explicitly equates this complete vul group with the reference group. Preserve it atomically instead of losing an endpoint or treating its parts as alternative complete verses.",
+      "evidence": {
+        "copenhagenRule": "2Ma.2:1-2:32",
+        "copenhagenRangeIndex": 0,
+        "sourceColumn": [
+          "Latin",
+          "Bulgarian#"
+        ],
+        "referenceColumn": [
+          "English",
+          "Greek"
+        ],
+        "verification": "Reviewed the named tradition column against the raw BOS profile: source/reference chapter counts, existing mapping endpoints and neighbouring shifts. The sniffing row supplies the semantic grouping; raw duplicated or final-member mappings independently corroborate its placement. This is a profile-data verification, not a collation of every translation."
+      },
+      "sourceChapterCounts": {
+        "MA2 2": 33
+      },
+      "referenceChapterCounts": {
+        "MA2 2": 32
+      }
+    },
+    {
+      "id": "vul-mat-17-14",
+      "system": "vul",
+      "source": [
+        "MAT 17:14"
+      ],
+      "target": [
+        "MAT 17:14-15"
+      ],
+      "replaceMappings": {},
+      "remainingMappings": {},
+      "reason": "MergedVerses in Copenhagen Mat.17:14-17:27 explicitly equates this complete vul group with the reference group. Preserve it atomically instead of losing an endpoint or treating its parts as alternative complete verses.",
+      "evidence": {
+        "copenhagenRule": "Mat.17:14-17:27",
+        "copenhagenRangeIndex": 0,
+        "sourceColumn": [
+          "Latin"
+        ],
+        "referenceColumn": [
+          "English",
+          "Greek"
+        ],
+        "verification": "Reviewed the named tradition column against the raw BOS profile: source/reference chapter counts, existing mapping endpoints and neighbouring shifts. The sniffing row supplies the semantic grouping; raw duplicated or final-member mappings independently corroborate its placement. This is a profile-data verification, not a collation of every translation."
+      },
+      "sourceChapterCounts": {
+        "MAT 17": 26
+      },
+      "referenceChapterCounts": {
+        "MAT 17": 27
+      }
+    },
+    {
+      "id": "vul-mrk-4-40",
+      "system": "vul",
+      "source": [
+        "MRK 4:40"
+      ],
+      "target": [
+        "MRK 4:40-41"
+      ],
+      "replaceMappings": {
+        "MRK 4:40": "MRK 4:41"
+      },
+      "remainingMappings": {},
+      "reason": "MergedVerses in Copenhagen Mrk.4:40-41 explicitly equates this complete vul group with the reference group. Preserve it atomically instead of losing an endpoint or treating its parts as alternative complete verses.",
+      "evidence": {
+        "copenhagenRule": "Mrk.4:40-41",
+        "copenhagenRangeIndex": 0,
+        "sourceColumn": [
+          "Latin"
+        ],
+        "referenceColumn": [
+          "English",
+          "Greek"
+        ],
+        "verification": "Reviewed the named tradition column against the raw BOS profile: source/reference chapter counts, existing mapping endpoints and neighbouring shifts. The sniffing row supplies the semantic grouping; raw duplicated or final-member mappings independently corroborate its placement. This is a profile-data verification, not a collation of every translation."
+      },
+      "sourceChapterCounts": {
+        "MRK 4": 40
+      },
+      "referenceChapterCounts": {
+        "MRK 4": 41
+      }
+    },
+    {
+      "id": "vul-act-7-55",
+      "system": "vul",
+      "source": [
+        "ACT 7:55"
+      ],
+      "target": [
+        "ACT 7:55-56"
+      ],
+      "replaceMappings": {
+        "ACT 7:55": "ACT 7:56"
+      },
+      "remainingMappings": {},
+      "reason": "MergedVerses in Copenhagen Act.7:55-7:60 explicitly equates this complete vul group with the reference group. Preserve it atomically instead of losing an endpoint or treating its parts as alternative complete verses.",
+      "evidence": {
+        "copenhagenRule": "Act.7:55-7:60",
+        "copenhagenRangeIndex": 0,
+        "sourceColumn": [
+          "Latin"
+        ],
+        "referenceColumn": [
+          "English",
+          "Greek"
+        ],
+        "verification": "Reviewed the named tradition column against the raw BOS profile: source/reference chapter counts, existing mapping endpoints and neighbouring shifts. The sniffing row supplies the semantic grouping; raw duplicated or final-member mappings independently corroborate its placement. This is a profile-data verification, not a collation of every translation."
+      },
+      "sourceChapterCounts": {
+        "ACT 7": 59
+      },
+      "referenceChapterCounts": {
+        "ACT 7": 60
+      }
+    },
+    {
+      "id": "vul-act-14-6",
+      "system": "vul",
+      "source": [
+        "ACT 14:6"
+      ],
+      "target": [
+        "ACT 14:6-7"
+      ],
+      "replaceMappings": {
+        "ACT 14:6": "ACT 14:7"
+      },
+      "remainingMappings": {},
+      "reason": "MergedVerses in Copenhagen Act.14:6-14:28 explicitly equates this complete vul group with the reference group. Preserve it atomically instead of losing an endpoint or treating its parts as alternative complete verses.",
+      "evidence": {
+        "copenhagenRule": "Act.14:6-14:28",
+        "copenhagenRangeIndex": 0,
+        "sourceColumn": [
+          "Latin"
+        ],
+        "referenceColumn": [
+          "English",
+          "Greek"
+        ],
+        "verification": "Reviewed the named tradition column against the raw BOS profile: source/reference chapter counts, existing mapping endpoints and neighbouring shifts. The sniffing row supplies the semantic grouping; raw duplicated or final-member mappings independently corroborate its placement. This is a profile-data verification, not a collation of every translation."
+      },
+      "sourceChapterCounts": {
+        "ACT 14": 27
+      },
+      "referenceChapterCounts": {
+        "ACT 14": 28
+      }
+    },
+    {
+      "id": "vul-num-26-1",
+      "system": "vul",
+      "source": [
+        "NUM 26:1"
+      ],
+      "target": [
+        "NUM 25:19",
+        "NUM 26:1"
+      ],
+      "replaceMappings": {
+        "NUM 26:1": "NUM 26:1"
+      },
+      "remainingMappings": {},
+      "reason": "The English verse joins the Hebrew plague transition and the following divine speech introduction.",
+      "evidence": {
+        "copenhagenRule": "Num.26:1-26:47",
+        "verification": "The Copenhagen English and Latin columns are the same group here; the complete cross-chapter Hebrew correspondence was verified in revision 1. The vul profile has NUM 25:18 and 26:65 and its raw NUM 26:1 -> NUM 26:1 also omits the plague transition.",
+        "copenhagenRangeIndex": 0
+      },
+      "sourceChapterCounts": {
+        "NUM 25": 18,
+        "NUM 26": 65
+      },
+      "referenceChapterCounts": {
+        "NUM 25": 19,
+        "NUM 26": 65
+      }
+    }
+  ]
+}

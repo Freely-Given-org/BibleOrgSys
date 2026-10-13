@@ -254,7 +254,7 @@ class OSISXMLBible( Bible ):
     divTag = OSISNameSpace + 'div'
 
 
-    def __init__( self, sourceFilepath, givenName=None, givenAbbreviation=None, encoding='utf-8' ) -> None:
+    def __init__( self, sourceFilepath, givenName=None, givenAbbreviation=None, encoding='utf-8', *, versification=None ) -> None:
         """
         Constructor: just sets up the OSIS Bible object.
 
@@ -264,7 +264,7 @@ class OSISXMLBible( Bible ):
         fnPrint( DEBUGGING_THIS_MODULE, f"OSISXMLBible.__init__( {sourceFilepath}, '{givenName}', '{givenAbbreviation}', {encoding} )" )
 
          # Setup and initialise the base class first
-        Bible.__init__( self )
+        Bible.__init__( self, versification=versification )
         self.objectNameString = 'OSIS XML Bible object'
         self.objectTypeString = 'OSIS'
 
@@ -356,6 +356,14 @@ class OSISXMLBible( Bible ):
         """
         fnPrint( DEBUGGING_THIS_MODULE, "OSISXMLBible.loadBooks()" )
 
+        # Inspect headers in the parent process: both the native parser and worker
+        # copies can otherwise lose the distinction between the Bible and cited works.
+        if self.possibleFilenames and len(self.possibleFilenames) > 1:
+            for filename in self.possibleFilenames:
+                self._loadOSISVersificationMetadata(os.path.join(self.sourceFolder, filename))
+        else:
+            self._loadOSISVersificationMetadata(self.sourceFilepath)
+
         loadErrors:list[str] = []
         if self.possibleFilenames and len(self.possibleFilenames) > 1: # then we possibly have multiple files, probably one for each book
             if BibleOrgSysGlobals.maxProcesses > 1 \
@@ -381,7 +389,7 @@ class OSISXMLBible( Bible ):
         elif os.path.isfile( self.sourceFilepath ): # most often we have all the Bible books in one file
             vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Using optimized Rust OSIS parser for {self.sourceFilepath}…" )
             try:
-                results = parseOsis( self.sourceFilepath )
+                results = parseOsis( str(self.sourceFilepath) )
                 for bbb, raw_lines in results['books'].items():
                     bBook = BibleBook( self, bbb )
                     bBook.objectNameString = 'OSIS XML Bible Book object'
@@ -445,6 +453,7 @@ class OSISXMLBible( Bible ):
         #else: logging.info( f"OSIS book {BBB} was completely blank" )
         loadErrors:list[str] = []
         pathname = os.path.join( self.sourceFolder, filename )
+        self._loadOSISVersificationMetadata(pathname)
         loadedBooks = self.__loadFile( pathname )
         assert len(loadedBooks) == 1
         for loadedBook,loadErrors in loadedBooks:

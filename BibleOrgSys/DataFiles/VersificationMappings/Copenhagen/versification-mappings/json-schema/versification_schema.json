@@ -1,0 +1,105 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "$id": "https://burrito.bible/schema/ingredients/versification.schema.json",
+    "$$target": "canon_constraints.schema.json",
+    "title": "Canon Constraints",
+    "type": "object",
+    "definitions": {
+        "bcv": {
+            "type": "string",
+            "pattern": "^[A-Z1-6]{3} [0-9]+:[0-9]+$"
+        },
+        "bcvRange": {
+            "type": "string",
+            "pattern": "^[A-Z1-6]{3} [0-9]+:[0-9]+(-[0-9]+)?$"
+        },
+        "bookName": {
+            "type": "string",
+            "pattern": "^[A-Z1-6]{3}$"
+        }
+    },
+    "properties": {
+        "basedOn": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9]*"
+        },
+        "verification": {
+            "type": "array",
+            "items": {
+                "properties": {
+                    "tool": {
+                        "type": "string"
+                    },
+                    "timestamp": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "passed": {
+                        "type": "boolean"
+                    },
+                    "report": {}
+                },
+                "required": [
+                    "tool",
+                    "passed"
+                ]
+            },
+            "additionalProperties": false
+        },
+        "maxVerses": {
+            "type": "object",
+            "propertyNames": {
+                "$ref": "#/definitions/bookName"
+            },
+            "additionalProperties": {
+                "type": "array",
+                "items": {
+                    "type": "number",
+                    "minimum": 0,
+                    "multipleOf": 1.0
+                },
+                "additionalItems": false
+            }
+        },
+        "excludedVerses": {
+            "type": "array",
+            "items": {
+                "$ref": "#/definitions/bcv"
+            },
+            "additionalItems": false
+        },
+        "mappedVerses": {
+            "propertyNames": {
+                "$ref": "#/definitions/bcvRange"
+            },
+            "additionalProperties": {
+                "$ref": "#/definitions/bcvRange"
+            }
+        },
+        "mergedVerses": {
+            "type": "array",
+            "items": {
+                "$ref": "#/definitions/bcvRange"
+            },
+            "additionalItems": false
+        },
+        "partialVerses": {
+            "type": "object",
+            "propertyNames": {
+                "$ref": "#/definitions/bcv"
+            },
+            "additionalProperties": {
+                "type": "array",
+                "items": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "additionalItems": false
+            }
+        }
+    },
+    "required": [
+        "maxVerses"
+    ],
+    "additionalProperties": false
+}

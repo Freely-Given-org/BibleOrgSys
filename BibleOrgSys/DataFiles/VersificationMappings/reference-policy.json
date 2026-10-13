@@ -1,0 +1,154 @@
+{
+  "formatVersion": 1,
+  "name": "BOSReference",
+  "version": "1-draft",
+  "status": "provisional-counts-catalogue",
+  "conversionReady": false,
+  "baseSystem": "org",
+  "description": "Hebrew OT and Greek NT numbering from Copenhagen org, plus explicitly sourced additional books and distinct witnesses. Counts describe a candidate address space, not verified text equivalence.",
+  "coreBooks": [
+    "GEN",
+    "EXO",
+    "LEV",
+    "NUM",
+    "DEU",
+    "JOS",
+    "JDG",
+    "RUT",
+    "1SA",
+    "2SA",
+    "1KI",
+    "2KI",
+    "1CH",
+    "2CH",
+    "EZR",
+    "NEH",
+    "EST",
+    "JOB",
+    "PSA",
+    "PRO",
+    "ECC",
+    "SNG",
+    "ISA",
+    "JER",
+    "LAM",
+    "EZK",
+    "DAN",
+    "HOS",
+    "JOL",
+    "AMO",
+    "OBA",
+    "JON",
+    "MIC",
+    "NAM",
+    "HAB",
+    "ZEP",
+    "HAG",
+    "ZEC",
+    "MAL",
+    "MAT",
+    "MRK",
+    "LUK",
+    "JHN",
+    "ACT",
+    "ROM",
+    "1CO",
+    "2CO",
+    "GAL",
+    "EPH",
+    "PHP",
+    "COL",
+    "1TH",
+    "2TH",
+    "1TI",
+    "2TI",
+    "TIT",
+    "PHM",
+    "HEB",
+    "JAS",
+    "1PE",
+    "2PE",
+    "1JN",
+    "2JN",
+    "3JN",
+    "JUD",
+    "REV"
+  ],
+  "coreBasis": {
+    "oldTestament": "BHS / Masoretic Hebrew versification convention",
+    "newTestament": "UBS GNT / Nestle-Aland Greek versification convention"
+  },
+  "baseBookNotes": {
+    "S3Y": "Retain org count 67. Upstream mappings include verse 68 and absent DAG destinations; resolve the bridge before conversion.",
+    "ESG": "Upstream maps use lettered addresses without a corresponding partialVerses declaration. Segment inventory and numbering need review.",
+    "JUB": "Retain the upstream Ethiopian chapter structure; it is not asserted to cover every edition of Jubilees.",
+    "ENO": "Retain the upstream Ethiopian chapter structure; it is not asserted to cover every edition of Enoch."
+  },
+  "extensions": {
+    "DAG": {
+      "sourceSystem": "lxx",
+      "role": "composite-view",
+      "status": "requires-review",
+      "reason": "Greek Daniel is a target of org mappings but has no org count definition. Use the lxx 12-chapter layout as a provisional Greek composite view. Shared Hebrew passages and Greek additions require an explicit bridge; this is not a new independent copy of those passages."
+    },
+    "LAO": {
+      "sourceSystem": "vul",
+      "role": "additional-book",
+      "status": "counts-only",
+      "reason": "Letter to the Laodiceans has 20 verses in both vul and eng; use the Latin-tradition source. No cross-tradition mapping is asserted."
+    },
+    "6EZ": {
+      "sourceSystem": "vul",
+      "role": "extract-view",
+      "status": "requires-review",
+      "reason": "Latin 6 Ezra has a two-chapter definition. Its relationship to the larger Ezra/Esdras works needs a verified bridge."
+    },
+    "1MQ": {
+      "sourceSystem": "ethiopian_custom",
+      "role": "additional-book",
+      "status": "requires-review",
+      "reason": "Only this snapshot supplies these Meqabyan counts. The enclosing custom file is incomplete/underspecified; verify the edition and completeness before conversion."
+    },
+    "3MQ": {
+      "sourceSystem": "ethiopian_custom",
+      "role": "additional-book",
+      "status": "requires-review",
+      "reason": "Only this snapshot supplies these Meqabyan counts; 2 Meqabyan remains absent. Verify the edition and completeness before conversion."
+    },
+    "REP": {
+      "sourceSystem": "ethiopian_custom",
+      "role": "additional-book",
+      "status": "requires-review",
+      "reason": "Provisional Ethiopian Reproof counts; verify the edition and completeness before conversion."
+    },
+    "4BA": {
+      "sourceSystem": "ethiopian_custom",
+      "role": "additional-book",
+      "status": "requires-review",
+      "reason": "Provisional 4 Baruch counts; verify the edition and completeness before conversion."
+    }
+  },
+  "mappingRestrictions": [
+    {
+      "system": "vul",
+      "books": [
+        "TOB",
+        "JDT",
+        "SIR"
+      ],
+      "code": "UNMAPPED_TEXTUAL_TRADITION",
+      "reason": "The upstream standard-mappings README explicitly states that no Vulgate-to-Septuagint mappings are supplied for these books because their Vorlage differs. Absence of a rule must not become identity.",
+      "source": "Copenhagen/versification-mappings/standard-mappings/README.md"
+    }
+  ],
+  "systemNotes": {
+    "ethiopian_custom": "The EXO array has only three entries while rules refer to EXO 21. No basedOn or chapter indexes are supplied. Do not infer inheritance, renumber these arrays, or use them as a full Bible definition."
+  },
+  "bridgeDecisions": [
+    "Preserve Hebrew DAN numbering in the reference core. Greek DAG/DNG is a composite view whose shared passages and additions need an explicit bridge.",
+    "Preserve Greek Esther, standalone Daniel additions, Letter of Jeremiah, and distinct Greek witnesses as separate catalogue entries until their equivalences are verified.",
+    "Resolve overlapping Ezra/Esdras works and extracts without creating duplicate canonical passage identities.",
+    "Latin Tobit, Judith, and Sirach need verified separate witness addresses or mappings; the present catalogue does not establish these."
+  ],
+  "corrections": []
+}

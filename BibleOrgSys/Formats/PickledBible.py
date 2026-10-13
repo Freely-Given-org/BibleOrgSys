@@ -45,6 +45,7 @@ import multiprocessing
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Bible import Bible, BibleBook
+from BibleOrgSys.Internals.InternalBible import InternalBible
 from BibleOrgSys.Internals.InternalBibleBook import InternalBibleBook
 from bible_organisational_system import InternalBibleEntryList
 from bible_organisational_system import InternalBibleBookCVIndex, InternalBibleBookSectionIndex
@@ -261,7 +262,7 @@ def createPickledBible( BibleObject:Bible, outputFolder=None, metadataDict:dict[
                     if (dataLevel==1 and attributeName in ( 'sourceFolder','sourceFilename','sourceFilepath',
                                                 'abbreviation','givenName','shortName','name',
                                                 'description','version',
-                                                'genericBOS')) \
+                                                'genericBOS', '_versificationState')) \
                     or (dataLevel==2 and attributeName not in ('books','discoveryResults',
                                                 'triedLoadingBook','bookNeedsReloading','preloadDone',
                                                 'errorDictionary','genericBRL',
@@ -293,6 +294,7 @@ def createPickledBible( BibleObject:Bible, outputFolder=None, metadataDict:dict[
                         datetime.now().isoformat(' '),
                         f'{IBPROGRAM_NAME_VERSION} {"last modified"} {IBModifiedDate}',
                         f'{IBBPROGRAM_NAME_VERSION} {"last modified"} {IBBModifiedDate}',
+                        'bible_organisational_system native indexes', # Retain the reader's IBIProgVersion slot.
                         BibleObject.getAName(), BibleObject.getBookList(),
                         metadataDict ):
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "String size", something, BibleOrgSysGlobals.totalSize( something ) )
@@ -346,7 +348,10 @@ def _loadObjectAttributes( pickleFileObject, BibleObject ):
         if attributeName == 'objectNameString': attributeName = 'originalObjectNameString'
         elif attributeName == 'objectTypeString': attributeName = 'originalObjectTypeString'
         # dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"attribute: {attributeName} = {attributeValue if attributeName!='discoveryResults' else '…'}" )
-        setattr( BibleObject, attributeName, attributeValue )
+        if attributeName == '_versificationState':
+            BibleObject._restoreVersificationState(attributeValue)
+        else:
+            setattr( BibleObject, attributeName, attributeValue )
         loadedCount += 1
     return loadedCount
 # end of PickledBible._loadObjectAttributes
@@ -449,7 +454,7 @@ class PickledBible( Bible ):
     Class to load and manipulate Pickle Bibles.
 
     """
-    def __init__( self, sourceFileOrFolder ) -> None:
+    def __init__( self, sourceFileOrFolder, *, versification=None ) -> None:
         """
         Create the internal Pickle Bible object.
 
@@ -505,8 +510,9 @@ class PickledBible( Bible ):
             self.isFastFormat = True
             # Load metadata using the new fast path
             fastObj = InternalBible.unpickleFast( self.pickleSourceFolder )
-            if fastObj:
-                self.__dict__.update( fastObj.__dict__ )
+            if fastObj is not None: # A lazy Bible has no loaded books and is falsey.
+                # Keep this instance's loader; fastObj.loadBook is bound to fastObj.
+                self.__dict__.update( {k: v for k, v in fastObj.__dict__.items() if k != 'loadBook'} )
                 self.pickleVersionData = {
                     'workName': self.name,
                     'bookList': sorted(list(self.availableBBBs)),
@@ -537,6 +543,11 @@ class PickledBible( Bible ):
             else: logging.critical( "PickledBible: "+f"Unable to find {VERSION_FILENAME!r}" )
 
         dPrint( 'Never', DEBUGGING_THIS_MODULE, "pickleVersionData", self.pickleVersionData )
+        if versification is not None:
+            savedDeclaration = getattr(self, '_versificationState', None)
+            self.setVersificationSystem(versification)
+            if savedDeclaration is not None:
+                self._restoreVersificationState(savedDeclaration)
     # end of PickledBible.__init_
 
 
@@ -655,10 +666,11 @@ class PickledBible( Bible ):
             #else: # not zipped
                 #bookObject = BibleOrgSysGlobals.unpickleObject( BOOK_FILENAME.format( BBB ), self.pickleSourceFolder )
         #else: # with attribute names and values
-        bookObject = InternalBibleBook( 'NoneYet—StillUnpickling', BBB )
+        bookObject = InternalBibleBook( self, BBB )
         bookObject.objectNameString = 'Pickled Bible book object'
         bookObject.objectTypeString = 'PickledBibleBook'
         
+        loadedCount = 0
         if getattr( self, 'isFastFormat', False ):
             bookFile = os.path.join( self.pickleSourceFolder, 'Books', f"{BBB}.bin" )
             if os.path.exists( bookFile ):

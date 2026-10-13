@@ -1,0 +1,539 @@
+{
+  "formatVersion": 1,
+  "source": "BibleOrgSys/DataFiles/BibleBooksCodes.xml",
+  "sourceSHA256": "7df34a20f7abbee64f98eefeaf822def28d43fea514171e8aecfbd0169883c9b",
+  "purpose": "Book identity crosswalk for auditing; this does not assert passage equivalence.",
+  "books": {
+    "1CH": {
+      "bosCode": "CH1",
+      "name": "1 Chronicles / 1 Paralipomenon",
+      "alternatives": []
+    },
+    "1CO": {
+      "bosCode": "CO1",
+      "name": "1 Corinthians",
+      "alternatives": []
+    },
+    "1ES": {
+      "bosCode": "GES",
+      "name": "Greek Esdras / Greek Ezra / 1 Esdras / 1 Ezra / 2 Ezra / 3 Ezra / 3 Esdras",
+      "alternatives": []
+    },
+    "1JN": {
+      "bosCode": "JN1",
+      "name": "1 John",
+      "alternatives": []
+    },
+    "1KI": {
+      "bosCode": "KI1",
+      "name": "1 Kings / 3 Kingdoms / 3 Kings",
+      "alternatives": []
+    },
+    "1MA": {
+      "bosCode": "MA1",
+      "name": "1 Maccabees",
+      "alternatives": []
+    },
+    "1MQ": {
+      "bosCode": "MQ1",
+      "name": "1 Meqabyan / 1 Makabian / Mekabis of Benjamin",
+      "alternatives": []
+    },
+    "1PE": {
+      "bosCode": "PE1",
+      "name": "1 Peter",
+      "alternatives": []
+    },
+    "1SA": {
+      "bosCode": "SA1",
+      "name": "1 Samuel / 1 Kingdoms / 1 Kings",
+      "alternatives": []
+    },
+    "1TH": {
+      "bosCode": "TH1",
+      "name": "1 Thessalonians",
+      "alternatives": []
+    },
+    "1TI": {
+      "bosCode": "TI1",
+      "name": "1 Timothy",
+      "alternatives": []
+    },
+    "2CH": {
+      "bosCode": "CH2",
+      "name": "2 Chronicles / 2 Paralipomenon",
+      "alternatives": []
+    },
+    "2CO": {
+      "bosCode": "CO2",
+      "name": "2 Corinthians",
+      "alternatives": []
+    },
+    "2ES": {
+      "bosCode": "LES",
+      "name": "Latin Esdras / 2 Esdras / 3 Esdras / 4 Esdras / 4 Ezra",
+      "alternatives": []
+    },
+    "2JN": {
+      "bosCode": "JN2",
+      "name": "2 John",
+      "alternatives": []
+    },
+    "2KI": {
+      "bosCode": "KI2",
+      "name": "2 Kings / 4 Kingdoms / 4 Kings",
+      "alternatives": []
+    },
+    "2MA": {
+      "bosCode": "MA2",
+      "name": "2 Maccabees",
+      "alternatives": []
+    },
+    "2PE": {
+      "bosCode": "PE2",
+      "name": "2 Peter",
+      "alternatives": []
+    },
+    "2SA": {
+      "bosCode": "SA2",
+      "name": "2 Samuel / 2 Kingdoms / 2 Kings",
+      "alternatives": []
+    },
+    "2TH": {
+      "bosCode": "TH2",
+      "name": "2 Thessalonians",
+      "alternatives": []
+    },
+    "2TI": {
+      "bosCode": "TI2",
+      "name": "2 Timothy",
+      "alternatives": []
+    },
+    "3JN": {
+      "bosCode": "JN3",
+      "name": "3 John",
+      "alternatives": []
+    },
+    "3MA": {
+      "bosCode": "MA3",
+      "name": "3 Maccabees",
+      "alternatives": []
+    },
+    "3MQ": {
+      "bosCode": "MQ3",
+      "name": "3 Meqabyan / 3 Makabian",
+      "alternatives": []
+    },
+    "4BA": {
+      "bosCode": "BA4",
+      "name": "4 Baruch / Paralipomenon of Jeremiah / Paraleipomena Ieremiou / Rest of the Words of Baruch",
+      "alternatives": []
+    },
+    "4MA": {
+      "bosCode": "MA4",
+      "name": "4 Maccabees",
+      "alternatives": []
+    },
+    "6EZ": {
+      "bosCode": "EZ6",
+      "name": "6 Ezra / 5 Esdras / 6 Esdras",
+      "alternatives": []
+    },
+    "ACT": {
+      "bosCode": "ACT",
+      "name": "Acts / Acts of the Apostles",
+      "alternatives": []
+    },
+    "AMO": {
+      "bosCode": "AMO",
+      "name": "Amos",
+      "alternatives": []
+    },
+    "BAR": {
+      "bosCode": "BAR",
+      "name": "Baruch / 1 Baruch",
+      "alternatives": []
+    },
+    "BEL": {
+      "bosCode": "BEL",
+      "name": "Bel and the dragon",
+      "alternatives": []
+    },
+    "BLT": {
+      "bosCode": "BLT",
+      "name": "Bel and the dragon θ / Bel and the dragon Th",
+      "alternatives": []
+    },
+    "COL": {
+      "bosCode": "COL",
+      "name": "Colossians",
+      "alternatives": []
+    },
+    "DAG": {
+      "bosCode": "DNG",
+      "name": "Greek Daniel / Daniel (Greek)",
+      "alternatives": [
+        "DNA",
+        "DNC"
+      ],
+      "reviewNote": "Default catalogue identity only; the importer must consider the source book structure before choosing a combined/additions-only BOS code."
+    },
+    "DAN": {
+      "bosCode": "DAN",
+      "name": "Daniel",
+      "alternatives": []
+    },
+    "DEU": {
+      "bosCode": "DEU",
+      "name": "Deuteronomy / 5 Moses",
+      "alternatives": []
+    },
+    "DNT": {
+      "bosCode": "DNT",
+      "name": "Daniel θ / Daniel Th",
+      "alternatives": []
+    },
+    "ECC": {
+      "bosCode": "ECC",
+      "name": "Ecclesiastes / Qoholeth",
+      "alternatives": []
+    },
+    "ENO": {
+      "bosCode": "ENO",
+      "name": "Enoch / 1 Enoch / Ethiopic Apocalypse of Enoch",
+      "alternatives": []
+    },
+    "EPH": {
+      "bosCode": "EPH",
+      "name": "Ephesians",
+      "alternatives": []
+    },
+    "ESG": {
+      "bosCode": "ESG",
+      "name": "Greek Esther / Esther (Greek)",
+      "alternatives": [
+        "ESC"
+      ],
+      "reviewNote": "Default catalogue identity only; the importer must consider the source book structure before choosing a combined/additions-only BOS code."
+    },
+    "EST": {
+      "bosCode": "EST",
+      "name": "Esther",
+      "alternatives": []
+    },
+    "EXO": {
+      "bosCode": "EXO",
+      "name": "Exodus / 2 Moses",
+      "alternatives": []
+    },
+    "EZA": {
+      "bosCode": "EZA",
+      "name": "Apocalypse of Ezra / Ezra Apocalypse / 4 Ezra / Ezra Shealtiel",
+      "alternatives": []
+    },
+    "EZK": {
+      "bosCode": "EZE",
+      "name": "Ezekiel",
+      "alternatives": []
+    },
+    "EZR": {
+      "bosCode": "EZR",
+      "name": "Ezra / 1 Ezra / 1 Esdras",
+      "alternatives": [
+        "EZN"
+      ],
+      "reviewNote": "Default catalogue identity only; the importer must consider the source book structure before choosing a combined/additions-only BOS code."
+    },
+    "GAL": {
+      "bosCode": "GAL",
+      "name": "Galatians",
+      "alternatives": []
+    },
+    "GEN": {
+      "bosCode": "GEN",
+      "name": "Genesis / 1 Moses",
+      "alternatives": []
+    },
+    "HAB": {
+      "bosCode": "HAB",
+      "name": "Habakkuk",
+      "alternatives": []
+    },
+    "HAG": {
+      "bosCode": "HAG",
+      "name": "Haggai",
+      "alternatives": []
+    },
+    "HEB": {
+      "bosCode": "HEB",
+      "name": "Hebrews",
+      "alternatives": []
+    },
+    "HOS": {
+      "bosCode": "HOS",
+      "name": "Hosea",
+      "alternatives": []
+    },
+    "ISA": {
+      "bosCode": "ISA",
+      "name": "Isaiah",
+      "alternatives": []
+    },
+    "JAS": {
+      "bosCode": "JAM",
+      "name": "James / Jacob",
+      "alternatives": []
+    },
+    "JDB": {
+      "bosCode": "JGB",
+      "name": "Judges B",
+      "alternatives": []
+    },
+    "JDG": {
+      "bosCode": "JDG",
+      "name": "Judges",
+      "alternatives": []
+    },
+    "JDT": {
+      "bosCode": "JDT",
+      "name": "Judith",
+      "alternatives": []
+    },
+    "JER": {
+      "bosCode": "JER",
+      "name": "Jeremiah",
+      "alternatives": []
+    },
+    "JHN": {
+      "bosCode": "JHN",
+      "name": "John",
+      "alternatives": []
+    },
+    "JOB": {
+      "bosCode": "JOB",
+      "name": "Job",
+      "alternatives": []
+    },
+    "JOL": {
+      "bosCode": "JOL",
+      "name": "Joel",
+      "alternatives": []
+    },
+    "JON": {
+      "bosCode": "JNA",
+      "name": "Jonah",
+      "alternatives": []
+    },
+    "JOS": {
+      "bosCode": "JOS",
+      "name": "Joshua / Joshua son of Nun",
+      "alternatives": []
+    },
+    "JSA": {
+      "bosCode": "JSA",
+      "name": "Joshua A",
+      "alternatives": []
+    },
+    "JUB": {
+      "bosCode": "JUB",
+      "name": "Jubilees",
+      "alternatives": []
+    },
+    "JUD": {
+      "bosCode": "JDE",
+      "name": "Jude / Judas",
+      "alternatives": []
+    },
+    "LAM": {
+      "bosCode": "LAM",
+      "name": "Lamentations / Lamentations of Jeremiah",
+      "alternatives": []
+    },
+    "LAO": {
+      "bosCode": "LAO",
+      "name": "Letter to the Laodiceans",
+      "alternatives": []
+    },
+    "LEV": {
+      "bosCode": "LEV",
+      "name": "Leviticus / 3 Moses",
+      "alternatives": []
+    },
+    "LJE": {
+      "bosCode": "LJE",
+      "name": "Letter of Jeremiah / Epistle of Jeremiah",
+      "alternatives": [
+        "LJB"
+      ],
+      "reviewNote": "Default catalogue identity only; the importer must consider the source book structure before choosing a combined/additions-only BOS code."
+    },
+    "LUK": {
+      "bosCode": "LUK",
+      "name": "Luke",
+      "alternatives": []
+    },
+    "MAL": {
+      "bosCode": "MAL",
+      "name": "Malachi",
+      "alternatives": []
+    },
+    "MAN": {
+      "bosCode": "MAN",
+      "name": "Prayer of Manasses / Prayer of Manasseh",
+      "alternatives": []
+    },
+    "MAT": {
+      "bosCode": "MAT",
+      "name": "Matthew",
+      "alternatives": []
+    },
+    "MIC": {
+      "bosCode": "MIC",
+      "name": "Micah",
+      "alternatives": []
+    },
+    "MRK": {
+      "bosCode": "MRK",
+      "name": "Mark",
+      "alternatives": []
+    },
+    "NAM": {
+      "bosCode": "NAH",
+      "name": "Nahum",
+      "alternatives": []
+    },
+    "NEH": {
+      "bosCode": "NEH",
+      "name": "Nehemiah / 2 Ezra / 2 Esdras",
+      "alternatives": []
+    },
+    "NUM": {
+      "bosCode": "NUM",
+      "name": "Numbers / 4 Moses",
+      "alternatives": []
+    },
+    "OBA": {
+      "bosCode": "OBA",
+      "name": "Obadiah",
+      "alternatives": []
+    },
+    "ODA": {
+      "bosCode": "ODE",
+      "name": "Odes / Odae",
+      "alternatives": []
+    },
+    "PHM": {
+      "bosCode": "PHM",
+      "name": "Philemon",
+      "alternatives": []
+    },
+    "PHP": {
+      "bosCode": "PHP",
+      "name": "Philippians",
+      "alternatives": []
+    },
+    "PRO": {
+      "bosCode": "PRO",
+      "name": "Proverbs",
+      "alternatives": []
+    },
+    "PS2": {
+      "bosCode": "PS2",
+      "name": "Psalm 151",
+      "alternatives": []
+    },
+    "PSA": {
+      "bosCode": "PSA",
+      "name": "Psalms / Gallicanum / Psalms A",
+      "alternatives": []
+    },
+    "PSS": {
+      "bosCode": "PSS",
+      "name": "Additional Psalms of Solomon",
+      "alternatives": []
+    },
+    "REP": {
+      "bosCode": "REP",
+      "name": "Reproof / Tegsas / Tegsats / Taagsas",
+      "alternatives": []
+    },
+    "REV": {
+      "bosCode": "REV",
+      "name": "Revelation / Revelation of John / Apocalypse of St. John",
+      "alternatives": []
+    },
+    "ROM": {
+      "bosCode": "ROM",
+      "name": "Romans",
+      "alternatives": []
+    },
+    "RUT": {
+      "bosCode": "RUT",
+      "name": "Ruth",
+      "alternatives": []
+    },
+    "S3Y": {
+      "bosCode": "PAZ",
+      "name": "Prayer of Azariah and the Song of the Three Young Men / Prayer of Azariah / Song of the Three Young Men / Song of the Three Children",
+      "alternatives": []
+    },
+    "SIR": {
+      "bosCode": "SIR",
+      "name": "Sirach / Ecclesiasticus / Wisdom of Ben Sira / Wisdom of Jesus son of Sirach",
+      "alternatives": []
+    },
+    "SNG": {
+      "bosCode": "SNG",
+      "name": "Song of Solomon / Song of Songs / Canticles / Canticle of Canticles",
+      "alternatives": []
+    },
+    "SST": {
+      "bosCode": "SST",
+      "name": "Susanna θ / Susanna Th",
+      "alternatives": []
+    },
+    "SUS": {
+      "bosCode": "SUS",
+      "name": "Susanna",
+      "alternatives": []
+    },
+    "TBS": {
+      "bosCode": "TBS",
+      "name": "Tobit S",
+      "alternatives": []
+    },
+    "TIT": {
+      "bosCode": "TIT",
+      "name": "Titus",
+      "alternatives": []
+    },
+    "TOB": {
+      "bosCode": "TOB",
+      "name": "Tobit / Tobias",
+      "alternatives": []
+    },
+    "WIS": {
+      "bosCode": "WIS",
+      "name": "Wisdom / Wisdom of Solomon",
+      "alternatives": []
+    },
+    "ZEC": {
+      "bosCode": "ZEC",
+      "name": "Zechariah",
+      "alternatives": []
+    },
+    "ZEP": {
+      "bosCode": "ZEP",
+      "name": "Zephaniah",
+      "alternatives": []
+    }
+  },
+  "systemOverrides": {
+    "lxx": {
+      "EZR": {
+        "bosCode": "EZN",
+        "reason": "lxx defines 23 chapters under EZR, combining Ezra and Nehemiah. Mapping destinations retain the org interpretation of EZR."
+      }
+    }
+  }
+}

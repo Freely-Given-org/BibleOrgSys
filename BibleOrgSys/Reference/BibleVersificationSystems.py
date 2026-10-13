@@ -6,7 +6,7 @@
 #
 # Module handling BibleVersificationSystems
 #
-# Copyright (C) 2010-2025 Robert Hunt
+# Copyright (C) 2010-2026 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # This Source Code Form is subject to the terms of the Mozilla Public
 # License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -17,8 +17,9 @@ Module to load, use, determine, and compare various Bible versification systems.
     Note that this doesn't just find the maximum verse number in each chapter --
         it also checks for combined, omitted, and reordered verses.
 
-NOTE: We still lack a REFERENCE Bible versification system
-        with back-and-forth mappings. This is a MAJOR outstanding deficiency.
+Reference mapping uses the bundled Copenhagen data through BOSReference.
+    Coverage is partial: unsupported and ambiguous results are explicit.
+    See Documentation/VersificationMappingAPI.md for the conversion contract.
 
 BibleVersificationSystems class:
     __init__( self ) # We can't give this parameters because of the singleton
@@ -51,12 +52,17 @@ BibleVersificationSystem class:
     isValidBCVRef( self, referenceTuple, referenceString=None, extended=False )
     expandCVRange( self, startRef, endRef, referenceString=None, bookOrderSystem=None )
     convertToReferenceVersification( self, BBB:str, C, V, S=None )
-    convertfrom BibleOrgSys.ReferenceVersification( self, refBBB, refC, refV, refS=None )
+    convertFromReferenceVersification( self, refBBB, refC, refV, refS=None )
+    convertToVersification( self, targetSystem, BBB, C, V, S=None, *, detailed=False )
+    convertReferencesToVersification( self, targetSystem, references )
+    convertRangeToVersification( self, targetSystem, startRef, endRef )
+    getMappingCapabilities( self )
 
 
 CHANGELOG:
     2024-09-20 Made BibleVersificationSystem iterable
     2025-08-29 Major change to use Copenhagen JSON versification files
+    2026-10-12 Added reference mappings and explicit conversion results
 """
 import os
 import logging
@@ -66,12 +72,15 @@ import json
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 import bos_books_codes_py
+from BibleOrgSys.Reference.BibleVersificationMappings import (
+    get_default_mapping_engine, UnknownVersificationSystemError,
+)
 
 
-LAST_MODIFIED_DATE = '2026-05-06' # by RJH
+LAST_MODIFIED_DATE = '2026-10-12'
 SHORT_PROGRAM_NAME = "BibleVersificationSystems"
 PROGRAM_NAME = "Bible Versification Systems handler"
-PROGRAM_VERSION = '0.63'
+PROGRAM_VERSION = '0.70'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -115,7 +124,7 @@ class BibleVersificationSystems:
                                     # print( f"{versificationName} {versificationData=}" )
                                 if self.__DataDict is None: self.__DataDict = {}
                                 self.__DataDict[versificationName] = versificationData
-    
+
                 if not self.__DataDict:
                     # See if we can load from the pickle file (faster than loading from the XML)
                     standardXMLFileOrFilepath = BibleOrgSysGlobals.BOS_DATAFILES_FOLDERPATH.joinpath( 'BibleVersificationSystems.xml' )
@@ -133,16 +142,19 @@ class BibleVersificationSystems:
                         vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Loading pickle file {standardPickleFilepath}…" )
                         with open( standardPickleFilepath, 'rb') as pickleFile:
                             self.__DataDict = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
+                        self.__addMappingSystems()
                         return self # So this command can be chained after the object creation
                     elif DEBUGGING_THIS_MODULE:
                         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "BibleVersificationSystems pickle file can't be loaded!" )
                     standardJsonFilepath = BibleOrgSysGlobals.BOS_DERIVED_DATAFILES_FOLDERPATH.joinpath( 'BibleVersificationSystems_Tables.json' )
                     if os.access( standardJsonFilepath, os.R_OK ) \
-                    and os.stat(standardJsonFilepath).st_mtime > os.stat(standardXMLFileOrFilepath).st_mtime \
-                    and os.stat(standardJsonFilepath).st_ctime > os.stat(standardXMLFileOrFilepath).st_ctime: # There's a newer pickle file
+                    and (not standardXMLFileOrFilepath.exists() or (
+                        os.stat(standardJsonFilepath).st_mtime > os.stat(standardXMLFileOrFilepath).st_mtime
+                        and os.stat(standardJsonFilepath).st_ctime > os.stat(standardXMLFileOrFilepath).st_ctime)):
                         vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Loading json file {standardJsonFilepath}…" )
                         with open( standardJsonFilepath, 'rb') as JsonFile:
                             self.__DataDict = json.load( JsonFile )
+                        self.__addMappingSystems()
                         # # NOTE: We have to convert str referenceNumber keys back to ints
                         # self.__DataDict['referenceNumberDict'] = { int(key):value \
                         #             for key,value in self.__DataDict['referenceNumberDict'].items() }
@@ -154,9 +166,13 @@ class BibleVersificationSystems:
                     from BibleOrgSys.Reference.Converters.BibleVersificationSystemsConverter import BibleVersificationSystemsConverter
                     if XMLFolder is not None:
                         logging.warning( f"Bible versification systems are already loaded -- your given filepath of {XMLFolder!r} was ignored" )
-                    bvsc = BibleVersificationSystemsConverter( XMLFolder )
-                    bvsc.loadAndValidate( XMLFileOrFilepath ) # Load the XML (if not done already)
+                    bvsc = BibleVersificationSystemsConverter()
+                    bvsc.loadSystems( XMLFolder )
                     self.__DataDict = bvsc.importDataToPython() # Get the various dictionaries organised for quick lookup
+            else:
+                from BibleOrgSys.Reference.Converters.BibleVersificationSystemsConverter import BibleVersificationSystemsConverter
+                self.__DataDict = BibleVersificationSystemsConverter().loadSystems(XMLFolder).importDataToPython()
+            self.__addMappingSystems()
         return self # So this command can be chained after the object creation
         #     # See if we can load from the pickle file (faster than loading from the XML)
         #     picklesGood = False
@@ -256,6 +272,13 @@ class BibleVersificationSystems:
         logging.error( f"No {systemName!r} system in Bible Versification Systems" )
         if BibleOrgSysGlobals.verbosityLevel > 2: logging.error( f"Available systems are {self.getAvailableVersificationSystemNames()}" )
     # end of BibleVersificationSystems.getVersificationSystem
+
+
+    def __addMappingSystems(self):
+        """Keep historical count systems and exact upstream names independently available."""
+        engine = get_default_mapping_engine()
+        for name in engine.get_system_names():
+            self.__DataDict[name] = engine.get_legacy_tables(name)
 
 
     def compareVersificationSystems( self, system1Name, system2Name=None ):
@@ -609,7 +632,9 @@ class BibleVersificationSystem:
         self._systemName = systemName
         self._bvss = BibleVersificationSystems().loadData() # Doesn't reload the XML unnecessarily :)
         result = self._bvss.getVersificationSystem( self._systemName )
-        if result is not None:
+        if result is None:
+            raise UnknownVersificationSystemError(f'Unknown versification system: {systemName!r}')
+        else:
             self.__chapterDataDict, self.__omittedVersesDict, self.__combinedVersesDict, self.__reorderedVersesDict = result['CV'], result['omitted'], result['combined'], result['reordered']
             # no longer true: assert len(self.__chapterDataDict) == len(self.__omittedVersesDict) == len(self.__combinedVersesDict) == len(self.__reorderedVersesDict)
     # end of BibleVersificationSystem.__init__
@@ -675,7 +700,7 @@ class BibleVersificationSystem:
     def __iter__( self ) -> str:
         """
         Yields the next BBB.
-        
+
         This gives the BBBs in order.
         """
         for BBB in self.__chapterDataDict:
@@ -944,30 +969,65 @@ class BibleVersificationSystem:
     # end of BibleVersificationSystem.expandCVRange
 
 
-    def convertToReferenceVersification( self, BBB:str, C:str, V:str, S=None ):
+    def convertToReferenceVersification( self, BBB:str, C:str, V:str, S=None, *, detailed=False ):
         """
         Convert the given reference (in this versification system)
             to the reference versification.
 
-        Returns a new BBB, C, V, S.
+        Return an exact (BBB, C, V, S) tuple, or a MappingResult with detailed=True.
+        Non-exact and multiple-reference results raise typed exceptions by default.
         """
-        logging.debug( "convertToReferenceVersification does nothing yet!" )
-        refBBB, refC, refV, refS = BBB, C, V, S
-        return refBBB, refC, refV, refS
+        engine = get_default_mapping_engine()
+        result = engine.convert(self._systemName, engine.reference_name, [(BBB, C, V, S)])
+        return result if detailed else result.require_single()
     # end of BibleVersificationSystem.convertToReferenceVersification
 
 
-    def convertFromReferenceVersification( self, refBBB, refC, refV, refS=None ):
+    def convertFromReferenceVersification( self, refBBB, refC, refV, refS=None, *, detailed=False ):
         """
         Convert the given reference in the reference versification system
             to this versification.
 
-        Returns a new BBB, C, V, S.
+        Return an exact tuple, or a MappingResult with detailed=True.
+        Reverse mappings preserve all candidate relationships, including identities.
         """
-        logging.debug( "converfrom BibleOrgSys.ReferenceVersification does nothing yet!" )
-        BBB, C, V, S = refBBB, refC, refV, refS
-        return BBB, C, V, S
+        engine = get_default_mapping_engine()
+        result = engine.convert(engine.reference_name, self._systemName, [(refBBB, refC, refV, refS)])
+        return result if detailed else result.require_single()
     # end of BibleVersificationSystem.convertfromReferenceVersification
+
+
+    def convertToVersification(self, targetSystem, BBB, C, V, S=None, *, detailed=False):
+        """Convert via BOSReference; targetSystem is a system name or system object."""
+        result = self.convertReferencesToVersification(targetSystem, [(BBB, C, V, S)])
+        return result if detailed else result.require_single()
+
+
+    def convertReferencesToVersification(self, targetSystem, references):
+        """Return a MappingResult for a complete ordered passage, possibly discontinuous.
+
+        Always returns the structured result. Intentional groups must be mapped
+        together rather than splitting a merge into independent single-verse calls.
+        """
+        if isinstance(targetSystem, BibleVersificationSystem):
+            targetSystem = targetSystem.getVersificationSystemName()
+        if not isinstance(targetSystem, str):
+            raise TypeError('targetSystem must be a name or BibleVersificationSystem')
+        return get_default_mapping_engine().convert(self._systemName, targetSystem, references)
+
+
+    def getMappingCapabilities(self):
+        """Describe profile availability; per-reference results remain authoritative."""
+        return get_default_mapping_engine().capabilities(self._systemName)
+
+
+    def convertRangeToVersification(self, targetSystem, startRef, endRef):
+        """Return a MappingResult for an inclusive same-book range, possibly crossing chapters."""
+        if isinstance(targetSystem, BibleVersificationSystem):
+            targetSystem = targetSystem.getVersificationSystemName()
+        if not isinstance(targetSystem, str):
+            raise TypeError('targetSystem must be a name or BibleVersificationSystem')
+        return get_default_mapping_engine().convert_range(self._systemName, targetSystem, startRef, endRef)
 # end of BibleVersificationSystem class
 
 

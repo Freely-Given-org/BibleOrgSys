@@ -35,6 +35,7 @@ import logging
 import multiprocessing
 from xml.etree.ElementTree import ElementTree
 import json
+import bos_books_codes_py
 
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
@@ -97,12 +98,9 @@ def PTX8BibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=Fa
         return False
 
     # Check that there's a USFM Bible here first
-    from BibleOrgSys.Formats.USFM2Bible import USFM2BibleFileCheck
-    from BibleOrgSys.Formats.USFMBible import USFMBibleFileCheck
-    check2Result = USFM2BibleFileCheck( givenFolderName, strictCheck, discountSSF=True ) # no autoloads
-    if not check2Result:
-        check3Result =  USFMBibleFileCheck( givenFolderName, strictCheck, discountSSF=True ) # no autoloads
-    if not check2Result and not check3Result:
+    # The current USFM reader accepts both versions. Do not import the removed
+    # USFM2Bible module or require a USFM 3 header on an older Paratext project.
+    if not USFMFilenames(givenFolderName).getMaximumPossibleFilenameTuples():
         vPrint( 'Info', DEBUGGING_THIS_MODULE, "PTX8BibleFileCheck: No USFMBible found (preliminary check)")
         return False
 
@@ -466,14 +464,14 @@ class PTX8Bible( Bible ):
     The PTX8Bible object contains USFM 2 or 3 BibleBooks.
         (i.e., there's not PTX8BibleBook object types.)
     """
-    def __init__( self, givenFolderName, givenName=None, givenAbbreviation=None, encoding='utf-8' ) -> None:
+    def __init__( self, givenFolderName, givenName=None, givenAbbreviation=None, encoding='utf-8', *, versification=None ) -> None:
         """
         Create the internal Paratext Bible object.
         """
         fnPrint( DEBUGGING_THIS_MODULE, f"PTX8Bible.__init__( {givenFolderName!r}, {givenName!r}, {givenAbbreviation!r}, {encoding!r} )" )
 
          # Setup and initialise the base class first
-        Bible.__init__( self )
+        Bible.__init__( self, versification=versification )
         self.objectNameString = 'Paratext-8 Bible object'
         self.objectTypeString = 'PTX8'
 

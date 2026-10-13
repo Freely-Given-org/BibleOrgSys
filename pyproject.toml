@@ -51,10 +51,13 @@ allow-direct-references = true
 
 [tool.hatch.build.targets.wheel]
 packages = ["BibleOrgSys"]
-
-[tool.hatch.build.targets.wheel.force-include]
-"BibleOrgSys/DataFiles/DerivedFiles" = "BibleOrgSys/DataFiles/DerivedFiles"
-"BibleOrgSys/DistributedFiles" = "BibleOrgSys/DistributedFiles"
+# These are already inside the package. Mark them as artifacts so they remain
+# included without force-include adding duplicate wheel archive entries.
+artifacts = [
+    "BibleOrgSys/DataFiles/DerivedFiles/**",
+    "BibleOrgSys/DistributedFiles/**",
+    "BibleOrgSys/DataFiles/VersificationMappings/**",
+]
 
 [tool.uv.workspace]
 members = [".", "Rust/bible_organisational_system"]

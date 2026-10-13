@@ -481,11 +481,11 @@ class BibleVersificationSystemsConverter:
         """
         def writeStructure( hFile, structName, structure ):
             """ Writes a typedef to the .h file. """
-            hFile.write( f"typedef struct{structName}EntryStruct {\n" )
+            hFile.write( f"typedef struct{structName}EntryStruct {{\n" )
             for declaration in structure.split(';'):
                 adjDeclaration = declaration.strip()
                 if adjDeclaration: hFile.write( f"   {adjDeclaration};\n" )
-            hFile.write( f"}{structName}Entry;\n\n" )
+            hFile.write( f"}}{structName}Entry;\n\n" )
         # end of writeStructure
 
         def exportPythonDict( cFile, theDict, dictName, structName, sortedBy, structure ):
@@ -506,7 +506,7 @@ class BibleVersificationSystemsConverter:
                             for value in field:
                                 if tupleResult: tupleResult += "," # Separate the fields (without a space)
                                 tupleResult += convertEntry( value ) # recursive call
-                            result += f"{{tupleResult} }"
+                            result += f"{{{tupleResult} }}"
                         else: logging.error( f"Cannot convert unknown field type {field!r} in entry {entry!r}" )
                 return result
             # end of convertEntry
@@ -516,15 +516,15 @@ class BibleVersificationSystemsConverter:
             #    break # We only check the first (random) entry we get
             fieldsCount = 2
 
-            cFile.write( f"const static{structName}\n{dictName}[{len(theDict)}] = {\n  // Fields ({fieldsCount}) are{structure}\n  // Sorted by{sortedBy}\n" )
+            cFile.write( f"const static{structName}\n{dictName}[{len(theDict)}] = {{\n  // Fields ({fieldsCount}) are{structure}\n  // Sorted by{sortedBy}\n" )
             for dictKey in sorted(theDict.keys()):
                 if isinstance( dictKey, str ):
-                    cFile.write( f"  {\"{dictKey}\",{convertEntry(theDict[dictKey])}},\n" )
+                    cFile.write( f'  {{"{dictKey}",{convertEntry(theDict[dictKey])}}},\n' )
                 elif isinstance( dictKey, int ):
-                    cFile.write( f"  {{dictKey},{convertEntry(theDict[dictKey])}},\n" )
+                    cFile.write( f"  {{{dictKey},{convertEntry(theDict[dictKey])}}},\n" )
                 else:
                     logging.error( f"Can't handle this type of data yet: {dictKey}" )
-            cFile.write( f"}; //{dictName} ({len(theDict)} entries)\n\n" )
+            cFile.write( f"}}; //{dictName} ({len(theDict)} entries)\n\n" )
         # end of exportPythonDict
 
         def XXXexportPythonDict( theFile, theDict, dictName, structName, fieldsComment ):
@@ -551,16 +551,16 @@ class BibleVersificationSystemsConverter:
                     else: logging.error( f"Cannot convert unknown field type {field!r} in entry {entry!r}" )
                 return result
 
-            theFile.write( f"static struct{structName}{dictName}[{len(theDict)}] = {\n  // Fields are{fieldsComment}\n" )
+            theFile.write( f"static struct{structName}{dictName}[{len(theDict)}] = {{\n  // Fields are{fieldsComment}\n" )
             for dictKey in sorted(theDict.keys()):
                 if isinstance( dictKey, str ):
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, dictKey, theDict[dictKey] )
-                    theFile.write( f"  {\"{dictKey}\",{convertEntry(theDict[dictKey])}},\n" )
+                    theFile.write( f'  {{"{dictKey}",{convertEntry(theDict[dictKey])}}},\n' )
                 elif isinstance( dictKey, int ):
-                    theFile.write( f"  {{dictKey},{convertEntry(theDict[dictKey])}},\n" )
+                    theFile.write( f"  {{{dictKey},{convertEntry(theDict[dictKey])}}},\n" )
                 else:
                     logging.error( f"Can't handle this type of key data yet: {dictKey}" )
-            theFile.write( f"}; //{dictName} ({len(theDict)} entries)\n\n" )
+            theFile.write( f"}}; //{dictName} ({len(theDict)} entries)\n\n" )
         # end of XXXexportPythonDict
 
 
@@ -629,10 +629,10 @@ class BibleVersificationSystemsConverter:
 #                exportPythonDict( myCFile, self.__DataDict[systemName][1], "omittedVersesDict", "{struct char* stuff[]}", "tables containing referenceAbbreviation then pairs of chapterNumber,omittedVerseNumber" )
 
             # Write out the final table of pointers to the above information
-            myCFile.write( f"\n// Pointers to above data\nconst static tableEntry bookOrderSystemTable[{len(self.__DataDict)}] = {\n" )
+            myCFile.write( f"\n// Pointers to above data\nconst static tableEntry bookOrderSystemTable[{len(self.__DataDict)}] = {{\n" )
             for systemName in self.__DataDict: # Now write out the actual pointer data into the .c file
-                myCFile.write( f'  { "{systemName}",{systemName+"CVDict"},{systemName+"OmittedVersesDict"} },\n' )
-            myCFile.write( f"}; //{len(self.__DataDict)} entries\n\n" )
+                myCFile.write( f'  {{ "{systemName}",{systemName+"CVDict"},{systemName+"OmittedVersesDict"} }},\n' )
+            myCFile.write( f"}}; //{len(self.__DataDict)} entries\n\n" )
             myCFile.write( f"// end of {os.path.basename(cFilepath)}" )
     # end of BibleVersificationSystemsConverter.exportDataToC
 # end of BibleVersificationSystemsConverter class

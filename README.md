@@ -84,6 +84,17 @@ This led on to writing modules to provide an API for these datasets which can be
 
 Other modules to import and export various Bible formats can be found in the [Formats](BibleOrgSys/Formats/) folder.
 
+[BOS reference versification mappings](Documentation/VersificationMappings.md)
+include bundled, attributed Copenhagen data, a provisional reference catalogue,
+and an offline coverage audit. The [conversion APIs](Documentation/VersificationMappingAPI.md)
+map references and passages through that catalogue, keeping unsupported and
+ambiguous relationships explicit. No external versification repository is required.
+[Bible-loading integration](Documentation/BibleVersification.md) supports explicit
+declarations, recognised metadata, Bible-level conversions, and saved declarations.
+[Passage retrieval](Documentation/BiblePassages.md) adds `Bible.getMappedPassage`
+and `getPassageData` for complete native text/context portions, including verse
+bridges, suffixes, and disjoint mappings, independently of any renderer.
+
 An internal, indexed Bible resource representation was created as seen in the [Internals](BibleOrgSys/Internals/) folder.
 The internal representation is based on [USFM](https://ubsicap.github.io/usfm/) lines (because USFM is used in real life for MANY Bible translations) along with some additional, custom markers for additional fields and also to ease processing (such as segment end markers).
 

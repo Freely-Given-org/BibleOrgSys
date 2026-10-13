@@ -146,7 +146,7 @@ class USXXMLBible( Bible ):
     Class to load and manipulate USX Bibles.
 
     """
-    def __init__( self, givenFolderName, givenName=None, givenAbbreviation=None, encoding='utf-8' ) -> None:
+    def __init__( self, givenFolderName, givenName=None, givenAbbreviation=None, encoding='utf-8', *, versification=None ) -> None:
         """
         Create the internal USX Bible object.
         """
@@ -154,7 +154,7 @@ class USXXMLBible( Bible ):
         self.doExtraChecking = DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag
 
          # Setup and initialise the base class first
-        Bible.__init__( self )
+        Bible.__init__( self, versification=versification )
         self.objectNameString = 'USX XML Bible object'
         self.objectTypeString = 'USX'
 
@@ -181,6 +181,7 @@ class USXXMLBible( Bible ):
 
         # Find the filenames of all our books
         self.USXFilenamesObject = USXFilenames( self.givenFolderName )
+        self._loadVersificationProjectMetadata()
         self.possibleFilenameDict = {}
         filenameTuples = self.USXFilenamesObject.getConfirmedFilenameTuples()
         if not filenameTuples: # Try again

@@ -90,7 +90,7 @@ class Bible( BibleWriter ):
         are based on this class.
     """
 
-    def __init__( self ) -> None:
+    def __init__( self, *, versification=None ) -> None:
         """
         Constructor: creates an empty Bible object.
         """
@@ -100,6 +100,8 @@ class Bible( BibleWriter ):
         self.objectTypeString = 'Unknown'
 
         self.BibleOrganisationalSystem = None
+        if versification is not None:
+            self.setVersificationSystem(versification)
         # Add our own extended data stores
         #self.metadata = {}
         #self.frontMatter = []

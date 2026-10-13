@@ -468,7 +468,7 @@ class USFMBible( Bible ):
     Class to load and manipulate USFM Bibles.
 
     """
-    def __init__( self, sourceFolder, givenName:str|None=None, givenAbbreviation:str|None=None, encoding:str|None=None ) -> None:
+    def __init__( self, sourceFolder, givenName:str|None=None, givenAbbreviation:str|None=None, encoding:str|None=None, *, versification=None ) -> None:
         """
         Create the internal USFM Bible object.
 
@@ -480,7 +480,7 @@ class USFMBible( Bible ):
         assert givenAbbreviation != 'utf-8'
 
          # Setup and initialise the base class first
-        super().__init__()
+        super().__init__(versification=versification)
         self.objectNameString = 'USFM Bible object'
         self.objectTypeString = 'USFM'
 
@@ -522,6 +522,7 @@ class USFMBible( Bible ):
             raise FileNotFoundError # No use continuing
 
         self.USFMFilenamesObject = USFMFilenames( self.sourceFolder )
+        self._loadVersificationProjectMetadata()
         vPrint( 'Never', DEBUGGING_THIS_MODULE, "USFMFilenamesObject", self.USFMFilenamesObject )
 
         if self.suppliedMetadata is None: self.suppliedMetadata = {}

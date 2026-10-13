@@ -232,7 +232,7 @@ class ESFMBible( Bible ):
     Class to load and manipulate ESFM Bibles.
 
     """
-    def __init__( self, sourceFolder, givenName=None, givenAbbreviation=None ) -> None:
+    def __init__( self, sourceFolder, givenName=None, givenAbbreviation=None, *, versification=None ) -> None:
         """
         Create the internal ESFM Bible object.
 
@@ -246,7 +246,7 @@ class ESFMBible( Bible ):
         fnPrint( DEBUGGING_THIS_MODULE, f"ESFMBible.__init__( {sourceFolder!r}, {givenName!r}, {givenAbbreviation!r} )" )
 
          # Setup and initialise the base class first
-        Bible.__init__( self )
+        Bible.__init__( self, versification=versification )
         self.objectNameString = 'ESFM Bible object'
         self.objectTypeString = 'ESFM'
 
