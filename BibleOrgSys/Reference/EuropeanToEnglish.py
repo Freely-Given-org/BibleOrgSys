@@ -32,7 +32,7 @@ import BibleOrgSys.BibleOrgSysGlobals as BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2026-10-06' # by RJH
+LAST_MODIFIED_DATE = '2026-10-10' # by RJH
 SHORT_PROGRAM_NAME = "EuropeanToEnglish"
 PROGRAM_NAME = "OpenBibleData European Language Handling functions"
 PROGRAM_VERSION = '1.0.1'
@@ -6719,7 +6719,7 @@ LATIN_WORD_MAP = (
                 (' mentem',' mind'),(' mente',' mind'),
                     (' mentibus',' minds'),
                         (' mentientes',' lying'),(' mentienti',' lying'),(' mentietur',' he_will_lie'),
-                        ('mentionem','mention'),(' mentio ',' mention '),
+                        ('mentionem','mention'),(' mentio ',' mention '),(' mentio,',' mention,'),
                         ('mentiretur','lie'),(' mentiri',' to_lie'),
                         (' mentis',' of_the_mind'),
                         (' mentiti',' they_lied'),(' mentitur',' he_lies'),(' mentitus',' lied'),
