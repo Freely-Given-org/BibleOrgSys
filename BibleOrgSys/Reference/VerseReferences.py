@@ -64,7 +64,7 @@ from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 import bos_books_codes_py
 
 
-LAST_MODIFIED_DATE = '2026-05-06' # by RJH
+LAST_MODIFIED_DATE = '2026-10-06' # by RJH
 SHORT_PROGRAM_NAME = "VerseReferences"
 PROGRAM_NAME = "Bible verse reference handler"
 PROGRAM_VERSION = '0.40'
@@ -188,7 +188,8 @@ class SimpleVerseKey():
     def __init__( self, BBB:str, C:str=None, V:str=None, SI=None, OSIS=False, ignoreParseErrors=False ) -> None:
         """
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"SimpleVerseKey.__init__( {BBB!r}, {C!r}, {V!r}, {SI!r} )" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, f"SimpleVerseKey.__init__( {BBB!r}, {C!r}, {V!r}, {SI!r} )" )
 
         self.ignoreParseErrors = ignoreParseErrors
 
@@ -320,7 +321,8 @@ class SimpleVerseKey():
 
         Returns True or False on success
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"parseOSISString( {referenceString!r} )" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, f"parseOSISString( {referenceString!r} )" )
 
         match = re.search( BCVS1_RE, referenceString )
         if match:
@@ -362,7 +364,8 @@ class SimpleVerseKey():
 
         Returns True or False on success
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"parseReferenceString( {referenceString!r} )" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, f"parseReferenceString( {referenceString!r} )" )
 
         match = re.search( OSIS_BCVS1_RE, referenceString )
         if match:
@@ -404,7 +407,8 @@ class SimpleVersesKey():
     def __init__( self, referenceString, OSIS=False, ignoreParseErrors=False ) -> None:
         """
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"SimpleVersesKey.__init__( {referenceString!r} )" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, f"SimpleVersesKey.__init__( {referenceString!r} )" )
 
         self.ignoreParseErrors = ignoreParseErrors
         #if BibleOrgSysGlobals.debugFlag:
@@ -470,7 +474,8 @@ class SimpleVersesKey():
 
         Returns True or False on success
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"parseReferenceString( {referenceString!r} )" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, f"parseReferenceString( {referenceString!r} )" )
 
         match = re.search( BCVS2_RE, referenceString )
         if match:
@@ -483,7 +488,8 @@ class SimpleVersesKey():
                 logging.error( f"SimpleVersesKey: Invalid {BBB!r} book code" )
             if BibleOrgSysGlobals.strictCheckingFlag:
                 assert bos_books_codes_py.is_valid_bos_book_code( BBB )
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "QWEQW", referenceString )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "QWEQW", referenceString )
                 assert int(V2)>int(V1)+1 or S2!=S1
             self.verseKeysList = [SimpleVerseKey(BBB,C,V1,S1), SimpleVerseKey(BBB,C,V2,S2)]
             self.keyType = '2V'
@@ -514,7 +520,8 @@ class SimpleVersesKey():
                 logging.error( f"SimpleVersesKey: Invalid {self.BBB!r} book code" )
             if BibleOrgSysGlobals.strictCheckingFlag:
                 assert bos_books_codes_py.is_valid_bos_book_code( BBB )
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "SDADQ", referenceString )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "SDADQ", referenceString )
                 assert int(V2)>int(V1)+1 or S2!=S1
                 assert int(V3)>int(V2)+1 or S3!=S2
             self.verseKeysList = [SimpleVerseKey(BBB,C,V1,S1), SimpleVerseKey(BBB,C,V2,S2), SimpleVerseKey(BBB,C,V3,S3)]
@@ -548,7 +555,8 @@ class SimpleVersesKey():
                 logging.error( f"SimpleVersesKey: Invalid {self.BBB!r} book code" )
             if BibleOrgSysGlobals.strictCheckingFlag:
                 assert bos_books_codes_py.is_valid_bos_book_code( BBB )
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "CCVSD", referenceString )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "CCVSD", referenceString )
                 assert int(V2)>int(V1)+1 or S2!=S1
                 assert int(V3)>int(V2)+1 or S3!=S2
                 assert int(V4)>int(V3)+1 or S4!=S3
@@ -703,7 +711,8 @@ class SimpleVersesKey():
 
         Returns True or False on success
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"parseOSISString( {referenceString!r} )" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, f"parseOSISString( {referenceString!r} )" )
 
         match = re.search( OSIS_BCVS2_RE, referenceString )
         if match:
@@ -793,7 +802,8 @@ class VerseRangeKey():
     def __init__( self, referenceString, OSIS=False, ignoreParseErrors=False ) -> None:
         """
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"VerseRangeKey.__init__( {referenceString!r} )" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, f"VerseRangeKey.__init__( {referenceString!r} )" )
 
         self.ignoreParseErrors = ignoreParseErrors
         #if BibleOrgSysGlobals.debugFlag:
@@ -851,7 +861,8 @@ class VerseRangeKey():
 
         Returns True or False on success
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"parseReferenceString( {referenceString!r} )" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, f"parseReferenceString( {referenceString!r} )" )
 
         match = re.search( BCVS_RANGE_RE, referenceString )
         if match:
@@ -933,7 +944,8 @@ class VerseRangeKey():
 
         Returns True or False on success
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"parseOSISString( {referenceString!r} )" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, f"parseOSISString( {referenceString!r} )" )
 
         match = re.search( OSIS_BCVS_RANGE_RE, referenceString )
         if match:
@@ -1025,7 +1037,8 @@ class FlexibleVersesKey():
     def __init__( self, referenceString, OSIS=False ) -> None:
         """
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"FlexibleVersesKey.__init__( {referenceString!r} )" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, f"FlexibleVersesKey.__init__( {referenceString!r} )" )
         if BibleOrgSysGlobals.debugFlag:
             assert isinstance( referenceString, str ) and 5<=len(referenceString)<=20
 
@@ -1092,7 +1105,8 @@ class FlexibleVersesKey():
 
         Returns True or False on success
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"parseReferenceString( {referenceString!r} )" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, f"parseReferenceString( {referenceString!r} )" )
         try:
             resultKey = SimpleVerseKey( referenceString, ignoreParseErrors=True )
             self.verseKeyObjectList.append( resultKey )
@@ -1603,7 +1617,8 @@ class FlexibleVersesKey():
 
         Returns True or False on success
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"parseOSISString( {referenceString!r} )" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, f"parseOSISString( {referenceString!r} )" )
         try:
             resultKey = SimpleVerseKey( referenceString, ignoreParseErrors=True )
             self.verseKeyObjectList.append( resultKey )
@@ -1702,57 +1717,78 @@ def briefDemo() -> None:
     goodVerseStrings = ( 'SA2_19:12', 'REV_11:12!b', 'EXO_17:9!5', 'PRO_31:2!101', )
     badVerseStrings = badStrings + ( 'GEN.1.1', 'EXO 2:2', 'LEV 3', '2SA_19:12', 'JNA_2:3b', 'REV_11:12!z', )
     if 1: # test SimpleVerseKey
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n\nTesting SimpleVerseKey…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n\nTesting SimpleVerseKey…" )
         for somethingGood in ( ('GEN','1','1'), ('GEN','1','1','a'), ('GEN','1','1','123'), ):
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Testing SimpleVerseKey with good {somethingGood!r}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Testing SimpleVerseKey with good {somethingGood!r}" )
             vK = SimpleVerseKey( *somethingGood )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '   ', vK, f"({vK.keyType}) and", vK.getOSISReference() )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '   ',vK == SimpleVerseKey( 'GEN', '1', '1' ), "then", vK == SimpleVerseKey( 'EXO', '1', '1' ) )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '   ', vK, f"({vK.keyType}) and", vK.getOSISReference() )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '   ',vK == SimpleVerseKey( 'GEN', '1', '1' ), "then", vK == SimpleVerseKey( 'EXO', '1', '1' ) )
         for somethingBad in ( ('GEN','1234','1'), ('GEN','1','1','ab'), ('GEN','1','1','123'), ):
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Testing SimpleVerseKey with bad {somethingBad!r}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Testing SimpleVerseKey with bad {somethingBad!r}" )
             try: vK = SimpleVerseKey( *somethingBad )
             except TypeError: pass
             else:
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '   ', vK, f"({vK.keyType}) and", vK.getOSISReference() )
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '   ',vK == SimpleVerseKey( 'GEN', '1', '1' ), "then", vK == SimpleVerseKey( 'EXO', '1', '1' ) )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '   ', vK, f"({vK.keyType}) and", vK.getOSISReference() )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '   ',vK == SimpleVerseKey( 'GEN', '1', '1' ), "then", vK == SimpleVerseKey( 'EXO', '1', '1' ) )
         for someGoodString in goodVerseStrings:
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Testing SimpleVerseKey with good {someGoodString!r}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Testing SimpleVerseKey with good {someGoodString!r}" )
             vK = SimpleVerseKey( someGoodString )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '    ', vK )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '    ', vK )
             assert vK.getVerseKeyText() == someGoodString
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '  BAD STUFF…' )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '  BAD STUFF…' )
         for someBadString in badVerseStrings:
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Testing SimpleVerseKey with bad {someBadString!r}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Testing SimpleVerseKey with bad {someBadString!r}" )
             try: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '    ', repr(someBadString), SimpleVerseKey( someBadString ) )
             except TypeError: pass #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, '    TypeError' )
 
     goodVersesStrings = ( 'SA2_19:12,19', 'REV_11:2!b,6!a', )
     badVersesStrings = badStrings + ( 'GEN.1.1,3', 'EXO 2:2,4', 'LEV_3,9', 'NUM_1:1', '2SA_19:12,321', 'JNA_2:3b,6a', 'REV_11:12!a,!c', )
     if 1: # test SimpleVersesKey
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n\nTesting SimpleVersesKey…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n\nTesting SimpleVersesKey…" )
         for someGoodString in goodVersesStrings:
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Testing SimpleVersesKey with good {someGoodString!r}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Testing SimpleVersesKey with good {someGoodString!r}" )
             vK = SimpleVersesKey( someGoodString )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '  ', repr(someGoodString), vK )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '  ', repr(someGoodString), vK )
             #assert vK.getVerseKeyText() == someGoodString
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '  BAD STUFF…' )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '  BAD STUFF…' )
         for someBadString in badVersesStrings:
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Testing SimpleVersesKey with bad {someBadString!r}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Testing SimpleVersesKey with bad {someBadString!r}" )
             try: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '  ', repr(someBadString), SimpleVersesKey( someBadString ) )
             except TypeError: pass #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, '    TypeError' )
 
     goodRangeStrings = ( 'SA2_19:12-19', 'REV_11:2!b-6!a', )
     badRangeStrings = badStrings + ( 'GEN.1.1', 'EXO 2:2', 'LEV 3', 'NUM_1:1', '2SA_19:12', 'JNA_2:3b', 'REV_11:12!z', )
     if 1: # test VerseRangeKey
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n\nTesting VerseRangeKey…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n\nTesting VerseRangeKey…" )
         for someGoodString in goodRangeStrings:
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Testing VerseRangeKey with good {someGoodString!r}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Testing VerseRangeKey with good {someGoodString!r}" )
             vK = VerseRangeKey( someGoodString )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '  ', repr(someGoodString), vK )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '  ', repr(someGoodString), vK )
             #assert vK.getVerseKeyText() == someGoodString
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '  BAD STUFF…' )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '  BAD STUFF…' )
         for someBadString in badRangeStrings:
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Testing VerseRangeKey with bad {someBadString!r}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Testing VerseRangeKey with bad {someBadString!r}" )
             try: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '  ', repr(someBadString), VerseRangeKey( someBadString ) )
             except TypeError: pass
 
@@ -1760,15 +1796,20 @@ def briefDemo() -> None:
                           + ( 'GEN_1:1,3-4', 'GEN_1:1-3,4', 'EXO_1:1!b,3-4', 'EXO_1:1-3!a,4!c', )
     badFlexibleStrings = badStrings + ( 'GEN.1.1', 'EXO 2:2', 'LEV 3', 'NUM_1234:1', '2SA_19:12', 'JNA_2:3b', 'REV_11:12!z', )
     if 1: # test FlexibleVersesKey
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n\nTesting FlexibleVersesKey…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n\nTesting FlexibleVersesKey…" )
         for someGoodString in goodFlexibleStrings:
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Testing FlexibleVersesKey with good {someGoodString!r}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Testing FlexibleVersesKey with good {someGoodString!r}" )
             vK = FlexibleVersesKey( someGoodString )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '  ', repr(someGoodString), vK )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '  ', repr(someGoodString), vK )
             #assert vK.getVerseKeyText() == someGoodString
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '  BAD STUFF…' )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '  BAD STUFF…' )
         for someBadString in badFlexibleStrings:
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Testing FlexibleVersesKey with bad {someBadString!r}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Testing FlexibleVersesKey with bad {someBadString!r}" )
             try: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '  ', repr(someBadString), FlexibleVersesKey( someBadString ) )
             except TypeError: pass
 # end of VerseReferences.briefDemo
@@ -1784,57 +1825,78 @@ def fullDemo() -> None:
     goodVerseStrings = ( 'SA2_19:12', 'REV_11:12!b', 'EXO_17:9!5', 'PRO_31:2!101', )
     badVerseStrings = badStrings + ( 'GEN.1.1', 'EXO 2:2', 'LEV 3', '2SA_19:12', 'JNA_2:3b', 'REV_11:12!z', )
     if 1: # test SimpleVerseKey
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n\nTesting SimpleVerseKey…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n\nTesting SimpleVerseKey…" )
         for somethingGood in ( ('GEN','1','1'), ('GEN','1','1','a'), ('GEN','1','1','123'), ):
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Testing SimpleVerseKey with good {somethingGood!r}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Testing SimpleVerseKey with good {somethingGood!r}" )
             vK = SimpleVerseKey( *somethingGood )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '   ', vK, f"({vK.keyType}) and", vK.getOSISReference() )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '   ',vK == SimpleVerseKey( 'GEN', '1', '1' ), "then", vK == SimpleVerseKey( 'EXO', '1', '1' ) )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '   ', vK, f"({vK.keyType}) and", vK.getOSISReference() )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '   ',vK == SimpleVerseKey( 'GEN', '1', '1' ), "then", vK == SimpleVerseKey( 'EXO', '1', '1' ) )
         for somethingBad in ( ('GEN','1234','1'), ('GEN','1','1','ab'), ('GEN','1','1','123'), ):
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Testing SimpleVerseKey with bad {somethingBad!r}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Testing SimpleVerseKey with bad {somethingBad!r}" )
             try: vK = SimpleVerseKey( *somethingBad )
             except TypeError: pass
             else:
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '   ', vK, f"({vK.keyType}) and", vK.getOSISReference() )
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '   ',vK == SimpleVerseKey( 'GEN', '1', '1' ), "then", vK == SimpleVerseKey( 'EXO', '1', '1' ) )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '   ', vK, f"({vK.keyType}) and", vK.getOSISReference() )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '   ',vK == SimpleVerseKey( 'GEN', '1', '1' ), "then", vK == SimpleVerseKey( 'EXO', '1', '1' ) )
         for someGoodString in goodVerseStrings:
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Testing SimpleVerseKey with good {someGoodString!r}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Testing SimpleVerseKey with good {someGoodString!r}" )
             vK = SimpleVerseKey( someGoodString )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '    ', vK )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '    ', vK )
             assert vK.getVerseKeyText() == someGoodString
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '  BAD STUFF…' )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '  BAD STUFF…' )
         for someBadString in badVerseStrings:
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Testing SimpleVerseKey with bad {someBadString!r}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Testing SimpleVerseKey with bad {someBadString!r}" )
             try: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '    ', repr(someBadString), SimpleVerseKey( someBadString ) )
             except TypeError: pass #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, '    TypeError' )
 
     goodVersesStrings = ( 'SA2_19:12,19', 'REV_11:2!b,6!a', )
     badVersesStrings = badStrings + ( 'GEN.1.1,3', 'EXO 2:2,4', 'LEV_3,9', 'NUM_1:1', '2SA_19:12,321', 'JNA_2:3b,6a', 'REV_11:12!a,!c', )
     if 1: # test SimpleVersesKey
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n\nTesting SimpleVersesKey…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n\nTesting SimpleVersesKey…" )
         for someGoodString in goodVersesStrings:
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Testing SimpleVersesKey with good {someGoodString!r}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Testing SimpleVersesKey with good {someGoodString!r}" )
             vK = SimpleVersesKey( someGoodString )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '  ', repr(someGoodString), vK )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '  ', repr(someGoodString), vK )
             #assert vK.getVerseKeyText() == someGoodString
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '  BAD STUFF…' )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '  BAD STUFF…' )
         for someBadString in badVersesStrings:
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Testing SimpleVersesKey with bad {someBadString!r}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Testing SimpleVersesKey with bad {someBadString!r}" )
             try: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '  ', repr(someBadString), SimpleVersesKey( someBadString ) )
             except TypeError: pass #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, '    TypeError' )
 
     goodRangeStrings = ( 'SA2_19:12-19', 'REV_11:2!b-6!a', )
     badRangeStrings = badStrings + ( 'GEN.1.1', 'EXO 2:2', 'LEV 3', 'NUM_1:1', '2SA_19:12', 'JNA_2:3b', 'REV_11:12!z', )
     if 1: # test VerseRangeKey
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n\nTesting VerseRangeKey…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n\nTesting VerseRangeKey…" )
         for someGoodString in goodRangeStrings:
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Testing VerseRangeKey with good {someGoodString!r}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Testing VerseRangeKey with good {someGoodString!r}" )
             vK = VerseRangeKey( someGoodString )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '  ', repr(someGoodString), vK )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '  ', repr(someGoodString), vK )
             #assert vK.getVerseKeyText() == someGoodString
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '  BAD STUFF…' )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '  BAD STUFF…' )
         for someBadString in badRangeStrings:
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Testing VerseRangeKey with bad {someBadString!r}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Testing VerseRangeKey with bad {someBadString!r}" )
             try: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '  ', repr(someBadString), VerseRangeKey( someBadString ) )
             except TypeError: pass
 
@@ -1842,15 +1904,20 @@ def fullDemo() -> None:
                           + ( 'GEN_1:1,3-4', 'GEN_1:1-3,4', 'EXO_1:1!b,3-4', 'EXO_1:1-3!a,4!c', )
     badFlexibleStrings = badStrings + ( 'GEN.1.1', 'EXO 2:2', 'LEV 3', 'NUM_1234:1', '2SA_19:12', 'JNA_2:3b', 'REV_11:12!z', )
     if 1: # test FlexibleVersesKey
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n\nTesting FlexibleVersesKey…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n\nTesting FlexibleVersesKey…" )
         for someGoodString in goodFlexibleStrings:
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Testing FlexibleVersesKey with good {someGoodString!r}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Testing FlexibleVersesKey with good {someGoodString!r}" )
             vK = FlexibleVersesKey( someGoodString )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '  ', repr(someGoodString), vK )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '  ', repr(someGoodString), vK )
             #assert vK.getVerseKeyText() == someGoodString
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '  BAD STUFF…' )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '  BAD STUFF…' )
         for someBadString in badFlexibleStrings:
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Testing FlexibleVersesKey with bad {someBadString!r}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Testing FlexibleVersesKey with bad {someBadString!r}" )
             try: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '  ', repr(someBadString), FlexibleVersesKey( someBadString ) )
             except TypeError: pass
 # end of VerseReferences.fullDemo

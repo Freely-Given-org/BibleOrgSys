@@ -87,7 +87,7 @@ from BibleOrgSys.Bible import Bible
 from BibleOrgSys.Reference.OldBiblicalEnglish import moderniseEnglishWords
 
 
-LAST_MODIFIED_DATE = '2025-03-22' # by RJH
+LAST_MODIFIED_DATE = '2026-10-06' # by RJH
 SHORT_PROGRAM_NAME = "EvaluateBibleLiteralness"
 PROGRAM_NAME = "Check literalness of English Bible translations vs Hebrew & Greek"
 PROGRAM_VERSION = '0.14'
@@ -271,15 +271,18 @@ def main() -> None:
 
     state = State()
     if loadHebrewData( state ) and loadGreekData( state ):
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nHebrew and Greek resources loaded.\n" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nHebrew and Greek resources loaded.\n" )
         for EnglishTranslationAbbreviation in state.EnglishTranslations:
             if not loadBible( EnglishTranslationAbbreviation, state ):
                 bible_not_loaded
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\n{len(state.EnglishTranslations)} English translations loaded.\n" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\n{len(state.EnglishTranslations)} English translations loaded.\n" )
 
         state.referenceBible = state.preloadedBibles[state.referenceVersionAbbreviation]
         for EnglishTranslationAbbreviation in state.EnglishTranslations:
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nProcessing {EnglishTranslationAbbreviation}…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nProcessing {EnglishTranslationAbbreviation}…" )
             state.foundGlosses[EnglishTranslationAbbreviation], state.versionResults[EnglishTranslationAbbreviation] = {}, {}
             if EnglishTranslationAbbreviation not in state.NTOnlyTranslations:
                 checkOT( EnglishTranslationAbbreviation, state )
@@ -293,7 +296,8 @@ def main() -> None:
 def loadHebrewData( state:State ) -> bool:
     """
     """
-    fnPrint( DEBUGGING_THIS_MODULE, "loadHebrewData()" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+        fnPrint( DEBUGGING_THIS_MODULE, "loadHebrewData()" )
 
     loadBible( 'UHB', state )
 
@@ -305,7 +309,8 @@ NUM_EXPECTED_GREEK_COLUMNS = 12
 def loadGreekData( state:State ) -> bool:
     """
     """
-    fnPrint( DEBUGGING_THIS_MODULE, f"loadGreekData() from {state.NT_word_filepath}" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+        fnPrint( DEBUGGING_THIS_MODULE, f"loadGreekData() from {state.NT_word_filepath}" )
 
     if 'ULT' in state.EnglishTranslations or 'UST' in state.EnglishTranslations:
         loadBible( 'UGNT', state )
@@ -314,20 +319,23 @@ def loadGreekData( state:State ) -> bool:
         loadBible( 'SR-GNT', state )
 
         # Now load the Greek word file
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Loading SR-GNT Greek word file from {state.NT_word_filepath}…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Loading SR-GNT Greek word file from {state.NT_word_filepath}…" )
         with open( state.NT_word_filepath, 'rt', encoding='utf-8' ) as tsv_file:
             tsv_lines = tsv_file.readlines()
 
         # Remove any BOM
         if tsv_lines[0].startswith("\ufeff"):
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Handling Byte Order Marker (BOM) at start of Greek tsv file…")
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Handling Byte Order Marker (BOM) at start of Greek tsv file…")
             tsv_lines[0] = tsv_lines[0][1:]
 
         # Get the headers before we start
         Greek_tsv_header_line = tsv_lines[0].strip()
         assert Greek_tsv_header_line == 'Ref\tGreekWord\tSRLemma\tGreekLemma\tVLTGlossWords\tOETGlossWords\tGlossCaps\tProbability\tStrongsExt\tRole\tMorphology\tTags', f"{Greek_tsv_header_line=}"
         Greek_tsv_column_headers = [header for header in Greek_tsv_header_line.split('\t')]
-        dPrint('Info', DEBUGGING_THIS_MODULE, f"Column headers: ({len(Greek_tsv_column_headers)}): {Greek_tsv_column_headers}")
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 3:
+            dPrint('Info', DEBUGGING_THIS_MODULE, f"Column headers: ({len(Greek_tsv_column_headers)}): {Greek_tsv_column_headers}")
         assert len(Greek_tsv_column_headers) == NUM_EXPECTED_GREEK_COLUMNS
 
 
@@ -381,10 +389,13 @@ def loadGreekData( state:State ) -> bool:
                     likelyGreekGlosses[greekWord].add( oetSubgloss[1:-1] if oetSubgloss[0]=='(' and oetSubgloss[-1]==')' else oetSubgloss )
             else: # no / alternatives
                 likelyGreekGlosses[greekWord].add( oetGloss[1:-1] if oetGloss[0]=='(' and oetGloss[-1]==')' else oetGloss )
-            dPrint( 'Info', DEBUGGING_THIS_MODULE, f"    likelyGreekGlosses[{greekWord}] = {likelyGreekGlosses[greekWord]}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 3:
+                dPrint( 'Info', DEBUGGING_THIS_MODULE, f"    likelyGreekGlosses[{greekWord}] = {likelyGreekGlosses[greekWord]}" )
 
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  Loaded {len(state.GreekRows):,} data rows from {state.NT_word_filepath}." )
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  Loaded glosses for {len(likelyGreekGlosses):,} Greek words." )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  Loaded {len(state.GreekRows):,} data rows from {state.NT_word_filepath}." )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  Loaded glosses for {len(likelyGreekGlosses):,} Greek words." )
 
         # Now tidy-up those glosses -- we split multiple words like 'to_cry' and put into a list, with the longest first
         state.likelyGreekGlosses = {}
@@ -416,52 +427,63 @@ PICKLE_FILENAME_END = '.OBD_Bible.pickle'
 def loadBible( versionAbbreviation:str, state:State ) -> bool:
     """
     """
-    fnPrint( DEBUGGING_THIS_MODULE, f"loadBible( {versionAbbreviation} )" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+        fnPrint( DEBUGGING_THIS_MODULE, f"loadBible( {versionAbbreviation} )" )
 
     # See if a pickled version is available for a MUCH faster load time
     folderOrFileLocationPath = Path( state.BibleLocations[versionAbbreviation] )
     pickleFilename = f'{versionAbbreviation}{PICKLE_FILENAME_END}'
     pickleFolderPath = folderOrFileLocationPath if folderOrFileLocationPath.is_dir() else folderOrFileLocationPath.parent
-    vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nLooking for a pickle for ‘{versionAbbreviation}’{f' in {pickleFolderPath}' if BibleOrgSysGlobals.verbosityLevel>2 else ''}…" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nLooking for a pickle for ‘{versionAbbreviation}’{f' in {pickleFolderPath}' if BibleOrgSysGlobals.verbosityLevel>2 else ''}…" )
     pickleFilePath = pickleFolderPath.joinpath( pickleFilename )
-    dPrint( 'Never', DEBUGGING_THIS_MODULE, f"{folderOrFileLocationPath=} {pickleFilename=} {pickleFolderPath=} {pickleFilePath=}" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 5:
+        dPrint( 'Never', DEBUGGING_THIS_MODULE, f"{folderOrFileLocationPath=} {pickleFilename=} {pickleFolderPath=} {pickleFilePath=}" )
     if pickleFilePath.is_file():
         pickleIsObsolete = False
         pickleMTime = pickleFilePath.stat().st_mtime # A large integer
-        dPrint( 'Info', DEBUGGING_THIS_MODULE, f"preloadVersions found {pickleFilename=}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 3:
+            dPrint( 'Info', DEBUGGING_THIS_MODULE, f"preloadVersions found {pickleFilename=}" )
         for somePath in pickleFolderPath.iterdir():
-            dPrint( 'Never', DEBUGGING_THIS_MODULE, f"Checking file-times in {pickleFolderPath=} {somePath=} {type(somePath)=}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 5:
+                dPrint( 'Never', DEBUGGING_THIS_MODULE, f"Checking file-times in {pickleFolderPath=} {somePath=} {type(somePath)=}" )
             if somePath.is_file() and not str(somePath).endswith( PICKLE_FILENAME_END ):
                 fileMTime = somePath.stat().st_mtime # A large integer
                 if fileMTime > pickleMTime:
                     pickleIsObsolete = True
-                    vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"{versionAbbreviation} pickle is obsolete because {somePath.name} is more recent." )
+                    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"{versionAbbreviation} pickle is obsolete because {somePath.name} is more recent." )
                     break
             elif versionAbbreviation == 'OET-LV': # This one has the OT and the NT in separate folders
                 if str(somePath).endswith ('intermediateTexts/auto_edited_OT_ESFM') or str(somePath).endswith ('intermediateTexts/auto_edited_VLT_ESFM'):
                     for someSubPath in somePath.iterdir():
-                        dPrint( 'Never', DEBUGGING_THIS_MODULE, f"Checking file-times in {somePath=} {someSubPath=} {type(someSubPath)=}" )
+                        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 5:
+                            dPrint( 'Never', DEBUGGING_THIS_MODULE, f"Checking file-times in {somePath=} {someSubPath=} {type(someSubPath)=}" )
                         if someSubPath.is_file() and not str(someSubPath).endswith( PICKLE_FILENAME_END ):
                             fileMTime = someSubPath.stat().st_mtime # A large integer
                             if fileMTime > pickleMTime:
                                 pickleIsObsolete = True
-                                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"{versionAbbreviation} pickle is obsolete because {someSubPath.name} is more recent." )
+                                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                                    vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"{versionAbbreviation} pickle is obsolete because {someSubPath.name} is more recent." )
                                 break
             else:
-                dPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"Ignoring pickle file or folder {somePath=} {somePath.name=}")
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 4:
+                    dPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"Ignoring pickle file or folder {somePath=} {somePath.name=}")
         if not pickleIsObsolete:
             try:
                 newBibleObj = BibleOrgSysGlobals.unpickleObject( pickleFilename, pickleFolderPath )
                 # dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"newObj is {newBibleObj}" )
                 # dPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Loaded {versionAbbreviation} {type(newBibleObj)} pickle file: {pickleFilename}." )
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"preloadVersions() loaded pickled {newBibleObj if BibleOrgSysGlobals.verbosityLevel>=2 else versionAbbreviation}" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"preloadVersions() loaded pickled {newBibleObj if BibleOrgSysGlobals.verbosityLevel>=2 else versionAbbreviation}" )
                 assert 'discoveryResults' in newBibleObj.__dict__ # .discover() should have been called before it was saved
                 state.preloadedBibles[versionAbbreviation] = newBibleObj
                 return True
             except EOFError:
                 logging.critical( f"Failed to load {versionAbbreviation} pickle file: Ran out of input from {pickleFilename} in {pickleFolderPath}")
     else:
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  No pickle file for {versionAbbreviation}." )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  No pickle file for {versionAbbreviation}." )
 
     if versionAbbreviation == 'OET-LV':
         # Load the OT and NT from separate folders, and then combine them into one ESFM Bible object
@@ -486,9 +508,11 @@ def loadBible( versionAbbreviation:str, state:State ) -> bool:
         thisBible.NTsourceFolder = thisBibleNT.sourceFolder
         thisBible.sourceFolder = None
         state.preloadedBibles['OET-LV'] = thisBible
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nDoing discovery for {thisBible.abbreviation} ({thisBible.name})…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nDoing discovery for {thisBible.abbreviation} ({thisBible.name})…" )
         thisBible.discover()
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"preloadVersions() loaded {thisBible}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"preloadVersions() loaded {thisBible}" )
 
         pickleFilename = f"{versionAbbreviation}{PICKLE_FILENAME_END}"
         pickleFolderPath = state.BibleLocations['OET-LV']
@@ -511,7 +535,8 @@ def preloadVersion( versionAbbreviation:str, folderOrFileLocation:str, state:Sta
     Loads the requested Bible into memory
         and return the Bible object.
     """
-    fnPrint( DEBUGGING_THIS_MODULE, f"preloadVersion( ‘{versionAbbreviation}’, '{folderOrFileLocation}', … )" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+        fnPrint( DEBUGGING_THIS_MODULE, f"preloadVersion( ‘{versionAbbreviation}’, '{folderOrFileLocation}', … )" )
     versionName = state.BibleNames[versionAbbreviation]
 
     # if versionAbbreviation in ('BSB',): # Single TSV .txt file
@@ -521,11 +546,13 @@ def preloadVersion( versionAbbreviation:str, folderOrFileLocation:str, state:Sta
     #     thisBible.load()
     #     print( f"{versionAbbreviation} loaded ({len(thisBible.books.keys())}) {thisBible.books.keys()}" )
     if versionAbbreviation in ('BLB','SBL-GNT'): # Single (BLB) or multiple (SBL-GNT) TSV .txt file(s)
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Loading ‘{versionAbbreviation}’ CSV/TSV Bible…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Loading ‘{versionAbbreviation}’ CSV/TSV Bible…" )
         thisBible = CSVBible.CSVBible( folderOrFileLocation, givenName=versionName,
                                             givenAbbreviation=versionAbbreviation, encoding='utf-8' )
         thisBible.loadBooks() # So we can iterate through them all later
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{versionAbbreviation} loaded ({len(thisBible.books.keys())}) {list(thisBible.books.keys())}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{versionAbbreviation} loaded ({len(thisBible.books.keys())}) {list(thisBible.books.keys())}" )
         # print( f"{thisBible.suppliedMetadata=}" )
         # print( f"{thisBible.settingsDict=}" )
         # verseEntryList, contextList = thisBible.getContextVerseData( ('MRK', '10', '45') )
@@ -537,51 +564,60 @@ def preloadVersion( versionAbbreviation:str, folderOrFileLocation:str, state:Sta
     #     thisBible.loadBooks() # So we can iterate through them all later
     #     print( f"{versionAbbreviation} loaded ({len(thisBible.books.keys())}) {thisBible.books.keys()}" )
     elif versionAbbreviation == 'LEB': # Custom XML
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Loading ‘{versionAbbreviation}’ XML Bible…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Loading ‘{versionAbbreviation}’ XML Bible…" )
         thisBible = LEBXMLBible.LEBXMLBible( folderOrFileLocation, givenName=versionName,
                                             givenAbbreviation=versionAbbreviation, encoding='utf-8' )
         thisBible.loadBooks() # So we can iterate through them all later
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{versionAbbreviation} loaded ({len(thisBible.books.keys())}) {list(thisBible.books.keys())}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{versionAbbreviation} loaded ({len(thisBible.books.keys())}) {list(thisBible.books.keys())}" )
         # print( f"{thisBible.suppliedMetadata=}" )
         # print( f"{thisBible.settingsDict=}" )
         # verseEntryList, contextList = thisBible.getContextVerseData( ('MAT', '2', '1') )
         # print( f"Mat 2:1 {verseEntryList=} {contextList=}" )
     elif versionAbbreviation in ('Cvdl','Bshps'): # Custom VPL
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Loading ‘{versionAbbreviation}’ VPL Bible…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Loading ‘{versionAbbreviation}’ VPL Bible…" )
         thisBible = VPLBible.VPLBible( folderOrFileLocation, givenName=versionName,
                                             givenAbbreviation=versionAbbreviation, encoding='utf-8' )
         thisBible.load() # So we can iterate through them all later
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{versionAbbreviation} loaded ({len(thisBible.books.keys())}) {list(thisBible.books.keys())}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{versionAbbreviation} loaded ({len(thisBible.books.keys())}) {list(thisBible.books.keys())}" )
         # print( f"{thisBible.suppliedMetadata=}" )
         # print( f"{thisBible.settingsDict=}" )
         # verseEntryList, contextList = thisBible.getContextVerseData( ('MRK', '1', '1') )
         # print( f"Mrk 1:1 {verseEntryList=} {contextList=}" )
     elif 'Zefania' in folderOrFileLocation: # Zefania XML
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Loading ‘{versionAbbreviation}’ Zefania XML Bible…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Loading ‘{versionAbbreviation}’ Zefania XML Bible…" )
         thisBible = ZefaniaXMLBible.ZefaniaXMLBible( folderOrFileLocation, givenName=versionName,
                                             givenAbbreviation=versionAbbreviation, encoding='utf-8' )
         thisBible.loadBooks() # So we can iterate through them all later
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{versionAbbreviation} loaded ({len(thisBible.books.keys())}) {list(thisBible.books.keys())}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{versionAbbreviation} loaded ({len(thisBible.books.keys())}) {list(thisBible.books.keys())}" )
         # print( f"{versionAbbreviation} {thisBible.suppliedMetadata=}" )
         # print( f"{versionAbbreviation} {thisBible.settingsDict=}" )
         # verseEntryList, contextList = thisBible.getContextVerseData( ('MAT', '2', '1') )
         # print( f"{versionAbbreviation} Mat 2:1 {verseEntryList=} {contextList=}" )
         # if versionAbbreviation=='Luth': assert False, "We want to stop here"
     elif 'OET' in versionAbbreviation or 'ESFM' in folderOrFileLocation: # ESFM
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Preloading ‘{versionAbbreviation}’ ESFM Bible…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Preloading ‘{versionAbbreviation}’ ESFM Bible…" )
         thisBible = ESFMBible.ESFMBible( folderOrFileLocation, givenName=versionName, givenAbbreviation=versionAbbreviation )
         thisBible.loadAuxiliaryFiles = True
         # if versionAbbreviation in ('ULT','UST','UHB','UGNT','SR-GNT'):
         #     thisBible.uWencoded = True # TODO: Shouldn't be required ???
         thisBible.loadBooks() # So we can iterate through them all later
     elif versionAbbreviation in state.selectedVersesOnlyVersions: # small numbers of sample verses
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Loading ‘{versionAbbreviation}’ sample verses…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Loading ‘{versionAbbreviation}’ sample verses…" )
         thisBible = loadSelectedVersesFile( folderOrFileLocation, givenName=versionName,
                                             givenAbbreviation=versionAbbreviation, encoding='utf-8' )
         # NOTE: thisBible is NOT a Bible object here!!!
         # vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{versionAbbreviation} loaded ({len(thisBible.books.keys())}) {list(thisBible.books.keys())}" )
     elif versionAbbreviation in ('NET',) and 'eBible.org' not in folderOrFileLocation: # USX
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Preloading ‘{versionAbbreviation}’ USX Bible…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Preloading ‘{versionAbbreviation}’ USX Bible…" )
         thisBible = USXXMLBible.USXXMLBible( folderOrFileLocation, givenName=versionName, givenAbbreviation=versionAbbreviation,
                                             encoding='utf-8' )
         if state.booksToLoad[versionAbbreviation] in (['ALL'],['OT'],['NT']):
@@ -593,7 +629,8 @@ def preloadVersion( versionAbbreviation:str, folderOrFileLocation:str, state:Sta
             for BBB in state.booksToLoad[versionAbbreviation]:
                 thisBible.loadBookIfNecessary( BBB )
     else: # USFM
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Preloading ‘{versionAbbreviation}’ USFM Bible…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Preloading ‘{versionAbbreviation}’ USFM Bible…" )
         thisBible = USFMBible.USFMBible( folderOrFileLocation, givenName=versionName, givenAbbreviation=versionAbbreviation,
                                             encoding='utf-8' )
         if versionAbbreviation in ('ULT','UST','UHB','UGNT','SR-GNT'):
@@ -603,20 +640,23 @@ def preloadVersion( versionAbbreviation:str, folderOrFileLocation:str, state:Sta
         #     thisBible.preload()
         #     for BBB in state.booksToLoad[versionAbbreviation]:
         #         thisBible.loadBookIfNecessary( BBB )
-    vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  preloadVersion() loaded {len(thisBible):,} {versionAbbreviation} verses" if versionAbbreviation in state.selectedVersesOnlyVersions else f"preloadVersion() loaded {thisBible}" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  preloadVersion() loaded {len(thisBible):,} {versionAbbreviation} verses" if versionAbbreviation in state.selectedVersesOnlyVersions else f"preloadVersion() loaded {thisBible}" )
 
     if ( versionAbbreviation not in state.selectedVersesOnlyVersions
     #and 'Zefania' not in folderOrFileLocation # TODO: these don't work for some reason
     and versionAbbreviation != 'OET-LV' # This one is handled by the calling function because it's more complex (uses two folders)
     and versionAbbreviation != 'TOSN' # This one has different complexities coz it loads various other bits
     ):
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nDoing discovery for {thisBible.abbreviation} ({thisBible.name})…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nDoing discovery for {thisBible.abbreviation} ({thisBible.name})…" )
         thisBible.discover()
 
         pickleFilename = f"{versionAbbreviation}{PICKLE_FILENAME_END}"
         pickleFolderPath = folderOrFileLocation if os.path.isdir( folderOrFileLocation ) else Path( folderOrFileLocation ).parent
         thisBible.pickle( pickleFilename, pickleFolderPath )
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  Saved pickle file: {pickleFilename}." )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  Saved pickle file: {pickleFilename}." )
 
     return thisBible
 # end of Bibles.preloadVersion
@@ -629,8 +669,10 @@ def loadSelectedVersesFile( fileLocation, givenName:str, givenAbbreviation:str, 
 
     Usually they only contain some small number of verses, e.g., 200 - 500 (cf NT. = 8,000, Bible = 31,000)
     """
-    fnPrint( DEBUGGING_THIS_MODULE, f"loadSelectedVersesFile( {fileLocation}, {givenName}, {givenAbbreviation}, {encoding} )" )
-    vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  loadSelectedVersesFile() loading {givenAbbreviation} ({givenName}) verse entries from {fileLocation}…" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+        fnPrint( DEBUGGING_THIS_MODULE, f"loadSelectedVersesFile( {fileLocation}, {givenName}, {givenAbbreviation}, {encoding} )" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  loadSelectedVersesFile() loading {givenAbbreviation} ({givenName}) verse entries from {fileLocation}…" )
     # assert givenAbbreviation in state.selectedVersesOnlyVersions
 
     verseTable = {}
@@ -654,7 +696,8 @@ def loadSelectedVersesFile( fileLocation, givenName:str, givenAbbreviation:str, 
                                         .replace('\\n','\n').replace('\\\\','\\') # See https://en.wikipedia.org/wiki/Tab-separated_values
                                         .replace('__ND__','\\nd') )
 
-    vPrint( 'Info', DEBUGGING_THIS_MODULE, f"    loadSelectedVersesFile() loaded {len(verseTable):,} {givenAbbreviation} verse entries from {fileLocation}." )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"    loadSelectedVersesFile() loaded {len(verseTable):,} {givenAbbreviation} verse entries from {fileLocation}." )
     return verseTable
 # end of Bibles.loadSelectedVersesFile
 
@@ -662,13 +705,15 @@ def loadSelectedVersesFile( fileLocation, givenName:str, givenAbbreviation:str, 
 def checkOT( EnglishVersionAbbreviation:str, state:State ) -> bool:
     """
     """
-    fnPrint( DEBUGGING_THIS_MODULE, f"checkOT( {EnglishVersionAbbreviation} )" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+        fnPrint( DEBUGGING_THIS_MODULE, f"checkOT( {EnglishVersionAbbreviation} )" )
 
     HebrewVersionAbbreviation = 'UHB'
 
     referenceBible = state.referenceBible if EnglishVersionAbbreviation in state.selectedVersesOnlyVersions else state.preloadedBibles[EnglishVersionAbbreviation]
     for BBB in BOOKLIST_OT39:
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  Processing {EnglishVersionAbbreviation} {BBB}…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  Processing {EnglishVersionAbbreviation} {BBB}…" )
 
         numChapters = referenceBible.getNumChapters( BBB ) # Causes the book to be loaded if not already
         if numChapters is None: return False
@@ -692,13 +737,15 @@ def checkOT( EnglishVersionAbbreviation:str, state:State ) -> bool:
 def checkNT( EnglishVersionAbbreviation:str, state:State ) -> bool:
     """
     """
-    fnPrint( DEBUGGING_THIS_MODULE, f"checkNT( {EnglishVersionAbbreviation} )" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+        fnPrint( DEBUGGING_THIS_MODULE, f"checkNT( {EnglishVersionAbbreviation} )" )
 
     GreekVersionAbbreviation = 'UGNT' if EnglishVersionAbbreviation=='ULT' else 'SR-GNT'
 
     referenceBible = state.referenceBible if EnglishVersionAbbreviation in state.selectedVersesOnlyVersions else state.preloadedBibles[EnglishVersionAbbreviation]
     for BBB in BOOKLIST_NT27:
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  Processing {EnglishVersionAbbreviation} {BBB}…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  Processing {EnglishVersionAbbreviation} {BBB}…" )
 
         numChapters = referenceBible.getNumChapters( BBB ) # Causes the book to be loaded if not already
         for c in range( 1, numChapters+1 ):
@@ -746,7 +793,8 @@ def checkNTVerse( GreekVersionAbbreviation:str, EnglishVersionAbbreviation:str, 
     """
     """
     refStr, refKey = f'{BBB}_{C}:{V}', SimpleVerseKey( BBB, C, V )
-    fnPrint( DEBUGGING_THIS_MODULE, f"checkNTVerse( {GreekVersionAbbreviation}, {EnglishVersionAbbreviation}, {refStr} )" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+        fnPrint( DEBUGGING_THIS_MODULE, f"checkNTVerse( {GreekVersionAbbreviation}, {EnglishVersionAbbreviation}, {refStr} )" )
 
     GreekReferenceBible, EnglishBible = state.preloadedBibles[GreekVersionAbbreviation], state.preloadedBibles[EnglishVersionAbbreviation]
     GreekVerseDictionaryRows = []
@@ -756,7 +804,8 @@ def checkNTVerse( GreekVersionAbbreviation:str, EnglishVersionAbbreviation:str, 
                 GreekVerseDictionaryRows.append( row )
             elif GreekVerseDictionaryRows:
                 break # Stop once we've finished all that verse
-        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"{refStr} has {len(GreekVerseDictionaryRows)} dict rows" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 4:
+            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"{refStr} has {len(GreekVerseDictionaryRows)} dict rows" )
 
     try:
         grkVrsTxt = GreekReferenceBible.getVerseText( refKey, fullTextFlag=False, includeNonCanonical=False )
@@ -828,7 +877,8 @@ def checkNTVerse( GreekVersionAbbreviation:str, EnglishVersionAbbreviation:str, 
         assert len(alignedList) == len(grkWords)
         verseScore *= ( len(alignedList) - alignedList.count( None ) ) / len(alignedList)
         #except ZeroDivisionError: pass # on an empty list, i.e., non-existing verse
-    vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  {refStr} score 1 = {verseScore:.1f}")
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  {refStr} score 1 = {verseScore:.1f}")
     
     # Check a handful of major terms
     for origWordList,engWordList,altEngWordList in OET_LV_NT_MAJOR_TERM_LISTS if EnglishVersionAbbreviation=='OET-LV' else OET_RV_NT_MAJOR_TERM_LISTS if EnglishVersionAbbreviation=='OET-RV' else NON_OET_NT_MAJOR_TERM_LISTS:
@@ -837,7 +887,8 @@ def checkNTVerse( GreekVersionAbbreviation:str, EnglishVersionAbbreviation:str, 
             verseScore *= grkCount / engCount
         elif engCount < grkCount:
             verseScore *= engCount / grkCount
-    vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  {refStr} score 2 = {verseScore:.1f}\n")
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  {refStr} score 2 = {verseScore:.1f}\n")
 
     return verseScore
 # end of EvaluateBibleLiteralness.checkNTVerse function
@@ -880,7 +931,8 @@ def removeWordNumber( versionAbbreviation:str, refStr:str, inputWord:str ) -> st
 def checkImportantWord( refStr:str, GreekVersionAbbreviation:str, EnglishVersionAbbreviation:str, grkWordList:str, engWordList:str, possibleGrkWrdLst:list[str], possibleEngWrdLst:list[str], alternativeEngWrdLst:list[str] ) -> tuple[int,int]:
     """
     """
-    fnPrint( DEBUGGING_THIS_MODULE, f"checkImportantWord( {refStr}, {GreekVersionAbbreviation}, {EnglishVersionAbbreviation}, ..., {possibleGrkWrdLst}, {possibleEngWrdLst}, {alternativeEngWrdLst} )" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+        fnPrint( DEBUGGING_THIS_MODULE, f"checkImportantWord( {refStr}, {GreekVersionAbbreviation}, {EnglishVersionAbbreviation}, ..., {possibleGrkWrdLst}, {possibleEngWrdLst}, {alternativeEngWrdLst} )" )
     # dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"checkImportantWord( {refStr}, {GreekVersionAbbreviation}, {EnglishVersionAbbreviation}, ({len(grkWordList)}) {grkWordList}, ({len(engWordList)}) {engWordList}, ({len(possibleGrkWrdLst)}) {possibleGrkWrdLst}, ({len(possibleEngWrdLst)}) {possibleEngWrdLst} )" )
 
     grkCount = engCount = altCount = 0
@@ -901,24 +953,34 @@ def checkImportantWord( refStr:str, GreekVersionAbbreviation:str, EnglishVersion
     #         # print( f"  Now {engCount=} with {engWordBit=}" )
 
     if engCount > grkCount:
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"GRK Couldn't find {engCount} {EnglishVersionAbbreviation} ‘{possibleEngWrdLst[0]}’ in {GreekVersionAbbreviation} {refStr}: {grkWordList}" )
-        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"Found '{possibleEngWrdLst[0]}' ({engCount}) vs ({grkCount}) in {EnglishVersionAbbreviation} {refStr}: {engWordList}" )
-        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"                              {grkWordList}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"GRK Couldn't find {engCount} {EnglishVersionAbbreviation} ‘{possibleEngWrdLst[0]}’ in {GreekVersionAbbreviation} {refStr}: {grkWordList}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 4:
+            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"Found '{possibleEngWrdLst[0]}' ({engCount}) vs ({grkCount}) in {EnglishVersionAbbreviation} {refStr}: {engWordList}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 4:
+            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"                              {grkWordList}" )
     # elif engCount+altCount > grkCount:
     #     vPrint( 'Info', DEBUGGING_THIS_MODULE, f"GRK With {alternativeEngWrdLst}, couldn't find {engCount} {altCount} {EnglishVersionAbbreviation} ‘{possibleEngWrdLst[0]}’ in {GreekVersionAbbreviation} {refStr}: {grkWordList}" )
     #     vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"Found '{possibleEngWrdLst[0]}' ({engCount}) vs ({grkCount}) in {EnglishVersionAbbreviation} {refStr}: {engWordList}" )
     #     vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"                              {grkWordList}" )
     elif grkCount > engCount+altCount:
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"{f'Even with {alternativeEngWrdLst}, c' if alternativeEngWrdLst else 'C'}ouldn't find {grkCount} ‘{possibleEngWrdLst[0]}’ in {EnglishVersionAbbreviation} {refStr}: {engWordList}" )
-        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"Found '{possibleEngWrdLst[0]}' ({grkCount}) vs ({engCount}) in {GreekVersionAbbreviation} {refStr}: {grkWordList}" )
-        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"                              {engWordList}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"{f'Even with {alternativeEngWrdLst}, c' if alternativeEngWrdLst else 'C'}ouldn't find {grkCount} ‘{possibleEngWrdLst[0]}’ in {EnglishVersionAbbreviation} {refStr}: {engWordList}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 4:
+            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"Found '{possibleEngWrdLst[0]}' ({grkCount}) vs ({engCount}) in {GreekVersionAbbreviation} {refStr}: {grkWordList}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 4:
+            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"                              {engWordList}" )
     elif grkCount > engCount:
         if grkCount == engCount+altCount:
-            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"With {alternativeEngWrdLst}, found {grkCount} ‘{possibleEngWrdLst[0]}’ in {EnglishVersionAbbreviation} {refStr}: {engWordList}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 4:
+                vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"With {alternativeEngWrdLst}, found {grkCount} ‘{possibleEngWrdLst[0]}’ in {EnglishVersionAbbreviation} {refStr}: {engWordList}" )
         else:
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"ENG Couldn't find {grkCount} ‘{possibleEngWrdLst[0]}’ in {EnglishVersionAbbreviation} {refStr}: {engWordList}" )
-        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"Found '{possibleEngWrdLst[0]}' ({grkCount}) vs ({engCount}) in {GreekVersionAbbreviation} {refStr}: {grkWordList}" )
-        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"                              {engWordList}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, f"ENG Couldn't find {grkCount} ‘{possibleEngWrdLst[0]}’ in {EnglishVersionAbbreviation} {refStr}: {engWordList}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 4:
+            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"Found '{possibleEngWrdLst[0]}' ({grkCount}) vs ({engCount}) in {GreekVersionAbbreviation} {refStr}: {grkWordList}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 4:
+            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"                              {engWordList}" )
 
     return grkCount, engCount
 # end of EvaluateBibleLiteralness.checkImportantWord()
@@ -932,8 +994,10 @@ def alignNTVerse( refStr:str, GreekVersionAbbreviation:str, EnglishVersionAbbrev
 
     Has a side-effect of updating state.foundGlosses[EnglishVersionAbbreviation]
     """
-    fnPrint( DEBUGGING_THIS_MODULE, f"alignNTVerse( {refStr}, {GreekVersionAbbreviation}, {EnglishVersionAbbreviation}, ..., {breakAtUnderline=} )" )
-    dPrint( 'Info', DEBUGGING_THIS_MODULE, f"alignNTVerse( {refStr}, {GreekVersionAbbreviation}, {EnglishVersionAbbreviation}, ({len(grkWordList)}) {grkWordList}, ({len(engWordList)}) {engWordList} {breakAtUnderline=} )" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+        fnPrint( DEBUGGING_THIS_MODULE, f"alignNTVerse( {refStr}, {GreekVersionAbbreviation}, {EnglishVersionAbbreviation}, ..., {breakAtUnderline=} )" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 3:
+        dPrint( 'Info', DEBUGGING_THIS_MODULE, f"alignNTVerse( {refStr}, {GreekVersionAbbreviation}, {EnglishVersionAbbreviation}, ({len(grkWordList)}) {grkWordList}, ({len(engWordList)}) {engWordList} {breakAtUnderline=} )" )
 
     alignedList = []
     unalignedEnglishWordList = engWordList.copy() # We'll replace words with None as we match them
@@ -947,16 +1011,19 @@ def alignNTVerse( refStr:str, GreekVersionAbbreviation:str, EnglishVersionAbbrev
                 logger = logging.critical if EnglishVersionAbbreviation=='OET-LV' else logging.error
                 logger( f"Why couldn't we find {grkWord=} in dict for {EnglishVersionAbbreviation} {refStr} w{gg+1} {grkWordList}" )
                 possibleEnglishGlossesList = ['NONE']
-        dPrint( 'Info', DEBUGGING_THIS_MODULE, f"\n    {refStr} {gg} {grkWord=} {processEnglishWordCaps=} ({len(possibleEnglishGlossesList)}) {possibleEnglishGlossesList=}")
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 3:
+            dPrint( 'Info', DEBUGGING_THIS_MODULE, f"\n    {refStr} {gg} {grkWord=} {processEnglishWordCaps=} ({len(possibleEnglishGlossesList)}) {possibleEnglishGlossesList=}")
         assert possibleEnglishGlossesList
         alignedWords = []
         for possibleEnglishGlossOrGlosses in possibleEnglishGlossesList: # This can be a list or a string -- in both cases with the longest first
-            dPrint( 'Info', DEBUGGING_THIS_MODULE, f"      {possibleEnglishGlossOrGlosses=}")
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 3:
+                dPrint( 'Info', DEBUGGING_THIS_MODULE, f"      {possibleEnglishGlossOrGlosses=}")
             if isinstance( possibleEnglishGlossOrGlosses, list ):
                 matchedParts = []
                 for pp,possibleEnglishSubgloss in enumerate( possibleEnglishGlossOrGlosses ):
                     searchWord = possibleEnglishSubgloss.title() if processEnglishWordCaps and pp==0 else  possibleEnglishSubgloss
-                    dPrint( 'Info', DEBUGGING_THIS_MODULE, f"        {pp}/{len(possibleEnglishGlossOrGlosses)} {possibleEnglishSubgloss=} {searchWord=}" )
+                    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 3:
+                        dPrint( 'Info', DEBUGGING_THIS_MODULE, f"        {pp}/{len(possibleEnglishGlossOrGlosses)} {possibleEnglishSubgloss=} {searchWord=}" )
                     try:
                         if not matchedParts:
                             ix = unalignedEnglishWordList.index( searchWord )
@@ -969,7 +1036,8 @@ def alignNTVerse( refStr:str, GreekVersionAbbreviation:str, EnglishVersionAbbrev
                         if matchedParts and ix != matchedParts[-1]+1: # not in order
                             break
                         matchedParts.append( ix )
-                        dPrint( 'Info', DEBUGGING_THIS_MODULE, f"          Matched A {pp}/{len(possibleEnglishGlossOrGlosses)} {possibleEnglishSubgloss=}" )
+                        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 3:
+                            dPrint( 'Info', DEBUGGING_THIS_MODULE, f"          Matched A {pp}/{len(possibleEnglishGlossOrGlosses)} {possibleEnglishSubgloss=}" )
                         # alignedWords.append( ix )
                         # removed = unalignedEnglishWordList[ix]; 
                         # unalignedEnglishWordList[ix] = None
@@ -988,7 +1056,8 @@ def alignNTVerse( refStr:str, GreekVersionAbbreviation:str, EnglishVersionAbbrev
                             if matchedParts and ix != matchedParts[-1]+1: # not in order
                                 break
                             matchedParts.append( ix )
-                            dPrint( 'Info', DEBUGGING_THIS_MODULE, f"          Matched B {pp}/{len(possibleEnglishGlossOrGlosses)} {possibleEnglishSubgloss=}" )
+                            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 3:
+                                dPrint( 'Info', DEBUGGING_THIS_MODULE, f"          Matched B {pp}/{len(possibleEnglishGlossOrGlosses)} {possibleEnglishSubgloss=}" )
                             # alignedWords.append( ix )
                             # removed = unalignedEnglishWordList[ix]; 
                             # unalignedEnglishWordList[ix] = None
@@ -999,7 +1068,8 @@ def alignNTVerse( refStr:str, GreekVersionAbbreviation:str, EnglishVersionAbbrev
                     for ix in matchedParts:
                         alignedWords.append( ix )
                         removed, unalignedEnglishWordList[ix] = unalignedEnglishWordList[ix], None
-                    dPrint( 'Info', DEBUGGING_THIS_MODULE, f"            ALIGNED MULTI_WORD {ix} {matchedParts=} now {unalignedEnglishWordList=}")
+                    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 3:
+                        dPrint( 'Info', DEBUGGING_THIS_MODULE, f"            ALIGNED MULTI_WORD {ix} {matchedParts=} now {unalignedEnglishWordList=}")
                     break # no need to try more English glosses for this Greek word
             else: # it's a string that we're trying to match
                 assert isinstance( possibleEnglishGlossOrGlosses, str )
@@ -1007,28 +1077,34 @@ def alignNTVerse( refStr:str, GreekVersionAbbreviation:str, EnglishVersionAbbrev
                     ix = unalignedEnglishWordList.index( possibleEnglishGlossOrGlosses.title() if processEnglishWordCaps else possibleEnglishGlossOrGlosses )
                     alignedWords.append( ix )
                     removed, unalignedEnglishWordList[ix] = unalignedEnglishWordList[ix], None
-                    dPrint( 'Info', DEBUGGING_THIS_MODULE, f"        A ALIGNED {ix} {removed=} now {unalignedEnglishWordList=}")
+                    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 3:
+                        dPrint( 'Info', DEBUGGING_THIS_MODULE, f"        A ALIGNED {ix} {removed=} now {unalignedEnglishWordList=}")
                     break # no need to try more English glosses for this Greek word
                 except ValueError:
                     try:
                         ix = unalignedEnglishWordList.index( possibleEnglishGlossOrGlosses if processEnglishWordCaps else possibleEnglishGlossOrGlosses.title() )
                         alignedWords.append( ix )
                         removed, unalignedEnglishWordList[ix] = unalignedEnglishWordList[ix], None
-                        dPrint( 'Info', DEBUGGING_THIS_MODULE, f"        B ALIGNED {ix} {removed=} now {unalignedEnglishWordList=}")
+                        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 3:
+                            dPrint( 'Info', DEBUGGING_THIS_MODULE, f"        B ALIGNED {ix} {removed=} now {unalignedEnglishWordList=}")
                         break # no need to try more English glosses for this Greek word
                     except ValueError:
                         pass
         if alignedWords:
-            dPrint( 'Info', DEBUGGING_THIS_MODULE, f"      Got {alignedWords=} for {gg} {grkWord=}")
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 3:
+                dPrint( 'Info', DEBUGGING_THIS_MODULE, f"      Got {alignedWords=} for {gg} {grkWord=}")
             alignedList.append( alignedWords )
         else:
-            dPrint( 'Info', DEBUGGING_THIS_MODULE, f"      Got no matches for {gg} {grkWord=}")
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 3:
+                dPrint( 'Info', DEBUGGING_THIS_MODULE, f"      Got no matches for {gg} {grkWord=}")
             alignedList.append( None )
 
     if not any( unalignedEnglishWordList ): # then we aligned everything
-        dPrint( 'Info', DEBUGGING_THIS_MODULE, "  Aligned ALL words!!!" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 3:
+            dPrint( 'Info', DEBUGGING_THIS_MODULE, "  Aligned ALL words!!!" )
     else:
-        dPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Returning ({len(alignedList)}) {alignedList=} leaving {unalignedEnglishWordList=}")
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 3:
+            dPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Returning ({len(alignedList)}) {alignedList=} leaving {unalignedEnglishWordList=}")
         assert len(alignedList) == len(grkWordList)
 
     return alignedList
@@ -1060,7 +1136,8 @@ def checkOTVerse( HebrewVersionAbbreviation:str, EnglishVersionAbbreviation:str,
     """
     """
     refStr, refKey = f'{BBB}_{C}:{V}', SimpleVerseKey( BBB, C, V )
-    fnPrint( DEBUGGING_THIS_MODULE, f"checkOTVerse( {HebrewVersionAbbreviation}, {EnglishVersionAbbreviation}, {refStr} )" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+        fnPrint( DEBUGGING_THIS_MODULE, f"checkOTVerse( {HebrewVersionAbbreviation}, {EnglishVersionAbbreviation}, {refStr} )" )
 
     HebrewReferenceBible, EnglishBible = state.preloadedBibles[HebrewVersionAbbreviation], state.preloadedBibles[EnglishVersionAbbreviation]
     HebrewVerseDictionaryRows = []
@@ -1070,7 +1147,8 @@ def checkOTVerse( HebrewVersionAbbreviation:str, EnglishVersionAbbreviation:str,
                 HebrewVerseDictionaryRows.append( row )
             elif HebrewVerseDictionaryRows:
                 break # Stop once we've finished all that verse
-        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"{refStr} has {len(HebrewVerseDictionaryRows)} dict rows" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 4:
+            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"{refStr} has {len(HebrewVerseDictionaryRows)} dict rows" )
 
     try:
         hebVrsTxt = HebrewReferenceBible.getVerseText( refKey, fullTextFlag=False, includeNonCanonical=False )
@@ -1147,7 +1225,8 @@ def checkOTVerse( HebrewVersionAbbreviation:str, EnglishVersionAbbreviation:str,
         assert len(alignedList) == len(hebWords)
         verseScore *= ( len(alignedList) - alignedList.count( None ) ) / len(alignedList)
         #except ZeroDivisionError: pass # on an empty list, i.e., non-existing verse
-    vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  {refStr} score 1 = {verseScore:.1f}")
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  {refStr} score 1 = {verseScore:.1f}")
     
     # Check a handful of major terms
     for origWordList,engWordList,altEngWordList in OET_LV_NT_MAJOR_TERM_LISTS if EnglishVersionAbbreviation=='OET-LV' else OET_RV_NT_MAJOR_TERM_LISTS if EnglishVersionAbbreviation=='OET-RV' else NON_OET_NT_MAJOR_TERM_LISTS:
@@ -1156,7 +1235,8 @@ def checkOTVerse( HebrewVersionAbbreviation:str, EnglishVersionAbbreviation:str,
             verseScore *= grkCount / engCount
         elif engCount < grkCount:
             verseScore *= engCount / grkCount
-    vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  {refStr} score 2 = {verseScore:.1f}\n")
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  {refStr} score 2 = {verseScore:.1f}\n")
 
     return verseScore
 # end of EvaluateBibleLiteralness.checkOTVerse function
@@ -1165,8 +1245,10 @@ def checkOTVerse( HebrewVersionAbbreviation:str, EnglishVersionAbbreviation:str,
 def publishResult( EnglishVersionAbbreviation:str, state:State ) -> bool:
     """
     """
-    fnPrint( DEBUGGING_THIS_MODULE, f"publishResult( {EnglishVersionAbbreviation} )" )
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "" ) # Blank line
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+        fnPrint( DEBUGGING_THIS_MODULE, f"publishResult( {EnglishVersionAbbreviation} )" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "" ) # Blank line
 
     EnglishBible = state.preloadedBibles[EnglishVersionAbbreviation]
     referenceBible = state.referenceBible if EnglishVersionAbbreviation in state.selectedVersesOnlyVersions else EnglishBible
@@ -1177,7 +1259,8 @@ def publishResult( EnglishVersionAbbreviation:str, state:State ) -> bool:
     bookScoresList = []
     state.versionResults[EnglishVersionAbbreviation]['bookScores'] = {}
     for BBB in BOOKLIST_66:
-        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"  Processing {EnglishVersionAbbreviation} {BBB}…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 4:
+            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"  Processing {EnglishVersionAbbreviation} {BBB}…" )
 
         numChapters = referenceBible.getNumChapters( BBB ) # Causes the book to be loaded if not already
         if not numChapters:
@@ -1211,39 +1294,53 @@ def publishResult( EnglishVersionAbbreviation:str, state:State ) -> bool:
                 except KeyError:
                     missingBookVersesList.append( refStr )
                     continue
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Overall result for {EnglishVersionAbbreviation} {BBB}:" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Overall result for {EnglishVersionAbbreviation} {BBB}:" )
         if missingBookChaptersList:
             bibleMissingChaptersCount += len( missingBookChaptersList )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"    Have {len(missingBookChaptersList)} missing chapters" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"    Have {len(missingBookChaptersList)} missing chapters" )
         elif missingBookVersesList:
             bibleMissingVersesCount += len( missingBookVersesList )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"    Have {len(missingBookVersesList)} missing verses" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"    Have {len(missingBookVersesList)} missing verses" )
         try:
             bookScore = bookTotalScores / bookVerseCount
         except ZeroDivisionError: bookScore = 0.0 # i.e., non-existing book
         state.versionResults[EnglishVersionAbbreviation]['bookScores'][BBB] = bookScore
         if bookScore > 0.0: bookScoresList.append( (BBB,bookScore) )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"    Average literalness score = {bookScore:.1f} (out of ten)")
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"    Average literalness score = {bookScore:.1f} (out of ten)")
         largeBookVerseScoreList.sort( key = lambda x: x[1] )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'''    Verses with LOWEST literalness scores were: {BBB} {str([f'{ref} @ {score:.1f}' for (ref,score) in largeBookVerseScoreList[:21]]).replace("'",'').replace('[','').replace(']','')}''' )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'''    Verses with LOWEST literalness scores were: {BBB} {str([f'{ref} @ {score:.1f}' for (ref,score) in largeBookVerseScoreList[:21]]).replace("'",'').replace('[','').replace(']','')}''' )
         if any([score < 10.0 for (_ref,score) in largeBookVerseScoreList[-8:]]):
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'''    Verses with HIGHEST literalness scores were: {BBB} {str([f'{ref} @ {score:.1f}' for (ref,score) in reversed(largeBookVerseScoreList[-8:])]).replace("'",'').replace('[','').replace(']','')}''' )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'''    Verses with HIGHEST literalness scores were: {BBB} {str([f'{ref} @ {score:.1f}' for (ref,score) in reversed(largeBookVerseScoreList[-8:])]).replace("'",'').replace('[','').replace(']','')}''' )
 
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nOverall result for {EnglishVersionAbbreviation}:" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nOverall result for {EnglishVersionAbbreviation}:" )
     if missingBooksList:
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Have {len(missingBooksList)} missing books" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Have {len(missingBooksList)} missing books" )
     try:
         bibleScore = bibleTotalScores / bibleVerseCount
     except ZeroDivisionError: bibleScore = 0.0 # i.e., non-existing book
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Total number of verses scored = {bibleVerseCount:,}")
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Average literalness score = {bibleScore:.1f} (out of ten) with {bibleVerseCount:,} verses scored")
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Total number of verses scored = {bibleVerseCount:,}")
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Average literalness score = {bibleScore:.1f} (out of ten) with {bibleVerseCount:,} verses scored")
     bookScoresList.sort( key = lambda x: x[1] )
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'''  Books with LOWEST literalness scores were: {str([f'{BBB} @ {score:.1f}' for (BBB,score) in bookScoresList[:7]]).replace("'",'').replace('[','').replace(']','')}''' )
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'''  Books with HIGHEST literalness scores were: {str([f'{BBB} @ {score:.1f}' for (BBB,score) in reversed(bookScoresList[-7:])]).replace("'",'').replace('[','').replace(']','')}''' )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'''  Books with LOWEST literalness scores were: {str([f'{BBB} @ {score:.1f}' for (BBB,score) in bookScoresList[:7]]).replace("'",'').replace('[','').replace(']','')}''' )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'''  Books with HIGHEST literalness scores were: {str([f'{BBB} @ {score:.1f}' for (BBB,score) in reversed(bookScoresList[-7:])]).replace("'",'').replace('[','').replace(']','')}''' )
     hugeBibleVerseScoreList.sort( key = lambda x: x[1] )
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'''  Verses with LOWEST literalness scores were: {str([f'{ref} @ {score:.1f}' for (ref,score) in hugeBibleVerseScoreList[:20]]).replace("'",'').replace('[','').replace(']','')}''' )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'''  Verses with LOWEST literalness scores were: {str([f'{ref} @ {score:.1f}' for (ref,score) in hugeBibleVerseScoreList[:20]]).replace("'",'').replace('[','').replace(']','')}''' )
     if any([score < 10.0 for (_ref,score) in hugeBibleVerseScoreList[-8:]]):
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'''  Verses with HIGHEST literalness scores were: {str([f'{ref} @ {score:.1f}' for (ref,score) in reversed(hugeBibleVerseScoreList[-8:])]).replace("'",'').replace('[','').replace(']','')}''' )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'''  Verses with HIGHEST literalness scores were: {str([f'{ref} @ {score:.1f}' for (ref,score) in reversed(hugeBibleVerseScoreList[-8:])]).replace("'",'').replace('[','').replace(']','')}''' )
 
     state.versionResults[EnglishVersionAbbreviation]['totalVersesScored'] = bibleVerseCount
     state.versionResults[EnglishVersionAbbreviation]['literalnessScore'] = bibleScore
@@ -1256,12 +1353,16 @@ def publishResult( EnglishVersionAbbreviation:str, state:State ) -> bool:
 def publishSummary( state:State ) -> bool:
     """
     """
-    fnPrint( DEBUGGING_THIS_MODULE, f"publishSummary()" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+        fnPrint( DEBUGGING_THIS_MODULE, f"publishSummary()" )
 
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n\nSummary results:" )
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "    (A typical OT has just over 23,200 verses, NT has just under 8,000 verses, whole Bible has just over 31,000 verses.)\n" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n\nSummary results:" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "    (A typical OT has just over 23,200 verses, NT has just under 8,000 verses, whole Bible has just over 31,000 verses.)\n" )
 
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Note: The OT is NOT YET PROPERLY EVALUATED for literalness!\n" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Note: The OT is NOT YET PROPERLY EVALUATED for literalness!\n" )
 
     versionsScoreSummaryList = []
     for EnglishVersionAbbreviation in state.EnglishTranslations:
@@ -1269,18 +1370,26 @@ def publishSummary( state:State ) -> bool:
         bibleScore = state.versionResults[EnglishVersionAbbreviation]['literalnessScore']
         versionsScoreSummaryList.append( (EnglishVersionAbbreviation,bibleScore) )
         bookScoresList = state.versionResults[EnglishVersionAbbreviation]['bookScoresList']
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{EnglishVersionAbbreviation} literalness summary results:" )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Average literalness score for {numVersesScored:,} {EnglishVersionAbbreviation} verses = {bibleScore:.1f} (out of ten)")
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'''  Books with LOWEST literalness scores were: {str([f'{BBB} @ {score:.1f}' for (BBB,score) in bookScoresList[:7]]).replace("'",'').replace('[','').replace(']','')}''' )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'''  Books with HIGHEST literalness scores were: {str([f'{BBB} @ {score:.1f}' for (BBB,score) in reversed(bookScoresList[-7:])]).replace("'",'').replace('[','').replace(']','')}''' )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{EnglishVersionAbbreviation} literalness summary results:" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Average literalness score for {numVersesScored:,} {EnglishVersionAbbreviation} verses = {bibleScore:.1f} (out of ten)")
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'''  Books with LOWEST literalness scores were: {str([f'{BBB} @ {score:.1f}' for (BBB,score) in bookScoresList[:7]]).replace("'",'').replace('[','').replace(']','')}''' )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'''  Books with HIGHEST literalness scores were: {str([f'{BBB} @ {score:.1f}' for (BBB,score) in reversed(bookScoresList[-7:])]).replace("'",'').replace('[','').replace(']','')}''' )
 
     versionsScoreSummaryList.sort( key = lambda x: x[1] )
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'''\nVersions with LOWEST literalness scores were: {str([f'{vers} @ {score:.1f}' for (vers,score) in versionsScoreSummaryList[:5]]).replace("'",'').replace('[','').replace(']','')}''' )
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'''Versions with HIGHEST literalness scores were: {str([f'{vers} @ {score:.1f}' for (vers,score) in reversed(versionsScoreSummaryList[-5:])]).replace("'",'').replace('[','').replace(']','')}''' )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'''\nVersions with LOWEST literalness scores were: {str([f'{vers} @ {score:.1f}' for (vers,score) in versionsScoreSummaryList[:5]]).replace("'",'').replace('[','').replace(']','')}''' )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'''Versions with HIGHEST literalness scores were: {str([f'{vers} @ {score:.1f}' for (vers,score) in reversed(versionsScoreSummaryList[-5:])]).replace("'",'').replace('[','').replace(']','')}''' )
 
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'''\nAll versions with literalness scores were: {str([f'{vers} @ {score:.1f}' for (vers,score) in reversed(versionsScoreSummaryList)]).replace("'",'').replace('[','').replace(']','')}''' )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'''\nAll versions with literalness scores were: {str([f'{vers} @ {score:.1f}' for (vers,score) in reversed(versionsScoreSummaryList)]).replace("'",'').replace('[','').replace(']','')}''' )
 
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nNOTE: The highest 10.0 score above is for the most LITERAL version.\n  You should note that it's not an indication that it's a GOOD, READABLE, or UNDERSTANDABLE English translation!\n" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nNOTE: The highest 10.0 score above is for the most LITERAL version.\n  You should note that it's not an indication that it's a GOOD, READABLE, or UNDERSTANDABLE English translation!\n" )
 
     return True
 # end of EvaluateBibleLiteralness.publishSummary()

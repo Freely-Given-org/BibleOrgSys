@@ -28,7 +28,7 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2023-03-10' # by RJH
+LAST_MODIFIED_DATE = '2026-10-06' # by RJH
 SHORT_PROGRAM_NAME = "GreekLexiconConverter"
 PROGRAM_NAME = "Greek Lexicon XML format handler"
 PROGRAM_VERSION = '0.17'
@@ -78,7 +78,8 @@ class GreekStrongsFileConverter:
         """
         Constructor: just sets up the file converter object.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, "GreekStrongsFileConverter.__init__()" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, "GreekStrongsFileConverter.__init__()" )
         self.title = self.version = self.date = None
         self.XMLTree = self.header = self.StrongsEntries = None
     # end of GreekStrongsFileConverter.__init__
@@ -105,12 +106,14 @@ class GreekStrongsFileConverter:
         Load the source XML file and remove the header from the tree.
         Also, extracts some useful elements from the header element.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"loadAndValidate( {XMLFolder} )" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, f"loadAndValidate( {XMLFolder} )" )
         if XMLFolder is None:
             XMLFolder = DEFAULT_LEXICON_FOLDERPATH # Greek lexicon folder
         self.XMLFolder = XMLFolder
         XMLFileOrFilepath = os.path.join( XMLFolder, GreekStrongsFileConverter.databaseFilename )
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Loading Greek lexicon from {XMLFileOrFilepath}…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Loading Greek lexicon from {XMLFileOrFilepath}…" )
         try: self.XMLTree = ElementTree().parse( XMLFileOrFilepath )
         except FileNotFoundError:
             logging.critical( f"GreekStrongsFileConverter could not find database at {XMLFileOrFilepath}" )
@@ -327,7 +330,8 @@ class GreekStrongsFileConverter:
             folderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH
             if not folderpath.exists(): os.mkdir( folderpath )
             filepath = os.path.join( folderpath, 'GreekLexicon_Strongs_Table.1.pickle' )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Exporting to {filepath}…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Exporting to {filepath}…" )
         with open( filepath, 'wb' ) as myFile:
             pickle.dump( self.StrongsEntries, myFile )
     # end of GreekStrongsFileConverter.pickle
@@ -342,15 +346,19 @@ def briefDemo() -> None:
     BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     if 1: # demonstrate the Greek Lexicon converter classes
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nDemonstrating the converter classes…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nDemonstrating the converter classes…" )
 
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
         gsc = GreekStrongsFileConverter()
         gsc.loadAndValidate() # Load the XML
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, gsc ) # Just print a summary
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, gsc ) # Just print a summary
 
         if BibleOrgSysGlobals.commandLineArguments.export:
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Exports aren't written yet!" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Exports aren't written yet!" )
             #gsc.exportDataToPython() # Produce the .py tables
             #gsc.exportDataToC() # Produce the .h tables
 # end of GreekLexiconConverter.briefDemo
@@ -362,16 +370,20 @@ def fullDemo() -> None:
     BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     if 1: # demonstrate the Greek Lexicon converter classes
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nDemonstrating the converter classes…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nDemonstrating the converter classes…" )
 
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
         gsc = GreekStrongsFileConverter()
         gsc.loadAndValidate() # Load the XML
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, gsc ) # Just print a summary
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, gsc ) # Just print a summary
 
         if BibleOrgSysGlobals.commandLineArguments.export:
             gsc.pickle() # Produce a pickle output file
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Other exports aren't written yet!" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Other exports aren't written yet!" )
             # gsc.exportDataToPython() # Produce the .py tables
             #gsc.exportDataToC() # Produce the .h tables
 # end of GreekLexiconConverter.fullDemo

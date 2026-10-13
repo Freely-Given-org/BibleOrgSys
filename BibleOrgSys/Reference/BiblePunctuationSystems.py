@@ -23,7 +23,7 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2020-05-02' # by RJH
+LAST_MODIFIED_DATE = '2026-10-06' # by RJH
 SHORT_PROGRAM_NAME = "BiblePunctuationSystems"
 PROGRAM_NAME = "Bible Punctuation Systems handler"
 PROGRAM_VERSION = '0.45'
@@ -65,7 +65,8 @@ class BiblePunctuationSystems:
                 # and os.stat(standardPickleFilepath).st_ctime > os.stat(standardXMLFileOrFilepath).st_ctime: # There's a newer pickle file
                 if pickleIsNewer:
                     import pickle
-                    vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Loading pickle file {standardPickleFilepath}…" )
+                    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Loading pickle file {standardPickleFilepath}…" )
                     with open( standardPickleFilepath, 'rb') as pickleFile:
                         self.__DataDict = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
                     return self # So this command can be chained after the object creation
@@ -76,7 +77,8 @@ class BiblePunctuationSystems:
                 and os.stat(standardJsonFilepath).st_mtime > os.stat(standardXMLFileOrFilepath).st_mtime \
                 and os.stat(standardJsonFilepath).st_ctime > os.stat(standardXMLFileOrFilepath).st_ctime: # There's a newer pickle file
                     import json
-                    vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Loading json file {standardJsonFilepath}…" )
+                    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Loading json file {standardJsonFilepath}…" )
                     with open( standardJsonFilepath, 'rb') as JsonFile:
                         self.__DataDict = json.load( JsonFile )
                     # # NOTE: We have to convert str referenceNumber keys back to ints
@@ -199,19 +201,23 @@ class BiblePunctuationSystems:
 
         if systemMatchCount:
             if systemMatchCount == 1: # What we hope for
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Matched {matchedPunctuationSystemCodes[0]} punctuation (with these {len(punctuationSchemeToCheck)} books)" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Matched {matchedPunctuationSystemCodes[0]} punctuation (with these {len(punctuationSchemeToCheck)} books)" )
                 if debugFlag: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, errorSummary )
             else:
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Matched {systemMatchCount} punctuation system(s): {matchedPunctuationSystemCodes} (with these {len(punctuationSchemeToCheck)} books)" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Matched {systemMatchCount} punctuation system(s): {matchedPunctuationSystemCodes} (with these {len(punctuationSchemeToCheck)} books)" )
                 if debugFlag: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, errorSummary )
         else:
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Mismatched {systemMismatchCount} punctuation systems (with these {len(punctuationSchemeToCheck)} books)" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Mismatched {systemMismatchCount} punctuation systems (with these {len(punctuationSchemeToCheck)} books)" )
             if debugFlag: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, allErrors )
             else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, errorSummary)
 
         if exportFlag and not systemMatchCount: # Write a new file
             outputFilepath = BibleOrgSysGlobals.BOS_DATAFILES_FOLDERPATH.joinpath( 'ScrapedFiles/', 'BiblePunctuation_'+systemName + '.xml' )
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Writing {len(punctuationSchemeToCheck)} books to {outputFilepath}…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Writing {len(punctuationSchemeToCheck)} books to {outputFilepath}…" )
             with open( outputFilepath, 'wt', encoding='utf-8' ) as myFile:
                 for n,BBB in enumerate(punctuationSchemeToCheck):
                     myFile.write( f'  <book id="{n+1}">{BBB}</book>\n' )
@@ -300,15 +306,20 @@ def briefDemo() -> None:
 
     # Demo the BiblePunctuationSystems object
     bpss = BiblePunctuationSystems().loadData() # Doesn't reload the XML unnecessarily :)
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, bpss ) # Just print a summary
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Available system names are: {bpss.getAvailablePunctuationSystemNames()}" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, bpss ) # Just print a summary
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Available system names are: {bpss.getAvailablePunctuationSystemNames()}" )
 
     # Demo the BiblePunctuationSystem object
     bps = BiblePunctuationSystem( "English" ) # Doesn't reload the XML unnecessarily :)
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, bps ) # Just print a summary
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Variables are: {bps.getAvailablePunctuationValueNames()}" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, bps ) # Just print a summary
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Variables are: {bps.getAvailablePunctuationValueNames()}" )
     name = 'chapterVerseSeparator'
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{name} for {bps.getPunctuationSystemName()} is {bps.getPunctuationValue(name)!r}" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{name} for {bps.getPunctuationSystemName()} is {bps.getPunctuationValue(name)!r}" )
 # end of BiblePunctuationSystem.briefDemo
 
 def fullDemo() -> None:
@@ -319,15 +330,20 @@ def fullDemo() -> None:
 
     # Demo the BiblePunctuationSystems object
     bpss = BiblePunctuationSystems().loadData() # Doesn't reload the XML unnecessarily :)
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, bpss ) # Just print a summary
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Available system names are: {bpss.getAvailablePunctuationSystemNames()}" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, bpss ) # Just print a summary
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Available system names are: {bpss.getAvailablePunctuationSystemNames()}" )
 
     # Demo the BiblePunctuationSystem object
     bps = BiblePunctuationSystem( "English" ) # Doesn't reload the XML unnecessarily :)
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, bps ) # Just print a summary
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Variables are: {bps.getAvailablePunctuationValueNames()}" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, bps ) # Just print a summary
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Variables are: {bps.getAvailablePunctuationValueNames()}" )
     name = 'chapterVerseSeparator'
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{name} for {bps.getPunctuationSystemName()} is {bps.getPunctuationValue(name)!r}" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{name} for {bps.getPunctuationSystemName()} is {bps.getPunctuationValue(name)!r}" )
 # end of BiblePunctuationSystem.fullDemo
 
 if __name__ == '__main__':

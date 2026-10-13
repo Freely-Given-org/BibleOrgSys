@@ -103,7 +103,7 @@ import usfm_markers_py
 from usfm_markers_py import OFTEN_IGNORED_USFM_HEADER_MARKERS, USFM_ALL_INTRODUCTION_MARKERS, USFM_PRECHAPTER_MARKERS
 
 
-LAST_MODIFIED_DATE = '2026-04-29' # by RJH
+LAST_MODIFIED_DATE = '2026-10-06' # by RJH
 SHORT_PROGRAM_NAME = "BibleWriter"
 PROGRAM_NAME = "Bible writer"
 PROGRAM_VERSION = '0.96'
@@ -126,7 +126,8 @@ def setDefaultControlFolderpath( newFolderName:Path ) -> None:
     Set the global default folder for control files.
     """
     global defaultControlFolderpath
-    vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"defaultControlFolderpath changed from {defaultControlFolderpath} to {newFolderName}" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"defaultControlFolderpath changed from {defaultControlFolderpath} to {newFolderName}" )
 
     defaultControlFolderpath = newFolderName
 # end of BibleWriter.setDefaultControlFolderpath
@@ -158,7 +159,8 @@ def killLibreOfficeServiceManager() -> None:
     """
     Doesn't work in Windows.
     """
-    vPrint( 'Info', DEBUGGING_THIS_MODULE, "Killing LibreOffice ServiceManager…" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, "Killing LibreOffice ServiceManager…" )
 
     p = subprocess.Popen(['ps', 'xa'], stdout=subprocess.PIPE) # NOTE: Linux-only code!!!
     out, err = p.communicate()
@@ -195,8 +197,10 @@ class BibleWriter( InternalBible ):
         """
         Saves this Python object as a pickle file (plus a zipped version for downloading).
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"toPickleObject( {self.abbreviation}, {outputFolderpath} )" )
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Running BibleWriter:toPickleObject…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, f"toPickleObject( {self.abbreviation}, {outputFolderpath} )" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Running BibleWriter:toPickleObject…" )
         if not outputFolderpath: outputFolderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_Bible_Object_Pickle/' )
         if not os.access( outputFolderpath, os.F_OK ): os.makedirs( outputFolderpath ) # Make the empty folder if there wasn't already one there
 
@@ -207,16 +211,19 @@ class BibleWriter( InternalBible ):
             if self.doExtraChecking: assert filename
             filename = BibleOrgSysGlobals.makeSafeFilename( f'{filename}.pickle' ) # Same as in InternalBible.pickle()
             filepath = Path( outputFolderpath ).joinpath( filename )
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Zipping {filename} pickle file…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Zipping {filename} pickle file…" )
             zf = zipfile.ZipFile( f'{filepath}.zip', 'w', compression=zipfile.ZIP_DEFLATED )
             zf.write( filepath, filename )
             zf.close()
 
             if BibleOrgSysGlobals.maxProcesses > 1:
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  BibleWriter.toPickleObject finished successfully." )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  BibleWriter.toPickleObject finished successfully." )
             return True
         else:
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  BibleWriter.toPickleObject failed." )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  BibleWriter.toPickleObject failed." )
             return False
     # end of BibleWriter.toPickleObject
 
@@ -241,8 +248,10 @@ class BibleWriter( InternalBible ):
         """
         from BibleOrgSys.Formats.PickledBible import createPickledBible
 
-        fnPrint( DEBUGGING_THIS_MODULE, f"toPickledBible( {outputFolderpath}, {metadataDict}, {dataLevel}, {zipOnly} )" )
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Running BibleWriter:toPickledBible" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, f"toPickledBible( {outputFolderpath}, {metadataDict}, {dataLevel}, {zipOnly} )" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Running BibleWriter:toPickledBible" )
 
         if not outputFolderpath: outputFolderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_PickledBible_Export/' )
         if not os.access( outputFolderpath, os.F_OK ): os.makedirs( outputFolderpath ) # Make the empty folder if there wasn't already one there
@@ -263,8 +272,10 @@ class BibleWriter( InternalBible ):
         Note: This can add up to a couple of GB if discovery data is included!
         """
         from BibleOrgSys.Formats.JSONBible import createBOSJSONBible
-        fnPrint( DEBUGGING_THIS_MODULE, f"toBOSJSONBible( {outputFolderpath}, {sourceURL}, {licenceString} )" )
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Running BibleWriter:toBOSJSONBible" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, f"toBOSJSONBible( {outputFolderpath}, {sourceURL}, {licenceString} )" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Running BibleWriter:toBOSJSONBible" )
         if not outputFolderpath: outputFolderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_JSONBible_Export/' )
         if not os.access( outputFolderpath, os.F_OK ): os.makedirs( outputFolderpath ) # Make the empty folder if there wasn't already one there
 
@@ -317,7 +328,8 @@ class BibleWriter( InternalBible ):
             Always writes the processed 5-tuples to .pSFM files (from _processedLines).
         """
         # from BibleOrgSys.Internals import InternalBibleBook
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Running BibleWriter:makeLists…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Running BibleWriter:makeLists…" )
         if self.doExtraChecking: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
@@ -386,7 +398,8 @@ class BibleWriter( InternalBible ):
             """
             title = BibleOrgSysGlobals.makeSafeXML( typeString.replace('_',' ') + " sorted by word" )
             filenamePortion = BibleOrgSysGlobals.makeSafeFilename( typeString + "_sorted_by_word." )
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Writing '{filenamePortion}*'…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Writing '{filenamePortion}*'…" )
             sortedWords = sorted(dictionary)
             with open( os.path.join( txtOutputFolder, filenamePortion )+'txt', 'wt', encoding='utf-8' ) as txtFile, \
                  open( os.path.join( csvOutputFolder, filenamePortion )+'csv', 'wt', encoding='utf-8' ) as csvFile, \
@@ -411,7 +424,8 @@ class BibleWriter( InternalBible ):
                     htmlFile.write( '</table></body></html>' ) # close open elements
             title = BibleOrgSysGlobals.makeSafeXML( typeString.replace('_',' ') + " sorted by count" )
             filenamePortion = BibleOrgSysGlobals.makeSafeFilename( typeString + "_sorted_by_count." )
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Writing '{filenamePortion}*'…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Writing '{filenamePortion}*'…" )
             with open( os.path.join( txtOutputFolder, filenamePortion )+'txt', 'wt', encoding='utf-8' ) as txtFile, \
                  open( os.path.join( csvOutputFolder, filenamePortion )+'csv', 'wt', encoding='utf-8' ) as csvFile, \
                  open( os.path.join( xmlOutputFolder, filenamePortion )+'xml', 'wt', encoding='utf-8' ) as xmlFile, \
@@ -480,7 +494,8 @@ class BibleWriter( InternalBible ):
         except KeyError: pass # Why is there no 'mainTextCaseInsensitiveWordCounts' field ???
 
         if BibleOrgSysGlobals.maxProcesses > 1:
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  BibleWriter.makeLists finished successfully." )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  BibleWriter.makeLists finished successfully." )
         return True
     # end of BibleWriter.makeLists
 
@@ -489,7 +504,8 @@ class BibleWriter( InternalBible ):
         """
         Write the internal pseudoUSFM out directly with one file per verse.
         """
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Running BibleWriter:toBOSBCV…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Running BibleWriter:toBOSBCV…" )
         if self.doExtraChecking: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
@@ -501,7 +517,8 @@ class BibleWriter( InternalBible ):
         self.writeBOSBCVFiles( outputFolderpath ) # This function is part of InternalBible
 
         # Now create a zipped collection (for easier download)
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Zipping BCV files…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Zipping BCV files…" )
         zf = zipfile.ZipFile( os.path.join( outputFolderpath, 'AllFiles.zip' ), 'w', compression=zipfile.ZIP_DEFLATED )
         for filename in os.listdir( outputFolderpath ):
             if not filename.endswith( '.zip' ):
@@ -510,7 +527,8 @@ class BibleWriter( InternalBible ):
         zf.close()
 
         if BibleOrgSysGlobals.maxProcesses > 1:
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  BibleWriter.toBOSBCV finished successfully." )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  BibleWriter.toBOSBCV finished successfully." )
         return True
     # end of BibleWriter.toBOSBCV
 
@@ -522,7 +540,8 @@ class BibleWriter( InternalBible ):
             May write the rawLines 2-tuples to .rSFM files (if _rawLines still exists)
             Always writes the processed 5-tuples to .pSFM files (from _processedLines).
         """
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Running BibleWriter:toPseudoUSFM…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Running BibleWriter:toPseudoUSFM…" )
         if self.doExtraChecking: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
@@ -543,7 +562,8 @@ class BibleWriter( InternalBible ):
 
                 filename = f"{j:02}_{BBB}_BibleWriter.rSFM"
                 filepath = os.path.join( outputFolderpath, BibleOrgSysGlobals.makeSafeFilename( filename ) )
-                vPrint( 'Info', DEBUGGING_THIS_MODULE, f'  toPseudoUSFM: Writing {filepath!r}…' )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                    vPrint( 'Info', DEBUGGING_THIS_MODULE, f'  toPseudoUSFM: Writing {filepath!r}…' )
                 with open( filepath, 'wt', encoding='utf-8' ) as myFile:
                     if BibleOrgSysGlobals.prependBOMFlag:
                         myFile.write( BibleOrgSysGlobals.BOM )
@@ -557,7 +577,8 @@ class BibleWriter( InternalBible ):
 
             filename = f"{j:02}_{BBB}_BibleWriter.pSFM"
             filepath = os.path.join( outputFolderpath, BibleOrgSysGlobals.makeSafeFilename( filename ) )
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, f'  toPseudoUSFM: Writing {filepath!r}…' )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, f'  toPseudoUSFM: Writing {filepath!r}…' )
             indentLevel = 0
             C, V = '-1', '-1' # So first/id line starts at -1:0
             with open( filepath, 'wt', encoding='utf-8' ) as myFile:
@@ -579,13 +600,15 @@ class BibleWriter( InternalBible ):
                         indentLevel += 1
                     elif indentLevel and marker[0]=='¬': indentLevel -= 1
                     if indentLevel > 7:
-                        dPrint( 'Quiet', DEBUGGING_THIS_MODULE,
-                                f"BibleWriter.toPseudoUSFM: {BBB} {C}:{V} indentLevel={indentLevel} marker={marker}" )
+                        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 1:
+                            dPrint( 'Quiet', DEBUGGING_THIS_MODULE,
+                                    f"BibleWriter.toPseudoUSFM: {BBB} {C}:{V} indentLevel={indentLevel} marker={marker}" )
                     if self.doExtraChecking: assert indentLevel <= 7 # Should only be 7: e.g., chapters c s1 p v list li1
             if self.doExtraChecking: assert indentLevel == 0
 
         # Now create a zipped collection
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Zipping PseudoUSFM files…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Zipping PseudoUSFM files…" )
         zf = zipfile.ZipFile( os.path.join( outputFolderpath, 'AllFiles.zip' ), 'w', compression=zipfile.ZIP_DEFLATED )
         for filename in os.listdir( outputFolderpath ):
             if not filename.endswith( '.zip' ):
@@ -594,7 +617,8 @@ class BibleWriter( InternalBible ):
         zf.close()
 
         if BibleOrgSysGlobals.maxProcesses > 1:
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  BibleWriter.toPseudoUSFM finished successfully." )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  BibleWriter.toPseudoUSFM finished successfully." )
         return True
     # end of BibleWriter.toPseudoUSFM
 
@@ -606,7 +630,8 @@ class BibleWriter( InternalBible ):
 
         NOTE: We use utf-8 encoding and Windows \r\n line endings for writing USFM files.
         """
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Running BibleWriter:toUSFM2…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Running BibleWriter:toUSFM2…" )
         if self.doExtraChecking: assert self.books
         includeEmptyVersesFlag = True
 
@@ -653,7 +678,8 @@ class BibleWriter( InternalBible ):
                     except (KeyError,TypeError): pass # ok, we've got nothing to add
             inField = None
             vBridgeStartInt = vBridgeEndInt = None # For printing missing (bridged) verse numbers
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Adjusting USFM2 output…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Adjusting USFM2 output…" )
             for processedBibleEntry in internalBibleBookData:
                 pseudoMarker, fullText = processedBibleEntry.getMarker(), processedBibleEntry.getFullText()
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, pseudoMarker, repr(fullText) )
@@ -684,7 +710,8 @@ class BibleWriter( InternalBible ):
                                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, repr(fullText), repr(vEnd) )
                                 try: vBridgeStartInt, vBridgeEndInt = int( fullText ), int( vEnd )
                                 except ValueError:
-                                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"toUSFM2: bridge doesn't seem to be integers in {BBB} {vString!r}" )
+                                    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"toUSFM2: bridge doesn't seem to be integers in {BBB} {vString!r}" )
                                     vBridgeStartInt = vBridgeEndInt = None # One of them isn't an integer
                                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, ' ', BBB, repr(vBridgeStartInt), repr(vBridgeEndInt) )
                                 break
@@ -705,7 +732,8 @@ class BibleWriter( InternalBible ):
                         #if (bookUSFM[-2]=='\\' or bookUSFM[-3]=='\\') and bookUSFM[-1]!=' ':
                         if bookUSFM[-1] != ' ':
                             bookUSFM += ' ' # Separate markers by a space e.g., \p\bk Revelation
-                            dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"toUSFM2: Added space to {bookUSFM[-2]!r} before {pseudoMarker!r}" )
+                            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 1:
+                                dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"toUSFM2: Added space to {bookUSFM[-2]!r} before {pseudoMarker!r}" )
                         adjValue += f'\\{pseudoMarker}*' # Do a close marker
                     elif pseudoMarker in ('f','x',): inField = pseudoMarker # Remember these so we can close them later
                     elif pseudoMarker in ('fr','fq','ft','xo',): bookUSFM += ' ' # These go on the same line just separated by spaces and don't get closed
@@ -727,16 +755,19 @@ class BibleWriter( InternalBible ):
             filename = f"{USFMNumber}{USFMAbbreviation.upper()}BibleWriter.usfm" # This seems to be the undocumented standard filename format even though it's so ugly with digits running into each other, e.g., 102SA…
             #if not os.path.exists( USFMOutputFolder ): os.makedirs( USFMOutputFolder )
             filepath = os.path.join( outputFolderpath, BibleOrgSysGlobals.makeSafeFilename( filename ) )
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, f'  toUSFM2: Writing {filepath!r}…' )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, f'  toUSFM2: Writing {filepath!r}…' )
             with open( filepath, 'wt', newline='\r\n', encoding='utf-8' ) as myFile: # Use Windows newline endings for bookUSFM
                 myFile.write( bookUSFM )
 
         if ignoredMarkers:
             logger.info( f"toUSFM: Ignored markers were {ignoredMarkers}" )
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  WARNING: Ignored toUSFM2 markers were {ignoredMarkers}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  WARNING: Ignored toUSFM2 markers were {ignoredMarkers}" )
 
         # Now create a zipped collection
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Zipping USFM2 files…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Zipping USFM2 files…" )
         zf = zipfile.ZipFile( os.path.join( outputFolderpath, 'AllUSFM2Files.zip' ), 'w', compression=zipfile.ZIP_DEFLATED )
         for filename in os.listdir( outputFolderpath ):
             if not filename.endswith( '.zip' ):
@@ -744,7 +775,8 @@ class BibleWriter( InternalBible ):
                 zf.write( filepath, filename ) # Save in the archive without the path
         zf.close()
         # Now create the gzipped file
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  GZipping USFM2 files…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, "  GZipping USFM2 files…" )
         tar = tarfile.open( os.path.join( outputFolderpath, 'AllUSFM2Files.gzip' ), 'w:gz' )
         for filename in os.listdir( outputFolderpath ):
             if filename.endswith( '.usfm' ):
@@ -752,7 +784,8 @@ class BibleWriter( InternalBible ):
                 tar.add( filepath, arcname=filename, recursive=False )
         tar.close()
         # Now create the bz2 file
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  BZipping USFM2 files…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, "  BZipping USFM2 files…" )
         tar = tarfile.open( os.path.join( outputFolderpath, 'AllUSFM2Files.bz2' ), 'w:bz2' )
         for filename in os.listdir( outputFolderpath ):
             if filename.endswith( '.usfm' ):
@@ -761,7 +794,8 @@ class BibleWriter( InternalBible ):
         tar.close()
 
         if BibleOrgSysGlobals.maxProcesses > 1:
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  BibleWriter.toUSFM2 finished successfully." )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  BibleWriter.toUSFM2 finished successfully." )
         return True
     # end of BibleWriter.toUSFM2
 
@@ -773,7 +807,8 @@ class BibleWriter( InternalBible ):
 
         NOTE: We use utf-8 encoding and Windows \r\n line endings for writing USFM files.
         """
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Running BibleWriter:toUSFM3…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Running BibleWriter:toUSFM3…" )
         if self.doExtraChecking: assert self.books
         includeEmptyVersesFlag = True
 
@@ -820,7 +855,8 @@ class BibleWriter( InternalBible ):
                     except (KeyError,TypeError): pass # ok, we've got nothing to add
             inField = None
             vBridgeStartInt = vBridgeEndInt = None # For printing missing (bridged) verse numbers
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Adjusting USFM3 output…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Adjusting USFM3 output…" )
             for processedBibleEntry in internalBibleBookData:
                 pseudoMarker, fullText = processedBibleEntry.getMarker(), processedBibleEntry.getFullText()
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, pseudoMarker, repr(fullText) )
@@ -857,7 +893,8 @@ class BibleWriter( InternalBible ):
                                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, repr(fullText), repr(vEnd) )
                                 try: vBridgeStartInt, vBridgeEndInt = int( fullText ), int( vEnd )
                                 except ValueError:
-                                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"toUSFM3: bridge doesn't seem to be integers in {BBB} {vString!r}" )
+                                    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"toUSFM3: bridge doesn't seem to be integers in {BBB} {vString!r}" )
                                     vBridgeStartInt = vBridgeEndInt = None # One of them isn't an integer
                                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, ' ', BBB, repr(vBridgeStartInt), repr(vBridgeEndInt) )
                                 break
@@ -878,7 +915,8 @@ class BibleWriter( InternalBible ):
                         #if (bookUSFM[-2]=='\\' or bookUSFM[-3]=='\\') and bookUSFM[-1]!=' ':
                         if bookUSFM[-1] != ' ':
                             bookUSFM += ' ' # Separate markers by a space e.g., \p\bk Revelation
-                            dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"toUSFM3: Added space to {bookUSFM[-2]!r} before {pseudoMarker!r}" )
+                            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 1:
+                                dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"toUSFM3: Added space to {bookUSFM[-2]!r} before {pseudoMarker!r}" )
                         adjValue += f'\\{pseudoMarker}*' # Do a close marker
                     elif pseudoMarker in ('f','x',): inField = pseudoMarker # Remember these so we can close them later
                     elif pseudoMarker in ('fr','fq','ft','xo',): bookUSFM += ' ' # These go on the same line just separated by spaces and don't get closed
@@ -900,7 +938,8 @@ class BibleWriter( InternalBible ):
             filename = f"{USFMNumber}{USFMAbbreviation.upper()}BibleWriter.usfm" # This seems to be the undocumented standard filename format even though it's so ugly with digits running into each other, e.g., 102SA…
             #if not os.path.exists( USFMOutputFolder ): os.makedirs( USFMOutputFolder )
             filepath = os.path.join( outputFolderpath, BibleOrgSysGlobals.makeSafeFilename( filename ) )
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, f'  toUSFM3: Writing {filepath!r}…' )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, f'  toUSFM3: Writing {filepath!r}…' )
             with open( filepath, 'wt', newline='\r\n', encoding='utf-8' ) as myFile: # Use Windows newline endings for bookUSFM
                 myFile.write( bookUSFM )
 
@@ -909,7 +948,8 @@ class BibleWriter( InternalBible ):
         #     vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + f"WARNING: Ignored toUSFM3 markers were {ignoredMarkers}" )
 
         # Now create a zipped collection
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Zipping USFM3 files…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Zipping USFM3 files…" )
         zf = zipfile.ZipFile( os.path.join( outputFolderpath, 'AllUSFM3Files.zip' ), 'w', compression=zipfile.ZIP_DEFLATED )
         for filename in os.listdir( outputFolderpath ):
             if filename.endswith( '.usfm' ):
@@ -917,7 +957,8 @@ class BibleWriter( InternalBible ):
                 zf.write( filepath, filename ) # Save in the archive without the path
         zf.close()
         # Now create the gzipped file
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  GZipping USFM3 files…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, "  GZipping USFM3 files…" )
         tar = tarfile.open( os.path.join( outputFolderpath, 'AllUSFM3Files.gzip' ), 'w:gz' )
         for filename in os.listdir( outputFolderpath ):
             if filename.endswith( '.usfm' ):
@@ -925,7 +966,8 @@ class BibleWriter( InternalBible ):
                 tar.add( filepath, arcname=filename, recursive=False )
         tar.close()
         # Now create the bz2 file
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  BZipping USFM3 files…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, "  BZipping USFM3 files…" )
         tar = tarfile.open( os.path.join( outputFolderpath, 'AllUSFM3Files.bz2' ), 'w:bz2' )
         for filename in os.listdir( outputFolderpath ):
             if filename.endswith( '.usfm' ):
@@ -934,7 +976,8 @@ class BibleWriter( InternalBible ):
         tar.close()
 
         if BibleOrgSysGlobals.maxProcesses > 1:
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  BibleWriter.toUSFM3 finished successfully." )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  BibleWriter.toUSFM3 finished successfully." )
         return True
     # end of BibleWriter.toUSFM3
 
@@ -944,7 +987,8 @@ class BibleWriter( InternalBible ):
         """
         Adjust the pseudo ESFM and write the ESFM files.
         """
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Running BibleWriter:toESFM…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Running BibleWriter:toESFM…" )
         if self.doExtraChecking: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
@@ -965,13 +1009,15 @@ class BibleWriter( InternalBible ):
             filename = f"{USFMNumber}{USFMAbbreviation.upper()}BibleWriter.ESFM"
             #if not os.path.exists( ESFMOutputFolder ): os.makedirs( ESFMOutputFolder )
             filepath = os.path.join( outputFolderpath, BibleOrgSysGlobals.makeSafeFilename( filename ) )
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, f'  toESFM: Writing {filepath!r}…' )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, f'  toESFM: Writing {filepath!r}…' )
             indentLevel, indentSize =  0, 2
             inField = None
             vBridgeStartInt = vBridgeEndInt = None # For printing missing (bridged) verse numbers
             initialMarkers = [processedBibleEntry.getMarker() for processedBibleEntry in internalBibleBookData[:4]]
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, initialMarkers )
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Adjusting ESFM output…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Adjusting ESFM output…" )
             with open( filepath, 'wt', encoding='utf-8' ) as myFile:
                 if BibleOrgSysGlobals.prependBOMFlag:
                     myFile.write( BibleOrgSysGlobals.BOM )
@@ -986,7 +1032,8 @@ class BibleWriter( InternalBible ):
                         myFile.write( f'\\rem ESFM v0.5 {BBB}\n' )
                 for j, processedBibleEntry in enumerate( internalBibleBookData ):
                     pseudoMarker, value = processedBibleEntry.getMarker(), processedBibleEntry.getFullText()
-                    dPrint( 'Never', DEBUGGING_THIS_MODULE, f"writeESFM {indentLevel=} now {BBB} {j} {pseudoMarker=} {value}" )
+                    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 5:
+                        dPrint( 'Never', DEBUGGING_THIS_MODULE, f"writeESFM {indentLevel=} now {BBB} {j} {pseudoMarker=} {value}" )
                     if j==1 and pseudoMarker=='ide':
                         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Write IDE 1" )
                         myFile.write( '\\ide UTF-8\n' )
@@ -1056,7 +1103,8 @@ class BibleWriter( InternalBible ):
                                 #if (ESFMLine[-2]=='\\' or ESFMLine[-3]=='\\') and ESFMLine[-1]!=' ':
                                 if ESFMLine[-1] != ' ':
                                     ESFMLine += ' ' # Separate markers by a space e.g., \p\bk Revelation
-                                    dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"toESFM: Added space to {ESFMLine[-2]!r} before {pseudoMarker!r}" )
+                                    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 1:
+                                        dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"toESFM: Added space to {ESFMLine[-2]!r} before {pseudoMarker!r}" )
                                 adjValue += f'\\{pseudoMarker}*' # Do a close marker
                             elif pseudoMarker in ('f','x',): inField = pseudoMarker # Remember these so we can close them later
                             elif pseudoMarker in ('fr','fq','ft','xo',): ESFMLine += ' ' # These go on the same line just separated by spaces and don't get closed
@@ -1076,10 +1124,12 @@ class BibleWriter( InternalBible ):
 
         if ignoredMarkers:
             logger.info( f"toESFM: Ignored markers were {ignoredMarkers}" )
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  WARNING: Ignored toESFM markers were {ignoredMarkers}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  WARNING: Ignored toESFM markers were {ignoredMarkers}" )
 
         # Now create a zipped collection
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Zipping ESFM files…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Zipping ESFM files…" )
         zf = zipfile.ZipFile( os.path.join( outputFolderpath, 'AllESFMFiles.zip' ), 'w', compression=zipfile.ZIP_DEFLATED )
         for filename in os.listdir( outputFolderpath ):
             if not filename.endswith( '.zip' ):
@@ -1088,7 +1138,8 @@ class BibleWriter( InternalBible ):
         zf.close()
 
         if BibleOrgSysGlobals.maxProcesses > 1:
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  BibleWriter.toESFM finished successfully." )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  BibleWriter.toESFM finished successfully." )
         return True
     # end of BibleWriter.toESFM
 
@@ -1100,7 +1151,8 @@ class BibleWriter( InternalBible ):
             The format varies, depending on whether or not there are paragraph markers in the text.
             Introductions and several other fields are ignored.
         """
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Running BibleWriter:toText…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Running BibleWriter:toText…" )
         if self.doExtraChecking: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
@@ -1118,12 +1170,14 @@ class BibleWriter( InternalBible ):
         try:
             import bible_organisational_system
             if hasattr(bible_organisational_system, 'exportToText'):
-                vPrint('Normal', DEBUGGING_THIS_MODULE, "  toText: Using Rust bible_organisational_system for parallel plain text export...")
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                    vPrint('Normal', DEBUGGING_THIS_MODULE, "  toText: Using Rust bible_organisational_system for parallel plain text export...")
                 ignoredMarkers = bible_organisational_system.exportToText(self.books, str(outputFolderpath), columnWidth)
                 
                 # Zip the output folders to match Python's expectations
                 for folder in (outputFolderpath, outputFolderpath2):
-                    vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Zipping text files in {folder}…" )
+                    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Zipping text files in {folder}…" )
                     zf = zipfile.ZipFile( os.path.join( folder, 'AllTextFiles.zip' ), 'w', compression=zipfile.ZIP_DEFLATED )
                     for filename in os.listdir( folder ):
                         filepath = os.path.join( folder, filename )
@@ -1133,10 +1187,12 @@ class BibleWriter( InternalBible ):
                 
                 if ignoredMarkers:
                     logger.info( f"toText: Ignored markers were {ignoredMarkers}" )
-                    vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  WARNING: Ignored toText markers were {ignoredMarkers}" )
+                    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  WARNING: Ignored toText markers were {ignoredMarkers}" )
 
                 if BibleOrgSysGlobals.maxProcesses > 1:
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  BibleWriter.toText finished successfully." )
+                    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  BibleWriter.toText finished successfully." )
                 return True
         except ImportError:
             pass
@@ -1147,7 +1203,8 @@ class BibleWriter( InternalBible ):
             """
             filename = f"BOS-BibleWriter-{BBB}.txt"
             filepath = os.path.join( wtfOutputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, f'  toText: Writing {filepath!r}…' )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, f'  toText: Writing {filepath!r}…' )
             textBuffer = ''
             with open( filepath, 'wt', encoding='utf-8' ) as myFile:
                 if withBOMFlag:
@@ -1198,7 +1255,8 @@ class BibleWriter( InternalBible ):
                             #.format( entry.getMarker(), entry.getOriginalMarker(), entry.getAdjustedText(), entry.getCleanText(), entry.getExtras() ) )
 
             # Now create a zipped collection
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Zipping text files…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Zipping text files…" )
             zf = zipfile.ZipFile( os.path.join( wtfOutputFolder, 'AllTextFiles.zip' ), 'w', compression=zipfile.ZIP_DEFLATED )
             for filename in os.listdir( wtfOutputFolder ):
                 if not filename.endswith( '.zip' ):
@@ -1215,10 +1273,12 @@ class BibleWriter( InternalBible ):
 
         if ignoredMarkers:
             logger.info( f"toText: Ignored markers were {ignoredMarkers}" )
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  WARNING: Ignored toText markers were {ignoredMarkers}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  WARNING: Ignored toText markers were {ignoredMarkers}" )
 
         if BibleOrgSysGlobals.maxProcesses > 1:
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  BibleWriter.toText finished successfully." )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  BibleWriter.toText finished successfully." )
         return True
     # end of BibleWriter.toText
 
@@ -1228,7 +1288,8 @@ class BibleWriter( InternalBible ):
         """
         Write the pseudo USFM out into some simple verse-per-line formats.
         """
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Running BibleWriter:toVPL…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Running BibleWriter:toVPL…" )
         if self.doExtraChecking: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
@@ -1256,7 +1317,8 @@ class BibleWriter( InternalBible ):
 
                 filename = f"BOS-BibleWriter-{bookName}.txt"
                 filepath = os.path.join( thisOutputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
-                vPrint( 'Info', DEBUGGING_THIS_MODULE, f'  toVPL: Writing {filepath!r}…' )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                    vPrint( 'Info', DEBUGGING_THIS_MODULE, f'  toVPL: Writing {filepath!r}…' )
                 textBuffer = ''
                 with open( filepath, 'wt', encoding='utf-8' ) as myFile:
                     #try: myFile.write(BibleOrgSysGlobals.BOM) # VPL needs the BOM
@@ -1324,10 +1386,12 @@ class BibleWriter( InternalBible ):
             if ignoredMarkers:
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Ignored", ignoredMarkers )
                 logger.info( f"toVPL: Ignored markers were {ignoredMarkers}" )
-                vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + f"WARNING: Ignored toVPL markers were {ignoredMarkers}" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                    vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + f"WARNING: Ignored toVPL markers were {ignoredMarkers}" )
 
             # Now create a zipped collection
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Zipping VPL text files…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Zipping VPL text files…" )
             zf = zipfile.ZipFile( os.path.join( thisOutputFolder, 'AllVPLTextFiles.zip' ), 'w', compression=zipfile.ZIP_DEFLATED )
             for filename in os.listdir( thisOutputFolder ):
                 if not filename.endswith( '.zip' ):
@@ -1336,7 +1400,8 @@ class BibleWriter( InternalBible ):
             zf.close()
 
         if BibleOrgSysGlobals.maxProcesses > 1:
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  BibleWriter.toVPL finished successfully." )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  BibleWriter.toVPL finished successfully." )
         return True
     # end of BibleWriter.toVPL
 
@@ -1347,7 +1412,8 @@ class BibleWriter( InternalBible ):
         Write the Bible data out into GFM markdown format.
             The format varies, depending on whether or not there are paragraph markers in the text.
         """
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Running BibleWriter:toMarkdown…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Running BibleWriter:toMarkdown…" )
         if self.doExtraChecking: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
@@ -1579,9 +1645,12 @@ class BibleWriter( InternalBible ):
                             logger.warning( f"formatMarkdownVerseText: Space before note at end of verse in {BBB} {C}:{V} has been lost" )
                             # No need to adjust adjIndex because the code below still works
                         elif adjIndex<0 or adjIndex>lenT: # The extras don't appear to fit correctly inside the text
-                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"formatMarkdownVerseText: Extras don't fit inside verse at {BBB} {C}:{V}: eI={extraIndex} o={offset} len={len(text)} aI={adjIndex}" )
-                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Verse={text!r}" )
-                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Extras={extras!r}" )
+                            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"formatMarkdownVerseText: Extras don't fit inside verse at {BBB} {C}:{V}: eI={extraIndex} o={offset} len={len(text)} aI={adjIndex}" )
+                            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Verse={text!r}" )
+                            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Extras={extras!r}" )
                         #assert 0 <= adjIndex <= len(verse)
                         #adjText = checkText( extraText, checkLeftovers=False ) # do any general character formatting
                         #if adjText!=extraText: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"processXRefsAndFootnotes: {extraType}@{extraIndex}-{offset}={adjIndex} {extraText!r} now {adjText!r}" )
@@ -1606,7 +1675,8 @@ class BibleWriter( InternalBible ):
                         elif extraType == 'ww':
                             extra = '' # temp
                         else:
-                            dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"__formatMarkdownVerseText.handleExtras: Unexpected {extraType=}" )
+                            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 1:
+                                dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"__formatMarkdownVerseText.handleExtras: Unexpected {extraType=}" )
                             extra = f"--UNKNOWN {extraType} EXTRA--"
                         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "was", verse )
                         if extra:
@@ -1647,7 +1717,8 @@ class BibleWriter( InternalBible ):
 
             if '\\' in text or '<' in text or '>' in text:
                 logger.error( f"formatMarkdownVerseText programming error: unprocessed code in {C!r} from {V!r} at {text} {givenText}:{BBB}" )
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"formatMarkdownVerseText: unprocessed code in {C!r} from {V!r} at {text} {givenText}:{BBB}" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"formatMarkdownVerseText: unprocessed code in {C!r} from {V!r} at {text} {givenText}:{BBB}" )
                 if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: assert False, "We want to stop here"
             return text
         # end of __formatMarkdownVerseText
@@ -1662,7 +1733,8 @@ class BibleWriter( InternalBible ):
 
             filename = f"BOS-BibleWriter-{BBB}.md"
             filepath = os.path.join( outputFolderpath, BibleOrgSysGlobals.makeSafeFilename( filename ) )
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, '  toMarkdown: ' + f"Writing {filepath!r}…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, '  toMarkdown: ' + f"Writing {filepath!r}…" )
             ourGlobals = {}
             ourGlobals['nextFootnoteIndex'] = ourGlobals['nextEndnoteIndex'] = ourGlobals['nextXRefIndex'] = 0
             ourGlobals['footnoteMD'], ourGlobals['endnoteMD'], ourGlobals['xrefMD'] = [], [], []
@@ -1716,10 +1788,12 @@ class BibleWriter( InternalBible ):
 
         if ignoredMarkers:
             logger.info( f"toMarkdown: Ignored markers were {ignoredMarkers}" )
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + f"WARNING: Ignored toMarkdown markers were {ignoredMarkers}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + f"WARNING: Ignored toMarkdown markers were {ignoredMarkers}" )
 
         # Now create a zipped collection
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Zipping markdown files…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Zipping markdown files…" )
         zf = zipfile.ZipFile( os.path.join( outputFolderpath, 'AllMarkdownFiles.zip' ), 'w', compression=zipfile.ZIP_DEFLATED )
         for filename in os.listdir( outputFolderpath ):
             if not filename.endswith( '.zip' ):
@@ -1728,7 +1802,8 @@ class BibleWriter( InternalBible ):
         zf.close()
 
         if BibleOrgSysGlobals.maxProcesses > 1:
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  BibleWriter.toMarkdown finished successfully." )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  BibleWriter.toMarkdown finished successfully." )
         return True
     # end of BibleWriter.toMarkdown
 
@@ -1959,9 +2034,12 @@ class BibleWriter( InternalBible ):
                     logger.warning( f"formatHTMLVerseText: Space before note at end of verse in {BBB} {C}:{V} has been lost" )
                     # No need to adjust adjIndex because the code below still works
                 elif adjIndex<0 or adjIndex>lenT: # The extras don't appear to fit correctly inside the text
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"formatHTMLVerseText: Extras don't fit inside verse at {BBB} {C}:{V}: eI={extraIndex} o={offset} len={len(text)} aI={adjIndex}" )
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Verse={text!r}" )
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Extras={extras!r}" )
+                    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"formatHTMLVerseText: Extras don't fit inside verse at {BBB} {C}:{V}: eI={extraIndex} o={offset} len={len(text)} aI={adjIndex}" )
+                    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Verse={text!r}" )
+                    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Extras={extras!r}" )
                 #assert 0 <= adjIndex <= len(verse)
                 #adjText = checkText( extraText, checkLeftovers=False ) # do any general character formatting
                 #if adjText!=extraText: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"processXRefsAndFootnotes: {extraType}@{extraIndex}-{offset}={adjIndex} {extraText!r} now {adjText!r}" )
@@ -1986,7 +2064,8 @@ class BibleWriter( InternalBible ):
                 elif extraType == 'ww':
                     extra = '' # temp
                 else:
-                    dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"__formatHTMLVerseText.handleExtras: Unexpected {extraType=}" )
+                    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 1:
+                        dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"__formatHTMLVerseText.handleExtras: Unexpected {extraType=}" )
                     extra = f"--UNKNOWN {extraType} EXTRA--"
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "was", verse )
                 adjText = adjText[:adjIndex] + str(extra) + adjText[adjIndex:]
@@ -2036,7 +2115,8 @@ class BibleWriter( InternalBible ):
 
         if '\\' in text:
             logger.error( f"formatHTMLVerseText programming error: unprocessed code in {C!r} from {V!r} at {text} {givenText}:{BBB}" )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"formatHTMLVerseText: unprocessed backslash code in {C!r} from {V!r} at {text} {givenText}:{BBB}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"formatHTMLVerseText: unprocessed backslash code in {C!r} from {V!r} at {text} {givenText}:{BBB}" )
             if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: assert False, "We want to stop here"
         return text
     # end of __formatHTMLVerseText
@@ -2047,7 +2127,8 @@ class BibleWriter( InternalBible ):
         Using settings from the given control file,
             converts the USFM information to UTF-8 HTML files.
         """
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Running BibleWriter:toHTML5…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Running BibleWriter:toHTML5…" )
         if BibleOrgSysGlobals.debugFlag:
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, self )
             assert self.books
@@ -2249,7 +2330,8 @@ class BibleWriter( InternalBible ):
 
 
         def writeHomePage():
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "    Creating HTML5 home/index page…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, "    Creating HTML5 home/index page…" )
             xw = MLWriter( 'index.html', WEBoutputFolder, 'HTML' )
             xw.setHumanReadable()
             xw.start( noAutoXML=True )
@@ -2263,7 +2345,8 @@ class BibleWriter( InternalBible ):
 
 
         def writeAboutPage():
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "    Creating HTML5 about page…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, "    Creating HTML5 about page…" )
             xw = MLWriter( 'about.html', WEBoutputFolder, 'HTML' )
             xw.setHumanReadable()
             xw.start( noAutoXML=True )
@@ -2504,7 +2587,8 @@ class BibleWriter( InternalBible ):
             BOS = BibleOrganisationalSystem( controlDict['PublicationCode'] )
             BRL = BibleReferenceList( BOS, BibleObject=None )
 
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Exporting to HTML5 format…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Exporting to HTML5 format…" )
         suffix = controlDict['HTML5Suffix'] if 'HTML5Suffix' in controlDict else 'html'
         filenameDict = {}
         for BBB in self.books: # Make a list of filenames
@@ -2515,7 +2599,8 @@ class BibleWriter( InternalBible ):
         try:
             import bible_organisational_system
             if hasattr(bible_organisational_system, 'exportToHtml5'):
-                vPrint('Normal', DEBUGGING_THIS_MODULE, "  toHTML5: Using Rust bible_organisational_system for parallel HTML5 export...")
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                    vPrint('Normal', DEBUGGING_THIS_MODULE, "  toHTML5: Using Rust bible_organisational_system for parallel HTML5 export...")
                 book_names_dict = {bkData.BBB: bkData.getAssumedBookNames()[0] for bkData in self}
                 today_str = datetime.today().strftime("%d-%b-%Y")
                 ignored, unhandled = bible_organisational_system.exportToHtml5(
@@ -2537,11 +2622,14 @@ class BibleWriter( InternalBible ):
                 writeAboutPage()
                 if ignoredMarkers:
                     logger.info( f"toHTML5: Ignored markers were {ignoredMarkers}" )
-                    vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + f"WARNING: Ignored toHTML5 markers were {ignoredMarkers}" )
+                    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + f"WARNING: Ignored toHTML5 markers were {ignoredMarkers}" )
                 if unhandledMarkers:
                     logger.warning( f"toHTML5: Unhandled markers were {unhandledMarkers}" )
-                    vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  " + f"WARNING: Unhandled toHTML5 markers were {unhandledMarkers}" )
-                vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Zipping HTML5 files…" )
+                    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  " + f"WARNING: Unhandled toHTML5 markers were {unhandledMarkers}" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                    vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Zipping HTML5 files…" )
                 zf = zipfile.ZipFile( os.path.join( outputFolderpath, 'AllWebFiles.zip' ), 'w', compression=zipfile.ZIP_DEFLATED )
                 for filename in os.listdir( WEBoutputFolder ):
                     if not filename.endswith( '.zip' ):
@@ -2553,7 +2641,8 @@ class BibleWriter( InternalBible ):
                     xw = MLWriter( filenameDict[last_bbb], WEBoutputFolder, 'HTML' )
                     validationResult = xw.validate( validationSchema )
                 if BibleOrgSysGlobals.maxProcesses > 1:
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  BibleWriter.toHTML5 finished successfully." )
+                    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  BibleWriter.toHTML5 finished successfully." )
                 if validationSchema: return validationResult
                 return True
         except ImportError:
@@ -2562,7 +2651,8 @@ class BibleWriter( InternalBible ):
         html5Globals = {}
         if 'HTML5Files' not in controlDict or controlDict['HTML5Files']=='byBook':
             for BBB,bookData in self.books.items(): # Now export the books
-                vPrint( 'Info', DEBUGGING_THIS_MODULE, f"    Exporting {BBB} to HTML5 format…" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                    vPrint( 'Info', DEBUGGING_THIS_MODULE, f"    Exporting {BBB} to HTML5 format…" )
                 xw = MLWriter( filenameDict[BBB], WEBoutputFolder, 'HTML' )
                 xw.setHumanReadable()
                 xw.start( noAutoXML=True )
@@ -2583,13 +2673,16 @@ class BibleWriter( InternalBible ):
 
         if ignoredMarkers:
             logger.info( f"toHTML5: Ignored markers were {ignoredMarkers}" )
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + f"WARNING: Ignored toHTML5 markers were {ignoredMarkers}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + f"WARNING: Ignored toHTML5 markers were {ignoredMarkers}" )
         if unhandledMarkers:
             logger.warning( f"toHTML5: Unhandled markers were {unhandledMarkers}" )
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  " + f"WARNING: Unhandled toHTML5 markers were {unhandledMarkers}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  " + f"WARNING: Unhandled toHTML5 markers were {unhandledMarkers}" )
 
         # Now create a zipped collection
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Zipping HTML5 files…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Zipping HTML5 files…" )
         zf = zipfile.ZipFile( os.path.join( outputFolderpath, 'AllWebFiles.zip' ), 'w', compression=zipfile.ZIP_DEFLATED )
         for filename in os.listdir( WEBoutputFolder ):
             if not filename.endswith( '.zip' ):
@@ -2599,7 +2692,8 @@ class BibleWriter( InternalBible ):
 
         if validationSchema: validationResult = xw.validate( validationSchema ) # Returns a 3-tuple: intCode, logString, errorLogString
         if BibleOrgSysGlobals.maxProcesses > 1:
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  BibleWriter.toHTML5 finished successfully." )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  BibleWriter.toHTML5 finished successfully." )
         if validationSchema: return validationResult # Returns a 3-tuple: intCode, logString, errorLogString
         return True
     # end of BibleWriter.toHTML5
@@ -2648,7 +2742,8 @@ class BibleWriter( InternalBible ):
             index {('Iv0'): 742, ('1v0'): 1412, ('1v3'): 2665, …}
 
         """
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Running BibleWriter:_toBibleDoorText…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Running BibleWriter:_toBibleDoorText…" )
         if self.doExtraChecking: assert self.books
 
         BDDataFormatVersion = 1 # Increment this when the data files / arrays change
@@ -2675,7 +2770,8 @@ class BibleWriter( InternalBible ):
             nonlocal bookText, savedC, savedV, savedText, currentText, sectionCV
 
             if self.doExtraChecking:
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"After {self.abbreviation} {BBB} {C}:{V} '{pseudoMarker}': saving index entry {savedC}:{savedV}—{lastC}:{lastV} @ {len(bookText):,} with sectionCV={sectionCV}" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"After {self.abbreviation} {BBB} {C}:{V} '{pseudoMarker}': saving index entry {savedC}:{savedV}—{lastC}:{lastV} @ {len(bookText):,} with sectionCV={sectionCV}" )
                 for j,line in enumerate( currentText.splitlines() ):
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  {j+1}/ {line}" )
                     assert line.index(paragraphDelimiter) <= 5 # Should start with a paragraph marker, e.g., imte1
@@ -2748,7 +2844,8 @@ class BibleWriter( InternalBible ):
                     if currentText: # start a new section
                         if pseudoMarker=='s1':
                             assert haveSectionHeadingsForBook
-                            vPrint( 'Never', DEBUGGING_THIS_MODULE, "Saving at s1 section heading" )
+                            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 5:
+                                vPrint( 'Never', DEBUGGING_THIS_MODULE, "Saving at s1 section heading" )
                         elif pseudoMarker=='c':
                             assert C=='I' or needToSaveByChapter or BBB=='PRO'
                             if DEBUGGING_THIS_MODULE:
@@ -2835,7 +2932,8 @@ class BibleWriter( InternalBible ):
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "BDText", bookText[:4000] )
             filename = f'{BBB}.{BDDataFormatVersion}.bd.txt'
             filepath = os.path.join( bookOutputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, '  toBDText: ' + f"Writing {filepath!r}…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, '  toBDText: ' + f"Writing {filepath!r}…" )
             with open( filepath, 'wt', encoding='utf-8' ) as myFile:
                 myFile.write( bookText )
 
@@ -2867,20 +2965,24 @@ class BibleWriter( InternalBible ):
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "index", bookIndex )
             filename = f'{BBB}.{BDDataFormatVersion}.bd.idx'
             filepath = os.path.join( bookOutputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, '  toBDText: ' + _(f"Writing {filepath!r}…") )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, '  toBDText: ' + _(f"Writing {filepath!r}…") )
             outputBytes = json.dumps( newBookIndexList, ensure_ascii=False, indent=jsonIndent ).encode( 'utf-8' )
             with open( filepath, 'wb' ) as jsonFile:
                 jsonFile.write( outputBytes )
 
         if ignoredMarkers:
             logger.info( f"_toBibleDoorText: Ignored markers were {ignoredMarkers}" )
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + f"WARNING: Ignored _toBibleDoorText markers were {ignoredMarkers}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + f"WARNING: Ignored _toBibleDoorText markers were {ignoredMarkers}" )
         if unhandledMarkers:
             logger.error( f"_toBibleDoorText: Unhandled markers were {unhandledMarkers}" )
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + _(f"WARNING: Unhandled _toBibleDoorText markers were {unhandledMarkers}") )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + _(f"WARNING: Unhandled _toBibleDoorText markers were {unhandledMarkers}") )
 
         # Now create the bz2 file
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  BZipping BDText files…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, "  BZipping BDText files…" )
         tar = tarfile.open( os.path.join( bookOutputFolder, 'AllBDTextFiles.bz2' ), 'w:bz2' )
         for filename in os.listdir( bookOutputFolder ):
             if filename.endswith( '.bd.txt' ) or filename.endswith( '.bd.idx' ):
@@ -2889,7 +2991,8 @@ class BibleWriter( InternalBible ):
         tar.close()
 
         if BibleOrgSysGlobals.maxProcesses > 1:
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  BibleWriter._toBibleDoorText finished successfully." )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  BibleWriter._toBibleDoorText finished successfully." )
         return True
     # end of BibleWriter._toBibleDoorText
 
@@ -3009,12 +3112,14 @@ class BibleWriter( InternalBible ):
             usageCount[shortString] = 0
             if shortString in codeSet: # check for duplicates
                 logger.critical( f"Duplicate {shortString!r} in compression dict" )
-                dPrint( 'Quiet', DEBUGGING_THIS_MODULE, shortString, codeSet )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 1:
+                    dPrint( 'Quiet', DEBUGGING_THIS_MODULE, shortString, codeSet )
                 assert False, "We want to stop here"
             codeSet.append( shortString )
             if longString in dataSet: # check for duplicates
                 logger.critical( f"Duplicate {longString!r} in compression dict" )
-                dPrint( 'Quiet', DEBUGGING_THIS_MODULE, longString, dataSet )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 1:
+                    dPrint( 'Quiet', DEBUGGING_THIS_MODULE, longString, dataSet )
                 assert False, "We want to stop here"
             dataSet.append( longString )
             if longString != '@':
@@ -3026,14 +3131,17 @@ class BibleWriter( InternalBible ):
         def writeCompressions():
             """
             """
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  Writing compression entries…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  Writing compression entries…" )
             #filepath = os.path.join( outputFolderpath, 'BDHeader.json' )
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, "    _toBibleDoorJSONCHTML " +  f"Exporting index to {compressionDictFilepath}…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, "    _toBibleDoorJSONCHTML " +  f"Exporting index to {compressionDictFilepath}…" )
             outputBytes = json.dumps( BDCompressions, ensure_ascii=False, indent=jsonIndent ).encode( 'utf-8' )
             with open( compressionDictFilepath, 'wb' ) as jsonFile:
                 jsonFile.write( outputBytes )
             checksums[compressionDictFilename] = hashlib.md5(outputBytes).hexdigest()
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"    {len(BDCompressions)} compression entries written." )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, f"    {len(BDCompressions)} compression entries written." )
         # end of _toBibleDoorJSONCHTML.writeCompressions
 
 
@@ -3055,7 +3163,8 @@ class BibleWriter( InternalBible ):
                 result = result.replace( '@', '~~' )
                 usageCount['~~'] += 1
             if '^' in result:
-                dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'have^', entry )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 1:
+                    dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'have^', entry )
                 assert False, "We want to stop here" # Bible Door compression will fail!
             for longString, shortString in reversedCompressions:
                 if longString in result:
@@ -3095,7 +3204,8 @@ class BibleWriter( InternalBible ):
             headerDict['Shareable'] = True
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, headerDict )
 
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " +  f"Exporting BD header to {headerFilepath}…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " +  f"Exporting BD header to {headerFilepath}…" )
             outputBytes = json.dumps( headerDict, ensure_ascii=False, indent=jsonIndent ).encode( 'utf-8' )
             with open( headerFilepath, 'wb' ) as jsonFile:
                 jsonFile.write( outputBytes )
@@ -3108,7 +3218,8 @@ class BibleWriter( InternalBible ):
             After we've written all the other files,
                 we write a json dictionary/map of md5 checksums (written as 32 hex characters in a string)
             """
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " +  f"Exporting BD checksums to {checksumFilepath}…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " +  f"Exporting BD checksums to {checksumFilepath}…" )
             with open( checksumFilepath, 'wt', encoding='utf-8' ) as jsonFile:
                 json.dump( checksums, jsonFile, ensure_ascii=False, indent=jsonIndent )
         # end of _toBibleDoorJSONCHTML.writeChecksums
@@ -3152,7 +3263,8 @@ class BibleWriter( InternalBible ):
                 if bos_books_codes_py.is_old_testament_nr(BBB) or bos_books_codes_py.is_new_testament_nr(BBB) or bos_books_codes_py.is_deuterocanon_nr(BBB):
                     doneAny = doneBooks = True
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, divisionData )
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + f"Exporting division names to {divisionNamesFilepath}…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + f"Exporting division names to {divisionNamesFilepath}…" )
             outputBytes = json.dumps( divisionData, ensure_ascii=False, indent=jsonIndent ).encode( 'utf-8' )
             with open( divisionNamesFilepath, 'wb' ) as jsonFile:
                 jsonFile.write( outputBytes )
@@ -3182,7 +3294,8 @@ class BibleWriter( InternalBible ):
                 if bos_books_codes_py.is_old_testament_nr(BBB) or bos_books_codes_py.is_new_testament_nr(BBB) or bos_books_codes_py.is_deuterocanon_nr(BBB):
                     doneAny = doneBooks = True
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, bkData )
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + f"Exporting book names to {bookNamesFilepath}…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + f"Exporting book names to {bookNamesFilepath}…" )
             outputBytes = json.dumps( bkData, ensure_ascii=False, indent=jsonIndent ).encode( 'utf-8' )
             with open( bookNamesFilepath, 'wb' ) as jsonFile:
                 jsonFile.write( outputBytes )
@@ -3199,7 +3312,8 @@ class BibleWriter( InternalBible ):
                 """
                 """
                 filepath = os.path.join( chapterOutputFolderJSON, f'{BBB}_{chapter}.{BDDataFormatVersion}.json' )
-                vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + f"Exporting {BBB}_{chapter} chapter to {filepath}…" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                    vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + f"Exporting {BBB}_{chapter} chapter to {filepath}…" )
                 with open( filepath, 'wt', encoding='utf-8' ) as jsonFile:
                     json.dump( cData, jsonFile, ensure_ascii=False, indent=jsonIndent )
             # end of writeBDChapter
@@ -3233,7 +3347,8 @@ class BibleWriter( InternalBible ):
 
             filename = f'{BBB}.{BDDataFormatVersion}.json'
             filepath = os.path.join( bookOutputFolderJSON, filename )
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + f"Exporting {BBB} book to {filepath}…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + f"Exporting {BBB} book to {filepath}…" )
             outputBytes = json.dumps( outputData, ensure_ascii=False, indent=jsonIndent ).encode( 'utf-8' )
             with open( filepath, 'wb' ) as jsonFile:
                 jsonFile.write( outputBytes )
@@ -3272,7 +3387,8 @@ class BibleWriter( InternalBible ):
                     ix = sectionHTML.index( '\\' )
                     segment = sectionHTML[ix-10 if ix>10 else 0 : ix+30]
                     logger.error( f"_toBibleDoorJSONCHTML programming error: unprocessed backslash code in {sectionBBB} {sectionC}:{sectionV} section: …{segment!r}…" )
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"_toBibleDoorJSONCHTML: unprocessed backslash code in {sectionBBB} {sectionC}:{sectionV} section: …{segment!r}…" )
+                    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"_toBibleDoorJSONCHTML: unprocessed backslash code in {sectionBBB} {sectionC}:{sectionV} section: …{segment!r}…" )
                     if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: assert False, "We want to stop here"
                 HTMLSections.append( sectionHTML )
                 indexEntry1 = sectionBCV[0],sectionBCV[1],sectionBCV[2],lastC,lastV,uncompressedFileOffset,len(sectionHTML)
@@ -3646,7 +3762,8 @@ class BibleWriter( InternalBible ):
                 completeHTMLString += sectionHTML
             filename = destinationZippedHTMLFilenameTemplate.format( BBB )
             filepath = destinationZippedHTMLFilepathTemplate.format( BBB )
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Zipping {filename} HTML file…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Zipping {filename} HTML file…" )
             zf = zipfile.ZipFile( filepath, 'w', compression=zipfile.ZIP_DEFLATED )
             zf.writestr( filename, completeHTMLString )
             zf.close()
@@ -3685,7 +3802,8 @@ class BibleWriter( InternalBible ):
         writeBDBookNames()
 
         if uncompressedHTMLIndex: # Sort the main uncompressed index and write it
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  Fixing and writing main uncompressed index…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  Fixing and writing main uncompressed index…" )
 
             def toInt( CVstring ):
                 try: return int( CVstring )
@@ -3706,14 +3824,16 @@ class BibleWriter( InternalBible ):
             #compressedHTMLIndex = sorted(compressedHTMLIndex)
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"    _toBibleDoorJSONCHTML: {len(newHTMLIndex)} index entries created." )
             #filepath = os.path.join( outputFolderpath, 'BDHeader.json' )
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, "    _toBibleDoorJSONCHTML: " +  f"Exporting uncompressed index to {uncompressedIndexFilepath}…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, "    _toBibleDoorJSONCHTML: " +  f"Exporting uncompressed index to {uncompressedIndexFilepath}…" )
             outputBytes = json.dumps( newHTMLIndex, ensure_ascii=False, indent=jsonIndent ).encode( 'utf-8' )
             with open( uncompressedIndexFilepath, 'wb' ) as jsonFile:
                 jsonFile.write( outputBytes )
             checksums[uncompressedIndexFilename] = hashlib.md5(outputBytes).hexdigest()
 
         if compressedHTMLIndex: # Sort the main uncompressed index and write it
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  Fixing and writing main compressed index…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  Fixing and writing main compressed index…" )
 
             def toInt( CVstring ):
                 try: return int( CVstring )
@@ -3734,7 +3854,8 @@ class BibleWriter( InternalBible ):
             #compressedHTMLIndex = sorted(compressedHTMLIndex)
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"    _toBibleDoorJSONCHTML: {len(newHTMLIndex)} index entries created." )
             #filepath = os.path.join( outputFolderpath, 'BDHeader.json' )
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, "    _toBibleDoorJSONCHTML: " +  f"Exporting compressed index to {compressedIndexFilepath}…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, "    _toBibleDoorJSONCHTML: " +  f"Exporting compressed index to {compressedIndexFilepath}…" )
             outputBytes = json.dumps( newHTMLIndex, ensure_ascii=False, indent=jsonIndent ).encode( 'utf-8' )
             with open( compressedIndexFilepath, 'wb' ) as jsonFile:
                 jsonFile.write( outputBytes )
@@ -3745,10 +3866,12 @@ class BibleWriter( InternalBible ):
 
         if ignoredMarkers:
             logger.info( f"_toBibleDoorJSONCHTML: Ignored markers were {ignoredMarkers}" )
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + f"WARNING: Ignored _toBibleDoorJSONCHTML markers were {ignoredMarkers}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + f"WARNING: Ignored _toBibleDoorJSONCHTML markers were {ignoredMarkers}" )
         if unhandledMarkers:
             logger.warning( f"_toBibleDoorJSONCHTML: Unhandled markers were {unhandledMarkers}" )
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  " + f"WARNING: Unhandled _toBibleDoorJSONCHTML markers were {unhandledMarkers}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  " + f"WARNING: Unhandled _toBibleDoorJSONCHTML markers were {unhandledMarkers}" )
 
         # Display compression info
         if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag:
@@ -3776,7 +3899,8 @@ class BibleWriter( InternalBible ):
         """
         Adjust the pseudo USFM and write the customized USFM files for the BibleDoor (Android) app.
         """
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Running BibleWriter:toBibleDoor…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Running BibleWriter:toBibleDoor…" )
         if self.doExtraChecking: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
@@ -3790,7 +3914,8 @@ class BibleWriter( InternalBible ):
         self._toBibleDoorText( outputFolderpath ) # Do our newer customised text outputs (used by the BibleDoor app)
 
         if BibleOrgSysGlobals.maxProcesses > 1:
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  BibleWriter.toBibleDoor finished successfully." )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  BibleWriter.toBibleDoor finished successfully." )
         return True
     # end of BibleWriter.toBibleDoor
 
@@ -3806,7 +3931,8 @@ class BibleWriter( InternalBible ):
         """
         from BibleOrgSys.Formats.EasyWorshipBible import createEasyWorshipBible
 
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Running BibleWriter:toEasyWorshipBible…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Running BibleWriter:toEasyWorshipBible…" )
         if self.doExtraChecking: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
@@ -3827,7 +3953,8 @@ class BibleWriter( InternalBible ):
 
         If a schema is given (either a path or URL), the XML output files are validated.
         """
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Running BibleWriter:toUSX2XML…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Running BibleWriter:toUSX2XML…" )
         logging.critical( "toUSX2XML is DEPRECATED and will soon be removed!!!" )
         if self.doExtraChecking: assert self.books
 
@@ -3858,7 +3985,8 @@ class BibleWriter( InternalBible ):
                 """
                 if not original_text: return ''
                 if '\\' not in original_text: return original_text
-                vPrint( 'Never', DEBUGGING_THIS_MODULE, "toUSX2XML:hITM4USX:", BBB, C, V, marker, "'"+original_text+"'" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 5:
+                    vPrint( 'Never', DEBUGGING_THIS_MODULE, "toUSX2XML:hITM4USX:", BBB, C, V, marker, "'"+original_text+"'" )
                 markerList = sorted( usfm_markers_py.get_marker_list_from_text( original_text ),
                                             key=lambda s: -len(s[4])) # Sort by longest characterContext first (maximum nesting)
                 # for insideMarker, iMIndex, nextSignificantChar, fullMarker, characterContext, endIndex, markerField in markerList: # check for internal markers
@@ -4107,7 +4235,8 @@ class BibleWriter( InternalBible ):
                                         logger.warning( f"toUSX2XML: {V!r} closing tag doesn't match in {firstToken} {BBB}:{C} footnote {USXfootnote!r}" )
                                     else:
                                         logger.critical( f"toUSX2XML: Unprocessed {V!r} token in {firstToken} {BBB}:{C} footnote {USXfootnote!r}" )
-                                        dPrint( 'Never', DEBUGGING_THIS_MODULE, "toUSX2XML USFMAllExpandedCharacterMarkers", BibleOrgSysGlobals.USFMAllExpandedCharacterMarkers )
+                                        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 5:
+                                            dPrint( 'Never', DEBUGGING_THIS_MODULE, "toUSX2XML USFMAllExpandedCharacterMarkers", BibleOrgSysGlobals.USFMAllExpandedCharacterMarkers )
                                         if self.doExtraChecking: assert False, "We want to stop here"
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  ", frOpen, fCharOpen, fTextOpen )
                     if frOpen:
@@ -4136,9 +4265,12 @@ class BibleWriter( InternalBible ):
                             logger.warning( f"toUSX2XML: Space before note at end of verse in {BBB} {C}:{V} has been lost" )
                             # No need to adjust adjIndex because the code below still works
                         elif adjIndex<0 or adjIndex>lenT: # The extras don't appear to fit correctly inside the text
-                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"toUSX2XML: Extras don't fit inside verse at {BBB} {C}:{V}: eI={extraIndex} o={offset} len={len(text)} aI={adjIndex}" )
-                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Verse={text!r}" )
-                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Extras={extras!r}" )
+                            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"toUSX2XML: Extras don't fit inside verse at {BBB} {C}:{V}: eI={extraIndex} o={offset} len={len(text)} aI={adjIndex}" )
+                            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Verse={text!r}" )
+                            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Extras={extras!r}" )
                         #assert 0 <= adjIndex <= len(verse)
                         #adjText = checkText( extraText, checkLeftovers=False ) # do any general character formatting
                         #if adjText!=extraText: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"processXRefsAndFootnotes: {extraType}@{extraIndex}-{offset}={adjIndex} {extraText!r} now {adjText!r}" )
@@ -4162,7 +4294,8 @@ class BibleWriter( InternalBible ):
                         elif extraType == 'ww':
                             extra = '' # temp
                         else:
-                            dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"toUSX2XML.handleNotes: Unexpected {extraType=}" )
+                            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 1:
+                                dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"toUSX2XML.handleNotes: Unexpected {extraType=}" )
                             extra = f"--UNKNOWN {extraType} EXTRA--"
                         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "was", verse )
                         adjText = adjText[:adjIndex] + str(extra) + adjText[adjIndex:]
@@ -4300,7 +4433,8 @@ class BibleWriter( InternalBible ):
             BOS = BibleOrganisationalSystem( controlDict['PublicationCode'] )
             BRL = BibleReferenceList( BOS, BibleObject=None )
 
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Exporting to USX format…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Exporting to USX format…" )
         #USXOutputFolder = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( "USX output/' )
         #if not os.access( USXOutputFolder, os.F_OK ): os.mkdir( USXOutputFolder ) # Make the empty folder if there wasn't already one there
 
@@ -4319,16 +4453,20 @@ class BibleWriter( InternalBible ):
 
         if ignoredMarkers:
             logger.info( f"toUSX2XML: Ignored markers were {ignoredMarkers}" )
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + f"ERROR: Ignored toUSX2XML markers were {ignoredMarkers}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + f"ERROR: Ignored toUSX2XML markers were {ignoredMarkers}" )
         if unhandledMarkers:
             logger.error( f"toUSX2XML: Unhandled markers were {unhandledMarkers}" )
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  " + f"ERROR: Unhandled toUSX2XML markers were {unhandledMarkers}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  " + f"ERROR: Unhandled toUSX2XML markers were {unhandledMarkers}" )
         if unhandledBooks:
             logger.warning( f"toUSX2XML: Unhandled books were {unhandledBooks}" )
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  " + f"WARNING: Unhandled toUSX2XML books were {unhandledBooks}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  " + f"WARNING: Unhandled toUSX2XML books were {unhandledBooks}" )
 
         # Now create a zipped collection
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Zipping USX2 files…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Zipping USX2 files…" )
         zf = zipfile.ZipFile( os.path.join( outputFolderpath, 'AllUSX2Files.zip' ), 'w', compression=zipfile.ZIP_DEFLATED )
         for filename in os.listdir( filesFolder ):
             #if not filename.endswith( '.zip' ):
@@ -4336,7 +4474,8 @@ class BibleWriter( InternalBible ):
             zf.write( filepath, filename ) # Save in the archive without the path
         zf.close()
         # Now create the gzipped file
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  GZipping USX2 files…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, "  GZipping USX2 files…" )
         tar = tarfile.open( os.path.join( outputFolderpath, 'AllUSX2Files.gzip' ), 'w:gz' )
         for filename in os.listdir( filesFolder ):
             if filename.endswith( '.usx' ):
@@ -4344,7 +4483,8 @@ class BibleWriter( InternalBible ):
                 tar.add( filepath, arcname=filename, recursive=False )
         tar.close()
         # Now create the bz2 file
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  BZipping USX2 files…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, "  BZipping USX2 files…" )
         tar = tarfile.open( os.path.join( outputFolderpath, 'AllUSX2Files.bz2' ), 'w:bz2' )
         for filename in os.listdir( filesFolder ):
             if filename.endswith( '.usx' ):
@@ -4353,7 +4493,8 @@ class BibleWriter( InternalBible ):
         tar.close()
 
         if BibleOrgSysGlobals.maxProcesses > 1:
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  BibleWriter.toUSX2XML finished successfully." )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  BibleWriter.toUSX2XML finished successfully." )
         if validationSchema: return validationResults
         return True
     # end of BibleWriter.toUSX2XML
@@ -4375,7 +4516,8 @@ class BibleWriter( InternalBible ):
         """
         from BibleOrgSys.Formats.USXXMLBible import createUSXXMLBible
 
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Running BibleWriter:toUSXXML…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Running BibleWriter:toUSXXML…" )
         if self.doExtraChecking: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
@@ -4403,7 +4545,8 @@ class BibleWriter( InternalBible ):
 
         If a schema is given (either a path or URL), the XML output files are validated.
         """
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Running BibleWriter:toUSFXXML…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Running BibleWriter:toUSFXXML…" )
         if self.doExtraChecking: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
@@ -4431,7 +4574,8 @@ class BibleWriter( InternalBible ):
                 """
                 if not original_text: return ''
                 if '\\' not in original_text: return original_text
-                vPrint( 'Never', DEBUGGING_THIS_MODULE, "toUSFXXML:hITM4USFX:", BBB, C, V, marker, "'"+original_text+"'" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 5:
+                    vPrint( 'Never', DEBUGGING_THIS_MODULE, "toUSFXXML:hITM4USFX:", BBB, C, V, marker, "'"+original_text+"'" )
                 markerList = sorted( usfm_markers_py.get_marker_list_from_text( original_text ),
                                             key=lambda s: -len(s[4])) # Sort by longest characterContext first (maximum nesting)
                 for insideMarker, iMIndex, nextSignificantChar, fullMarker, characterContext, endIndex, markerField in markerList: # check for internal markers
@@ -4652,9 +4796,12 @@ class BibleWriter( InternalBible ):
                             logger.warning( f"toUSFXXML: Space before note at end of verse in {BBB} {C}:{V} has been lost" )
                             # No need to adjust adjIndex because the code below still works
                         elif adjIndex<0 or adjIndex>lenT: # The extras don't appear to fit correctly inside the text
-                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"toUSFXXML: Extras don't fit inside verse at {BBB} {C}:{V}: eI={extraIndex} o={offset} len={len(text)} aI={adjIndex}" )
-                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Verse={text!r}" )
-                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Extras={extras!r}" )
+                            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"toUSFXXML: Extras don't fit inside verse at {BBB} {C}:{V}: eI={extraIndex} o={offset} len={len(text)} aI={adjIndex}" )
+                            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Verse={text!r}" )
+                            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Extras={extras!r}" )
                         #assert 0 <= adjIndex <= len(verse)
                         #adjText = checkText( extraText, checkLeftovers=False ) # do any general character formatting
                         #if adjText!=extraText: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"processXRefsAndFootnotes: {extraType}@{extraIndex}-{offset}={adjIndex} {extraText!r} now {adjText!r}" )
@@ -4678,7 +4825,8 @@ class BibleWriter( InternalBible ):
                         elif extraType == 'ww':
                             extra = '' # temp
                         else:
-                            dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"toUSFXXML.handleNotes: Unexpected {extraType=}" )
+                            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 1:
+                                dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"toUSFXXML.handleNotes: Unexpected {extraType=}" )
                             extra = f"--UNKNOWN {extraType} EXTRA--"
                         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "was", verse )
                         adjText = adjText[:adjIndex] + str(extra) + adjText[adjIndex:]
@@ -4800,7 +4948,8 @@ class BibleWriter( InternalBible ):
             BOS = BibleOrganisationalSystem( controlDict['PublicationCode'] )
             BRL = BibleReferenceList( BOS, BibleObject=None )
 
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Exporting to USFX XML format…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Exporting to USFX XML format…" )
         #USFXOutputFolder = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( "USFX output/' )
         #if not os.access( USFXOutputFolder, os.F_OK ): os.mkdir( USFXOutputFolder ) # Make the empty folder if there wasn't already one there
 
@@ -4825,23 +4974,28 @@ class BibleWriter( InternalBible ):
 
         if ignoredMarkers:
             logger.info( f"toUSFXXML: Ignored markers were {ignoredMarkers}" )
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + f"WARNING: Ignored toUSFXXML markers were {ignoredMarkers}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + f"WARNING: Ignored toUSFXXML markers were {ignoredMarkers}" )
         if unhandledMarkers:
             logger.warning( f"toUSFXXML: Unhandled markers were {unhandledMarkers}" )
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  " + f"WARNING: Unhandled toUSFXXML markers were {unhandledMarkers}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  " + f"WARNING: Unhandled toUSFXXML markers were {unhandledMarkers}" )
         if unhandledBooks:
             logger.warning( f"toUSFXXML: Unhandled books were {unhandledBooks}" )
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  " + f"WARNING: Unhandled toUSFXXML books were {unhandledBooks}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  " + f"WARNING: Unhandled toUSFXXML books were {unhandledBooks}" )
 
         # Now create a zipped version
         filepath = os.path.join( outputFolderpath, filename )
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Zipping {filename} USFX file…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Zipping {filename} USFX file…" )
         zf = zipfile.ZipFile( filepath+'.zip', 'w', compression=zipfile.ZIP_DEFLATED )
         zf.write( filepath, filename )
         zf.close()
 
         if BibleOrgSysGlobals.maxProcesses > 1:
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  BibleWriter.toUSFXXML finished successfully." )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  BibleWriter.toUSFXXML finished successfully." )
         if validationSchema: return validationResults # Returns a 3-tuple: intCode, logString, errorLogString
         return True
     # end of BibleWriter.toUSFXXML
@@ -4852,7 +5006,8 @@ class BibleWriter( InternalBible ):
         """
         Writes a UTF-8 Sword locale file containing the book names and abbreviations.
         """
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Writing Sword locale file {localeFilepath}…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Writing Sword locale file {localeFilepath}…" )
 
         with open( localeFilepath, 'wt', encoding='utf-8' ) as SwLocFile:
             SwLocFile.write( f'[Meta]\nName={name}\n' )
@@ -4926,7 +5081,8 @@ class BibleWriter( InternalBible ):
                             SwLocFile.write( f'{vernacularAbbrev}={swordAbbrev}\n' )
                             abbreviationList.append( vernacularAbbrev )
 
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  Wrote {len(bookList)} book names and {len(abbreviationList)} abbreviations." )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  Wrote {len(bookList)} book names and {len(abbreviationList)} abbreviations." )
     # end of BibleWriter._writeSwordLocale
 
 
@@ -4940,7 +5096,8 @@ class BibleWriter( InternalBible ):
 
         TODO: We're not consistent about handling errors: sometimes we use assert, sometime raise (both of which abort the program), and sometimes log errors or warnings.
         """
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Running BibleWriter:toOSISXML…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Running BibleWriter:toOSISXML…" )
         if self.doExtraChecking: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
@@ -5205,9 +5362,12 @@ class BibleWriter( InternalBible ):
                             logger.warning( f"toOSIS: Space before note at end of verse in {toOSISGlobals['verseRef']} has been lost" )
                             # No need to adjust adjIndex because the code below still works
                         elif adjIndex<0 or adjIndex>lenV: # The extras don't appear to fit correctly inside the verse
-                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"toOSIS: Extras don't fit inside verse at {toOSISGlobals['verseRef']}: eI={extraIndex} o={offset} len={len(verse)} aI={adjIndex}" )
-                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Verse={verse!r}" )
-                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Extras={extras!r}" )
+                            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"toOSIS: Extras don't fit inside verse at {toOSISGlobals['verseRef']}: eI={extraIndex} o={offset} len={len(verse)} aI={adjIndex}" )
+                            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Verse={verse!r}" )
+                            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Extras={extras!r}" )
                         #assert 0 <= adjIndex <= len(verse)
                         adjText = checkOSISText( extraText, checkLeftovers=False ) # do any general character formatting on the notes
                         #if adjText!=extraText: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"processXRefsAndFootnotes: {extraType}@{extraIndex}-{offset}={adjIndex} {extraText!r} now {adjText!r}" )
@@ -5231,7 +5391,8 @@ class BibleWriter( InternalBible ):
                         elif extraType == 'ww':
                             extra = '' # temp
                         else:
-                            dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"toOSISXML.handleNotes: Unexpected {extraType=}" )
+                            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 1:
+                                dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"toOSISXML.handleNotes: Unexpected {extraType=}" )
                             extra = f"--UNKNOWN {extraType} EXTRA--"
                         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "was", verse )
                         verse = verse[:adjIndex] + str(extra) + verse[adjIndex:]
@@ -5599,7 +5760,8 @@ class BibleWriter( InternalBible ):
 
         # Start of main toOSIS code
         if 'osisFiles' not in controlDict or controlDict['osisFiles']=='byBook': # Write an individual XML file for each book
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Exporting individually to OSIS XML format…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Exporting individually to OSIS XML format…" )
             validationResults = ( 0, '', '', ) # xmllint result code, program output, error output
             for BBB,bookData in self.books.items(): # Process each Bible book
                 try: fn = controlDict['osisOutputFilename'].replace( '_Bible', f"_Book-{BBB}" )
@@ -5631,7 +5793,8 @@ class BibleWriter( InternalBible ):
                         if validationResults[1]: veFile.write( validationResults[1] + '\n\n\n' ) # Normally empty
                         if validationResults[2]: veFile.write( validationResults[2] )
         elif controlDict['osisFiles']=='byBible': # write all the books into a single file
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Exporting to OSIS XML format…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Exporting to OSIS XML format…" )
             filename = BibleOrgSysGlobals.makeSafeFilename( controlDict['osisOutputFilename'] )
             xw = MLWriter( filename, outputFolderpath )
             xw.setHumanReadable( 'All' ) # Can be set to 'All', 'Header', or 'None' — one output file went from None/Header=4.7MB to All=5.7MB
@@ -5648,7 +5811,8 @@ class BibleWriter( InternalBible ):
             xw.close()
             # Now create a zipped version
             filepath = os.path.join( outputFolderpath, filename )
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Zipping {filename} OSIS file…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Zipping {filename} OSIS file…" )
             zf = zipfile.ZipFile( filepath+'.zip', 'w', compression=zipfile.ZIP_DEFLATED )
             zf.write( filepath, filename )
             zf.close()
@@ -5658,16 +5822,21 @@ class BibleWriter( InternalBible ):
 
         if ignoredMarkers:
             logger.info( f"toOSISXML: Ignored markers were {ignoredMarkers}" )
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + f"ERROR: Ignored toOSISXML markers were {ignoredMarkers}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + f"ERROR: Ignored toOSISXML markers were {ignoredMarkers}" )
         if unhandledMarkers:
             logger.error( f"toOSISXML: Unhandled markers were {unhandledMarkers}" )
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  " + f"ERROR: Unhandled toOSISXML markers were {unhandledMarkers}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  " + f"ERROR: Unhandled toOSISXML markers were {unhandledMarkers}" )
         if unhandledBooks:
             logger.warning( f"toOSISXML: Unhandled books were {unhandledBooks}" )
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  " + f"WARNING: Unhandled toOSISXML books were {unhandledBooks}" )
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "Need to find and look at an example where a new chapter isn't a new <p> to see how chapter eIDs should be handled there" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  " + f"WARNING: Unhandled toOSISXML books were {unhandledBooks}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, "Need to find and look at an example where a new chapter isn't a new <p> to see how chapter eIDs should be handled there" )
         if BibleOrgSysGlobals.maxProcesses > 1:
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  BibleWriter.toOSISXML finished successfully." )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  BibleWriter.toOSISXML finished successfully." )
         if validationSchema: return validationResults
         return True
     # end of BibleWriter.toOSISXML
@@ -5683,7 +5852,8 @@ class BibleWriter( InternalBible ):
             and at http://www.bgfdb.de/zefaniaxml/bml/
             but more fields can be discovered by looking at downloaded files.
         """
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Running BibleWriter:toZefaniaXML…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Running BibleWriter:toZefaniaXML…" )
         if self.doExtraChecking: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
@@ -5770,11 +5940,13 @@ class BibleWriter( InternalBible ):
                             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, repr(value), repr(vEnd) )
                             try: vBridgeStartInt = int( value )
                             except ValueError: # Not an integer
-                                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"toZefaniaXML1: bridge doesn't seem to be integers in {BBB} {verseNumberString!r}" )
+                                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"toZefaniaXML1: bridge doesn't seem to be integers in {BBB} {verseNumberString!r}" )
                                 vBridgeStartInt = value
                             try: vBridgeEndInt = int( vEnd )
                             except ValueError: # Not an integer
-                                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"toZefaniaXML1: bridge doesn't seem to be integers in {BBB} {verseNumberString!r}" )
+                                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"toZefaniaXML1: bridge doesn't seem to be integers in {BBB} {verseNumberString!r}" )
                                 vBridgeEndInt = vEnd
                             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f' Z-VB {BBB} {C}:{V} {vBridgeStartInt!r} {vBridgeEndInt!r}' )
                             return vBridgeStartInt, vBridgeEndInt
@@ -5994,9 +6166,12 @@ class BibleWriter( InternalBible ):
                             logger.warning( f"toZefania: Space before note at end of verse in {toZefGlobals['verseRef']} has been lost" )
                             # No need to adjust adjIndex because the code below still works
                         elif adjIndex<0 or adjIndex>lenV: # The extras don't appear to fit correctly inside the verse
-                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"toZefania: Extras don't fit inside verse at {toZefGlobals['verseRef']}: eI={extraIndex} o={offset} len={len(verse)} aI={adjIndex}" )
-                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Verse={verse!r}" )
-                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Extras={extras!r}" )
+                            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"toZefania: Extras don't fit inside verse at {toZefGlobals['verseRef']}: eI={extraIndex} o={offset} len={len(verse)} aI={adjIndex}" )
+                            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Verse={verse!r}" )
+                            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Extras={extras!r}" )
                         #assert 0 <= adjIndex <= len(verse)
                         adjText = checkZefaniaText( extraText, checkLeftovers=False ) # do any general character formatting on the notes
                         #if adjText!=extraText: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"processZefXRefsAndFootnotes: {extraType}@{extraIndex}-{offset}={adjIndex} {extraText!r} now {adjText!r}" )
@@ -6020,7 +6195,8 @@ class BibleWriter( InternalBible ):
                         elif extraType == 'ww':
                             extra = '' # temp
                         else:
-                            dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"toZefaniaXML.handleNotes: Unexpected {extraType=}" )
+                            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 1:
+                                dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"toZefaniaXML.handleNotes: Unexpected {extraType=}" )
                             extra = f"--UNKNOWN {extraType} EXTRA--"
                         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "was", verse )
                         verse = verse[:adjIndex] + str(extra) + verse[adjIndex:]
@@ -6129,7 +6305,8 @@ class BibleWriter( InternalBible ):
             BOS = BibleOrganisationalSystem( controlDict['PublicationCode'] )
             BRL = BibleReferenceList( BOS, BibleObject=None )
 
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Exporting to Zefania format…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Exporting to Zefania format…" )
         try: zOFn = controlDict['ZefaniaOutputFilename']
         except KeyError: zOFn = 'Bible.zef'
         filename = BibleOrgSysGlobals.makeSafeFilename( zOFn )
@@ -6149,24 +6326,29 @@ class BibleWriter( InternalBible ):
 
         if ignoredMarkers:
             logger.info( f"toZefania: Ignored markers were {ignoredMarkers}" )
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + f"WARNING: Ignored toZefania markers were {ignoredMarkers}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + f"WARNING: Ignored toZefania markers were {ignoredMarkers}" )
         if unhandledMarkers:
             logger.warning( f"toZefania: Unhandled markers were {unhandledMarkers}" )
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  " + f"WARNING: Unhandled toZefania markers were {unhandledMarkers}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  " + f"WARNING: Unhandled toZefania markers were {unhandledMarkers}" )
         if unhandledBooks:
             logger.warning( f"toZefania: Unhandled books were {unhandledBooks}" )
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  " + f"WARNING: Unhandled toZefania books were {unhandledBooks}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  " + f"WARNING: Unhandled toZefania books were {unhandledBooks}" )
 
         # Now create a zipped version
         filepath = os.path.join( outputFolderpath, filename )
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Zipping {filename} Zefania file…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Zipping {filename} Zefania file…" )
         zf = zipfile.ZipFile( filepath+'.zip', 'w', compression=zipfile.ZIP_DEFLATED )
         zf.write( filepath, filename )
         zf.close()
 
         if validationSchema: validationResult = xw.validate( validationSchema ) # Returns a 3-tuple: intCode, logString, errorLogString
         if BibleOrgSysGlobals.maxProcesses > 1:
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  BibleWriter.toZefaniaXML finished successfully." )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  BibleWriter.toZefaniaXML finished successfully." )
         if validationSchema: return validationResult # Returns a 3-tuple: intCode, logString, errorLogString
         return True
     # end of BibleWriter.toZefaniaXML
@@ -6181,7 +6363,8 @@ class BibleWriter( InternalBible ):
         This format is roughly documented at http://de.wikipedia.org/wiki/Haggai_XML
             but more fields can be discovered by looking at downloaded files.
         """
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Running BibleWriter:toHaggaiXML…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Running BibleWriter:toHaggaiXML…" )
         if self.doExtraChecking: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
@@ -6321,7 +6504,8 @@ class BibleWriter( InternalBible ):
             BOS = BibleOrganisationalSystem( controlDict['PublicationCode'] )
             BRL = BibleReferenceList( BOS, BibleObject=None )
 
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Exporting to Haggai format…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Exporting to Haggai format…" )
         try: hOFn = controlDict['HaggaiOutputFilename']
         except KeyError: hOFn = 'Bible.hag'
         filename = BibleOrgSysGlobals.makeSafeFilename( hOFn )
@@ -6341,24 +6525,29 @@ class BibleWriter( InternalBible ):
 
         if ignoredMarkers:
             logger.info( f"toHaggai: Ignored markers were {ignoredMarkers}" )
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + f"WARNING: Ignored toHaggai markers were {ignoredMarkers}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + f"WARNING: Ignored toHaggai markers were {ignoredMarkers}" )
         if unhandledMarkers:
             logger.warning( f"toHaggai: Unhandled markers were {unhandledMarkers}" )
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  " + f"WARNING: Unhandled toHaggai markers were {unhandledMarkers}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  " + f"WARNING: Unhandled toHaggai markers were {unhandledMarkers}" )
         if unhandledBooks:
             logger.warning( f"toHaggai: Unhandled books were {unhandledBooks}" )
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  " + f"WARNING: Unhandled toHaggai books were {unhandledBooks}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  " + f"WARNING: Unhandled toHaggai books were {unhandledBooks}" )
 
         # Now create a zipped version
         filepath = os.path.join( outputFolderpath, filename )
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Zipping {filename} Haggai file…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Zipping {filename} Haggai file…" )
         zf = zipfile.ZipFile( filepath+'.zip', 'w', compression=zipfile.ZIP_DEFLATED )
         zf.write( filepath, filename )
         zf.close()
 
         if validationSchema: validationResult = xw.validate( validationSchema ) # Returns a 3-tuple: intCode, logString, errorLogString
         if BibleOrgSysGlobals.maxProcesses > 1:
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  BibleWriter.toHaggaiXML finished successfully." )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  BibleWriter.toHaggaiXML finished successfully." )
         if validationSchema: return validationResult # Returns a 3-tuple: intCode, logString, errorLogString
         return True
     # end of BibleWriter.toHaggaiXML
@@ -6375,7 +6564,8 @@ class BibleWriter( InternalBible ):
         """
         from BibleOrgSys.Formats.OpenSongXMLBible import createOpenSongXML
 
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Running BibleWriter:toOpenSongXML…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Running BibleWriter:toOpenSongXML…" )
         if self.doExtraChecking: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
@@ -6398,7 +6588,8 @@ class BibleWriter( InternalBible ):
         Using settings from the given control file,
             converts the USFM information to a UTF-8 OSIS-XML-based Sword module.
         """
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Running BibleWriter:toSwordModule…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Running BibleWriter:toSwordModule…" )
         if self.doExtraChecking: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
@@ -6491,7 +6682,8 @@ class BibleWriter( InternalBible ):
             try:
                 with open( os.path.join( defaultControlFolderpath, 'SwordProject.conf' ) ) as myFile: confText = myFile.read()
             except FileNotFoundError:
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "dCF", defaultControlFolderpath )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "dCF", defaultControlFolderpath )
                 logger.critical( "toSwordModule: Unable to read sample conf file SwordProject.conf" )
                 confText = ''
             # Do common text replacements
@@ -7071,7 +7263,8 @@ class BibleWriter( InternalBible ):
 
         # An uncompressed Sword module consists of a .conf file
         #   plus ot and nt XML files with binary indexes ot.vss and nt.vss (containing 6-byte chunks = 4-byte offset, 2-byte length)
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Exporting to Sword modified-OSIS XML format…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Exporting to Sword modified-OSIS XML format…" )
         xwOT = MLWriter( 'ot', lgFolder )
         xwNT = MLWriter( 'nt', lgFolder )
         xwOT.setHumanReadable( 'NLSpace', indentSize=5 ) # Can be set to 'All', 'Header', or 'None'
@@ -7100,20 +7293,24 @@ class BibleWriter( InternalBible ):
 
         if ignoredMarkers:
             logger.info( f"toSwordModule: Ignored markers were {ignoredMarkers}" )
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + f"ERROR: Ignored toSwordModule markers were {ignoredMarkers}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + f"ERROR: Ignored toSwordModule markers were {ignoredMarkers}" )
         if unhandledMarkers:
             logger.error( f"toSwordModule: Unhandled markers were {unhandledMarkers}" )
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  " + f"ERROR: Unhandled toSwordModule markers were {unhandledMarkers}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  " + f"ERROR: Unhandled toSwordModule markers were {unhandledMarkers}" )
         if unhandledBooks:
             logger.warning( f"toSwordModule: Unhandled books were {unhandledBooks}" )
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  " + f"WARNING: Unhandled toSwordModule books were {unhandledBooks}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  " + f"WARNING: Unhandled toSwordModule books were {unhandledBooks}" )
         makeConfFile( modsdFolder, compressedFlag=False ) # Create the conf (settings) file
         if validationSchema:
             OTresults= xwOT.validate( validationSchema ) # Returns a 3-tuple: intCode, logString, errorLogString
             NTresults= xwNT.validate( validationSchema ) # Returns a 3-tuple: intCode, logString, errorLogString
             return OTresults and NTresults
         if BibleOrgSysGlobals.maxProcesses > 1:
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  BibleWriter.toSwordModule finished successfully." )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  BibleWriter.toSwordModule finished successfully." )
         return True
     #end of BibleWriter.toSwordModule
 
@@ -7128,7 +7325,8 @@ class BibleWriter( InternalBible ):
         """
         from BibleOrgSys.Formats.theWordBible import createTheWordModule
 
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Running BibleWriter:totheWord…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Running BibleWriter:totheWord…" )
         if self.doExtraChecking: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
@@ -7157,7 +7355,8 @@ class BibleWriter( InternalBible ):
         """
         from BibleOrgSys.Formats.MySwordBible import createMySwordModule
 
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Running BibleWriter:toMySword…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Running BibleWriter:toMySword…" )
         if self.doExtraChecking: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
@@ -7186,7 +7385,8 @@ class BibleWriter( InternalBible ):
         """
         from BibleOrgSys.Formats.ESwordBible import createESwordBibleModule
 
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Running BibleWriter:toESword…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Running BibleWriter:toESword…" )
         if self.doExtraChecking: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
@@ -7216,7 +7416,8 @@ class BibleWriter( InternalBible ):
         """
         from BibleOrgSys.Formats.MyBibleBible import createMyBibleModule
 
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Running BibleWriter:toMyBible…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Running BibleWriter:toMyBible…" )
         if self.doExtraChecking: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
@@ -7251,7 +7452,8 @@ class BibleWriter( InternalBible ):
                             'TH1':'1Th', 'TH2':'2Th', 'TI1':'1Ti', 'TI2':'2Ti', 'TIT':'Tit', 'PHM':'Phm',
                             'HEB':'Heb', 'JAM':'Jas', 'PE1':'1Pe', 'PE2':'2Pe',
                             'JN1':'1Jo', 'JN2':'2Jo', 'JN3':'3Jo', 'JDE':'Jude', 'REV':'Re' }
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Running BibleWriter:toSwordSearcher…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Running BibleWriter:toSwordSearcher…" )
         if self.doExtraChecking: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
@@ -7330,10 +7532,12 @@ class BibleWriter( InternalBible ):
         # end of toSwordSearcher:writeSSBook
 
 
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Exporting to SwordSearcher format…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Exporting to SwordSearcher format…" )
         filename = 'Bible.txt'
         filepath = os.path.join( outputFolderpath, BibleOrgSysGlobals.makeSafeFilename( filename ) )
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, '  toSwordSearcher: ' + f"Writing {filepath!r}…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, '  toSwordSearcher: ' + f"Writing {filepath!r}…" )
         with open( filepath, 'wt', encoding='utf-8' ) as myFile:
             try: myFile.write(BibleOrgSysGlobals.BOM) # Forge for SwordSearcher needs the BOM
             except UnicodeEncodeError: # why does this fail on Windows???
@@ -7347,22 +7551,27 @@ class BibleWriter( InternalBible ):
 
         if ignoredMarkers:
             logger.info( f"toSwordSearcher: Ignored markers were {ignoredMarkers}" )
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + f"WARNING: Ignored toSwordSearcher markers were {ignoredMarkers}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + f"WARNING: Ignored toSwordSearcher markers were {ignoredMarkers}" )
         if unhandledMarkers:
             logger.warning( f"toSwordSearcher: Unhandled markers were {unhandledMarkers}" )
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  " + f"WARNING: Unhandled toSwordSearcher markers were {unhandledMarkers}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  " + f"WARNING: Unhandled toSwordSearcher markers were {unhandledMarkers}" )
         if unhandledBooks:
             logger.warning( f"toSwordSearcher: Unhandled books were {unhandledBooks}" )
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  " + f"WARNING: Unhandled toSwordSearcher books were {unhandledBooks}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  " + f"WARNING: Unhandled toSwordSearcher books were {unhandledBooks}" )
 
         # Now create a zipped version
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Zipping {filename} SwordSearcher file…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Zipping {filename} SwordSearcher file…" )
         zf = zipfile.ZipFile( filepath+'.zip', 'w', compression=zipfile.ZIP_DEFLATED )
         zf.write( filepath )
         zf.close()
 
         if BibleOrgSysGlobals.maxProcesses > 1:
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  BibleWriter.toSwordSearcher finished successfully." )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  BibleWriter.toSwordSearcher finished successfully." )
         return True
     # end of BibleWriter.toSwordSearcher
 
@@ -7372,7 +7581,8 @@ class BibleWriter( InternalBible ):
         """
         Write the pseudo USFM out into the DrupalBible format.
         """
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Running BibleWriter:toDrupalBible…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Running BibleWriter:toDrupalBible…" )
         if self.doExtraChecking: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
@@ -7436,7 +7646,8 @@ class BibleWriter( InternalBible ):
             #textField = re.sub( r'(\\\+?[a-z][a-z0-9]{0,3} )', '', textField ) # Remove any remaining character fields, e.g., '\+add '
             textField = re.sub( r'(\\\+?[a-z][a-z0-9]{0,3}[ \*])', '', textField ) # Remove any remaining character end fields, e.g., '\+add*'
             if '\\' in textField: # Catch any left-overs
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"toDrupalBible.doDrupalTextFormat: unprocessed code in {textField!r} from {givenTextField!r}" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"toDrupalBible.doDrupalTextFormat: unprocessed code in {textField!r} from {givenTextField!r}" )
                 if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: assert False, "We want to stop here"
             return textField
         # end of doDrupalTextFormat
@@ -7513,10 +7724,12 @@ class BibleWriter( InternalBible ):
         # end of toDrupalBible:writeDrupalBibleBook
 
 
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Exporting to DrupalBible format…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Exporting to DrupalBible format…" )
         filename = "Bible.txt"
         filepath = os.path.join( outputFolderpath, BibleOrgSysGlobals.makeSafeFilename( filename ) )
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, '  toDrupalBible: ' + f"Writing {filepath!r}…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, '  toDrupalBible: ' + f"Writing {filepath!r}…" )
         with open( filepath, 'wt', encoding='utf-8' ) as myFile:
             writeDrupalBibleHeader( myFile )
             writeDrupalBibleChapters( myFile )
@@ -7528,22 +7741,27 @@ class BibleWriter( InternalBible ):
 
         if ignoredMarkers:
             logger.info( f"toDrupalBible: Ignored markers were {ignoredMarkers}" )
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + f"WARNING: Ignored toDrupalBible markers were {ignoredMarkers}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + f"WARNING: Ignored toDrupalBible markers were {ignoredMarkers}" )
         if unhandledMarkers:
             logger.warning( f"toDrupalBible: Unhandled markers were {unhandledMarkers}" )
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  " + f"WARNING: Unhandled toDrupalBible markers were {unhandledMarkers}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  " + f"WARNING: Unhandled toDrupalBible markers were {unhandledMarkers}" )
         if unhandledBooks:
             logger.warning( f"toDrupalBible: Unhandled books were {unhandledBooks}" )
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  " + f"WARNING: Unhandled toDrupalBible books were {unhandledBooks}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  " + f"WARNING: Unhandled toDrupalBible books were {unhandledBooks}" )
 
         # Now create a zipped version
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Zipping {filename} DrupalBible file…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Zipping {filename} DrupalBible file…" )
         zf = zipfile.ZipFile( filepath+'.zip', 'w', compression=zipfile.ZIP_DEFLATED )
         zf.write( filepath )
         zf.close()
 
         if BibleOrgSysGlobals.maxProcesses > 1:
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  BibleWriter.toDrupalBible finished successfully." )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  BibleWriter.toDrupalBible finished successfully." )
         return True
     # end of BibleWriter.toDrupalBible
 
@@ -7562,7 +7780,8 @@ class BibleWriter( InternalBible ):
             ImageMagick convert is unable to handle complex scripts.  :(
         """
         import unicodedata
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Running BibleWriter:toPhotoBible… {datetime.now().strftime('%H:%M')}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Running BibleWriter:toPhotoBible… {datetime.now().strftime('%H:%M')}" )
         if self.doExtraChecking: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
@@ -7600,9 +7819,12 @@ class BibleWriter( InternalBible ):
         assert 10 <= maxLines <= 20
         maxBooknameLetters = 12 # For the header line — the chapter number is appended to this
         maxDown = pixelHeight-1 - defaultLineSize - 3 # Be sure to leave one blank line at the bottom
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"toPhotoBible -> {pixelWidth}x{pixelHeight} pixel JPEG frames" )
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  {maxLineCharacters} chars per line with {defaultFontSize} fontsize and {leftPadding} pixel(s) left padding" )
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  {maxLines} lines with {defaultLeadingRatio} leading -> {defaultLineSize} pixels" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"toPhotoBible -> {pixelWidth}x{pixelHeight} pixel JPEG frames" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  {maxLineCharacters} chars per line with {defaultFontSize} fontsize and {leftPadding} pixel(s) left padding" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  {maxLines} lines with {defaultLeadingRatio} leading -> {defaultLineSize} pixels" )
 
         # Now determine our fonts
         # Use "identify -list font" or "convert -list font" to see all fonts on the system (use the Font field, not the family field)
@@ -8079,13 +8301,16 @@ class BibleWriter( InternalBible ):
 
         if ignoredMarkers:
             logger.info( f"toPhotoBible: Ignored markers were {ignoredMarkers}" )
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + f"WARNING: Ignored toPhotoBible markers were {ignoredMarkers}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + f"WARNING: Ignored toPhotoBible markers were {ignoredMarkers}" )
         if unhandledMarkers:
             logger.warning( f"toPhotoBible: Unhandled markers were {unhandledMarkers}" )
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  " + f"WARNING: Unhandled toPhotoBible markers were {unhandledMarkers}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  " + f"WARNING: Unhandled toPhotoBible markers were {unhandledMarkers}" )
 
         # Now create some zipped collections (for easier downloads)
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Zipping PhotoBible files…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Zipping PhotoBible files…" )
         for subset in ('OT','NT','Other','All'):
             loadFolder = outputFolderpath if subset=='All' else os.path.join( outputFolderpath, subset+'/' )
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, repr(subset), "Load folder =", repr(loadFolder) )
@@ -8114,7 +8339,8 @@ class BibleWriter( InternalBible ):
             zf.close()
 
         if BibleOrgSysGlobals.maxProcesses > 1:
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  BibleWriter.toPhotoBible finished successfully at {datetime.now().strftime('%H:%M')}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  BibleWriter.toPhotoBible finished successfully at {datetime.now().strftime('%H:%M')}" )
         return True
     # end of BibleWriter.toPhotoBible
 
@@ -8131,7 +8357,8 @@ class BibleWriter( InternalBible ):
         from com.sun.star.lang import IllegalArgumentException
         from time import sleep
 
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Running BibleWriter:toODF… {datetime.now().strftime('%H:%M')}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Running BibleWriter:toODF… {datetime.now().strftime('%H:%M')}" )
         if self.doExtraChecking: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
@@ -8178,7 +8405,8 @@ class BibleWriter( InternalBible ):
             weStartedLibreOffice = True
             if 0:
                 parameters = ['/usr/bin/libreoffice', f'--accept="socket,host=localhost,port={DEFAULT_OPENOFFICE_PORT};urp;StarOffice.ServiceManager"','--norestore','--nologo','--headless']
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Parameters", repr(parameters) )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Parameters", repr(parameters) )
                 myProcess = subprocess.Popen( parameters, stdout=subprocess.PIPE, stderr=subprocess.PIPE )
                 sleep( 5 ) # Wait
                 #programOutputBytes, programErrorOutputBytes = myProcess.communicate()
@@ -9136,7 +9364,8 @@ class BibleWriter( InternalBible ):
                         elif extraType == 'vp': pass # it's already been converted to a newline field
                         elif extraType == 'ww': pass # don't know how to encode this yet
                         else:
-                            dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"toODF.insertFormattedODFText: Unexpected {extraType=}" )
+                            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 1:
+                                dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"toODF.insertFormattedODFText: Unexpected {extraType=}" )
                             handleTextSubsegment( f"--UNKNOWN {extraType} EXTRA--" )
                         lastIndex = extraIndex
                     handleTextSegment( givenText[lastIndex:] )
@@ -9151,7 +9380,8 @@ class BibleWriter( InternalBible ):
             """
             Returns a True/False result
             """
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Creating ODF file for {BBB}…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Creating ODF file for {BBB}…" )
             if BibleOrgSysGlobals.verbosityLevel > 1: # Very basic progress bar
                 vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{BBB}-{datetime.now().strftime('%H:%M')}…", end='', flush=True )
             internalBibleBookData = bookObject._processedLines
@@ -9159,7 +9389,8 @@ class BibleWriter( InternalBible ):
             # Create the blank document
             filename = f"{bookNum:02}-{BBB}_BOS-BibleWriter.odt"
             filepath = os.path.join( os.getcwd(), outputFolderpath, BibleOrgSysGlobals.makeSafeFilename( filename ) )
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + f"Creating {filename!r}…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + f"Creating {filename!r}…" )
             document = frameDesktop.loadComponentFromURL( sourceURL, "_blank", 0, () )
             try: documentText = document.Text
             except AttributeError: # no Text? = no blank/outline ODF text available
@@ -9349,7 +9580,8 @@ class BibleWriter( InternalBible ):
             # Save the created document
             document.storeAsURL( f'file://{filepath}', () )
             document.dispose() # Close the document (even though it might be a headless server anyway)
-            vPrint( 'Never', DEBUGGING_THIS_MODULE, f"Finished {BBB}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 5:
+                vPrint( 'Never', DEBUGGING_THIS_MODULE, f"Finished {BBB}" )
             return True
         # end of toODF.createODFBook
 
@@ -9384,15 +9616,17 @@ class BibleWriter( InternalBible ):
                     if createODFBook( j, BBB, bookObject ):
                         createCount += 1
                 except Exception as err:
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE,
-                        f'BibleWriter.toODF: Unexpected {err} with {BBB}: {traceback.format_exc()})' )
+                    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE,
+                            f'BibleWriter.toODF: Unexpected {err} with {BBB}: {traceback.format_exc()})' )
                     logger.error( f"toODF: Oops, creating {BBB} failed with {err}!" )
                     killLibreOfficeServiceManager()
                     break
             else: # *nix system hopefully
                 if 0: # Signal doesn't time out when LOSM locks up :-(
                     timeoutSeconds = max( 20, len(bookObject._processedLines)//40 ) # But depends on footnotes, etc. as well
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Timeout for {BBB} is {timeoutSeconds}s" )
+                    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Timeout for {BBB} is {timeoutSeconds}s" )
                     class ODFTimeoutException( Exception ): pass
                     def TimeoutHandler( signum, frame ):
                         logger.critical( f"createODFBook( {BBB} ) went too long!" )
@@ -9405,7 +9639,8 @@ class BibleWriter( InternalBible ):
                             createCount += 1
                         signal.alarm( 0 ) # Disable timeout
                     except ODFTimeoutException as err:
-                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"BibleWriter.toODF {BBB} Timeout error:", sys.exc_info()[0], err)
+                        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"BibleWriter.toODF {BBB} Timeout error:", sys.exc_info()[0], err)
                         logger.critical( f"BibleWriter.toODF: Oops, {BBB} timed out. Aborting!" )
                         killLibreOfficeServiceManager() # Shut down the locked-up  process
                         if not restartLOSMForEachBook: break # No real point in continuing with locked-up system
@@ -9422,7 +9657,8 @@ class BibleWriter( InternalBible ):
                             killLibreOfficeServiceManager() # Shut down the locked-up  process
                             raise KeyboardInterrupt
                         except Exception as err: # BibleWriter.DisposedException (where does BibleWriter.com.sun.star.lang.DisposedException come from???)
-                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"BibleWriter.toODF {BBB} Timeout error:", sys.exc_info()[0], err)
+                            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"BibleWriter.toODF {BBB} Timeout error:", sys.exc_info()[0], err)
                             logger.critical( f"BibleWriter.toODF: Oops, {BBB} timed out. Aborting!" )
                             killLibreOfficeServiceManager() # Shut down the locked-up  process
                             if not restartLOSMForEachBook: break # No real point in continuing with locked-up system
@@ -9435,14 +9671,17 @@ class BibleWriter( InternalBible ):
 
         if ignoredMarkers:
             logger.info( f"toODF: Ignored markers were {ignoredMarkers}" )
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + f"WARNING: Ignored toODF markers were {ignoredMarkers}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + f"WARNING: Ignored toODF markers were {ignoredMarkers}" )
         if unhandledMarkers:
             logger.warning( f"toODF: Unhandled markers were {unhandledMarkers}" )
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  " + f"WARNING: Unhandled toODF markers were {unhandledMarkers}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  " + f"WARNING: Unhandled toODF markers were {unhandledMarkers}" )
 
         # Now create a zipped collection
         if createCount > 0:
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Zipping ODF files…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Zipping ODF files…" )
             zf = zipfile.ZipFile( os.path.join( outputFolderpath, 'AllODFFiles.zip' ), 'w', compression=zipfile.ZIP_DEFLATED )
             for filename in os.listdir( outputFolderpath ):
                 if not filename.endswith( '.zip' ):
@@ -9451,7 +9690,8 @@ class BibleWriter( InternalBible ):
             zf.close()
 
             if BibleOrgSysGlobals.maxProcesses > 1:
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  BibleWriter.toODF finished successfully ({createCount} files) at {datetime.now().strftime('%H:%M')}" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  BibleWriter.toODF finished successfully ({createCount} files) at {datetime.now().strftime('%H:%M')}" )
             return True
         # else
         logger.critical( "BibleWriter.toODF produced no files!" )
@@ -9465,7 +9705,8 @@ class BibleWriter( InternalBible ):
         Write the pseudo USFM out into a TeX (typeset) format.
             The format varies, depending on whether or not there are paragraph markers in the text.
         """
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Running BibleWriter:toTeX… {datetime.now().strftime('%H:%M')}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Running BibleWriter:toTeX… {datetime.now().strftime('%H:%M')}" )
         if self.doExtraChecking: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
@@ -9582,7 +9823,8 @@ class BibleWriter( InternalBible ):
                         text = text.replace( fullCharMarker, '' ).replace( endCharMarker, '' )
 
             if '\\' in text: # Catch any left-overs
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"toTeX.texText: unprocessed code in {text!r} from {givenText!r}" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"toTeX.texText: unprocessed code in {text!r} from {givenText!r}" )
                 if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: assert False, "We want to stop here"
             return text.replace( '~^~', '\\' )
         # end of toTeX:texText
@@ -9621,7 +9863,8 @@ class BibleWriter( InternalBible ):
                 if programErrorOutputBytes:
                     programErrorOutputString = programErrorOutputBytes.decode( encoding='utf-8', errors='replace' )
                     #with open( os.path.join( outputFolderpath, 'ScriptErrorOutput.txt" ), 'wt', encoding='utf-8' ) as myFile: myFile.write( programErrorOutputString )
-                    dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "pEOS", programErrorOutputString )
+                    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 1:
+                        dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "pEOS", programErrorOutputString )
 
                 # Rename our PDF (and the log file) according to the style
                 try: os.replace( mainFilepath+'.log', mainFilepath+'.'+filenamePart+'.log' )
@@ -9635,14 +9878,16 @@ class BibleWriter( InternalBible ):
         cwdSave = os.getcwd() # Save the current working directory before changing (below) to the output directory
         allFilename = "All-BOS-BibleWriter.tex"
         allFilepath = os.path.join( outputFolderpath, BibleOrgSysGlobals.makeSafeFilename( allFilename ) )
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, '  toTeX: ' + f"Writing {allFilepath!r}…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, '  toTeX: ' + f"Writing {allFilepath!r}…" )
         with open( allFilepath, 'wt', encoding='utf-8' ) as allFile:
             writeTeXHeader( allFile )
             for j, (BBB,bookObject) in enumerate( self.books.items() ):
                 haveTitle = haveIntro = False
                 filename = f"{j:02}-{BBB}_BOS-BibleWriter.tex"
                 filepath = os.path.join( outputFolderpath, BibleOrgSysGlobals.makeSafeFilename( filename ) )
-                vPrint( 'Info', DEBUGGING_THIS_MODULE, '  toTeX: ' + f"Writing {filepath!r}…" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                    vPrint( 'Info', DEBUGGING_THIS_MODULE, '  toTeX: ' + f"Writing {filepath!r}…" )
                 with open( filepath, 'wt', encoding='utf-8' ) as bookFile:
                     writeTeXHeader( bookFile )
                     allFile.write( f"\n\\BibleBook{{{bookObject.getAssumedBookNames()[0]}}}\n" )
@@ -9746,13 +9991,16 @@ class BibleWriter( InternalBible ):
 
         if ignoredMarkers:
             logger.info( f"toTeX: Ignored markers were {ignoredMarkers}" )
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + f"WARNING: Ignored toTeX markers were {ignoredMarkers}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + f"WARNING: Ignored toTeX markers were {ignoredMarkers}" )
         if unhandledMarkers:
             logger.warning( f"toTeX: Unhandled markers were {unhandledMarkers}" )
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  " + f"WARNING: Unhandled toTeX markers were {unhandledMarkers}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  " + f"WARNING: Unhandled toTeX markers were {unhandledMarkers}" )
 
         # Now create a zipped collection
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Zipping PDF files…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Zipping PDF files…" )
         zf = zipfile.ZipFile( os.path.join( outputFolderpath, 'AllBible1PDFFiles.zip' ), 'w', compression=zipfile.ZIP_DEFLATED )
         for filename in os.listdir( outputFolderpath ):
             if filename.endswith( '.Bible1.pdf' ):
@@ -9767,7 +10015,8 @@ class BibleWriter( InternalBible ):
         zf.close()
 
         if BibleOrgSysGlobals.maxProcesses > 1:
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  BibleWriter.toTeX finished successfully at {datetime.now().strftime('%H:%M')}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  BibleWriter.toTeX finished successfully at {datetime.now().strftime('%H:%M')}" )
         return True
     # end of BibleWriter.toTeX
 
@@ -9781,7 +10030,8 @@ class BibleWriter( InternalBible ):
 
         TODO: Could be a function rather than a method (self is not used).
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"BibleWriter.doExportHelper( {ff} )…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, f"BibleWriter.doExportHelper( {ff} )…" )
         function, folder = ff
         if function is None: return None # Some exports are not always requested
 
@@ -9797,8 +10047,9 @@ class BibleWriter( InternalBible ):
             # filename = frame.f_code.co_filename
             # linecache.checkcache( filename )
             # line = linecache.getline( filename, lineno, frame.f_globals ) # Not really helpful -- it's only the toplevel line -- not where the error often is
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE,
-                f'BibleWriter.doExportHelper: Unexpected {err} in {function} using folder {folder}: {traceback.format_exc()})' )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE,
+                    f'BibleWriter.doExportHelper: Unexpected {err} in {function} using folder {folder}: {traceback.format_exc()})' )
             # print( f"{traceback.format_exc()=}" ) # This is the helpful one
             # print( f"{traceback.print_tb(err.__traceback__)=}" ) # None
             # print( f"{traceback.print_stack()=}" ) # None
@@ -9817,14 +10068,16 @@ class BibleWriter( InternalBible ):
         Returns a dictionary of result flags.
         """
         allWord = "all" if wantPhotoBible and wantODFs and wantPDFs else "most"
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"BibleWriterV{PROGRAM_VERSION}.doAllExports: " + f"Exporting {self.name} ({self.objectTypeString}) to {allWord} formats… {datetime.now().strftime('%H:%M')}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"BibleWriterV{PROGRAM_VERSION}.doAllExports: " + f"Exporting {self.name} ({self.objectTypeString}) to {allWord} formats… {datetime.now().strftime('%H:%M')}" )
 
         if not self.projectName: self.projectName = self.getAName() # Seems no post-processing was done???
 
         if givenOutputFolderName is None:
             givenOutputFolderName = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH
             if not os.access( givenOutputFolderName, os.F_OK ):
-                vPrint( 'Info', DEBUGGING_THIS_MODULE, "BibleWriter.doAllExports: " + f"creating {givenOutputFolderName!r} output folder" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                    vPrint( 'Info', DEBUGGING_THIS_MODULE, "BibleWriter.doAllExports: " + f"creating {givenOutputFolderName!r} output folder" )
                 os.makedirs( givenOutputFolderName ) # Make the empty folder if there wasn't already one there
         if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag:
             assert givenOutputFolderName and isinstance( givenOutputFolderName, (str,Path) )
@@ -9867,13 +10120,16 @@ class BibleWriter( InternalBible ):
         TeXOutputFolder = os.path.join( givenOutputFolderName, 'BOS_TeX_Export/' )
 
         if not wantPhotoBible:
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, "BibleWriter.doAllExports: " + "Skipping PhotoBible export" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, "BibleWriter.doAllExports: " + "Skipping PhotoBible export" )
             PhotoBibleExportResult = None
         if not wantODFs:
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, "BibleWriter.doAllExports: " + "Skipping ODF export" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, "BibleWriter.doAllExports: " + "Skipping ODF export" )
             ODFExportResult = None
         if not wantPDFs:
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, "BibleWriter.doAllExports: " + "Skipping TeX/PDF export" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, "BibleWriter.doAllExports: " + "Skipping TeX/PDF export" )
             TeXExportResult = None
 
         # Pickle this Bible object
@@ -10248,7 +10504,8 @@ def briefDemo() -> None:
     # Since this is only designed to be a virtual base class, it can't actually do much at all
     BW = BibleWriter()
     BW.objectNameString = 'Dummy test Bible Writer object'
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, BW )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, BW )
 
 
     if 0: # Test reading and writing a (shortish) USFM Bible (with ALL exports so it's SLOW)
@@ -10261,11 +10518,13 @@ def briefDemo() -> None:
                 ) # You can put your USFM test folder here
 
         for j, (name, abbrev, testFolder) in enumerate( testData ):
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nBibleWriter A{j+1}/…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nBibleWriter A{j+1}/…" )
             if os.access( testFolder, os.R_OK ):
                 UB = USFMBible( testFolder, name, abbrev )
                 UB.load()
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ' ', UB )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ' ', UB )
                 if BibleOrgSysGlobals.strictCheckingFlag: UB.check()
                 if UB.books:
                     #result = UB.toBibleDoor(); vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{result[0]} {result[1]!r}\n{result[2]}" ); assert False, "We want to stop here"
@@ -10275,7 +10534,8 @@ def briefDemo() -> None:
                         fN = USFMFilenames( testFolder )
                         folderContents1 = os.listdir( testFolder ) # Originals
                         folderContents2 = os.listdir( outputFolderpath ) # Derived
-                        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nComparing original and re-exported USFM files…" )
+                        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nComparing original and re-exported USFM files…" )
                         for jj, (BBB,filename1) in enumerate( fN.getMaximumPossibleFilenameTuples() ):
                             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, jj, BBB, filename1 )
                             UUU, nn = bos_books_codes_py.bos_book_code_to_usfm_abbrev( BBB ).upper(), bos_books_codes_py.bos_book_code_to_usfm_num_str( BBB )
@@ -10306,11 +10566,13 @@ def briefDemo() -> None:
                 ) # You can put your USFM test folder here
 
         for j, (name, abbrev, testFolder) in enumerate( testData, start=1 ):
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nBibleWriter B{j}/ {abbrev} from {testFolder}…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nBibleWriter B{j}/ {abbrev} from {testFolder}…" )
             if os.access( testFolder, os.R_OK ):
                 UB = USFMBible( testFolder, name, abbrev )
                 UB.load()
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f" {UB}" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f" {UB}" )
                 if BibleOrgSysGlobals.strictCheckingFlag: UB.check()
                 if UB.books:
                     if DEBUGGING_THIS_MODULE:
@@ -10322,7 +10584,8 @@ def briefDemo() -> None:
                         fN = USFMFilenames( testFolder )
                         folderContents1 = os.listdir( testFolder ) # Originals
                         folderContents2 = os.listdir( outputFolderpath ) # Derived
-                        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nComparing original and re-exported USFM files…" )
+                        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nComparing original and re-exported USFM files…" )
                         for jj, (BBB,filename1) in enumerate( fN.getMaximumPossibleFilenameTuples() ):
                             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, jj, BBB, filename1 )
                             UUU, nn = bos_books_codes_py.bos_book_code_to_usfm_abbrev( BBB ).upper(), bos_books_codes_py.bos_book_code_to_usfm_num_str( BBB )
@@ -10354,14 +10617,17 @@ def briefDemo() -> None:
                 ) # You can put your test folder here
 
         for j, (name, abbrev, testFolder) in enumerate( testData ):
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '\nBibleWriter C'+str(j+1)+'/…' )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '\nBibleWriter C'+str(j+1)+'/…' )
             if os.access( testFolder, os.R_OK ):
                 UnkB = UnknownBible( testFolder )
                 result = UnkB.search( autoLoadAlways=True, autoLoadBooks=True )
-                vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Bible loaded", result )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                    vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Bible loaded", result )
                 if isinstance( result, Bible ):
                     thisBible = result
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ' ', thisBible )
+                    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ' ', thisBible )
                     if BibleOrgSysGlobals.strictCheckingFlag: thisBible.check()
                     thisBible.toBibleDoor(); assert False, "We want to stop here"
                     myFlag = DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.verbosityLevel > 3
@@ -10371,7 +10637,8 @@ def briefDemo() -> None:
                         fN = USFMFilenames( testFolder )
                         folderContents1 = os.listdir( testFolder ) # Originals
                         folderContents2 = os.listdir( outputFolderpath ) # Derived
-                        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nComparing original and re-exported USFM files…" )
+                        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nComparing original and re-exported USFM files…" )
                         for jj, (BBB,filename1) in enumerate( fN.getMaximumPossibleFilenameTuples() ):
                             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, jj, BBB, filename1 )
                             UUU, nn = bos_books_codes_py.bos_book_code_to_usfm_abbrev( BBB ).upper(), bos_books_codes_py.bos_book_code_to_usfm_num_str( BBB )
@@ -10405,11 +10672,13 @@ def briefDemo() -> None:
                 ) # You can put your USX test folder here
 
         for j, (name, testFolder) in enumerate( testData ):
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '\nBibleWriter D'+str(j+1)+'/…' )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '\nBibleWriter D'+str(j+1)+'/…' )
             if os.access( testFolder, os.R_OK ):
                 UB = USXXMLBible( testFolder, name )
                 UB.load()
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ' ', UB )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ' ', UB )
                 if BibleOrgSysGlobals.strictCheckingFlag: UB.check()
                 doaResults = UB.doAllExports( wantPhotoBible=True, wantODFs=False, wantPDFs=False )
                 if BibleOrgSysGlobals.strictCheckingFlag: # Now compare the original and the derived USX XML files
@@ -10417,7 +10686,8 @@ def briefDemo() -> None:
                     fN = USXFilenames( testFolder )
                     folderContents1 = os.listdir( testFolder ) # Originals
                     folderContents2 = os.listdir( outputFolderpath ) # Derived
-                    vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nComparing original and re-exported USX files…" )
+                    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nComparing original and re-exported USX files…" )
                     for jj, (BBB,filename) in enumerate( fN.getPossibleFilenameTuples() ):
                         if filename in folderContents1 and filename in folderContents2:
                             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n{jj+1}: {BBB} {filename}" )
@@ -10440,7 +10710,8 @@ def briefDemo() -> None:
             if os.access( testFolder, os.R_OK ):
                 UB = USFMBible( testFolder, name )
                 UB.load()
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '\nBibleWriter E'+str(j+1)+'/', UB )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '\nBibleWriter E'+str(j+1)+'/', UB )
                 #if BibleOrgSysGlobals.strictCheckingFlag: UB.check()
                 #result = UB.totheWord()
                 doaResults = UB.doAllExports( wantPhotoBible=True, wantODFs=True, wantPDFs=True )
@@ -10452,10 +10723,12 @@ def briefDemo() -> None:
                     else: assert False, "We want to stop here"
                     fn1 = name + ext # Supplied
                     fn2 = name + ext # Created
-                    vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nComparing supplied and exported theWord files…" )
+                    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nComparing supplied and exported theWord files…" )
                     result = theWordFileCompare( fn1, fn2, mainFolderpath, outputFolderpath, exitCount=10 )
                     if not result:
-                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "theWord modules did NOT match" )
+                        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "theWord modules did NOT match" )
                         #if BibleOrgSysGlobals.debugFlag: assert False, "We want to stop here"
                 break
             else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Sorry, test folder '{testFolder}' is not readable on this computer." )
@@ -10476,7 +10749,8 @@ def fullDemo() -> None:
     # Since this is only designed to be a virtual base class, it can't actually do much at all
     BW = BibleWriter()
     BW.objectNameString = 'Dummy test Bible Writer object'
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, BW )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, BW )
 
 
     if 0: # Test reading and writing a (shortish) USFM Bible (with ALL exports so it's SLOW)
@@ -10489,11 +10763,13 @@ def fullDemo() -> None:
                 ) # You can put your USFM test folder here
 
         for j, (name, abbrev, testFolder) in enumerate( testData ):
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nBibleWriter A{j+1}/…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nBibleWriter A{j+1}/…" )
             if os.access( testFolder, os.R_OK ):
                 UB = USFMBible( testFolder, name, abbrev )
                 UB.load()
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ' ', UB )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ' ', UB )
                 if BibleOrgSysGlobals.strictCheckingFlag: UB.check()
                 if UB.books:
                     #result = UB.toBibleDoor(); vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{result[0]} {result[1]!r}\n{result[2]}" ); assert False, "We want to stop here"
@@ -10503,7 +10779,8 @@ def fullDemo() -> None:
                         fN = USFMFilenames( testFolder )
                         folderContents1 = os.listdir( testFolder ) # Originals
                         folderContents2 = os.listdir( outputFolderpath ) # Derived
-                        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nComparing original and re-exported USFM files…" )
+                        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nComparing original and re-exported USFM files…" )
                         for jj, (BBB,filename1) in enumerate( fN.getMaximumPossibleFilenameTuples() ):
                             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, jj, BBB, filename1 )
                             UUU, nn = bos_books_codes_py.bos_book_code_to_usfm_abbrev( BBB ).upper(), bos_books_codes_py.bos_book_code_to_usfm_num_str( BBB )
@@ -10552,12 +10829,14 @@ def fullDemo() -> None:
                 ) # You can put your USFM test folder here
 
         for j, (name, abbrev, testFolder) in enumerate( testData ):
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nBibleWriter B{j+1}/ {abbrev} from {testFolder}…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nBibleWriter B{j+1}/ {abbrev} from {testFolder}…" )
             if os.access( testFolder, os.R_OK ):
                 UB = USFMBible( testFolder, givenName=name, givenAbbreviation=abbrev )
                 if name in ('ULT','UST'): UB.uWencoded = True
                 UB.load()
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f" {UB}" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f" {UB}" )
                 if BibleOrgSysGlobals.strictCheckingFlag: UB.check()
                 if UB.books:
                     if DEBUGGING_THIS_MODULE:
@@ -10570,7 +10849,8 @@ def fullDemo() -> None:
                         fN = USFMFilenames( testFolder )
                         folderContents1 = os.listdir( testFolder ) # Originals
                         folderContents2 = os.listdir( outputFolderpath ) # Derived
-                        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nComparing original and re-exported USFM files…" )
+                        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nComparing original and re-exported USFM files…" )
                         for jj, (BBB,filename1) in enumerate( fN.getMaximumPossibleFilenameTuples() ):
                             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, jj, BBB, filename1 )
                             UUU, nn = bos_books_codes_py.bos_book_code_to_usfm_abbrev( BBB ).upper(), bos_books_codes_py.bos_book_code_to_usfm_num_str( BBB )
@@ -10617,14 +10897,17 @@ def fullDemo() -> None:
                 ) # You can put your test folder here
 
         for j, (name, abbrev, testFolder) in enumerate( testData ):
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '\nBibleWriter C'+str(j+1)+'/…' )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '\nBibleWriter C'+str(j+1)+'/…' )
             if os.access( testFolder, os.R_OK ):
                 UnkB = UnknownBible( testFolder )
                 result = UnkB.search( autoLoadAlways=True, autoLoadBooks=True )
-                vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Bible loaded", result )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                    vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Bible loaded", result )
                 if isinstance( result, Bible ):
                     thisBible = result
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ' ', thisBible )
+                    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ' ', thisBible )
                     if BibleOrgSysGlobals.strictCheckingFlag: thisBible.check()
                     thisBible.toBibleDoor(); assert False, "We want to stop here"
                     myFlag = DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.verbosityLevel > 3
@@ -10634,7 +10917,8 @@ def fullDemo() -> None:
                         fN = USFMFilenames( testFolder )
                         folderContents1 = os.listdir( testFolder ) # Originals
                         folderContents2 = os.listdir( outputFolderpath ) # Derived
-                        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nComparing original and re-exported USFM files…" )
+                        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nComparing original and re-exported USFM files…" )
                         for jj, (BBB,filename1) in enumerate( fN.getMaximumPossibleFilenameTuples() ):
                             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, jj, BBB, filename1 )
                             UUU, nn = bos_books_codes_py.bos_book_code_to_usfm_abbrev( BBB ).upper(), bos_books_codes_py.bos_book_code_to_usfm_num_str( BBB )
@@ -10667,11 +10951,13 @@ def fullDemo() -> None:
                 ) # You can put your USX test folder here
 
         for j, (name, testFolder) in enumerate( testData ):
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '\nBibleWriter D'+str(j+1)+'/…' )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '\nBibleWriter D'+str(j+1)+'/…' )
             if os.access( testFolder, os.R_OK ):
                 UB = USXXMLBible( testFolder, name )
                 UB.load()
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ' ', UB )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ' ', UB )
                 if BibleOrgSysGlobals.strictCheckingFlag: UB.check()
                 doaResults = UB.doAllExports( wantPhotoBible=True, wantODFs=False, wantPDFs=False )
                 if BibleOrgSysGlobals.strictCheckingFlag: # Now compare the original and the derived USX XML files
@@ -10679,7 +10965,8 @@ def fullDemo() -> None:
                     fN = USXFilenames( testFolder )
                     folderContents1 = os.listdir( testFolder ) # Originals
                     folderContents2 = os.listdir( outputFolderpath ) # Derived
-                    vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nComparing original and re-exported USX files…" )
+                    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nComparing original and re-exported USX files…" )
                     for jj, (BBB,filename) in enumerate( fN.getPossibleFilenameTuples() ):
                         if filename in folderContents1 and filename in folderContents2:
                             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n{jj+1}: {BBB} {filename}" )
@@ -10714,7 +11001,8 @@ def fullDemo() -> None:
             if os.access( testFolder, os.R_OK ):
                 UB = USFMBible( testFolder, name )
                 UB.load()
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '\nBibleWriter E'+str(j+1)+'/', UB )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '\nBibleWriter E'+str(j+1)+'/', UB )
                 #if BibleOrgSysGlobals.strictCheckingFlag: UB.check()
                 #result = UB.totheWord()
                 doaResults = UB.doAllExports( wantPhotoBible=True, wantODFs=True, wantPDFs=True )
@@ -10726,10 +11014,12 @@ def fullDemo() -> None:
                     else: assert False, "We want to stop here"
                     fn1 = name + ext # Supplied
                     fn2 = name + ext # Created
-                    vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nComparing supplied and exported theWord files…" )
+                    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nComparing supplied and exported theWord files…" )
                     result = theWordFileCompare( fn1, fn2, mainFolderpath, outputFolderpath, exitCount=10 )
                     if not result:
-                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "theWord modules did NOT match" )
+                        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "theWord modules did NOT match" )
                         #if BibleOrgSysGlobals.debugFlag: assert False, "We want to stop here"
             else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Sorry, test folder '{testFolder}' is not readable on this computer." )
 # end of BibleWriter.fullDemo

@@ -41,7 +41,7 @@ import bos_books_codes_py
 from bible_organisational_system import parseOsis
 
 
-LAST_MODIFIED_DATE = '2026-05-28' # by RJH
+LAST_MODIFIED_DATE = '2026-10-06' # by RJH
 SHORT_PROGRAM_NAME = "OSISXMLBible"
 PROGRAM_NAME = "OSIS XML Bible format handler"
 PROGRAM_VERSION = '0.67'
@@ -73,7 +73,8 @@ def OSISXMLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool
     if autoLoad is true and exactly one OSIS Bible is found,
         returns the loaded OSISXMLBible object.
     """
-    fnPrint( DEBUGGING_THIS_MODULE, f"OSISXMLBibleFileCheck( {givenFolderName}, {strictCheck}, {autoLoad}, {autoLoadBooks} )" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+        fnPrint( DEBUGGING_THIS_MODULE, f"OSISXMLBibleFileCheck( {givenFolderName}, {strictCheck}, {autoLoad}, {autoLoadBooks} )" )
     if BibleOrgSysGlobals.debugFlag: assert givenFolderName and isinstance( givenFolderName, (str,Path) )
     if BibleOrgSysGlobals.debugFlag: assert autoLoad in (True,False)
 
@@ -88,7 +89,8 @@ def OSISXMLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool
     # Find all the files and folders in this folder
     # OSIS is tricky coz a whole Bible can be in one file (normally), or in lots of separate (book) files
     #   and we don't want to think that 66 book files are 66 different OSIS Bibles
-    vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f" OSISXMLBibleFileCheck: Looking for files in given {givenFolderName}" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 4:
+        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f" OSISXMLBibleFileCheck: Looking for files in given {givenFolderName}" )
     foundFolders, foundFiles, foundBookFiles = [], [], []
     for something in os.listdir( givenFolderName ):
         somepath = os.path.join( givenFolderName, something )
@@ -132,7 +134,8 @@ def OSISXMLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool
         lastFilenameFound = None
         numFound = 1
     if numFound:
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "OSISXMLBibleFileCheck got", numFound, givenFolderName, lastFilenameFound )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, "OSISXMLBibleFileCheck got", numFound, givenFolderName, lastFilenameFound )
         if numFound == 1 and (autoLoad or autoLoadBooks):
             ub = OSISXMLBible( givenFolderName, lastFilenameFound ) # lastFilenameFound can be None
             if autoLoadBooks: ub.loadBooks() # Load and process the file(s)
@@ -145,7 +148,8 @@ def OSISXMLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool
     foundProjects = []
     for thisFolderName in sorted( foundFolders ):
         tryFolderName = os.path.join( givenFolderName, thisFolderName+'/' )
-        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"    OSISXMLBibleFileCheck: Looking for files in {tryFolderName}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 4:
+            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"    OSISXMLBibleFileCheck: Looking for files in {tryFolderName}" )
         foundSubfolders, foundSubfiles, foundSubBookFiles = [], [], []
         try:
             for something in os.listdir( tryFolderName ):
@@ -186,7 +190,8 @@ def OSISXMLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool
         lastFilenameFound = None
         numFound = 1
     if numFound:
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "OSISXMLBibleFileCheck foundProjects", numFound, foundProjects )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, "OSISXMLBibleFileCheck foundProjects", numFound, foundProjects )
         if numFound == 1 and (autoLoad or autoLoadBooks):
             if BibleOrgSysGlobals.debugFlag: assert len(foundProjects) == 1
             ub = OSISXMLBible( foundProjects[0][0], foundProjects[0][1] ) # Folder and filename
@@ -204,7 +209,8 @@ def clean( elementText, loadErrors=None, location=None, verseMilestone=None ):
 
     If the text is None, returns None
     """
-    fnPrint( DEBUGGING_THIS_MODULE, f"LEBXMLBible.clean( '{elementText}', '{location}', {verseMilestone} )" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+        fnPrint( DEBUGGING_THIS_MODULE, f"LEBXMLBible.clean( '{elementText}', '{location}', {verseMilestone} )" )
     if loadErrors: assert isinstance( loadErrors, list )
     if location: assert isinstance( location, str )
     if verseMilestone: assert isinstance( verseMilestone, str )
@@ -261,7 +267,8 @@ class OSISXMLBible( Bible ):
         sourceFilepath can be a folder (esp. if each book is in a separate file)
             or the path of a specific file (probably containing the whole Bible -- most common)
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"OSISXMLBible.__init__( {sourceFilepath}, '{givenName}', '{givenAbbreviation}', {encoding} )" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, f"OSISXMLBible.__init__( {sourceFilepath}, '{givenName}', '{givenAbbreviation}', {encoding} )" )
 
          # Setup and initialise the base class first
         Bible.__init__( self, versification=versification )
@@ -312,7 +319,8 @@ class OSISXMLBible( Bible ):
                                 # returned bkCodes are all UPPERCASE
                                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'bc', bkCode, upperFilename )
                                 if bkCode in upperFilename:
-                                    dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'OSISXMLBible.__init__ ' + f"found {bkCode!r} in {upperFilename!r}" )
+                                    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 1:
+                                        dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'OSISXMLBible.__init__ ' + f"found {bkCode!r} in {upperFilename!r}" )
                                     if foundBBB: # already -- don't expect doubles
                                         logging.warning( 'OSISXMLBible.__init__: ' + f"Found a second possible book abbreviation for {foundBBB} in {filename}" )
                                     foundBBB = bos_books_codes_py.usfm_abbrev_to_bos_book_code( bkCode, strict=False )
@@ -341,7 +349,8 @@ class OSISXMLBible( Bible ):
             if not os.access( self.sourceFilepath, os.R_OK ):
                 logging.critical( 'OSISXMLBible: ' + f"File {self.sourceFilepath!r} is unreadable" )
                 return # No use continuing
-            vPrint( 'Never', DEBUGGING_THIS_MODULE, f"OSISXMLBible possibleFilenames: {self.possibleFilenames}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 5:
+                vPrint( 'Never', DEBUGGING_THIS_MODULE, f"OSISXMLBible possibleFilenames: {self.possibleFilenames}" )
 
         self.name, self.abbreviation = self.givenName, self.givenAbbreviation
         self.workNames, self.workPrefixes = [], {}
@@ -354,7 +363,8 @@ class OSISXMLBible( Bible ):
         """
         Loads the OSIS XML file or files.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, "OSISXMLBible.loadBooks()" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, "OSISXMLBible.loadBooks()" )
 
         # Inspect headers in the parent process: both the native parser and worker
         # copies can otherwise lose the distinction between the Bible and cited works.
@@ -369,8 +379,10 @@ class OSISXMLBible( Bible ):
             if BibleOrgSysGlobals.maxProcesses > 1 \
             and not BibleOrgSysGlobals.alreadyMultiprocessing: # Get our subprocesses ready and waiting for work
                 # Load all the books as quickly as possible
-                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Loading {len(self.possibleFilenames)} OSIS books using {BibleOrgSysGlobals.maxProcesses} processes…" )
-                vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  NOTE: Outputs (including error and warning messages) from loading various books may be interspersed." )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                    vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Loading {len(self.possibleFilenames)} OSIS books using {BibleOrgSysGlobals.maxProcesses} processes…" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                    vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  NOTE: Outputs (including error and warning messages) from loading various books may be interspersed." )
                 BibleOrgSysGlobals.alreadyMultiprocessing = True
                 with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                     results = pool.map( self._loadBookFileMP, self.possibleFilenames ) # have the pool do our loads
@@ -387,7 +399,8 @@ class OSISXMLBible( Bible ):
                         self.stashBook( loadedBook )
                         loadErrors += bookLoadErrors
         elif os.path.isfile( self.sourceFilepath ): # most often we have all the Bible books in one file
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Using optimized Rust OSIS parser for {self.sourceFilepath}…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Using optimized Rust OSIS parser for {self.sourceFilepath}…" )
             try:
                 results = parseOsis( str(self.sourceFilepath) )
                 for bbb, raw_lines in results['books'].items():
@@ -429,12 +442,14 @@ class OSISXMLBible( Bible ):
             #assert self.preloadDone
 
         if not self.possibleFilenames: # then the whole Bible was probably in one file
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Unable to load OSIS by individual book (only whole Bible?) -- returning" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Unable to load OSIS by individual book (only whole Bible?) -- returning" )
             return # nothing to do here
 
         if BBB not in self.bookNeedsReloading or not self.bookNeedsReloading[BBB]:
             if BBB in self.books:
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  {BBB} is already loaded -- returning" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  {BBB} is already loaded -- returning" )
                 return # Already loaded
             if BBB in self.triedLoadingBook:
                 logging.warning( f"We had already tried loading OSIS {BBB} for {self.name}" )
@@ -478,8 +493,10 @@ class OSISXMLBible( Bible ):
 
         Returns the book info.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"_loadBookFileMP( {XMLBookFilename} )" )
-        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"  LoadingMP {self.name} book from {XMLBookFilename} from {self.sourceFolder}…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, f"_loadBookFileMP( {XMLBookFilename} )" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 4:
+            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"  LoadingMP {self.name} book from {XMLBookFilename} from {self.sourceFolder}…" )
 
         pathname = os.path.join( self.sourceFolder, XMLBookFilename )
         result = self.__loadFile( pathname )
@@ -494,9 +511,11 @@ class OSISXMLBible( Bible ):
         Load a single source XML file and remove the header from the tree.
         Also, extracts some useful elements from the header element.
         """
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  OSISXMLBible loading {OSISFilepath}…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  OSISXMLBible loading {OSISFilepath}…" )
 
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "Resetting bookList and loadErrors")
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, "Resetting bookList and loadErrors")
         bookList:list[tuple[BibleBook,list[str]]] = []
         loadErrors:list[str] = []
 
@@ -550,10 +569,12 @@ class OSISXMLBible( Bible ):
                         if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                 if self.lang:
                     if self.lang in ('en','de','he'): # Only specifically recognise these ones so far (English, German, Hebrew)
-                        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"    Language is {self.lang!r}" )
+                        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"    Language is {self.lang!r}" )
                     else:
                         logging.info( f"Discovered unknown {self.lang!r} language" )
-                vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  osisIDWork is {self.osisIDWork!r}" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                    vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  osisIDWork is {self.osisIDWork!r}" )
 
                 # Find (and move) the header container
                 if textElement[0].tag == OSISXMLBible.headerTag:
@@ -621,9 +642,11 @@ class OSISXMLBible( Bible ):
             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
 
         if len( bookList ) == 1:
-            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"    _loadFile({OSISFilepath}) is returning {bookList[0][0].BBB} with {len(bookList[0][1])} loadErrors" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 4:
+                vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"    _loadFile({OSISFilepath}) is returning {bookList[0][0].BBB} with {len(bookList[0][1])} loadErrors" )
         else: # More than one book in this OSIS file
-            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"    _loadFile({OSISFilepath}) is returning {len(bookList)} books" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 4:
+                vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"    _loadFile({OSISFilepath}) is returning {len(bookList)} books" )
         return bookList
     # end of OSISXMLBible._loadFile function
 
@@ -945,7 +968,8 @@ class OSISXMLBible( Bible ):
                 if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, notePlacement )
         if notePlacement and BibleOrgSysGlobals.debugFlag: assert notePlacement in ('foot','inline')
-        vPrint( 'Never', DEBUGGING_THIS_MODULE, f"  Note attributes: noteType={noteN!r} noteN={noteOsisRef!r} noteOsisRef={noteOsisID!r} noteOsisID={verseMilestone!r} at {noteType}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 5:
+            vPrint( 'Never', DEBUGGING_THIS_MODULE, f"  Note attributes: noteType={noteN!r} noteN={noteOsisRef!r} noteOsisRef={noteOsisID!r} noteOsisID={verseMilestone!r} at {noteType}" )
 
         guessed = False
         openFieldname = None
@@ -1018,7 +1042,8 @@ class OSISXMLBible( Bible ):
             thisBook.appendToLastLine( f'\\str {noteN} ' )
             openFieldname = 'str'
         else:
-            vPrint( 'Never', DEBUGGING_THIS_MODULE, "validateCrossReferenceOrFootnote note1", repr(noteType) )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 5:
+                vPrint( 'Never', DEBUGGING_THIS_MODULE, "validateCrossReferenceOrFootnote note1", repr(noteType) )
             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: assert False, "We want to stop here"
         noteText = clean( element.text, loadErrors, location, verseMilestone )
         #if not noteText or noteText.isspace(): # Maybe we can infer the anchor reference
@@ -1065,7 +1090,8 @@ class OSISXMLBible( Bible ):
             elif noteType == 'x-strongsMarkup':
                 thisBook.appendToLastLine( f'\\ft {noteText}' )
             else:
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "note2", noteType )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "note2", noteType )
                 if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: assert False, "We want to stop here"
         for subelement in element:
             if subelement.tag == OSISXMLBible.OSISNameSpace+'reference': # cross-references
@@ -1111,7 +1137,8 @@ class OSISXMLBible( Bible ):
                         elif noteType=='footnote':
                             thisBook.addLine( 'v~', anchor ) # There's no USFM for this
                         else:
-                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'CATERPILLAR', sublocation, verseMilestone, noteType, referenceType, referenceText )
+                            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'CATERPILLAR', sublocation, verseMilestone, noteType, referenceType, referenceText )
                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: assert False, "We want to stop here"
                 if noteType=='crossReference' and referenceType=='source':
                     #assert not noteText and not referenceTail
@@ -1244,7 +1271,8 @@ class OSISXMLBible( Bible ):
                     thisBook.appendToLastLine( f'\\fq {clean(catchWordText)}' )
                     BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation+" at "+verseMilestone, 'fh38', loadErrors )
                 else:
-                    vPrint( 'Never', DEBUGGING_THIS_MODULE, f"{noteType!r} note not handled FG35" )
+                    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 5:
+                        vPrint( 'Never', DEBUGGING_THIS_MODULE, f"{noteType!r} note not handled FG35" )
                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: assert False, "We want to stop here"
                 if catchWordTail:
                     thisBook.appendToLastLine( f'\\fq* {clean(catchWordTail)}' ) # Do we need the space
@@ -1389,7 +1417,8 @@ class OSISXMLBible( Bible ):
                 logging.warning( f"8jh6 Unprocessed {location!r} attribute ({attrib}) in {value} subelement of {displayTag}" )
                 loadErrors.append( f"Unprocessed {location!r} attribute ({attrib}) in {value} subelement of {displayTag} (8jh6)" )
                 if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
-        vPrint( 'Never', DEBUGGING_THIS_MODULE, f" validateVerseElement attributes: OSISVerseID = {OSISVerseID!r} sID = {sID!r} eID = {eID!r} n = {n!r}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 5:
+            vPrint( 'Never', DEBUGGING_THIS_MODULE, f" validateVerseElement attributes: OSISVerseID = {OSISVerseID!r} sID = {sID!r} eID = {eID!r} n = {n!r}" )
         if sID and eID:
             logging.critical( f"Invalid combined sID and eID verse attributes in {location}: {element.items()}" )
             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
@@ -1710,7 +1739,8 @@ class OSISXMLBible( Bible ):
         """
         Check/validate the given OSIS header record.
         """
-        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"Loading {self.abbreviation+' ' if self.abbreviation else ''}OSIS header…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 4:
+            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"Loading {self.abbreviation+' ' if self.abbreviation else ''}OSIS header…" )
         headerlocation = 'header'
         BibleOrgSysGlobals.checkXMLNoText( header, headerlocation, '2s90', loadErrors )
         BibleOrgSysGlobals.checkXMLNoAttributes( header, headerlocation, '4f6h', loadErrors )
@@ -1764,7 +1794,8 @@ class OSISXMLBible( Bible ):
                 for attrib,value in element.items():
                     if attrib=='osisWork':
                         osisWorkName = value
-                        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Have a {osisWorkName!r} work" )
+                        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Have a {osisWorkName!r} work" )
                     elif attrib==OSISXMLBible.XMLNameSpace+"lang": lang = value
                     else:
                         logging.warning( f"2k5s Unprocessed {attrib} attribute ({value}) in work element" )
@@ -1830,7 +1861,8 @@ class OSISXMLBible( Bible ):
                                 logging.warning( f"9f2d Unprocessed {sublocation!r} attribute ({attrib}) in {value}" )
                                 loadErrors.append( f"Unprocessed {sublocation!r} attribute ({attrib}) in {value} (9f2d)" )
                                 if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
-                            vPrint( 'Info', DEBUGGING_THIS_MODULE, "    Creator (role={!r}{}) was {!r}".format( creatorRole, f", type={creatorType!r}" if creatorType else '', self.suppliedMetadata['OSIS']['Creator'] ) )
+                            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                                vPrint( 'Info', DEBUGGING_THIS_MODULE, "    Creator (role={!r}{}) was {!r}".format( creatorRole, f", type={creatorType!r}" if creatorType else '', self.suppliedMetadata['OSIS']['Creator'] ) )
                     elif subelement.tag == OSISXMLBible.OSISNameSpace+'contributor':
                         sublocation = "contributor of " + location
                         BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation, '2u5z', loadErrors )
@@ -1843,14 +1875,16 @@ class OSISXMLBible( Bible ):
                                 logging.warning( f"1s5g Unprocessed {sublocation!r} attribute ({attrib}) in {value}" )
                                 loadErrors.append( f"Unprocessed {sublocation!r} attribute ({attrib}) in {value} (1s5g)" )
                                 if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
-                            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"    Contributor ({contributorRole}) was {self.suppliedMetadata['OSIS']['Contributor']!r}" )
+                            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                                vPrint( 'Info', DEBUGGING_THIS_MODULE, f"    Contributor ({contributorRole}) was {self.suppliedMetadata['OSIS']['Contributor']!r}" )
                     elif subelement.tag == OSISXMLBible.OSISNameSpace+'subject':
                         sublocation = "subject of " + location
                         BibleOrgSysGlobals.checkXMLNoAttributes( subelement, sublocation, 'frg3', loadErrors )
                         BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation, 'ft4g', loadErrors )
                         BibleOrgSysGlobals.checkXMLNoTail( subelement, sublocation, 'c35g', loadErrors )
                         self.suppliedMetadata['OSIS']['Subject'] = subelement.text
-                        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"    Subject was {self.suppliedMetadata['OSIS']['Subject']!r}" )
+                        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"    Subject was {self.suppliedMetadata['OSIS']['Subject']!r}" )
                     elif subelement.tag == OSISXMLBible.OSISNameSpace+'description':
                         sublocation = "description of " + location
                         BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation, '4a7s', loadErrors )
@@ -1881,7 +1915,8 @@ class OSISXMLBible( Bible ):
                                 loadErrors.append( f"Unprocessed {sublocation!r} attribute ({attrib}) in {value} (2f5s)" )
                                 if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                         if BibleOrgSysGlobals.debugFlag: assert formatType == 'x-MIME'
-                        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"    Format ({formatType}) is {self.suppliedMetadata['OSIS']['Format']!r}" )
+                        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"    Format ({formatType}) is {self.suppliedMetadata['OSIS']['Format']!r}" )
                     elif subelement.tag == OSISXMLBible.OSISNameSpace+'type':
                         sublocation = "type of " + location
                         BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation, '8j8b', loadErrors )
@@ -1895,7 +1930,8 @@ class OSISXMLBible( Bible ):
                                 loadErrors.append( f"Unprocessed {sublocation!r} attribute ({attrib}) in {value} (7j3f)" )
                                 if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                         if BibleOrgSysGlobals.debugFlag: assert typeType == 'OSIS'
-                        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"    Type ({typeType}) is {self.suppliedMetadata['OSIS']['Type']!r}" )
+                        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"    Type ({typeType}) is {self.suppliedMetadata['OSIS']['Type']!r}" )
                     elif subelement.tag == OSISXMLBible.OSISNameSpace+'identifier':
                         sublocation = "identifier of " + location
                         BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation, '2x6e', loadErrors )
@@ -1910,7 +1946,8 @@ class OSISXMLBible( Bible ):
                                 if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "id", repr(identifierType) )
                         if BibleOrgSysGlobals.debugFlag: assert identifierType in ('OSIS','URL','ISBN','x-ebible-id')
-                        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"    Identifier ({identifierType}) is {identifier!r}" )
+                        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"    Identifier ({identifierType}) is {identifier!r}" )
                         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Here vds1", repr(self.name), repr(self.abbreviation) )
                         if identifierType=='OSIS':
                             if not self.name: self.name = identifier
@@ -1931,7 +1968,8 @@ class OSISXMLBible( Bible ):
                                 logging.warning( f"6h7h Unprocessed {sublocation!r} attribute ({attrib}) in {value}" )
                                 loadErrors.append( f"Unprocessed {sublocation!r} attribute ({attrib}) in {value} (6h7h)" )
                                 if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
-                            vPrint( 'Info', DEBUGGING_THIS_MODULE, "    Source{} was {!r}".format( f" ({sourceRole})" if sourceRole else '', self.suppliedMetadata['OSIS']['Source'] ) )
+                            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                                vPrint( 'Info', DEBUGGING_THIS_MODULE, "    Source{} was {!r}".format( f" ({sourceRole})" if sourceRole else '', self.suppliedMetadata['OSIS']['Source'] ) )
                     elif subelement.tag == OSISXMLBible.OSISNameSpace+'publisher':
                         sublocation = "publisher of " + location
                         BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation, '8n3x', loadErrors )
@@ -1944,21 +1982,24 @@ class OSISXMLBible( Bible ):
                                 logging.warning( f"7g5g Unprocessed {sublocation!r} attribute ({attrib}) in {value}" )
                                 loadErrors.append( f"Unprocessed {sublocation!r} attribute ({attrib}) in {value} (7g5g)" )
                                 if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
-                            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"    Publisher {f'({publisherType}) ' if publisherType else ''}is/was {self.suppliedMetadata['OSIS']['Publisher']!r}" )
+                            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                                vPrint( 'Info', DEBUGGING_THIS_MODULE, f"    Publisher {f'({publisherType}) ' if publisherType else ''}is/was {self.suppliedMetadata['OSIS']['Publisher']!r}" )
                     elif subelement.tag == OSISXMLBible.OSISNameSpace+'scope':
                         sublocation = "scope of " + location
                         BibleOrgSysGlobals.checkXMLNoAttributes( subelement, sublocation, '3d4d', loadErrors )
                         BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation, '2g5z', loadErrors )
                         BibleOrgSysGlobals.checkXMLNoTail( subelement, sublocation, '1z4i', loadErrors )
                         self.suppliedMetadata['OSIS']['Scope'] = subelement.text
-                        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"    Scope is {self.suppliedMetadata['OSIS']['Scope']!r}" )
+                        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"    Scope is {self.suppliedMetadata['OSIS']['Scope']!r}" )
                     elif subelement.tag == OSISXMLBible.OSISNameSpace+'coverage':
                         sublocation = "coverage of " + location
                         BibleOrgSysGlobals.checkXMLNoAttributes( subelement, sublocation, '3d6g', loadErrors )
                         BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation, '3a6p', loadErrors )
                         BibleOrgSysGlobals.checkXMLNoTail( subelement, sublocation, '9l2p', loadErrors )
                         self.suppliedMetadata['OSIS']['Coverage'] = subelement.text
-                        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"    Coverage is {self.suppliedMetadata['OSIS']['Coverage']!r}" )
+                        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"    Coverage is {self.suppliedMetadata['OSIS']['Coverage']!r}" )
                     elif subelement.tag == OSISXMLBible.OSISNameSpace+'refSystem':
                         sublocation = "refSystem of " + location
                         BibleOrgSysGlobals.checkXMLNoAttributes( subelement, sublocation, '2s4f', loadErrors )
@@ -1966,7 +2007,8 @@ class OSISXMLBible( Bible ):
                         BibleOrgSysGlobals.checkXMLNoTail( subelement, sublocation, '3p65', loadErrors )
                         self.suppliedMetadata['OSIS']['RefSystem'] = subelement.text
                         if self.suppliedMetadata['OSIS']['RefSystem'] in ('Bible','Bible.KJV','Bible.NRSVA','Dict.Strongs','Dict.Robinsons','Dict.strongMorph'):
-                            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"    Reference system is {self.suppliedMetadata['OSIS']['RefSystem']!r}" )
+                            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                                vPrint( 'Info', DEBUGGING_THIS_MODULE, f"    Reference system is {self.suppliedMetadata['OSIS']['RefSystem']!r}" )
                         else:
                             logging.info( f"Discovered an unknown {self.suppliedMetadata['OSIS']['RefSystem']!r} refSystem" )
                             loadErrors.append( f"Discovered an unknown {self.suppliedMetadata['OSIS']['RefSystem']!r} refSystem" )
@@ -1985,7 +2027,8 @@ class OSISXMLBible( Bible ):
                                 if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                         if languageType in ('SIL','IETF','x-ethnologue','x-in-english','x-vernacular'):
                             if ISOLanguages.isValidLanguageCode( self.suppliedMetadata['OSIS']['Language'] ):
-                                vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Language is: {ISOLanguages.getLanguageName( self.suppliedMetadata['OSIS']['Language'] )}" )
+                                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                                    vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Language is: {ISOLanguages.getLanguageName( self.suppliedMetadata['OSIS']['Language'] )}" )
                             elif BibleOrgSysGlobals.verbosityLevel>2: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Discovered an unknown {self.suppliedMetadata['OSIS']['Language']!r} language" )
                         else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Discovered an unknown {languageType!r} languageType" )
                     elif subelement.tag == OSISXMLBible.OSISNameSpace+'rights':
@@ -1999,7 +2042,8 @@ class OSISXMLBible( Bible ):
                                 logging.warning( f"1s3d Unprocessed {sublocation!r} attribute ({attrib}) in {value}" )
                                 loadErrors.append( f"Unprocessed {sublocation!r} attribute ({attrib}) in {value} (1s3d)" )
                                 if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
-                        vPrint( 'Never', DEBUGGING_THIS_MODULE, "copyrightType", copyrightType )
+                        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 5:
+                            vPrint( 'Never', DEBUGGING_THIS_MODULE, "copyrightType", copyrightType )
                         if BibleOrgSysGlobals.debugFlag:
                             assert copyrightType in (None,'x-copyright','x-license','x-license-url','x-BY-SA','x-BY','x-comments-to')
                             vPrint( 'Info', DEBUGGING_THIS_MODULE, "    Rights{} are/were {!r}".format( f" ({copyrightType})" if copyrightType else '', subelement.text ) )
@@ -2078,7 +2122,8 @@ class OSISXMLBible( Bible ):
         """
         Check/validate the given OSIS front matter (div) record.
         """
-        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"Loading {self.abbreviation+' ' if self.abbreviation else ''}OSIS front matter…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 4:
+            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"Loading {self.abbreviation+' ' if self.abbreviation else ''}OSIS front matter…" )
         assert isinstance( bookList, list )
 
         frontMatterLocation = "frontMatter"
@@ -2096,7 +2141,8 @@ class OSISXMLBible( Bible ):
         thisBook = BibleBook( self, 'FRT' )
         thisBook.objectNameString = 'OSIS XML Bible Book object'
         thisBook.objectTypeString = 'OSIS'
-        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"Appending {thisBook.BBB} and {len(loadErrors)} load errors to bookList" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 4:
+            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"Appending {thisBook.BBB} and {len(loadErrors)} load errors to bookList" )
         for bkLE in bookList:
             assert len(bkLE) == 2 # bookObject and loadErrors
             assert bkLE[0].BBB != 'FRT' # Don't allow duplicate books
@@ -2206,10 +2252,12 @@ class OSISXMLBible( Bible ):
         Check/validate and extract data from the given OSIS div record.
             This may be a book group, or directly into a book
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"validateAndExtractMainDiv( {len(bookList)}, {len(div)}, {len(loadErrors)} )…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, f"validateAndExtractMainDiv( {len(bookList)}, {len(div)}, {len(loadErrors)} )…" )
         assert isinstance( bookList, list )
         assert isinstance( loadErrors, list )
-        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"Loading {self.abbreviation+' ' if self.abbreviation else ''}OSIS main div…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 4:
+            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"Loading {self.abbreviation+' ' if self.abbreviation else ''}OSIS main div…" )
         self.haveEIDs = False
         self.haveBook = False
 
@@ -2239,7 +2287,8 @@ class OSISXMLBible( Bible ):
             BibleOrgSysGlobals.checkXMLNoSubelements( element, location+" at book group", 'js21', loadErrors )
             if BibleOrgSysGlobals.debugFlag: assert titleText
             if titleText:
-                vPrint( 'Info', DEBUGGING_THIS_MODULE, "    Got book group title", repr(titleText) )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                    vPrint( 'Info', DEBUGGING_THIS_MODULE, "    Got book group title", repr(titleText) )
                 self.divisions[titleText] = []
         # end of OSISXMLBible.validateGroupTitle
 
@@ -2268,7 +2317,8 @@ class OSISXMLBible( Bible ):
         if mainDivType == 'bookGroup': # this is all the books lumped in together into one big div
             if BibleOrgSysGlobals.debugFlag: assert mainDivCanonical == 'true'
             # We have to set BBB when we get a chapter reference
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Loading a book group…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Loading a book group…" )
             self.haveBook = False
             for element in div:
                 if element.tag == OSISXMLBible.OSISNameSpace+'title':
@@ -2352,7 +2402,8 @@ class OSISXMLBible( Bible ):
                     if BibleOrgSysGlobals.debugFlag: assert canonical == 'true'
                     chapterMilestone = OSISChapterID
                 else:
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'SQUIGGLE', repr(OSISChapterID), repr(sID), repr(eID) )
+                    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'SQUIGGLE', repr(OSISChapterID), repr(sID), repr(eID) )
                     logging.error( f"Unrecognized chapter milestone in {location}: {element.items()} at {location}" )
                     loadErrors.append( f"Unrecognized chapter milestone in {location}: {element.items()} at {location}" )
                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
@@ -2377,14 +2428,17 @@ class OSISXMLBible( Bible ):
                             loadErrors.append( f"{bits[0]!r} is not a valid OSIS book identifier in chapter milestone {OSISChapterID}" )
                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                         if cmBBB and isinstance( cmBBB, list ): # There must be multiple alternatives for BBB from the OSIS one
-                            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Multiple alternatives for OSIS {cmBBB!r}: {mainDivOsisID} (Choosing the first one)" )
+                            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                                vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Multiple alternatives for OSIS {cmBBB!r}: {mainDivOsisID} (Choosing the first one)" )
                             cmBBB = cmBBB[0]
                         if cmBBB and cmBBB != BBB: # We've started on a new book
                             #if BBB and ( len(bookResults)>20 or len(USFMResults)>20 ): # Save the previous book
-                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "here MAGIC", cmBBB, BBB, repr(chapterMilestone), len(thisBook._rawLines) )
+                            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "here MAGIC", cmBBB, BBB, repr(chapterMilestone), len(thisBook._rawLines) )
                             if BBB and len(thisBook._rawLines) > 5: # Save the previous book
                                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, verseMilestone )
-                                vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Saving previous {self.abbreviation+' ' if self.abbreviation else ''}{BBB} book into results…" )
+                                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                                    vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Saving previous {self.abbreviation+' ' if self.abbreviation else ''}{BBB} book into results…" )
                                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, mainDivOsisID, "results", BBB, bookResults[:10], "…" )
                                 # Remove the last titles
                                 #lastBookResult = bookResults.pop()
@@ -2422,18 +2476,21 @@ class OSISXMLBible( Bible ):
                             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "23f4 BBB is", BBB )
                             USFMAbbreviation = bos_books_codes_py.bos_book_code_to_usfm_abbrev( BBB )
                             USFMNumber = bos_books_codes_py.bos_book_code_to_usfm_num_str( BBB )
-                            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  It seems we have {BBB}" )
+                            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                                vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  It seems we have {BBB}" )
                             thisBook = BibleBook( self, BBB )
                             thisBook.objectNameString = 'OSIS XML Bible Book object'
                             thisBook.objectTypeString = 'OSIS'
-                            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"Appending {thisBook.BBB} and {len(loadErrors)} load errors to bookList" )
+                            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 4:
+                                vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"Appending {thisBook.BBB} and {len(loadErrors)} load errors to bookList" )
                             for bkLE in bookList:
                                 assert len(bkLE) == 2 # bookObject and loadErrors
                                 assert bkLE[0].BBB != BBB # Don't allow duplicate books
                             bookList.append( (thisBook,loadErrors.copy()) )
                             loadErrors.clear()
                             self.haveBook = True
-                        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "validateChapterElement bookList", len(bookList), [bkLE[0].BBB for bkLE in bookList] )
+                        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 4:
+                            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "validateChapterElement bookList", len(bookList), [bkLE[0].BBB for bkLE in bookList] )
                         bookList[-1][0].addLine( 'c', bits[1] )
 
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "validateChapterElement returning milestone:", chapterMilestone )
@@ -2892,7 +2949,8 @@ class OSISXMLBible( Bible ):
 
 
         # Main code for validateAndExtractBookDiv
-        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"Loading {self.abbreviation+' ' if self.abbreviation else ''}OSIS book div…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 4:
+            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"Loading {self.abbreviation+' ' if self.abbreviation else ''}OSIS book div…" )
         self.haveEIDs = False
         self.haveBook = False
 
@@ -2932,15 +2990,18 @@ class OSISXMLBible( Bible ):
                         BBB = tryBBB; break
             if BBB:
                 if isinstance( BBB, list ): # There must be multiple alternatives for BBB from the OSIS one
-                    vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Multiple alternatives for OSIS {BBB!r}: {mainDivOsisID} (Choosing the first one)" )
+                    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Multiple alternatives for OSIS {BBB!r}: {mainDivOsisID} (Choosing the first one)" )
                     BBB = BBB[0]
-                vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Loading {self.abbreviation+' ' if self.abbreviation else ''}{BBB}…" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                    vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Loading {self.abbreviation+' ' if self.abbreviation else ''}{BBB}…" )
                 USFMAbbreviation = bos_books_codes_py.bos_book_code_to_usfm_abbrev( BBB )
                 USFMNumber = bos_books_codes_py.bos_book_code_to_usfm_num_str( BBB )
                 thisBook = BibleBook( self, BBB )
                 thisBook.objectNameString = 'OSIS XML Bible Book object'
                 thisBook.objectTypeString = 'OSIS'
-                vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"Appending {thisBook.BBB} and {len(loadErrors)} load errors to bookList" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 4:
+                    vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"Appending {thisBook.BBB} and {len(loadErrors)} load errors to bookList" )
                 for bkLE in bookList:
                     assert len(bkLE) == 2 # bookObject and loadErrors
                     assert bkLE[0].BBB != BBB, f"OSIS loader stopped at duplicate {BBB} book"
@@ -3288,13 +3349,15 @@ class OSISXMLBible( Bible ):
                         logging.critical( f"{OSISBookID!r} is not a valid OSIS book identifier" )
                         if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
                     if newBBB and isinstance( newBBB, list ): # There must be multiple alternatives for BBB from the OSIS one
-                        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Multiple alternatives for OSIS {newBBB!r}: {mainDivOsisID} (Choosing the first one)" )
+                        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Multiple alternatives for OSIS {newBBB!r}: {mainDivOsisID} (Choosing the first one)" )
                         newBBB = newBBB[0]
                     if newBBB != BBB:
                         BBB = newBBB
                         USFMAbbreviation = bos_books_codes_py.bos_book_code_to_usfm_abbrev( BBB )
                         USFMNumber = bos_books_codes_py.bos_book_code_to_usfm_num_str( BBB )
-                        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  Loading {self.abbreviation+' ' if self.abbreviation else ''}{BBB}…" )
+                        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  Loading {self.abbreviation+' ' if self.abbreviation else ''}{BBB}…" )
                 if chapterMilestone.startswith('chapterContainer.'): # it must have been a container -- process the subelements
                     OSISChapterID = chapterMilestone[17:] # Remove the 'chapterContainer.' prefix
                     chapterBits = OSISChapterID.split( '.' )
@@ -3570,13 +3633,15 @@ class OSISXMLBible( Bible ):
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Done Validating", BBB, mainDivOsisID, mainDivType )
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "bookResults", bookResults )
         if BBB:
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Saving {self.abbreviation+' ' if self.abbreviation else ''}{BBB} book into results…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Saving {self.abbreviation+' ' if self.abbreviation else ''}{BBB} book into results…" )
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, mainDivOsisID, "results", BBB, bookResults[:10], "…" )
             #if bookResults: self.bkData[BBB] = bookResults
             #if USFMResults: self.USFMBooks[BBB] = USFMResults
             # self.stashBook( thisBook )
             # Should be already there I think
-            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"Appending {thisBook.BBB} and {len(loadErrors)} load errors to bookList" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 4:
+                vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"Appending {thisBook.BBB} and {len(loadErrors)} load errors to bookList" )
             found = False
             for bkLE in bookList:
                 assert len(bkLE) == 2 # bookObject and loadErrors
@@ -3598,13 +3663,17 @@ def briefDemo() -> None:
         for standardTestFolder in (
                         BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'OSISTest1/' ),
                         ):
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nStandard testfolder is: {standardTestFolder}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nStandard testfolder is: {standardTestFolder}" )
             result1 = OSISXMLBibleFileCheck( standardTestFolder )
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "OSIS TestA1", result1 )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, "OSIS TestA1", result1 )
             result2 = OSISXMLBibleFileCheck( standardTestFolder, autoLoad=True )
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "OSIS TestA2", result2 )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, "OSIS TestA2", result2 )
             result3 = OSISXMLBibleFileCheck( standardTestFolder, autoLoadBooks=True )
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "OSIS TestA3", result3 )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, "OSIS TestA3", result3 )
 
 
     BiblesFolderpath = Path( '/srv/Bibles/' )
@@ -3617,11 +3686,14 @@ def briefDemo() -> None:
         # Demonstrate the OSIS Bible class
         #for j, testFilepath in enumerate( justOne ): # Choose testFilepaths or justOne
         for j, testFilepath in enumerate( testFilepaths, start=1 ): # Choose testFilepaths or justOne
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nB/ OSIS {j}/ Demonstrating the OSIS Bible class…" )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Test filepath is {testFilepath!r}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nB/ OSIS {j}/ Demonstrating the OSIS Bible class…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Test filepath is {testFilepath!r}" )
             oB = OSISXMLBible( testFilepath ) # Load and process the XML
             oB.load()
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, oB ) # Just print a summary
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, oB ) # Just print a summary
 
             if 1: # Test verse lookup
                 from BibleOrgSys.Reference import VerseReferences
@@ -3680,13 +3752,17 @@ def fullDemo() -> None:
                         BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_USFM3_Reexport/' ),
                         'MadeUpFolder/',
                         ):
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nStandard testfolder is: {standardTestFolder}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nStandard testfolder is: {standardTestFolder}" )
             result1 = OSISXMLBibleFileCheck( standardTestFolder )
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "OSIS TestA1", result1 )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, "OSIS TestA1", result1 )
             result2 = OSISXMLBibleFileCheck( standardTestFolder, autoLoad=True )
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "OSIS TestA2", result2 )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, "OSIS TestA2", result2 )
             result3 = OSISXMLBibleFileCheck( standardTestFolder, autoLoadBooks=True )
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "OSIS TestA3", result3 )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, "OSIS TestA3", result3 )
 
 
     BiblesFolderpath = Path( '/srv/Bibles/' )
@@ -3712,11 +3788,14 @@ def fullDemo() -> None:
         # Demonstrate the OSIS Bible class
         #for j, testFilepath in enumerate( justOne ): # Choose testFilepaths or justOne
         for j, testFilepath in enumerate( testFilepaths, start=1 ): # Choose testFilepaths or justOne
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nB/ OSIS {j}/ Demonstrating the OSIS Bible class…" )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Test filepath is {testFilepath!r}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nB/ OSIS {j}/ Demonstrating the OSIS Bible class…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Test filepath is {testFilepath!r}" )
             oB = OSISXMLBible( testFilepath ) # Load and process the XML
             oB.load()
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, oB ) # Just print a summary
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, oB ) # Just print a summary
 
             if 1: # Test verse lookup
                 from BibleOrgSys.Reference import VerseReferences

@@ -74,7 +74,7 @@ from usfm_markers_py import to_standard_marker, get_newline_markers_list, is_new
                             USFM_BIBLE_PARAGRAPH_MARKERS, USFM_ALL_BIBLE_PARAGRAPH_MARKERS, USFM_ALL_MARKERS
 
 
-LAST_MODIFIED_DATE = '2026-09-10' # by RJH
+LAST_MODIFIED_DATE = '2026-10-06' # by RJH
 SHORT_PROGRAM_NAME = "InternalBibleBook"
 PROGRAM_NAME = "Internal Bible book handler"
 PROGRAM_VERSION = '1.0.4'
@@ -218,9 +218,11 @@ cleanUWalignmentsL 144 TI1 1:11 'x-strong="G35880" x-lemma="ὁ" x-morph="Gr,EA,
         and wordsList contains 3-tuples: (transWord, occurrence,occurrences).
     """
     debuggingThisFunction = DEBUGGING_THIS_MODULE or False #(99 if BBB=='TI1' else False)
-    fnPrint( debuggingThisFunction, f"cleanUWalignments( {workAbbreviation}, {BBB}, … )" )
+    if (debuggingThisFunction) or BibleOrgSysGlobals.debugFlag:
+        fnPrint( debuggingThisFunction, f"cleanUWalignments( {workAbbreviation}, {BBB}, … )" )
 
-    vPrint( 'Verbose', debuggingThisFunction, f"Cleaning {len(originalAlignments):,} {workAbbreviation} alignments…" )
+    if (debuggingThisFunction) or BibleOrgSysGlobals.verbosityLevel >= 4:
+        vPrint( 'Verbose', debuggingThisFunction, f"Cleaning {len(originalAlignments):,} {workAbbreviation} alignments…" )
     assert originalAlignments
     assert isinstance( originalAlignments, list )
 
@@ -228,7 +230,8 @@ cleanUWalignmentsL 144 TI1 1:11 'x-strong="G35880" x-lemma="ὁ" x-morph="Gr,EA,
     cleanedAlignmentList:list[tuple[str,str,str,str]] = []
     for j, (C,V, originalLanguageTextString,translatedWordsString) in enumerate( originalAlignments, start=1 ):
         if C == '1':
-            dPrint( 'Never', debuggingThisFunction, f"cleanUWalignmentsL {j} {BBB} {C}:{V} '{originalLanguageTextString}'\n    = '{translatedWordsString}'" )
+            if (debuggingThisFunction) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 5:
+                dPrint( 'Never', debuggingThisFunction, f"cleanUWalignmentsL {j} {BBB} {C}:{V} '{originalLanguageTextString}'\n    = '{translatedWordsString}'" )
 
         assert isinstance( C, str ) and C
         assert isinstance( V, str ) and V
@@ -330,7 +333,8 @@ cleanUWalignmentsL 144 TI1 1:11 'x-strong="G35880" x-lemma="ὁ" x-morph="Gr,EA,
 
         cleanedAlignmentList.append( (C,V, textList, translatedWordsString,wordsList) )
 
-    vPrint( 'Info', debuggingThisFunction,
+    if (debuggingThisFunction) or BibleOrgSysGlobals.verbosityLevel >= 3:
+        vPrint( 'Info', debuggingThisFunction,
 f'''\nInternalBibleBook cleanUWalignments: Have {len(cleanedAlignmentList):,} alignment entries for {workAbbreviation} {BBB}
   Maximum of {maxOriginalWords} original language words in one {workAbbreviation} {BBB} entry
   Maximum of {maxTranslatedWords} translated words in one {workAbbreviation} {BBB} entry''' )
@@ -574,7 +578,8 @@ class InternalBibleBook:
         if marker not in BOS_CUSTOM_CONTENT_MARKERS and not is_newline_marker( marker ):
             logging.warning( f"IBB.addLine: Not a NL marker: {marker}={text=}" )
             if 1 or marker != 'w': # This can happen with unfoldingWord aligned Bibles
-                dPrint( 'Quiet', DEBUGGING_THIS_MODULE, self, repr(marker), repr(text) )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 1:
+                    dPrint( 'Quiet', DEBUGGING_THIS_MODULE, self, repr(marker), repr(text) )
                 if DEBUGGING_THIS_MODULE: assert False, "We want to stop here" # How did this happen?
 
         if text is None:
@@ -927,7 +932,8 @@ class InternalBibleBook:
 
         Also creates the CV index (but NOT the section index)
         """
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + f"Processing {self.objectNameString} {self.objectTypeString} {self.workName=} {self.BBB} {len(self._rawLines):,} lines…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + f"Processing {self.objectNameString} {self.objectTypeString} {self.workName=} {self.BBB} {len(self._rawLines):,} lines…" )
         if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag or DEBUGGING_THIS_MODULE:
             assert self._rawLines # or else the book was totally blank
             assert not self._processedFlag # Can only do it once
@@ -987,7 +993,8 @@ class InternalBibleBook:
             assert not self._indexedCVFlag
         if self._indexedCVFlag: return # Can only do it once
 
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + f"Indexing {self.objectNameString} {self.BBB=} {self.workName} text…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + f"Indexing {self.objectNameString} {self.BBB=} {self.workName} text…" )
         self._CVIndex = InternalBibleBookCVIndex( self.workName, self.BBB )
         self._CVIndex.makeBookCVIndex( self._processedLines )
 
@@ -1052,7 +1059,8 @@ class InternalBibleBook:
             #dPrint( 'Info', DEBUGGING_THIS_MODULE, "Already done InternalBibleBook._makeBookSectionIndex!" )
             return # Can only do it once
 
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + f"Indexing {self.objectNameString} {self.BBB=} {self.workName} text…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + f"Indexing {self.objectNameString} {self.BBB=} {self.workName} text…" )
         assert isinstance( self.containerBibleObject, Bible )
         assert len(self.containerBibleObject.books)
         self._SectionIndex = InternalBibleBookSectionIndex( self.workName, self.BBB )
@@ -1070,9 +1078,11 @@ class InternalBibleBook:
         numLines = 50
         if '_rawLines' in self.__dict__:
             for j in range( min( numLines, len(self._rawLines) ) ):
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f" Raw {j}: {self._rawLines[j][0]} = {self._rawLines[j][1]=}" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f" Raw {j}: {self._rawLines[j][0]} = {self._rawLines[j][1]=}" )
         for j in range( min( numLines, len(self._processedLines) ) ):
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f" Proc {j}: {self._processedLines[j][0]}{f'({self._processedLines[j][1]})' if self._processedLines[j][1]!=self._processedLines[j][0] else ''} = {self._processedLines[j][2]=}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f" Proc {j}: {self._processedLines[j][0]}{f'({self._processedLines[j][1]})' if self._processedLines[j][1]!=self._processedLines[j][0] else ''} = {self._processedLines[j][2]=}" )
     # end of InternalBibleBook.debugPrint
 
 
@@ -1084,7 +1094,8 @@ class InternalBibleBook:
         This does a quick check for major SFM errors. It is not as thorough as checkSFMs below.
         """
         if not self._processedFlag:
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"InternalBibleBook '{self.workName}' {self.BBB}: processing lines called from 'validateMarkers'" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, f"InternalBibleBook '{self.workName}' {self.BBB}: processing lines called from 'validateMarkers'" )
             self.processLines()
         if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE:
             assert self._processedLines
@@ -1111,7 +1122,8 @@ class InternalBibleBook:
         Returns the contents of the first field in the book with a marker match.
         """
         if not self._processedFlag:
-            dPrint( 'Never', DEBUGGING_THIS_MODULE, f"InternalBibleBook {self.BBB}: calling processLines from 'getField'" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 5:
+                dPrint( 'Never', DEBUGGING_THIS_MODULE, f"InternalBibleBook {self.BBB}: calling processLines from 'getField'" )
             self.processLines()
         if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE:
             assert self._processedLines
@@ -1130,7 +1142,8 @@ class InternalBibleBook:
         Replace the contents of an existing SFM field in the loaded book.
         """
         if not self._processedFlag:
-            dPrint( 'Never', DEBUGGING_THIS_MODULE, f"InternalBibleBook {self.BBB}: calling processLines from 'setField'" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 5:
+                dPrint( 'Never', DEBUGGING_THIS_MODULE, f"InternalBibleBook {self.BBB}: calling processLines from 'setField'" )
             self.processLines()
         if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE:
             assert self._processedLines
@@ -1141,7 +1154,8 @@ class InternalBibleBook:
             assert isinstance( entry, InternalBibleEntry )
             if entry.getMarker() == adjFieldName:
                 if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: assert not entry.getExtras() # We're maybe losing some info here
-                dPrint( 'Normal', DEBUGGING_THIS_MODULE, f"InternalBibleBook.setField replace {self.BBB} '{entry.getText()}' with '{newValue}'" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 2:
+                    dPrint( 'Normal', DEBUGGING_THIS_MODULE, f"InternalBibleBook.setField replace {self.BBB} '{entry.getText()}' with '{newValue}'" )
                 entry.setCleanText( newValue )
                 return True
         return False
@@ -1163,7 +1177,8 @@ class InternalBibleBook:
         """
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "InternalBibleBook.getAssumedBookNames()" )
         if not self._processedFlag:
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"InternalBibleBook '{self.workName}' {self.BBB}: processing lines called from 'getAssumedBookNames'" ) # This is usually the first call from the Bible Drop Box
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, f"InternalBibleBook '{self.workName}' {self.BBB}: processing lines called from 'getAssumedBookNames'" ) # This is usually the first call from the Bible Drop Box
             self.processLines()
         if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE:
             assert self._processedLines
@@ -1245,7 +1260,8 @@ class InternalBibleBook:
             (to copy with weird CV schemes in some of the less common Bible books)
         """
         if not self._processedFlag:
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"InternalBibleBook '{self.workName}' {self.BBB}: processing lines called from 'getVersification'" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, f"InternalBibleBook '{self.workName}' {self.BBB}: processing lines called from 'getVersification'" )
             self.processLines()
         if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag: assert self._processedLines
 
@@ -1267,7 +1283,8 @@ class InternalBibleBook:
 
         Stores it in self.versification and self.missingVersesList
         """
-        fnPrint( DEBUGGING_THIS_MODULE, "getVersificationIfNecessary()" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, "getVersificationIfNecessary()" )
         if self.versificationList is None:
             assert self.omittedVersesList is None and self.combinedVersesList is None and self.reorderedVersesList is None # also
             versificationResult = self.getVersification()
@@ -1293,13 +1310,15 @@ class InternalBibleBook:
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 5: fnPrint( DEBUGGING_THIS_MODULE, f"_discover() for {self.BBB}" )
         if not self._processedFlag:
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"InternalBibleBook '{self.workName}' {self.BBB}: processing lines called from 'discover'" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, f"InternalBibleBook '{self.workName}' {self.BBB}: processing lines called from 'discover'" )
             self.processLines()
         if BibleOrgSysGlobals.debugFlag: assert self._processedLines
         if not self._indexedCVFlag:
             self.makeBookCVIndex()
 
-        vPrint( 'Never', DEBUGGING_THIS_MODULE, f"InternalBibleBook._discover() for {self.BBB} using Rust…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 5:
+            vPrint( 'Never', DEBUGGING_THIS_MODULE, f"InternalBibleBook._discover() for {self.BBB} using Rust…" )
 
         rustResults = self._CVIndex.discover()
         bkDict = rustResults.to_dict()
@@ -1315,7 +1334,8 @@ class InternalBibleBook:
         Note that all chapter and verse values are returned as strings not integers.
         """
         if not self._processedFlag:
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"InternalBibleBook '{self.workName}' {self.BBB}: processing lines called from 'getAddedUnits'" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, f"InternalBibleBook '{self.workName}' {self.BBB}: processing lines called from 'getAddedUnits'" )
             self.processLines()
         if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag: assert self._processedLines
 
@@ -1625,9 +1645,11 @@ class InternalBibleBook:
         """
         Runs a number of checks on the book and returns the error dictionary.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, "checkBook()" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, "checkBook()" )
         if not self._processedFlag:
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"InternalBibleBook '{self.workName}' {self.BBB}: processing lines called from 'checkBook'" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, f"InternalBibleBook '{self.workName}' {self.BBB}: processing lines called from 'checkBook'" )
             self.processLines()
         if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag: assert self._processedLines
 
@@ -1661,7 +1683,8 @@ class InternalBibleBook:
         """
         Returns the number of chapters (int) in this book.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, "getNumChapters()" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, "getNumChapters()" )
 
         self.getVersificationIfNecessary()
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, self.getVersification() )
@@ -1718,7 +1741,8 @@ class InternalBibleBook:
         assert self.BBB == BCVReference[0] if isinstance( BCVReference, tuple ) else BCVReference.getBBB() if isinstance( BCVReference, SimpleVerseKey ) else BCVReference.split('_',1)[0] # Assume it's a string
 
         if not self._processedFlag:
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"InternalBibleBook '{self.workName}' {self.BBB}: processing lines called from 'getContextVerseData'" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, f"InternalBibleBook '{self.workName}' {self.BBB}: processing lines called from 'getContextVerseData'" )
             self.processLines()
         if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag:
             assert self._processedLines
@@ -1845,7 +1869,8 @@ class InternalBibleBook:
         """
         Write the internal pseudoUSFM out directly with one file per verse in one folder for the book.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, '  writeBOSBCVFiles: ' + f"Writing '{self.BBB}' as BCV…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, '  writeBOSBCVFiles: ' + f"Writing '{self.BBB}' as BCV…" )
 
         # Write the data out with the introduction in one file, and then each verse in a separate file
         introLines = verseLines = ''
@@ -1895,7 +1920,8 @@ class InternalBibleBook:
         if verseLines: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"verseLines = {verseLines}" )
         assert not verseLines
 
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + "Writing BCV book metadata…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + "Writing BCV book metadata…" )
         metadataLines = f'BCVVersion = {BCV_VERSION}\n'
         if self.workName: metadataLines += f'WorkName = {self.workName}\n'
         metadataLines += f'CVList = {CVList}\n'
@@ -1915,15 +1941,18 @@ def briefDemo() -> None:
     """
     BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Since this is only designed to be a base class, it can't actually do much at all." )
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Try running USFMBibleBook or USXXMLBibleBook which use this class." )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Since this is only designed to be a base class, it can't actually do much at all." )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Try running USFMBibleBook or USXXMLBibleBook which use this class." )
 
     IBB = InternalBibleBook( 'Dummy', 'GEN' )
     # The following fields would normally be filled in a by "load" routine in the derived class
     IBB.objectNameString = 'Dummy test Internal Bible Book object'
     IBB.objectTypeString = 'DUMMY'
     IBB.sourceFilepath = 'Nowhere'
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, IBB )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, IBB )
 # end of InternalBibleBook.briefDemo
 
 def fullDemo() -> None:
@@ -1932,36 +1961,47 @@ def fullDemo() -> None:
     """
     BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Since this is only designed to be a base class, it can't actually do much at all." )
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Try running USFMBibleBook or USXXMLBibleBook which use this class." )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Since this is only designed to be a base class, it can't actually do much at all." )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Try running USFMBibleBook or USXXMLBibleBook which use this class." )
 
     IBB = InternalBibleBook( 'Dummy', 'GEN' )
     # The following fields would normally be filled in a by "load" routine in the derived class
     IBB.objectNameString = 'Dummy test Internal Bible Book object'
     IBB.objectTypeString = 'DUMMY'
     IBB.sourceFilepath = 'Nowhere'
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, IBB )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, IBB )
 
     from BibleOrgSys.Formats.USFMBibleBook import USFMBibleBook
     def demoFile( name, filename, folder, BBB ):
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Loading {} from {}{}…".format( BBB, filename, f" from {folder}" if BibleOrgSysGlobals.verbosityLevel > 2 else '' ) )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Loading {} from {}{}…".format( BBB, filename, f" from {folder}" if BibleOrgSysGlobals.verbosityLevel > 2 else '' ) )
         UBB = USFMBibleBook( name, BBB )
         UBB.load( filename, folder, encoding )
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  ID is {UBB.getField( 'id' )=}" )
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  Header is {UBB.getField( 'h' )=}" )
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  Main titles are {UBB.getField( 'mt1' )=} and {UBB.getField( 'mt2' )=}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  ID is {UBB.getField( 'id' )=}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  Header is {UBB.getField( 'h' )=}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  Main titles are {UBB.getField( 'mt1' )=} and {UBB.getField( 'mt2' )=}" )
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, UBB )
         UBB.validateMarkers()
         UBBVersification = UBB.getVersification()
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, UBBVersification )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, UBBVersification )
         UBBAddedUnits = UBB.getAddedUnits()
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, UBBAddedUnits )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, UBBAddedUnits )
         discoveryDict = UBB._discover()
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "discoveryDict", discoveryDict )
         UBB.checkBook()
         UBErrors = UBB.getCheckResults()
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, UBErrors )
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, UBErrors.get('Priority Errors', []) )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, UBErrors )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, UBErrors.get('Priority Errors', []) )
     # end of demoFile
 
     from BibleOrgSys.InputOutput import USFMFilenames
@@ -1969,7 +2009,8 @@ def fullDemo() -> None:
         name, encoding, testFolder = "Matigsalug", 'utf-8', Path( '/mnt/HDs/Matigsalug/Bible/MBTV/' ) # You can put your test folder here
         #name, encoding, testFolder = "WEB", 'utf-8', Path( '/srv/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/' ) # You can put your test folder here
         if os.access( testFolder, os.R_OK ):
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Scanning {name} from {testFolder}…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Scanning {name} from {testFolder}…" )
             fileList = USFMFilenames.USFMFilenames( testFolder ).getMaximumPossibleFilenameTuples()
             for BBB,filename in fileList:
                 demoFile( name, filename, testFolder, BBB )

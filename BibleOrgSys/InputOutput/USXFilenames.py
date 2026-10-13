@@ -27,7 +27,7 @@ from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 import bos_books_codes_py
 
 
-LAST_MODIFIED_DATE = '2026-05-17' # by RJH (Rust conversion)
+LAST_MODIFIED_DATE = '2026-10-06' # by RJH (Rust conversion)
 SHORT_PROGRAM_NAME = "USXBible"
 PROGRAM_NAME = "USX Bible filenames handler"
 PROGRAM_VERSION = '0.60'
@@ -46,7 +46,8 @@ class USXFilenames:
         """
         Create the object by inspecting files in the given folder.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"USXFilenames.__init__( {givenFolderName} )" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, f"USXFilenames.__init__( {givenFolderName} )" )
 
         self.givenFolderName = givenFolderName
         self.pattern, self.fileExtension = '', 'usx'
@@ -147,10 +148,12 @@ def briefDemo() -> None:
     testFolders = (BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USXTest1/' ), BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USXTest2/' ),
                    BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFMTest1/' ), BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFMTest2/' ),)
     for testFolder in testFolders:
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '\n' )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '\n' )
         if os.access( testFolder, os.R_OK ):
             UsxFns = USXFilenames( testFolder )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, UsxFns )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, UsxFns )
             result = UsxFns.getMaximumPossibleFilenameTuples(); vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nConfirmed: {len(result)} books found" )
             result = UsXFns.getUnusedFilenames(); vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Other: {len(result)} files" )
         else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Sorry, test folder '{testFolder}' doesn't exist on this computer." )

@@ -24,7 +24,7 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2021-01-23' # by RJH
+LAST_MODIFIED_DATE = '2026-10-06' # by RJH
 SHORT_PROGRAM_NAME = "TestBooksCodesRE"
 PROGRAM_NAME = "TestBooksCodes Regular Expressions"
 PROGRAM_VERSION = '0.21'
@@ -51,29 +51,35 @@ OSIS_BOOK_RE = '([1-5A-EG-JL-PRSTVWZ][BCEJKMPSTa-ehimoprsuxz](?:[AJMa-eghik-pr-v
 
 
 def doBBB():
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\ndoBBB" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\ndoBBB" )
     Letter0, Letter1, Letter2 = defaultdict( int ), defaultdict( int ), defaultdict( int )
     for BBB in bos_books_codes_py.get_all_bos_book_codes():
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB )
         Letter0[BBB[0]] += 1
         Letter1[BBB[1]] += 1
         Letter2[BBB[2]] += 1
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ' ', sorted(L0) )
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ' ', sorted(L1) )
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ' ', sorted(L2) )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ' ', sorted(L0) )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ' ', sorted(L1) )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ' ', sorted(L2) )
 
     # Now test the RE on the books codes
     for BBB in bos_books_codes_py.get_all_bos_book_codes():
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB )
         match = re.search( BBB_RE, BBB )
         if not match:
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB )
             assert False, "We want to stop here" # Got a BBB that can't be found by the RE
 # end of doBBB
 
 
 def doOSIS():
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\ndoOSIS" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\ndoOSIS" )
     minL, maxL = 999, 0
     L = {}
     for BBB in bos_books_codes_py.get_all_bos_book_codes():
@@ -89,8 +95,10 @@ def doOSIS():
             if OB[j] in L[j]: L[j][OB[j]] += 1
             else: L[j][OB[j]] = 1
     for k in range( maxL ):
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ' ', k, sorted(L[k]) )
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ' ', minL, maxL )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ' ', k, sorted(L[k]) )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ' ', minL, maxL )
 
     # Now test the RE on the books codes
     for BBB in bos_books_codes_py.get_all_bos_book_codes():
@@ -99,7 +107,8 @@ def doOSIS():
         if not OB: continue
         match = re.search( OSIS_BOOK_RE, OB )
         if not match:
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, OB )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, OB )
             assert False, "We want to stop here" # Got a OB that can't be found by the RE
 # end of doOSIS
 

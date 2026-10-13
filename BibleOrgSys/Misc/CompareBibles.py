@@ -76,7 +76,7 @@ from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Bible import Bible, BibleBook
 
 
-LAST_MODIFIED_DATE = '2020-11-05' # by RJH
+LAST_MODIFIED_DATE = '2026-10-06' # by RJH
 SHORT_PROGRAM_NAME = "CompareBibles"
 PROGRAM_NAME = "Bible compare analyzer"
 PROGRAM_VERSION = '0.27'
@@ -176,12 +176,14 @@ def loadWordCompares( folder, filename ):
     """
     Returns two dicts (longest entries first)
     """
-    fnPrint( DEBUGGING_THIS_MODULE, f"loadWordCompares( {folder}, {filename} )" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+        fnPrint( DEBUGGING_THIS_MODULE, f"loadWordCompares( {folder}, {filename} )" )
 
     dict12, dict21 = {}, {} # Not worried about sorting yet
 
     filepath = os.path.join( folder, filename )
-    vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Loading word compares from {filepath}…" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Loading word compares from {filepath}…" )
 
     lineCount = 0
     with open( filepath, 'rt', encoding='utf-8' ) as inputFile:
@@ -434,7 +436,8 @@ def compareBooksPedantic( book1, book2,
     The returned list is sorted by C:V
     Each list entry is a 2-tuple, being 3-tuple C/V/marker and error message.
     """
-    fnPrint( DEBUGGING_THIS_MODULE, f"compareBooksPedantic( {book1}, {book2}, {compareQuotes!r}, {comparePunctuation!r}, {compareDigits}, {illegalCleanTextOnlyStrings1}, {illegalCleanTextOnlyStrings2}, {matchingPairs}, {breakOnOne} ) for {book1.BBB}" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+        fnPrint( DEBUGGING_THIS_MODULE, f"compareBooksPedantic( {book1}, {book2}, {compareQuotes!r}, {comparePunctuation!r}, {compareDigits}, {illegalCleanTextOnlyStrings1}, {illegalCleanTextOnlyStrings2}, {matchingPairs}, {breakOnOne} ) for {book1.BBB}" )
     assert book1.BBB == book2.BBB
     #dPrint( 'Info', DEBUGGING_THIS_MODULE, book1.workName, book2.workName )
     assert book1.workName != 'utf-8'
@@ -679,7 +682,8 @@ def segmentizeLine( line:str, segmentEndPunctuation:str='.?!;:' ) -> list[list[s
 
     Returns a list of lists of words.
     """
-    vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"segmentizeLine( {line!r} )" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 4:
+        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"segmentizeLine( {line!r} )" )
 
     if segmentEndPunctuation:
         for segmentEndChar in segmentEndPunctuation:
@@ -738,7 +742,8 @@ def segmentizeBooks( book1:BibleBook, book2:BibleBook ) -> tuple[list,list]:
         1/ 3-tuple being C, V, optional marker
         2/ Error message string
     """
-    vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"segmentizeBooks( {book1}, {book2}, … ) for {book1.BBB}" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 4:
+        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"segmentizeBooks( {book1}, {book2}, … ) for {book1.BBB}" )
     assert isinstance( book1, BibleBook )
     assert isinstance( book2, BibleBook )
     assert book1.BBB == book2.BBB
@@ -899,7 +904,8 @@ def analyzeWordsInSegment( reference, segmentAList, segmentBList, dictAB, result
             if lCount > rCount:
                 if ' ' not in lEntry and lEntry in foundLPhrases:
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, lEntry, foundLPhrases ); assert False, "We want to stop here"
-                      vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  analyzeWordsInSegment: Skipping {foundLPhrases!r} because already found in {lEntry}" )
+                      if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                          vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  analyzeWordsInSegment: Skipping {foundLPhrases!r} because already found in {lEntry}" )
                 else:
                     resultsList.append( (reference,f"{segmentBList!r} from {lEntry}\n   not enough ({segmentAList}/{lCount}) in {rCount}") )
                     #resultsList.append( ((' ',' ',' '), rEntry) )
@@ -917,7 +923,8 @@ def analyzeWords( segmentList, dict12=None, dict21=None ):
 
     Returns a list of results.
     """
-    vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "analyzeWords( … )" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 4:
+        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "analyzeWords( … )" )
     assert isinstance( segmentList, list )
     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\ndict12", dict12 )
     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\ndict21", dict21 )
@@ -934,7 +941,8 @@ def analyzeWords( segmentList, dict12=None, dict21=None ):
     for j,(segment1,segment2) in enumerate( segmentList ):
         for word1 in segment1:
             if word1 not in wordDict1:
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Processing {j} {word1!r}…" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Processing {j} {word1!r}…" )
                 #wordDict1[word1] = []
                 options = {}
                 wordSet = set( segment2 )
@@ -942,11 +950,13 @@ def analyzeWords( segmentList, dict12=None, dict21=None ):
                     if word1 in segment1b:
                         wordSet = wordSet.intersection( segment2b )
                         if len(wordSet) == 1:
-                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, word1, wordSet )
+                            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, word1, wordSet )
                             wordDict1[word1] = wordSet.pop()
                             break
         #if j > 5: break
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, len(wordDict1), wordDict1 )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, len(wordDict1), wordDict1 )
     assert False, "We want to stop here"
 # end of CompareBibles.analyzeWords
 
@@ -961,13 +971,15 @@ def analyzeBibles( Bible1:Bible, Bible2:Bible ) -> dict[str,list]:
     The returned list is sorted by C:V
     Each list entry is a 2-tuple, being BCV and error message.
     """
-    vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"analyzeBibles( {Bible1}, {Bible2} )" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 4:
+        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"analyzeBibles( {Bible1}, {Bible2} )" )
     assert isinstance( Bible1, Bible )
     assert isinstance( Bible2, Bible )
     assert Bible1.abbreviation != Bible2.abbreviation or Bible1.name != Bible2.name
     assert Bible1.discoveryResults
     assert Bible2.discoveryResults
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Running analyzeBibles…" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Running analyzeBibles…" )
 
     bSegmentList, bResults = {}, {}
 
@@ -977,10 +989,13 @@ def analyzeBibles( Bible1:Bible, Bible2:Bible ) -> dict[str,list]:
         if bBook.BBB in Bible2: commonBooks.append( bBook.BBB )
     numBooks = len( commonBooks )
 
-    vPrint( 'Info', DEBUGGING_THIS_MODULE, "Running segmentizeBooks on both Bibles…" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, "Running segmentizeBooks on both Bibles…" )
     if BibleOrgSysGlobals.maxProcesses > 1: # Check all the books as quickly as possible
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Comparing {numBooks} books using {BibleOrgSysGlobals.maxProcesses} processes…" )
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  NOTE: Outputs (including error and warning messages) from scanning various books may be interspersed." )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Comparing {numBooks} books using {BibleOrgSysGlobals.maxProcesses} processes…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  NOTE: Outputs (including error and warning messages) from scanning various books may be interspersed." )
         BibleOrgSysGlobals.alreadyMultiprocessing = True
         with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
             results = pool.map( _doCompare, [(BBB,Bible1,Bible2) for BBB in commonBooks] ) # have the pool do our loads
@@ -990,10 +1005,13 @@ def analyzeBibles( Bible1:Bible, Bible2:Bible ) -> dict[str,list]:
         BibleOrgSysGlobals.alreadyMultiprocessing = False
     else: # Just single threaded
         for BBB in commonBooks: # Do individual book prechecks
-            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "  " + f"Comparing {BBB}…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 4:
+                vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "  " + f"Comparing {BBB}…" )
             bSegmentList[BBB], bResults[BBB] = segmentizeBooks( Bible1[BBB], Bible2[BBB] ) #, abResults1, abResults2 )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, bSegmentList[BBB] )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, bResults[BBB] )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, bSegmentList[BBB] )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, bResults[BBB] )
     return bResults
 # end of CompareBibles.analyzeBibles
 
@@ -1017,7 +1035,8 @@ def compareBibles( Bible1, Bible2,
     Runs a series of checks and count on each book of the Bible
         in order to try to determine what are the normal standards.
     """
-    fnPrint( DEBUGGING_THIS_MODULE, f"compareBibles( {Bible1}, {Bible2} )" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+        fnPrint( DEBUGGING_THIS_MODULE, f"compareBibles( {Bible1}, {Bible2} )" )
     assert isinstance( Bible1, Bible )
     assert isinstance( Bible2, Bible )
     assert Bible1.getAName() != 'utf-8'
@@ -1025,18 +1044,22 @@ def compareBibles( Bible1, Bible2,
     assert Bible1.getAName() != Bible2.getAName()
     assert Bible1.abbreviation != Bible2.abbreviation or Bible1.name != Bible2.name
 
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Running compareBibles…" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Running compareBibles…" )
     len1, len2 = len(Bible1), len(Bible2)
     commonBooks = []
     for bBook in Bible1:
         if bBook.BBB in Bible2: commonBooks.append( bBook.BBB )
     numBooks = len( commonBooks )
 
-    vPrint( 'Info', DEBUGGING_THIS_MODULE, "Running compareBooksPedantic on both Bibles…" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, "Running compareBooksPedantic on both Bibles…" )
     bResults = {}
     if BibleOrgSysGlobals.maxProcesses > 1: # Check all the books as quickly as possible
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Comparing {numBooks} books using {BibleOrgSysGlobals.maxProcesses} processes…" )
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  NOTE: Outputs (including error and warning messages) from scanning various books may be interspersed." )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Comparing {numBooks} books using {BibleOrgSysGlobals.maxProcesses} processes…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  NOTE: Outputs (including error and warning messages) from scanning various books may be interspersed." )
         BibleOrgSysGlobals.alreadyMultiprocessing = True
         with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
             results = pool.map( _doCompare, [(BBB,Bible1,Bible2) for BBB in commonBooks] ) # have the pool do our loads
@@ -1046,7 +1069,8 @@ def compareBibles( Bible1, Bible2,
         BibleOrgSysGlobals.alreadyMultiprocessing = False
     else: # Just single threaded
         for BBB in commonBooks: # Do individual book prechecks
-            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "  " + f"Comparing {BBB}…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 4:
+                vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "  " + f"Comparing {BBB}…" )
             bResults[BBB] = compareBooksPedantic( Bible1[BBB], Bible2[BBB], compareQuotes=compareQuotes,
                                                 comparePunctuation=comparePunctuation, compareDigits=compareDigits,
                                                 illegalCleanTextOnlyStrings1=illegalCleanTextOnlyStrings1, illegalCleanTextOnlyStrings2=illegalCleanTextOnlyStrings2,
@@ -1069,7 +1093,8 @@ def briefDemo() -> None:
     BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     # Load a USFM Bible and BT
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nLoading USFM Bible…" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nLoading USFM Bible…" )
     name1, encoding1, testFolder1 = "MBTV", 'utf-8', Path( '/mnt/HDs/Matigsalug/Bible/MBTV/' ) # You can put your test folder here
     name2, encoding2, testFolder2 = "MS-BT", 'utf-8', Path( '/mnt/HDs/Matigsalug/Bible/MBTBT/' ) # You can put your test folder here
     MS_ILLEGAL_CLEAN_TEXT_ONLY_STRINGS_1 = ( 'C','c','F','f','J','j','O','o','Q','q','V','v','X','x','Z','z', ) + DEFAULT_ILLEGAL_USFM_CLEAN_TEXT_ONLY_STRINGS_VERNACULAR
@@ -1083,7 +1108,8 @@ def briefDemo() -> None:
     if os.access( testFolder1, os.R_OK ):
         UB1 = USFMBible( testFolder1, name1, encoding=encoding1 )
         UB1.load()
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, UB1 )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, UB1 )
         if BibleOrgSysGlobals.strictCheckingFlag:
             UB1.check()
         #UB1.doAllExports( "BOSOutputFiles", wantPhotoBible=False, wantODFs=False, wantPDFs=False )
@@ -1092,24 +1118,29 @@ def briefDemo() -> None:
     if os.access( testFolder2, os.R_OK ):
         UB2 = USFMBible( testFolder2, name2, encoding=encoding2 )
         UB2.load()
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, UB2 )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, UB2 )
         if BibleOrgSysGlobals.strictCheckingFlag:
             UB2.check()
         #UB2.doAllExports( "BOSOutputFiles", wantPhotoBible=False, wantODFs=False, wantPDFs=False )
     else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Sorry, test folder {testFolder2!r} is not readable on this computer." )
 
     if 0: # Test one book
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nTesting one book only…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nTesting one book only…" )
         BBB = 'JDE'
         result = compareBooksPedantic( UB1[BBB], UB2[BBB],
                                         illegalCleanTextOnlyStrings1=MS_ILLEGAL_CLEAN_TEXT_ONLY_STRINGS_1, illegalCleanTextOnlyStrings2=MS_ILLEGAL_CLEAN_TEXT_ONLY_STRINGS_2,
                                         illegalCompleteLineStrings1=MS_ILLEGAL_COMPLETE_LINE_STRINGS_1, illegalCompleteLineStrings2=MS_ILLEGAL_COMPLETE_LINE_STRINGS_2,
                                         legalPairs1=MS_LEGAL_PAIRS, legalPairs2=MS_LEGAL_PAIRS )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Comparing {BBB} gave:" )
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, ' ', result )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Comparing {BBB} gave:" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, ' ', result )
 
     if 1: # Test the whole Bibles
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nTesting for whole Bible…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nTesting for whole Bible…" )
         results = compareBibles( UB1, UB2,
                                         illegalCleanTextOnlyStrings1=MS_ILLEGAL_CLEAN_TEXT_ONLY_STRINGS_1, illegalCleanTextOnlyStrings2=MS_ILLEGAL_CLEAN_TEXT_ONLY_STRINGS_2,
                                         illegalCompleteLineStrings1=MS_ILLEGAL_COMPLETE_LINE_STRINGS_1, illegalCompleteLineStrings2=MS_ILLEGAL_COMPLETE_LINE_STRINGS_2,
@@ -1128,12 +1159,15 @@ def briefDemo() -> None:
             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{totalCount} total results in {resultsBooksCount} books (out of {len(UB1)})" )
 
     if 0: # Compare one book
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nAnalyzing one book only…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nAnalyzing one book only…" )
         BBB = 'JDE'
         segmentResult, otherResult = segmentizeBooks( UB1[BBB], UB2[BBB] )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Comparing {BBB} gave:" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Comparing {BBB} gave:" )
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, ' 1s', len(segmentResult), segmentResult )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ' 2o', len(otherResult), otherResult )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ' 2o', len(otherResult), otherResult )
         dict12, dict21 = loadWordCompares( 'Tests/DataFilesForTests', 'MSBTCheckWords.txt' )
         awResult = analyzeWords( segmentResult, dict12, dict21 )
         if BibleOrgSysGlobals.verbosityLevel > 0:
@@ -1145,7 +1179,8 @@ def briefDemo() -> None:
             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{len(awResult):,} results in {BBB}" )
 
     if 0: # Compare the whole Bibles
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nAnalyzing whole Bible…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nAnalyzing whole Bible…" )
         totalSegments = totalCount = 0
         for BBB in UB1.getBookList():
             segmentResult, otherResult = segmentizeBooks( UB1[BBB], UB2[BBB] )
@@ -1164,7 +1199,8 @@ def briefDemo() -> None:
                     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'  {BBB} {C}:{V} {marker} {resultString}' )
                 vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  {len(awResult):,} results in {BBB}" )
             break
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{totalCount:,} total results in {len(UB1)} books ({totalSegments:,} segments)" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{totalCount:,} total results in {len(UB1)} books ({totalSegments:,} segments)" )
 # end of CompareBibles.briefDemo
 
 def fullDemo() -> None:
@@ -1188,7 +1224,8 @@ def fullDemo() -> None:
         assert (resultL, resultR) == ((-1,-1),(0,-2),(-2,47))[j-1]
 
     # Load a USFM Bible and BT
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nLoading USFM Bible…" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nLoading USFM Bible…" )
     name1, encoding1, testFolder1 = "MBTV", 'utf-8', Path( '/mnt/HDs/Matigsalug/Bible/MBTV/' ) # You can put your test folder here
     name2, encoding2, testFolder2 = "MS-BT", 'utf-8', Path( '/mnt/HDs/Matigsalug/Bible/MBTBT/' ) # You can put your test folder here
     MS_ILLEGAL_CLEAN_TEXT_ONLY_STRINGS_1 = ( 'c','f','j','o','q','v','x','z', ) + DEFAULT_ILLEGAL_USFM_CLEAN_TEXT_ONLY_STRINGS_VERNACULAR
@@ -1202,7 +1239,8 @@ def fullDemo() -> None:
     if os.access( testFolder1, os.R_OK ):
         UB1 = USFMBible( testFolder1, name1, name1, encoding=encoding1 )
         UB1.load()
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, UB1 )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, UB1 )
         if BibleOrgSysGlobals.strictCheckingFlag:
             UB1.check()
         #UB1.doAllExports( "BOSOutputFiles", wantPhotoBible=False, wantODFs=False, wantPDFs=False )
@@ -1211,24 +1249,29 @@ def fullDemo() -> None:
     if os.access( testFolder2, os.R_OK ):
         UB2 = USFMBible( testFolder2, name2, name2, encoding=encoding2 )
         UB2.load()
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, UB2 )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, UB2 )
         if BibleOrgSysGlobals.strictCheckingFlag:
             UB2.check()
         #UB2.doAllExports( "BOSOutputFiles", wantPhotoBible=False, wantODFs=False, wantPDFs=False )
     else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Sorry, test folder {testFolder2!r} is not readable on this computer." )
 
     if 0: # Test one book
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nTesting one book only…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nTesting one book only…" )
         BBB = 'JDE'
         result = compareBooksPedantic( UB1[BBB], UB2[BBB],
                                         illegalCleanTextOnlyStrings1=MS_ILLEGAL_CLEAN_TEXT_ONLY_STRINGS_1, illegalCleanTextOnlyStrings2=MS_ILLEGAL_CLEAN_TEXT_ONLY_STRINGS_2,
                                         illegalCompleteLineStrings1=MS_ILLEGAL_COMPLETE_LINE_STRINGS_1, illegalCompleteLineStrings2=MS_ILLEGAL_COMPLETE_LINE_STRINGS_2,
                                         legalPairs1=MS_LEGAL_PAIRS, legalPairs2=MS_LEGAL_PAIRS )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Comparing {BBB} gave:" )
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, ' ', result )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Comparing {BBB} gave:" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, ' ', result )
 
     if 1: # Test the whole Bibles
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nTesting for whole Bible…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nTesting for whole Bible…" )
         results = compareBibles( UB1, UB2,
                                         illegalCleanTextOnlyStrings1=MS_ILLEGAL_CLEAN_TEXT_ONLY_STRINGS_1, illegalCleanTextOnlyStrings2=MS_ILLEGAL_CLEAN_TEXT_ONLY_STRINGS_2,
                                         illegalCompleteLineStrings1=MS_ILLEGAL_COMPLETE_LINE_STRINGS_1, illegalCompleteLineStrings2=MS_ILLEGAL_COMPLETE_LINE_STRINGS_2,
@@ -1247,12 +1290,15 @@ def fullDemo() -> None:
             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{totalCount} total results in {resultsBooksCount} books (out of {len(UB1)})" )
 
     if 0: # Compare one book
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nAnalyzing one book only…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nAnalyzing one book only…" )
         BBB = 'JDE'
         segmentResult, otherResult = segmentizeBooks( UB1[BBB], UB2[BBB] )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Comparing {BBB} gave:" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Comparing {BBB} gave:" )
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, ' 1s', len(segmentResult), segmentResult )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ' 2o', len(otherResult), otherResult )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ' 2o', len(otherResult), otherResult )
         dict12, dict21 = loadWordCompares( 'Tests/DataFilesForTests', 'MSBTCheckWords.txt' )
         awResult = analyzeWords( segmentResult, dict12, dict21 )
         if BibleOrgSysGlobals.verbosityLevel > 0:
@@ -1264,7 +1310,8 @@ def fullDemo() -> None:
             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{len(awResult):,} results in {BBB}" )
 
     if 0: # Compare the whole Bibles
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nAnalyzing whole Bible…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nAnalyzing whole Bible…" )
         totalSegments = totalCount = 0
         for BBB in UB1.getBookList():
             segmentResult, otherResult = segmentizeBooks( UB1[BBB], UB2[BBB] )
@@ -1282,7 +1329,8 @@ def fullDemo() -> None:
                     resultString = resultString.replace( 'Bible1', name1 ).replace( 'Bible2', name2 )
                     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'  {BBB} {C}:{V} {marker} {resultString}' )
                 vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  {len(awResult):,} results in {BBB}" )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{totalCount:,} total results in {len(UB1)} books ({totalSegments:,} segments)" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{totalCount:,} total results in {len(UB1)} books ({totalSegments:,} segments)" )
 # end of CompareBibles.fullDemo
 
 
@@ -1302,7 +1350,8 @@ def main() -> None:
     if allOkay:
         UnkB1 = UnknownBible( fp1 )
         result1 = UnkB1.search( autoLoadAlways=True, autoLoadBooks=True )
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Bible1 loaded", result1 )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Bible1 loaded", result1 )
         if isinstance( result1, Bible ):
             Bible1 = result1
         else:
@@ -1310,7 +1359,8 @@ def main() -> None:
     if allOkay:
         UnkB2 = UnknownBible( fp2 )
         result2 = UnkB2.search( autoLoadAlways=True, autoLoadBooks=True )
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Bible2 loaded", result2 )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Bible2 loaded", result2 )
         if isinstance( result2, Bible ):
             Bible2 = result2
         else:

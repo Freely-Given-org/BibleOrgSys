@@ -25,7 +25,7 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2026-05-17' # by RJH (Rust conversion)
+LAST_MODIFIED_DATE = '2026-10-06' # by RJH (Rust conversion)
 SHORT_PROGRAM_NAME = "XMLFile"
 PROGRAM_NAME = "XML file handler"
 PROGRAM_VERSION = '0.10'
@@ -66,9 +66,11 @@ class XMLFile():
 
         # Do a preliminary check on the readability of our schema file
         if not os.access( self.sourceFilepath, os.R_OK ):
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"XMLFile: File {self.sourceFilepath!r} is unreadable" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"XMLFile: File {self.sourceFilepath!r} is unreadable" )
         if self.schemaFilepath and not os.access( self.schemaFilepath, os.R_OK ):
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"XMLFile: Schema file {self.schemaFilepath!r} is unreadable" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"XMLFile: Schema file {self.schemaFilepath!r} is unreadable" )
         # Remote schema check moved to when needed or handled by Rust/requests if needed.
     # end of XMLFile.__init__
 
@@ -101,14 +103,16 @@ class XMLFile():
         """
         errorString = None
 
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Loading {self.sourceFilepath}…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Loading {self.sourceFilepath}…" )
         try:
             # Rust check first
             validateWellFormedness(str(self.sourceFilepath))
             # If well-formed, we can load it into Python if needed (for legacy XMLTree access)
             self.XMLTree = ElementTree().parse( self.sourceFilepath )
             self.validatedByLoading = True
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Successfully loaded and validated {self.sourceFilepath}." )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Successfully loaded and validated {self.sourceFilepath}." )
         except Exception as err:
             errorString = str(err)
             logging.error( f"validateByLoading failed for {self.sourceFilepath}: {errorString}" )
@@ -122,16 +126,19 @@ class XMLFile():
         """
         Runs the xmllint program to validate the XML file (via Rust backend).
         """
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Running xmllint validation on {self.sourceFilepath}…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Running xmllint validation on {self.sourceFilepath}…" )
         
         schema = self.schemaURL or self.schemaFilepath
         success, stdout, stderr, code = validateWithLint(str(self.sourceFilepath), schema)
 
         self.validatedWithLint = success
         if not success:
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  WARNING: xmllint gave an error on {self.sourceFilepath}: {code} = {xmllintError[code] if code is not None and code < len(xmllintError) else 'Unknown'}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  WARNING: xmllint gave an error on {self.sourceFilepath}: {code} = {xmllintError[code] if code is not None and code < len(xmllintError) else 'Unknown'}" )
         else:
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  xmllint validated {self.sourceFilepath}." )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  xmllint validated {self.sourceFilepath}." )
 
         return self.validatedWithLint, stdout, stderr
     # end of XMLFile.validateWithLint
@@ -160,22 +167,26 @@ def briefDemo() -> None:
             if os.access( xf.sourceFilepath, os.R_OK ):
                 xf.validateByLoading()
                 xf.validateWithLint()
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, xf )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, xf )
             else:
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Skipping {xf.sourceFilepath} (not found)" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Skipping {xf.sourceFilepath} (not found)" )
             break
     # end of doTest
 
     if 1: # Test some OpenSong Bibles
         testFolder = Path( '/srv/Bibles//OpenSong Bibles/' )
         good = ( "KJV.xmm", "AMP.xmm", )
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\n\nDemonstrating the XMLFile class with OpenSong Bibles…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\n\nDemonstrating the XMLFile class with OpenSong Bibles…" )
         doTest( testFolder, good )
 
     if 1: # Test some OSIS Bibles
         testFolder = Path( '/srv/Bibles/Formats/OSIS/kjvxml from DMSmith/' )
         testNames = ( "kjv.xml", )
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\n\nDemonstrating the XMLFile class with OSIS Bibles (no schema)…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\n\nDemonstrating the XMLFile class with OSIS Bibles (no schema)…" )
         doTest( testFolder, testNames )
         # vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\n\nDemonstrating the XMLFile class with OSIS Bibles (web schema)…" )
         # doTest( testFolder, (testNames[0],), schema=osisSchemaHTTP )

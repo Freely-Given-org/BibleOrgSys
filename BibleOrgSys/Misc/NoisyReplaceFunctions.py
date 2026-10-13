@@ -33,7 +33,7 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2020-04-10' # by RJH
+LAST_MODIFIED_DATE = '2026-10-06' # by RJH
 SHORT_PROGRAM_NAME = "NoisyReplaceFunctions"
 PROGRAM_NAME = "Noisy Replace Functions"
 PROGRAM_VERSION = '0.07'
@@ -75,10 +75,12 @@ def noisyReplaceAll( text:str, this:str, that:str, loop:bool=False ) -> str:
     """
     count = text.count( this )
     if count == 0:
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"No occurrences of {this!r} found to replace" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"No occurrences of {this!r} found to replace" )
         return text
 
-    vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Replacing {count:,} occurrence{'' if count==1 else 's'} of {this!r} with {that!r}" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Replacing {count:,} occurrence{'' if count==1 else 's'} of {this!r} with {that!r}" )
     if loop:
         newText = text
         while this in newText:
@@ -99,9 +101,11 @@ def noisyRegExReplaceAll( text:str, this:str, that:str ) -> str:
 
     count1 = len( re.findall( regex, text ) )
     if count1 == 0:
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"No occurrences of regex {this!r} found to replace" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"No occurrences of regex {this!r} found to replace" )
         return text
-    vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Replacing {count1:,} occurrence{'' if count1==1 else 's'} of regex {this!r} with {that!r}" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Replacing {count1:,} occurrence{'' if count1==1 else 's'} of regex {this!r} with {that!r}" )
 
     newText, count2 = re.subn( regex, that, text )
     if count2!=count1 and BibleOrgSysGlobals.verbosityLevel > 0:
@@ -120,9 +124,11 @@ def noisyDeleteAll( text:str, this:str ) -> str:
     """
     count = text.count( this )
     if count == 0:
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"No occurrences of {this!r} found to delete" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"No occurrences of {this!r} found to delete" )
         return text
-    vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Deleting {count:,} occurrence{'' if count==1 else 's'} of {this!r}" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Deleting {count:,} occurrence{'' if count==1 else 's'} of {this!r}" )
     newText = text.replace( this, '' )
 
     count2 = newText.count( this )
@@ -139,9 +145,11 @@ def noisyRegExDeleteAll( text:str, this:str ) -> str:
 
     count1 = len( re.findall( regex, text ) )
     if count1 == 0:
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"No occurrences of regex {this!r} found to delete" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"No occurrences of regex {this!r} found to delete" )
         return text
-    vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Deleting {count1:,} occurrence{'' if count1==1 else 's'} of regex {this!r}" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Deleting {count1:,} occurrence{'' if count1==1 else 's'} of regex {this!r}" )
 
     newText, count2 = re.subn( regex, '', text )
     if count2!=count1 and BibleOrgSysGlobals.verbosityLevel > 2:
@@ -167,9 +175,11 @@ These functions can be used for string find, replace, and delete, but they are n
     in the sense that they print exactly what's happening.
 """
     resultDA_bad = noisyDeleteAll( sampleText, 'xyx' )
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"resultDA_bad={resultDA_bad}" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"resultDA_bad={resultDA_bad}" )
     resultDA_good = noisyDeleteAll( sampleText, 'string' )
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"resultDA_good={resultDA_good}" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"resultDA_good={resultDA_good}" )
 # end of NoisyReplaceFunctions.demo
 
 

@@ -32,7 +32,7 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2026-06-21' # by RJH (Rust conversion)
+LAST_MODIFIED_DATE = '2026-10-06' # by RJH (Rust conversion)
 SHORT_PROGRAM_NAME = "USFMFile"
 PROGRAM_NAME = "USFM File loader"
 PROGRAM_VERSION = '0.90'
@@ -80,7 +80,8 @@ class USFMFile:
 
         Puts the result into self.lines
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"USFMFile.read( {USFMFilepath=}, {ignoreSFMs=}, {encoding=} )" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, f"USFMFile.read( {USFMFilepath=}, {ignoreSFMs=}, {encoding=} )" )
 
         # Check/handle parameters
         if ignoreSFMs is None: ignoreSFMs = []
@@ -89,7 +90,8 @@ class USFMFile:
         try:
             self.lines = readUSFMFile( str(USFMFilepath), ignoreSFMs )
         except Exception as err:
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "USFMFile error:", sys.exc_info()[0], err )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "USFMFile error:", sys.exc_info()[0], err )
             logging.critical( f"Error reading {USFMFilepath}: {err}" )
             # raise
     # end of USFMFile.read
@@ -105,15 +107,19 @@ def briefDemo() -> None:
 
     import os.path
     filepath = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'MatigsalugDictionaryA.sfm' )
-    vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Using {filepath} as test file…" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Using {filepath} as test file…" )
 
     linesDB = USFMFile()
     linesDB.read( filepath, ignoreSFMs=('mn','aMU','aMW','cu','cp') )
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, len(linesDB.lines), 'lines read from file', filepath )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, len(linesDB.lines), 'lines read from file', filepath )
     for i, r in enumerate(linesDB.lines):
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, i, r)
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, i, r)
         if i>9: break
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '…\n',len(linesDB.lines)-1, linesDB.lines[-1], '\n') # Display the last record
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '…\n',len(linesDB.lines)-1, linesDB.lines[-1], '\n') # Display the last record
 # end of fullDemo
 
 def fullDemo() -> None:

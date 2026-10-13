@@ -35,7 +35,7 @@ from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisational
 import bos_books_codes_py
 
 
-LAST_MODIFIED_DATE = '2025-07-07' # by RJH
+LAST_MODIFIED_DATE = '2026-10-06' # by RJH
 SHORT_PROGRAM_NAME = "EpubBible"
 PROGRAM_NAME = "EPub Bible format handler"
 PROGRAM_VERSION = '0.02'
@@ -60,7 +60,8 @@ def EpubBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=Fa
     if autoLoad is true and exactly one EPub Bible is found,
         returns the loaded EpubBible object.
     """
-    fnPrint( DEBUGGING_THIS_MODULE, f"EpubBibleFileCheck( {givenFolderName}, {strictCheck}, {autoLoad}, {autoLoadBooks} )" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+        fnPrint( DEBUGGING_THIS_MODULE, f"EpubBibleFileCheck( {givenFolderName}, {strictCheck}, {autoLoad}, {autoLoadBooks} )" )
     if BibleOrgSysGlobals.debugFlag: assert givenFolderName and isinstance( givenFolderName, (str,Path) )
     if BibleOrgSysGlobals.debugFlag: assert autoLoad in (True,False,)
 
@@ -73,7 +74,8 @@ def EpubBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=Fa
         return False
 
     # Find all the files and folders in this folder
-    vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f" EpubBibleFileCheck: Looking for files in given {givenFolderName}" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 4:
+        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f" EpubBibleFileCheck: Looking for files in given {givenFolderName}" )
     foundFolders, foundFiles = [], []
     numFound = foundFileCount = 0
     for something in os.listdir( givenFolderName ):
@@ -90,7 +92,8 @@ def EpubBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=Fa
     #if foundFileCount >= len(compulsoryFiles):
         #numFound = 1
     if numFound:
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "EpubBibleFileCheck got", numFound, givenFolderName )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, "EpubBibleFileCheck got", numFound, givenFolderName )
         if numFound == 1 and (autoLoad or autoLoadBooks):
             oB = EpubBible( givenFolderName, foundFiles[0] )
             if autoLoadBooks: oB.load() # Load and process the file
@@ -107,7 +110,8 @@ def EpubBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=Fa
         if not os.access( tryFolderName, os.R_OK ): # The subfolder is not readable
             logging.warning( f"EpubBibleFileCheck: {tryFolderName!r} subfolder is unreadable" )
             continue
-        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"    EpubBibleFileCheck: Looking for files in {tryFolderName}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 4:
+            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"    EpubBibleFileCheck: Looking for files in {tryFolderName}" )
         foundSubfolders, foundSubfiles = [], []
         try:
             for something in os.listdir( tryFolderName ):
@@ -123,7 +127,8 @@ def EpubBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=Fa
             #foundProjects.append( tryFolderName )
             #numFound += 1
     if numFound:
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "EpubBibleFileCheck foundProjects", numFound, foundProjects )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, "EpubBibleFileCheck foundProjects", numFound, foundProjects )
         if numFound == 1 and (autoLoad or autoLoadBooks):
             if BibleOrgSysGlobals.debugFlag: assert len(foundProjects) == 1
             oB = EpubBible( foundProjects[0][0], foundProjects[0][1] )
@@ -145,7 +150,8 @@ def createEpubBible( BibleObject, outputFolder=None ):
     # It seems 7-9 give the correct two header bytes
     ZLIB_COMPRESSION_LEVEL = 9 #  -1=default(=6), 0=none, 1=fastest…9=highest compression level
 
-    vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Running createEpubBible…" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Running createEpubBible…" )
     if BibleOrgSysGlobals.debugFlag: assert BibleObject.books
 
     if not BibleObject.doneSetupGeneric: BibleObject.__setupWriter()
@@ -214,11 +220,13 @@ def createEpubBible( BibleObject, outputFolder=None ):
 
     if ignoredMarkers:
         logging.info( f"createEpubBible: Ignored markers were {ignoredMarkers}" )
-    vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + f"WARNING: Ignored createEpubBible markers were {ignoredMarkers}" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + f"WARNING: Ignored createEpubBible markers were {ignoredMarkers}" )
 
     # Now create a zipped version
     filepath = os.path.join( outputFolder, filename )
-    vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Zipping {filename} EWB file…" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Zipping {filename} EWB file…" )
     zf = zipfile.ZipFile( filepath+'.zip', 'w', compression=zipfile.ZIP_DEFLATED )
     zf.write( filepath, filename )
     zf.close()
@@ -244,7 +252,8 @@ class EpubBible( Bible ):
         """
         Constructor: just sets up the Bible object.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"EpubBible.__init__( {sourceFolder}, {sourceFilename} )" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, f"EpubBible.__init__( {sourceFolder}, {sourceFilename} )" )
          # Setup and initialise the base class first
         Bible.__init__( self )
         self.objectNameString = 'EPub Bible object'
@@ -273,8 +282,10 @@ class EpubBible( Bible ):
         """
         Load the compressed data file and import book objects.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, "EpubBible.preload()" )
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nLoading {self.sourceFilepath}…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, "EpubBible.preload()" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nLoading {self.sourceFilepath}…" )
 
         self.inputZipfile = ZipFile( self.sourceFilepath )
         zipFileNameList = self.inputZipfile.namelist()
@@ -286,14 +297,16 @@ class EpubBible( Bible ):
         assert mimetypeStr == 'application/epub+zip'
 
         metafileList = [f for f in zipFileNameList if f.startswith( 'META-INF/' )]
-        dPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Got metafile list ({len(metafileList)}) {metafileList}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 2:
+            dPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Got metafile list ({len(metafileList)}) {metafileList}" )
         assert 'META-INF/container.xml' in metafileList
         containerXML = self.inputZipfile.read( 'META-INF/container.xml' ).decode( 'utf-8' )
         # dPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Got container XML ({len(containerXML)}) {containerXML}" )
         ixStart = containerXML.index( '<rootfile full-path="' )
         ixEnd = containerXML.index( '"', ixStart+21+1 )
         rootFilepath = containerXML[ixStart+21:ixEnd]
-        dPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Got {rootFilepath=}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 2:
+            dPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Got {rootFilepath=}" )
         # assert rootFilepath.endswith( 'content.opf' )
         assert rootFilepath == 'OEBPS/content.opf' # OEBPS = Open eBook Publication Structure
 
@@ -320,32 +333,38 @@ class EpubBible( Bible ):
                         BibleOrgSysGlobals.checkXMLNoTail( subelement, sublocation, 'cdb2' )
                         # BibleOrgSysGlobals.checkXMLNoAttributes( subelement, sublocation, '9s2d' ) # id=title
                         BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation, 'kxs1' )
-                        dPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Title = {subelement.text}" )
+                        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 2:
+                            dPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Title = {subelement.text}" )
                     elif subelement.tag.endswith( '}language' ):
                         # dPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Got spine subelement {subelement.tag} ({len(subelement)}) {subelement}" )
                         BibleOrgSysGlobals.checkXMLNoTail( subelement, sublocation, 'dkv3' )
                         BibleOrgSysGlobals.checkXMLNoAttributes( subelement, sublocation, 'kk32' )
                         BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation, 'll23' )
-                        dPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Language = {subelement.text}" )
+                        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 2:
+                            dPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Language = {subelement.text}" )
                     elif subelement.tag.endswith( '}identifier' ):
                         # dPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Got spine subelement {subelement.tag} ({len(subelement)}) {subelement}" )
                         BibleOrgSysGlobals.checkXMLNoTail( subelement, sublocation, 'z02l' )
                         # BibleOrgSysGlobals.checkXMLNoAttributes( subelement, sublocation, 'las0' ) # id=uid
                         BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation, 'ks10' )
-                        dPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Identifier = {subelement.text}" )
+                        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 2:
+                            dPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Identifier = {subelement.text}" )
                     elif subelement.tag.endswith( '}rights' ):
                         # dPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Got spine subelement {subelement.tag} ({len(subelement)}) {subelement}" )
                         BibleOrgSysGlobals.checkXMLNoTail( subelement, sublocation, 'z02l' )
                         BibleOrgSysGlobals.checkXMLNoAttributes( subelement, sublocation, 'las0' )
                         BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation, 'ks10' )
-                        dPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Rights = {subelement.text}" )
+                        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 2:
+                            dPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Rights = {subelement.text}" )
                     elif subelement.tag.endswith( '}meta' ):
-                        dPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Got spine subelement {subelement.tag} ({len(subelement)}) {subelement}" )
+                        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 2:
+                            dPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Got spine subelement {subelement.tag} ({len(subelement)}) {subelement}" )
                         BibleOrgSysGlobals.checkXMLNoText( subelement, sublocation, 'ls02' )
                         BibleOrgSysGlobals.checkXMLNoTail( subelement, sublocation, 'kas1' )
                         # BibleOrgSysGlobals.checkXMLNoAttributes( subelement, sublocation, 'kas4' )
                         BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation, 'kgf0' )
-                        dPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Rights = {subelement.text}" )
+                        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 2:
+                            dPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Rights = {subelement.text}" )
                     else: raise ValueError( f"Unexpected EPub content metadata frame: {subelement.tag}" )
             elif element.tag.endswith( '}manifest' ): # gives a unordered list of books
                 BibleOrgSysGlobals.checkXMLNoAttributes( element, location, 'j3jd' )
@@ -365,7 +384,8 @@ class EpubBible( Bible ):
                             else: logging.warning( f"Unprocessed '{attrib}' attribute ({value}) in content subelement" )
                         manifestDict[itemID] = href
                     else: raise ValueError( f"Unexpected EPub content manifest frame: {subelement.tag}" )
-                dPrint( 'Info', DEBUGGING_THIS_MODULE, f"Got manifest entries ({len(manifestDict)}) {manifestDict}" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 3:
+                    dPrint( 'Info', DEBUGGING_THIS_MODULE, f"Got manifest entries ({len(manifestDict)}) {manifestDict}" )
             elif element.tag.endswith( '}spine' ): # tells us the book order
                 toc = None
                 for attrib,value in element.items():
@@ -388,11 +408,13 @@ class EpubBible( Bible ):
                         assert idref in manifestDict
                         spineEntries.append( (idref,linear) )
                     else: raise ValueError( f"Unexpected EPub content spine frame: {subelement.tag}" )
-                dPrint( 'Info', DEBUGGING_THIS_MODULE, f"Got spine entries ({len(spineEntries)}) {spineEntries}" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 3:
+                    dPrint( 'Info', DEBUGGING_THIS_MODULE, f"Got spine entries ({len(spineEntries)}) {spineEntries}" )
             else: raise ValueError( f"Unexpected EPub content frame: {element.tag}" )
 
         self.ePubBookDict = {(idref[1:] if idref[0]=='x' and len(idref)==4 else idref):manifestDict[idref] for idref,_linear in spineEntries}
-        dPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Got ePubBookDict entries ({len(self.ePubBookDict)}) {self.ePubBookDict}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 2:
+            dPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Got ePubBookDict entries ({len(self.ePubBookDict)}) {self.ePubBookDict}" )
         self.preloaded = True
     # end of EpubBible.preload
 
@@ -401,10 +423,12 @@ class EpubBible( Bible ):
         """
         Load the requested book out of the zipped container.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"EpubBible.loadBook( {BBB} )" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, f"EpubBible.loadBook( {BBB} )" )
         if not self.preloaded: self.preload()
 
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Loading {BBB}…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Loading {BBB}…" )
         UUU = bos_books_codes_py.bos_book_code_to_usfm_abbrev( BBB )
         uuu = UUU.lower()
         bookFilename = self.ePubBookDict[uuu]
@@ -447,7 +471,8 @@ class EpubBible( Bible ):
         location = f'{BBB} book contents'
         lastC = None
         for element in bookTree:
-            dPrint( 'Normal', DEBUGGING_THIS_MODULE, f"loadBook got element {element.tag} ({len(element)})" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 2:
+                dPrint( 'Normal', DEBUGGING_THIS_MODULE, f"loadBook got element {element.tag} ({len(element)})" )
             elementTag = element.tag[len(self.NAME_SPACE):]
             location = f'{location}-{elementTag}'
             BibleOrgSysGlobals.checkXMLNoText( element, location, 'bf03' )
@@ -460,7 +485,8 @@ class EpubBible( Bible ):
                 BibleOrgSysGlobals.checkXMLNoTail( element, location, 'dj69' )
                 BibleOrgSysGlobals.checkXMLNoAttributes( element, location, 'j8jf' )
                 for subelement in element:
-                    dPrint( 'Normal', DEBUGGING_THIS_MODULE, f"loadBook got subelement {subelement.tag} ({len(subelement)})" )
+                    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 2:
+                        dPrint( 'Normal', DEBUGGING_THIS_MODULE, f"loadBook got subelement {subelement.tag} ({len(subelement)})" )
                     subelementTag = subelement.tag[len(self.NAME_SPACE):]
                     sublocation = f'{location}-{subelementTag}'
                     BibleOrgSysGlobals.checkXMLNoText( subelement, sublocation, '4gfd' )
@@ -571,7 +597,8 @@ class EpubBible( Bible ):
                                     # print( f"{div2Class=}" )
                                     # BibleOrgSysGlobals.checkXMLNoText( sub2element, sub2location, '6df2' ) # Ignore the verse number
                                     for sub3element in sub2element:
-                                        dPrint( 'Normal', DEBUGGING_THIS_MODULE, f"loadBook got sub3element {sub3element.tag} ({len(sub3element)})" )
+                                        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 2:
+                                            dPrint( 'Normal', DEBUGGING_THIS_MODULE, f"loadBook got sub3element {sub3element.tag} ({len(sub3element)})" )
                                         sub3elementTag = sub3element.tag[len(self.NAME_SPACE):]
                                         sub3location = f'{sub2location}-{sub3elementTag}'
                                         # BibleOrgSysGlobals.checkXMLNoTail( sub3element, sub3location, '4dk7' )
@@ -605,10 +632,12 @@ class EpubBible( Bible ):
         """
         Load all the books out of the zipped container.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, "EpubBible.load()" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, "EpubBible.load()" )
         if not self.preloaded: self.preload()
 
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Loading ePub books from {self.sourceFilepath}…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Loading ePub books from {self.sourceFilepath}…" )
         loadErrors:list[str] = []
 
         for idref,_bookPath in self.ePubBookDict.items():
@@ -631,11 +660,14 @@ def testEPub( TEWBfilename ):
 
     #TEWBfolder = os.path.join( testFolder, TEWBfilename+'/' )
     TEWBfolder = testFolder
-    vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Demonstrating the EPub Bible class…" )
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Test folder is {TEWBfolder!r} {TEWBfilename!r}" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Demonstrating the EPub Bible class…" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Test folder is {TEWBfolder!r} {TEWBfilename!r}" )
     ePub = EpubBible( TEWBfolder, TEWBfilename )
     keep = ePub.load() # Load and process the file
-    vPrint( 'Normal', DEBUGGING_THIS_MODULE, ePub ) # Just print a summary
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, ePub ) # Just print a summary
     if BibleOrgSysGlobals.strictCheckingFlag:
         ePub.check()
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, UsfmB.books['GEN']._processedLines[0:40] )
@@ -692,11 +724,14 @@ def fullDemo() -> None:
 
     if 0: # demo the file checking code -- first with the whole folder and then with only one folder
         result1 = EpubBibleFileCheck( testFolder )
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "EPub TestA1", result1 )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "EPub TestA1", result1 )
         result2 = EpubBibleFileCheck( testFolder, autoLoad=True )
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "EPub TestA2", result2 )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "EPub TestA2", result2 )
         result3 = EpubBibleFileCheck( testFolder, autoLoadBooks=True )
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "EPub TestA3", result3 )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "EPub TestA3", result3 )
 
         #testSubfolder = os.path.join( testFolder, 'AV/' )
         #result3 = EpubBibleFileCheck( testSubfolder )
@@ -708,7 +743,8 @@ def fullDemo() -> None:
 
     if 1: # specified module
         singleModule = 'eng-asv.epub'
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nEPub C/ Trying {singleModule}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nEPub C/ Trying {singleModule}" )
         #myTestFolder = os.path.join( testFolder, singleModule+'/' )
         #testFilepath = os.path.join( testFolder, singleModule+'/', singleModule+'_utf8.txt' )
         testEPub( singleModule )
@@ -727,7 +763,8 @@ def fullDemo() -> None:
         bad = ( 'aa.ewb','gkm.ewb','gnt.ewb','hcsb.ewb','msg.ewb','rsv.ewb' )
         allModules = good + bad
         for j, testFilename in enumerate( good ): # Choose one of the above: good, nonEnglish, bad, allModules
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nEPub D{j+1}/ Trying {testFilename}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nEPub D{j+1}/ Trying {testFilename}" )
             #myTestFolder = os.path.join( testFolder, testFilename+'/' )
             #testFilepath = os.path.join( testFolder, testFilename+'/', testFilename+'_utf8.txt' )
             allModulesKeepDict[testFilename] = testEPub( testFilename )
@@ -790,7 +827,8 @@ def fullDemo() -> None:
             elif os.path.isfile( somepath ): foundFiles.append( something )
 
         if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nTrying all {len(foundFolders)} discovered modules…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nTrying all {len(foundFolders)} discovered modules…" )
             parameters = [folderName for folderName in sorted(foundFolders)]
             BibleOrgSysGlobals.alreadyMultiprocessing = True
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
@@ -799,7 +837,8 @@ def fullDemo() -> None:
             BibleOrgSysGlobals.alreadyMultiprocessing = False
         else: # Just single threaded
             for j, someFolder in enumerate( sorted( foundFolders ) ):
-                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nEPub E{j+1}/ Trying {someFolder}" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                    vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nEPub E{j+1}/ Trying {someFolder}" )
                 #myTestFolder = os.path.join( testFolder, someFolder+'/' )
                 testEPub( someFolder )
 # end of EpubBible.fullDemo

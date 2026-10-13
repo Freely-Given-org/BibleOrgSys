@@ -30,7 +30,7 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2026-06-12' # by RJH
+LAST_MODIFIED_DATE = '2026-10-06' # by RJH
 SHORT_PROGRAM_NAME = "HebrewLexicon"
 PROGRAM_NAME = "Hebrew Lexicon handler"
 PROGRAM_VERSION = '0.30'
@@ -51,7 +51,8 @@ class HebrewLexiconIndex:
         Constructor: expects the filepath of the source XML file.
         Loads (and crudely validates the XML file) into an element tree.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"HebrewLexiconIndex.__init__( {XMLFolder} )" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, f"HebrewLexiconIndex.__init__( {XMLFolder} )" )
         self.XMLFolder = XMLFolder
     # end of HebrewLexiconIndex.__init__
 
@@ -62,7 +63,8 @@ class HebrewLexiconIndex:
         """
         from BibleOrgSys.OriginalLanguages.Converters.HebrewLexiconConverter import AugmentedStrongsIndexFileConverter, LexicalIndexFileConverter
 
-        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "HebrewLexiconIndex.load()" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 4:
+            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "HebrewLexiconIndex.load()" )
         if self.XMLFolder is None:
             self.XMLFolder = BibleOrgSysGlobals.BADBAD_PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( 'HebrewLexicon/' ) # Hebrew lexicon folder
 
@@ -202,7 +204,8 @@ class HebrewLexiconSimple:
         Constructor: expects the filepath of the source XML file.
         Loads (and crudely validates the XML file) into an element tree.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"HebrewLexiconSimple.__init__( {XMLFolder} )" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, f"HebrewLexiconSimple.__init__( {XMLFolder} )" )
         self.XMLFolder = XMLFolder
         self.StrongsEntries = self.BrownDriverBriggsXMLEntries = self.BrownDriverBriggsEntries = None
         if preload: self.load()
@@ -257,7 +260,8 @@ class HebrewLexiconSimple:
 
         Returns None if the key is not found.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"HebrewLexiconSimple.getStrongsEntryData( {key!r} )" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, f"HebrewLexiconSimple.getStrongsEntryData( {key!r} )" )
         if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert key and key[0]=='H' and key[1:].isdigit()
         if self.StrongsEntries is None: self.load()
@@ -275,7 +279,8 @@ class HebrewLexiconSimple:
         Returns a string for the given key and fieldName names.
         Returns None if the key or fieldName is not found.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"HebrewLexiconSimple.getStrongsEntryField( {key!r}, {fieldName!r} )" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, f"HebrewLexiconSimple.getStrongsEntryField( {key!r}, {fieldName!r} )" )
         if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert key and key[0]=='H' and key[1:].isdigit()
         if self.StrongsEntries is None: self.load()
@@ -309,7 +314,8 @@ class HebrewLexiconSimple:
                 the same Hebrew form from <a href="#ot:1961"><i title="{haw-yaw}" xml:lang="hbo">הָיָה</i></a>).</li>
 
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"HebrewLexiconSimple.getStrongsEntryHTML( {key} )…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, f"HebrewLexiconSimple.getStrongsEntryHTML( {key} )…" )
         if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert key and key[0]=='H' and key[1:].isdigit()
         if self.StrongsEntries is None: self.load()
@@ -403,7 +409,8 @@ class HebrewLexiconSimple:
                 #.format( keyDigits, keyDigits, entry['word'][2], entry['word'][0], sourceHTML, meaningHTML, usageHTML )
             html = f'<p class=Strongs>{wordHTML}<br>{sourceHTML}<br>{meaningHTML}<br>{usageHTML}</p>' \
                             .replace( ' ,', ',' ).replace( ' ;', ';' ) # clean it up
-            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"  HebrewLexiconSimple.getStrongsEntryHTML about to return: {html}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 4:
+                vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"  HebrewLexiconSimple.getStrongsEntryHTML about to return: {html}" )
             assert '<w ' not in html, f"HebrewLexiconSimple.getStrongsEntryHTML: Unexpected {key} w span {html.count('<span')} {html.count('</span>')} from {html=}"
             assert html.count('<p') == html.count('</p>'), f"HebrewLexiconSimple.getStrongsEntryHTML: Mismatched {key} paragraphs {html.count('<p')} {html.count('</p>')} from {html=}"
             assert html.count('<span') == html.count('</span>'), f"HebrewLexiconSimple.getStrongsEntryHTML: Mismatched {key} spans {html.count('<span')} {html.count('</span>')} from {html=}"
@@ -420,7 +427,8 @@ class HebrewLexiconSimple:
 
         Returns None if the key is not found.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"HebrewLexiconSimple.getBrDrBrEntryData( {key!r} )" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, f"HebrewLexiconSimple.getBrDrBrEntryData( {key!r} )" )
         if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert key and key.count('.')==2
         if self.BrownDriverBriggsEntries is None: self.load()
@@ -438,7 +446,8 @@ class HebrewLexiconSimple:
         Returns a string for the given key and fieldName names.
         Returns None if the key or fieldName is not found.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"HebrewLexiconSimple.getBrDrBrEntryField( {key!r}, {fieldName!r} )" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, f"HebrewLexiconSimple.getBrDrBrEntryField( {key!r}, {fieldName!r} )" )
         if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert key and key.count('.')==2
         if self.BrownDriverBriggsEntries is None: self.load()
@@ -458,13 +467,15 @@ class HebrewLexiconSimple:
         Returns an HTML entry for the given key.
         Returns None if the key is not found.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"HebrewLexiconSimple.getBrDrBrEntryHTML( {key!r} )" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, f"HebrewLexiconSimple.getBrDrBrEntryHTML( {key!r} )" )
         if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert key and key.count('.')==2
         if self.BrownDriverBriggsEntries is None: self.load()
 
         entry =  self.getBrDrBrEntryData( key, getXML=getFull )
-        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"  HebrewLexiconSimple.getBrDrBrEntryHTML got entry: {entry}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 4:
+            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"  HebrewLexiconSimple.getBrDrBrEntryHTML got entry: {entry}" )
         # print( f"  HebrewLexiconSimple.getBrDrBrEntryHTML {key=} got entry: {entry}" )
         if getFull: # We have the full XML entry to format
             namespace1 = '{http://openscriptures.github.com/morphhb/namespace}'
@@ -632,7 +643,8 @@ class HebrewLexicon( HebrewLexiconSimple ):
         Constructor: expects the filepath of the source XML file.
         Loads (and crudely validates the XML file) into an element tree.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"HebrewLexicon.__init__( {XMLFolder} )" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, f"HebrewLexicon.__init__( {XMLFolder} )" )
         HebrewLexiconSimple.__init__( self, XMLFolder )
         self.XMLFolder = XMLFolder
         self.hlix = None
@@ -646,12 +658,14 @@ class HebrewLexicon( HebrewLexiconSimple ):
 
         Otherwise lLoad the actual XML lexicon (slow).
         """
-        fnPrint( DEBUGGING_THIS_MODULE, "HebrewLexicon.load()" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, "HebrewLexicon.load()" )
         standardPickleFilepath = BibleOrgSysGlobals.BOS_DISTRIBUTED_FILES_FOLDERPATH.joinpath( 'HebrewLexicon_Tables.1.pickle' )
         if standardPickleFilepath.is_file():
             import pickle
             self.hlix = HebrewLexiconIndex()
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Loading pickle file {standardPickleFilepath}…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Loading pickle file {standardPickleFilepath}…" )
             with open( standardPickleFilepath, 'rb') as pickleFile: # The protocol version used is detected automatically, so we do not have to specify it
                 self.hlix.indexEntries1 = pickle.load( pickleFile ) # Augmented Strongs
                 self.hlix.indexEntries2 = pickle.load( pickleFile ) # Augmented Strongs
@@ -700,7 +714,8 @@ class HebrewLexicon( HebrewLexiconSimple ):
 
         Returns None if the key is not found.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"HebrewLexicon.getBrDrBrEntryData( {key!r} )" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, f"HebrewLexicon.getBrDrBrEntryData( {key!r} )" )
         if '.' not in key: # assume it's a Strongs code then
             if self.hlix is None: self.load()
             key = self.hlix.getBrDrBrCodeFromStrongsNumber( key )
@@ -719,7 +734,8 @@ class HebrewLexicon( HebrewLexiconSimple ):
 
         Returns None if the key or fieldName is not found.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"HebrewLexicon.getBrDrBrEntryField( {key!r}, {fieldName!r} )" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, f"HebrewLexicon.getBrDrBrEntryField( {key!r}, {fieldName!r} )" )
 
         if '.' not in key: # assume it's a Strongs code then
             if self.hlix is None: self.load()
@@ -738,13 +754,15 @@ class HebrewLexicon( HebrewLexiconSimple ):
         Returns an HTML entry for the given key.
         Returns None if the key is not found.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"HebrewLexicon.getBrDrBrEntryHTML( {key} )…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, f"HebrewLexicon.getBrDrBrEntryHTML( {key} )…" )
         if '.' not in key: # assume it's a Strongs code then
             if self.hlix is None: self.load()
             key = self.hlix.getBrDrBrCodeFromStrongsNumber( key )
         if key:
             html = HebrewLexiconSimple.getBrDrBrEntryHTML( self, key, getFull=True )
-            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"  HebrewLexicon.getBrDrBrEntryHTML about to return: {html}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 4:
+                vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"  HebrewLexicon.getBrDrBrEntryHTML about to return: {html}" )
             return html
     # end of HebrewLexicon.getBrDrBrEntryHTML
 # end of HebrewLexicon class
@@ -758,54 +776,89 @@ def briefDemo() -> None:
     BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     if 1: # demonstrate the Hebrew Lexicon Index class
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nDemonstrating the Hebrew Lexicon Index class…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nDemonstrating the Hebrew Lexicon Index class…" )
         hlix = HebrewLexiconIndex() # Load and process the XML
         hlix.load()
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, hlix ) # Just print a summary
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Code for 2 is", hlix.getBrDrBrCodeFromHebrewStrongsNumber( '2' ) )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Code for H8674 is", hlix.getBrDrBrCodeFromHebrewStrongsNumber( 'H8674' ) )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Code for H8675 is", hlix.getBrDrBrCodeFromHebrewStrongsNumber( 'H8675' ) )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Codes for aac are", hlix.getStrongsNumberFromLexiconCode('aac'), hlix.getBrDrBrCodeFromLexiconCode('aac'), hlix.getTWOTCodeFromLexiconCode('aac') )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Codes for nyy are", hlix.getStrongsNumberFromLexiconCode('nyy'), hlix.getBrDrBrCodeFromLexiconCode('nyy'), hlix.getTWOTCodeFromLexiconCode('nyy') )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Codes for pdc are", hlix.getStrongsNumberFromLexiconCode('pdc'), hlix.getBrDrBrCodeFromLexiconCode('pdc'), hlix.getTWOTCodeFromLexiconCode('pdc') )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Codes for pdd are", hlix.getStrongsNumberFromLexiconCode('pdd'), hlix.getBrDrBrCodeFromLexiconCode('pdd'), hlix.getTWOTCodeFromLexiconCode('pdd') )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, hlix ) # Just print a summary
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Code for 2 is", hlix.getBrDrBrCodeFromHebrewStrongsNumber( '2' ) )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Code for H8674 is", hlix.getBrDrBrCodeFromHebrewStrongsNumber( 'H8674' ) )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Code for H8675 is", hlix.getBrDrBrCodeFromHebrewStrongsNumber( 'H8675' ) )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Codes for aac are", hlix.getStrongsNumberFromLexiconCode('aac'), hlix.getBrDrBrCodeFromLexiconCode('aac'), hlix.getTWOTCodeFromLexiconCode('aac') )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Codes for nyy are", hlix.getStrongsNumberFromLexiconCode('nyy'), hlix.getBrDrBrCodeFromLexiconCode('nyy'), hlix.getTWOTCodeFromLexiconCode('nyy') )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Codes for pdc are", hlix.getStrongsNumberFromLexiconCode('pdc'), hlix.getBrDrBrCodeFromLexiconCode('pdc'), hlix.getTWOTCodeFromLexiconCode('pdc') )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Codes for pdd are", hlix.getStrongsNumberFromLexiconCode('pdd'), hlix.getBrDrBrCodeFromLexiconCode('pdd'), hlix.getTWOTCodeFromLexiconCode('pdd') )
 
     if 1: # demonstrate the simple Hebrew Lexicon class
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nDemonstrating the simple Hebrew Lexicon class…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nDemonstrating the simple Hebrew Lexicon class…" )
         hls = HebrewLexiconSimple() # Load and process the XML
         hls.load()
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, hls ) # Just print a summary
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, hls ) # Just print a summary
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
         for strongsKey in ('H1','H123','H165','H1732','H1979','H2011','H8674','H8675',): # Last one is invalid
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '\n' + strongsKey )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " Data:", hls.getStrongsEntryData( strongsKey ) )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " Usage:", hls.getStrongsEntryField( strongsKey, 'usage' ) )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " HTML:", hls.getStrongsEntryHTML( strongsKey ) )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '\n' + strongsKey )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " Data:", hls.getStrongsEntryData( strongsKey ) )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " Usage:", hls.getStrongsEntryField( strongsKey, 'usage' ) )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " HTML:", hls.getStrongsEntryHTML( strongsKey ) )
         for BrDrBrKey in ('a.ab.ac','a.gq.ab','b.aa.aa','xw.ah.ah','xy.zz.zz',): # Last one is invalid
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '\n' + BrDrBrKey )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " Data:", hls.getBrDrBrEntryData( BrDrBrKey ) )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " Status:", hls.getBrDrBrEntryField( BrDrBrKey, 'status' ) )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " HTML:", hls.getBrDrBrEntryHTML( BrDrBrKey ) )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '\n' + BrDrBrKey )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " Data:", hls.getBrDrBrEntryData( BrDrBrKey ) )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " Status:", hls.getBrDrBrEntryField( BrDrBrKey, 'status' ) )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " HTML:", hls.getBrDrBrEntryHTML( BrDrBrKey ) )
 
     if 1: # demonstrate the Hebrew Lexicon class
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nDemonstrating the Hebrew Lexicon class…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nDemonstrating the Hebrew Lexicon class…" )
         hl = HebrewLexicon() # Load and process the XML
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, hl ) # Just print a summary
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, hl ) # Just print a summary
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
         for strongsKey in ('H1','H123','H165','H1732','H1979','H2011','H8674','H8675',): # Last one is invalid
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '\n' + strongsKey )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " Data:", hl.getStrongsEntryData( strongsKey ) )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " Usage:", hl.getStrongsEntryField( strongsKey, 'usage' ) )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " HTML:", hl.getStrongsEntryHTML( strongsKey ) )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " Data:", hl.getBrDrBrEntryData( strongsKey ) )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " Status:", hl.getBrDrBrEntryField( strongsKey, 'status' ) )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " HTML:", hl.getBrDrBrEntryHTML( strongsKey ) )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '\n' + strongsKey )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " Data:", hl.getStrongsEntryData( strongsKey ) )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " Usage:", hl.getStrongsEntryField( strongsKey, 'usage' ) )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " HTML:", hl.getStrongsEntryHTML( strongsKey ) )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " Data:", hl.getBrDrBrEntryData( strongsKey ) )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " Status:", hl.getBrDrBrEntryField( strongsKey, 'status' ) )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " HTML:", hl.getBrDrBrEntryHTML( strongsKey ) )
         for BrDrBrKey in ('a.ab.ac','a.gq.ab','b.aa.aa','xw.ah.ah','xy.zz.zz',): # Last one is invalid
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '\n' + BrDrBrKey )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " Data:", hl.getBrDrBrEntryData( BrDrBrKey ) )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " Status:", hl.getBrDrBrEntryField( BrDrBrKey, 'status' ) )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " HTML:", hl.getBrDrBrEntryHTML( BrDrBrKey ) )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '\n' + BrDrBrKey )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " Data:", hl.getBrDrBrEntryData( BrDrBrKey ) )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " Status:", hl.getBrDrBrEntryField( BrDrBrKey, 'status' ) )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " HTML:", hl.getBrDrBrEntryHTML( BrDrBrKey ) )
 # end of HebrewLexicon.briefDemo
 
 def fullDemo() -> None:
@@ -815,54 +868,89 @@ def fullDemo() -> None:
     BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     if 1: # demonstrate the Hebrew Lexicon Index class
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nDemonstrating the Hebrew Lexicon Index class…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nDemonstrating the Hebrew Lexicon Index class…" )
         hlix = HebrewLexiconIndex() # Load and process the XML
         hlix.load()
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, hlix ) # Just print a summary
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Code for 2 is", hlix.getBrDrBrCodeFromHebrewStrongsNumber( '2' ) )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Code for H8674 is", hlix.getBrDrBrCodeFromHebrewStrongsNumber( 'H8674' ) )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Code for H8675 is", hlix.getBrDrBrCodeFromHebrewStrongsNumber( 'H8675' ) )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Codes for aac are", hlix.getStrongsNumberFromLexiconCode('aac'), hlix.getBrDrBrCodeFromLexiconCode('aac'), hlix.getTWOTCodeFromLexiconCode('aac') )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Codes for nyy are", hlix.getStrongsNumberFromLexiconCode('nyy'), hlix.getBrDrBrCodeFromLexiconCode('nyy'), hlix.getTWOTCodeFromLexiconCode('nyy') )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Codes for pdc are", hlix.getStrongsNumberFromLexiconCode('pdc'), hlix.getBrDrBrCodeFromLexiconCode('pdc'), hlix.getTWOTCodeFromLexiconCode('pdc') )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Codes for pdd are", hlix.getStrongsNumberFromLexiconCode('pdd'), hlix.getBrDrBrCodeFromLexiconCode('pdd'), hlix.getTWOTCodeFromLexiconCode('pdd') )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, hlix ) # Just print a summary
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Code for 2 is", hlix.getBrDrBrCodeFromHebrewStrongsNumber( '2' ) )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Code for H8674 is", hlix.getBrDrBrCodeFromHebrewStrongsNumber( 'H8674' ) )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Code for H8675 is", hlix.getBrDrBrCodeFromHebrewStrongsNumber( 'H8675' ) )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Codes for aac are", hlix.getStrongsNumberFromLexiconCode('aac'), hlix.getBrDrBrCodeFromLexiconCode('aac'), hlix.getTWOTCodeFromLexiconCode('aac') )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Codes for nyy are", hlix.getStrongsNumberFromLexiconCode('nyy'), hlix.getBrDrBrCodeFromLexiconCode('nyy'), hlix.getTWOTCodeFromLexiconCode('nyy') )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Codes for pdc are", hlix.getStrongsNumberFromLexiconCode('pdc'), hlix.getBrDrBrCodeFromLexiconCode('pdc'), hlix.getTWOTCodeFromLexiconCode('pdc') )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Codes for pdd are", hlix.getStrongsNumberFromLexiconCode('pdd'), hlix.getBrDrBrCodeFromLexiconCode('pdd'), hlix.getTWOTCodeFromLexiconCode('pdd') )
 
     if 1: # demonstrate the simple Hebrew Lexicon class
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nDemonstrating the simple Hebrew Lexicon class…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nDemonstrating the simple Hebrew Lexicon class…" )
         hls = HebrewLexiconSimple() # Load and process the XML
         hls.load()
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, hls ) # Just print a summary
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, hls ) # Just print a summary
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
         for strongsKey in ('H1','H123','H165','H1732','H1979','H2011','H8674','H8675',): # Last one is invalid
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '\n' + strongsKey )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " Data:", hls.getStrongsEntryData( strongsKey ) )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " Usage:", hls.getStrongsEntryField( strongsKey, 'usage' ) )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " HTML:", hls.getStrongsEntryHTML( strongsKey ) )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '\n' + strongsKey )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " Data:", hls.getStrongsEntryData( strongsKey ) )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " Usage:", hls.getStrongsEntryField( strongsKey, 'usage' ) )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " HTML:", hls.getStrongsEntryHTML( strongsKey ) )
         for BrDrBrKey in ('a.ab.ac','a.gq.ab','b.aa.aa','xw.ah.ah','xy.zz.zz',): # Last one is invalid
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '\n' + BrDrBrKey )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " Data:", hls.getBrDrBrEntryData( BrDrBrKey ) )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " Status:", hls.getBrDrBrEntryField( BrDrBrKey, 'status' ) )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " HTML:", hls.getBrDrBrEntryHTML( BrDrBrKey ) )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '\n' + BrDrBrKey )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " Data:", hls.getBrDrBrEntryData( BrDrBrKey ) )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " Status:", hls.getBrDrBrEntryField( BrDrBrKey, 'status' ) )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " HTML:", hls.getBrDrBrEntryHTML( BrDrBrKey ) )
 
     if 1: # demonstrate the Hebrew Lexicon class
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nDemonstrating the Hebrew Lexicon class…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nDemonstrating the Hebrew Lexicon class…" )
         hl = HebrewLexicon() # Load and process the XML
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, hl ) # Just print a summary
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, hl ) # Just print a summary
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
         for strongsKey in ('H1','H123','H165','H1732','H1979','H2011','H8674','H8675',): # Last one is invalid
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '\n' + strongsKey )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " Data:", hl.getStrongsEntryData( strongsKey ) )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " Usage:", hl.getStrongsEntryField( strongsKey, 'usage' ) )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " HTML:", hl.getStrongsEntryHTML( strongsKey ) )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " Data:", hl.getBrDrBrEntryData( strongsKey ) )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " Status:", hl.getBrDrBrEntryField( strongsKey, 'status' ) )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " HTML:", hl.getBrDrBrEntryHTML( strongsKey ) )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '\n' + strongsKey )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " Data:", hl.getStrongsEntryData( strongsKey ) )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " Usage:", hl.getStrongsEntryField( strongsKey, 'usage' ) )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " HTML:", hl.getStrongsEntryHTML( strongsKey ) )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " Data:", hl.getBrDrBrEntryData( strongsKey ) )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " Status:", hl.getBrDrBrEntryField( strongsKey, 'status' ) )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " HTML:", hl.getBrDrBrEntryHTML( strongsKey ) )
         for BrDrBrKey in ('a.ab.ac','a.gq.ab','b.aa.aa','xw.ah.ah','xy.zz.zz',): # Last one is invalid
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '\n' + BrDrBrKey )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " Data:", hl.getBrDrBrEntryData( BrDrBrKey ) )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " Status:", hl.getBrDrBrEntryField( BrDrBrKey, 'status' ) )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " HTML:", hl.getBrDrBrEntryHTML( BrDrBrKey ) )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '\n' + BrDrBrKey )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " Data:", hl.getBrDrBrEntryData( BrDrBrKey ) )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " Status:", hl.getBrDrBrEntryField( BrDrBrKey, 'status' ) )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " HTML:", hl.getBrDrBrEntryHTML( BrDrBrKey ) )
 # end of HebrewLexicon.fullDemo
 
 if __name__ == '__main__':

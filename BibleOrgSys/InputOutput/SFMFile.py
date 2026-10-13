@@ -36,7 +36,7 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2026-05-17' # by RJH (Rust conversion)
+LAST_MODIFIED_DATE = '2026-10-06' # by RJH (Rust conversion)
 SHORT_PROGRAM_NAME = "SFMFile"
 PROGRAM_NAME = "SFM Files loader"
 PROGRAM_VERSION = '0.88'
@@ -89,7 +89,8 @@ class SFMLines:
         try:
             self.lines = readSFMLines( str(SFMFilepath), ignoreSFMs )
         except Exception as err:
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "SFMLines error:", sys.exc_info()[0], err )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "SFMLines error:", sys.exc_info()[0], err )
             logging.critical( f"Error reading {SFMFilepath}: {err}" )
             # raise
     # end of SFMLines.read
@@ -157,7 +158,8 @@ class SFMRecords:
         try:
             self.records = readSFMRecords( str(SFMFilepath), key, ignoreSFMs, ignoreEntries, changePairs )
         except Exception as err:
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "SFMRecords error:", sys.exc_info()[0], err )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "SFMRecords error:", sys.exc_info()[0], err )
             logging.critical( f"Error reading {SFMFilepath}: {err}" )
             # raise
     # end of SFMRecords.read
@@ -233,23 +235,30 @@ def briefDemo() -> None:
     BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     filepath = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'MatigsalugDictionaryA.sfm' )
-    vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Using {filepath} as test file…" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Using {filepath} as test file…" )
 
     linesDB = SFMLines()
     linesDB.read( filepath, ignoreSFMs=('mn','aMU','aMW','cu','cp') )
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, len(linesDB.lines), 'lines read from file', filepath )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, len(linesDB.lines), 'lines read from file', filepath )
     for i, r in enumerate(linesDB.lines):
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, i, r)
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, i, r)
         if i>9: break
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '…\n',len(linesDB.lines)-1, linesDB.lines[-1], '\n') # Display the last record
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '…\n',len(linesDB.lines)-1, linesDB.lines[-1], '\n') # Display the last record
 
     recordsDB = SFMRecords()
     recordsDB.read( filepath, 'og', ignoreSFMs=('mn','aMU','aMW','cu','cp'))
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, len(recordsDB.records), 'records read from file', filepath )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, len(recordsDB.records), 'records read from file', filepath )
     for i, r in enumerate(recordsDB.records):
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, i, r)
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, i, r)
         if i>3: break
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '…\n',len(recordsDB.records)-1, recordsDB.records[-1]) # Display the last record
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '…\n',len(recordsDB.records)-1, recordsDB.records[-1]) # Display the last record
 # end of SFMFile.briefDemo
 
 def fullDemo() -> None:
@@ -261,23 +270,30 @@ def fullDemo() -> None:
     BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     filepath = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'MatigsalugDictionaryA.sfm' )
-    vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Using {filepath} as test file…" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Using {filepath} as test file…" )
 
     linesDB = SFMLines()
     linesDB.read( filepath, ignoreSFMs=('mn','aMU','aMW','cu','cp') )
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, len(linesDB.lines), 'lines read from file', filepath )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, len(linesDB.lines), 'lines read from file', filepath )
     for i, r in enumerate(linesDB.lines):
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, i, r)
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, i, r)
         if i>9: break
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '…\n',len(linesDB.lines)-1, linesDB.lines[-1], '\n') # Display the last record
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '…\n',len(linesDB.lines)-1, linesDB.lines[-1], '\n') # Display the last record
 
     recordsDB = SFMRecords()
     recordsDB.read( filepath, 'og', ignoreSFMs=('mn','aMU','aMW','cu','cp'))
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, len(recordsDB.records), 'records read from file', filepath )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, len(recordsDB.records), 'records read from file', filepath )
     for i, r in enumerate(recordsDB.records):
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, i, r)
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, i, r)
         if i>3: break
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '…\n',len(recordsDB.records)-1, recordsDB.records[-1]) # Display the last record
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '…\n',len(recordsDB.records)-1, recordsDB.records[-1]) # Display the last record
 # end of SFMFile.fullDemo
 
 if __name__ == '__main__':

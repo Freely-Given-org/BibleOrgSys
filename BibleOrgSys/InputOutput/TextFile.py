@@ -23,7 +23,7 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2016-12-28' # by RJH
+LAST_MODIFIED_DATE = '2026-10-06' # by RJH
 SHORT_PROGRAM_NAME = "TextFile"
 PROGRAM_NAME = "Text File"
 PROGRAM_VERSION = '0.03'
@@ -135,7 +135,8 @@ def briefDemo() -> None:
 
     tf = TextFile( folderpath=os.path.dirname(__file__), filename='TextFile.py' ) # Read myself!
     tf.replace( "TextFile", "ABRACADABRA" )
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, tf.fileText )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, tf.fileText )
     #tf.saveAs( "/tmp/fred.py" )
 
     #with TextFile( 'TextFile.py' ) as tf:

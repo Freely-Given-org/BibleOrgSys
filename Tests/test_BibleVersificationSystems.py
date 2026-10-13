@@ -26,7 +26,7 @@ from BibleOrgSys.Reference.Converters import BibleVersificationSystemsConverter
 from BibleOrgSys.Reference import BibleVersificationSystems
 
 
-LAST_MODIFIED_DATE = '2020-04-06' # by RJH
+LAST_MODIFIED_DATE = '2026-10-06' # by RJH
 SHORT_PROGRAM_NAME = "test_BVS"
 PROGRAM_NAME = "Bible Versification Systems tests"
 PROGRAM_VERSION = '0.48'
@@ -81,7 +81,8 @@ class BibleVersificationSystemsConverterTests(unittest.TestCase):
 
     def test_1070_exportDataToC( self ):
         """ Test the exportDataToC function. """
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Sorry, no C export yet :(" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Sorry, no C export yet :(" )
         #self.assertEqual( self.bvssc.exportDataToC(), None ) # Basically just make sure that it runs
     # end of test_1070_exportDataToC
 # end of BibleVersificationSystemsConverterTests class
@@ -214,7 +215,8 @@ class BibleVersificationSystemTests(unittest.TestCase):
         for BBB in ('GEN','MAT','JDE',):
             result = self.bvs.getNumVersesList( BBB )
             self.assertTrue( isinstance( result, list ) )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, len(result), result )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, len(result), result )
             self.assertTrue( 1 <= len(result) <= 151 )
             self.assertEqual( len(result), self.bvs.getNumChapters(BBB) )
             for value in result:
@@ -241,7 +243,8 @@ if __name__ == '__main__':
     parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
-    vPrint( 'Normal', DEBUGGING_THIS_MODULE, PROGRAM_NAME_VERSION )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, PROGRAM_NAME_VERSION )
 
     unittest.main() # Automatically runs all of the above tests
 # end of BibleVersificationSystemsTests.py

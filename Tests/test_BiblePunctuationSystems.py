@@ -26,7 +26,7 @@ from BibleOrgSys.Reference.Converters import BiblePunctuationSystemsConverter
 from BibleOrgSys.Reference import BiblePunctuationSystems
 
 
-LAST_MODIFIED_DATE = '2020-04-06' # by RJH
+LAST_MODIFIED_DATE = '2026-10-06' # by RJH
 PROGRAM_NAME = "Bible Punctuation Systems tests"
 PROGRAM_VERSION = '0.42'
 PROGRAM_NAME_VERSION = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
@@ -234,7 +234,8 @@ if __name__ == '__main__':
     parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
-    vPrint( 'Normal', DEBUGGING_THIS_MODULE, PROGRAM_NAME_VERSION )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, PROGRAM_NAME_VERSION )
 
     unittest.main() # Automatically runs all of the above tests
 # end of BiblePunctuationSystemsTests.py

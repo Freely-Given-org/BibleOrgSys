@@ -26,7 +26,7 @@ from BibleOrgSys.Reference import BibleOrganisationalSystems
 from BibleOrgSys.Reference import BibleReferences
 
 
-LAST_MODIFIED_DATE = '2020-04-06' # by RJH
+LAST_MODIFIED_DATE = '2026-10-06' # by RJH
 PROGRAM_NAME = "Bible References tests"
 PROGRAM_VERSION = '0.25'
 PROGRAM_NAME_VERSION = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
@@ -265,7 +265,8 @@ class BibleReferencesTests( unittest.TestCase ):
                                             ('JOS','12','17,18', '12:17'), ('JDG','12','17,18', '12:18'), ('SA1','12','17', '12:17,18'), ('SA2','12','18', '12:17,18'), \
                                             ('CH1','12','17-19', '12:18'), ('CH2','12','18', '12:17-19'), ):
             BAR = BibleReferences.BibleAnchorReference( ourBBB, ourC, ourV )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, BAR ) # Just print a summary
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, BAR ) # Just print a summary
             self.assertTrue( BAR.matchesAnchorString( ourAnchor ) )
     # end of test_400_BibleAnchorReference
 
@@ -299,7 +300,8 @@ if __name__ == '__main__':
     parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
-    vPrint( 'Normal', DEBUGGING_THIS_MODULE, PROGRAM_NAME_VERSION )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, PROGRAM_NAME_VERSION )
 
     unittest.main() # Automatically runs all of the above tests
 # end of BibleReferencesTests.py

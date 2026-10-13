@@ -51,7 +51,7 @@ from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
 from BibleOrgSys.Online.Door43OnlineCatalog import Door43CatalogResources, Door43CatalogBible
 
 
-LAST_MODIFIED_DATE = '2025-02-08' # by RJH
+LAST_MODIFIED_DATE = '2026-10-06' # by RJH
 SHORT_PROGRAM_NAME = "CheckuWLiteralNTvsGreek"
 PROGRAM_NAME = "Check unfoldingWord Literal NT vs Greek"
 PROGRAM_VERSION = '0.04'
@@ -76,9 +76,11 @@ def main() -> None:
 
     # Download the online Door43 Resource Catalog
     door43CatalogResources = Door43CatalogResources()
-    vPrint( 'Info', DEBUGGING_THIS_MODULE, door43CatalogResources )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, door43CatalogResources )
     door43CatalogResources.fetchCatalog()
-    vPrint( 'Info', DEBUGGING_THIS_MODULE, f'\n{door43CatalogResources}\n\n' )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f'\n{door43CatalogResources}\n\n' )
 
     # Download and load all books from the UGNT = unfoldingWord® Greek New Testament
     UGNTDict = door43CatalogResources.searchBibles( 'el-x-koine', 'unfoldingWord® Greek New Testament' )
@@ -88,7 +90,8 @@ def main() -> None:
         Door43CatalogUGNTBible.preload()
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, Door43CatalogUGNTBible )
         Door43CatalogUGNTBible.load()
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, Door43CatalogUGNTBible, end='\n\n' )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, Door43CatalogUGNTBible, end='\n\n' )
     assert len(Door43CatalogUGNTBible) == 27, f"{len(Door43CatalogUGNTBible)=}"
 
     # Download the ULT = unfoldingWord® Literal Text
@@ -97,7 +100,8 @@ def main() -> None:
         Door43CatalogULTBible = Door43CatalogBible( ULTDict )
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, Door43CatalogULTBible )
         Door43CatalogULTBible.preload()
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, Door43CatalogULTBible, end='\n\n' )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, Door43CatalogULTBible, end='\n\n' )
     assert len(Door43CatalogULTBible) == 66, f"{len(Door43CatalogULTBible)=}"
 
     # Go through the UGNT verse by verse
@@ -125,14 +129,19 @@ def main() -> None:
                 J1 = 'Ἰησοῦς' in text1 or 'Ἰησοῦ' in text1 or 'Ἰησοῦν' in text1
                 J2 = 'Jesus' in text2
                 if J1 and not J2:
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Found 'Jesus' in Grk {ref.getShortText()}: {text1}" )
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"                              {text2}" )
+                    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Found 'Jesus' in Grk {ref.getShortText()}: {text1}" )
+                    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"                              {text2}" )
                     count1 += 1
                 if J2 and not J1:
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Found 'Jesus' in ULT {ref.getShortText()}: {text2}" )
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"                              {text1}" )
+                    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Found 'Jesus' in ULT {ref.getShortText()}: {text2}" )
+                    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"                              {text1}" )
                     count2 += 1
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nFound {count1} unmatched occurrences in UGNT, {count2} in ULT." )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nFound {count1} unmatched occurrences in UGNT, {count2} in ULT." )
 # end of main
 
 def briefDemo() -> None:

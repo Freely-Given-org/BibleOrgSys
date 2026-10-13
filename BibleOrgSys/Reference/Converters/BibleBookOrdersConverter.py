@@ -26,7 +26,7 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2021-01-19' # by RJH
+LAST_MODIFIED_DATE = '2026-10-06' # by RJH
 SHORT_PROGRAM_NAME = "BibleBookOrderSystemsConverter"
 PROGRAM_NAME = "Bible Book Order Systems converter"
 PROGRAM_VERSION = '0.85'
@@ -74,13 +74,15 @@ class BibleBookOrdersConverter:
         if not self._XMLSystems: # Only ever do this once
             if XMLFolder is None: XMLFolder = BibleOrgSysGlobals.BOS_DATAFILES_FOLDERPATH.joinpath( 'BookOrders/' ) # Relative to module, not cwd
             self.__XMLFolder = XMLFolder
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Loading book order systems from {self.__XMLFolder}…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Loading book order systems from {self.__XMLFolder}…" )
             filenamePrefix = "BIBLEBOOKORDER_"
             for filename in os.listdir( self.__XMLFolder ):
                 filepart, extension = os.path.splitext( filename )
                 if extension.upper() == '.XML' and filepart.upper().startswith(filenamePrefix):
                     bookOrderSystemCode = filepart[len(filenamePrefix):]
-                    vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"  Loading{bookOrderSystemCode} book order system from {filename}…" )
+                    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 4:
+                        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"  Loading{bookOrderSystemCode} book order system from {filename}…" )
                     self._XMLSystems[bookOrderSystemCode] = {}
                     self._XMLSystems[bookOrderSystemCode]['tree'] = ElementTree().parse( os.path.join( self.__XMLFolder, filename ) )
                     assert self._XMLSystems[bookOrderSystemCode]['tree'] # Fail here if we didn't load anything at all
@@ -116,7 +118,8 @@ class BibleBookOrdersConverter:
                     bookCount = 0 # There must be an easier way to do this
                     for subelement in self._XMLSystems[bookOrderSystemCode]['tree']:
                         bookCount += 1
-                    vPrint( 'Info', DEBUGGING_THIS_MODULE, f"    Loaded {bookCount} books for {bookOrderSystemCode}" )
+                    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"    Loaded {bookCount} books for {bookOrderSystemCode}" )
                     logging.info( f"    Loaded {bookCount} books for {bookOrderSystemCode}" )
 
                 if BibleOrgSysGlobals.strictCheckingFlag:
@@ -308,7 +311,8 @@ class BibleBookOrdersConverter:
             folder = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH
             if not os.path.exists( folder ): os.mkdir( folder )
             filepath = os.path.join( folder, self.__filenameBase + '_Tables.pickle' )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Exporting to {filepath}…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Exporting to {filepath}…" )
         with open( filepath, 'wb' ) as pickleFile:
             pickle.dump( self.__DataDicts, pickleFile )
             pickle.dump( self.__DataLists, pickleFile )
@@ -332,7 +336,8 @@ class BibleBookOrdersConverter:
         assert len(self.__DataDicts) and len(self.__DataLists)
 
         if not filepath: filepath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH.joinpath( self.__filenameBase + '_Tables.py' )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Exporting to {filepath}…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Exporting to {filepath}…" )
 
         # Split into two dictionaries
         with open( filepath, 'wt', encoding='utf-8' ) as myFile:
@@ -370,7 +375,8 @@ class BibleBookOrdersConverter:
         assert len(self.__DataDicts) and len(self.__DataLists)
 
         if not filepath: filepath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH.joinpath( self.__filenameBase + '_Tables.json' )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Exporting to {filepath}…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Exporting to {filepath}…" )
         with open( filepath, 'wt', encoding='utf-8' ) as myFile:
             json.dump( self.__DataDicts, myFile, ensure_ascii=False, indent=2 )
     # end of exportDataToJSON
@@ -429,7 +435,8 @@ class BibleBookOrdersConverter:
         if not filepath: filepath = str( BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH.joinpath( self.__filenameBase + '_Tables' ) )
         hFilepath = filepath + '.h'
         cFilepath = filepath + '.c'
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Exporting to {cFilepath}…" ) # Don't bother telling them about the .h file
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Exporting to {cFilepath}…" ) # Don't bother telling them about the .h file
         ifdefName = self.__filenameBase.upper() + "_Tables_h"
 
         with open( hFilepath, 'wt', encoding='utf-8' ) as myHFile, \
@@ -537,7 +544,8 @@ def briefDemo() -> None:
     else: # Must be demo mode
         # Demo the converter object
         bbosc = BibleBookOrdersConverter().loadSystems() # Load the XML
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, bbosc ) # Just print a summary
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, bbosc ) # Just print a summary
 # end of fullDemo
 
 def fullDemo() -> None:

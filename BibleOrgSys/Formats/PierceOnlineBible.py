@@ -35,7 +35,7 @@ from BibleOrgSys.Bible import Bible, BibleBook
 from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
 
 
-LAST_MODIFIED_DATE = '2022-07-12' # by RJH
+LAST_MODIFIED_DATE = '2026-10-06' # by RJH
 SHORT_PROGRAM_NAME = "PierceOnlineBible"
 PROGRAM_NAME = "Pierce Online Bible format handler"
 PROGRAM_VERSION = '0.22'
@@ -60,7 +60,8 @@ def PierceOnlineBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad
     if autoLoad is true and exactly one Online Bible is found,
         returns the loaded PierceOnlineBible object.
     """
-    fnPrint( DEBUGGING_THIS_MODULE, f"PierceOnlineBibleFileCheck( {givenFolderName}, {strictCheck}, {autoLoad}, {autoLoadBooks} )" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+        fnPrint( DEBUGGING_THIS_MODULE, f"PierceOnlineBibleFileCheck( {givenFolderName}, {strictCheck}, {autoLoad}, {autoLoadBooks} )" )
     if BibleOrgSysGlobals.debugFlag: assert givenFolderName and isinstance( givenFolderName, (str,Path) )
     if BibleOrgSysGlobals.debugFlag: assert autoLoad in (True,False,)
 
@@ -73,7 +74,8 @@ def PierceOnlineBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad
         return False
 
     # Find all the files and folders in this folder
-    vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f" PierceOnlineBibleFileCheck: Looking for files in given {givenFolderName}" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 4:
+        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f" PierceOnlineBibleFileCheck: Looking for files in given {givenFolderName}" )
     foundFolders, foundFiles = [], []
     numFound = foundFileCount = 0
     for something in os.listdir( givenFolderName ):
@@ -88,7 +90,8 @@ def PierceOnlineBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad
     if foundFileCount >= len(compulsoryFiles):
         numFound = 1
     if numFound:
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "PierceOnlineBibleFileCheck got", numFound, givenFolderName )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, "PierceOnlineBibleFileCheck got", numFound, givenFolderName )
         if numFound == 1 and (autoLoad or autoLoadBooks):
             oB = PierceOnlineBible( givenFolderName )
             if autoLoadBooks: oB.load() # Load and process the file
@@ -105,7 +108,8 @@ def PierceOnlineBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad
         if not os.access( tryFolderName, os.R_OK ): # The subfolder is not readable
             logging.warning( f"PierceOnlineBibleFileCheck: {tryFolderName!r} subfolder is unreadable" )
             continue
-        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"    PierceOnlineBibleFileCheck: Looking for files in {tryFolderName}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 4:
+            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"    PierceOnlineBibleFileCheck: Looking for files in {tryFolderName}" )
         foundSubfolders, foundSubfiles = [], []
         try:
             for something in os.listdir( tryFolderName ):
@@ -119,7 +123,8 @@ def PierceOnlineBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad
                 numFound += 1
         except PermissionError: pass # can't read folder, e.g., system folder
     if numFound:
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "PierceOnlineBibleFileCheck foundProjects", numFound, foundProjects )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, "PierceOnlineBibleFileCheck foundProjects", numFound, foundProjects )
         if numFound == 1 and (autoLoad or autoLoadBooks):
             if BibleOrgSysGlobals.debugFlag: assert len(foundProjects) == 1
             oB = PierceOnlineBible( foundProjects[0] )
@@ -169,14 +174,16 @@ class PierceOnlineBible( Bible ):
         """
         Load the compressed data file and import book elements.
         """
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nLoading from {self.sourceFolder}…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nLoading from {self.sourceFolder}…" )
 
 
         def loadPierceOnlineBibleMetadata():
             """
             Version.Ext contains lines of text.
             """
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  Loading metadata from {self.sourceFolder}…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  Loading metadata from {self.sourceFolder}…" )
 
             if self.suppliedMetadata is None: self.suppliedMetadata = {}
             self.suppliedMetadata['Online'] = {}
@@ -204,7 +211,8 @@ class PierceOnlineBible( Bible ):
             if self.encoding is None and lines:
                 self.encoding = encoding
 
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"    {len(lines)} metadata lines read" ) # 16 expected
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, f"    {len(lines)} metadata lines read" ) # 16 expected
 
             self.suppliedMetadata['Online']['Abbreviation'] = lines[0]
             self.suppliedMetadata['Online']['VersificationScheme'] = lines[1]
@@ -271,16 +279,19 @@ class PierceOnlineBible( Bible ):
                   S Said See So Some Son T That The Their Them Then There These They This To Told Up Us
                   Was We Went Were What When Who Will With Would You Your
             """
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  Loading main version data from {self.sourceFolder}…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  Loading main version data from {self.sourceFolder}…" )
             filename = 'Version.Dat'
             filepath = os.path.join( self.sourceFolder, filename )
             if not os.access( filepath, os.R_OK ):
                 filename = filename.lower() # Some modules (e.g., WEBSTER) seem to have lower case names for some files
                 filepath = os.path.join( self.sourceFolder, filename )
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Loading version from {self.sourceFolder} {filename}…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Loading version from {self.sourceFolder} {filename}…" )
             with open( filepath, 'rb' ) as myFile: # Automatically closes the file when done
                 versionBytes = myFile.read()
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"    {len(versionBytes):,} version bytes read" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, f"    {len(versionBytes):,} version bytes read" )
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"vB {len(versionBytes)} {versionBytes}" )
 
             key, size = versionBytes[0], versionBytes[1]
@@ -418,7 +429,8 @@ class PierceOnlineBible( Bible ):
             if numStrings2 > 0: self.characterBitSize = 16
             if BibleOrgSysGlobals.debugFlag:
                 vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"    {numStrings2}={numStrings2:04x} 16-bit capitalized common words loaded" )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '     ', strings2 )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '     ', strings2 )
             if DEBUGGING_THIS_MODULE:
                 ix = -1
                 for j, word in enumerate( strings2 ):
@@ -441,16 +453,19 @@ class PierceOnlineBible( Bible ):
                     elshaddaizites
             Counters for these sequences are in XrefNdx.Dat.
             """
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  Loading dictionary characters from {self.sourceFolder}…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  Loading dictionary characters from {self.sourceFolder}…" )
             filename = 'Tokens.Dat'
             filepath = os.path.join( self.sourceFolder, filename )
             if not os.access( filepath, os.R_OK ):
                 filename = filename.lower() # Some modules (e.g., WEBSTER) seem to have lower case names for some files
                 filepath = os.path.join( self.sourceFolder, filename )
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Loading token characters from {self.sourceFolder} {filename}…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Loading token characters from {self.sourceFolder} {filename}…" )
             with open( filepath, 'rb' ) as myFile: # Automatically closes the file when done
                 tokenBytes = myFile.read()
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"    {len(tokenBytes):,} token bytes read" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, f"    {len(tokenBytes):,} token bytes read" )
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"vB {len(tokenBytes)} {hexlify(tokenBytes[:40])}" )
             assert tokenBytes[0] == 32
             assert tokenBytes[1] in (0,32)
@@ -472,7 +487,8 @@ class PierceOnlineBible( Bible ):
                 #self.tokenBytes.append( token )
                 tokenChar = chr( token )
                 self.tokenString += tokenChar
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"    {len(self.tokenString):,} {self.characterBitSize}-bit token characters loaded" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, f"    {len(self.tokenString):,} {self.characterBitSize}-bit token characters loaded" )
         # end of load.loadTokenCharacters
 
 
@@ -481,17 +497,20 @@ class PierceOnlineBible( Bible ):
             Seems to have a header and then 972 3+32-byte or 3+48-byte (CEV) entry lines.
                 972 * 32 = 31,104 = 31,102 verses in KJV + 2 blank at end.
             """
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  Loading verse index info from {self.sourceFolder}…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  Loading verse index info from {self.sourceFolder}…" )
             filename = 'TextNdx.Dat'
             filepath = os.path.join( self.sourceFolder, filename )
             if not os.access( filepath, os.R_OK ):
                 filename = filename.lower() # Some modules (e.g., WEBSTER) seem to have lower case names for some files
                 filepath = os.path.join( self.sourceFolder, filename )
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Loading verse text index from {self.sourceFolder} {filename}…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Loading verse text index from {self.sourceFolder} {filename}…" )
             with open( filepath, 'rb' ) as myFile: # Automatically closes the file when done
                 textIndexBytes = myFile.read()
             numTextIndexBytes = len(textIndexBytes)
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"    {numTextIndexBytes:,} text index bytes read" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, f"    {numTextIndexBytes:,} text index bytes read" )
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"tIB {len(textIndexBytes)} {hexlify(textIndexBytes[:99])}" )
             assert numTextIndexBytes in (34055,49623,) # Divisible by 35 or 51 = 973
 
@@ -561,7 +580,8 @@ class PierceOnlineBible( Bible ):
             assert index == numTextIndexBytes
 
             numTextIndexEntries = len(self.textIndex)
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"    {numTextIndexEntries:,} text-index entries loaded from {count} lines" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, f"    {numTextIndexEntries:,} text-index entries loaded from {count} lines" )
             if BibleOrgSysGlobals.debugFlag:
                 assert numTextIndexEntries == 31102 or self.abbreviation in ( 'Darby','Wey', 'Williams',) # Darby has 31,099 (3 less)
                 vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"    Final accumulated total was {total + iE:,} (should equal length of Text.Dat)" )
@@ -579,18 +599,21 @@ class PierceOnlineBible( Bible ):
                 05..7F is an index to the common words in Version.Dat
                 80..FF means use the next byte as well as an index to the dictionary.
             """
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  Loading verse text data from {self.sourceFolder}…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  Loading verse text data from {self.sourceFolder}…" )
             filename = 'Text.Dat'
             filepath = os.path.join( self.sourceFolder, filename )
             if not os.access( filepath, os.R_OK ):
                 filename = filename.lower() # Some modules (e.g., WEBSTER) seem to have lower case names for some files
                 filepath = os.path.join( self.sourceFolder, filename )
 
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Loading text from {self.sourceFolder} {filename}…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Loading text from {self.sourceFolder} {filename}…" )
             with open( filepath, 'rb' ) as myFile: # Automatically closes the file when done
                 self.textBytes = myFile.read()
             numTextBytes = len(self.textBytes)
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"    {numTextBytes:,} text bytes read" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, f"    {numTextBytes:,} text bytes read" )
             if BibleOrgSysGlobals.debugFlag: assert numTextBytes == self.textIndex[-1]
         # end of load.loadBibleText
 
@@ -608,20 +631,24 @@ class PierceOnlineBible( Bible ):
                 Years Yes Yet Young Yourself Zedekiah Zion
             Doesn't include the capitalized words from Version.Dat.
             """
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  Loading textOpt data from {self.sourceFolder}…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  Loading textOpt data from {self.sourceFolder}…" )
             filename = 'TextOpt.Dat'
             filepath = os.path.join( self.sourceFolder, filename )
             if not os.access( filepath, os.R_OK ):
                 filename = filename.lower() # Some modules (e.g., WEBSTER) seem to have lower case names for some files
                 filepath = os.path.join( self.sourceFolder, filename )
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Loading text opts from {self.sourceFolder} {filename}…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Loading text opts from {self.sourceFolder} {filename}…" )
             with open( filepath, 'rb' ) as myFile: # Automatically closes the file when done
                 optBytes = myFile.read()
-            dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"    {len(optBytes):,} optBytes bytes read" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 1:
+                dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"    {len(optBytes):,} optBytes bytes read" )
 
             index = 0
             key, size, zero1, zero2 = optBytes[0], optBytes[1], optBytes[2], optBytes[3]
-            dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"    TextOpt: key={key} size={size}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 1:
+                dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"    TextOpt: key={key} size={size}" )
             assert key == 255
             assert size == 3
             assert zero1 == 0
@@ -724,17 +751,20 @@ class PierceOnlineBible( Bible ):
                 a count (3..226)
                 a not always increasing pointer (0..640.567) to Xref.Dat
             """
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  Loading cross-reference index data from {self.sourceFolder}…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  Loading cross-reference index data from {self.sourceFolder}…" )
             filename = 'XrefNdx.Dat'
             filepath = os.path.join( self.sourceFolder, filename )
             if not os.access( filepath, os.R_OK ):
                 filename = filename.lower() # Some modules (e.g., WEBSTER) seem to have lower case names for some files
                 filepath = os.path.join( self.sourceFolder, filename )
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Loading xref index from {self.sourceFolder} {filename}…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Loading xref index from {self.sourceFolder} {filename}…" )
             with open( filepath, 'rb' ) as myFile: # Automatically closes the file when done
                 xrefIndexBytes = myFile.read()
             numXrefIndexBytes = len(xrefIndexBytes)
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"    {numXrefIndexBytes:,} xref index bytes read" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, f"    {numXrefIndexBytes:,} xref index bytes read" )
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"tIB {len(xrefIndexBytes)} {hexlify(xrefIndexBytes[:99])}" )
 
             #header = xrefIndexBytes[0:35]
@@ -742,7 +772,8 @@ class PierceOnlineBible( Bible ):
             key, size0, size1, indexSize, tokenBlkSize = struct.unpack( "<BBBHH", xrefIndexBytes[0:7] )
             size = size0 + size1
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  prelude length = {size:04x} {size}" )
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"    Key={key}, line entry size {size0}+{size1}={size} index size={indexSize} tokenBlkSize={tokenBlkSize}*2={tokenBlkSize*2}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"    Key={key}, line entry size {size0}+{size1}={size} index size={indexSize} tokenBlkSize={tokenBlkSize}*2={tokenBlkSize*2}" )
             assert key == 2
             assert size0 == 35 # 35-3=32
             assert size1 == 67 # 67-3=64
@@ -770,10 +801,14 @@ class PierceOnlineBible( Bible ):
                 assert diskPointer2 == total
                 count1 = indexEntry1[3]
                 if 0 and len(self.xrefIndex) < 10:
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'  {len(self.xrefIndex)} {diskPointer1:06x}={diskPointer1} {count1}' )
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'    a {len(indexEntry1)} {hexlify(indexEntry1)} {indexEntry1[3:]}' )
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'     {diskPointer2:06x}={diskPointer2}' )
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'    b {len(indexEntry2)} {hexlify(indexEntry2)} {indexEntry2[3:]}' )
+                    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'  {len(self.xrefIndex)} {diskPointer1:06x}={diskPointer1} {count1}' )
+                    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'    a {len(indexEntry1)} {hexlify(indexEntry1)} {indexEntry1[3:]}' )
+                    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'     {diskPointer2:06x}={diskPointer2}' )
+                    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'    b {len(indexEntry2)} {hexlify(indexEntry2)} {indexEntry2[3:]}' )
                 for x in range( 32 ):
                     b1, w2 = indexEntry1[x+3], (indexEntry2[2*x+3+1]<<8) + indexEntry2[2*x+3]
                     if b1 == 0:
@@ -786,7 +821,8 @@ class PierceOnlineBible( Bible ):
                 count += 1
             assert index == numXrefIndexBytes
             numXrefIndexEntries = len(self.xrefIndex)
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"    {numXrefIndexEntries:,} xref index duples loaded from {count} double lines" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, f"    {numXrefIndexEntries:,} xref index duples loaded from {count} double lines" )
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, self.xrefIndex )
             # assert 231 <= count <= 428 # AV=417, YLT=385, CEV=338
             # assert 7365 <= numXrefIndexEntries <= 13694 # AV=13,316, YLT=12,289, CEV=10,796
@@ -808,7 +844,8 @@ class PierceOnlineBible( Bible ):
 
             Strongs printed numbers are Hebrew 1..8,674 plus Greek 1..5,624 = total = 14,298
             """
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  Loading Strongs index data from {self.sourceFolder}…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  Loading Strongs index data from {self.sourceFolder}…" )
             filename = 'XrefNdxs.Dat'
             filepath = os.path.join( self.sourceFolder, filename )
             if not os.access( filepath, os.R_OK ):
@@ -818,11 +855,13 @@ class PierceOnlineBible( Bible ):
                 try: del self.StrongsIndex
                 except AttributeError: pass
                 return False
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Loading Strongs reference index from {self.sourceFolder} {filename}…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Loading Strongs reference index from {self.sourceFolder} {filename}…" )
             with open( filepath, 'rb' ) as myFile: # Automatically closes the file when done
                 xrefIndexBytes = myFile.read()
             numXrefIndexBytes = len(xrefIndexBytes)
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"    {numXrefIndexBytes:,} Strongs index bytes read" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, f"    {numXrefIndexBytes:,} Strongs index bytes read" )
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"tIB {len(xrefIndexBytes)} {hexlify(xrefIndexBytes[:99])}" )
 
             #header = xrefIndexBytes[0:35]
@@ -854,8 +893,10 @@ class PierceOnlineBible( Bible ):
                 if total == 0: total = diskPointer # Starts part way through
                 assert diskPointer == total
                 if 0 and len(self.xrefIndex) < 10:
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'  {len(self.xrefIndex)} {diskPointer:06x}={diskPointer}' )
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'    {len(indexEntry)} {hexlify(indexEntry)} {indexEntry[3:]}' )
+                    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'  {len(self.xrefIndex)} {diskPointer:06x}={diskPointer}' )
+                    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'    {len(indexEntry)} {hexlify(indexEntry)} {indexEntry[3:]}' )
                 for x in range( 32 ):
                     w2 = (indexEntry[2*x+3+1]<<8) + indexEntry[2*x+3]
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'    {x} w2={w2:04x}={w2} @ {len(self.StrongsIndex)}' )
@@ -866,7 +907,8 @@ class PierceOnlineBible( Bible ):
                 count += 1
             assert index == numXrefIndexBytes
             numStrongsIndexEntries = len(self.StrongsIndex)
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"    {numStrongsIndexEntries:,} Strongs index entries loaded from {count} lines" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, f"    {numStrongsIndexEntries:,} Strongs index entries loaded from {count} lines" )
             if BibleOrgSysGlobals.debugFlag:
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, self.StrongsIndex )
                 assert count == 277
@@ -880,17 +922,20 @@ class PierceOnlineBible( Bible ):
             """
             0.6-1.1MB
             """
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  Loading cross-reference data from {self.sourceFolder}…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  Loading cross-reference data from {self.sourceFolder}…" )
             filename = 'Xref.Dat'
             filepath = os.path.join( self.sourceFolder, filename )
             if not os.access( filepath, os.R_OK ):
                 filename = filename.lower() # Some modules (e.g., WEBSTER) seem to have lower case names for some files
                 filepath = os.path.join( self.sourceFolder, filename )
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Loading xref data from {self.sourceFolder} {filename}…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Loading xref data from {self.sourceFolder} {filename}…" )
             with open( filepath, 'rb' ) as myFile: # Automatically closes the file when done
                 self.xrefBytes = myFile.read()
             numXrefBytes = len(self.xrefBytes)
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"    {numXrefBytes:,} xref bytes read" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, f"    {numXrefBytes:,} xref bytes read" )
             if BibleOrgSysGlobals.debugFlag:
                 if 'StrongsIndex' in self.__dict__: assert numXrefBytes == self.StrongsIndex[-1]
                 else: # Not all versions have Strongs
@@ -903,7 +948,8 @@ class PierceOnlineBible( Bible ):
                 lastPointer = 0
                 for j, pointer in enumerate( self.textIndex ):
                     strip = self.xrefBytes[lastPointer:pointer]
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{j:5} {lastPointer:5} {pointer:5} {hexlify(strip)} {strip}" )
+                    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{j:5} {lastPointer:5} {pointer:5} {hexlify(strip)} {strip}" )
                     lastPointer = pointer
                     if j > 10: break
         # end of load.loadXrefData
@@ -912,7 +958,8 @@ class PierceOnlineBible( Bible ):
         def createDictionary():
             """
             """
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  Creating dictionary…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  Creating dictionary…" )
             self.dictionary = {}
 
             # Put the short common words into the dictionary
@@ -964,7 +1011,8 @@ class PierceOnlineBible( Bible ):
             """
             Given a verse number from 0..31,101, return the encoded bytes
             """
-            fnPrint( DEBUGGING_THIS_MODULE, f"getVerseBytes( {self.abbreviation} {absoluteVerseNumber} ) = {BOS.convertAbsoluteVerseNumber( absoluteVerseNumber+1 )}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+                fnPrint( DEBUGGING_THIS_MODULE, f"getVerseBytes( {self.abbreviation} {absoluteVerseNumber} ) = {BOS.convertAbsoluteVerseNumber( absoluteVerseNumber+1 )}" )
                 #assert 0 <= absoluteVerseNumber < len(self.textIndex)
             startAt = 0 if absoluteVerseNumber==0 else self.textIndex[absoluteVerseNumber-1]
             endAt = self.textIndex[absoluteVerseNumber]
@@ -1018,7 +1066,8 @@ class PierceOnlineBible( Bible ):
             """
             Given a verse number from 0..31,101, return the encoded bytes
             """
-            fnPrint( DEBUGGING_THIS_MODULE, f"getBibleText( {hexlify(verseBytes)} ) {self.abbreviation} {reference}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+                fnPrint( DEBUGGING_THIS_MODULE, f"getBibleText( {hexlify(verseBytes)} ) {self.abbreviation} {reference}" )
             resultString = ''
             capsFlag = footnoteFlag = headingFlag = False
             saved = None
@@ -1123,7 +1172,8 @@ class PierceOnlineBible( Bible ):
         def loadBooks():
             """
             """
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, 'Loading books…' )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, 'Loading books…' )
 
             bookCount = 0
             currentBBB = None
@@ -1132,7 +1182,8 @@ class PierceOnlineBible( Bible ):
                 BBB, C, V = BCVRef
                 if BBB != currentBBB:
                     if currentBBB is not None: # Save the last book
-                        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "Saving", BBB, bookCount+1 )
+                        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 4:
+                            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "Saving", BBB, bookCount+1 )
                         self.stashBook( thisBook )
                     # Create the new book
                     if BibleOrgSysGlobals.verbosityLevel > 2:  vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'  Loading {BBB}…' )
@@ -1152,7 +1203,8 @@ class PierceOnlineBible( Bible ):
                     logging.warning( f"No verse information for {self.abbreviation} {BBB} {C}:{V}" )
 
             if currentBBB is not None: # Save the very last book
-                vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "Saving", BBB, bookCount+1 )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 4:
+                    vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "Saving", BBB, bookCount+1 )
                 self.stashBook( thisBook )
         # end of load.loadBooks
 
@@ -1160,7 +1212,8 @@ class PierceOnlineBible( Bible ):
         def test():
             """
             """
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, '\nDEBUG TEST:' )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, '\nDEBUG TEST:' )
 
             if 1:
                 for n in ( 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 123, 23144, 23145, 23146, 31101, ):
@@ -1169,13 +1222,16 @@ class PierceOnlineBible( Bible ):
                         verseStuff = getVerseBytes( n )
                         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n{self.abbreviation} {BCVRef} = {len(verseStuff)} {hexlify(verseStuff)} {verseStuff}" )
                         verseString = getBibleText( verseStuff, BCVRef )
-                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n{self.abbreviation} {n} {BCVRef} = {repr(verseString)}" )
+                        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n{self.abbreviation} {n} {BCVRef} = {repr(verseString)}" )
                         if 0:
                             for j in range( int( len(verseStuff)/2 ) ):
                                 w2 = (verseStuff[2*j+1]<<8) + verseStuff[2*j]
-                                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'   {j} {w2:04x}={w2} {self.tokenString[w2:w2+3]!r}' )
+                                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'   {j} {w2:04x}={w2} {self.tokenString[w2:w2+3]!r}' )
                     except IndexError:
-                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"No such verse: {self.abbreviation} {n} {BCVRef}" )
+                        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"No such verse: {self.abbreviation} {n} {BCVRef}" )
 
             if 0:
                 for n in range( 31102 ):
@@ -1191,15 +1247,19 @@ class PierceOnlineBible( Bible ):
                             #if '<<62' in verseString: assert False, "We want to stop here"
                         #if BCVRef == ('GEN','20','2'): assert False, "We want to stop here"
                     except IndexError:
-                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"No such verse: {self.abbreviation} {n} {BCVRef}" )
+                        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"No such verse: {self.abbreviation} {n} {BCVRef}" )
 
             if 1 and self.haveStrongsFlag:
                 for word in ( 'from', 'the', 'same' ):
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'{word!r} -> {findWordInDictionary( word )}' )
+                    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'{word!r} -> {findWordInDictionary( word )}' )
                 for strongs in ( 7225, 430, 1254, 853, 8064, 1, 2, 8849, 8850 ):
                     xrefStuff = getStrongsBytes( strongs )
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nStrongs {strongs} = {len(xrefStuff)} {hexlify(xrefStuff)} {xrefStuff}" )
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"         {strongs} = {getBibleText( xrefStuff )!r}" )
+                    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nStrongs {strongs} = {len(xrefStuff)} {hexlify(xrefStuff)} {xrefStuff}" )
+                    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"         {strongs} = {getBibleText( xrefStuff )!r}" )
 
             #if self.missingWordNumbers:
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'missingWordNumbers', sorted(self.missingWordNumbers) ); assert False, "We want to stop here"
@@ -1248,11 +1308,14 @@ def testOB( TOBfilename ):
     testFolder = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'PierceOnlineBible/' )
 
     TOBfolder = os.path.join( testFolder, TOBfilename+'/' )
-    vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Demonstrating the Online Bible class…" )
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Test folder is {TOBfolder!r} {TOBfilename!r}" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Demonstrating the Online Bible class…" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Test folder is {TOBfolder!r} {TOBfilename!r}" )
     olb = PierceOnlineBible( TOBfolder )
     olb.load() # Load and process the file
-    vPrint( 'Normal', DEBUGGING_THIS_MODULE, olb ) # Just print a summary
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, olb ) # Just print a summary
     if BibleOrgSysGlobals.strictCheckingFlag:
         olb.check()
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, UsfmB.books['GEN']._processedLines[0:40] )
@@ -1294,24 +1357,31 @@ def briefDemo() -> None:
 
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder
         result1 = PierceOnlineBibleFileCheck( testFolder )
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Online TestA1", result1 )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Online TestA1", result1 )
         result2 = PierceOnlineBibleFileCheck( testFolder, autoLoad=True )
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Online TestA2", result2 )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Online TestA2", result2 )
         result3 = PierceOnlineBibleFileCheck( testFolder, autoLoadBooks=True )
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Online TestA3", result3 )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Online TestA3", result3 )
 
         testSubfolder = os.path.join( testFolder, 'AV/' )
         result3 = PierceOnlineBibleFileCheck( testSubfolder )
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Online TestB1", result3 )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Online TestB1", result3 )
         result4 = PierceOnlineBibleFileCheck( testSubfolder, autoLoad=True )
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Online TestB2", result4 )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Online TestB2", result4 )
         result5 = PierceOnlineBibleFileCheck( testSubfolder, autoLoadBooks=True )
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Online TestB3", result5 )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Online TestB3", result5 )
 
 
     if 0: # specified module
         singleModule = 'AV'
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nOnline C/ Trying {singleModule}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nOnline C/ Trying {singleModule}" )
         #myTestFolder = os.path.join( testFolder, singleModule+'/' )
         #testFilepath = os.path.join( testFolder, singleModule+'/', singleModule+'_utf8.txt' )
         testOB( singleModule )
@@ -1321,7 +1391,8 @@ def briefDemo() -> None:
         nonEnglish = (  )
         bad = ( )
         for j, testFilename in enumerate( good ): # Choose one of the above: good, nonEnglish, bad
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nOnline D{j+1}/ Trying {testFilename}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nOnline D{j+1}/ Trying {testFilename}" )
             #myTestFolder = os.path.join( testFolder, testFilename+'/' )
             #testFilepath = os.path.join( testFolder, testFilename+'/', testFilename+'_utf8.txt' )
             testOB( testFilename )
@@ -1335,7 +1406,8 @@ def briefDemo() -> None:
             elif os.path.isfile( somepath ): foundFiles.append( something )
 
         if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nTrying all {len(foundFolders)} discovered modules…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nTrying all {len(foundFolders)} discovered modules…" )
             parameters = [folderName for folderName in sorted(foundFolders)]
             BibleOrgSysGlobals.alreadyMultiprocessing = True
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
@@ -1344,7 +1416,8 @@ def briefDemo() -> None:
             BibleOrgSysGlobals.alreadyMultiprocessing = False
         else: # Just single threaded
             for j, someFolder in enumerate( sorted( foundFolders ) ):
-                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nOnline E{j+1}/ Trying {someFolder}" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                    vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nOnline E{j+1}/ Trying {someFolder}" )
                 #myTestFolder = os.path.join( testFolder, someFolder+'/' )
                 testOB( someFolder )
 # end of PierceOnlineBible.briefDemo
@@ -1360,24 +1433,31 @@ def fullDemo() -> None:
 
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder
         result1 = PierceOnlineBibleFileCheck( testFolder )
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Online TestA1", result1 )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Online TestA1", result1 )
         result2 = PierceOnlineBibleFileCheck( testFolder, autoLoad=True )
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Online TestA2", result2 )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Online TestA2", result2 )
         result3 = PierceOnlineBibleFileCheck( testFolder, autoLoadBooks=True )
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Online TestA3", result3 )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Online TestA3", result3 )
 
         testSubfolder = os.path.join( testFolder, 'AV/' )
         result3 = PierceOnlineBibleFileCheck( testSubfolder )
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Online TestB1", result3 )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Online TestB1", result3 )
         result4 = PierceOnlineBibleFileCheck( testSubfolder, autoLoad=True )
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Online TestB2", result4 )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Online TestB2", result4 )
         result5 = PierceOnlineBibleFileCheck( testSubfolder, autoLoadBooks=True )
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Online TestB3", result5 )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Online TestB3", result5 )
 
 
     if 0: # specified module
         singleModule = 'AV'
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nOnline C/ Trying {singleModule}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nOnline C/ Trying {singleModule}" )
         #myTestFolder = os.path.join( testFolder, singleModule+'/' )
         #testFilepath = os.path.join( testFolder, singleModule+'/', singleModule+'_utf8.txt' )
         testOB( singleModule )
@@ -1387,7 +1467,8 @@ def fullDemo() -> None:
         nonEnglish = (  )
         bad = ( )
         for j, testFilename in enumerate( good ): # Choose one of the above: good, nonEnglish, bad
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nOnline D{j+1}/ Trying {testFilename}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nOnline D{j+1}/ Trying {testFilename}" )
             #myTestFolder = os.path.join( testFolder, testFilename+'/' )
             #testFilepath = os.path.join( testFolder, testFilename+'/', testFilename+'_utf8.txt' )
             testOB( testFilename )
@@ -1401,7 +1482,8 @@ def fullDemo() -> None:
             elif os.path.isfile( somepath ): foundFiles.append( something )
 
         if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nTrying all {len(foundFolders)} discovered modules…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nTrying all {len(foundFolders)} discovered modules…" )
             parameters = [folderName for folderName in sorted(foundFolders)]
             BibleOrgSysGlobals.alreadyMultiprocessing = True
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
@@ -1410,7 +1492,8 @@ def fullDemo() -> None:
             BibleOrgSysGlobals.alreadyMultiprocessing = False
         else: # Just single threaded
             for j, someFolder in enumerate( sorted( foundFolders ) ):
-                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nOnline E{j+1}/ Trying {someFolder}" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                    vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nOnline E{j+1}/ Trying {someFolder}" )
                 #myTestFolder = os.path.join( testFolder, someFolder+'/' )
                 testOB( someFolder )
 # end of PierceOnlineBible.fullDemo

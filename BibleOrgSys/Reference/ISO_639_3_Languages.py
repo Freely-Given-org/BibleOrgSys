@@ -23,7 +23,7 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2020-04-05' # by RJH
+LAST_MODIFIED_DATE = '2026-10-06' # by RJH
 SHORT_PROGRAM_NAME = "ISOLanguages"
 PROGRAM_NAME = "ISO 639_3_Languages handler"
 PROGRAM_VERSION = '0.85'
@@ -80,7 +80,8 @@ class ISO_639_3_Languages:
                 # and os.stat(standardPickleFilepath).st_ctime > os.stat(standardXMLFileOrFilepath).st_ctime: # There's a newer pickle file
                 if pickleIsNewer:
                     import pickle
-                    vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Loading pickle file {standardPickleFilepath}…" )
+                    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Loading pickle file {standardPickleFilepath}…" )
                     with open( standardPickleFilepath, 'rb') as pickleFile:
                         self.__IDDict, self.__NameDict = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
                     return self # So this command can be chained after the object creation
@@ -157,29 +158,39 @@ def briefDemo() -> None:
 
     # Demo the languages object
     lg = ISO_639_3_Languages().loadData() # Doesn't reload the XML unnecessarily :)
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, lg ) # Just print a summary
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, lg ) # Just print a summary
     for testCode in ('qwq','mbt','MBT','abk',):
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Testing {testCode}…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Testing {testCode}…" )
         if not lg.isValidLanguageCode( testCode ):
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"    {testCode} not found" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"    {testCode} not found" )
         else:
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"    {testCode} -> {lg.getLanguageName( testCode )}" )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"    Scope is {lg.getScope(testCode)}, Type is {lg.getType(testCode)}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"    {testCode} -> {lg.getLanguageName( testCode )}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"    Scope is {lg.getScope(testCode)}, Type is {lg.getType(testCode)}" )
             part1Code, part2Code = lg.getPart1Code(testCode), lg.getPart2Code(testCode)
             if part1Code is not None: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"    Part1 code is {part1Code}" )
             if part2Code is not None: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"    Part2 code is {part2Code}" )
     for testName in ('English','German','Deutsch','French','Ayta, Abellen','Manobo, Matigsalug','Manobo','SomeName',):
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Testing {testName}…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Testing {testName}…" )
         code = lg.getLanguageCode( testName )
         if code is None:
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"    {testName} not found" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"    {testName} not found" )
         else:
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"    {testName} -> {code}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"    {testName} -> {code}" )
     for testNamePortion in ('English','German','Deutsch','French','Ayta, Abellen','Manobo, Matigsalug','Manobo','SomeName',):
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Testing {testNamePortion}…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Testing {testNamePortion}…" )
         matches = lg.getNameMatches( testNamePortion )
         for match in matches:
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"    Found {lg.getLanguageCode(match)} = {match}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"    Found {lg.getLanguageCode(match)} = {match}" )
         else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"    {testNamePortion} not found" )
 # end of fullDemo
 

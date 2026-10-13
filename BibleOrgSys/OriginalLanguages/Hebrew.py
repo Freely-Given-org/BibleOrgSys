@@ -21,7 +21,7 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2026-10-04' # by RJH
+LAST_MODIFIED_DATE = '2026-10-06' # by RJH
 SHORT_PROGRAM_NAME = "Hebrew"
 PROGRAM_NAME = "Hebrew language handler"
 PROGRAM_VERSION = '0.16'
@@ -317,7 +317,8 @@ class Hebrew():
         #def printUnicodeInfo( text, description ):
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{description}:" )
         for j,char in enumerate(text):
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{j:2} {ord(char):04x} {unicodedata.name(char)} {char!r}   (cat={unicodedata.category(char)} bid={unicodedata.bidirectional(char)} comb={unicodedata.combining(char)} mirr={unicodedata.mirrored(char)})" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{j:2} {ord(char):04x} {unicodedata.name(char)} {char!r}   (cat={unicodedata.category(char)} bid={unicodedata.bidirectional(char)} comb={unicodedata.combining(char)} mirr={unicodedata.mirrored(char)})" )
     # end of Hebrew.printUnicodeData
 
 
@@ -331,12 +332,14 @@ class Hebrew():
         this = ( ' ', '־', )
         for j,letter in enumerate(text):
             if letter not in consonants and letter not in this:
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Found unexpected {letter!r} ({unicodedata.name(letter)}) non-consonant at index {j} in {text!r}" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Found unexpected {letter!r} ({unicodedata.name(letter)}) non-consonant at index {j} in {text!r}" )
                 haveError = True
             if letter in finalConsonants and j<textLength-1:
                 nextLetter = text[j+1]
                 if nextLetter not in this:
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Found unexpected {letter!r} ({unicodedata.name(letter)}) final consonant before {nextLetter!r} ({unicodedata.name(nextLetter)}) at index {j} in {text!r}" )
+                    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Found unexpected {letter!r} ({unicodedata.name(letter)}) final consonant before {nextLetter!r} ({unicodedata.name(nextLetter)}) at index {j} in {text!r}" )
                     haveError = True
         return haveError
     # end of Hebrew.verifyConsonantsOnly
@@ -371,20 +374,24 @@ class Hebrew():
                 nextMark = text[j+1] if j<textLength-1 else ''
                 if previousMark in ( patah, segol ) or nextMark in (): # Assume it's a vowel point meteg
                     if asVowel:
-                        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Deleting (vowel point) meteg after {previousMark!r} ({unicodedata.name(previousMark) if previousMark else ''}) and before {nextMark!r} ({unicodedata.name(nextMark) if nextMark else ''})" )
+                        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Deleting (vowel point) meteg after {previousMark!r} ({unicodedata.name(previousMark) if previousMark else ''}) and before {nextMark!r} ({unicodedata.name(nextMark) if nextMark else ''})" )
                         text = text[:j] + text[j+1:]
                         madeChanges = True
                         break
                     else:
-                        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Ignoring (vowel point) meteg/siluq after {previousMark!r} ({unicodedata.name(previousMark) if previousMark else ''}) and before {nextMark!r} ({unicodedata.name(nextMark) if nextMark else ''})" )
+                        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Ignoring (vowel point) meteg/siluq after {previousMark!r} ({unicodedata.name(previousMark) if previousMark else ''}) and before {nextMark!r} ({unicodedata.name(nextMark) if nextMark else ''})" )
                 else: # it doesn't appear to be a vowel point meteg
                     if not asVowel:
-                        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Deleting (cantillation mark) siluq after {previousMark!r} ({unicodedata.name(previousMark) if previousMark else ''}) and before {nextMark!r} ({unicodedata.name(nextMark) if nextMark else ''})" )
+                        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Deleting (cantillation mark) siluq after {previousMark!r} ({unicodedata.name(previousMark) if previousMark else ''}) and before {nextMark!r} ({unicodedata.name(nextMark) if nextMark else ''})" )
                         text = text[:j] + text[j+1:]
                         madeChanges = True
                         break
                     else:
-                        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Ignoring (cantillation mark) meteg/siluq after {previousMark!r} ({unicodedata.name(previousMark) if previousMark else ''}) and before {nextMark!r} ({unicodedata.name(nextMark) if nextMark else ''})" )
+                        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Ignoring (cantillation mark) meteg/siluq after {previousMark!r} ({unicodedata.name(previousMark) if previousMark else ''}) and before {nextMark!r} ({unicodedata.name(nextMark) if nextMark else ''})" )
             if not madeChanges: break # Check for another meteg if we made any changes
         return text
     # end of Hebrew._removeMetegOrSiluq
@@ -478,33 +485,46 @@ def briefDemo() -> None:
     dan14 = "יְלָדִ֣ים אֲשֶׁ֣ר אֵֽין־בָּהֶ֣ם כָּל־מאום וְטוֹבֵ֨י מַרְאֶ֜ה וּמַשְׂכִּילִ֣ים בְּכָל־חָכְמָ֗ה וְיֹ֤דְעֵי דַ֙עַת֙ וּמְבִינֵ֣י מַדָּ֔ע וַאֲשֶׁר֙ כֹּ֣חַ בָּהֶ֔ם לַעֲמֹ֖ד בְּהֵיכַ֣ל הַמֶּ֑לֶךְ וּֽלֲלַמְּדָ֥ם סֵ֖פֶר וּלְשׁ֥וֹן כַּשְׂדִּֽים ׃"
     dan15 = "וַיְמַן֩ לָהֶ֨ם הַמֶּ֜לֶךְ דְּבַר־י֣וֹם בְּיוֹמ֗וֹ מִפַּת־בַּ֤ג הַמֶּ֙לֶךְ֙ וּמִיֵּ֣ין מִשְׁתָּ֔יו וּֽלְגַדְּלָ֖ם שָׁנִ֣ים שָׁל֑וֹשׁ וּמִ֨קְצָתָ֔ם יַֽעַמְד֖וּ לִפְנֵ֥י הַמֶּֽלֶךְ ׃"
     for string in ( dan11, dan12, dan13, dan14, dan15 ):
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
         h = Hebrew( string )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, h )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, h )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
         h.removeCantillationMarks()
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Removed cantillation marks" )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, h )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Removed cantillation marks" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, h )
         msCount = h.currentText.count(metegOrSiluq)
         if msCount: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{msCount} meteg or siluq marks remaining" )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
         h.removeVowelPointing()
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Removed vowel pointing" )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, h )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Removed vowel pointing" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, h )
         msCount = h.currentText.count(metegOrSiluq)
         if msCount: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{msCount} meteg or siluq marks remaining" )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
         h.removeOtherMarks()
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Removed other marks" )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, h )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Removed other marks" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, h )
         msCount = h.currentText.count(metegOrSiluq)
         if msCount: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{msCount} meteg or siluq marks remaining" )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
         h.verifyConsonantsOnly()
         h = Hebrew( string )
         h.removeCantillationMarks()
         #h.printUnicodeData()
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Transliterated: {h.transliterate()}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Transliterated: {h.transliterate()}" )
 # end of Hebrew.briefDemo
 
 def fullDemo() -> None:
@@ -520,33 +540,46 @@ def fullDemo() -> None:
     dan14 = "יְלָדִ֣ים אֲשֶׁ֣ר אֵֽין־בָּהֶ֣ם כָּל־מאום וְטוֹבֵ֨י מַרְאֶ֜ה וּמַשְׂכִּילִ֣ים בְּכָל־חָכְמָ֗ה וְיֹ֤דְעֵי דַ֙עַת֙ וּמְבִינֵ֣י מַדָּ֔ע וַאֲשֶׁר֙ כֹּ֣חַ בָּהֶ֔ם לַעֲמֹ֖ד בְּהֵיכַ֣ל הַמֶּ֑לֶךְ וּֽלֲלַמְּדָ֥ם סֵ֖פֶר וּלְשׁ֥וֹן כַּשְׂדִּֽים ׃"
     dan15 = "וַיְמַן֩ לָהֶ֨ם הַמֶּ֜לֶךְ דְּבַר־י֣וֹם בְּיוֹמ֗וֹ מִפַּת־בַּ֤ג הַמֶּ֙לֶךְ֙ וּמִיֵּ֣ין מִשְׁתָּ֔יו וּֽלְגַדְּלָ֖ם שָׁנִ֣ים שָׁל֑וֹשׁ וּמִ֨קְצָתָ֔ם יַֽעַמְד֖וּ לִפְנֵ֥י הַמֶּֽלֶךְ ׃"
     for string in ( dan11, dan12, dan13, dan14, dan15 ):
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
         h = Hebrew( string )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, h )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, h )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
         h.removeCantillationMarks()
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Removed cantillation marks" )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, h )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Removed cantillation marks" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, h )
         msCount = h.currentText.count(metegOrSiluq)
         if msCount: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{msCount} meteg or siluq marks remaining" )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
         h.removeVowelPointing()
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Removed vowel pointing" )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, h )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Removed vowel pointing" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, h )
         msCount = h.currentText.count(metegOrSiluq)
         if msCount: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{msCount} meteg or siluq marks remaining" )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
         h.removeOtherMarks()
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Removed other marks" )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, h )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Removed other marks" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, h )
         msCount = h.currentText.count(metegOrSiluq)
         if msCount: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{msCount} meteg or siluq marks remaining" )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
         h.verifyConsonantsOnly()
         h = Hebrew( string )
         h.removeCantillationMarks()
         #h.printUnicodeData()
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Transliterated: {h.transliterate()}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Transliterated: {h.transliterate()}" )
 # end of Hebrew.fullDemo
 
 if __name__ == '__main__':

@@ -25,7 +25,7 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2021-01-19' # by RJH
+LAST_MODIFIED_DATE = '2026-10-06' # by RJH
 SHORT_PROGRAM_NAME = "BiblePunctuationSystemsConverter"
 PROGRAM_NAME = "Bible Punctuation Systems handler"
 PROGRAM_VERSION = '0.44'
@@ -77,14 +77,16 @@ class BiblePunctuationSystemsConverter:
         if not self._XMLSystems: # Only ever do this once
             if XMLFolder is None: XMLFolder = BibleOrgSysGlobals.BOS_DATAFILES_FOLDERPATH.joinpath( 'PunctuationSystems/' ) # Relative to module, not cwd
             self.__XMLFolder = XMLFolder
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Loading punctuations systems from {self.__XMLFolder}…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Loading punctuations systems from {self.__XMLFolder}…" )
             filenamePrefix = "BIBLEPUNCTUATIONSYSTEM_"
             for filename in os.listdir( self.__XMLFolder ):
                 filepart, extension = os.path.splitext( filename )
 
                 if extension.upper() == '.XML' and filepart.upper().startswith(filenamePrefix):
                     punctuationSystemCode = filepart[len(filenamePrefix):]
-                    vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"Loading {punctuationSystemCode} punctuation system from {filename}…" )
+                    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 4:
+                        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"Loading {punctuationSystemCode} punctuation system from {filename}…" )
                     self._XMLSystems[punctuationSystemCode] = {}
                     self._XMLSystems[punctuationSystemCode]['tree'] = ElementTree().parse( os.path.join( self.__XMLFolder, filename ) )
                     assert self._XMLSystems[punctuationSystemCode]['tree'] # Fail here if we didn't load anything at all
@@ -120,7 +122,8 @@ class BiblePunctuationSystemsConverter:
                     bookCount = 0 # There must be an easier way to do this
                     for subelement in self._XMLSystems[punctuationSystemCode]['tree']:
                         bookCount += 1
-                    vPrint( 'Info', DEBUGGING_THIS_MODULE, f"    Loaded {bookCount} books for {punctuationSystemCode}" )
+                    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"    Loaded {bookCount} books for {punctuationSystemCode}" )
                     logging.info( f"    Loaded {bookCount} books for {punctuationSystemCode}" )
 
                     if BibleOrgSysGlobals.strictCheckingFlag:
@@ -285,7 +288,8 @@ class BiblePunctuationSystemsConverter:
             folder = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH
             if not os.path.exists( folder ): os.mkdir( folder )
             filepath = os.path.join( folder, self.__filenameBase + '_Tables.pickle' )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Exporting to {filepath}…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Exporting to {filepath}…" )
         with open( filepath, 'wb' ) as myFile:
             pickle.dump( self._DataDict, myFile )
     # end of pickle
@@ -308,7 +312,8 @@ class BiblePunctuationSystemsConverter:
         assert self._DataDict
 
         if not filepath: filepath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH.joinpath( self.__filenameBase + '_Tables.py' )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Exporting to {filepath}…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Exporting to {filepath}…" )
 
         with open( filepath, 'wt', encoding='utf-8' ) as myFile:
             myFile.write( f"# {filepath}\n#\n" )
@@ -339,7 +344,8 @@ class BiblePunctuationSystemsConverter:
         assert self._DataDict
 
         if not filepath: filepath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH.joinpath( self.__filenameBase + '_Tables.json' )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Exporting to {filepath}…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Exporting to {filepath}…" )
         with open( filepath, 'wt', encoding='utf-8' ) as myFile:
             json.dump( self._DataDict, myFile, ensure_ascii=False, indent=2 )
     # end of exportDataToJSON
@@ -398,7 +404,8 @@ class BiblePunctuationSystemsConverter:
         if not filepath: filepath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH.joinpath( self.__filenameBase + '_Tables' )
         hFilepath = filepath + '.h'
         cFilepath = filepath + '.c'
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Exporting to {cFilepath}…" ) # Don't bother telling them about the .h file
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Exporting to {cFilepath}…" ) # Don't bother telling them about the .h file
         ifdefName = self.__filenameBase.upper() + "_Tables_h"
 
         with open( hFilepath, 'wt', encoding='utf-8' ) as myHFile, \
@@ -467,19 +474,23 @@ class BiblePunctuationSystemsConverter:
 
         if systemMatchCount:
             if systemMatchCount == 1: # What we hope for
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Matched {matchedPunctuationSystemCodes[0]} punctuation (with these {len(punctuationSchemeToCheck)} books)" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Matched {matchedPunctuationSystemCodes[0]} punctuation (with these {len(punctuationSchemeToCheck)} books)" )
                 if debugFlag: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, errorSummary )
             else:
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Matched {systemMatchCount} punctuation system(s): {matchedPunctuationSystemCodes} (with these {len(punctuationSchemeToCheck)} books)" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Matched {systemMatchCount} punctuation system(s): {matchedPunctuationSystemCodes} (with these {len(punctuationSchemeToCheck)} books)" )
                 if debugFlag: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, errorSummary )
         else:
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Mismatched {systemMismatchCount} punctuation systems (with these {len(punctuationSchemeToCheck)} books)" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Mismatched {systemMismatchCount} punctuation systems (with these {len(punctuationSchemeToCheck)} books)" )
             if debugFlag: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, allErrors )
             else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, errorSummary)
 
         if exportFlag and not systemMatchCount: # Write a new file
             outputFilepath = BibleOrgSysGlobals.BOS_DATAFILES_FOLDERPATH.joinpath( 'ScrapedFiles/', "BiblePunctuation_"+systemName + '.xml' )
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Writing {len(punctuationSchemeToCheck)} books to {outputFilepath}…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Writing {len(punctuationSchemeToCheck)} books to {outputFilepath}…" )
             with open( outputFilepath, 'wt', encoding='utf-8' ) as myFile:
                 for n,BBB in enumerate(punctuationSchemeToCheck):
                     myFile.write( f'  <book id="{n+1}">{BBB}</book>\n' )
@@ -505,7 +516,8 @@ def briefDemo() -> None:
     else: # Must be demo mode
         # Demo the converter object
         bpsc = BiblePunctuationSystemsConverter().loadSystems() # Load the XML
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, bpsc ) # Just print a summary
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, bpsc ) # Just print a summary
 # end of BiblePunctuationSystemsConverter.briefDemo
 
 def fullDemo() -> None:
@@ -524,7 +536,8 @@ def fullDemo() -> None:
     else: # Must be demo mode
         # Demo the converter object
         bpsc = BiblePunctuationSystemsConverter().loadSystems() # Load the XML
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, bpsc ) # Just print a summary
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, bpsc ) # Just print a summary
 # end of BiblePunctuationSystemsConverter.fullDemo
 
 if __name__ == '__main__':

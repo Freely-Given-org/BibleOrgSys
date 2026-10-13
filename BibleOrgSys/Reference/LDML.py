@@ -52,7 +52,7 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2023-02-02' # by RJH
+LAST_MODIFIED_DATE = '2026-10-06' # by RJH
 SHORT_PROGRAM_NAME = "LDML_Handler"
 PROGRAM_NAME = "Unicode LOCALE DATA MARKUP LANGUAGE handler"
 PROGRAM_VERSION = '0.13'
@@ -115,7 +115,8 @@ class LDMLFile:
 
         LDML = Locale Data Markup Language (see http://unicode.org/reports/tr35/tr35-4.html)
         """
-        fnPrint( DEBUGGING_THIS_MODULE, "load()" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, "load()" )
 
         SIL_URN_Prefix = '{urn://www.sil.org/ldml/0.1}'
         lenSILURNPrefix = len( SIL_URN_Prefix )
@@ -525,7 +526,8 @@ class LDMLFile:
                 if subelement.tag == 'defaultNumberingSystem':
                     dnsDraft = None
                     for attrib,value in subelement.items():
-                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "here dns1", attrib, value )
+                        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "here dns1", attrib, value )
                         if attrib=='draft': dnsDraft = value; assert dnsDraft in DRAFT_VALUES
                         elif attrib=='alt': dnsAlt = value; assert dnsAlt=='latn'
                         else:
@@ -3557,7 +3559,8 @@ class LDMLFile:
 
 
         # Main code for LDMLFile.load()
-        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"    Loading LOCALE DATA MARKUP LANGUAGE (LDML) file from {self.filepath}…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 4:
+            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"    Loading LOCALE DATA MARKUP LANGUAGE (LDML) file from {self.filepath}…" )
 
         LDMLData = {}
 
@@ -3835,7 +3838,8 @@ def briefDemo() -> None:
 
                 for something2 in sorted( os.listdir( somepath ) ):
                     if something2 in ( 'blo_Latn.xml', 'blt_Latn.xml', 'blt_Tavt.xml', ):
-                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Skipping {something2}" )
+                        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Skipping {something2}" )
                         continue # bad XML
                     somepath2 = os.path.join( somepath, something2 )
                     if os.path.isfile( somepath2 ):
@@ -3845,7 +3849,8 @@ def briefDemo() -> None:
                         if os.access( somepath2, os.R_OK ):
                             thisLDMLfile = LDMLFile( somepath, something2 )
                             LDMLdict = thisLDMLfile.load()
-                            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  Loaded {something2} and got:\n  {LDMLdict}" )
+                            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  Loaded {something2} and got:\n  {LDMLdict}" )
                             #if BibleOrgSysGlobals.strictCheckingFlag: thisLDMLfile.check()
                         else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Sorry, test file '{somepath2}' is not readable on this computer." )
         #dPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nPTX8 B/ Trying single module in {testFolder}" )

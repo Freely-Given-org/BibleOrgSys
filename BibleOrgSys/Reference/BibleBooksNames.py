@@ -24,7 +24,7 @@ from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 import bos_books_codes_py
 
 
-LAST_MODIFIED_DATE = '2026-05-06' # by RJH
+LAST_MODIFIED_DATE = '2026-10-06' # by RJH
 SHORT_PROGRAM_NAME = "BibleBooksNames"
 PROGRAM_NAME = "Bible Books Names Systems handler"
 PROGRAM_VERSION = '0.41'
@@ -95,7 +95,8 @@ def expandBibleNamesInputs ( systemName, divisionsNamesDict, booknameLeadersDict
     assert divisionsNamesDict and booknameLeadersDict and bookNamesDict
     assert bookList
 
-    vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Expanding {systemName} input abbreviations (for {len(bookList)} books)…" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Expanding {systemName} input abbreviations (for {len(bookList)} books)…" )
 
     # Firstly, make a new UPPER CASE leaders dictionary., e.g., Saint/Snt goes to SAINT/SNT
     UCBNLeadersDict = {}
@@ -222,7 +223,8 @@ class BibleBooksNamesSystems:
                 # and os.stat(standardPickleFilepath).st_ctime > os.stat(standardXMLFileOrFilepath).st_ctime: # There's a newer pickle file
                 if pickleIsNewer:
                     import pickle
-                    vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Loading pickle file {standardPickleFilepath}…" )
+                    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Loading pickle file {standardPickleFilepath}…" )
                     with open( standardPickleFilepath, 'rb') as pickleFile:
                         self.__DataDicts = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
                         # self.__ExpandedDicts = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
@@ -234,7 +236,8 @@ class BibleBooksNamesSystems:
                 and os.stat(standardJsonFilepath).st_mtime > os.stat(standardXMLFileOrFilepath).st_mtime \
                 and os.stat(standardJsonFilepath).st_ctime > os.stat(standardXMLFileOrFilepath).st_ctime: # There's a newer pickle file
                     import json
-                    vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Loading json file {standardJsonFilepath}…" )
+                    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Loading json file {standardJsonFilepath}…" )
                     with open( standardJsonFilepath, 'rb') as JsonFile:
                         self.__DataDicts = json.load( JsonFile )
                         # self.__ExpandedDicts = json.load( JsonFile )
@@ -349,7 +352,8 @@ class BibleBooksNamesSystems:
 
         Tries all the known Bible Books Names systems.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"BibleBooksNamesSystems.getBBBFromText( {bookNameOrAbbreviation} )" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, f"BibleBooksNamesSystems.getBBBFromText( {bookNameOrAbbreviation} )" )
         if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert bookNameOrAbbreviation
 
@@ -518,7 +522,8 @@ class BibleBooksNamesSystem:
 
         If it fails, tries the same named function from BibleBooksCodes
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"BibleBooksNamesSystem.getBBBFromText( {bookNameOrAbbreviation} )" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, f"BibleBooksNamesSystem.getBBBFromText( {bookNameOrAbbreviation} )" )
         if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert bookNameOrAbbreviation
 
@@ -593,31 +598,45 @@ def briefDemo() -> None:
 
     # Demo the BibleBooksNamesSystems object
     bbnss = BibleBooksNamesSystems().loadData() # Doesn't reload the XML unnecessarily :)
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, bbnss ) # Just print a summary
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Available system names are:", bbnss.getAvailableBooksNamesSystemNames() )
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Available eng system names are:", bbnss.getAvailableBooksNamesSystemNames( 'eng' ) ) # Just get the ones for this language code
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Available mbt system names are:", bbnss.getAvailableBooksNamesSystemNames( languageCode='mbt' ) )
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Available language codes are:", bbnss.getAvailableLanguageCodes() )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, bbnss ) # Just print a summary
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Available system names are:", bbnss.getAvailableBooksNamesSystemNames() )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Available eng system names are:", bbnss.getAvailableBooksNamesSystemNames( 'eng' ) ) # Just get the ones for this language code
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Available mbt system names are:", bbnss.getAvailableBooksNamesSystemNames( languageCode='mbt' ) )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Available language codes are:", bbnss.getAvailableLanguageCodes() )
     for bookName in ( 'Genesis', 'Genèse', 'Génesis', 'Gênesis', '1 John' ):
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"From {bookName!r} got {bbnss.getBBBFromText( bookName )}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"From {bookName!r} got {bbnss.getBBBFromText( bookName )}" )
 
     # Demo the BibleBooksNamesSystem object
     bbns1 = BibleBooksNamesSystem("eng_traditional") # Doesn't reload the XML unnecessarily :)
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, bbns1 ) # Just print a summary
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, bbns1 ) # Just print a summary
 
     # Demo the BibleBooksNamesSystem object with a book list
     bbns2 = BibleBooksNamesSystem("eng_traditional",sampleBookList) # Doesn't reload the XML unnecessarily :)
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, bbns2 ) # Just print a summary
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Checking book name inputs…" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, bbns2 ) # Just print a summary
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Checking book name inputs…" )
     for bookAbbrevInput in ('Gen', 'GEN', 'Gn', 'Exo', 'Judges','1 Samuel', '1Samuel', '1Sam', '1 Sam', '1 Sml', '1Sml', '1 S', '1S','II Sa','IIS','1Kgs', '1 Kgs', '1K', '1 K', 'IK', 'I K', '1M', 'IV Mac', 'Mt', 'Jude', 'Rvl' ):
         # NOTE: '1S' is ambiguous with '1st' :(
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Searching for {bookAbbrevInput!r} got {bbns2.getBBBFromText(bookAbbrevInput)}" )
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Checking division name inputs…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Searching for {bookAbbrevInput!r} got {bbns2.getBBBFromText(bookAbbrevInput)}" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Checking division name inputs…" )
     for divisionAbbrevInput in ('OT','NewTest', 'Paul', 'Deutero', 'Gn', 'Exo' ): # Last two should always fail
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Searching for {divisionAbbrevInput!r} got {bbns2.getDivisionAbbreviation(divisionAbbrevInput)}" )
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Getting division booklists…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Searching for {divisionAbbrevInput!r} got {bbns2.getDivisionAbbreviation(divisionAbbrevInput)}" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Getting division booklists…" )
     for divisionAbbrevInput in ('OT','NT', 'NewTest', 'Paul', 'Deutero', 'Gn', 'Exo', '1 Samuel' ):
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Searching for {divisionAbbrevInput!r} got {bbns2.getDivisionBooklist(divisionAbbrevInput)}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Searching for {divisionAbbrevInput!r} got {bbns2.getDivisionBooklist(divisionAbbrevInput)}" )
 # end of BibleBooksNames.briefDemo
 
 def fullDemo() -> None:
@@ -632,31 +651,45 @@ def fullDemo() -> None:
 
     # Demo the BibleBooksNamesSystems object
     bbnss = BibleBooksNamesSystems().loadData() # Doesn't reload the XML unnecessarily :)
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, bbnss ) # Just print a summary
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Available system names are:", bbnss.getAvailableBooksNamesSystemNames() )
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Available eng system names are:", bbnss.getAvailableBooksNamesSystemNames( 'eng' ) ) # Just get the ones for this language code
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Available mbt system names are:", bbnss.getAvailableBooksNamesSystemNames( languageCode='mbt' ) )
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Available language codes are:", bbnss.getAvailableLanguageCodes() )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, bbnss ) # Just print a summary
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Available system names are:", bbnss.getAvailableBooksNamesSystemNames() )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Available eng system names are:", bbnss.getAvailableBooksNamesSystemNames( 'eng' ) ) # Just get the ones for this language code
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Available mbt system names are:", bbnss.getAvailableBooksNamesSystemNames( languageCode='mbt' ) )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Available language codes are:", bbnss.getAvailableLanguageCodes() )
     for bookName in ( 'Genesis', 'Genèse', 'Génesis', 'Gênesis', '1 John' ):
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"From {bookName!r} got {bbnss.getBBBFromText( bookName )}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"From {bookName!r} got {bbnss.getBBBFromText( bookName )}" )
 
     # Demo the BibleBooksNamesSystem object
     bbns1 = BibleBooksNamesSystem("eng_traditional") # Doesn't reload the XML unnecessarily :)
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, bbns1 ) # Just print a summary
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, bbns1 ) # Just print a summary
 
     # Demo the BibleBooksNamesSystem object with a book list
     bbns2 = BibleBooksNamesSystem("eng_traditional",sampleBookList) # Doesn't reload the XML unnecessarily :)
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, bbns2 ) # Just print a summary
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Checking book name inputs…" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, bbns2 ) # Just print a summary
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Checking book name inputs…" )
     for bookAbbrevInput in ('Gen', 'GEN', 'Gn', 'Exo', 'Judges','1 Samuel', '1Samuel', '1Sam', '1 Sam', '1 Sml', '1Sml', '1 S', '1S','II Sa','IIS','1Kgs', '1 Kgs', '1K', '1 K', 'IK', 'I K', '1M', 'IV Mac', 'Mt', 'Jude', 'Rvl' ):
         # NOTE: '1S' is ambiguous with '1st' :(
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Searching for {bookAbbrevInput!r} got {bbns2.getBBBFromText(bookAbbrevInput)}" )
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Checking division name inputs…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Searching for {bookAbbrevInput!r} got {bbns2.getBBBFromText(bookAbbrevInput)}" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Checking division name inputs…" )
     for divisionAbbrevInput in ('OT','NewTest', 'Paul', 'Deutero', 'Gn', 'Exo' ): # Last two should always fail
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Searching for {divisionAbbrevInput!r} got {bbns2.getDivisionAbbreviation(divisionAbbrevInput)}" )
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Getting division booklists…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Searching for {divisionAbbrevInput!r} got {bbns2.getDivisionAbbreviation(divisionAbbrevInput)}" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Getting division booklists…" )
     for divisionAbbrevInput in ('OT','NT', 'NewTest', 'Paul', 'Deutero', 'Gn', 'Exo', '1 Samuel' ):
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Searching for {divisionAbbrevInput!r} got {bbns2.getDivisionBooklist(divisionAbbrevInput)}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Searching for {divisionAbbrevInput!r} got {bbns2.getDivisionBooklist(divisionAbbrevInput)}" )
 # end of BibleBooksNames.fullDemo
 
 if __name__ == '__main__':

@@ -27,7 +27,7 @@ from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 import bos_books_codes_py
 
 
-LAST_MODIFIED_DATE = '2026-05-17' # by RJH (Rust conversion)
+LAST_MODIFIED_DATE = '2026-10-06' # by RJH (Rust conversion)
 SHORT_PROGRAM_NAME = "USFMFilenames"
 PROGRAM_NAME = "USFM Bible filenames handler"
 PROGRAM_VERSION = '0.80'
@@ -48,7 +48,8 @@ class USFMFilenames:
         """
         Create the object by inspecting files in the given folder.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"USFMFilenames.__init__( {givenFolderName} )" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, f"USFMFilenames.__init__( {givenFolderName} )" )
         self.givenFolderName = givenFolderName
         self.pattern, self.fileExtension = '', ''
         self.fileList = []
@@ -217,7 +218,8 @@ class USFMFilenames:
                     if foundFileBit in str(self.givenFolderName):
                         index = j; count += 1 # Take a guess that this might be the right one
                 if count==1 and index!=-1: filelist = [ filelist[index] ] # Found exactly one so reduce the list down to this one filepath
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"getSSFFilenames: returning filelist ({len(filelist)})={filelist}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"getSSFFilenames: returning filelist ({len(filelist)})={filelist}" )
         return filelist
     # end of USFMFilenames.getSSFFilenames
 # end of class USFMFilenames
@@ -236,10 +238,12 @@ def briefDemo() -> None:
                    Path( '/srv/AutoProcesses/Processed/Test/' ),
                    )
     for j, testFolder in enumerate( testFolders ):
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'\n{j+1}' )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'\n{j+1}' )
         if os.access( testFolder, os.R_OK ):
             UFns = USFMFilenames( testFolder )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, UFns )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, UFns )
             result = UFns.getAllFilenames(); vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nAll: {len(result)} files found" )
             result = UFns.getMaximumPossibleFilenameTuples(); vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nMaxPoss: {len(result)} books found" )
             if result: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  First book: {result[0]}, Last book: {result[-1]}" )
