@@ -2458,7 +2458,7 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
             chapter_cache=chapterCache, combine_adjacent=combineAdjacent)
 
 
-    def getMappedPassage(self, sourceSystem, references, *, chapterCache=None, combineAdjacent=False):
+    def getMappedPassage(self, sourceSystem, references, *, chapterCache=None, combineAdjacent=False, expandGroups=False):
         """Map a complete external passage into this Bible and retrieve its text.
 
         sourceSystem is a name, BibleVersificationSystem, or another Bible.
@@ -2467,13 +2467,19 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
         VersificationMappingError before loading text. Missing text raises
         KeyError; an incomplete passage is never returned as a successful result.
 
+        expandGroups=True retrieves complete indivisible mapping/stored groups.
+        mapping.requested_references retains the original selection, while
+        mapping.source_references describes the complete source coverage. Use
+        mapping.is_expanded to label combined text; native_references describes
+        the actual stored verse labels. Native entries/word identifiers are kept.
+
         References use the profiles' BOS book identities. Edition-specific
         storage aliases are not inferred; adapt references explicitly and use
         getPassageData when an import uses different physical book identities.
         """
         from BibleOrgSys.Internals.InternalBiblePassages import get_mapped_passage
         return get_mapped_passage(self, sourceSystem, references,
-            chapter_cache=chapterCache, combine_adjacent=combineAdjacent)
+            chapter_cache=chapterCache, combine_adjacent=combineAdjacent, expand_groups=expandGroups)
 
 
     def getContextVerseDataRange( self, startBCVReference:SimpleVerseKey|tuple[str,str,str,str], endBCVReference:SimpleVerseKey|tuple[str,str,str,str], strict=True ) -> tuple[InternalBibleEntryList,list[str]]|None:

@@ -106,6 +106,53 @@ class PassageTests(unittest.TestCase):
         self.assertEqual(self.text(result.portions),'Third. First.')
         self.assertEqual([p.reference[2] for p in result.portions],['3','1'])
 
+    def test_acts_19_same_system_and_combined_original_text_keep_native_word_ids(self):
+        rv = self.bible('\\c 19\n\\p\n\\v 40 Speech¦98355.\n\\v 41 Dismissal¦98365.\n','ACT','eng')
+        lv = self.bible('\\c 19\n\\p\n\\v 40 Speech¦98355. Dismissal¦98365.\n','ACT','org')
+        for verse, word in ((40,'Speech'),(41,'Dismissal')):
+            with self.subTest(verse=verse):
+                english = rv.getMappedPassage('eng',[('ACT',19,verse)],expandGroups=True)
+                self.assertFalse(english.mapping.is_expanded)
+                self.assertEqual(len(english.mapping.references),1)
+                self.assertIn(word,self.text(english.portions))
+                original = lv.getMappedPassage('eng',[('ACT',19,verse)],expandGroups=True)
+                self.assertTrue(original.mapping.is_expanded)
+                self.assertEqual(original.mapping.source_references,
+                                 (('ACT','19','40',None),('ACT','19','41',None)))
+                self.assertEqual(original.mapping.requested_references,(('ACT','19',str(verse),None),))
+                self.assertEqual(original.native_references,(('ACT','19','40',None),))
+                self.assertEqual(original.portions[0].reference,('ACT','19','40'))
+                self.assertEqual(self.text(original.portions),'Speech¦98355. Dismissal¦98365.')
+
+    def test_stored_bridge_expands_coverage_and_cascades_through_mapping(self):
+        bible = self.bible('\\c 1\n\\p\n\\v 1-2 Combined¦42.\n')
+        result = bible.getMappedPassage('org',[['GEN',1,2]],expandGroups=True)
+        self.assertTrue(result.mapping.is_expanded)
+        self.assertEqual(result.mapping.source_references,(('GEN','1','1',None),('GEN','1','2',None)))
+        self.assertEqual(self.text(result.portions),'Combined¦42.')
+
+        engine = VersificationMappingEngine({'maxVerses':{'GEN':[2]}}, {
+            'eng':{'maxVerses':{'GEN':[3]},'groupMappings':[{'source':'GEN 1:1-2','target':'GEN 1:1'}],
+                   'mappedVerses':{'GEN 1:3':'GEN 1:2'}},
+            'org':{'maxVerses':{'GEN':[2]},'identityBooks':{'GEN':'GEN'}},
+        })
+        with patch.object(bv,'get_default_mapping_engine',return_value=engine):
+            result = bible.getMappedPassage('eng',[('GEN',1,1)],expandGroups=True)
+        self.assertEqual(result.mapping.source_references,tuple(('GEN','1',str(v),None) for v in (1,2,3)))
+        self.assertEqual(result.mapping.requested_references,(('GEN','1','1',None),))
+        self.assertEqual(len(result.portions),1)
+        self.assertEqual(self.text(result.portions),'Combined¦42.')
+
+    def test_unmapped_extra_text_in_stored_bridge_is_not_reported_as_exact(self):
+        bible = self.bible('\\c 1\n\\p\n\\v 1-2 Bridge.\n')
+        engine = VersificationMappingEngine({'maxVerses':{'GEN':[2]}}, {
+            'eng':{'maxVerses':{'GEN':[1]},'identityBooks':{'GEN':'GEN'}},
+            'org':{'maxVerses':{'GEN':[2]},'identityBooks':{'GEN':'GEN'}},
+        })
+        with patch.object(bv,'get_default_mapping_engine',return_value=engine):
+            with self.assertRaises(PartialMappingError):
+                bible.getMappedPassage('eng',[('GEN',1,1)],expandGroups=True)
+
     def test_native_access_needs_no_declaration_and_can_span_books(self):
         bible = self.bible('\\c 1\n\\p\n\\v 1 Genesis.\n')
         other = self.bible('\\c 1\n\\p\n\\v 1 Exodus.\n','EXO')
@@ -172,7 +219,7 @@ class PassageTests(unittest.TestCase):
         for target,source,refs,error in (
             ('eng','Luther',[('GEN',1,1)],UnsupportedMappingError),
             # Supplement revision 2 makes this an incomplete atomic group.
-            ('eng','eng',[('PSA',13,5)],PartialMappingError),
+            ('org','eng',[('PSA',13,5)],PartialMappingError),
             ('org','rsc',[('PSA',9,22)],AmbiguousMappingError),
             ('eng','eng',[('GEN',0,1)],InvalidReferenceError),
             ('eng','eng',[],InvalidReferenceError),

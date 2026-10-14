@@ -107,7 +107,7 @@ Result fields:
   paths. Errors identify unusable rules in their diagnostics.
 - `reference_version`, `data_revision`, and `mapping_policy_version` identify
   the address-space version, mapping-data revision, and engine-policy revision.
-  The reference remains `1-draft`; the current policy version is `2`.
+  The reference remains `1-draft`; the current policy version is `3`.
   Bundled `data_revision` is the pinned source commit followed by
   `+bos-supplement-2.<sha256>`, where the digest covers the supplement's canonical
   JSON (sorted keys, compact separators, UTF-8). The earlier bare commit and
@@ -203,9 +203,9 @@ Tobit/Judith/Sirach textual restrictions still apply.
 
 The [audit guide](VersificationSniffingAudit.md) lists the groups, evidence and
 deferred conflicts. Sniffing labels do not identify every modern edition: for
-example, OET-RV already puts the dismissal in Acts 19:40, while Copenhagen `eng`
-puts it in 19:41. Neither `eng` nor `org` is automatically an alias for an entire
-translation. Select a profile that matches the edition being converted.
+example, editions may combine the Acts 19:40–41 sentences in one stored verse.
+The current OET-RV source separates them; OET-LV stores both in native 19:40.
+Neither `eng` nor `org` is automatically an alias for an entire translation. Select a profile that matches the edition being converted.
 
 Bible objects can also [retrieve the mapped text](BiblePassages.md) with
 `getMappedPassage(sourceSystem, references)`. The returned object retains the
@@ -223,9 +223,31 @@ Output follows the input passage and each chosen rule's order, rather than being
 sorted by destination address; duplicate destinations are stably deduplicated.
 Reverse indexes include explicit rules **and declared identities**, so collisions
 remain visible. Duplicate identical relationships do not create ambiguity.
-Even same-system calls go through the reference, and an ambiguous first leg
-stays ambiguous when its final candidates converge. A failing alternative cannot
-be discarded to turn another alternative into an exact result.
+Same-system calls validate native addresses and return identity directly; they
+do not depend on a cross-system bridge. Counts, exclusions, declared titles and
+suffixes are still checked. Cross-system conversions retain an ambiguous first
+leg even when its final candidates converge. A failing alternative cannot be
+discarded to turn another alternative into an exact result.
+
+Applications that can display an explicitly labelled combined passage may opt in
+with `engine.convert_passage(source, target, references)`. Strict `convert()` and
+legacy scalar methods retain their incomplete-group errors. The passage method
+completes connected atomic and merged groups on both conversion legs, retaining
+gaps, native suffixes, and rule order. Competing relationships, unsupported
+rules and missing mappings remain non-exact; the method never guesses a split.
+Expansion is bounded to 10,000 visited addresses.
+
+For example, `convert_passage('eng', 'org', [('ACT', 19, 41)])` returns:
+
+- `requested_references`: English Acts 19:41;
+- `source_references`: English Acts 19:40–41;
+- `references`: original Acts 19:40;
+- `status`: `exact` for that complete group, and `is_expanded`: `True`.
+
+The result does **not** claim that original verse 40 is precisely English verse
+41 alone. Applications should display the full source/native coverage whenever
+`is_expanded` is true. Reference-only conversion cannot detect an edition's
+stored verse bridges; use `getMappedPassage(..., expandGroups=True)` for that.
 
 Search is bounded to 64 distinct candidate groups and 10,000 search steps per
 leg/candidate, with at most 64 composed candidates retained. Truncation produces

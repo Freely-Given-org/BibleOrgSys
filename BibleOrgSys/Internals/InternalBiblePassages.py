@@ -6,14 +6,15 @@ Public Bible methods delegate here; this module has no application, renderer,
 or navigation dependencies. Mapping results describe references, while portions
 describe the text actually stored (including indivisible USFM verse bridges).
 """
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 import re
 from typing import NamedTuple
 
 from bible_organisational_system import InternalBibleEntryList
 from BibleOrgSys.Reference.BibleVersification import BibleVersificationMixin, _system_name
 from BibleOrgSys.Reference.BibleVersificationMappings import (
-    MappingResult, MappingStatus, get_default_mapping_engine, normalize_reference,
+    MappingDiagnostic, MappingResult, MappingStatus, PartialMappingError,
+    get_default_mapping_engine, normalize_reference,
 )
 
 
@@ -34,6 +35,7 @@ class MappedBiblePassage:
     """An exact mapping (with provenance) and all its retrieved text portions."""
     mapping: MappingResult
     portions: tuple[PassagePortion, ...]
+    native_references: tuple = ()
 
 
 class MissingPassageBookError(KeyError):
@@ -180,11 +182,45 @@ def _copy_portions(portions, combine_adjacent):
     return tuple(joined)
 
 
-def get_mapped_passage(bible, source_system, references, *, chapter_cache=None, combine_adjacent=False):
-    """Map a complete source group using both declarations, then retrieve it."""
-    result = bible.convertReferencesFromVersification(source_system, references)
-    if result.status != MappingStatus.EXACT:
-        result.require_single() # Raise the specific mapping error with its result.
-    portions = get_passage_data(bible, result.references,
-        chapter_cache=chapter_cache, combine_adjacent=combine_adjacent)
-    return MappedBiblePassage(result, portions)
+def get_mapped_passage(bible, source_system, references, *, chapter_cache=None, combine_adjacent=False,
+                       expand_groups=False):
+    """Retrieve mapped text, optionally completing mapping AND stored bridges.
+
+    Stored labels and entries are never renumbered or sliced. When expansion is
+    requested, additional text in a stored bridge must also have known source
+    coverage. Feed that coverage back through mapping until both are complete.
+    """
+    selection = tuple(references)
+    requested = None
+    cache = {} if chapter_cache is None else chapter_cache
+    while True:
+        result = bible.convertReferencesFromVersification(source_system, selection, expandGroups=expand_groups)
+        if result.status != MappingStatus.EXACT:
+            result.require_single() # Raise the specific mapping error with its result.
+        if requested is None:
+            requested = result.requested_references or result.source_references
+        portions = get_passage_data(bible, result.references,
+            chapter_cache=cache, combine_adjacent=combine_adjacent)
+        native = tuple(dict.fromkeys(ref for portion in portions for ref in (
+            passageReferencesFromEntries(portion.reference, portion.entries, bible) or
+            _verse_references(*portion.reference))))
+        if not expand_groups:
+            return MappedBiblePassage(result, portions, native)
+        # Whole-verse requests legitimately retrieve every stored suffix.
+        extra = [ref for ref in native if ref not in result.references
+                 and not (ref[3] and (*ref[:3], None) in result.references)]
+        if not extra:
+            return MappedBiblePassage(replace(result, requested_references=requested), portions, native)
+        stored_coverage = tuple(dict.fromkeys((
+            *((*ref[:3], None) if (*ref[:3], None) in result.references else ref for ref in native),
+            *result.references)))
+        coverage = bible.convertReferencesToVersification(source_system, stored_coverage, expandGroups=True)
+        if coverage.status != MappingStatus.EXACT:
+            coverage.require_single()
+        expanded = tuple(dict.fromkeys((*coverage.references, *result.source_references)))
+        if set(expanded) <= set(result.source_references) or len(expanded) > 10000:
+            raise PartialMappingError(replace(result, status=MappingStatus.PARTIAL, references=(),
+                requested_references=requested, diagnostics=result.diagnostics + (
+                    MappingDiagnostic('INCOMPLETE_STORED_BRIDGE',
+                        'Stored text extends beyond the provable complete passage.', result.target_system, native),)))
+        selection = expanded

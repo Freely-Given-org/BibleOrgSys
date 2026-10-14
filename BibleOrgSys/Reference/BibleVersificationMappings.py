@@ -13,7 +13,7 @@ from __future__ import annotations
 
 from collections import defaultdict, deque
 from copy import deepcopy
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from enum import Enum
 from functools import lru_cache
 import hashlib
@@ -59,7 +59,14 @@ class MappingResult:
     provenance: tuple[str, ...] = ()
     reference_version: str = ''
     data_revision: str = ''
-    mapping_policy_version: str = '2'
+    mapping_policy_version: str = '3'
+    # The caller's original selection when complete-group expansion was used.
+    requested_references: tuple[Reference, ...] = ()
+
+    @property
+    def is_expanded(self):
+        return bool(self.requested_references and
+                    set(self.requested_references) != set(self.source_references))
 
     def require_single(self) -> Reference:
         """Return the exact singleton or raise an exception retaining this result."""
@@ -699,11 +706,13 @@ class VersificationMappingEngine:
                 reference_version=self.reference_version, data_revision=self.data_revision)
 
     def convert(self, source_system, target_system, references) -> MappingResult:
-        """Map an ordered iterable of references; even same-system calls use the reference.
+        """Map an ordered iterable of references, without enlarging the request.
 
         Unsupported system names return an unsupported result so callers can use
         this method with historical BOS count-only systems. Syntax errors and
         references outside a known system return invalid results.
+        Same-system requests validate native addresses and return them directly;
+        an unavailable or indivisible cross-system bridge cannot change identity.
         """
         try:
             references = _unique(normalize_reference(r) for r in references)
@@ -727,6 +736,17 @@ class VersificationMappingEngine:
             if name not in self._domains:
                 return result(MappingStatus.UNSUPPORTED, diagnostics=(MappingDiagnostic('UNSUPPORTED_SYSTEM',
                     'No verified mapping profile exists for this system; no legacy alias is inferred.', name),))
+        if source_system == target_system:
+            issues = [MappingDiagnostic(*problem, source_system, (ref,)) for ref in references
+                      if (problem := self._domains[source_system].issue(ref))]
+            if source_system == self.reference_name:
+                issues.extend(MappingDiagnostic('UNRESOLVED_REFERENCE_BOOK',
+                    'Reference book needs a verified bridge.', source_system, (ref,))
+                    for ref in references if ref[0] in self._blocked_reference_books)
+            if issues:
+                status = MappingStatus.INVALID if all(d.code in ('BOOK_NOT_IN_SYSTEM', 'OUTSIDE_SYSTEM') for d in issues) else MappingStatus.UNSUPPORTED
+                return result(status, diagnostics=issues)
+            return result(MappingStatus.EXACT, (references,))
         if source_system == self.reference_name:
             issues = [MappingDiagnostic('UNRESOLVED_REFERENCE_BOOK', 'Reference book needs a verified bridge.',
                                         source_system, (r,)) for r in references if r[0] in self._blocked_reference_books]
@@ -777,6 +797,80 @@ class VersificationMappingEngine:
         else:
             status = MappingStatus.EXACT
         return result(status, candidates, diagnostics, provenance)
+
+    def convert_passage(self, source_system, target_system, references):
+        """Opt in to the smallest connected, unambiguous complete mapping group.
+
+        Strict conversion is tried first. Only incomplete atomic/merged groups
+        can be enlarged. Follow explicit relationships in both directions on
+        both legs, including groups crossing chapters or containing gaps. Never
+        choose between competing relationships or infer an enclosing verse range.
+        source_references describes the complete coverage; requested_references
+        retains the original selection so applications can label combined text.
+        """
+        strict = self.convert(source_system, target_system, references)
+        requested = strict.source_references
+        if strict.status != MappingStatus.PARTIAL or not strict.diagnostics or any(
+                d.code not in ('INCOMPLETE_MAPPING_GROUP', 'INCOMPLETE_MERGED_VERSE')
+                for d in strict.diagnostics):
+            return replace(strict, requested_references=requested)
+        names = _unique((source_system, self.reference_name, target_system))
+        tables = [self._table(name) for name in names if name != self.reference_name]
+        coverage = {name: [] for name in names}
+        pending, visited = deque(), set()
+
+        def include(name, group):
+            existing = coverage[name]
+            added = [ref for ref in group if ref not in existing]
+            if not added:
+                return
+            # Insert missing members in the rule's order, at the first member
+            # already selected. Preserve the caller's order for complete groups.
+            position = next((n for n, ref in enumerate(existing) if ref in group), len(existing))
+            existing[:] = [ref for ref in existing if ref not in group]
+            existing[position:position] = group
+            pending.extend((name, ref) for ref in added)
+
+        include(source_system, requested)
+        while pending:
+            name, ref = pending.popleft()
+            if (name, ref) in visited:
+                continue
+            visited.add((name, ref))
+            if len(visited) > 10000:
+                return replace(strict, requested_references=requested, diagnostics=strict.diagnostics + (
+                    MappingDiagnostic('EXPANSION_LIMIT', 'Complete-group expansion exceeds 10000 addresses.', name),))
+            for group in self._domains[name].merged:
+                if ref in group:
+                    include(name, group)
+            for table in tables:
+                if name not in (table.name, self.reference_name):
+                    continue
+                index = table.reverse if name == self.reference_name else table.forward
+                choices = index.get(ref, ())
+                if len(choices) > 1:
+                    return replace(strict, status=MappingStatus.AMBIGUOUS, requested_references=requested,
+                        diagnostics=strict.diagnostics + (MappingDiagnostic('COMPETING_MAPPINGS',
+                            'Complete-group expansion touches competing relationships; none was selected.', name, (ref,)),))
+                if choices:
+                    relation, = choices
+                    include(table.name, relation.source)
+                    include(self.reference_name, relation.target)
+        # A group discovered on the target leg can insert an earlier member.
+        # Project its complete order back, rather than appending that earlier
+        # verse after the initially requested later member.
+        backward = self.convert(target_system, source_system, coverage[target_system])
+        source_coverage = (backward.references if backward.status == MappingStatus.EXACT
+                           and set(backward.references) == set(coverage[source_system])
+                           else coverage[source_system])
+        source_coverage = list(source_coverage)
+        for group in self._domains[source_system].merged:
+            if set(group) <= set(source_coverage) and not set(group) <= set(requested):
+                position = next(n for n, ref in enumerate(source_coverage) if ref in group)
+                source_coverage[:] = [ref for ref in source_coverage if ref not in group]
+                source_coverage[position:position] = group
+        expanded = self.convert(source_system, target_system, source_coverage)
+        return replace(expanded, requested_references=requested)
 
 
 @lru_cache(maxsize=1)

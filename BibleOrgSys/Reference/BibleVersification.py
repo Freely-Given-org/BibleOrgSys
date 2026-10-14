@@ -173,7 +173,7 @@ class BibleVersificationMixin:
         return {**get_default_mapping_engine().capabilities(declaration['system']),
                 'declarationStatus': declaration['status'], 'diagnostics': declaration['diagnostics']}
 
-    def _convertVersification(self, target, references, *, from_reference=False, from_system=None, end=None):
+    def _convertVersification(self, target, references, *, from_reference=False, from_system=None, end=None, expand_groups=False):
         engine = get_default_mapping_engine()
         own = self.getVersificationDeclaration()
         incoming = from_reference or from_system is not None
@@ -188,7 +188,8 @@ class BibleVersificationMixin:
             other_name = _system_name(other_system)
         source_name, target_name = (other_name, own_name) if incoming else (own_name, other_name)
         if end is None:
-            result = engine.convert(source_name, target_name, references)
+            converter = engine.convert_passage if expand_groups else engine.convert
+            result = converter(source_name, target_name, references)
         else:
             result = engine.convert_range(source_name, target_name, references, end)
         diagnostics = tuple(MappingDiagnostic(d['code'], f"{side}: {d['message']}", 'Bible declaration')
@@ -210,19 +211,21 @@ class BibleVersificationMixin:
         result = self.convertReferencesToVersification(targetSystem, [(BBB, C, V, S)])
         return result if detailed else result.require_single()
 
-    def convertReferencesToVersification(self, targetSystem, references):
-        return self._convertVersification(targetSystem, references)
+    def convertReferencesToVersification(self, targetSystem, references, *, expandGroups=False):
+        return self._convertVersification(targetSystem, references, expand_groups=expandGroups)
 
-    def convertReferencesFromVersification(self, sourceSystem, references):
+    def convertReferencesFromVersification(self, sourceSystem, references, *, expandGroups=False):
         """Convert an external passage into this Bible's declared numbering.
 
         sourceSystem may be a name, system object, or another Bible. Declaration
         conflicts on either Bible retain the same diagnostics/status as outgoing
         conversions. This method converts references without loading any text.
+        expandGroups opts into complete indivisible groups and records the
+        original selection in the result's requested_references.
         """
         if sourceSystem is None:
             raise TypeError('A source versification is required.')
-        return self._convertVersification(None, references, from_system=sourceSystem)
+        return self._convertVersification(None, references, from_system=sourceSystem, expand_groups=expandGroups)
 
     def convertReferencesFromReferenceVersification(self, references):
         return self._convertVersification(None, references, from_reference=True)

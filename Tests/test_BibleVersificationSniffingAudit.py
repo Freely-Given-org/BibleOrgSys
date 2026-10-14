@@ -122,6 +122,18 @@ class ReviewedSniffingCorrectionsTests(unittest.TestCase):
                             with self.assertRaises(PartialMappingError):
                                 result.require_single()
 
+    def test_opt_in_expansion_completes_every_reviewed_group(self):
+        for profile,a,b in NEW_CASES:
+            for source,target,group,destination in ((profile,'org',refs(a),refs(b)),
+                                                     ('org',profile,refs(b),refs(a))):
+                for member in group:
+                    with self.subTest(source=source,target=target,member=member):
+                        result = self.engine.convert_passage(source,target,(member,))
+                        self.assertEqual(result.status,MappingStatus.EXACT)
+                        self.assertEqual(result.source_references,group)
+                        self.assertEqual(result.references,destination)
+                        self.assertEqual(result.requested_references,(member,))
+
     def test_unaffected_members_of_all_touched_chapters_keep_their_results(self):
         old = deepcopy(self.bundle)
         old['supplement']['corrections'] = old['supplement']['corrections'][:8]

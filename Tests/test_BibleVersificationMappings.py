@@ -162,9 +162,9 @@ class RelationshipTests(unittest.TestCase):
         self.assertEqual(engine().convert('a', 'BOSReference', [ref(), ref(), ref(verse=2)]).references,
                          (ref(), ref(verse=2)))
 
-    def test_same_system_conversion_uses_reference_and_can_be_ambiguous(self):
+    def test_same_system_validates_identity_without_a_reference_round_trip(self):
         e = engine(definition(identityBooks={'GEN': 'GEN'}, mappedVerses={'GEN 1:1': 'GEN 1:2'}))
-        self.assertEqual(e.convert('a', 'a', [ref()]).status, MappingStatus.AMBIGUOUS)
+        self.assertEqual(e.convert('a', 'a', [ref()]).references, (ref(),))
 
     def test_results_and_definition_inputs_are_isolated(self):
         d = definition(identityBooks={'GEN': 'GEN'})
@@ -174,6 +174,49 @@ class RelationshipTests(unittest.TestCase):
         self.assertEqual(result.require_single(), ref())
         with self.assertRaises(FrozenInstanceError):
             result.status = MappingStatus.UNSUPPORTED
+
+    def test_same_system_identity_still_validates_native_addresses(self):
+        e = engine(definition(excludedVerses=['GEN 1:2']))
+        for reference, code in ((ref(verse=9), 'OUTSIDE_SYSTEM'), (ref(verse=0), 'UNDECLARED_TITLE'),
+                                (ref(suffix='a'), 'UNDECLARED_SEGMENT'), (ref(verse=2), 'EXCLUDED_VERSE')):
+            with self.subTest(reference=reference):
+                result = e.convert('a', 'a', [reference])
+                self.assertNotEqual(result.status, MappingStatus.EXACT)
+                self.assertIn(code, [d.code for d in result.diagnostics])
+
+    def test_complete_group_expansion_on_either_leg_and_cascading_groups(self):
+        e = engine(definition(groupMappings=[{'source':['GEN 1:1','GEN 2:2'], 'target':'GEN 1:1'},
+                                             {'source':'GEN 1:3', 'target':'GEN 1:2'}]),
+                   definition(groupMappings=[{'source':['GEN 1:4','GEN 2:1'], 'target':'GEN 1:1-2'}]))
+        result = e.convert_passage('a','b',[ref('GEN',2,2)])
+        self.assertEqual(result.status, MappingStatus.EXACT)
+        self.assertTrue(result.is_expanded)
+        self.assertEqual(result.requested_references, (ref('GEN',2,2),))
+        self.assertEqual(result.source_references, (ref(),ref('GEN',2,2),ref(verse=3)))
+        self.assertEqual(result.references, (ref(verse=4),ref('GEN',2,1)))
+        self.assertEqual(e.convert('a','b',[ref('GEN',2,2)]).status, MappingStatus.PARTIAL)
+
+    def test_expansion_never_unions_competing_groups_or_fills_unmapped_gaps(self):
+        e = engine(definition(groupMappings=[{'source':'GEN 1:1-2','target':'GEN 1:1'},
+                                             {'source':'GEN 1:1-3','target':'GEN 1:2'}]))
+        result = e.convert_passage('a','BOSReference',[ref()])
+        self.assertEqual(result.status, MappingStatus.AMBIGUOUS)
+        self.assertFalse(result.references)
+        e = engine(definition(mappedVerses={'GEN 1:1':'GEN 1:1'}))
+        self.assertEqual(e.convert_passage('a','BOSReference',[ref(),ref(verse=2)]).status, MappingStatus.PARTIAL)
+
+    def test_expansion_respects_merged_domains_and_explicit_suffixes(self):
+        e = engine(definition(identityBooks={'GEN':'GEN'},mergedVerses=['GEN 1:1-2']))
+        for source,target in (('a','BOSReference'),('BOSReference','a')):
+            result = e.convert_passage(source,target,[ref(verse=2)])
+            self.assertEqual(result.status, MappingStatus.EXACT)
+            self.assertEqual(result.source_references, (ref(),ref(verse=2)))
+        e = engine(definition(partialVerses={'GEN 1:1':['a','b']},
+            groupMappings=[{'source':['GEN 1:1a','GEN 1:1b'],'target':'GEN 1:2'}]))
+        result = e.convert_passage('a','BOSReference',[ref(suffix='b')])
+        self.assertEqual(result.source_references, (ref(suffix='a'),ref(suffix='b')))
+        self.assertEqual(result.references, (ref(verse=2),))
+        self.assertNotEqual(e.convert_passage('a','BOSReference',[ref()]).status, MappingStatus.EXACT)
 
     def test_many_alternatives_are_bounded_but_never_reported_exact(self):
         # Two choices per verse yield 128 complete passage interpretations.
@@ -272,7 +315,7 @@ class InvalidAndIncompleteDataTests(unittest.TestCase):
 
     def test_merged_reference_is_also_respected(self):
         e = engine(reference=definition(mergedVerses=['GEN 1:1-2']))
-        for source, target in [('a', 'BOSReference'), ('BOSReference', 'a'), ('BOSReference', 'BOSReference')]:
+        for source, target in [('a', 'BOSReference'), ('BOSReference', 'a')]:
             self.assertEqual(e.convert(source, target, [ref()]).status, MappingStatus.PARTIAL)
 
     def test_known_title_is_supported_but_arbitrary_zero_is_not(self):
@@ -378,8 +421,8 @@ class BundledMappingTests(unittest.TestCase):
         self.assertEqual(result.status, MappingStatus.AMBIGUOUS)
         self.assertEqual(set(result.alternatives), {(ref('PSA', 10, 0),), (ref('PSA', 10, 1),)})
 
-    def test_ambiguous_same_system_round_trip_is_not_hidden(self):
-        self.assertEqual(self.engine.convert('rsc', 'rsc', [ref('PSA', 9, 22)]).status, MappingStatus.AMBIGUOUS)
+    def test_cross_system_ambiguity_does_not_prevent_native_identity(self):
+        self.assertEqual(self.engine.convert('rsc', 'rsc', [ref('PSA', 9, 22)]).references, (ref('PSA', 9, 22),))
 
     def test_unresolved_additions_and_ethiopian_books_are_explicit(self):
         for source, target, reference in [('org', 'BOSReference', ref('PAZ')), ('eng', 'BOSReference', ref('ESG')),
@@ -412,7 +455,7 @@ class BundledMappingTests(unittest.TestCase):
         self.assertEqual(result.require_single(), ref())
         self.assertEqual(result.reference_version, '1-draft')
         self.assertRegex(result.data_revision, r'^519af776ab65d89a51e37f750779250f940459ef\+bos-supplement-2\.[0-9a-f]{64}$')
-        self.assertEqual(result.mapping_policy_version, '2')
+        self.assertEqual(result.mapping_policy_version, '3')
 
 
 @unittest.skipUnless(importlib.util.find_spec('bos_books_codes_py') and importlib.util.find_spec('bible_organisational_system'),

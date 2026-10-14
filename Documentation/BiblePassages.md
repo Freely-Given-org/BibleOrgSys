@@ -39,6 +39,8 @@ The return value is `MappedBiblePassage`:
 - `portions` is a tuple of `PassagePortion` named tuples. Each has `reference`
   (native `(BBB, C, V)` with any suffix appended to V), `entries`
   (`InternalBibleEntryList`), and `context` (the starting context marker list).
+- `native_references` lists the actual stored verse coverage, including bridges
+  and suffixes. Word identifiers and entries retain their native values.
 
 By default, each distinct stored verse span is a separate portion. With
 `combineAdjacent=True`, consecutive native addresses in the same chapter are
@@ -49,6 +51,35 @@ addresses. Entries retain their original numbering, markup, notes, and extras.
 `convertReferencesFromVersification(sourceSystem, references)` offers the same
 incoming reference conversion without loading text. It returns `MappingResult`
 for every status, complementing `convertReferencesToVersification`.
+
+## Explicitly retrieve an indivisible combined passage
+
+```python
+passage = targetBible.getMappedPassage('eng', [('ACT', 19, 41)], expandGroups=True)
+assert passage.mapping.requested_references == (('ACT', '19', '41', None),)
+assert passage.mapping.source_references == (
+    ('ACT', '19', '40', None), ('ACT', '19', '41', None),
+)
+assert passage.mapping.is_expanded
+assert passage.native_references == (('ACT', '19', '40', None),)
+```
+
+This opt-in completes unambiguous mapping groups, then retrieves their full native
+text. It also accounts for indivisible stored bridges, such as an English edition
+storing `\v 40-41`: coverage is mapped back and completed until the retrieved text
+and the mapped source passage agree. An unsupported or ambiguous extra portion
+raises a mapping error; it is never silently presented as the requested verse.
+
+Renderers should label expanded results with their complete source and native
+references (for example, “Combined passage: English Acts 19:40–41; native Acts
+19:40”). The requested verse remains available in `requested_references` for
+navigation. BOS neither renumbers entries/word identifiers nor invents textual
+splits. A same-system request for separately stored English verse 41 retrieves
+only verse 41, independently of its cross-system mapping group.
+
+The Bible's `convertReferencesFromVersification` and
+`convertReferencesToVersification` methods also accept `expandGroups=True` for
+reference-only use. Their default remains strict.
 
 ## Native retrieval, bridges, and suffixes
 
@@ -67,8 +98,9 @@ A stored USFM bridge such as `\v 2-3` is indivisible and is returned once when
 both verses are requested. Requesting just verse 3 also returns that complete
 stored span; this API does not invent a textual division. `portion.reference`
 identifies the first requested address in the portion, while its entries retain
-the actual stored verse label (`2-3`). The mapping result still describes the
+the actual stored verse label (`2-3`). With the default strict mapping option, the mapping result still describes the
 requested references, not a claim that the text can be sliced that finely.
+`expandGroups=True` instead reports the complete source coverage as above.
 
 A whole verse stored as `4a` and `4b` includes both entries. An explicit request
 for `('GEN', 1, 4, 'b')` requires that suffix to exist and never falls back to the
@@ -107,7 +139,8 @@ to the application. `getMappedPassage` rejects introduction/chapter-zero inputs.
 
 Non-exact mappings raise the corresponding existing `VersificationMappingError`
 subclass (`AmbiguousMappingError`, `PartialMappingError`, `UnsupportedMappingError`,
-or `InvalidReferenceError`) before loading destination text. The exception's
+or `InvalidReferenceError`) before loading destination text. With expansion
+enabled, a further mapping failure can arise after inspecting a stored bridge. The exception's
 `result` retains diagnostics and alternatives. No same-number fallback is used.
 
 If an exact mapping points to absent text, `MissingPassageBookError` or
