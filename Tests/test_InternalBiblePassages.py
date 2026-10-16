@@ -5,6 +5,7 @@ Run with BOS's native dependencies installed:
     .venv/bin/python -m unittest discover -s Tests -p test_InternalBiblePassages.py
 """
 import logging
+import pickle
 from pathlib import Path
 from tempfile import TemporaryDirectory
 import unittest
@@ -17,6 +18,7 @@ from BibleOrgSys.Internals.InternalBiblePassages import (
     PassagePortion, passageReferencesFromEntries,
 )
 import BibleOrgSys.Reference.BibleVersification as bv
+import BibleOrgSys.Reference.BibleVersificationMappings as vm
 from BibleOrgSys.Reference.BibleVersificationMappings import (
     AmbiguousMappingError, InvalidReferenceError, MappingStatus, PartialMappingError,
     UnsupportedMappingError, VersificationMappingEngine,
@@ -73,6 +75,40 @@ class PassageTests(unittest.TestCase):
         self.assertEqual(len(result.portions),2)
         self.assertIsInstance(result.portions[0],PassagePortion)
         self.assertEqual(result.portions[0].context,['chapters','c'])
+
+    def test_malformed_stored_labels_identify_bible_and_source_file(self):
+        bible = self.bible('\\c 13\n\\p\n\\v 7And malformed text.\n')
+        bible.abbreviation = 'BAD-LABEL'
+        entries,context = bible.getContextVerseData(('GEN','13','7And'),strict=True)
+        # A native index can return a malformed stored label for a numeric lookup.
+        cache = {(id(bible),'GEN','13'):{'7':(entries,context)}}
+        for retrieve in (
+                lambda: bible.getPassageData([('GEN',13,7)],chapterCache=cache),
+                lambda: bible.getMappedPassage('org',[('GEN',13,7)],chapterCache=cache),
+                lambda: passageReferencesFromEntries(('GEN','13'),entries,bible),
+                lambda: passageReferencesFromEntries(('GEN','13'),entries,'org',sourceBible=bible)):
+            with self.assertRaisesRegex(ValueError,'Unsupported source verse label') as caught:
+                retrieve()
+            message = str(caught.exception)
+            self.assertIn('BAD-LABEL',message)
+            self.assertIn('7And',message)
+            self.assertIn('GEN 13:',message)
+            self.assertIn(str(self.root/'1'/'GEN.usfm'),message)
+            self.assertEqual(str(pickle.loads(pickle.dumps(caught.exception))),message)
+
+    def test_bos_exception_payloads_and_notes_survive_pickle(self):
+        result = vm.MappingResult('eng','org',(('ACT','19','41',None),),vm.MappingStatus.PARTIAL)
+        for error in (vm.VersificationMappingError(result),vm.PartialMappingError(result),
+                      vm.AmbiguousMappingError(result),vm.UnsupportedMappingError(result),
+                      vm.InvalidReferenceError(result),vm.MultipleReferencesError(result),
+                      MissingPassageBookError(('SA1','13','7')),
+                      MissingPassageVerseError(('SA1','13','7'))):
+            with self.subTest(error=type(error).__name__):
+                error.add_note('Bible KJB-1611')
+                restored = pickle.loads(pickle.dumps(error))
+                self.assertIs(type(restored),type(error))
+                self.assertEqual(str(restored),str(error))
+                self.assertEqual(restored.__dict__,error.__dict__)
 
     def test_cross_chapter_mapping_retains_native_context_and_order(self):
         bible = self.bible('\\c 31\n\\p\n\\v 54 Last.\n\\c 32\n\\p\n'

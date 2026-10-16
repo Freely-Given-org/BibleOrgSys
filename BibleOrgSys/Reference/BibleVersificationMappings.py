@@ -89,6 +89,12 @@ class VersificationMappingError(ValueError):
         reason = result.diagnostics[0].message if result.diagnostics else 'The result contains multiple references.'
         super().__init__(f'{result.source_system} → {result.target_system}: {result.status.value}: {reason}')
 
+    def __reduce__(self):
+        # Exception.args contains the display string, whereas this constructor
+        # requires a MappingResult. Default unpickling can kill a pool's result
+        # handler thread and leave its parent waiting forever.
+        return type(self), (self.result,), self.__dict__
+
 
 class UnsupportedMappingError(VersificationMappingError):
     pass

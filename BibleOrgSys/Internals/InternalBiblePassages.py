@@ -44,6 +44,9 @@ class MissingPassageBookError(KeyError):
         self.reference = reference
         super().__init__(reference[0])
 
+    def __reduce__(self):
+        return type(self), (self.reference,), self.__dict__
+
 
 class MissingPassageVerseError(KeyError):
     """A requested native verse or exact suffix is absent from the edition."""
@@ -52,20 +55,40 @@ class MissingPassageVerseError(KeyError):
         super().__init__(reference)
 
 
-def _verse_references(BBB, C, value):
+def _passage_source_description(source, BBB):
+    """Identify the edition and, where available, the offending source file."""
+    if source is None:
+        return 'Bible not supplied'
+    if isinstance(source, str):
+        return source
+    if isinstance(source, BibleVersificationMixin):
+        names = tuple(dict.fromkeys(str(value) for value in (
+            getattr(source, 'abbreviation', None), getattr(source, 'name', None),
+            getattr(source, 'givenName', None)) if value))
+        book = getattr(source, 'books', {}).get(BBB)
+        path = (getattr(book, 'sourceFilepath', None) or getattr(source, 'sourceFilepath', None)
+                or getattr(source, 'sourceFolder', None))
+        description = 'Bible ' + (' / '.join(names) or source.getAName() or type(source).__name__)
+        return f'{description}; source {path}' if path else description
+    return f'versification {_system_name(source)} (Bible not supplied)'
+
+
+def _verse_references(BBB, C, value, source=None):
     """Expand a stored numeric bridge; preserve an explicit verse suffix."""
     match = re.fullmatch(r'(\d+)([a-z]*)(?:-(\d+))?', value)
     if not match:
-        raise ValueError(f'Unsupported source verse label {BBB} {C}:{value}')
+        raise ValueError(f'Unsupported source verse label {BBB} {C}:{value!r} '
+                         f'[{_passage_source_description(source, BBB)}]')
     first, suffix, last = match.groups()
     if last:
         if suffix or int(last) < int(first):
-            raise ValueError(f'Unsupported source verse bridge {BBB} {C}:{value}')
+            raise ValueError(f'Unsupported source verse bridge {BBB} {C}:{value!r} '
+                             f'[{_passage_source_description(source, BBB)}]')
         return tuple(normalize_reference((BBB,C,v)) for v in range(int(first),int(last)+1))
     return (normalize_reference((BBB,C,first,suffix)),)
 
 
-def passageReferencesFromEntries(reference, entries, sourceSystem):
+def passageReferencesFromEntries(reference, entries, sourceSystem, *, sourceBible=None):
     """Extract ordered scripture references from a BOS entry list.
 
     reference supplies the starting (BBB,C[,V]); c fields update the chapter.
@@ -77,6 +100,8 @@ def passageReferencesFromEntries(reference, entries, sourceSystem):
     labels raise ValueError rather than silently dropping part of a passage.
 
     sourceSystem accepts a name, BibleVersificationSystem, or declared Bible.
+    If numbering is supplied separately, sourceBible can identify the edition
+    (a Bible object or descriptive name) for malformed-label diagnostics.
     This extracts addresses, not a promise that their subsequent mapping is exact.
     """
     if not isinstance(reference, (tuple, list)) or len(reference) not in (2,3,4):
@@ -89,7 +114,7 @@ def passageReferencesFromEntries(reference, entries, sourceSystem):
         if marker == 'c':
             C, numbered = value, False
         elif marker == 'v':
-            references.extend(_verse_references(BBB,C,value))
+            references.extend(_verse_references(BBB,C,value,sourceBible if sourceBible is not None else sourceSystem))
             numbered = True
         elif marker == 'd' and not numbered and int(C) > 0:
             title = normalize_reference((BBB,C,0))
@@ -154,10 +179,10 @@ def get_passage_data(bible, references, *, chapter_cache=None, combine_adjacent=
 
     for reference in references:
         fetch(reference)
-    return _copy_portions(portions, combine_adjacent)
+    return _copy_portions(portions, combine_adjacent, bible)
 
 
-def _copy_portions(portions, combine_adjacent):
+def _copy_portions(portions, combine_adjacent, bible):
     """Detach data from caches, optionally coalescing adjacent native addresses.
 
     Never bridge gaps, book/chapter changes, or reordering. Do not infer a text
@@ -166,7 +191,7 @@ def _copy_portions(portions, combine_adjacent):
     joined, previous = [], None
     for reference, entries, context in portions:
         BBB, C, V = reference
-        first = _verse_references(BBB,C,V)[0]
+        first = _verse_references(BBB,C,V,bible)[0]
         adjacent = combine_adjacent and previous and previous[:2] == first[:2] and (
             (previous[3] is None and first[3] is None and int(first[2]) == int(previous[2])+1)
             or (previous[2] == first[2] and previous[3] and first[3]
@@ -178,7 +203,7 @@ def _copy_portions(portions, combine_adjacent):
             copied.extend(entries)
             joined.append(PassagePortion(reference, copied, list(context)))
         labels = [e.getCleanText() for e in entries if e.getMarker() == 'v']
-        previous = _verse_references(BBB,C,labels[-1])[-1] if labels else first
+        previous = _verse_references(BBB,C,labels[-1],bible)[-1] if labels else first
     return tuple(joined)
 
 
@@ -203,7 +228,7 @@ def get_mapped_passage(bible, source_system, references, *, chapter_cache=None, 
             chapter_cache=cache, combine_adjacent=combine_adjacent)
         native = tuple(dict.fromkeys(ref for portion in portions for ref in (
             passageReferencesFromEntries(portion.reference, portion.entries, bible) or
-            _verse_references(*portion.reference))))
+            _verse_references(*portion.reference,source=bible))))
         if not expand_groups:
             return MappedBiblePassage(result, portions, native)
         # Whole-verse requests legitimately retrieve every stored suffix.

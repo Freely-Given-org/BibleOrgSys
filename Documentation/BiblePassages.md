@@ -131,6 +131,17 @@ produce invented zero addresses. This handles intermediate titles that a plain
 range expansion intentionally does not insert. Unsupported verse-label syntax
 raises `ValueError`. Extraction alone does not certify an exact mapping.
 
+Malformed-label errors identify the Bible edition and its source file or folder
+when available, as well as the book, chapter, and offending label. If the source
+profile is supplied separately from its Bible, pass `sourceBible=sourceBible`
+(or a descriptive edition name) to retain this diagnostic context:
+
+```python
+references = passageReferencesFromEntries(
+    ('SA1', '13'), entries, 'eng', sourceBible=sourceBible,
+)
+```
+
 Editorial book introductions and headers are not scripture addresses. Continue
 to retrieve those with `getContextVerseData`; their pairing/display policy belongs
 to the application. `getMappedPassage` rejects introduction/chapter-zero inputs.
@@ -149,6 +160,11 @@ missing native `reference`. These types and the result/portion types are in
 `BibleOrgSys.Internals.InternalBiblePassages`. A successful result always contains
 the full requested group; callers are not given a partially retrieved passage.
 Failed requests may still have loaded books or populated the caller's cache.
+
+Mapping and missing-passage exceptions support pickling, including their result
+or reference and added exception notes, for use with multiprocessing. Applications
+which need prompt failure reporting and detection of crashed workers can use
+the BOS [parallel task runner](ParallelTasks.md).
 
 Book identities must match those of the selected profile. If an import stores a
 combined book under a different name or splits it across physical books, the

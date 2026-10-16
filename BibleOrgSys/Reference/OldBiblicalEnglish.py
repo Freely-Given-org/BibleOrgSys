@@ -32,7 +32,7 @@ import BibleOrgSys.BibleOrgSysGlobals as BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2026-10-06' # by RJH
+LAST_MODIFIED_DATE = '2026-10-16' # by RJH
 SHORT_PROGRAM_NAME = "OldBiblicalEnglish"
 PROGRAM_NAME = "OpenBibleData English Language Handling functions"
 PROGRAM_VERSION = '1.0.2'
@@ -2073,6 +2073,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
             (('proceedeth','proceadeth'),'proceedeth/proceeds'),(('proceaded',),'proceeded'),(('proceede ','proceade ','procede '),'proceed '),
                     ((' proclaymed',' proclamed'),' proclaimed'),(('Proclaime ','Proclayme ','Proclame '),'Proclaim '),((' proclaime ',' proclayme ',' proclame '),' proclaim '),
                 (('prophane',),'profane'), # (('prophaned',),'profaned'),
+                    (('professe ',),'profess '),
                     (('profitabli',),'profitably'), (('profitide',),'profited'),(('profiteth','profitith'),'profiteth/profits'),(('profite ',),'profit '),(('profite,',),'profit,'),(('proffet',),'profit'),
                     (('profounde',),'profound'),
                 (('prolonge ','prologe '),'prolong '),
