@@ -253,7 +253,7 @@ class PassageTests(unittest.TestCase):
 
     def test_non_exact_mappings_fail_before_loading_text(self):
         for target,source,refs,error in (
-            ('eng','Luther',[('GEN',1,1)],UnsupportedMappingError),
+            ('eng','KJV',[('GEN',1,1)],UnsupportedMappingError),
             # Supplement revision 2 makes this an incomplete atomic group.
             ('org','eng',[('PSA',13,5)],PartialMappingError),
             ('org','rsc',[('PSA',9,22)],AmbiguousMappingError),

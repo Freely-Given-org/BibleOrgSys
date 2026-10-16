@@ -244,6 +244,16 @@ def _apply_supplement(systems, reference_definition, bundle):
                 continue  # The compiler still quarantines malformed upstream rules.
             if overlap:
                 raise VersificationDataError(f'Supplement group overlaps remaining mapping: {name}: {left}')
+    for restriction in supplement.get('unmappedVerses', ()):
+        name, span = restriction['system'], restriction['source']
+        if (name not in systems or not restriction['reason']
+                or restriction['evidence']['copenhagenRule'] not in evidence_rules
+                or not restriction['evidence']['verification']):
+            raise VersificationDataError('Invalid unmapped-verse evidence.')
+        domain = _Domain(name, systems[name])
+        if any(domain.issue(r) for r in _points(span)):
+            raise VersificationDataError('Unmapped verse outside declared domain.')
+        systems[name].setdefault('unmappedVerses', {})[span] = restriction['reason']
     payload = json.dumps(supplement, sort_keys=True, ensure_ascii=False, separators=(',', ':')).encode('utf-8')
     return f'{supplement["sourceSnapshot"]}+bos-supplement-{supplement["version"]}.{hashlib.sha256(payload).hexdigest()}'
 
@@ -375,6 +385,17 @@ class _Table:
             record(left, right)
         for group in definition.get('groupMappings', ()):
             record(group['source'], group['target'], grouped=True, origin=group.get('provenance'))
+        # Text present in this edition can have no counterpart in the reference.
+        # Keep it valid for native/same-system retrieval, but do not invent an
+        # identity edge to the next verse. The opposite direction stays usable.
+        for span, reason in definition.get('unmappedVerses', {}).items():
+            points = _points(span)
+            if not reason or any(domain.issue(r) for r in points):
+                raise VersificationDataError(f'Invalid unmapped-verse declaration: {name}: {span}')
+            diagnostic = MappingDiagnostic('NO_REFERENCE_COUNTERPART', reason, name, points)
+            for ref in points:
+                touched.add(ref)
+                self.forward_blocks[ref].append(diagnostic)
         # Restrictions poison both directions even when no rule exists.
         for book, reason in definition.get('unsupportedBooks', {}).items():
             diagnostic = MappingDiagnostic('UNSUPPORTED_BOOK_MAPPING', reason, name)
@@ -595,6 +616,20 @@ class VersificationMappingEngine:
         # identifies an org title at the same address.
         systems['org']['verseZeroReferences'] = sorted(reference_zeros)
         data_revision = _apply_supplement(systems, reference_definition, bundle)
+        # Independently reviewed profiles use BOS book codes and fully specified
+        # counts. They do not change or masquerade as the pinned upstream files.
+        additional = bundle.get('additionalMappings', ())
+        for profile in additional:
+            name = profile['name']
+            if (profile['formatVersion'] != 1 or profile['referenceVersion'] != reference['version']
+                    or name in systems or name == 'BOSReference' or not profile['evidence']
+                    or not profile['scope'] or not profile['version']):
+                raise VersificationDataError(f'Invalid additional mapping profile: {name}')
+            systems[name] = deepcopy(profile['definition'])
+        if additional:
+            payload = json.dumps(additional, sort_keys=True, ensure_ascii=False,
+                                 separators=(',', ':')).encode('utf-8')
+            data_revision += '+bos-profiles.' + hashlib.sha256(payload).hexdigest()
         return cls(reference_definition, systems, reference_version=reference['version'],
                    data_revision=data_revision,
                    blocked_reference_books=('PAZ', 'DNG', 'EZ6', 'MQ1', 'MQ3', 'REP', 'BA4'))

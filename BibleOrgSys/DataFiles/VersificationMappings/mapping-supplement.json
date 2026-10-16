@@ -1,6 +1,6 @@
 {
   "formatVersion": 1,
-  "version": "2",
+  "version": "3",
   "sourceSnapshot": "519af776ab65d89a51e37f750779250f940459ef",
   "dataLicense": "CC-BY-SA-4.0",
   "dataLicenseURL": "https://creativecommons.org/licenses/by-sa/4.0/",
@@ -12,7 +12,7 @@
     "localFiles": "Tests/DataFilesForTests/OET-{LV,RV}/OET-{LV,RV}_{NUM,SA1,KI1,CH1,PSA,ISA,ACT}.ESFM; Tests/DataFilesForTests/YETTest/kjv-red.yet",
     "note": "Verse contents were compared during the 2026-10-12 audit. These optional maintainer text files are not a runtime or test dependency; the verification summaries are recorded per correction. Revision 2 also records profile-data verification separately from direct OET text checks."
   },
-  "scope": "Reviewed whole-group corrections for eng and vul in BOS book codes. Revision 2 audits all 556 Copenhagen split/merge rows, adds profile-verified corrections, and retains edition/textual/notation conflicts for review. Original Copenhagen files and reference counts are unchanged.",
+  "scope": "Reviewed whole-group corrections for eng and vul in BOS book codes. Revision 2 audits all 556 Copenhagen split/merge rows, adds profile-verified corrections, and retains edition/textual/notation conflicts for review. Original Copenhagen files and reference counts are unchanged. Revision 3 prevents an invented identity for English Nehemiah 7:68, whose horses/mules are absent from the reference text. Revision 3 also verifies the English 2 Corinthians 13 greetings/benediction against source text and the corrected TVTMS table.",
   "corrections": [
     {
       "id": "eng-num-26-1",
@@ -1757,6 +1757,65 @@
       "referenceChapterCounts": {
         "NUM 25": 19,
         "NUM 26": 65
+      }
+    },
+    {
+      "id": "eng-co2-13-greetings",
+      "system": "eng",
+      "source": [
+        "CO2 13:12-13"
+      ],
+      "target": [
+        "CO2 13:12"
+      ],
+      "replaceMappings": {},
+      "remainingMappings": {},
+      "sourceChapterCounts": {
+        "CO2 13": 14
+      },
+      "referenceChapterCounts": {
+        "CO2 13": 13
+      },
+      "reason": "Preserve the final greetings and benediction across the 14/13-verse chapter divisions.",
+      "evidence": {
+        "copenhagenRule": "2Co.13:12-13",
+        "copenhagenRangeIndex": 0,
+        "verification": "The pinned Copenhagen 2Co.13:12-13 rule has incomplete/inconsistent last-verse tests. STEPBible TVTMS at commit 4efdf91bbd0a45076ab5efab5d491ab2013fcad1, rows 3459-3463, explicitly gives English 14 verses and Greek 13: English 12-13 are Greek 12, English 14 is Greek 13. OET-LV CO2 13:12 contains both greetings and 13:13 the blessing; local KJB 13:12/13 split the greetings and 13:14 is the blessing. LUTH1545STR has the same 13-verse division as OET-LV."
+      }
+    },
+    {
+      "id": "eng-co2-13-blessing",
+      "system": "eng",
+      "source": [
+        "CO2 13:14"
+      ],
+      "target": [
+        "CO2 13:13"
+      ],
+      "replaceMappings": {},
+      "remainingMappings": {},
+      "sourceChapterCounts": {
+        "CO2 13": 14
+      },
+      "referenceChapterCounts": {
+        "CO2 13": 13
+      },
+      "reason": "Preserve the final greetings and benediction across the 14/13-verse chapter divisions.",
+      "evidence": {
+        "copenhagenRule": "2Co.13:12-13",
+        "copenhagenRangeIndex": 0,
+        "verification": "The pinned Copenhagen 2Co.13:12-13 rule has incomplete/inconsistent last-verse tests. STEPBible TVTMS at commit 4efdf91bbd0a45076ab5efab5d491ab2013fcad1, rows 3459-3463, explicitly gives English 14 verses and Greek 13: English 12-13 are Greek 12, English 14 is Greek 13. OET-LV CO2 13:12 contains both greetings and 13:13 the blessing; local KJB 13:12/13 split the greetings and 13:14 is the blessing. LUTH1545STR has the same 13-verse division as OET-LV."
+      }
+    }
+  ],
+  "unmappedVerses": [
+    {
+      "system": "eng",
+      "source": "NEH 7:68",
+      "reason": "The horses and mules listed in this verse are absent from the Hebrew reference text. No same-number substitute is valid.",
+      "evidence": {
+        "copenhagenRule": "Neh.7:68-7:73",
+        "verification": "Copenhagen and STEPBible TVTMS identify the horses/mules verse as absent from Hebrew. OET-LV NEH 7:68 contains camels/donkeys (English 7:69), while Luther/English 7:68 lists horses/mules. Remove the implicit identity edge; do not turn 7:68 into the following verse. Native and same-system retrieval remains valid."
       }
     }
   ]

@@ -120,7 +120,7 @@ class SupplementTests(unittest.TestCase):
         before = deepcopy(self.bundle)
         VersificationMappingEngine.from_bundled_data(bundle=self.bundle)
         self.assertEqual(before, self.bundle)
-        self.assertEqual(len(self.bundle['supplement']['corrections']), 54)
+        self.assertEqual(len(self.bundle['supplement']['corrections']), 56)
         self.assertEqual(self.bundle['systems']['eng']['mappedVerses']['PSA 51:0'], 'PSA 51:2')
         self.assertEqual(self.bundle['supplement']['dataLicense'], 'CC-BY-SA-4.0')
         evidence = {row['name']: row for row in self.bundle['supplementEvidence']}

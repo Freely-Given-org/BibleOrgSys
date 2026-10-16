@@ -1,7 +1,7 @@
 {
   "formatVersion": 1,
   "sourceSnapshot": "519af776ab65d89a51e37f750779250f940459ef",
-  "mappingDataRevision": "519af776ab65d89a51e37f750779250f940459ef+bos-supplement-2.7871fb0b24ae7aa2af32aaaf80292f284a6355db6f7c5fc2be0d87e172789940",
+  "mappingDataRevision": "519af776ab65d89a51e37f750779250f940459ef+bos-supplement-3.d1f0914e6bd4ee61f9ecd3202409377e1128e407b3ead2574bc1de5bc52a9da0+bos-profiles.a4a4464c0dce0675038e5914f4ce02592fe58ec357e224b70f9348ba7611ce37",
   "dataLicense": "CC-BY-SA-4.0",
   "scope": "Audit of every Copenhagen sniffing row; explicit split/merge assessments for eng, vul and lxx. Candidate labels are comparisons, never automatic aliases or runtime mappings. Unreviewed findings do not change the existing runtime profile.",
   "ruleCount": 403,
@@ -27,8 +27,8 @@
     "no-group-difference": 24,
     "notation-or-domain-review": 14,
     "positional-alignment-covered": 236,
-    "reviewed-correction": 54,
-    "same-column": 842,
+    "reviewed-correction": 55,
+    "same-column": 841,
     "textual-tradition-blocked": 277,
     "title-convention-covered": 59,
     "witness-or-book-bridge-review": 87
@@ -74341,8 +74341,12 @@
       ],
       "profiles": {
         "eng": {
-          "status": "same-column",
-          "reason": "This row does not distinguish these candidate traditions; it does not certify profile equivalence."
+          "status": "reviewed-correction",
+          "corrections": [
+            "eng-co2-13-greetings",
+            "eng-co2-13-blessing"
+          ],
+          "reason": "Explicit supplement with recorded evidence and bidirectional regression tests."
         },
         "vul": {
           "status": "edition-not-selected",

@@ -109,8 +109,9 @@ Result fields:
   the address-space version, mapping-data revision, and engine-policy revision.
   The reference remains `1-draft`; the current policy version is `3`.
   Bundled `data_revision` is the pinned source commit followed by
-  `+bos-supplement-2.<sha256>`, where the digest covers the supplement's canonical
-  JSON (sorted keys, compact separators, UTF-8). The earlier bare commit and
+  `+bos-supplement-3.<sha256>+bos-profiles.<sha256>`, where the digests cover the
+  supplement and additional profiles' canonical JSON (sorted keys, compact
+  separators, UTF-8), including evidence. The earlier bare commit and
   policy `1` identify results produced without this supplement. Store these
   fields alongside persisted converted references, and recompute affected old
   results rather than treating their former `exact` status as a content guarantee.
@@ -118,6 +119,13 @@ Result fields:
 `getMappingCapabilities()` on a system, or `engine.capabilities(name)`, reports
 profile availability as `partial` or `unsupported`. It is not a guarantee for
 every reference. The per-request result remains authoritative.
+
+The reviewed [Luther profile](LutherVersification.md) is bundled separately from
+the pinned Copenhagen files. Supplement revision 3 also supplies the English
+2 Corinthians 13:12–14 greeting/benediction mapping and marks English Nehemiah
+7:68 as having no counterpart in the Hebrew reference. `NO_REFERENCE_COUNTERPART`
+means the source text exists but has no verified cross-system edge; native and
+same-system retrieval still work. It must not silently select the following verse.
 
 ## Passages, ranges, splits, and merges
 

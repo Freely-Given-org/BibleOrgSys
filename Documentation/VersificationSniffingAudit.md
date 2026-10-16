@@ -1,15 +1,21 @@
-# Copenhagen sniffing audit and BOS supplement revision 2
+# Copenhagen sniffing audit and BOS mapping supplements
+
+Revision 3 adds the verified 2 Corinthians 13 greetings and benediction (two
+groups, bringing the total to 56) and removes the false English Nehemiah 7:68
+identity edge. The independently bundled [Luther profile](LutherVersification.md)
+also contributes a content hash to result revisions. The following records the
+revision-2 audit history; regenerated reports describe the current runtime data.
 
 BOS audited all **403 rules / 1,466 rows** in the bundled Copenhagen sniffing
 snapshot. **556 rows** are explicitly tagged `SubdividedVerse` (427) or
 `MergedVerses` (129). Revision 2 adds **46 reviewed mapping groups**: three for
 `eng` and 43 for `vul`. Together with revision 1's eight corrections, the runtime
-supplement now contains 54 groups. No external repository or online data source
+supplement then contained 54 groups. No external repository or online data source
 is needed to run conversions, reproduce the audit, or run the tests.
 
 The verbatim Copenhagen files, source commit, reference counts, reference
 version `1-draft`, and mapping policy `2` are unchanged. Mapping data results
-now identify `+bos-supplement-2.<canonical-json-sha256>` after the pinned commit.
+then identified `+bos-supplement-2.<canonical-json-sha256>` after the pinned commit.
 Recompute affected stored conversions: some formerly exact singleton results
 are now correctly partial until all members of their group are supplied.
 

@@ -454,7 +454,7 @@ class BundledMappingTests(unittest.TestCase):
         result = self.engine.convert('BOSReference', 'BOSReference', [ref()])
         self.assertEqual(result.require_single(), ref())
         self.assertEqual(result.reference_version, '1-draft')
-        self.assertRegex(result.data_revision, r'^519af776ab65d89a51e37f750779250f940459ef\+bos-supplement-2\.[0-9a-f]{64}$')
+        self.assertRegex(result.data_revision, r'^519af776ab65d89a51e37f750779250f940459ef\+bos-supplement-3\.[0-9a-f]{64}\+bos-profiles\.[0-9a-f]{64}$')
         self.assertEqual(result.mapping_policy_version, '3')
 
 

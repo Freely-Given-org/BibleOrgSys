@@ -92,10 +92,10 @@ class ReviewedSniffingCorrectionsTests(unittest.TestCase):
         cls.bundle = load_bundle()
         cls.engine = get_default_mapping_engine()
 
-    def test_all_46_new_groups_both_directions_and_via_reference(self):
+    def test_all_46_revision_2_groups_both_directions_and_via_reference(self):
         self.assertEqual(len(NEW_CASES), 46)
         actual = {(c['system'], refs(';'.join(c['source'])), refs(';'.join(c['target'])))
-                  for c in self.bundle['supplement']['corrections'][8:]}
+                  for c in self.bundle['supplement']['corrections'][8:54]}
         self.assertEqual(actual, {(s, refs(a), refs(b)) for s, a, b in NEW_CASES})
         for profile, a, b in NEW_CASES:
             for original in ('org', 'BOSReference'):
@@ -155,9 +155,9 @@ class ReviewedSniffingCorrectionsTests(unittest.TestCase):
                             self.assertEqual((after.status, after.references, after.alternatives),
                                              (before.status, before.references, before.alternatives))
 
-    def test_new_numeric_groups_agree_with_their_exact_evidence_columns(self):
+    def test_revision_2_numeric_groups_agree_with_their_exact_evidence_columns(self):
         rules = {r['name']: r for r in self.bundle['supplementEvidence']}
-        for correction in self.bundle['supplement']['corrections'][8:]:
+        for correction in self.bundle['supplement']['corrections'][8:54]:
             if correction['id'] == 'vul-num-26-1':
                 continue  # Explicitly completed truncated row; inherited revision-1 text evidence.
             with self.subTest(correction=correction['id']):
@@ -227,7 +227,7 @@ class SniffingInventoryTests(unittest.TestCase):
         counts = Counter(a['status'] for row in self.report['rows'] for a in row.get('profiles', {}).values())
         self.assertEqual(dict(counts), self.report['assessmentCounts'])
         self.assertEqual(sum(counts.values()), 556*3)
-        self.assertEqual(counts['reviewed-correction'], 54)
+        self.assertEqual(counts['reviewed-correction'], 55)
         self.assertEqual(counts['candidate-needs-review'], 14)
         self.assertEqual(counts['textual-tradition-blocked'], 277)
         self.assertEqual(counts['positional-alignment-covered'], 236)

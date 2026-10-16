@@ -102,6 +102,7 @@ def load_bundle(root=None):
         'policy': _read_json(root.joinpath('reference-policy.json')),
         'legacy': _read_json(root.joinpath('legacy-inventory.json')),
         'supplement': _read_json(root.joinpath('mapping-supplement.json')),
+        'additionalMappings': [_read_json(root.joinpath('luther-mapping.json'))],
         'supplementEvidence': _read_json(root.joinpath('Copenhagen', 'versification-sniffing',
                                                       'rules', 'merged_rules.json')),
     }
@@ -446,6 +447,10 @@ def build_coverage_report(bundle: dict, reference: dict | None = None) -> dict:
         'dataLicense': bundle['manifest']['dataLicense'],
         'mappingDataRevision': engine.data_revision,
         'mappingSupplementVersion': bundle['supplement']['version'],
+        'additionalProfiles': {profile['name']: {
+            'version': profile['version'], 'scope': profile['scope'],
+            'compiledReferenceCoverage': engine.audit_reference_coverage(profile['name']),
+        } for profile in bundle.get('additionalMappings', ())},
         'conversionReady': False,
         'scope': 'Raw structural findings plus separately labelled compiled reference coverage. '
                  'Compiled coverage includes the BOS supplement and declared delta identities; '

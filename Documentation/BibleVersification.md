@@ -63,6 +63,11 @@ conversion profile. `ethiopian_custom` is also unavailable for conversion.
 `getMappingCapabilities()` explains availability; individual conversion results
 remain authoritative.
 
+`Luther` now has an explicit [Luther 1545 mapping profile](LutherVersification.md),
+verified against the 66-book LUTH1545STR Zefania edition dated 2009-01-20. Its
+runtime counts replace the old count-only `Luther` table, including four corrected
+chapter maxima. It is not a declaration for every Luther revision or German Bible.
+
 ## Loading a Bible
 
 This complete example creates a small local USFM fixture, loads it, and leaves
