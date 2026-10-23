@@ -13,7 +13,7 @@ from typing import NamedTuple
 from bible_organisational_system import InternalBibleEntryList
 from BibleOrgSys.Reference.BibleVersification import BibleVersificationMixin, _system_name
 from BibleOrgSys.Reference.BibleVersificationMappings import (
-    MappingDiagnostic, MappingResult, MappingStatus, PartialMappingError,
+    MappingDiagnostic, MappingResult, MappingStatus, PartialMappingError, VersificationMappingError,
     get_default_mapping_engine, normalize_reference,
 )
 
@@ -32,10 +32,11 @@ class PassagePortion(NamedTuple):
 
 @dataclass(frozen=True)
 class MappedBiblePassage:
-    """An exact mapping (with provenance) and all its retrieved text portions."""
+    """Mapping provenance and retrieved text; allowAbsent can explicitly be partial."""
     mapping: MappingResult
     portions: tuple[PassagePortion, ...]
     native_references: tuple = ()
+    absent_source_references: tuple = ()
 
 
 class MissingPassageBookError(KeyError):
@@ -208,13 +209,39 @@ def _copy_portions(portions, combine_adjacent, bible):
 
 
 def get_mapped_passage(bible, source_system, references, *, chapter_cache=None, combine_adjacent=False,
-                       expand_groups=False):
+                       expand_groups=False, allow_absent=False):
     """Retrieve mapped text, optionally completing mapping AND stored bridges.
 
     Stored labels and entries are never renumbered or sliced. When expansion is
     requested, additional text in a stored bridge must also have known source
     coverage. Feed that coverage back through mapping until both are complete.
     """
+    if allow_absent:
+        requested = tuple(normalize_reference(ref) for ref in references)
+        try:
+            return get_mapped_passage(bible,source_system,requested,
+                chapter_cache=chapter_cache,combine_adjacent=combine_adjacent,expand_groups=expand_groups)
+        except VersificationMappingError as error:
+            result = error.result
+            # Only an explicit reviewed absence may be omitted. Unknown books,
+            # ambiguous mappings, undeclared titles and missing data still fail.
+            if not result.diagnostics or any(d.code != 'NO_REFERENCE_COUNTERPART'
+                    or d.system != result.source_system for d in result.diagnostics):
+                raise
+            absent = tuple(dict.fromkeys(ref for d in result.diagnostics for ref in d.references))
+            remaining = tuple(ref for ref in requested if ref not in absent)
+            if len(remaining) == len(requested):
+                raise
+            if remaining:
+                mapped = get_mapped_passage(bible,source_system,remaining,
+                    chapter_cache=chapter_cache,combine_adjacent=combine_adjacent,expand_groups=expand_groups)
+                coverage = tuple(dict.fromkeys((*requested,*mapped.mapping.source_references)))
+                mapping = replace(mapped.mapping,status=MappingStatus.PARTIAL,
+                    source_references=coverage,requested_references=requested,
+                    diagnostics=mapped.mapping.diagnostics+result.diagnostics)
+                return replace(mapped,mapping=mapping,absent_source_references=absent)
+            return MappedBiblePassage(replace(result,status=MappingStatus.PARTIAL,
+                requested_references=requested),(),(),absent)
     selection = tuple(references)
     requested = None
     cache = {} if chapter_cache is None else chapter_cache

@@ -57,7 +57,7 @@ wrong argument types raise `TypeError`. No profile is guessed from the Bible's
 name, language, file format, observed verse counts, or generic organisational
 system used by an exporter.
 
-Historical names such as `KJV`, `Original`, and `Vulgate` still select their
+Historical names such as `Original` and `Vulgate` still select their
 independent BOS count-only systems. They can be declared but have no verified
 conversion profile. `ethiopian_custom` is also unavailable for conversion.
 `getMappingCapabilities()` explains availability; individual conversion results
@@ -67,6 +67,12 @@ remain authoritative.
 verified against the 66-book LUTH1545STR Zefania edition dated 2009-01-20. Its
 runtime counts replace the old count-only `Luther` table, including four corrected
 chapter maxima. It is not a declaration for every Luther revision or German Bible.
+
+`KJV` now has a reviewed [New Testament conversion profile](KJVVersification.md).
+Its 80-book historical counts are unchanged; OT/Apocrypha conversions remain
+unsupported. `VLT` describes the 27-book VLT v3 word-table numbering, including
+PHP 1:16-17 in KJV order. Declare it explicitly for that source, rather than
+assuming every Greek text follows `org`.
 
 ## Loading a Bible
 
@@ -177,7 +183,7 @@ profile or infer inheritance. ESFM offers the explicit declaration API; its own
 metadata conventions are unchanged.
 
 OSIS exact BOS names are recognised. `Bible.KJV` is recognised as historical BOS
-`KJV`, which remains count-only. Generic `Bible` and other unverified identifiers
+`KJV`, which has verified NT conversions but no OT/Apocrypha conversion. Generic `Bible` and other unverified identifiers
 are unresolved. The work-aware header scan runs before either native or Python
 text parsing and before parallel workers are started. Multi-file disagreements
 therefore survive loading. Flat `suppliedMetadata['OSIS']['RefSystem']` values are

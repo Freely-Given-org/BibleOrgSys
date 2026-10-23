@@ -4,6 +4,9 @@
 The pure mapping engine needs only Python. Wrapper tests additionally require
 BOS's normal installed dependencies; run this suite with .venv/bin/python to
 exercise them. Existing historical count-system tests remain separate.
+
+CHANGELOG:
+    2026-10-21 Use Original as the count-only fixture now that KJV has NT mappings.
 """
 
 from dataclasses import FrozenInstanceError
@@ -436,7 +439,7 @@ class BundledMappingTests(unittest.TestCase):
                 self.assertTrue(result.diagnostics)
 
     def test_historical_system_names_are_not_unverified_aliases(self):
-        for legacy in ('Original', 'KJV', 'Septuagint', 'Vulgate', 'BibMaxRef'):
+        for legacy in ('Original', 'Septuagint', 'Vulgate', 'BibMaxRef'):
             with self.subTest(legacy=legacy):
                 self.assertEqual(self.engine.convert(legacy, 'eng', [ref()]).status, MappingStatus.UNSUPPORTED)
 
@@ -523,10 +526,10 @@ class PublicAPITests(unittest.TestCase):
             russian.convertToReferenceVersification('PSA', 9, 22)
 
     def test_unsupported_historical_counts_no_longer_echo_input(self):
-        kjv = self.system('KJV')
+        original = self.system('Original')
         with self.assertRaises(UnsupportedMappingError):
-            kjv.convertToReferenceVersification('GEN', 1, 1)
-        self.assertEqual(kjv.getMappingCapabilities()['status'], 'unsupported')
+            original.convertToReferenceVersification('GEN', 1, 1)
+        self.assertEqual(original.getMappingCapabilities()['status'], 'unsupported')
         self.assertEqual(self.system('eng').getMappingCapabilities()['status'], 'partial')
 
     def test_plural_api_returns_complete_passage(self):

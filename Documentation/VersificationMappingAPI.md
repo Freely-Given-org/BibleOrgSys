@@ -46,12 +46,17 @@ are lowercase letters and require an explicit validated declaration. Chapter
 zero/introduction references are invalid; verse zero is allowed only where a
 title has been declared for that chapter.
 
-Historical BOS names such as `KJV`, `Original`, `Septuagint`, `Vulgate`, and
+Historical BOS names such as `Original`, `Septuagint`, `Vulgate`, and
 `BibMaxRef` remain separate count systems. Their counts are unchanged; they have
 no verified mapping profile. Converting with these names reports `unsupported`,
 even when the input and output names are identical. Do not alias `KJV` to `eng`
 merely because many of their counts agree. An unknown name passed to the
 `BibleVersificationSystem` constructor raises `UnknownVersificationSystemError`.
+
+Since 2026-10-21, `KJV` has a reviewed [New Testament mapping](KJVVersification.md).
+All 80 historical book counts remain available, but OT and Apocrypha conversion
+is explicitly unsupported. `VLT` supplies the 27-book VLT v3 source profile,
+including its PHP 1:16-17 ordering. Neither profile is an alias for `eng` or `org`.
 
 ## Structured results and exceptions
 

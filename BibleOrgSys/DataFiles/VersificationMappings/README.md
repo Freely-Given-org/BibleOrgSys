@@ -25,6 +25,9 @@ declarations, metadata resolution, and Bible-level conversions. The structural a
 | `legacy-inventory.json` | Book inventories from the existing BOS systems, with the source file's checksum; used to identify remaining gaps. |
 | `reference-policy.json` | BOS reference choices, their reasons, known textual restrictions, and unresolved bridge decisions. |
 | `mapping-supplement.json` | 54 reviewed English/Latin group corrections (revision 2), with expected old rules, unaffected remainders, evidence, attribution, and a separate revision. |
+| `kjv-mapping.json` | Reviewed KJV OT/NT conversion (updated 2026-10-22), preserving all 80 historical book counts while blocking unreviewed Apocrypha conversions. |
+| `bibletags-nt-mapping.json` | Reviewed BibleTags Greek NT profile (2026-10-22): split Acts 19:40–41, original 2 Corinthians 13:12–13; source evidence is recorded in the profile. |
+| `vlt-mapping.json` | Reviewed VLT v3 NT source profile (2026-10-21), including its PHP 1:16-17 ordering; see [the profile guide](../../../Documentation/KJVVersification.md). |
 | `BOSReference.json` | Generated provisional reference catalogue, using BOS book codes and integer chapter maxima. Each book identifies its source definition. |
 | `coverage-report.json` | Raw structural findings plus compiled reference-address coverage, including unmapped and blocked ranges. |
 | `sniffing-audit-report.json` | All 403 sniffing rules / 1,466 rows, with explicit profile assessments for 556 split/merge rows and reasons for deferred findings. |
@@ -120,3 +123,6 @@ python -m unittest discover -s Tests -p 'test_BibleVersificationMappingsData.py'
 python -m unittest Tests.test_BibleVersificationSupplement
 python -m unittest Tests.test_BibleVersificationSniffingAudit
 ```
+
+`oet-rv-mapping.json` and `oet-lv-mapping.json` declare the reviewed 66-book OET
+source profiles. See [the profile guide](../../../Documentation/OETVersification.md).

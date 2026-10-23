@@ -50,6 +50,7 @@ Note that this software does write some files to
         which is usually ~/BibleOrgSysData/BOSOutputFiles/
 
 CHANGELOG:
+    2026-10-22 Add explicit partial-passage retrieval for reviewed absent counterparts.
     2024-01-24 add getContextVerseDataRange() function
     2026-10-12 Add complete native and mapped passage retrieval APIs.
     2025-02-13 Changed special characters in getVerseText() function and add includeNonCanonical parameter
@@ -74,7 +75,7 @@ from BibleOrgSys.Reference.BibleVersification import BibleVersificationMixin
 import bos_books_codes_py
 
 
-LAST_MODIFIED_DATE = '2026-10-12' # by RJH
+LAST_MODIFIED_DATE = '2026-10-22' # by RJH
 SHORT_PROGRAM_NAME = "InternalBible"
 PROGRAM_NAME = "Internal Bible handler"
 PROGRAM_VERSION = '0.95'
@@ -2458,7 +2459,7 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
             chapter_cache=chapterCache, combine_adjacent=combineAdjacent)
 
 
-    def getMappedPassage(self, sourceSystem, references, *, chapterCache=None, combineAdjacent=False, expandGroups=False):
+    def getMappedPassage(self, sourceSystem, references, *, chapterCache=None, combineAdjacent=False, expandGroups=False, allowAbsent=False):
         """Map a complete external passage into this Bible and retrieve its text.
 
         sourceSystem is a name, BibleVersificationSystem, or another Bible.
@@ -2473,13 +2474,19 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
         mapping.is_expanded to label combined text; native_references describes
         the actual stored verse labels. Native entries/word identifiers are kept.
 
+        allowAbsent=True (2026-10-22) permits only reviewed source addresses
+        explicitly declared NO_REFERENCE_COUNTERPART to be omitted. The result
+        then has PARTIAL status, preserved diagnostics, and a nonempty
+        absent_source_references tuple. Callers must label that absence. All
+        other non-exact mappings and missing text still raise; default is strict.
+
         References use the profiles' BOS book identities. Edition-specific
         storage aliases are not inferred; adapt references explicitly and use
         getPassageData when an import uses different physical book identities.
         """
         from BibleOrgSys.Internals.InternalBiblePassages import get_mapped_passage
         return get_mapped_passage(self, sourceSystem, references,
-            chapter_cache=chapterCache, combine_adjacent=combineAdjacent, expand_groups=expandGroups)
+            chapter_cache=chapterCache, combine_adjacent=combineAdjacent, expand_groups=expandGroups, allow_absent=allowAbsent)
 
 
     def getContextVerseDataRange( self, startBCVReference:SimpleVerseKey|tuple[str,str,str,str], endBCVReference:SimpleVerseKey|tuple[str,str,str,str], strict=True ) -> tuple[InternalBibleEntryList,list[str]]|None:

@@ -12,6 +12,11 @@ Copenhagen repository nor BOS's native extensions are needed to reproduce the
 checked-in reference and coverage report::
 
     python -m BibleOrgSys.Reference.Converters.BibleVersificationMappingsConverter --check
+
+CHANGELOG:
+    2026-10-22 Bundle the verified BibleTags Greek NT profile.
+    2026-10-21 Bundle reviewed KJV NT and VLT v3 mapping profiles.
+    2026-10-22 Include KJV OT and explicit OET-RV/OET-LV source profiles.
 """
 
 from __future__ import annotations
@@ -102,7 +107,9 @@ def load_bundle(root=None):
         'policy': _read_json(root.joinpath('reference-policy.json')),
         'legacy': _read_json(root.joinpath('legacy-inventory.json')),
         'supplement': _read_json(root.joinpath('mapping-supplement.json')),
-        'additionalMappings': [_read_json(root.joinpath('luther-mapping.json'))],
+        'additionalMappings': [_read_json(root.joinpath(filename)) for filename in
+                               ('luther-mapping.json', 'kjv-mapping.json', 'vlt-mapping.json',
+                                'bibletags-nt-mapping.json', 'oet-rv-mapping.json', 'oet-lv-mapping.json')],
         'supplementEvidence': _read_json(root.joinpath('Copenhagen', 'versification-sniffing',
                                                       'rules', 'merged_rules.json')),
     }

@@ -2,6 +2,9 @@
 """Real loading and persistence tests; use .venv/bin/python for BOS dependencies.
 
 All fixtures are local and temporary. No external repository or network is used.
+
+CHANGELOG:
+    2026-10-21 KJV is now a partially supported NT profile, not count-only.
 """
 import copy
 import json
@@ -112,7 +115,7 @@ class DeclarationTests(BibleTestCase):
                 b.setVersificationSystem(value)
 
     def test_count_only_and_disabled_profiles_remain_unsupported(self):
-        for name in ('KJV', 'Original', 'ethiopian_custom'):
+        for name in ('Original', 'ethiopian_custom'):
             with self.subTest(name=name):
                 b = Bible(versification=name)
                 self.assertEqual(b.getVersificationSystemName(), name)

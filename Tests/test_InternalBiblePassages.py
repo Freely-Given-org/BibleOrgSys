@@ -69,6 +69,25 @@ class PassageTests(unittest.TestCase):
                 self.assertEqual(result.portions[0].reference,('MAL','3','19'))
                 self.assertIn('Native-24.',self.text(result.portions))
 
+    def test_reviewed_absence_is_opt_in_partial_and_keeps_native_words(self):
+        bible = self.bible('\\c 7\n\\v 67 singers¦11\n\\v 68 camels¦22\n', 'NEH')
+        refs = [('NEH',7,67),('NEH',7,68),('NEH',7,69)]
+        with self.assertRaises(UnsupportedMappingError):
+            bible.getMappedPassage('eng',refs)
+        mapped = bible.getMappedPassage('eng',refs,allowAbsent=True)
+        self.assertEqual(mapped.mapping.status,MappingStatus.PARTIAL)
+        self.assertEqual(mapped.absent_source_references,(('NEH','7','68',None),))
+        self.assertEqual(mapped.native_references,(('NEH','7','67',None),('NEH','7','68',None)))
+        self.assertIn('camels¦22',self.text(mapped.portions))
+        self.assertTrue(mapped.mapping.diagnostics)
+        absent = bible.getMappedPassage('eng',[('NEH',7,68)],allowAbsent=True)
+        self.assertEqual(absent.mapping.status,MappingStatus.PARTIAL)
+        self.assertFalse(absent.portions)
+        with self.assertRaises(UnsupportedMappingError):
+            bible.getMappedPassage('Original',refs,allowAbsent=True)
+        with self.assertRaises(KeyError):
+            bible.getMappedPassage('eng',[('NEH',7,70)],allowAbsent=True)
+
     def test_default_keeps_verse_portions_separate(self):
         bible = self.bible('\\c 1\n\\p\n\\v 1 One.\n\\v 2 Two.\n')
         result = bible.getMappedPassage('eng',[('GEN',1,1),('GEN',1,2)])
@@ -253,7 +272,7 @@ class PassageTests(unittest.TestCase):
 
     def test_non_exact_mappings_fail_before_loading_text(self):
         for target,source,refs,error in (
-            ('eng','KJV',[('GEN',1,1)],UnsupportedMappingError),
+            ('eng','KJV',[('TOB',1,1)],UnsupportedMappingError),
             # Supplement revision 2 makes this an incomplete atomic group.
             ('org','eng',[('PSA',13,5)],PartialMappingError),
             ('org','rsc',[('PSA',9,22)],AmbiguousMappingError),
