@@ -27,6 +27,7 @@ Currently aware of the following Bible types:
     Sword modules (binary).
 """
 import logging
+from importlib import import_module
 import os.path
 from pathlib import Path
 
@@ -34,39 +35,10 @@ import bible_organisational_system
 
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
-from BibleOrgSys.Formats.ESFMBible import ESFMBibleFileCheck
-from BibleOrgSys.Formats.PTX8Bible import PTX8BibleFileCheck
-from BibleOrgSys.Formats.USFMBible import USFMBibleFileCheck
-from BibleOrgSys.Formats.ScriptureBurritoBible import ScriptureBurritoBibleFileCheck
-from BibleOrgSys.Formats.DBLBible import DBLBibleFileCheck
-from BibleOrgSys.Formats.USXXMLBible import USXXMLBibleFileCheck
-from BibleOrgSys.Formats.USFXXMLBible import USFXXMLBibleFileCheck
-from BibleOrgSys.Formats.OpenSongXMLBible import OpenSongXMLBibleFileCheck
-from BibleOrgSys.Formats.OSISXMLBible import OSISXMLBibleFileCheck
-from BibleOrgSys.Formats.ZefaniaXMLBible import ZefaniaXMLBibleFileCheck
-from BibleOrgSys.Formats.HaggaiXMLBible import HaggaiXMLBibleFileCheck
-from BibleOrgSys.Formats.VerseViewXMLBible import VerseViewXMLBibleFileCheck
-from BibleOrgSys.Formats.UnboundBible import UnboundBibleFileCheck
-from BibleOrgSys.Formats.DrupalBible import DrupalBibleFileCheck
-from BibleOrgSys.Formats.YETBible import YETBibleFileCheck
-from BibleOrgSys.Formats.theWordBible import theWordBibleFileCheck
-from BibleOrgSys.Formats.MySwordBible import MySwordBibleFileCheck
-from BibleOrgSys.Formats.ESwordBible import ESwordBibleFileCheck
-from BibleOrgSys.Formats.ESwordCommentary import ESwordCommentaryFileCheck
-from BibleOrgSys.Formats.MyBibleBible import MyBibleBibleFileCheck
-from BibleOrgSys.Formats.PalmDBBible import PalmDBBibleFileCheck
-from BibleOrgSys.Formats.GoBible import GoBibleFileCheck
-from BibleOrgSys.Formats.PickledBible import PickledBibleFileCheck
-from BibleOrgSys.Formats.PierceOnlineBible import PierceOnlineBibleFileCheck
-from BibleOrgSys.Formats.EasyWorshipBible import EasyWorshipBibleFileCheck
-from BibleOrgSys.Formats.SwordBible import SwordBibleFileCheck
-from BibleOrgSys.Formats.CSVBible import CSVBibleFileCheck
-from BibleOrgSys.Formats.ForgeForSwordSearcherBible import ForgeForSwordSearcherBibleFileCheck
-from BibleOrgSys.Formats.VPLBible import VPLBibleFileCheck
 #from BibleOrgSys.Formats.SwordResources import SwordInterface # What about these?
 
 
-LAST_MODIFIED_DATE = '2022-04-22' # by RJH
+LAST_MODIFIED_DATE = '2026-10-06' # by RJH
 SHORT_PROGRAM_NAME = "UnknownBible"
 PROGRAM_NAME = "Unknown Bible object handler"
 PROGRAM_VERSION = '0.38'
@@ -84,12 +56,18 @@ class UnknownBible:
     Class for handling an entire Bible.
     """
 
-    def __init__( self, givenPathname:Path ) -> None:
+    def __init__( self, givenPathname:Path, *, versification=None ) -> None:
         """
         Constructor: creates an empty Bible object.
         """
         if BibleOrgSysGlobals.debugFlag: assert givenPathname and isinstance( givenPathname, (str,Path) )
         self.givenFolderName = givenPathname # NOTE: givenPathname can actually be zip file for PickledBible
+        # Validate once at the loading entry point; all detected formats inherit
+        # the shared declaration API, even those without a constructor keyword.
+        self._requestedVersification = None
+        if versification is not None:
+            from BibleOrgSys.Bible import Bible
+            self._requestedVersification = Bible(versification=versification).getVersificationSystemName()
 
         # Check that the given folder is readable
         if not os.access( givenPathname, os.R_OK ):
@@ -121,10 +99,27 @@ class UnknownBible:
         Search our folder to find what if any Bible versions can be found.
         Optimized version using Rust-based parallel detection.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"UnknownBible.search( {strictCheck}, {autoLoad}, {autoLoadAlways}, {autoLoadBooks} )" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, f"UnknownBible.search( {strictCheck}, {autoLoad}, {autoLoadAlways}, {autoLoadBooks} )" )
 
         if not self.folderReadable: return None
         if autoLoadAlways or autoLoadBooks: autoLoad = True
+
+        # A burrito is a container, so prefer its manifest over loose text files
+        # inside it. The Rust detector still assumes metadata.json + ingredients/
+        # and cannot identify legacy XML, arbitrary layouts or ZIP burritos.
+        candidate = Path(self.givenFolderName)
+        if ((candidate.is_dir() and any((candidate / name).is_file()
+                for name in ('metadata.json', 'metadata.xml')))
+                or candidate.suffix.lower() == '.zip'):
+            from BibleOrgSys.Formats.ScriptureBurritoBible import ScriptureBurritoBibleFileCheck
+            result = ScriptureBurritoBibleFileCheck(candidate, strictCheck=strictCheck,
+                autoLoad=autoLoad, autoLoadBooks=autoLoadBooks)
+            if result:
+                self.foundType = 'SB Bible'
+                if self._requestedVersification is not None and hasattr(result, 'setVersificationSystem'):
+                    result.setVersificationSystem(self._requestedVersification)
+                return result
 
         # Use the optimized Rust detector
         try:
@@ -135,10 +130,12 @@ class UnknownBible:
         
         # Handle retry logic similar to original Python version
         if not detected and strictCheck and not BibleOrgSysGlobals.strictCheckingFlag:
-            vPrint('Info', DEBUGGING_THIS_MODULE, "UnknownBible.search: retrying without strict checking criteria")
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint('Info', DEBUGGING_THIS_MODULE, "UnknownBible.search: retrying without strict checking criteria")
             detected = bible_organisational_system.detectBibles(str(self.givenFolderName), False)
         elif len(detected) > 1 and not strictCheck:
-            vPrint('Info', DEBUGGING_THIS_MODULE, "UnknownBible.search: retrying with strict checking criteria")
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint('Info', DEBUGGING_THIS_MODULE, "UnknownBible.search: retrying with strict checking criteria")
             detected = bible_organisational_system.detectBibles(str(self.givenFolderName), True)
 
         totalBibleCount = len(detected)
@@ -155,10 +152,12 @@ class UnknownBible:
         if totalBibleCount > 1:
             if totalBibleTypes == 1:
                 format_name = list(formats_found.keys())[0]
-                vPrint('Quiet', DEBUGGING_THIS_MODULE, f"UnknownBible.search: Multiple ({totalBibleCount}) {format_name} Bibles found")
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                    vPrint('Quiet', DEBUGGING_THIS_MODULE, f"UnknownBible.search: Multiple ({totalBibleCount}) {format_name} Bibles found")
                 self.foundType = f"Multiple found: {format_name} Bibles"
             else:
-                vPrint('Quiet', DEBUGGING_THIS_MODULE, f"UnknownBible.search: Multiple ({totalBibleCount}) Bibles found: {list(formats_found.keys())}")
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                    vPrint('Quiet', DEBUGGING_THIS_MODULE, f"UnknownBible.search: Multiple ({totalBibleCount}) Bibles found: {list(formats_found.keys())}")
                 self.foundType = 'Many types found'
             
             if not autoLoadAlways:
@@ -170,40 +169,49 @@ class UnknownBible:
         
         # Mapping to actual Python file checkers for loading
         CHECKERS = {
-            'pickled Bible': PickledBibleFileCheck,
-            'theWord Bible': theWordBibleFileCheck,
-            'MySword Bible': MySwordBibleFileCheck,
-            'e-Sword Bible': ESwordBibleFileCheck,
-            'e-Sword Commentary': ESwordCommentaryFileCheck,
-            'MyBible Bible': MyBibleBibleFileCheck,
-            'PalmDB Bible': PalmDBBibleFileCheck,
-            'GoBible Bible': GoBibleFileCheck,
-            'Sword Bible': SwordBibleFileCheck,
-            'Unbound Bible': UnboundBibleFileCheck,
-            'Drupal Bible': DrupalBibleFileCheck,
-            'YET Bible': YETBibleFileCheck,
-            'ESFM Bible': ESFMBibleFileCheck,
-            'PTX8 Bible': PTX8BibleFileCheck,
-            'SB Bible': ScriptureBurritoBibleFileCheck,
-            'USFM Bible': USFMBibleFileCheck,
-            'DBL Bible': DBLBibleFileCheck,
-            'USX XML Bible': USXXMLBibleFileCheck,
-            'USFX XML Bible': USFXXMLBibleFileCheck,
-            'OSIS XML Bible': OSISXMLBibleFileCheck,
-            'OpenSong XML Bible': OpenSongXMLBibleFileCheck,
-            'Zefania XML Bible': ZefaniaXMLBibleFileCheck,
-            'Haggai XML Bible': HaggaiXMLBibleFileCheck,
-            'VerseView XML Bible': VerseViewXMLBibleFileCheck,
-            'CSV Bible': CSVBibleFileCheck,
-            'Forge Bible': ForgeForSwordSearcherBibleFileCheck,
-            'VPL Bible': VPLBibleFileCheck,
+            'pickled Bible': ('PickledBible', 'PickledBibleFileCheck'),
+            'theWord Bible': ('theWordBible', 'theWordBibleFileCheck'),
+            'MySword Bible': ('MySwordBible', 'MySwordBibleFileCheck'),
+            'e-Sword Bible': ('ESwordBible', 'ESwordBibleFileCheck'),
+            'e-Sword Commentary': ('ESwordCommentary', 'ESwordCommentaryFileCheck'),
+            'MyBible Bible': ('MyBibleBible', 'MyBibleBibleFileCheck'),
+            'PalmDB Bible': ('PalmDBBible', 'PalmDBBibleFileCheck'),
+            'GoBible Bible': ('GoBible', 'GoBibleFileCheck'),
+            'Sword Bible': ('SwordBible', 'SwordBibleFileCheck'),
+            'Unbound Bible': ('UnboundBible', 'UnboundBibleFileCheck'),
+            'Drupal Bible': ('DrupalBible', 'DrupalBibleFileCheck'),
+            'YET Bible': ('YETBible', 'YETBibleFileCheck'),
+            'ESFM Bible': ('ESFMBible', 'ESFMBibleFileCheck'),
+            'PTX8 Bible': ('PTX8Bible', 'PTX8BibleFileCheck'),
+            'SB Bible': ('ScriptureBurritoBible', 'ScriptureBurritoBibleFileCheck'),
+            'USFM Bible': ('USFMBible', 'USFMBibleFileCheck'),
+            'DBL Bible': ('DBLBible', 'DBLBibleFileCheck'),
+            'USX XML Bible': ('USXXMLBible', 'USXXMLBibleFileCheck'),
+            'USFX XML Bible': ('USFXXMLBible', 'USFXXMLBibleFileCheck'),
+            'OSIS XML Bible': ('OSISXMLBible', 'OSISXMLBibleFileCheck'),
+            'OpenSong XML Bible': ('OpenSongXMLBible', 'OpenSongXMLBibleFileCheck'),
+            'Zefania XML Bible': ('ZefaniaXMLBible', 'ZefaniaXMLBibleFileCheck'),
+            'Haggai XML Bible': ('HaggaiXMLBible', 'HaggaiXMLBibleFileCheck'),
+            'VerseView XML Bible': ('VerseViewXMLBible', 'VerseViewXMLBibleFileCheck'),
+            'CSV Bible': ('CSVBible', 'CSVBibleFileCheck'),
+            'Forge Bible': ('ForgeForSwordSearcherBible', 'ForgeForSwordSearcherBibleFileCheck'),
+            'VPL Bible': ('VPLBible', 'VPLBibleFileCheck'),
         }
 
-        checker = CHECKERS.get(best_match.format)
-        if checker:
+        checker_spec = CHECKERS.get(best_match.format)
+        if checker_spec:
+            # Detection needs no format imports. Load only the selected parser so
+            # an optional/unrelated format cannot prevent loading this Bible.
+            module_name, checker_name = checker_spec
+            checker = getattr(import_module(f'BibleOrgSys.Formats.{module_name}'), checker_name)
             # We call the Python checker but it's only for the actual loading/init now
             # since we've already done the detection.
-            return checker(best_match.path, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks)
+            result = checker(best_match.path, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks)
+            if self._requestedVersification is not None:
+                from BibleOrgSys.Internals.InternalBible import InternalBible
+                if isinstance(result, InternalBible):
+                    result.setVersificationSystem(self._requestedVersification)
+            return result
         
         return self.foundType
     # end of UnknownBible.search
@@ -222,33 +230,45 @@ def briefDemo() -> None:
     # Now demo the class
     if 0: # Just test one folder
         testFolder = 'Put your folder here/'
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n\nUnknownBible A1/ Trying (but not loading) {testFolder}…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n\nUnknownBible A1/ Trying (but not loading) {testFolder}…" )
         uB = UnknownBible( testFolder )
         result1 = uB.search( autoLoad=False )
         result2 = uB.search( autoLoadBooks=True ) if result1 else None
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, uB )
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  A1 result1 is: {result1}" )
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  A1 result2 is: {result2}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, uB )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  A1 result1 is: {result1}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  A1 result2 is: {result2}" )
         if result1 == 'Many types found':
             uB = UnknownBible( testFolder )
             result3 = uB.search( autoLoadAlways=False )
             result4 = uB.search( autoLoadAlways=True ) if result3 else None
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  A1 result3 is: {result3}" )
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  A1 result4 is: {result4}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  A1 result3 is: {result3}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  A1 result4 is: {result4}" )
 
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n\nUnknownBible A2/ (Strict as per BDB). Trying (but not loading) {testFolder}…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n\nUnknownBible A2/ (Strict as per BDB). Trying (but not loading) {testFolder}…" )
         uB = UnknownBible( testFolder )
         result1 = uB.search( strictCheck=True, autoLoad=False )
         result2 = uB.search( strictCheck=True, autoLoadBooks=True ) if result1 else None
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  A2 strict result1 is: {result1}" )
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  A2 strict result2 is: {result2}" )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, uB )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  A2 strict result1 is: {result1}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  A2 strict result2 is: {result2}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, uB )
         if result1 == 'Many types found':
             uB = UnknownBible( testFolder )
             result3 = uB.search( strictCheck=True, autoLoadAlways=False )
             result4 = uB.search( strictCheck=True, autoLoadAlways=True ) if result3 else None
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  A2 strict result3 is: {result3}" )
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  A2 strict result4 is: {result4}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  A2 strict result3 is: {result3}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  A2 strict result4 is: {result4}" )
             if result3 == 'Many types found':
                 uB = UnknownBible( testFolder )
                 result5 = uB.search( strictCheck=True, autoLoadAlways=False, autoLoadBooks=True )
@@ -324,56 +344,74 @@ def briefDemo() -> None:
                     )
     if 1: # Just find the files
         testFolder = random.choice( testFolders )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n\nUnknownBible B/ Trying (but not loading) {testFolder}…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n\nUnknownBible B/ Trying (but not loading) {testFolder}…" )
         uB = UnknownBible( testFolder )
         result = uB.search( autoLoad=False )
         #result2 = uB.search( autoLoad=True ) if result1 else None
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Result is: {result}" )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, uB )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Result is: {result}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, uB )
 
     if 1: # Just load the Bible objects (only if exactly one found)
         testFolder = random.choice( testFolders )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n\nUnknownBible C/ Single loading (but not books) {testFolder}…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n\nUnknownBible C/ Single loading (but not books) {testFolder}…" )
         uB = UnknownBible( testFolder )
         result = uB.search( autoLoad=True )
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Result is: {result}" )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, uB )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Result is: {result}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, uB )
 
     if 1: # Fully load the Bible objects (only if exactly one found)
         testFolder = random.choice( testFolders )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n\nUnknownBible D/ Single loading (incl. books) {testFolder}…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n\nUnknownBible D/ Single loading (incl. books) {testFolder}…" )
         uB = UnknownBible( testFolder )
         result = uB.search( autoLoadBooks=True )
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Result is: {result}" )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, uB )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Result is: {result}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, uB )
 
     if 1: # Always load the Bible objects
         testFolder = random.choice( testFolders )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n\nUnknownBible E/ Always loading (but not books) {testFolder}…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n\nUnknownBible E/ Always loading (but not books) {testFolder}…" )
         uB = UnknownBible( testFolder )
         result = uB.search( autoLoadAlways=True )
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Result is: {result}" )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, uB )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Result is: {result}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, uB )
 
     if 1: # Always fully load the Bible objects
         testFolder = random.choice( testFolders )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n\nUnknownBible F/ Always loading (incl. books) {testFolder}…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n\nUnknownBible F/ Always loading (incl. books) {testFolder}…" )
         uB = UnknownBible( testFolder )
         result = uB.search( autoLoadAlways=True, autoLoadBooks=True )
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Result is: {result}" )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, uB )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Result is: {result}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, uB )
 
     if 0: # Load, check, and export the files
         testFolder = random.choice( testFolders )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n\nUnknownBible G/ Processing {testFolder}…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n\nUnknownBible G/ Processing {testFolder}…" )
         uB = UnknownBible( testFolder )
         result = uB.search( autoLoad=True )
         #dPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Results are: {result1} and {result2}" )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, uB )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, uB )
         if result:
             result.check()
             results = result.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Results are: {results}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Results are: {results}" )
 # end of UnknownBible.briefDemo
 
 def fullDemo() -> None:
@@ -385,33 +423,45 @@ def fullDemo() -> None:
     # Now demo the class
     if 1: # Just test one folder
         testFolder = 'Put your folder here/'
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n\nUnknownBible A1/ Trying (but not loading) {testFolder}…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n\nUnknownBible A1/ Trying (but not loading) {testFolder}…" )
         uB = UnknownBible( testFolder )
         result1 = uB.search( autoLoad=False )
         result2 = uB.search( autoLoadBooks=True ) if result1 else None
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, uB )
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  A1 result1 is: {result1}" )
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  A1 result2 is: {result2}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, uB )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  A1 result1 is: {result1}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  A1 result2 is: {result2}" )
         if result1 == 'Many types found':
             uB = UnknownBible( testFolder )
             result3 = uB.search( autoLoadAlways=False )
             result4 = uB.search( autoLoadAlways=True ) if result3 else None
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  A1 result3 is: {result3}" )
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  A1 result4 is: {result4}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  A1 result3 is: {result3}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  A1 result4 is: {result4}" )
 
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n\nUnknownBible A2/ (Strict as per BDB). Trying (but not loading) {testFolder}…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n\nUnknownBible A2/ (Strict as per BDB). Trying (but not loading) {testFolder}…" )
         uB = UnknownBible( testFolder )
         result1 = uB.search( strictCheck=True, autoLoad=False )
         result2 = uB.search( strictCheck=True, autoLoadBooks=True ) if result1 else None
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  A2 strict result1 is: {result1}" )
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  A2 strict result2 is: {result2}" )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, uB )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  A2 strict result1 is: {result1}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  A2 strict result2 is: {result2}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, uB )
         if result1 == 'Many types found':
             uB = UnknownBible( testFolder )
             result3 = uB.search( strictCheck=True, autoLoadAlways=False )
             result4 = uB.search( strictCheck=True, autoLoadAlways=True ) if result3 else None
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  A2 strict result3 is: {result3}" )
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  A2 strict result4 is: {result4}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  A2 strict result3 is: {result3}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  A2 strict result4 is: {result4}" )
             if result3 == 'Many types found':
                 uB = UnknownBible( testFolder )
                 result5 = uB.search( strictCheck=True, autoLoadAlways=False, autoLoadBooks=True )
@@ -487,56 +537,74 @@ def fullDemo() -> None:
                     )
     if 1: # Just find the files
         for j, testFolder in enumerate( testFolders ):
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n\nUnknownBible B{j+1}/ Trying (but not loading) {testFolder}…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n\nUnknownBible B{j+1}/ Trying (but not loading) {testFolder}…" )
             uB = UnknownBible( testFolder )
             result = uB.search( autoLoad=False )
             #result2 = uB.search( autoLoad=True ) if result1 else None
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Result is: {result}" )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, uB )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Result is: {result}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, uB )
 
     if 1: # Just load the Bible objects (only if exactly one found)
         for j, testFolder in enumerate( testFolders ):
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n\nUnknownBible C{j+1}/ Single loading (but not books) {testFolder}…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n\nUnknownBible C{j+1}/ Single loading (but not books) {testFolder}…" )
             uB = UnknownBible( testFolder )
             result = uB.search( autoLoad=True )
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Result is: {result}" )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, uB )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Result is: {result}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, uB )
 
     if 1: # Fully load the Bible objects (only if exactly one found)
         for j, testFolder in enumerate( testFolders ):
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n\nUnknownBible D{j+1}/ Single loading (incl. books) {testFolder}…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n\nUnknownBible D{j+1}/ Single loading (incl. books) {testFolder}…" )
             uB = UnknownBible( testFolder )
             result = uB.search( autoLoadBooks=True )
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Result is: {result}" )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, uB )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Result is: {result}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, uB )
 
     if 1: # Always load the Bible objects
         for j, testFolder in enumerate( testFolders ):
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n\nUnknownBible E{j+1}/ Always loading (but not books) {testFolder}…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n\nUnknownBible E{j+1}/ Always loading (but not books) {testFolder}…" )
             uB = UnknownBible( testFolder )
             result = uB.search( autoLoadAlways=True )
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Result is: {result}" )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, uB )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Result is: {result}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, uB )
 
     if 1: # Always fully load the Bible objects
         for j, testFolder in enumerate( testFolders ):
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n\nUnknownBible F{j+1}/ Always loading (incl. books) {testFolder}…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n\nUnknownBible F{j+1}/ Always loading (incl. books) {testFolder}…" )
             uB = UnknownBible( testFolder )
             result = uB.search( autoLoadAlways=True, autoLoadBooks=True )
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Result is: {result}" )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, uB )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Result is: {result}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, uB )
 
     if 0: # Load, check, and export the files
         for j, testFolder in enumerate( testFolders ):
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n\nUnknownBible G{j+1}/ Processing {testFolder}…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n\nUnknownBible G{j+1}/ Processing {testFolder}…" )
             uB = UnknownBible( testFolder )
             result = uB.search( autoLoad=True )
             #dPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Results are: {result1} and {result2}" )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, uB )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, uB )
             if result:
                 result.check()
                 results = result.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
-                vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Results are: {results}" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                    vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Results are: {results}" )
 # end of UnknownBible.fullDemo
 
 if __name__ == '__main__':

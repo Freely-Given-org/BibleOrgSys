@@ -24,7 +24,7 @@ from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
 
 
-LAST_MODIFIED_DATE = '2020-04-18' # by RJH
+LAST_MODIFIED_DATE = '2026-10-06' # by RJH
 SHORT_PROGRAM_NAME = "BibleReferencesLinks"
 PROGRAM_NAME = "Bible References Links handler"
 PROGRAM_VERSION = '0.40'
@@ -59,7 +59,8 @@ class BibleReferencesLinks:
             # See if we can load from the pickle file (faster than loading from the XML)
             standardIndexPickleFilepath = BibleOrgSysGlobals.BOS_DERIVED_DATAFILES_FOLDERPATH.joinpath( 'BibleReferencesLinks_Tables.index.pickle' )
             self.dataPickleFilepath = BibleOrgSysGlobals.BOS_DERIVED_DATAFILES_FOLDERPATH.joinpath( 'BibleReferencesLinks_Tables.data.pickle' )
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Loading pickle index file {standardIndexPickleFilepath}…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Loading pickle index file {standardIndexPickleFilepath}…" )
             with open( standardIndexPickleFilepath, 'rb') as pickleFile:
                 self.__Index = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
         return self # So this command can be chained after the object creation
@@ -284,31 +285,38 @@ def briefDemo() -> None:
 
     # Demo the BibleReferencesLinks object
     brl = BibleReferencesLinks().loadData() # Doesn't reload the XML unnecessarily :)
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, brl ) # Just print a summary
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, brl ) # Just print a summary
 
     testKeys = ( 'MAT_1:23', 'MAT_3:12', 'MRK_7:7', 'ACT_7:8', 'ISA_7:14', )
 
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nTest full passage list…" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nTest full passage list…" )
     for verseReferenceString in testKeys:
         svk = SimpleVerseKey( verseReferenceString )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, svk.getShortText() )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, svk.getShortText() )
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, svk, brl.getFullRelatedPassagesList( svk ) )
         relatedPassageList = brl.getFullRelatedPassagesList( svk )
         if relatedPassageList:
             for relatedPassage in relatedPassageList:
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, ' ', relatedPassage )
                 sourceReference,sourceComponent,parsedSourceReference,actualLinksList = relatedPassage
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ' ', sourceReference )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ' ', sourceReference )
                 for actualLink in actualLinksList:
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, '    ', actualLink )
                     targetReference,targetComponent,parsedTargetReference,linkType = actualLink
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '    ', linkType, targetReference )
+                    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '    ', linkType, targetReference )
         break
 
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nTest passage list…" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nTest passage list…" )
     for verseReferenceString in testKeys:
         svk = SimpleVerseKey( verseReferenceString )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, svk.getVerseKeyText(), brl.getRelatedPassagesList( svk ) )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, svk.getVerseKeyText(), brl.getRelatedPassagesList( svk ) )
         break
 # end of BibleReferencesLinks.briefDemo
 
@@ -320,30 +328,37 @@ def fullDemo() -> None:
 
     # Demo the BibleReferencesLinks object
     brl = BibleReferencesLinks().loadData() # Doesn't reload the XML unnecessarily :)
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, brl ) # Just print a summary
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, brl ) # Just print a summary
 
     testKeys = ( 'MAT_1:23', 'MAT_3:12', 'MRK_7:7', 'ACT_7:8', 'ISA_7:14', )
 
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nTest full passage list…" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nTest full passage list…" )
     for verseReferenceString in testKeys:
         svk = SimpleVerseKey( verseReferenceString )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, svk.getShortText() )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, svk.getShortText() )
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, svk, brl.getFullRelatedPassagesList( svk ) )
         relatedPassageList = brl.getFullRelatedPassagesList( svk )
         if relatedPassageList:
             for relatedPassage in relatedPassageList:
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, ' ', relatedPassage )
                 sourceReference,sourceComponent,parsedSourceReference,actualLinksList = relatedPassage
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ' ', sourceReference )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ' ', sourceReference )
                 for actualLink in actualLinksList:
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, '    ', actualLink )
                     targetReference,targetComponent,parsedTargetReference,linkType = actualLink
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '    ', linkType, targetReference )
+                    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '    ', linkType, targetReference )
 
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nTest passage list…" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nTest passage list…" )
     for verseReferenceString in testKeys:
         svk = SimpleVerseKey( verseReferenceString )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, svk.getVerseKeyText(), brl.getRelatedPassagesList( svk ) )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, svk.getVerseKeyText(), brl.getRelatedPassagesList( svk ) )
 # end of BibleReferencesLinks.fullDemo
 
 if __name__ == '__main__':

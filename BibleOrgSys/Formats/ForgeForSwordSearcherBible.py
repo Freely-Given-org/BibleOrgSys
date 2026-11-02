@@ -54,7 +54,7 @@ from BibleOrgSys.Bible import Bible, BibleBook
 from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
 
 
-LAST_MODIFIED_DATE = '2024-06-05' # by RJH
+LAST_MODIFIED_DATE = '2026-10-06' # by RJH
 SHORT_PROGRAM_NAME = "ForgeForSwordSearcherBible"
 PROGRAM_NAME = "Forge for SwordSearcher Bible format handler"
 PROGRAM_VERSION = '0.38'
@@ -82,7 +82,8 @@ def ForgeForSwordSearcherBibleFileCheck( givenFolderName, strictCheck:bool=True,
     if autoLoad is true and exactly one ForgeForSwordSearcher Bible is found,
         returns the loaded ForgeForSwordSearcherBible object.
     """
-    fnPrint( DEBUGGING_THIS_MODULE, f"ForgeForSwordSearcherBibleFileCheck( {givenFolderName}, {strictCheck}, {autoLoad}, {autoLoadBooks} )" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+        fnPrint( DEBUGGING_THIS_MODULE, f"ForgeForSwordSearcherBibleFileCheck( {givenFolderName}, {strictCheck}, {autoLoad}, {autoLoadBooks} )" )
     if BibleOrgSysGlobals.debugFlag: assert givenFolderName and isinstance( givenFolderName, (str,Path) )
     if BibleOrgSysGlobals.debugFlag: assert autoLoad in (True,False,)
 
@@ -95,7 +96,8 @@ def ForgeForSwordSearcherBibleFileCheck( givenFolderName, strictCheck:bool=True,
         return False
 
     # Find all the files and folders in this folder
-    vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f" ForgeForSwordSearcherBibleFileCheck: Looking for files in given {repr(givenFolderName)}" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 4:
+        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f" ForgeForSwordSearcherBibleFileCheck: Looking for files in given {repr(givenFolderName)}" )
     foundFolders, foundFiles = [], []
     for something in os.listdir( givenFolderName ):
         somepath = os.path.join( givenFolderName, something )
@@ -132,12 +134,14 @@ def ForgeForSwordSearcherBibleFileCheck( givenFolderName, strictCheck:bool=True,
                     if BibleOrgSysGlobals.debugFlag:
                         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"ForgeForSwordSearcherBibleFileCheck First line got {match.group(0)!r} match from {firstLine!r}" )
                 else:
-                    vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"ForgeForSwordSearcherBibleFileCheck: (unexpected) first line was {thisFilename!r} in {firstLine}" )
+                    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 4:
+                        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"ForgeForSwordSearcherBibleFileCheck: (unexpected) first line was {thisFilename!r} in {firstLine}" )
                     continue
             lastFilenameFound = thisFilename
             numFound += 1
     if numFound:
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "ForgeForSwordSearcherBibleFileCheck got", numFound, givenFolderName, lastFilenameFound )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, "ForgeForSwordSearcherBibleFileCheck got", numFound, givenFolderName, lastFilenameFound )
         if numFound == 1 and (autoLoad or autoLoadBooks):
             uB = ForgeForSwordSearcherBible( givenFolderName, lastFilenameFound[:-4] ) # Remove the end of the actual filename ".txt"
             if autoLoadBooks: uB.load() # Load and process the file
@@ -153,7 +157,8 @@ def ForgeForSwordSearcherBibleFileCheck( givenFolderName, strictCheck:bool=True,
         if not os.access( tryFolderName, os.R_OK ): # The subfolder is not readable
             logging.warning( f"ForgeForSwordSearcherBibleFileCheck: {tryFolderName!r} subfolder is unreadable" )
             continue
-        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"    ForgeForSwordSearcherBibleFileCheck: Looking for files in {tryFolderName}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 4:
+            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"    ForgeForSwordSearcherBibleFileCheck: Looking for files in {tryFolderName}" )
         foundSubfolders, foundSubfiles = [], []
         try:
             for something in os.listdir( tryFolderName ):
@@ -185,14 +190,16 @@ def ForgeForSwordSearcherBibleFileCheck( givenFolderName, strictCheck:bool=True,
                         if BibleOrgSysGlobals.debugFlag:
                             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"ForgeForSwordSearcherBibleFileCheck First line got type {match.group(0)!r} match from {firstLine!r}" )
                     else:
-                        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"ForgeForSwordSearcherBibleFileCheck: (unexpected) first line was {thisFilename!r} in {firstLine}" )
+                        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 4:
+                            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"ForgeForSwordSearcherBibleFileCheck: (unexpected) first line was {thisFilename!r} in {firstLine}" )
                         if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: assert False, "We want to stop here"
                         continue
                 foundProjects.append( (tryFolderName, thisFilename,) )
                 lastFilenameFound = thisFilename
                 numFound += 1
     if numFound:
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "ForgeForSwordSearcherBibleFileCheck foundProjects", numFound, foundProjects )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, "ForgeForSwordSearcherBibleFileCheck foundProjects", numFound, foundProjects )
         if numFound == 1 and (autoLoad or autoLoadBooks):
             if BibleOrgSysGlobals.debugFlag: assert len(foundProjects) == 1
             uB = ForgeForSwordSearcherBible( foundProjects[0][0], foundProjects[0][1][:-4] ) # Remove the end of the actual filename ".txt"
@@ -234,7 +241,8 @@ class ForgeForSwordSearcherBible( Bible ):
         """
         Load a single source file and load book elements.
         """
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Loading {self.sourceFilepath}…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Loading {self.sourceFilepath}…" )
 
         global BOS66, BOS81, BOSx
         if BOS66 is None: BOS66 = BibleOrganisationalSystem( 'GENERIC-KJV-66-ENG' )
@@ -263,7 +271,8 @@ class ForgeForSwordSearcherBible( Bible ):
                         if BibleOrgSysGlobals.debugFlag:
                             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"First line got type {match.group(0)!r} match from {line!r}" )
                     else:
-                        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"ForgeForSwordSearcherBible.load: (unexpected) first line was {thisFilename!r} in {firstLine}" )
+                        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 4:
+                            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"ForgeForSwordSearcherBible.load: (unexpected) first line was {thisFilename!r} in {firstLine}" )
                         if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: assert False, "We want to stop here"
                         continue
 
@@ -459,11 +468,14 @@ def testForge4SS( F4SSFolder ):
     # Crudely demonstrate the Forge for SwordSearcher Bible class
     from BibleOrgSys.Reference import VerseReferences
 
-    vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Demonstrating the Forge for SwordSearcher Bible class…" )
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Test folder is {F4SSFolder!r}" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Demonstrating the Forge for SwordSearcher Bible class…" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Test folder is {F4SSFolder!r}" )
     vb = ForgeForSwordSearcherBible( F4SSFolder, "demo" )
     vb.load() # Load and process the file
-    vPrint( 'Normal', DEBUGGING_THIS_MODULE, vb ) # Just print a summary
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, vb ) # Just print a summary
     if BibleOrgSysGlobals.strictCheckingFlag:
         vb.check()
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, UsfmB.books['GEN']._processedLines[0:40] )
@@ -487,7 +499,8 @@ def testForge4SS( F4SSFolder ):
             verseText = vb.getVerseText( svk )
         except KeyError:
             verseText = "Verse not available!"
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, reference, shortText, verseText )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, reference, shortText, verseText )
 # end of testForge4SS
 
 
@@ -506,10 +519,12 @@ def briefDemo() -> None:
                     BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'VPLTest2/' ),
                     ) )
         result1 = ForgeForSwordSearcherBibleFileCheck( testFolder )
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nForgeForSwordSearcher TestA1", result1 )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nForgeForSwordSearcher TestA1", result1 )
 
         result2 = ForgeForSwordSearcherBibleFileCheck( testFolder, autoLoad=True )
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "ForgeForSwordSearcher TestA2", result2 )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "ForgeForSwordSearcher TestA2", result2 )
         if isinstance( result2, Bible):
             try: result2.loadMetadataTextFile( os.path.join( testFolder, "BooknamesMetadata.txt" ) )
             except FileNotFoundError: pass # it's not compulsory
@@ -523,7 +538,8 @@ def briefDemo() -> None:
                 result2.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
 
         result3 = ForgeForSwordSearcherBibleFileCheck( testFolder, autoLoadBooks=True )
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "ForgeForSwordSearcher TestA3", result3 )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "ForgeForSwordSearcher TestA3", result3 )
         if isinstance( result3, Bible):
             try: result3.loadMetadataTextFile( os.path.join( testFolder, "BooknamesMetadata.txt" ) )
             except FileNotFoundError: pass # it's not compulsory
@@ -545,7 +561,8 @@ def briefDemo() -> None:
             elif os.path.isfile( somepath ): foundFiles.append( something )
 
         if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nTrying all {len(foundFolders)} discovered modules…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nTrying all {len(foundFolders)} discovered modules…" )
             parameters = [folderName for folderName in sorted(foundFolders)]
             BibleOrgSysGlobals.alreadyMultiprocessing = True
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
@@ -554,7 +571,8 @@ def briefDemo() -> None:
             BibleOrgSysGlobals.alreadyMultiprocessing = False
         else: # Just single threaded
             for j, someFolder in enumerate( sorted( foundFolders ) ):
-                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nForgeForSwordSearcher D{j+1}/ Trying {someFolder}" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                    vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nForgeForSwordSearcher D{j+1}/ Trying {someFolder}" )
                 #myTestFolder = os.path.join( testFolder, someFolder+'/' )
                 testForge4SS( someFolder )
 # end of ForgeForSwordSearcherBible.briefDemo
@@ -572,10 +590,12 @@ def fullDemo() -> None:
                     BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'VPLTest2/' ),
                     ):
             result1 = ForgeForSwordSearcherBibleFileCheck( testFolder )
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nForgeForSwordSearcher TestA1", result1 )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nForgeForSwordSearcher TestA1", result1 )
 
             result2 = ForgeForSwordSearcherBibleFileCheck( testFolder, autoLoad=True )
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "ForgeForSwordSearcher TestA2", result2 )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, "ForgeForSwordSearcher TestA2", result2 )
             if isinstance( result2, Bible):
                 try: result2.loadMetadataTextFile( os.path.join( testFolder, "BooknamesMetadata.txt" ) )
                 except FileNotFoundError: pass # it's not compulsory
@@ -589,7 +609,8 @@ def fullDemo() -> None:
                     result2.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
 
             result3 = ForgeForSwordSearcherBibleFileCheck( testFolder, autoLoadBooks=True )
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "ForgeForSwordSearcher TestA3", result3 )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, "ForgeForSwordSearcher TestA3", result3 )
             if isinstance( result3, Bible):
                 try: result3.loadMetadataTextFile( os.path.join( testFolder, "BooknamesMetadata.txt" ) )
                 except FileNotFoundError: pass # it's not compulsory
@@ -611,7 +632,8 @@ def fullDemo() -> None:
             elif os.path.isfile( somepath ): foundFiles.append( something )
 
         if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nTrying all {len(foundFolders)} discovered modules…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nTrying all {len(foundFolders)} discovered modules…" )
             parameters = [folderName for folderName in sorted(foundFolders)]
             BibleOrgSysGlobals.alreadyMultiprocessing = True
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
@@ -620,7 +642,8 @@ def fullDemo() -> None:
             BibleOrgSysGlobals.alreadyMultiprocessing = False
         else: # Just single threaded
             for j, someFolder in enumerate( sorted( foundFolders ) ):
-                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nForgeForSwordSearcher D{j+1}/ Trying {someFolder}" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                    vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nForgeForSwordSearcher D{j+1}/ Trying {someFolder}" )
                 #myTestFolder = os.path.join( testFolder, someFolder+'/' )
                 testForge4SS( someFolder )
 # end of ForgeForSwordSearcherBible.fullDemo

@@ -57,7 +57,7 @@ from BibleOrgSys.OriginalLanguages import Hebrew, Greek
 import bos_books_codes_py
 
 
-LAST_MODIFIED_DATE = '2026-08-29' # by RJH
+LAST_MODIFIED_DATE = '2026-10-06' # by RJH
 SHORT_PROGRAM_NAME = "CSVBible"
 PROGRAM_NAME = "CSV Bible format handler"
 PROGRAM_VERSION = '0.60'
@@ -84,7 +84,8 @@ def CSVBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=Fal
     if autoLoad is true and exactly one CSV Bible is found,
         returns the loaded CSVBible object.
     """
-    fnPrint( DEBUGGING_THIS_MODULE, f"CSVBibleFileCheck( {givenFolderName}, {strictCheck}, {autoLoad}, {autoLoadBooks} )" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+        fnPrint( DEBUGGING_THIS_MODULE, f"CSVBibleFileCheck( {givenFolderName}, {strictCheck}, {autoLoad}, {autoLoadBooks} )" )
     if BibleOrgSysGlobals.debugFlag:
         assert givenFolderName and isinstance( givenFolderName, (str,Path) )
         assert autoLoad in (True,False,) and autoLoadBooks in (True,False,)
@@ -98,7 +99,8 @@ def CSVBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=Fal
         return False
 
     # Find all the files and folders in this folder
-    vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f" CSVBibleFileCheck: Looking for files in given {givenFolderName!r}" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 4:
+        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f" CSVBibleFileCheck: Looking for files in given {givenFolderName!r}" )
     foundFolders, foundFiles = [], []
     for something in os.listdir( givenFolderName ):
         somepath = os.path.join( givenFolderName, something )
@@ -130,12 +132,14 @@ def CSVBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=Fal
                 and not firstLine.startswith( 'Book,Chapter,Verse,' ) and not firstLine.startswith( '1,1,1,') \
                 and not firstLine.startswith( 'Book|Chapter|Verse|' ) \
                 and not '\tBSB Sort\t' in firstLine and not '\tMSB Sort\t' in firstLine:
-                    vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"CSVBibleFileCheck: (unexpected) first line was {thisFilename!r} in {firstLine}" )
+                    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 4:
+                        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"CSVBibleFileCheck: (unexpected) first line was {thisFilename!r} in {firstLine}" )
                     continue
             lastFilenameFound = thisFilename
             numFound += 1
     if numFound:
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "CSVBibleFileCheck got", numFound, givenFolderName, lastFilenameFound )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, "CSVBibleFileCheck got", numFound, givenFolderName, lastFilenameFound )
         if numFound == 1 and (autoLoad or autoLoadBooks):
             uB = CSVBible( givenFolderName, lastFilenameFound[:-4] ) # Remove the end of the actual filename ".txt"
             if autoLoadBooks: uB.load() # Load and process the file
@@ -151,7 +155,8 @@ def CSVBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=Fal
         if not os.access( tryFolderName, os.R_OK ): # The subfolder is not readable
             logging.warning( f"CSVBibleFileCheck: {tryFolderName!r} subfolder is unreadable" )
             continue
-        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"    CSVBibleFileCheck: Looking for files in {tryFolderName}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 4:
+            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"    CSVBibleFileCheck: Looking for files in {tryFolderName}" )
         foundSubfolders, foundSubfiles = [], []
         try:
             for something in os.listdir( tryFolderName ):
@@ -177,14 +182,16 @@ def CSVBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=Fal
                     if not firstLine.startswith( '"Book","Chapter","Verse",' ) and not firstLine.startswith( '"1","1","1",') \
                     and not firstLine.startswith( 'Book,Chapter,Verse,' ) and not firstLine.startswith( '1,1,1,') \
                     and not firstLine.startswith( 'Book|Chapter|Verse|' ):
-                        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"CSVBibleFileCheck: (unexpected) first line was {thisFilename!r} in {firstLine}" )
+                        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 4:
+                            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"CSVBibleFileCheck: (unexpected) first line was {thisFilename!r} in {firstLine}" )
                         if DEBUGGING_THIS_MODULE: assert False, "We want to stop here"
                         continue
                 foundProjects.append( (tryFolderName, thisFilename,) )
                 lastFilenameFound = thisFilename
                 numFound += 1
     if numFound:
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "CSVBibleFileCheck foundProjects", numFound, foundProjects )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, "CSVBibleFileCheck foundProjects", numFound, foundProjects )
         if numFound == 1 and (autoLoad or autoLoadBooks):
             if BibleOrgSysGlobals.debugFlag: assert len(foundProjects) == 1
             uB = CSVBible( foundProjects[0][0], foundProjects[0][1][:-4] ) # Remove the end of the actual filename ".txt"
@@ -203,7 +210,8 @@ class CSVBible( Bible ):
         """
         Constructor: just sets up the Bible object.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"CSVBible.__init__( '{sourceFileOrFolder}', gN='{givenName}', gA='{givenAbbreviation}', e='{encoding}' )" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, f"CSVBible.__init__( '{sourceFileOrFolder}', gN='{givenName}', gA='{givenAbbreviation}', e='{encoding}' )" )
         # self.doExtraChecking = DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag
         assert givenName != 'utf-8'
         assert givenAbbreviation != 'utf-8'
@@ -268,8 +276,10 @@ class CSVBible( Bible ):
         Parameter 'temporaryBookStore' is optionally used to save the books
             (because we don't always load them in the correct order)
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"CSVBible._loadFile( {filepath}, {temporaryBookStore} )")
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Loading {filepath}…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, f"CSVBible._loadFile( {filepath}, {temporaryBookStore} )")
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Loading {filepath}…" )
 
         haveBereanWordSpreadsheet = False
         separator = numColumns = quoted = BBB = None # Empty defaults
@@ -286,7 +296,8 @@ class CSVBible( Bible ):
                 if not line: continue # Just discard blank lines
                 if line==' ': continue # Handle special case which has blanks on every second line -- HACK
                 lastLine = line
-                dPrint( 'Info', DEBUGGING_THIS_MODULE, f"CSV file line {lineCount} is {line!r}" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 3:
+                    dPrint( 'Info', DEBUGGING_THIS_MODULE, f"CSV file line {lineCount} is {line!r}" )
                 if line[0]=='#': continue # Just discard comment lines
                 if not separator and lineCount < 4:
                     if line.startswith( '"Book",' ):
@@ -314,25 +325,30 @@ class CSVBible( Bible ):
                 if lineCount <= 3: dPrint( 'Info', DEBUGGING_THIS_MODULE, f"{lineCount}: {separator=} {numColumns=} {quoted=} {BBB=}" )
 
                 bits = line.split( separator, numColumns-1 )
-                dPrint( 'Info', DEBUGGING_THIS_MODULE, lineCount, self.givenName, BBB, bits )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 3:
+                    dPrint( 'Info', DEBUGGING_THIS_MODULE, lineCount, self.givenName, BBB, bits )
                 if len(bits) == 4:
                     booknameString, chapterNumberString, verseNumberString, vText = bits
-                    dPrint( 'Info', DEBUGGING_THIS_MODULE, f"{booknameString=}, {chapterNumberString=}, {verseNumberString=}, {vText=}" )
+                    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 3:
+                        dPrint( 'Info', DEBUGGING_THIS_MODULE, f"{booknameString=}, {chapterNumberString=}, {verseNumberString=}, {vText=}" )
                 elif len(bits) == 3:
                     chapterNumberString, verseNumberString, vText = bits
-                    dPrint( 'Info', DEBUGGING_THIS_MODULE, f"{chapterNumberString=}, {verseNumberString=}, {vText=}" )
+                    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 3:
+                        dPrint( 'Info', DEBUGGING_THIS_MODULE, f"{chapterNumberString=}, {verseNumberString=}, {vText=}" )
                     booknameString = ''
                 elif len(bits) == 2:
                     refString, vText = bits
                     if BBB is None and refString.count(':') != 1:
-                        dPrint( 'Info', DEBUGGING_THIS_MODULE, f"Skipping the rest of 2-bit line because no BBB yet: {lineCount}: {bits} '{line}'" )
+                        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 3:
+                            dPrint( 'Info', DEBUGGING_THIS_MODULE, f"Skipping the rest of 2-bit line because no BBB yet: {lineCount}: {bits} '{line}'" )
                         continue # Still in header lines ???
                     booknameString, CV = refString.rsplit( ' ', 1) # e.g., Genesis 1:1, 3 John 1:2, Song of Songs 2:3
                     assert 0 <= booknameString.count( ' ' ) <= 3, f"{booknameString=}"
                     assert CV.count( ':' ) == 1
                     chapterNumberString, verseNumberString = CV.split( ':' )
                 elif len(bits) >= 20 and 'Hdg' in bits and 'Crossref' in bits and 'Par' in bits and ('Pnc' in bits or 'pnc' in bits):
-                    dPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Have a likely Berean word table with {self.givenName=} {numColumns=}: {lineCount}: {bits} '{line}'" )
+                    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 2:
+                        dPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Have a likely Berean word table with {self.givenName=} {numColumns=}: {lineCount}: {bits} '{line}'" )
                     haveBereanWordSpreadsheet = True
                     break # We'll use a separate function for this
                 else:
@@ -352,7 +368,8 @@ class CSVBible( Bible ):
                 #if BibleOrgSysGlobals.debugFlag: assert 2  <= len(bookCode) <= 4
                 #if BibleOrgSysGlobals.debugFlag: assert chapterNumberString.isdigit()
                 #if BibleOrgSysGlobals.debugFlag: assert verseNumberString.isdigit()
-                dPrint( 'Never', DEBUGGING_THIS_MODULE, f"  Now have {lineCount}: {booknameString=} {chapterNumberString=} {verseNumberString=}" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 5:
+                    dPrint( 'Never', DEBUGGING_THIS_MODULE, f"  Now have {lineCount}: {booknameString=} {chapterNumberString=} {verseNumberString=}" )
                 if booknameString:
                     try: bookNumber = int( booknameString )
                     except ValueError: # Assume it's a book code of some sort or a book name
@@ -362,7 +379,8 @@ class CSVBible( Bible ):
                 elif not BBB: # Try the filename
                     thisFilepath = Path(filepath) if isinstance( filepath, str ) else filepath
                     filename = thisFilepath.stem
-                    dPrint( 'Info', DEBUGGING_THIS_MODULE, f"{filename=}" )
+                    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 3:
+                        dPrint( 'Info', DEBUGGING_THIS_MODULE, f"{filename=}" )
                     try: BBB = {'AC':'ACT', 'JOH':'JHN', 'MT':'MAT', 'JUDE':'JDE', '1JO':'JN1','2JO':'JN2','3JO':'JN3'}[filename]
                     except KeyError: pass # no problem
                     if not BBB:
@@ -387,27 +405,34 @@ class CSVBible( Bible ):
                                         BBB = bos_books_codes_py.usfm_abbrev_to_bos_book_code( Uuu )
                                         break
                     if BBB:
-                        dPrint( 'Info', DEBUGGING_THIS_MODULE, f"Got {BBB=}" )
+                        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 3:
+                            dPrint( 'Info', DEBUGGING_THIS_MODULE, f"Got {BBB=}" )
                         bookNumber = bos_books_codes_py.get_reference_number( BBB )
-                        dPrint( 'Info', DEBUGGING_THIS_MODULE, f"Got {bookNumber=}" )
+                        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 3:
+                            dPrint( 'Info', DEBUGGING_THIS_MODULE, f"Got {bookNumber=}" )
                     else:
-                        dPrint( 'Info', DEBUGGING_THIS_MODULE, f"Got {filename=} {booknameString=} {BBB=} {bookNumber=}" )
+                        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 3:
+                            dPrint( 'Info', DEBUGGING_THIS_MODULE, f"Got {filename=} {booknameString=} {BBB=} {bookNumber=}" )
                         assert False, "We want to stop here"
 
                 if lastBookNumber==-1 and not BBB:
-                    dPrint( 'Never', DEBUGGING_THIS_MODULE, f"Skipping the rest of (introductory?) line because no BBB yet: {lineCount}: '{line}'" )
+                    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 5:
+                        dPrint( 'Never', DEBUGGING_THIS_MODULE, f"Skipping the rest of (introductory?) line because no BBB yet: {lineCount}: '{line}'" )
                     continue
 
                 chapterNumber = int( chapterNumberString )
                 verseNumber = int( verseNumberString )
-                dPrint( 'Never', DEBUGGING_THIS_MODULE, f"    which gives: {bookNumber=} {BBB=} {chapterNumber=} {verseNumber=}" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 5:
+                    dPrint( 'Never', DEBUGGING_THIS_MODULE, f"    which gives: {bookNumber=} {BBB=} {chapterNumber=} {verseNumber=}" )
 
                 if bookNumber != lastBookNumber: # We've started a new book
                     if lastBookNumber != -1: # Better save the last book
-                        dPrint( 'Info', DEBUGGING_THIS_MODULE, f"Stashing previous {self.abbreviation} book: {thisBook.BBB=}…" )
+                        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 3:
+                            dPrint( 'Info', DEBUGGING_THIS_MODULE, f"Stashing previous {self.abbreviation} book: {thisBook.BBB=}…" )
                         if temporaryBookStore is not None: temporaryBookStore[thisBook.BBB] = thisBook
                         else: self.stashBook( thisBook )
-                        dPrint( 'Info', DEBUGGING_THIS_MODULE, f"    Now have {len(temporaryBookStore)=} books: {temporaryBookStore.keys()=}." )
+                        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 3:
+                            dPrint( 'Info', DEBUGGING_THIS_MODULE, f"    Now have {len(temporaryBookStore)=} books: {temporaryBookStore.keys()=}." )
                     BBB = bos_books_codes_py.get_bos_book_code_from_reference_number( bookNumber )  # Try to guess
                     assert BBB
                     thisBook = BibleBook( self, BBB )
@@ -476,10 +501,12 @@ class CSVBible( Bible ):
             return self._loadBereanSpreadsheetTable( filepath ) # Use a separate loading function
         
         # Save the final book
-        dPrint( 'Info', DEBUGGING_THIS_MODULE, f"Stashing final {self.abbreviation} book: {thisBook.BBB=}…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 3:
+            dPrint( 'Info', DEBUGGING_THIS_MODULE, f"Stashing final {self.abbreviation} book: {thisBook.BBB=}…" )
         if temporaryBookStore is None: self.stashBook( thisBook )
         else: temporaryBookStore[thisBook.BBB] = thisBook
-        dPrint( 'Info', DEBUGGING_THIS_MODULE, f"    Now have {len(temporaryBookStore)=} books: {temporaryBookStore.keys()=}." )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 3:
+            dPrint( 'Info', DEBUGGING_THIS_MODULE, f"    Now have {len(temporaryBookStore)=} books: {temporaryBookStore.keys()=}." )
     # end of CSVBible._loadFile
 
 
@@ -490,8 +517,10 @@ class CSVBible( Bible ):
         from csv import DictReader
         from BibleOrgSys.Formats.ESFMBibleBook import ESFMBibleBook
 
-        fnPrint( DEBUGGING_THIS_MODULE, f"CSVBible._loadBereanSpreadsheetTable( {filepath} )")
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Loading Berean word table from {filepath}…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, f"CSVBible._loadBereanSpreadsheetTable( {filepath} )")
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Loading Berean word table from {filepath}…" )
         filepath = Path( filepath ) if not isinstance( filepath, Path ) else filepath # Ensure we have a Path
 
         WORD_TABLE_FILENAMES = ('OET-LV_OT_word_table.tsv', 'OET-LV_NT_word_table.tsv')
@@ -528,7 +557,8 @@ class CSVBible( Bible ):
 
             Returns the number of tables loaded into self.abbreviatedWordTables
             """
-            fnPrint( DEBUGGING_THIS_MODULE, f"CSVBible._loadBereanSpreadsheetTable._loadPossibleWordTables( {folderpath} )")
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+                fnPrint( DEBUGGING_THIS_MODULE, f"CSVBible._loadBereanSpreadsheetTable._loadPossibleWordTables( {folderpath} )")
 
             # Only load the word tables we actually need for the requested books.
             #   (If no books are specified, we need both testaments.)
@@ -537,7 +567,8 @@ class CSVBible( Bible ):
                 needNT = any( bos_books_codes_py.is_new_testament_nr( BBB ) for BBB in self.specifiedBooks )
                 neededFilenames = [filename for filename in WORD_TABLE_FILENAMES
                                    if ('_OT_' in filename and needOT) or ('_NT_' in filename and needNT)]
-                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"_loadPossibleWordTables: Only loading {neededFilenames} because {self.specifiedBooks=}" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                    vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"_loadPossibleWordTables: Only loading {neededFilenames} because {self.specifiedBooks=}" )
             else:
                 neededFilenames = WORD_TABLE_FILENAMES
 
@@ -556,9 +587,11 @@ class CSVBible( Bible ):
 
                 self.ESFMWordTables[filename] = wordFileText.rstrip( '\n' ).split( '\n' ) # Remove any blank line at the end then split
                 # Uses less memory to keep the rows as single strings, rather than separating the columns at the tabs now
-                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"CSVBible._loadBereanSpreadsheetTable._loadPossibleWordTables for {self.abbreviation} loaded {len(self.ESFMWordTables[filename]):,} total rows from {filename}" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                    vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"CSVBible._loadBereanSpreadsheetTable._loadPossibleWordTables for {self.abbreviation} loaded {len(self.ESFMWordTables[filename]):,} total rows from {filename}" )
                 self.ESFMColumnNameList[filename] = self.ESFMWordTables[filename][0].split( '\t' )
-                dPrint( 'Normal', DEBUGGING_THIS_MODULE, f"CSVBible._loadBereanSpreadsheetTable._loadPossibleWordTables for {self.abbreviation} loaded column names were: ({len(self.ESFMColumnNameList[filename])}) {self.ESFMColumnNameList[filename]}" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 2:
+                    dPrint( 'Normal', DEBUGGING_THIS_MODULE, f"CSVBible._loadBereanSpreadsheetTable._loadPossibleWordTables for {self.abbreviation} loaded column names were: ({len(self.ESFMColumnNameList[filename])}) {self.ESFMColumnNameList[filename]}" )
 
                 self.abbreviatedWordTables[filename] = []
                 for tableRow in self.ESFMWordTables[filename]:
@@ -609,12 +642,14 @@ class CSVBible( Bible ):
 
         # Remove any BOM
         if tsv_lines[0].startswith("\ufeff"):
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  Handling Byte Order Marker (BOM) at start of our tsv file…")
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  Handling Byte Order Marker (BOM) at start of our tsv file…")
             tsv_lines[0] = tsv_lines[0][1:]
 
         # Get the headers before we start
         tsv_column_headers = [header for header in tsv_lines[0].strip().split('\t')]
-        dPrint('Info', DEBUGGING_THIS_MODULE, f"Column headers: ({len(tsv_column_headers)}): {tsv_column_headers}")
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 3:
+            dPrint('Info', DEBUGGING_THIS_MODULE, f"Column headers: ({len(tsv_column_headers)}): {tsv_column_headers}")
         assert len(tsv_column_headers) >= 20
 
         lastMarker = lastText = None
@@ -859,7 +894,8 @@ class CSVBible( Bible ):
 
                 if BBB != lastBBB: # We've started a new book
                     if lastBBB: # Better save the last book
-                        dPrint( 'Info', DEBUGGING_THIS_MODULE, f"Stashing previous {self.abbreviation} book: {thisBook.BBB=}…" )
+                        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 3:
+                            dPrint( 'Info', DEBUGGING_THIS_MODULE, f"Stashing previous {self.abbreviation} book: {thisBook.BBB=}…" )
                         self.stashBook( thisBook )
                     thisBook = (ESFMBibleBook if self.ESFMWordTables else BibleBook)( self, BBB )
                     # thisBook.objectNameString = 'CSV Bible Book object'
@@ -1265,7 +1301,8 @@ class CSVBible( Bible ):
                         wJ = False
 
         if lastBBB: # Save the final book
-            dPrint( 'Info', DEBUGGING_THIS_MODULE, f"Stashing final {self.abbreviation} book: {thisBook.BBB=}…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 3:
+                dPrint( 'Info', DEBUGGING_THIS_MODULE, f"Stashing final {self.abbreviation} book: {thisBook.BBB=}…" )
             self.stashBook( thisBook )
     # end of CSVBible._loadBereanWoordTable
 
@@ -1276,7 +1313,8 @@ class CSVBible( Bible ):
 
         Load a single source file and load book elements.
         """
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"CSVBible: Loading {self.sourceFilepath}…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"CSVBible: Loading {self.sourceFilepath}…" )
         assert self.sourceFilepath is not None
 
         self._loadFile( self.sourceFilepath )
@@ -1295,7 +1333,8 @@ class CSVBible( Bible ):
             return self.load()
         # else: # we have a folder
         assert self.sourceBookFileExtension
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Loading books from {self.sourceFolder}…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Loading books from {self.sourceFolder}…" )
 
         tempBookStore = {}
         for filename in os.listdir( self.sourceFolder ):
@@ -1307,10 +1346,12 @@ class CSVBible( Bible ):
                 if filenameStart == 'PA': # from RP-GNT
                     continue # Not sure what this is
                 BBB = bos_books_codes_py.english_name_to_bos_book_code( filenameStart )
-                dPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Got {BBB=} from {filenameStart=}")
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 3:
+                    dPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Got {BBB=} from {filenameStart=}")
                 self._loadFile( os.path.join( self.sourceFolder, filename ), tempBookStore )
 
-        dPrint( 'Info', DEBUGGING_THIS_MODULE, f"{len(tempBookStore)}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 3:
+            dPrint( 'Info', DEBUGGING_THIS_MODULE, f"{len(tempBookStore)}" )
 
         # Now save the books in the right Biblical order
         for BBB in bos_books_codes_py.get_all_bos_book_codes():
@@ -1352,11 +1393,14 @@ def testCSV( CSVfolder ):
     # Crudely demonstrate the CSV Bible class
     from BibleOrgSys.Reference import VerseReferences
 
-    vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Demonstrating the CSV Bible class…" )
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Test folder is {CSVfolder!r}" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Demonstrating the CSV Bible class…" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Test folder is {CSVfolder!r}" )
     vb = CSVBible( CSVfolder, "demo" )
     vb.load() # Load and process the file
-    vPrint( 'Normal', DEBUGGING_THIS_MODULE, vb ) # Just print a summary
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, vb ) # Just print a summary
     if BibleOrgSysGlobals.strictCheckingFlag:
         vb.check()
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, UsfmB.books['GEN']._processedLines[0:40] )
@@ -1380,7 +1424,8 @@ def testCSV( CSVfolder ):
             verseText = vb.getVerseText( svk )
         except KeyError:
             verseText = "Verse not available!"
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, reference, shortText, verseText )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, reference, shortText, verseText )
 # end of testCSV
 
 
@@ -1399,13 +1444,16 @@ def briefDemo() -> None:
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder
         testFolder = random.choice( testFolders )
         result1 = CSVBibleFileCheck( testFolder )
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "CSV TestA1", result1 )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "CSV TestA1", result1 )
 
         result2 = CSVBibleFileCheck( testFolder, autoLoad=True )
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "CSV TestA2", result2 )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "CSV TestA2", result2 )
 
         result3 = CSVBibleFileCheck( testFolder, autoLoadBooks=True )
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "CSV TestA3", result3 )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "CSV TestA3", result3 )
         #result3.loadMetadataFile( os.path.join( testFolder, "BooknamesMetadata.txt" ) )
 
         if BibleOrgSysGlobals.strictCheckingFlag:
@@ -1426,7 +1474,8 @@ def briefDemo() -> None:
             elif os.path.isfile( somepath ): foundFiles.append( something )
 
         if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nTrying all {len(foundFolders)} discovered modules…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nTrying all {len(foundFolders)} discovered modules…" )
             parameters = [folderName for folderName in sorted(foundFolders)]
             BibleOrgSysGlobals.alreadyMultiprocessing = True
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
@@ -1435,7 +1484,8 @@ def briefDemo() -> None:
             BibleOrgSysGlobals.alreadyMultiprocessing = False
         else: # Just single threaded
             for j, someFolder in enumerate( sorted( foundFolders ) ):
-                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nCSV D{j+1}/ Trying {someFolder}" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                    vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nCSV D{j+1}/ Trying {someFolder}" )
                 #myTestFolder = os.path.join( testFolder, someFolder+'/' )
                 testCSV( someFolder )
 # end of CSVBible.briefDemo
@@ -1466,18 +1516,21 @@ def speedComparisonDemo():
             bereanFolder = candidate
             break
     if bereanFolder is None:
-        vPrint( 'Info', DEBUGGING_THIS_MODULE,
-                "Skipping the Berean speed-comparison test (couldn't find the BSB spreadsheet data)." )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE,
+                    "Skipping the Berean speed-comparison test (couldn't find the BSB spreadsheet data)." )
         return
 
-    vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nSpeed comparison using the full Berean spreadsheet at {bereanFolder}…" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nSpeed comparison using the full Berean spreadsheet at {bereanFolder}…" )
 
     # 1. A full load of every book
     fullVB = CSVBible( bereanFolder, 'bsb_tables', 'BSB' )
     tStart = time.time()
     fullVB.load()
     fullTime = time.time() - tStart
-    vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"    Full load of all {len(fullVB)} books took {fullTime:.2f} s" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"    Full load of all {len(fullVB)} books took {fullTime:.2f} s" )
 
     # 2. A load of only a few requested books
     fewVB = CSVBible( bereanFolder, 'bsb_tables', 'BSB' )
@@ -1485,11 +1538,13 @@ def speedComparisonDemo():
     tStart = time.time()
     fewVB.load()
     fewTime = time.time() - tStart
-    vPrint( 'Normal', DEBUGGING_THIS_MODULE,
-            f"    Load of only {len(fewVB)} book(s) {BEREAN_SPREADSHEET_DEMO_BOOKS} took {fewTime:.2f} s" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE,
+                f"    Load of only {len(fewVB)} book(s) {BEREAN_SPREADSHEET_DEMO_BOOKS} took {fewTime:.2f} s" )
 
     if fullTime > 0:
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"    => few-books load is {fullTime/fewTime:.1f}x faster than the full load" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"    => few-books load is {fullTime/fewTime:.1f}x faster than the full load" )
 
     # 3. Verify the few-books load produces identical verse text to the full load
     #    for the books that were requested.
@@ -1498,7 +1553,8 @@ def speedComparisonDemo():
         fewBook = fewVB.books.get( BBB )
         fullBook = fullVB.books.get( BBB )
         if fewBook is None or fullBook is None:
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"    WARNING: {BBB} missing from one of the loads" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"    WARNING: {BBB} missing from one of the loads" )
             continue
         versification, *_ = fullBook.getVersification()
         for chapter, numVerses in versification:
@@ -1510,10 +1566,12 @@ def speedComparisonDemo():
                 if fullText != fewText:
                     mismatches += 1
                     if mismatches <= 5:
-                        vPrint( 'Normal', DEBUGGING_THIS_MODULE,
-                                f"    MISMATCH {reference}:\n        full: {fullText!r}\n        few : {fewText!r}" )
-    vPrint( 'Normal', DEBUGGING_THIS_MODULE,
-            f"    Compared {checked:,} verse(s) of {BEREAN_SPREADSHEET_DEMO_BOOKS} between the two loads: {mismatches} mismatch(es)" )
+                        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                            vPrint( 'Normal', DEBUGGING_THIS_MODULE,
+                                    f"    MISMATCH {reference}:\n        full: {fullText!r}\n        few : {fewText!r}" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE,
+                f"    Compared {checked:,} verse(s) of {BEREAN_SPREADSHEET_DEMO_BOOKS} between the two loads: {mismatches} mismatch(es)" )
     assert mismatches == 0, f"{mismatches} verse mismatches between the few-books and full loads!"
 # end of speedComparisonDemo
 
@@ -1532,13 +1590,16 @@ def fullDemo() -> None:
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder
         for testFolder in testFolders:
             result1 = CSVBibleFileCheck( testFolder )
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "CSV TestA1", result1 )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, "CSV TestA1", result1 )
 
             result2 = CSVBibleFileCheck( testFolder, autoLoad=True )
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "CSV TestA2", result2 )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, "CSV TestA2", result2 )
 
             result3 = CSVBibleFileCheck( testFolder, autoLoadBooks=True )
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "CSV TestA3", result3 )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, "CSV TestA3", result3 )
             #result3.loadMetadataFile( os.path.join( testFolder, "BooknamesMetadata.txt" ) )
 
             if BibleOrgSysGlobals.strictCheckingFlag:
@@ -1559,7 +1620,8 @@ def fullDemo() -> None:
             elif os.path.isfile( somepath ): foundFiles.append( something )
 
         if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nTrying all {len(foundFolders)} discovered modules…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nTrying all {len(foundFolders)} discovered modules…" )
             parameters = [folderName for folderName in sorted(foundFolders)]
             BibleOrgSysGlobals.alreadyMultiprocessing = True
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
@@ -1568,7 +1630,8 @@ def fullDemo() -> None:
             BibleOrgSysGlobals.alreadyMultiprocessing = False
         else: # Just single threaded
             for j, someFolder in enumerate( sorted( foundFolders ) ):
-                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nCSV D{j+1}/ Trying {someFolder}" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                    vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nCSV D{j+1}/ Trying {someFolder}" )
                 #myTestFolder = os.path.join( testFolder, someFolder+'/' )
                 testCSV( someFolder )
 # end of CSVBible.fullDemo

@@ -49,7 +49,7 @@ from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisational
 from BibleOrgSys.Formats.ESwordBible import handleESwordLine
 
 
-LAST_MODIFIED_DATE = '2020-04-29' # by RJH
+LAST_MODIFIED_DATE = '2026-10-06' # by RJH
 SHORT_PROGRAM_NAME = "e-SwordCommentary"
 PROGRAM_NAME = "e-Sword Commentary format handler"
 PROGRAM_VERSION = '0.07'
@@ -76,7 +76,8 @@ def ESwordCommentaryFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:
     if autoLoad is true and exactly one e-Sword Bible is found,
         returns the loaded ESwordCommentary object.
     """
-    fnPrint( DEBUGGING_THIS_MODULE, f"ESwordCommentaryFileCheck( {givenFolderName}, {strictCheck}, {autoLoad}, {autoLoadBooks} )" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+        fnPrint( DEBUGGING_THIS_MODULE, f"ESwordCommentaryFileCheck( {givenFolderName}, {strictCheck}, {autoLoad}, {autoLoadBooks} )" )
     if BibleOrgSysGlobals.debugFlag: assert givenFolderName and isinstance( givenFolderName, (str,Path) )
     if BibleOrgSysGlobals.debugFlag: assert autoLoad in (True,False,)
 
@@ -89,7 +90,8 @@ def ESwordCommentaryFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:
         return False
 
     # Find all the files and folders in this folder
-    vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f" ESwordCommentaryFileCheck: Looking for files in given {givenFolderName}" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 4:
+        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f" ESwordCommentaryFileCheck: Looking for files in given {givenFolderName}" )
     foundFolders, foundFiles = [], []
     for something in os.listdir( givenFolderName ):
         somepath = os.path.join( givenFolderName, something )
@@ -115,9 +117,11 @@ def ESwordCommentaryFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:
         lastFilenameFound = thisFilename
         numFound += 1
     if numFound:
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "ESwordCommentaryFileCheck got", numFound, givenFolderName, lastFilenameFound )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, "ESwordCommentaryFileCheck got", numFound, givenFolderName, lastFilenameFound )
         if numFound == 1 and (autoLoad or autoLoadBooks):
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"{PROGRAM_NAME_VERSION} doing autoload of {lastFilenameFound}…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"{PROGRAM_NAME_VERSION} doing autoload of {lastFilenameFound}…" )
             eSB = ESwordCommentary( givenFolderName, lastFilenameFound )
             if autoLoad or autoLoadBooks: eSB.preload()
             if autoLoadBooks: eSB.load() # Load and process the database
@@ -133,7 +137,8 @@ def ESwordCommentaryFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:
         if not os.access( tryFolderName, os.R_OK ): # The subfolder is not readable
             logging.warning( f"ESwordCommentaryFileCheck: {tryFolderName!r} subfolder is unreadable" )
             continue
-        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"    ESwordCommentaryFileCheck: Looking for files in {tryFolderName!r}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 4:
+            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"    ESwordCommentaryFileCheck: Looking for files in {tryFolderName!r}" )
         foundSubfolders, foundSubfiles = [], []
         try:
             for something in os.listdir( tryFolderName ):
@@ -157,9 +162,11 @@ def ESwordCommentaryFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:
             lastFilenameFound = thisFilename
             numFound += 1
     if numFound:
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "ESwordCommentaryFileCheck foundProjects", numFound, foundProjects )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, "ESwordCommentaryFileCheck foundProjects", numFound, foundProjects )
         if numFound == 1 and (autoLoad and autoLoadBooks):
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"{PROGRAM_NAME_VERSION} doing autoload of {foundProjects[0][1]}…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"{PROGRAM_NAME_VERSION} doing autoload of {foundProjects[0][1]}…" )
             if BibleOrgSysGlobals.debugFlag: assert len(foundProjects) == 1
             eSB = ESwordCommentary( foundProjects[0][0], foundProjects[0][1] )
             if autoLoad or autoLoadBooks: eSB.preload()
@@ -178,7 +185,8 @@ class ESwordCommentary( Bible ):
         """
         Constructor: just sets up the Bible object.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"ESwordCommentary.init( {sourceFolder!r}, {givenFilename!r}, {encoding!r} )" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, f"ESwordCommentary.init( {sourceFolder!r}, {givenFilename!r}, {encoding!r} )" )
 
          # Setup and initialise the base class first
         Bible.__init__( self )
@@ -232,9 +240,11 @@ class ESwordCommentary( Bible ):
         """
         Load Bible details out of the SQLite3 database.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, "ESwordCommentary.preload()…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, "ESwordCommentary.preload()…" )
 
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Preloading {self.sourceFilepath}…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Preloading {self.sourceFilepath}…" )
         loadErrors:list[str] = []
 
         fileExtensionUpper = self.fileExtension.upper()
@@ -327,10 +337,12 @@ class ESwordCommentary( Bible ):
         """
         Load all the books out of the SQLite3 database.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, "load()…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, "load()…" )
         if not self.preloaded: self.preload()
 
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Loading {self.sourceFilepath}…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Loading {self.sourceFilepath}…" )
         loadErrors:list[str] = []
 
         #fileExtensionUpper = self.fileExtension.upper()
@@ -451,7 +463,8 @@ class ESwordCommentary( Bible ):
                         VV = vBegin if (vEnd==vBegin or chEnd!=chBegin) else f'{vBegin}-{vEnd}'
                         handleESwordLine( self, self.name, BBB, C, VV, line, thisBook, ourGlobals )
 
-            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "  e-Sword saving", BBB, bookCount+1 )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 4:
+                vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "  e-Sword saving", BBB, bookCount+1 )
             self.stashBook( thisBook )
 
         #if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag:
@@ -468,17 +481,20 @@ class ESwordCommentary( Bible ):
         """
         Load the requested book out of the SQLite3 database.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"loadBook( {BBB} )" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, f"loadBook( {BBB} )" )
 
         if BBB in self.books:
-            dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  {BBB} is already loaded -- returning" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 1:
+                dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  {BBB} is already loaded -- returning" )
             return # Already loaded
         if BBB in self.triedLoadingBook:
             logging.warning( f"We had already tried loading e-Sword-Commentary {BBB} for {self.name}" )
             return # We've already attempted to load this book
         self.triedLoadingBook[BBB] = True
         self.bookNeedsReloading[BBB] = False
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Loading {BBB} from {self.sourceFilepath}…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Loading {BBB} from {self.sourceFilepath}…" )
         loadErrors:list[str] = []
 
         # Create the book
@@ -590,7 +606,8 @@ class ESwordCommentary( Bible ):
                     #self.handleLine( self.name, BBB, C, VV, line, thisBook, ourGlobals )
 
         if haveLines:
-            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "  ESwordCommentary saving", BBB )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 4:
+                vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "  ESwordCommentary saving", BBB )
             self.stashBook( thisBook )
     # end of ESwordCommentary.loadBook
 # end of ESwordCommentary class
@@ -604,7 +621,7 @@ def createESwordCommentaryModule( self, outputFolder, controlDict ):
     self here is a Bible object with _processedLines
     """
     import zipfile
-    from usfm_markers_py import OFTEN_IGNORED_USFM_HEADER_MARKERS, USFM_ALL_INTRODUCTION_MARKERS, removeUSFMCharacterField, replaceUSFMCharacterFields
+    from usfm_markers_py import OFTEN_IGNORED_USFM_HEADER_MARKERS, USFM_ALL_INTRODUCTION_MARKERS, remove_usfm_character_field, replace_usfm_character_fields
     from BibleOrgSys.Internals.InternalBibleBook import BOS_CUSTOM_NESTING_MARKERS, BOS_NESTING_MARKERS
     from BibleOrgSys.Formats.theWordBible import theWordOTBookLines, theWordNTBookLines, theWordBookLines, theWordIgnoredIntroMarkers
 
@@ -621,12 +638,12 @@ def createESwordCommentaryModule( self, outputFolder, controlDict ):
 
         if '\\x' in line: # Remove cross-references completely (why???)
             #line = line.replace('\\x ','<RX>').replace('\\x*','<Rx>')
-            line = removeUSFMCharacterField( 'x', line, closed_flag=True ).lstrip() # Remove superfluous spaces
+            line = remove_usfm_character_field( 'x', line, closed_flag=True ).lstrip() # Remove superfluous spaces
 
         if '\\f' in line: # Handle footnotes
-            line = removeUSFMCharacterField( 'f', line, closed_flag=True ).lstrip() # Remove superfluous spaces
+            line = remove_usfm_character_field( 'f', line, closed_flag=True ).lstrip() # Remove superfluous spaces
             #for marker in ( 'fr', 'fm', ): # simply remove these whole field
-                #line = removeUSFMCharacterField( marker, line, closed_flag=None )
+                #line = remove_usfm_character_field( marker, line, closed_flag=None )
             #for marker in ( 'fq', 'fqa', 'fl', 'fk', ): # italicise these ones
                 #while '\\'+marker+' ' in line:
                     ##dPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, C, V, marker, line.count('\\'+marker+' '), line )
@@ -651,9 +668,9 @@ def createESwordCommentaryModule( self, outputFolder, controlDict ):
                 ##assert False, "We want to stop here"
 
         if '\\' in line: # Handle character formatting fields
-            line = removeUSFMCharacterField( 'fig', line, closed_flag=True ) # Remove figures
-            line = removeUSFMCharacterField( 'str', line, closed_flag=True ) # Remove Strong's numbers
-            line = removeUSFMCharacterField( 'sem', line, closed_flag=True ) # Remove semantic tagging
+            line = remove_usfm_character_field( 'fig', line, closed_flag=True ) # Remove figures
+            line = remove_usfm_character_field( 'str', line, closed_flag=True ) # Remove Strong's numbers
+            line = remove_usfm_character_field( 'sem', line, closed_flag=True ) # Remove semantic tagging
             replacements = (
                 ( ('add',), '~^~cf15~^~i','~^~cf0~^~i0' ),
                 ( ('qt',), '<FO>','<Fo>' ),
@@ -664,7 +681,7 @@ def createESwordCommentaryModule( self, outputFolder, controlDict ):
                 ( ('it','rq','bk','dc','qs','sig','sls','tl',), '<i>','</i>' ),
                 ( ('nd','sc',), '<font size=-1>','</font>' ),
                 )
-            line = replaceUSFMCharacterFields( replacements, line ) # This function also handles USFM 2.4 nested character markers
+            line = replace_usfm_character_fields( replacements, line ) # This function also handles USFM 2.4 nested character markers
             if '\\nd' not in originalLine and '\\+nd' not in originalLine:
                 line = line.replace('LORD', '<font size=-1>LORD</font>')
                 #line = line.replace('\\nd ','<font size=-1>',).replace('\\nd*','</font>').replace('\\+nd ','<font size=-1>',).replace('\\+nd*','</font>')
@@ -685,7 +702,8 @@ def createESwordCommentaryModule( self, outputFolder, controlDict ):
         # Check what's left at the end
         if '\\' in line:
             logging.warning( f"toESword.adjustLine: Doesn't handle formatted line yet: {BBB} {C}:{V} {line!r}" )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"toESword.adjustLine: Doesn't handle formatted line yet: {BBB} {C}:{V} {line!r}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"toESword.adjustLine: Doesn't handle formatted line yet: {BBB} {C}:{V} {line!r}" )
             if DEBUGGING_THIS_MODULE: assert False, "We want to stop here"
         return line
     # end of toESword.adjustLine
@@ -730,7 +748,8 @@ def createESwordCommentaryModule( self, outputFolder, controlDict ):
         # Check what's left at the end
         if '\\' in composedLine:
             logging.warning( f"toESword.handleIntroduction: Doesn't handle formatted line yet: {BBB} {composedLine!r}" )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"toESword.handleIntroduction: Doesn't handle formatted line yet: {BBB} {composedLine!r}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"toESword.handleIntroduction: Doesn't handle formatted line yet: {BBB} {composedLine!r}" )
             if DEBUGGING_THIS_MODULE: assert False, "We want to stop here"
         return composedLine.replace( '~^~', '\\' )
     # end of toESword.handleIntroduction
@@ -778,7 +797,8 @@ def createESwordCommentaryModule( self, outputFolder, controlDict ):
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "toESword.composeVerseLine:", BBB, C, V, marker, text )
             if marker in theWordIgnoredIntroMarkers:
                 logging.error( f"toESword.composeVerseLine: Found unexpected {marker} introduction marker at {BBB} {C}:{V} {repr(text)}" )
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "toESword.composeVerseLine:", BBB, C, V, marker, text, verseData )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "toESword.composeVerseLine:", BBB, C, V, marker, text, verseData )
                 if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE:
                     assert marker not in theWordIgnoredIntroMarkers # these markers shouldn't occur in verses
 
@@ -862,7 +882,8 @@ def createESwordCommentaryModule( self, outputFolder, controlDict ):
                 elif lastMarker == 'm': composedLine += '~^~line ' # We had a continuation paragraph
                 elif lastMarker in BibleOrgSysGlobals.USFMParagraphMarkers: pass # Did we need to do anything here???
                 elif lastMarker != 'v':
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, C, V, marker, lastMarker, verseData )
+                    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, C, V, marker, lastMarker, verseData )
                     composedLine += adjustLine(BBB,C,V, text )
                     if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: assert False, "We want to stop here" # This should never happen -- probably a b marker with text
                 #if ourGlobals['pi1']: composedLine += '<PI>'
@@ -888,7 +909,8 @@ def createESwordCommentaryModule( self, outputFolder, controlDict ):
         # Check what's left at the end (but hide e-Sword \line markers first)
         if '\\' in composedLine.replace( '\\line ', '' ):
             logging.warning( f"toESword.composeVerseLine: Doesn't handle formatted line yet: {BBB} {C}:{V} {composedLine!r}" )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"toESword.composeVerseLine: Doesn't handle formatted line yet: {BBB} {C}:{V} {composedLine!r}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"toESword.composeVerseLine: Doesn't handle formatted line yet: {BBB} {C}:{V} {composedLine!r}" )
             if DEBUGGING_THIS_MODULE: assert False, "We want to stop here"
         return composedLine.replace( '~^~', '\\' ).rstrip()
     # end of toESword.composeVerseLine
@@ -898,7 +920,8 @@ def createESwordCommentaryModule( self, outputFolder, controlDict ):
         """
         Writes a book to the e-Sword sqlObject file.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"toESword.writeESwordCommentaryBook( {sqlObject}, {BBB}, {ourGlobals}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, f"toESword.writeESwordCommentaryBook( {sqlObject}, {BBB}, {ourGlobals}" )
         assert False, "We want to stop here" # Not written yet
 
         nonlocal lineCount
@@ -986,7 +1009,8 @@ def createESwordCommentaryModule( self, outputFolder, controlDict ):
         booksExpected, textLineCountExpected, checkTotals = 66, 31102, theWordBookLines
     extension = '.bblx'
 
-    vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Exporting to e-Sword format…" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Exporting to e-Sword format…" )
     mySettings = {}
     mySettings['unhandledMarkers'] = set()
     handledBooks = []
@@ -1000,7 +1024,8 @@ def createESwordCommentaryModule( self, outputFolder, controlDict ):
     if not filename.endswith( extension ): filename += extension # Make sure that we have the right file extension
     filepath = os.path.join( outputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
     if os.path.exists( filepath ): os.remove( filepath )
-    vPrint( 'Info', DEBUGGING_THIS_MODULE, '  writeESwordCommentaryBook: ' + f"Writing {filepath!r}…" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, '  writeESwordCommentaryBook: ' + f"Writing {filepath!r}…" )
     conn = sqlite3.connect( filepath )
     cursor = conn.cursor()
 
@@ -1068,16 +1093,19 @@ def createESwordCommentaryModule( self, outputFolder, controlDict ):
 
     if mySettings['unhandledMarkers']:
         logging.warning( f"BibleWriter.toESword: Unhandled markers were {mySettings['unhandledMarkers']}" )
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  " + f"WARNING: Unhandled toESword markers were {mySettings['unhandledMarkers']}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  " + f"WARNING: Unhandled toESword markers were {mySettings['unhandledMarkers']}" )
     unhandledBooks = []
     for BBB in self.getBookList():
         if BBB not in handledBooks: unhandledBooks.append( BBB )
     if unhandledBooks:
         logging.warning( f"toESword: Unhandled books were {unhandledBooks}" )
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  " + f"WARNING: Unhandled toESword books were {unhandledBooks}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  " + f"WARNING: Unhandled toESword books were {unhandledBooks}" )
 
     # Now create a zipped version
-    vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Zipping {filename} e-Sword file…" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Zipping {filename} e-Sword file…" )
     zf = zipfile.ZipFile( filepath+'.zip', 'w', compression=zipfile.ZIP_DEFLATED )
     zf.write( filepath, filename )
     zf.close()
@@ -1098,12 +1126,15 @@ def testeSwC( indexString, eSwCfolder, eSwCfilename ):
     #testFolder = Path( '/srv/Bibles/e-Sword modules/' ) # Must be the same as below
 
     #TUBfolder = os.path.join( eSwCfolder, eSwCfilename )
-    vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Demonstrating the e-Sword Bible class {indexString}…" )
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Test folder is {eSwCfolder!r} {eSwCfilename!r}" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Demonstrating the e-Sword Bible class {indexString}…" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Test folder is {eSwCfolder!r} {eSwCfilename!r}" )
     eSwC = ESwordCommentary( eSwCfolder, eSwCfilename )
     eSwC.preload()
     #eSwC.load() # Load and process the file
-    vPrint( 'Normal', DEBUGGING_THIS_MODULE, "testeSwC1:", eSwC ) # Just print a summary
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "testeSwC1:", eSwC ) # Just print a summary
     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, eSwC.suppliedMetadata['e-Sword-Commentary'] )
     if eSwC is not None:
         if BibleOrgSysGlobals.strictCheckingFlag: eSwC.check()
@@ -1119,9 +1150,11 @@ def testeSwC( indexString, eSwCfolder, eSwCfilename ):
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, svk, ob.getVerseDataList( reference ) )
             try:
                 shortText, verseText = svk.getShortText(), eSwC.getVerseText( svk )
-                vPrint( 'Normal', DEBUGGING_THIS_MODULE, reference, shortText, verseText )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                    vPrint( 'Normal', DEBUGGING_THIS_MODULE, reference, shortText, verseText )
             except KeyError:
-                vPrint( 'Normal', DEBUGGING_THIS_MODULE, reference, "not found!!!" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                    vPrint( 'Normal', DEBUGGING_THIS_MODULE, reference, "not found!!!" )
 
         eSwC.discover() # Just to test this
 
@@ -1130,11 +1163,13 @@ def testeSwC( indexString, eSwCfolder, eSwCfilename ):
             #doaResults = eSwC.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
             if BibleOrgSysGlobals.strictCheckingFlag: # Now compare the original and the derived USX XML files
                 outputFolder = "BOSOutputFiles/BOS_e-Sword_Reexport/"
-                vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nComparing original and re-exported e-Sword files…" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                    vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nComparing original and re-exported e-Sword files…" )
                 result = BibleOrgSysGlobals.fileCompare( eSwCfilename, eSwCfilename, eSwCfolder, outputFolder )
                 if BibleOrgSysGlobals.debugFlag:
                     if not result: assert False, "We want to stop here"
-    vPrint( 'Info', DEBUGGING_THIS_MODULE, "testeSwC2:", eSwC ) # Just print a summary
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, "testeSwC2:", eSwC ) # Just print a summary
 # end of testeSwC
 
 
@@ -1147,17 +1182,21 @@ def briefDemo() -> None:
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder
         testFolder = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'e-SwordTest/' )
         result1 = ESwordCommentaryFileCheck( testFolder )
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "TestA1", result1 )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "TestA1", result1 )
         result2 = ESwordCommentaryFileCheck( testFolder, autoLoad=True )
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "TestA2", result2 )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "TestA2", result2 )
         result3 = ESwordCommentaryFileCheck( testFolder, autoLoadBooks=True )
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "TestA3", result3 )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "TestA3", result3 )
 
 
     if 1: # individual module
         testFolder = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'e-SwordTest/' )
         filename = 'comentario_exegetico_al_texto_griego_nt_samuel_perez_millos.cmti'
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\neSwC B/ Trying {filename}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\neSwC B/ Trying {filename}" )
         testeSwC( 'B', testFolder, filename )
 
 
@@ -1168,7 +1207,8 @@ def briefDemo() -> None:
             indexString = 'C' + str( j+1 )
             fullname = name + '.cmtx'
             if os.path.exists( os.path.join( testFolder, fullname ) ):
-                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\neSw {indexString}/ Trying {fullname}" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                    vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\neSw {indexString}/ Trying {fullname}" )
                 testeSwC( indexString, testFolder, fullname )
                 break
             else:
@@ -1182,7 +1222,8 @@ def briefDemo() -> None:
         for j, name in enumerate( names):
             indexString = 'D' + str( j+1 )
             fullname = name + '.cmtx'
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\neSw {indexString}/ Trying {fullname}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\neSw {indexString}/ Trying {fullname}" )
             testeSwC( indexString, testFolder, fullname )
             break
 
@@ -1199,7 +1240,8 @@ def briefDemo() -> None:
                 break
 
         if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nTrying all {len(foundFolders)} discovered modules…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nTrying all {len(foundFolders)} discovered modules…" )
             parameters = [('G'+str(j+1),testFolder,filename) for j,filename in enumerate(sorted(foundFiles))]
             BibleOrgSysGlobals.alreadyMultiprocessing = True
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
@@ -1209,7 +1251,8 @@ def briefDemo() -> None:
         else: # Just single threaded
             for j, someFile in enumerate( sorted( foundFiles ) ):
                 indexString = 'G' + str( j+1 )
-                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\neSw {indexString}/ Trying {someFile}" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                    vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\neSw {indexString}/ Trying {someFile}" )
                 #myTestFolder = os.path.join( testFolder, someFolder+'/' )
                 testeSwC( indexString, testFolder, someFile )
                 #break # only do the first one…temp
@@ -1224,17 +1267,21 @@ def fullDemo() -> None:
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder
         testFolder = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'e-SwordTest/' )
         result1 = ESwordCommentaryFileCheck( testFolder )
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "TestA1", result1 )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "TestA1", result1 )
         result2 = ESwordCommentaryFileCheck( testFolder, autoLoad=True )
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "TestA2", result2 )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "TestA2", result2 )
         result3 = ESwordCommentaryFileCheck( testFolder, autoLoadBooks=True )
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "TestA3", result3 )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "TestA3", result3 )
 
 
     if 1: # individual module
         testFolder = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'e-SwordTest/' )
         filename = 'comentario_exegetico_al_texto_griego_nt_samuel_perez_millos.cmti'
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\neSwC B/ Trying {filename}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\neSwC B/ Trying {filename}" )
         testeSwC( 'B', testFolder, filename )
 
 
@@ -1245,7 +1292,8 @@ def fullDemo() -> None:
             indexString = 'C' + str( j+1 )
             fullname = name + '.cmtx'
             if os.path.exists( os.path.join( testFolder, fullname ) ):
-                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\neSw {indexString}/ Trying {fullname}" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                    vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\neSw {indexString}/ Trying {fullname}" )
                 testeSwC( indexString, testFolder, fullname )
             else:
                 logging.error( f"{indexString} File '{fullname}' doesn't exist in folder '{testFolder}'" )
@@ -1258,7 +1306,8 @@ def fullDemo() -> None:
         for j, name in enumerate( names):
             indexString = 'D' + str( j+1 )
             fullname = name + '.cmtx'
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\neSw {indexString}/ Trying {fullname}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\neSw {indexString}/ Trying {fullname}" )
             testeSwC( indexString, testFolder, fullname )
 
 
@@ -1311,7 +1360,8 @@ def fullDemo() -> None:
             elif os.path.isfile( somepath ) and somepath.endswith('.cmtx'): foundFiles.append( something )
 
         if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nTrying all {len(foundFolders)} discovered modules…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nTrying all {len(foundFolders)} discovered modules…" )
             parameters = [('G'+str(j+1),testFolder,filename) for j,filename in enumerate(sorted(foundFiles))]
             BibleOrgSysGlobals.alreadyMultiprocessing = True
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
@@ -1321,7 +1371,8 @@ def fullDemo() -> None:
         else: # Just single threaded
             for j, someFile in enumerate( sorted( foundFiles ) ):
                 indexString = 'G' + str( j+1 )
-                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\neSw {indexString}/ Trying {someFile}" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                    vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\neSw {indexString}/ Trying {someFile}" )
                 #myTestFolder = os.path.join( testFolder, someFolder+'/' )
                 testeSwC( indexString, testFolder, someFile )
                 #break # only do the first one…temp

@@ -19,6 +19,7 @@ CHANGELOG:
     2024-06-11 Fix bug with XML tail duplication after <char> field inside <note>
     2026-05-26 Handle Rust libraries
     2026-06-25 Better handling of NET XNL fields
+    2026-10-25 Import enhanced Paratext USX while retaining word-group links
 """
 import logging
 import os
@@ -29,11 +30,12 @@ from xml.etree.ElementTree import ElementTree, ParseError
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Bible import Bible, BibleBook
+from BibleOrgSys.Formats.EnhancedUSX import normaliseEnhancedUSX
 import bos_books_codes_py
 import usfm_markers_py
 
 
-LAST_MODIFIED_DATE = '2026-06-25' # by RJH
+LAST_MODIFIED_DATE = '2026-10-25' # by RJH
 SHORT_PROGRAM_NAME = "USXXMLBibleBookHandler"
 PROGRAM_NAME = "USX XML Bible book handler"
 PROGRAM_VERSION = '0.31'
@@ -68,7 +70,8 @@ class USXXMLBibleBook( BibleBook ):
         """
         Load a single source USX XML file and extract the information.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"load( {filename}, {folder}, {encoding} )" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, f"load( {filename}, {folder}, {encoding} )" )
 
         C, V = '-1', '-1' # So first/id line starts at -1:0
         loadErrors:list[str] = []
@@ -78,15 +81,15 @@ class USXXMLBibleBook( BibleBook ):
             """
             """
             nonlocal C, V
-            vPrint( 'Never', DEBUGGING_THIS_MODULE, f"USXXMLBibleBook.loadChapterNumberField( {chapterNumberElement.tag}, {chapterNumberElement} @ {self.BBB} {C}:{V} )" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 5:
+                vPrint( 'Never', DEBUGGING_THIS_MODULE, f"USXXMLBibleBook.loadChapterNumberField( {chapterNumberElement.tag}, {chapterNumberElement} @ {self.BBB} {C}:{V} )" )
             assert chapterNumberElement.tag == 'chapter'
 
             BibleOrgSysGlobals.checkXMLNoText( chapterNumberElement, chapterNumberLocation )
             BibleOrgSysGlobals.checkXMLNoTail( chapterNumberElement, chapterNumberLocation )
             BibleOrgSysGlobals.checkXMLNoSubelements( chapterNumberElement, chapterNumberLocation )
 
-            if ( version is None or version.startswith('3.') ) \
-            and 'eid' in chapterNumberElement.keys():
+            if 'eid' in chapterNumberElement.keys():
                 # It's a chapter end marker
                 BibleOrgSysGlobals.checkXMLNoTail( chapterNumberElement, chapterNumberLocation )
                 chapterEndId = None
@@ -103,6 +106,7 @@ class USXXMLBibleBook( BibleBook ):
             else: # it's a chapter start marker
                 V = '0'
                 # Process the attributes
+                C = chapterNumberElement.get('number', C)
                 chapterStyle = pubNumber = chapterStartId = None
                 for attrib,value in chapterNumberElement.items():
                     if attrib=='number': C = value
@@ -136,14 +140,14 @@ class USXXMLBibleBook( BibleBook ):
             Has no return value -- updates the data fields directly.
             """
             nonlocal V
-            vPrint( 'Never', DEBUGGING_THIS_MODULE, f"USXXMLBibleBook.loadVerseNumberField( {verseNumberElement.tag}, {verseNumberLocation} @ {self.BBB} {C}:{V} )" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 5:
+                vPrint( 'Never', DEBUGGING_THIS_MODULE, f"USXXMLBibleBook.loadVerseNumberField( {verseNumberElement.tag}, {verseNumberLocation} @ {self.BBB} {C}:{V} )" )
             assert verseNumberElement.tag == 'verse'
 
             BibleOrgSysGlobals.checkXMLNoText( verseNumberElement, verseNumberLocation )
             BibleOrgSysGlobals.checkXMLNoSubelements( verseNumberElement, verseNumberLocation )
 
-            if ( version is None or version.startswith('3.') ) \
-            and 'eid' in verseNumberElement.keys():
+            if 'eid' in verseNumberElement.keys():
                 # It's a verse end marker
                 BibleOrgSysGlobals.checkXMLNoTail( verseNumberElement, verseNumberLocation )
                 verseEndId = None
@@ -161,6 +165,7 @@ class USXXMLBibleBook( BibleBook ):
 
             else: # it's a verse start marker
                 # Process the attributes first
+                V = verseNumberElement.get('number', V)
                 verseStyle = altNumber = pubNumber = verseStartId = None
                 for attrib,value in verseNumberElement.items():
                     if attrib=='number': V = value
@@ -203,7 +208,8 @@ class USXXMLBibleBook( BibleBook ):
 
             Results the result as a string (to be appended to whatever came before)
             """
-            fnPrint( DEBUGGING_THIS_MODULE, f"loadCharField( {charElement.tag=}, {charLocation=} @ {self.BBB}_{C}:{V} )" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+                fnPrint( DEBUGGING_THIS_MODULE, f"loadCharField( {charElement.tag=}, {charLocation=} @ {self.BBB}_{C}:{V} )" )
             assert charElement.tag == 'char'
 
             # Process the attributes first
@@ -297,7 +303,8 @@ class USXXMLBibleBook( BibleBook ):
                 assert '\n' not in charStyle
                 assert '\n' not in charTail
             charLine = f'{charLine}{charTail}'
-            vPrint( 'Never', DEBUGGING_THIS_MODULE, f"USX.loadCharField: {self.BBB}_{C}:{V} {charStyle=} {charLine=}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 5:
+                vPrint( 'Never', DEBUGGING_THIS_MODULE, f"USX.loadCharField: {self.BBB}_{C}:{V} {charStyle=} {charLine=}" )
             assert '\n' not in charLine
             # assert ' \\bk*' not in charLine
             return charLine
@@ -312,7 +319,8 @@ class USXXMLBibleBook( BibleBook ):
 
             Results the result as a string (to be appended to whatever came before)
             """
-            fnPrint( DEBUGGING_THIS_MODULE, f"loadNoteField( {noteElement.tag}, {noteLocation} @ {self.workName} {self.BBB}_{C}:{V} )" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+                fnPrint( DEBUGGING_THIS_MODULE, f"loadNoteField( {noteElement.tag}, {noteLocation} @ {self.workName} {self.BBB}_{C}:{V} )" )
             # dPrint( 'Never', DEBUGGING_THIS_MODULE, f"  {BibleOrgSysGlobals.elementStr( noteElement )=}" )
             assert noteElement.tag == 'note'
 
@@ -405,7 +413,8 @@ class USXXMLBibleBook( BibleBook ):
                 if noteTail and noteTail[-1] in ('\n','\t'): noteTail = noteTail.rstrip()
                 noteField += noteTail
 
-            vPrint( 'Never', DEBUGGING_THIS_MODULE, f"  loadNoteField returning noteField: {noteField!r}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 5:
+                vPrint( 'Never', DEBUGGING_THIS_MODULE, f"  loadNoteField returning noteField: {noteField!r}" )
             if self.doExtraChecking: assert '\n' not in noteField
             noteField = noteField.replace( ' \\f*', '\\f*' ) # TODO: WHY!!!
             return noteField.replace( '  ', ' ' ) # TODO: Why do we get doubled spaces before \\ft fields in footnotes and \\xt fields in cross-references?
@@ -424,7 +433,8 @@ class USXXMLBibleBook( BibleBook ):
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"USXXMLBibleBook.loadParagraph( {paragraphXML} {paragraphlocation} )" )
 
             # Process the attributes first
-            paragraphStyle = paragraphVerseId = None
+            paragraphStyle = paragraphXML.get('style')
+            paragraphVerseId = None
             for attrib,value in paragraphXML.items():
                 if attrib=='style': paragraphStyle = value # This is basically the USFM marker name
                 elif attrib=='vid':
@@ -432,8 +442,13 @@ class USXXMLBibleBook( BibleBook ):
                     assert paragraphVerseId[:3] in filename
                     assert paragraphVerseId[3] == ' '
                     colonIx = paragraphVerseId.index( ':' )
-                    assert paragraphVerseId[4:colonIx] == C
-                    assert paragraphVerseId[colonIx+1:] == V
+                    if paragraphStyle and paragraphStyle.startswith(('s', 'ms', 'mt', 'imt', 'is', 'toc')):
+                        # A heading can retain the preceding verse's vid even
+                        # after a chapter milestone (e.g. NIV84+ 1CH 26).
+                        pass
+                    else:
+                        assert paragraphVerseId[4:colonIx] == C
+                        assert paragraphVerseId[colonIx+1:] == V
                 else:
                     logging.error( f"CH46 Unprocessed {attrib} attribute ({value}) in {paragraphlocation}" )
                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
@@ -566,6 +581,8 @@ class USXXMLBibleBook( BibleBook ):
             logging.critical( f"Loader parse error in xml file {filename}: {sys.exc_info()[0]} {err}" )
             loadErrors.append( f"Loader parse error in xml file {filename}: {sys.exc_info()[0]} {err}" )
             self.addPriorityError( 100, C, V, f"Loader parse error in xml file {filename}: {err}" )
+            raise ValueError(f'Cannot parse USX source {self.sourceFilepath}: {err}') from err
+        self.enhancedWordGroups = normaliseEnhancedUSX(self.XMLTree, self.BBB)
         if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE:
             assert self.XMLTree # Fail here if we didn't load anything at all
 
@@ -587,7 +604,8 @@ class USXXMLBibleBook( BibleBook ):
             if version not in ( None, '2.0','2.5','2.6','3.0' ):
                 logging.critical( f"Not sure if we can handle v{version} USX files" )
                 if DEBUGGING_THIS_MODULE: assert False, "We want to stop here"
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Parsing USX v{version} file for {self.workName} {self.BBB}…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Parsing USX v{version} file for {self.workName} {self.BBB}…" )
 
             # Now process the data
             for element in self.XMLTree:
@@ -617,6 +635,8 @@ class USXXMLBibleBook( BibleBook ):
                     loadChapterNumberField( element, location )
                 elif element.tag == 'verse': # milestone (not a container in USX)
                     loadVerseNumberField( element, location ) # Not in a paragraph!
+                elif element.tag == 'char': # Enhanced Hebrew can have top-level word groups.
+                    self.appendToLastLine(loadCharField(element, location))
                 elif element.tag == 'para':
                     if C == '-1': V = str( int(V) + 1 ) # first/id line will be -1:0
                     BibleOrgSysGlobals.checkXMLNoTail( element, location )
@@ -756,7 +776,9 @@ class USXXMLBibleBook( BibleBook ):
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "NOTE", BibleOrgSysGlobals.elementStr( element ) )
                     processedNoteField = loadNoteField( element, location )
                     if BibleOrgSysGlobals.strictCheckingFlag: assert '\n' not in processedNoteField
-                    self.appendToLastLine( processedNoteField )
+                    # A note following a chapter must not turn its address into
+                    # e.g. "119\\f" (ESV Psalms).
+                    self.appendToLastLine( (' ' if V == '0' else '') + processedNoteField )
                 else:
                     logging.error( f"DV60 Unprocessed {element.tag} element after {self.BBB} {C}:{V} in {location}" )
                     self.addPriorityError( 1, C, V, f"Unprocessed {element.tag} element" )
@@ -785,8 +807,10 @@ def briefDemo() -> None:
     name, testFolder = "Matigsalug", Path( '/mnt/SSDs/Work/VirtualBox_Shared_Folder/PT7.5 Exports/USX/MBTV/' ) # You can put your USX test folder here
     name2, testFolder2 = "Matigsalug", Path( '/mnt/HDs/Matigsalug/Bible/MBTV/' ) # You can put your USFM test folder here (for comparing the USX with)
     if os.access( testFolder, os.R_OK ):
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Scanning USX  {name} from {testFolder}…" )
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Scanning USFM {name} from {testFolder2}…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Scanning USX  {name} from {testFolder}…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Scanning USFM {name} from {testFolder2}…" )
         fileList = USXFilenames.USXFilenames( testFolder ).getConfirmedFilenameTuples()
         for BBB,filename in fileList:
             if BBB in (
@@ -797,21 +821,29 @@ def briefDemo() -> None:
                     'ROM','CO1','CO2','GAL','EPH','PHP','COL','TH1','TH2','TI1','TI2','TIT','PHM',
                     'HEB','JAM','PE1','PE2','JN1','JN2','JN3','JDE','REV'
                     ):
-                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Loading USX {BBB} from {filename}…" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                    vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Loading USX {BBB} from {filename}…" )
                 UxBB = USXXMLBibleBook( name, BBB )
                 UxBB.load( filename, testFolder )
-                vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  ID is {UxBB.getField( 'id' )!r}" )
-                vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Header is {UxBB.getField( 'h' )!r}" )
-                vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Main titles are {UxBB.getField( 'mt1' )!r} and {UxBB.getField( 'mt2' )!r}" )
-                vPrint( 'Info', DEBUGGING_THIS_MODULE, UxBB )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                    vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  ID is {UxBB.getField( 'id' )!r}" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                    vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Header is {UxBB.getField( 'h' )!r}" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                    vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Main titles are {UxBB.getField( 'mt1' )!r} and {UxBB.getField( 'mt2' )!r}" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                    vPrint( 'Info', DEBUGGING_THIS_MODULE, UxBB )
                 UxBB.validateMarkers()
                 UxBBVersification = UxBB.getVersification()
-                vPrint( 'Info', DEBUGGING_THIS_MODULE, UxBBVersification )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                    vPrint( 'Info', DEBUGGING_THIS_MODULE, UxBBVersification )
                 UxBBAddedUnits = UxBB.getAddedUnits()
-                vPrint( 'Info', DEBUGGING_THIS_MODULE, UxBBAddedUnits )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                    vPrint( 'Info', DEBUGGING_THIS_MODULE, UxBBAddedUnits )
                 UxBB.checkBook()
                 UxBBErrors = UxBB.getCheckResults()
-                vPrint( 'Info', DEBUGGING_THIS_MODULE, UxBBErrors )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                    vPrint( 'Info', DEBUGGING_THIS_MODULE, UxBBErrors )
                 break
 
                 # # Test our USX code by comparing with the original USFM books
@@ -904,8 +936,10 @@ def fullDemo() -> None:
     # name, testFolder = "Matigsalug", Path( '/mnt/SSDs/Work/VirtualBox_Shared_Folder/PT7.5 Exports/USX/MBTV/' ) # You can put your USX test folder here
     # name2, testFolder2 = "Matigsalug", Path( '/mnt/HDs/Matigsalug/Bible/MBTV/' ) # You can put your USFM test folder here (for comparing the USX with)
     if os.access( testFolder, os.R_OK ):
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Scanning USX  {name} from {testFolder}…" )
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Scanning USFM {name} from {testFolder2}…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Scanning USX  {name} from {testFolder}…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Scanning USFM {name} from {testFolder2}…" )
         fileList = USXFilenames.USXFilenames( testFolder ).getConfirmedFilenameTuples()
         for BBB,filename in fileList:
             if BBB in (
@@ -920,21 +954,29 @@ def fullDemo() -> None:
                     'ROM','CO1','CO2','GAL','EPH','PHP','COL','TH1','TH2','TI1','TI2','TIT','PHM',
                     'HEB','JAM','PE1','PE2','JN1','JN2','JN3','JDE','REV'
                     ):
-                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Loading USX {BBB} from {filename}…" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                    vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Loading USX {BBB} from {filename}…" )
                 UxBB = USXXMLBibleBook( name, BBB )
                 UxBB.load( filename, testFolder )
-                vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  ID is {UxBB.getField( 'id' )!r}" )
-                vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Header is {UxBB.getField( 'h' )!r}" )
-                vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Main titles are {UxBB.getField( 'mt1' )!r} and {UxBB.getField( 'mt2' )!r}" )
-                vPrint( 'Info', DEBUGGING_THIS_MODULE, UxBB )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                    vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  ID is {UxBB.getField( 'id' )!r}" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                    vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Header is {UxBB.getField( 'h' )!r}" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                    vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Main titles are {UxBB.getField( 'mt1' )!r} and {UxBB.getField( 'mt2' )!r}" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                    vPrint( 'Info', DEBUGGING_THIS_MODULE, UxBB )
                 UxBB.validateMarkers()
                 UxBBVersification = UxBB.getVersification()
-                vPrint( 'Info', DEBUGGING_THIS_MODULE, UxBBVersification )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                    vPrint( 'Info', DEBUGGING_THIS_MODULE, UxBBVersification )
                 UxBBAddedUnits = UxBB.getAddedUnits()
-                vPrint( 'Info', DEBUGGING_THIS_MODULE, UxBBAddedUnits )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                    vPrint( 'Info', DEBUGGING_THIS_MODULE, UxBBAddedUnits )
                 UxBB.checkBook()
                 UxBBErrors = UxBB.getCheckResults()
-                vPrint( 'Info', DEBUGGING_THIS_MODULE, UxBBErrors )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                    vPrint( 'Info', DEBUGGING_THIS_MODULE, UxBBErrors )
 
                 # Test our USX code by comparing with the original USFM books
                 if os.access( testFolder2, os.R_OK ):
@@ -944,37 +986,50 @@ def fullDemo() -> None:
                         if BBB2 == BBB:
                             found2 = True; break
                     if found2:
-                        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Loading USFM {BBB2} from {filename2}…" )
+                        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Loading USFM {BBB2} from {filename2}…" )
                         UBB = USFMBibleBook.USFMBibleBook( name, BBB )
                         UBB.load( filename2, testFolder2 )
                         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  ID is {UBB.getField( 'id' )!r}" )
                         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Header is {UBB.getField( 'h' )!r}" )
                         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Main titles are {UBB.getField( 'mt1' )!r} and {UBB.getField( 'mt2' )!r}" )
-                        vPrint( 'Info', DEBUGGING_THIS_MODULE, UBB )
+                        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                            vPrint( 'Info', DEBUGGING_THIS_MODULE, UBB )
                         UBB.validateMarkers()
 
                         if 0: # Display a given chunk of each book
                             ixFrom, ixTo = 400, 415 # Set the beginning and end ranges here
-                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nPRINTING COMPARISON" )
+                            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nPRINTING COMPARISON" )
                             if ixTo-ixFrom < 10: # Only a few -- display USX block then USFM block
-                                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"UsxBB[{ixFrom}-{ixTo}]" )
+                                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"UsxBB[{ixFrom}-{ixTo}]" )
                                 for ix in range( ixFrom, min( ixTo, len(UxBB._processedLines) ) ):
-                                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  {'   ' if UxBB._processedLines[ix]==UBB._processedLines[ix] else 'BAD'} {UxBB._processedLines[ix]}" )
-                                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"UsfBB[{ixFrom}-{ixTo}]" )
+                                    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  {'   ' if UxBB._processedLines[ix]==UBB._processedLines[ix] else 'BAD'} {UxBB._processedLines[ix]}" )
+                                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"UsfBB[{ixFrom}-{ixTo}]" )
                                 for ix in range( ixFrom, min( ixTo, len(UBB._processedLines) ) ):
-                                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  {'   ' if UxBB._processedLines[ix]==UBB._processedLines[ix] else 'BAD'} {UBB._processedLines[ix]}" )
+                                    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  {'   ' if UxBB._processedLines[ix]==UBB._processedLines[ix] else 'BAD'} {UBB._processedLines[ix]}" )
                             else: # Too many -- display USX then USFM lines interleaved
                                 for ix in range( ixFrom, ixTo ):
                                     try:
-                                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"UsxBB[{ix}]: {'   ' if UxBB._processedLines[ix]==UBB._processedLines[ix] else 'BAD'} {UxBB._processedLines[ix]}" )
-                                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"UsfBB[{ix}]: {'   ' if UxBB._processedLines[ix]==UBB._processedLines[ix] else 'BAD'} {UBB._processedLines[ix]}" )
+                                        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"UsxBB[{ix}]: {'   ' if UxBB._processedLines[ix]==UBB._processedLines[ix] else 'BAD'} {UxBB._processedLines[ix]}" )
+                                        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"UsfBB[{ix}]: {'   ' if UxBB._processedLines[ix]==UBB._processedLines[ix] else 'BAD'} {UBB._processedLines[ix]}" )
                                         if UxBB._processedLines[ix].extras:
-                                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"UsxBB[{ix}]: {'   ' if UxBB._processedLines[ix].extras==UBB._processedLines[ix].extras else 'BAD'} {UxBB._processedLines[ix].extras}" )
+                                            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                                                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"UsxBB[{ix}]: {'   ' if UxBB._processedLines[ix].extras==UBB._processedLines[ix].extras else 'BAD'} {UxBB._processedLines[ix].extras}" )
                                         if UBB._processedLines[ix].extras:
-                                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"UsfBB[{ix}]: {'   ' if UxBB._processedLines[ix].extras==UBB._processedLines[ix].extras else 'BAD'} {UBB._processedLines[ix].extras}" )
+                                            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                                                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"UsfBB[{ix}]: {'   ' if UxBB._processedLines[ix].extras==UBB._processedLines[ix].extras else 'BAD'} {UBB._processedLines[ix].extras}" )
                                     except IndexError:
-                                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"     [{ix}] Oops Usx has {len(UxBB._processedLines)} entries, Usfm has {len(UBB._processedLines)}." )
-                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "END COMPARISON\n" )
+                                        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"     [{ix}] Oops Usx has {len(UxBB._processedLines)} entries, Usfm has {len(UBB._processedLines)}." )
+                            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "END COMPARISON\n" )
 
                         # Now compare the USX and USFM projects
                         mismatchCount = 0
@@ -982,17 +1037,26 @@ def fullDemo() -> None:
                         for i in range(0, max( UxL, UL ) ):
                             if i<UxL and i<UL:
                                 if UxBB._processedLines[i] != UBB._processedLines[i]:
-                                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n{BBB} line {i} not equal:\n  USX  {UxBB._processedLines[i].getCleanText()}({UxBB._processedLines[i].getMarker()}) \n  USFM {UBB._processedLines[i].getCleanText()}({UBB._processedLines[i].getMarker()})" )
-                                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "usx ", repr(UxBB._processedLines[i]) )
-                                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "usx ", i, len(UxBB._processedLines[i]), UxBB._processedLines[i].getMarker(), UxBB._processedLines[i].getOriginalText() )
-                                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "usfm", repr(UBB._processedLines[i]) )
-                                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "usfm", i, len(UBB._processedLines[i]), UBB._processedLines[i].getMarker() )
+                                    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n{BBB} line {i} not equal:\n  USX  {UxBB._processedLines[i].getCleanText()}({UxBB._processedLines[i].getMarker()}) \n  USFM {UBB._processedLines[i].getCleanText()}({UBB._processedLines[i].getMarker()})" )
+                                    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "usx ", repr(UxBB._processedLines[i]) )
+                                    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "usx ", i, len(UxBB._processedLines[i]), UxBB._processedLines[i].getMarker(), UxBB._processedLines[i].getOriginalText() )
+                                    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "usfm", repr(UBB._processedLines[i]) )
+                                    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "usfm", i, len(UBB._processedLines[i]), UBB._processedLines[i].getMarker() )
                                     if UxBB._processedLines[i].getAdjustedText() != UBB._processedLines[i].getAdjustedText():
-                                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"   UsxBB[adj]: {getShortVersion( UxBB._processedLines[i].getAdjustedText() )!r}" )
-                                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"   UsfBB[adj]: {getShortVersion( UBB._processedLines[i].getAdjustedText() )!r}" )
+                                        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"   UsxBB[adj]: {getShortVersion( UxBB._processedLines[i].getAdjustedText() )!r}" )
+                                        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"   UsfBB[adj]: {getShortVersion( UBB._processedLines[i].getAdjustedText() )!r}" )
                                     if (UxBB._processedLines[i].getCleanText() or UBB._processedLines[i].getCleanText()) and UxBB._processedLines[i].getCleanText()!=UBB._processedLines[i].getCleanText():
-                                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"   UdsBB[clT]: {getShortVersion( UxBB._processedLines[i].getCleanText() )!r}" )
-                                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"   UsfBB[clT]: {getShortVersion( UBB._processedLines[i].getCleanText() )!r}" )
+                                        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"   UdsBB[clT]: {getShortVersion( UxBB._processedLines[i].getCleanText() )!r}" )
+                                        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"   UsfBB[clT]: {getShortVersion( UBB._processedLines[i].getCleanText() )!r}" )
                                     mismatchCount += 1
                             else: # one has more lines
                                 if BibleOrgSysGlobals.verbosityLevel > 0:

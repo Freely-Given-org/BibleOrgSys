@@ -28,7 +28,7 @@ from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Misc.singleton import singleton
 
 
-LAST_MODIFIED_DATE = '2022-07-12' # by RJH
+LAST_MODIFIED_DATE = '2026-10-06' # by RJH
 SHORT_PROGRAM_NAME = "GenericOnlineBible"
 PROGRAM_NAME = "Generic online Bible handler"
 PROGRAM_VERSION = '0.02'
@@ -55,7 +55,8 @@ class GenericOnlineBible:
                 1-3: Language code, e.g., ENG
                 4-6: Version code, e.g., ESV
         """
-        fnPrint( DEBUGGING_THIS_MODULE, "GenericOnlineBible.__init__()" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, "GenericOnlineBible.__init__()" )
 
         self.bookList = None
         self.books = {}
@@ -99,7 +100,8 @@ class GenericOnlineBible:
         """
         Given an index, return the book object (or raise an IndexError)
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"GenericOnlineBible.__getitem__( {keyIndex} )…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, f"GenericOnlineBible.__getitem__( {keyIndex} )…" )
 
         return list(self.books.items())[keyIndex][1] # element 0 is BBB, element 1 is the book object
     # end of GenericOnlineBible.__getitem__
@@ -134,10 +136,12 @@ class GenericOnlineBible:
         """
         Given a BCV key, add the data to the cache.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"GenericOnlineBible.cacheVerse( {key}, {verseData} )…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, f"GenericOnlineBible.cacheVerse( {key}, {verseData} )…" )
 
         if str(key) in self.cache:
-            vPrint( 'Never', DEBUGGING_THIS_MODULE, "  " + "Retrieved from cache" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 5:
+                vPrint( 'Never', DEBUGGING_THIS_MODULE, "  " + "Retrieved from cache" )
             self.cache.move_to_end( str(key) )
             cachedVerseData = self.cache[str(key)]
             if cachedVerseData != verseData:
@@ -154,10 +158,12 @@ class GenericOnlineBible:
 
         Return None if not.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"GenericOnlineBible.getCachedVerseDataList( {key} )…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, f"GenericOnlineBible.getCachedVerseDataList( {key} )…" )
 
         if str(key) in self.cache:
-            vPrint( 'Never', DEBUGGING_THIS_MODULE, "  " + "Retrieved from cache" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 5:
+                vPrint( 'Never', DEBUGGING_THIS_MODULE, "  " + "Retrieved from cache" )
             self.cache.move_to_end( str(key) )
             return self.cache[str(key)]
 
@@ -172,7 +178,8 @@ class GenericOnlineBible:
 
         (Most platforms don't provide the context so an empty list is returned.)
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"GenericOnlineBible.getContextVerseData( {key} )…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, f"GenericOnlineBible.getContextVerseData( {key} )…" )
 
         return self.getVerseDataList( key ), [] # No context
     # end of GenericOnlineBible.getContextVerseData
@@ -191,21 +198,29 @@ def briefDemo() -> None:
     testRefs = ( ('GEN','1','1'), ('JER','33','3'), ('MAL','4','6'), ('MAT','1','1'), ('JHN','3','16'), ('JDE','1','14'), ('REV','22','21'), )
 
     if 1: # Test the GenericOnlineBible class
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
         dbpBible1 = GenericOnlineBible()
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, dbpBible1 )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, dbpBible1 )
         for testRef in testRefs:
             verseKey = SimpleVerseKey( *testRef )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, verseKey )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, verseKey )
             dbpBible1.cacheVerse( verseKey, [f"Verse text for {verseKey}"] )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Cache length: {len(dbpBible1.cache)}" )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " ", dbpBible1.getCachedVerseDataList( verseKey ) )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Cache length: {len(dbpBible1.cache)}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " ", dbpBible1.getCachedVerseDataList( verseKey ) )
          # Now test the GenericOnlineBible class caching
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
         for testRef in testRefs:
             verseKey = SimpleVerseKey( *testRef )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, verseKey, "cached" )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " ", dbpBible1.getCachedVerseDataList( verseKey ) )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, verseKey, "cached" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " ", dbpBible1.getCachedVerseDataList( verseKey ) )
 # end of GenericOnlineBible.briefDemo
 
 def fullDemo() -> None:
@@ -219,21 +234,29 @@ def fullDemo() -> None:
     testRefs = ( ('GEN','1','1'), ('JER','33','3'), ('MAL','4','6'), ('MAT','1','1'), ('JHN','3','16'), ('JDE','1','14'), ('REV','22','21'), )
 
     if 1: # Test the GenericOnlineBible class
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
         dbpBible1 = GenericOnlineBible()
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, dbpBible1 )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, dbpBible1 )
         for testRef in testRefs:
             verseKey = SimpleVerseKey( *testRef )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, verseKey )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, verseKey )
             dbpBible1.cacheVerse( verseKey, [f"Verse text for {verseKey}"] )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Cache length: {len(dbpBible1.cache)}" )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " ", dbpBible1.getCachedVerseDataList( verseKey ) )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Cache length: {len(dbpBible1.cache)}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " ", dbpBible1.getCachedVerseDataList( verseKey ) )
          # Now test the GenericOnlineBible class caching
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
         for testRef in testRefs:
             verseKey = SimpleVerseKey( *testRef )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, verseKey, "cached" )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " ", dbpBible1.getCachedVerseDataList( verseKey ) )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, verseKey, "cached" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " ", dbpBible1.getCachedVerseDataList( verseKey ) )
 # end of GenericOnlineBible.fullDemo
 
 if __name__ == '__main__':

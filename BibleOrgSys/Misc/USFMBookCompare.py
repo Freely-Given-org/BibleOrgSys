@@ -36,7 +36,7 @@ from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.InputOutput.USFMFile import USFMFile
 
 
-LAST_MODIFIED_DATE = '2020-04-12' # by RJH
+LAST_MODIFIED_DATE = '2026-10-06' # by RJH
 SHORT_PROGRAM_NAME = "USFMBookCompare"
 PROGRAM_NAME = "USFM book file comparator"
 PROGRAM_VERSION = '0.17'
@@ -49,9 +49,12 @@ DEBUGGING_THIS_MODULE = False
 def USFMBookCompare( filepath1, filepath2, file1Name='file1', file2Name='file2' ):
     """
     """
-    vPrint( 'Info', DEBUGGING_THIS_MODULE, "\nUSFMBookCompare() for USFM Bible books" )
-    vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"  comparing {filepath1}" )
-    vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"        and {filepath2}" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, "\nUSFMBookCompare() for USFM Bible books" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 4:
+        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"  comparing {filepath1}" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 4:
+        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"        and {filepath2}" )
 
 
     # Set up empty results dictionaries
@@ -240,20 +243,24 @@ def USFMBookCompare( filepath1, filepath2, file1Name='file1', file2Name='file2' 
     startedCVs1 = startedCVs2 = False
     while True:
         if lineIndex >= resultDict['File1']['LineCount']:
-            vPrint( 'Never', DEBUGGING_THIS_MODULE, "File1 done" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 5:
+                vPrint( 'Never', DEBUGGING_THIS_MODULE, "File1 done" )
             break
         if lineIndex >= resultDict['File2']['LineCount']:
-            vPrint( 'Never', DEBUGGING_THIS_MODULE, "File2 done" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 5:
+                vPrint( 'Never', DEBUGGING_THIS_MODULE, "File2 done" )
             break
         (m1,l1), (m2,l2) = uf1.lines[lineIndex], uf2.lines[lineIndex+lineOffset]
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, lineIndex, lineOffset, m1, m2 )
         if m1==m2: resultDict['Same']['SameMarkerCount'] += 1
         else:
-            dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Diff", m1, m2, l1, l2 )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 1:
+                dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Diff", m1, m2, l1, l2 )
             resultDict['Different']['DifferentMarkerCount'] += 1
         if m1==m2 and l1==l2: resultDict['Same']['SameLineCount'] += 1
         else:
-            dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Diff", m1, m2, l1, l2 )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 1:
+                dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Diff", m1, m2, l1, l2 )
             resultDict['Different']['DifferentLineCount'] += 1
         lineIndex += 1
 
@@ -278,8 +285,10 @@ def briefDemo() -> None:
     if not os.path.exists( fp1 ): logging.critical( f"Filepath1 {fp1!r} is invalid -- aborting" ); allOkay = False
     if not os.path.exists( fp2 ): logging.critical( f"Filepath2 {fp2!r} is invalid -- aborting" ); allOkay = False
     if allOkay:
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nFile1 is: {fp1}" )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"File2 is: {fp2}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nFile1 is: {fp1}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"File2 is: {fp2}" )
 
         result = USFMBookCompare( fp1, fp2, file1Name='SCP file', file2Name='BAK file' )
         if BibleOrgSysGlobals.verbosityLevel > 0:
@@ -309,8 +318,10 @@ def fullDemo() -> None:
     if not os.path.exists( fp1 ): logging.critical( f"Filepath1 {fp1!r} is invalid -- aborting" ); allOkay = False
     if not os.path.exists( fp2 ): logging.critical( f"Filepath2 {fp2!r} is invalid -- aborting" ); allOkay = False
     if allOkay:
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nFile1 is: {fp1}" )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"File2 is: {fp2}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nFile1 is: {fp1}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"File2 is: {fp2}" )
 
         result = USFMBookCompare( fp1, fp2, file1Name='SCP file', file2Name='BAK file' )
         if BibleOrgSysGlobals.verbosityLevel > 0:

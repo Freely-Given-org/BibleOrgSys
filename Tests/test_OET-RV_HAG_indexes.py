@@ -27,7 +27,7 @@ from bible_organisational_system import InternalBibleEntryList, InternalBibleEnt
     InternalBibleBookCVIndex, InternalBibleBookSectionIndex
 
 
-LAST_MODIFIED_DATE = '2026-06-27' # by RJH
+LAST_MODIFIED_DATE = '2026-10-06' # by RJH
 SHORT_PROGRAM_NAME = "test_OET_RV_HAG_indexes"
 PROGRAM_NAME = "Test OET-RV HAG CV and section indexes"
 PROGRAM_VERSION = '0.11.3'
@@ -45,22 +45,26 @@ def load_OET_RV_Haggai() -> ESFMBible|None:
     Load the OET-RV Haggai (two-chapter) ESFM file (from GitHub)
         in order to get test data to help the AI agents duplicate the Python code in Rust
     """
-    fnPrint( DEBUGGING_THIS_MODULE, "load_OET_RV_Haggai()" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+        fnPrint( DEBUGGING_THIS_MODULE, "load_OET_RV_Haggai()" )
 
     if USE_ONLINE_DATA:
         folderURL = 'https://raw.githubusercontent.com/Freely-Given-org/OpenEnglishTranslation--OET/refs/heads/main/translatedTexts/ReadersVersion'
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Looking for ESFM Bible at {folderURL}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Looking for ESFM Bible at {folderURL}" )
         EsfmBib = ESFMBible( folderURL, 'Open English Translation Readers’ Version', 'OET-RV' )
     else: # use local path
         relativePath = Path( 'Tests/DataFilesForTests/OET-RV/' )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Looking for ESFM Bible at {relativePath}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Looking for ESFM Bible at {relativePath}" )
         EsfmBib = ESFMBible( relativePath, 'Open English Translation Readers’ Version', 'OET-RV' )
     # EsfmBib.preload()
 
     # We copied this function inline here so we could get an more internals (before processLines() gets called)
     filename = 'OET-RV_HAG.ESFM'
     # EsfmBib.loadBook( BBB, filename )
-    fnPrint( DEBUGGING_THIS_MODULE, f"ESFMBible.loadBook( {BBB}, {filename} )" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+        fnPrint( DEBUGGING_THIS_MODULE, f"ESFMBible.loadBook( {BBB}, {filename} )" )
     if BBB in EsfmBib.books: return # Already loaded
     if BBB in EsfmBib.dontLoadBook: return # Must be a dictionary that's already loaded
     if BBB in EsfmBib.triedLoadingBook:
@@ -82,9 +86,11 @@ def load_OET_RV_Haggai() -> ESFMBible|None:
     EBB = ESFMBibleBook( EsfmBib, BBB )
     EBB.load( filename, EsfmBib.sourceFolder )
     if EBB._rawLines:
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"{len(EBB._rawLines)=}" )# expected 83
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"{len(EBB._rawLines)=}" )# expected 83
         for ee, entry in enumerate( EBB._rawLines ):
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  {ee} Raw {entry=}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  {ee} Raw {entry=}" )
 
         EBB.validateMarkers() # Usually activates InternalBibleBook.processLines()
         EsfmBib.stashBook( EBB )
@@ -1258,7 +1264,8 @@ def load_OET_RV_Haggai() -> ESFMBible|None:
     if 1: # Check that it loaded correctly
         from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
         from bible_organisational_system import InternalBibleEntry
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "Displaying ESFM text from some given references…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, "Displaying ESFM text from some given references…" )
         for thisBBB,C,V in ( (BBB,'1','1'),(BBB,'1','2'),(BBB,'1','3'),(BBB,'1','4'),(BBB,'1','5'),(BBB,'1','6'),(BBB,'2','1'),(BBB,'2','23') ):
             svk = SimpleVerseKey( thisBBB, C, V )
             shortText = svk.getShortText()
@@ -1284,7 +1291,8 @@ def load_OET_RV_Haggai() -> ESFMBible|None:
 
     bookObject = EsfmBib[BBB]
 
-    vPrint( 'Info', DEBUGGING_THIS_MODULE, f"{bookObject._processedLines=}" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"{bookObject._processedLines=}" )
     assert len(bookObject._processedLines) > 183 # after 'v=' markers added to 183 lines
 
     return EsfmBib
@@ -1359,11 +1367,13 @@ def test_CV_index( thisBible:ESFMBible ):
     61 ('2', '22') InternalBibleBookCVIndexEntry object: ix=179 cnt=3 ixE=182 ctxt=['chapters', 'c', 'p']
     62 ('2', '23') InternalBibleBookCVIndexEntry object: ix=182 cnt=6 ixE=188 ctxt=['chapters', 'c', 'p']
     """
-    fnPrint( DEBUGGING_THIS_MODULE, "test_CV_index()" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+        fnPrint( DEBUGGING_THIS_MODULE, "test_CV_index()" )
 
     thisBible.doPostLoadProcessing() # Makes the CV index as part of this
     bookObject = thisBible[BBB]
-    vPrint( 'Info', DEBUGGING_THIS_MODULE, f"{bookObject._CVIndex=}" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"{bookObject._CVIndex=}" )
     assert len(bookObject._CVIndex) == 64 # 2 chapters + 38 verses + 18(+6 extras) header/intro lines
     # for ee,(CV,thisCVIndexEntry) in enumerate( bookObject._CVIndex.items() ):
     #     print( f"  {ee} {CV} {thisCVIndexEntry}" )
@@ -1371,9 +1381,11 @@ def test_CV_index( thisBible:ESFMBible ):
     C, V = '1', '1'
     c, v = int( C ), int( V )
     verseEntryList, contextList = thisBible.getContextVerseData( (BBB,C) if c==-1 else (BBB, C, V) )
-    vPrint( 'Info', DEBUGGING_THIS_MODULE, f"For {BBB} {C}:{V}\n  {contextList=}" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"For {BBB} {C}:{V}\n  {contextList=}" )
     assert contextList == ['chapters', 'c']
-    vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  {verseEntryList=}" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  {verseEntryList=}" )
     assert isinstance( verseEntryList, InternalBibleEntryList ) # A list with ESFM line entries (InternalBibleEntry)
     assert len(verseEntryList) == 8
     assert verseEntryList[0].getMarker() == 'v='; assert verseEntryList[0].getCleanText() == '1'
@@ -1389,7 +1401,8 @@ def test_CV_index( thisBible:ESFMBible ):
     assert verseEntryList[6].getMarker() == 'v~'
     assert verseEntryList[7].getMarker() == '¬v'
     assert verseEntryList[7].getCleanText() == V
-    vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"OET-RV CV index for {BBB} matches expectations." )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"OET-RV CV index for {BBB} matches expectations." )
 # end of test_CV_index
 
 def test_section_index( thisBible:ESFMBible ):
@@ -1406,13 +1419,15 @@ def test_section_index( thisBible:ESFMBible ):
     5 2:10 InternalBibleBookSectionIndexEntry object: (inclusive) endCV=2:19 ix=124–169 (cnt=46) s1='Haggai consults the priests' sectionIndexEntry=InternalBibleBookSectionIndexEntry object: (inclusive) endCV=2:19 ix=124–169 (cnt=46) s1='Haggai consults the priests'
     6 2:20 InternalBibleBookSectionIndexEntry object: (inclusive) endCV=2:23 ix=170–187 (cnt=18) s1='God's promise to Zerubavel' sectionIndexEntry=InternalBibleBookSectionIndexEntry object: (inclusive) endCV=2:23 ix=170–187 (cnt=18) s1='God's promise to Zerubavel'
     """
-    fnPrint( DEBUGGING_THIS_MODULE, "test_section_index()" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+        fnPrint( DEBUGGING_THIS_MODULE, "test_section_index()" )
 
     thisBible.discover()
     assert 'discoveryResults' in thisBible.__dict__
     thisBible.makeSectionIndex()
     bookObject = thisBible[BBB]
-    vPrint( 'Info', DEBUGGING_THIS_MODULE, f"{bookObject._SectionIndex=}" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"{bookObject._SectionIndex=}" )
     assert isinstance( bookObject._SectionIndex, InternalBibleBookSectionIndex ) # A dict with (C,V) keys
     assert len(bookObject._SectionIndex) == 7
     HAG_startCV_list = ( ('-1','0'),  ('-1','13'), ('1','1'),  ('1','12'), ('2','1'), ('2','10'), ('2','20') )
@@ -1422,14 +1437,16 @@ def test_section_index( thisBible:ESFMBible ):
     HAG_contexts     = ( [], [], ['chapters','c'], ['chapters','c'], ['chapters','c'], ['chapters','c'], ['chapters','c'] )
     for n,((C,V),sectionIndexEntry) in enumerate( bookObject._SectionIndex.items() ):
         # print( f"  {n} {C}:{V} {sectionIndexEntry}")
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"{sectionIndexEntry=}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"{sectionIndexEntry=}" )
         if n==0: assert sectionIndexEntry.sectionName == BBB, f"{sectionIndexEntry.sectionName} vs {BBB}"
         assert (C,V) == HAG_startCV_list[n], f"{n} {C}:{V} vs {HAG_startCV_list[n]}"
         assert (sectionIndexEntry.endC,sectionIndexEntry.endV) == HAG_endCV_list[n], f"{n} {sectionIndexEntry.endC}:{sectionIndexEntry.endV} vs {HAG_endCV_list[n]}"
         assert (sectionIndexEntry.startIx,sectionIndexEntry.endIx) == HAG_indices[n], f"{n} {sectionIndexEntry.startIx}:{sectionIndexEntry.endIx} vs {HAG_indices[n]}"
         assert sectionIndexEntry.reasonMarker == HAG_reasons[n], f"{n} {sectionIndexEntry.reasonMarker} vs {HAG_reasons[n]}"
         assert sectionIndexEntry.contextList == HAG_contexts[n], f"{n} {sectionIndexEntry.contextList} vs {HAG_contexts[n]}"
-    vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"OET-RV section index for {BBB} matches expectations." )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"OET-RV section index for {BBB} matches expectations." )
 # end of test_section_index
 
 
@@ -1453,7 +1470,8 @@ if __name__ == '__main__':
     # Export option allows the two indexes to be created as files in the current folder
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=False ) # TODO: not implemented yet (save indexes to .txt files)
 
-    vPrint( 'Normal', DEBUGGING_THIS_MODULE, PROGRAM_NAME_VERSION )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, PROGRAM_NAME_VERSION )
 
     fullDemo()
 
@@ -1470,7 +1488,8 @@ if __name__ == '__main__':
     # Export option allows the two indexes to be created as files in the current folder
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=False ) # TODO: not implemented yet (save indexes to .txt files)
 
-    vPrint( 'Normal', DEBUGGING_THIS_MODULE, PROGRAM_NAME_VERSION )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, PROGRAM_NAME_VERSION )
 
     fullDemo()
 

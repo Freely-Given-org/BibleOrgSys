@@ -86,7 +86,7 @@ from BibleOrgSys.Bible import Bible, BibleBook
 from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
 
 
-LAST_MODIFIED_DATE = '2024-06-05' # by RJH
+LAST_MODIFIED_DATE = '2026-10-06' # by RJH
 SHORT_PROGRAM_NAME = "MyBibleBible"
 PROGRAM_NAME = "MyBible Bible format handler"
 PROGRAM_VERSION = '0.24'
@@ -223,7 +223,8 @@ def MyBibleBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool
     if autoLoad is true and exactly one MyBible Bible is found,
         returns the loaded MyBibleBible object.
     """
-    fnPrint( DEBUGGING_THIS_MODULE, f"MyBibleBibleFileCheck( {givenFolderName}, {strictCheck}, {autoLoad}, {autoLoadBooks} )" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+        fnPrint( DEBUGGING_THIS_MODULE, f"MyBibleBibleFileCheck( {givenFolderName}, {strictCheck}, {autoLoad}, {autoLoadBooks} )" )
     if BibleOrgSysGlobals.debugFlag:
         assert givenFolderName and isinstance( givenFolderName, (str,Path) )
         assert autoLoad in (True,False,)
@@ -237,7 +238,8 @@ def MyBibleBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool
         return False
 
     # Find all the files and folders in this folder
-    vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f" MyBibleBibleFileCheck: Looking for files in given {givenFolderName}" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 4:
+        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f" MyBibleBibleFileCheck: Looking for files in given {givenFolderName}" )
     foundFolders, foundFiles = [], []
     for something in os.listdir( givenFolderName ):
         somepath = os.path.join( givenFolderName, something )
@@ -264,7 +266,8 @@ def MyBibleBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool
         lastFilenameFound = thisFilename
         numFound += 1
     if numFound:
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "MyBibleBibleFileCheck got", numFound, givenFolderName, lastFilenameFound )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, "MyBibleBibleFileCheck got", numFound, givenFolderName, lastFilenameFound )
         if numFound == 1 and (autoLoad or autoLoadBooks):
             MyBB = MyBibleBible( givenFolderName, lastFilenameFound )
             if autoLoad or autoLoadBooks: MyBB.preload()
@@ -281,7 +284,8 @@ def MyBibleBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool
         if not os.access( tryFolderName, os.R_OK ): # The subfolder is not readable
             logging.warning( f"MyBibleBibleFileCheck: {tryFolderName!r} subfolder is unreadable" )
             continue
-        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"    MyBibleBibleFileCheck: Looking for files in {tryFolderName}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 4:
+            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"    MyBibleBibleFileCheck: Looking for files in {tryFolderName}" )
         foundSubfolders, foundSubfiles = [], []
         try:
             for something in os.listdir( tryFolderName ):
@@ -305,7 +309,8 @@ def MyBibleBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool
             lastFilenameFound = thisFilename
             numFound += 1
     if numFound:
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "MyBibleBibleFileCheck foundProjects", numFound, foundProjects )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, "MyBibleBibleFileCheck foundProjects", numFound, foundProjects )
         if numFound == 1 and (autoLoad or autoLoadBooks):
             if BibleOrgSysGlobals.debugFlag: assert len(foundProjects) == 1
             MyBB = MyBibleBible( foundProjects[0][0], foundProjects[0][1] )
@@ -351,9 +356,11 @@ class MyBibleBible( Bible ):
         """
         Load the metadata from the SQLite3 database.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, "preload()…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, "preload()…" )
 
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Preloading {self.sourceFilepath}…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Preloading {self.sourceFilepath}…" )
 
         fileExtensionUpper = self.fileExtension.upper()
         if fileExtensionUpper not in FILENAME_ENDINGS_TO_ACCEPT:
@@ -373,7 +380,8 @@ class MyBibleBible( Bible ):
         for row in rows:
             assert len(row) == 2 # name, value
             name, value = row
-            vPrint( 'Never', DEBUGGING_THIS_MODULE, '  INFO', name, repr(value) )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 5:
+                vPrint( 'Never', DEBUGGING_THIS_MODULE, '  INFO', name, repr(value) )
             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag:
                 assert name in KNOWN_INFO_FIELD_NAMES
             # NOTE: detailed_info may contain HTML formatting
@@ -437,7 +445,8 @@ class MyBibleBible( Bible ):
                     { 'bookNumber':bookNumber, 'longName':longName, 'shortName':shortName, 'title':title, 'bookColor':bookColor, 'isPresent':isPresent } \
                         if len(row)==6 else \
                     { 'bookNumber':bookNumber, 'longName':longName, 'shortName':shortName, 'isPresent':isPresent, 'bookColor':bookColor }
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  Loaded book info ({len(rows)}) from BOOKS_ALL table" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  Loaded book info ({len(rows)}) from BOOKS_ALL table" )
             loadedBookInfo = True
         except sqlite3.OperationalError: pass # Table is not in older module versions
 
@@ -481,10 +490,12 @@ class MyBibleBible( Bible ):
         """
         Load all the books out of the SQLite3 database.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, "loadBooks()…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, "loadBooks()…" )
         assert self.preloadDone
 
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Loading {self.sourceFilepath}…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Loading {self.sourceFilepath}…" )
 
         for BBB in self.suppliedMetadata['MyBible']['BookInfo']:
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'isPresent', self.suppliedMetadata['MyBible']['BookInfo'][BBB]['isPresent'] )
@@ -503,11 +514,13 @@ class MyBibleBible( Bible ):
         """
         Load the requested book out of the SQLite3 database.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"loadBook( {BBB} )" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, f"loadBook( {BBB} )" )
         assert self.preloadDone
 
         if BBB in self.books:
-            dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  {BBB} is already loaded -- returning" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 1:
+                dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  {BBB} is already loaded -- returning" )
             return # Already loaded
         if BBB in self.triedLoadingBook:
             logging.warning( f"We had already tried loading MyBibleBible {BBB} for {self.name}" )
@@ -525,7 +538,8 @@ class MyBibleBible( Bible ):
         """
         Load the requested Bible book out of the SQLite3 database.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"__loadBibleBook( {BBB} )" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, f"__loadBibleBook( {BBB} )" )
 
         lastC = None
         def importVerseLine( name, BBB:str, C:str, V:str, originalLine, bookObject ):
@@ -565,7 +579,8 @@ class MyBibleBible( Bible ):
 
             # Check for left-overs
             if '<' in line or '>' in line: # or '{' in line or '}' in line: RSTI has braces
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"importVerseLine( {V!r} failed at {name} {BBB}:{C} {line!r} from {originalLine!r} )" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"importVerseLine( {V!r} failed at {name} {BBB}:{C} {line!r} from {originalLine!r} )" )
                 if DEBUGGING_THIS_MODULE: assert False, "We want to stop here"
 
             # Ok, use the adjusted info
@@ -622,7 +637,8 @@ class MyBibleBible( Bible ):
             importVerseLine( self.name, BBB, C, V, line, thisBook ) # handle any formatting and save the line
 
         if haveLines:
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, "  MyBible loadBibleBook saving", BBB )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, "  MyBible loadBibleBook saving", BBB )
             self.stashBook( thisBook )
         #else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Not saving", BBB )
 
@@ -636,7 +652,8 @@ class MyBibleBible( Bible ):
         """
         Load the requested Bible book out of the SQLite3 database.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"__loadBibleCommentaryBook( {BBB} )" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, f"__loadBibleCommentaryBook( {BBB} )" )
 
         lastC = None
         def importCommentaryLine( name, BBB:str, C:str, V:str, footnoteNumber, originalLine, bookObject ):
@@ -667,7 +684,8 @@ class MyBibleBible( Bible ):
             # Check for left-overs
             if '<' in line or '>' in line or '=' in line or '{' in line or '}' in line:
                 if '<a ' not in line:
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"importCommentaryLine( {V!r} failed at {name} {BBB}:{C} {line!r} from {originalLine!r} )" )
+                    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"importCommentaryLine( {V!r} failed at {name} {BBB}:{C} {line!r} from {originalLine!r} )" )
                     if DEBUGGING_THIS_MODULE:
                         assert False, "We want to stop here"
 
@@ -739,7 +757,8 @@ class MyBibleBible( Bible ):
             importCommentaryLine( self.name, BBB, C, V, footnoteMarker, line, thisBook ) # handle any formatting and save the line
 
         if haveLines:
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, "  MyBible loadBibleCommentaryBook saving", BBB )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, "  MyBible loadBibleCommentaryBook saving", BBB )
             self.stashBook( thisBook )
         #else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Not saving", BBB )
 
@@ -758,7 +777,7 @@ def createMyBibleModule( self, outputFolder, controlDict ) -> bool:
     self here is a Bible object with _processedLines
     """
     import zipfile
-    from usfm_markers_py import OFTEN_IGNORED_USFM_HEADER_MARKERS, USFM_ALL_INTRODUCTION_MARKERS, USFM_BIBLE_PARAGRAPH_MARKERS, removeUSFMCharacterField, replaceUSFMCharacterFields
+    from usfm_markers_py import OFTEN_IGNORED_USFM_HEADER_MARKERS, USFM_ALL_INTRODUCTION_MARKERS, USFM_BIBLE_PARAGRAPH_MARKERS, remove_usfm_character_field, replace_usfm_character_fields
     from BibleOrgSys.Internals.InternalBibleBook import BOS_CUSTOM_NESTING_MARKERS, BOS_NESTING_MARKERS
     from BibleOrgSys.Formats.theWordBible import theWordOTBookLines, theWordNTBookLines, theWordBookLines, theWordIgnoredIntroMarkers
 
@@ -775,7 +794,7 @@ def createMyBibleModule( self, outputFolder, controlDict ) -> bool:
 
         if '\\x' in line: # Remove cross-references completely (why???)
             #line = line.replace('\\x ','<RX>').replace('\\x*','<Rx>')
-            line = removeUSFMCharacterField( 'x', line, closed_flag=True ).lstrip() # Remove superfluous spaces
+            line = remove_usfm_character_field( 'x', line, closed_flag=True ).lstrip() # Remove superfluous spaces
 
         if '\\f' in line: # Handle footnotes
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "originalLine", repr(originalLine) )
@@ -809,9 +828,9 @@ def createMyBibleModule( self, outputFolder, controlDict ) -> bool:
                 line = line[:match.start()] + '<n>' + newNote + '</n>' + line[match.end():]
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "line2", repr(line) )
 
-            #line = removeUSFMCharacterField( 'f', line, closed_flag=True ).lstrip() # Remove superfluous spaces
+            #line = remove_usfm_character_field( 'f', line, closed_flag=True ).lstrip() # Remove superfluous spaces
             ##for marker in ( 'fr', 'fm', ): # simply remove these whole field
-                ##line = removeUSFMCharacterField( marker, line, closed_flag=None )
+                ##line = remove_usfm_character_field( marker, line, closed_flag=None )
             ##for marker in ( 'fq', 'fqa', 'fl', 'fk', ): # italicise these ones
                 ##while '\\'+marker+' ' in line:
                     ###dPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, C, V, marker, line.count('\\'+marker+' '), line )
@@ -836,9 +855,9 @@ def createMyBibleModule( self, outputFolder, controlDict ) -> bool:
                 ###assert False, "We want to stop here"
 
         if '\\' in line: # Handle character formatting fields
-            line = removeUSFMCharacterField( 'fig', line, closed_flag=True ) # Remove figures
-            #line = removeUSFMCharacterField( 'str', line, closed_flag=True ) # Remove Strong's numbers
-            line = removeUSFMCharacterField( 'sem', line, closed_flag=True ) # Remove semantic tagging
+            line = remove_usfm_character_field( 'fig', line, closed_flag=True ) # Remove figures
+            #line = remove_usfm_character_field( 'str', line, closed_flag=True ) # Remove Strong's numbers
+            line = remove_usfm_character_field( 'sem', line, closed_flag=True ) # Remove semantic tagging
             replacements = (
                 ( ('add',), '<i>','</i>' ),
                 ( ('qt',), '','' ),
@@ -851,7 +870,7 @@ def createMyBibleModule( self, outputFolder, controlDict ) -> bool:
                 #( ('f',), '<n>','</n>' ),
                 ( ('str',), '<S>','</S>' ),
                 )
-            line = replaceUSFMCharacterFields( replacements, line ) # This function also handles USFM 2.4 nested character markers
+            line = replace_usfm_character_fields( replacements, line ) # This function also handles USFM 2.4 nested character markers
             if '\\nd' not in originalLine and '\\+nd' not in originalLine:
                 line = line.replace('LORD', '<font size=-1>LORD</font>')
                 #line = line.replace('\\nd ','<font size=-1>',).replace('\\nd*','</font>').replace('\\+nd ','<font size=-1>',).replace('\\+nd*','</font>')
@@ -872,7 +891,8 @@ def createMyBibleModule( self, outputFolder, controlDict ) -> bool:
         # Check what's left at the end
         if '\\' in line:
             logging.warning( f"toMyBible.adjustLine: Doesn't handle formatted line yet: {BBB} {C}:{V} {line!r}" )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"toMyBible.adjustLine: Doesn't handle formatted line yet: {BBB} {C}:{V} {line!r}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"toMyBible.adjustLine: Doesn't handle formatted line yet: {BBB} {C}:{V} {line!r}" )
             if DEBUGGING_THIS_MODULE: assert False, "We want to stop here"
         return line
     # end of toMyBible.adjustLine
@@ -967,7 +987,8 @@ def createMyBibleModule( self, outputFolder, controlDict ) -> bool:
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "toMyBible.composeVerseLine:", BBB, C, V, marker, text )
             if marker in theWordIgnoredIntroMarkers:
                 logging.error( f"toMyBible.composeVerseLine: Found unexpected {marker} introduction marker at {BBB} {C}:{V} {repr(text)}" )
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "toMyBible.composeVerseLine:", BBB, C, V, marker, text, verseData )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "toMyBible.composeVerseLine:", BBB, C, V, marker, text, verseData )
                 if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE:
                     assert marker not in theWordIgnoredIntroMarkers # these markers shouldn't occur in verses
 
@@ -1072,7 +1093,8 @@ def createMyBibleModule( self, outputFolder, controlDict ) -> bool:
         # Check what's left at the end (but hide MyBible \line markers first)
         if '\\' in composedLine:
             logging.warning( f"toMyBible.composeVerseLine: Doesn't handle formatted line yet: {BBB} {C}:{V} {composedLine!r}" )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"toMyBible.composeVerseLine: Doesn't handle formatted line yet: {BBB} {C}:{V} {composedLine!r}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"toMyBible.composeVerseLine: Doesn't handle formatted line yet: {BBB} {C}:{V} {composedLine!r}" )
             if DEBUGGING_THIS_MODULE: assert False, "We want to stop here"
         return composedLine.replace( '~^~', '\\' ).rstrip()
     # end of toMyBible.composeVerseLine
@@ -1082,7 +1104,8 @@ def createMyBibleModule( self, outputFolder, controlDict ) -> bool:
         """
         Writes a book to the MyBible sqlObject file.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"writeMyBibleBook( …, {BBB}, {nBBB}, …, {ourGlobals} )" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, f"writeMyBibleBook( …, {BBB}, {nBBB}, …, {ourGlobals} )" )
 
         try: verseList = BOS.getNumVersesList( BBB )
         except KeyError: return False
@@ -1171,7 +1194,8 @@ def createMyBibleModule( self, outputFolder, controlDict ) -> bool:
         #testament, startBBB, endBBB = 'BOTH', 'GEN', 'REV'
         #booksExpected, textLineCountExpected, checkTotals = 66, 31102, theWordBookLines
 
-    vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Exporting to MyBible format…" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Exporting to MyBible format…" )
     if BibleOrgSysGlobals.alreadyMultiprocessing:
         logging.warning( "writeMyBibleBook() can fail with multiprocessing if output filenames happen to coincide" )
     mySettings = {}
@@ -1196,7 +1220,8 @@ def createMyBibleModule( self, outputFolder, controlDict ) -> bool:
     if not filename.endswith( extension ): filename += extension # Make sure that we have the right file extension
     filepath = os.path.join( outputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
     if os.path.exists( filepath ): os.remove( filepath )
-    vPrint( 'Info', DEBUGGING_THIS_MODULE, '  writeMyBibleBook: ' + f"Writing {filepath!r}…" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, '  writeMyBibleBook: ' + f"Writing {filepath!r}…" )
     conn = sqlite3.connect( filepath )
     cursor = conn.cursor()
 
@@ -1286,16 +1311,19 @@ def createMyBibleModule( self, outputFolder, controlDict ) -> bool:
 
     if mySettings['unhandledMarkers']:
         logging.warning( f"BibleWriter.toMyBible: Unhandled markers were {mySettings['unhandledMarkers']}" )
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  " + f"WARNING: Unhandled toMyBible markers were {mySettings['unhandledMarkers']}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  " + f"WARNING: Unhandled toMyBible markers were {mySettings['unhandledMarkers']}" )
     unhandledBooks = []
     for BBB in self.getBookList():
         if BBB not in handledBooks: unhandledBooks.append( BBB )
     if unhandledBooks:
         logging.warning( f"toMyBible: Unhandled books were {unhandledBooks}" )
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  " + f"WARNING: Unhandled toMyBible books were {unhandledBooks}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  " + f"WARNING: Unhandled toMyBible books were {unhandledBooks}" )
 
     # Now create a zipped version
-    vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Zipping {filename} MyBible file…" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Zipping {filename} MyBible file…" )
     zf = zipfile.ZipFile( filepath+'.zip', 'w', compression=zipfile.ZIP_DEFLATED )
     zf.write( filepath, filename )
     zf.close()
@@ -1318,12 +1346,15 @@ def testMyBB( indexString:str, MyBBfolder, MyBBfilename:str ) -> None:
     #testFolder = Path( '/srv/Bibles/MyBible modules/' ) # Must be the same as below
 
     #TUBfolder = os.path.join( MyBBfolder, MyBBfilename )
-    vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Demonstrating the MyBible Bible class {indexString}…" )
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Test folder/filename are {MyBBfolder!r} {MyBBfilename!r}" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Demonstrating the MyBible Bible class {indexString}…" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Test folder/filename are {MyBBfolder!r} {MyBBfilename!r}" )
     MyBB = MyBibleBible( MyBBfolder, MyBBfilename )
     MyBB.preload()
     #MyBB.loadBooks() # Load and process the file
-    vPrint( 'Normal', DEBUGGING_THIS_MODULE, MyBB ) # Just print a summary
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, MyBB ) # Just print a summary
     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, MyBB.suppliedMetadata['MyBible'] )
     if MyBB is not None:
         if BibleOrgSysGlobals.strictCheckingFlag: MyBB.check()
@@ -1340,9 +1371,11 @@ def testMyBB( indexString:str, MyBBfolder, MyBBfilename:str ) -> None:
             try:
                 shortText = svk.getShortText()
                 verseText = MyBB.getVerseText( svk )
-                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f'    {shortText}\t{verseText!r}' )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                    vPrint( 'Normal', DEBUGGING_THIS_MODULE, f'    {shortText}\t{verseText!r}' )
             except KeyError:
-                vPrint( 'Normal', DEBUGGING_THIS_MODULE, '  testMyBB', reference, "not found!!!" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                    vPrint( 'Normal', DEBUGGING_THIS_MODULE, '  testMyBB', reference, "not found!!!" )
                 #if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: raise
 
         #MyBB.loadBooks()
@@ -1354,7 +1387,8 @@ def testMyBB( indexString:str, MyBBfolder, MyBBfilename:str ) -> None:
             #doaResults = MyBB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
             if BibleOrgSysGlobals.strictCheckingFlag: # Now compare the original and the derived USX XML files
                 outputFolder = "BOSOutputFiles/BOS_MyBible_Reexport/"
-                vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nComparing original and re-exported MyBible files…" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                    vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nComparing original and re-exported MyBible files…" )
                 result = BibleOrgSysGlobals.fileCompare( MyBBfilename, MyBBfilename, MyBBfolder, outputFolder )
                 if BibleOrgSysGlobals.debugFlag:
                     if not result: assert False, "We want to stop here"
@@ -1368,8 +1402,10 @@ def exportMyBB( eIndexString:str, eFolder ) -> None:
     from BibleOrgSys.UnknownBible import UnknownBible
     uB = UnknownBible( eFolder )
     result = uB.search( autoLoadAlways=True, autoLoadBooks=True )
-    vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  {eIndexString} result is: {result}" )
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, uB )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  {eIndexString} result is: {result}" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, uB )
     if isinstance( result, Bible ) and result.books:
         result.toMyBible()
         #try: result.toMyBible()
@@ -1395,11 +1431,14 @@ def briefDemo() -> None:
     if 1: # A: demo the file checking code
         testFolder = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'MyBibleTest/' )
         result1 = MyBibleBibleFileCheck( testFolder )
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "TestA1", result1 )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "TestA1", result1 )
         result2 = MyBibleBibleFileCheck( testFolder, autoLoad=True )
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "TestA2", result2 )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "TestA2", result2 )
         result3 = MyBibleBibleFileCheck( testFolder, autoLoadBooks=True )
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "TestA3", result3 )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "TestA3", result3 )
 
 
     if 1: # B: individual modules in the test folder
@@ -1410,7 +1449,8 @@ def briefDemo() -> None:
             pathname = os.path.join( testFolder, fullname )
             if os.path.exists( pathname ):
                 indexString = f'B{j}'
-                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nMyBib {indexString}/ Trying {fullname}" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                    vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nMyBib {indexString}/ Trying {fullname}" )
                 testMyBB( indexString, testFolder, fullname )
                 break
 
@@ -1423,7 +1463,8 @@ def briefDemo() -> None:
             pathname = os.path.join( testFolder, fullname )
             if os.path.exists( pathname ):
                 indexString = f'C{j}'
-                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nMyBib {indexString}/ Trying {fullname}" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                    vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nMyBib {indexString}/ Trying {fullname}" )
                 testMyBB( indexString, testFolder, fullname )
                 break
 
@@ -1445,7 +1486,8 @@ def briefDemo() -> None:
 
         if BibleOrgSysGlobals.maxProcesses > 1 \
         and not BibleOrgSysGlobals.alreadyMultiprocessing: # Get our subprocesses ready and waiting for work
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nD: Trying all {len(foundFiles)} discovered modules…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nD: Trying all {len(foundFiles)} discovered modules…" )
             parameters = [('D'+str(j+1),testFolder,filename) for j,filename in enumerate(sorted(foundFiles))]
             BibleOrgSysGlobals.alreadyMultiprocessing = True
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
@@ -1455,7 +1497,8 @@ def briefDemo() -> None:
         else: # Just single threaded
             for j, someFile in enumerate( sorted( foundFiles ), start=1 ):
                 indexString = f'D{j}'
-                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nMyBib {indexString}/ Trying {someFile}" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                    vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nMyBib {indexString}/ Trying {someFile}" )
                 #myTestFolder = os.path.join( testFolder, someFolder+'/' )
                 testMyBB( indexString, testFolder, someFile )
                 #break # only do the first one…temp
@@ -1477,7 +1520,8 @@ def briefDemo() -> None:
 
         if BibleOrgSysGlobals.maxProcesses > 1 \
         and not BibleOrgSysGlobals.alreadyMultiprocessing: # Get our subprocesses ready and waiting for work
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nMyBib E: Trying all {len(foundFiles)} discovered modules…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nMyBib E: Trying all {len(foundFiles)} discovered modules…" )
             parameters = [(f'E{j}',testFolder,filename) for j,filename in enumerate(sorted(foundFiles),start=1)]
             BibleOrgSysGlobals.alreadyMultiprocessing = True
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
@@ -1487,7 +1531,8 @@ def briefDemo() -> None:
         else: # Just single threaded
             for j, someFile in enumerate( sorted( foundFiles ), start=1 ):
                 indexString = f'E{j}'
-                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nMyBib {indexString}/ Trying {someFile}" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                    vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nMyBib {indexString}/ Trying {someFile}" )
                 #myTestFolder = os.path.join( testFolder, someFolder+'/' )
                 testMyBB( indexString, testFolder, someFile )
                 #break # only do the first one…temp
@@ -1531,7 +1576,8 @@ def briefDemo() -> None:
         and not BibleOrgSysGlobals.alreadyMultiprocessing: # Get our subprocesses ready and waiting for work
             # This fails with "daemonic processes are not allowed to have children"
             #   -- InternalBible (used by UnknownBible) already uses pools for discovery (and possibly for loading)
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\n\nMyBib F: Export all {len(foundFiles)} discovered Bibles…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\n\nMyBib F: Export all {len(foundFiles)} discovered Bibles…" )
             parameters = [(f'F{j}',testFolder) for j,testFolder in enumerate( testFolders, start=1 )]
             BibleOrgSysGlobals.alreadyMultiprocessing = True
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
@@ -1541,7 +1587,8 @@ def briefDemo() -> None:
         else: # Just single threaded
             for j, testFolder in enumerate( testFolders, start=1 ):
                 indexString = f'F{j}'
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\ntoMyBible {indexString}/ Export MyBible module for {testFolder}…" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\ntoMyBible {indexString}/ Export MyBible module for {testFolder}…" )
                 exportMyBB( indexString, testFolder )
                 #uB = UnknownBible( testFolder )
                 #result = uB.search( autoLoadAlways=True, autoLoadBooks=True )
@@ -1569,11 +1616,14 @@ def fullDemo() -> None:
     if 1: # A: demo the file checking code
         testFolder = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'MyBibleTest/' )
         result1 = MyBibleBibleFileCheck( testFolder )
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "TestA1", result1 )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "TestA1", result1 )
         result2 = MyBibleBibleFileCheck( testFolder, autoLoad=True )
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "TestA2", result2 )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "TestA2", result2 )
         result3 = MyBibleBibleFileCheck( testFolder, autoLoadBooks=True )
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "TestA3", result3 )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "TestA3", result3 )
 
 
     if 1: # B: individual modules in the test folder
@@ -1584,7 +1634,8 @@ def fullDemo() -> None:
             pathname = os.path.join( testFolder, fullname )
             if os.path.exists( pathname ):
                 indexString = f'B{j}'
-                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nMyBib {indexString}/ Trying {fullname}" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                    vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nMyBib {indexString}/ Trying {fullname}" )
                 testMyBB( indexString, testFolder, fullname )
 
 
@@ -1596,7 +1647,8 @@ def fullDemo() -> None:
             pathname = os.path.join( testFolder, fullname )
             if os.path.exists( pathname ):
                 indexString = f'C{j}'
-                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nMyBib {indexString}/ Trying {fullname}" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                    vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nMyBib {indexString}/ Trying {fullname}" )
                 testMyBB( indexString, testFolder, fullname )
 
 
@@ -1616,7 +1668,8 @@ def fullDemo() -> None:
 
         if BibleOrgSysGlobals.maxProcesses > 1 \
         and not BibleOrgSysGlobals.alreadyMultiprocessing: # Get our subprocesses ready and waiting for work
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nD: Trying all {len(foundFiles)} discovered modules…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nD: Trying all {len(foundFiles)} discovered modules…" )
             parameters = [('D'+str(j+1),testFolder,filename) for j,filename in enumerate(sorted(foundFiles))]
             BibleOrgSysGlobals.alreadyMultiprocessing = True
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
@@ -1626,7 +1679,8 @@ def fullDemo() -> None:
         else: # Just single threaded
             for j, someFile in enumerate( sorted( foundFiles ), start=1 ):
                 indexString = f'D{j}'
-                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nMyBib {indexString}/ Trying {someFile}" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                    vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nMyBib {indexString}/ Trying {someFile}" )
                 #myTestFolder = os.path.join( testFolder, someFolder+'/' )
                 testMyBB( indexString, testFolder, someFile )
                 #break # only do the first one…temp
@@ -1647,7 +1701,8 @@ def fullDemo() -> None:
 
         if BibleOrgSysGlobals.maxProcesses > 1 \
         and not BibleOrgSysGlobals.alreadyMultiprocessing: # Get our subprocesses ready and waiting for work
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nMyBib E: Trying all {len(foundFiles)} discovered modules…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nMyBib E: Trying all {len(foundFiles)} discovered modules…" )
             parameters = [(f'E{j}',testFolder,filename) for j,filename in enumerate(sorted(foundFiles),start=1)]
             BibleOrgSysGlobals.alreadyMultiprocessing = True
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
@@ -1657,7 +1712,8 @@ def fullDemo() -> None:
         else: # Just single threaded
             for j, someFile in enumerate( sorted( foundFiles ), start=1 ):
                 indexString = f'E{j}'
-                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nMyBib {indexString}/ Trying {someFile}" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                    vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nMyBib {indexString}/ Trying {someFile}" )
                 #myTestFolder = os.path.join( testFolder, someFolder+'/' )
                 testMyBB( indexString, testFolder, someFile )
                 #break # only do the first one…temp
@@ -1701,7 +1757,8 @@ def fullDemo() -> None:
         and not BibleOrgSysGlobals.alreadyMultiprocessing: # Get our subprocesses ready and waiting for work
             # This fails with "daemonic processes are not allowed to have children"
             #   -- InternalBible (used by UnknownBible) already uses pools for discovery (and possibly for loading)
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\n\nMyBib F: Export all {len(foundFiles)} discovered Bibles…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\n\nMyBib F: Export all {len(foundFiles)} discovered Bibles…" )
             parameters = [(f'F{j}',testFolder) for j,testFolder in enumerate(testFolders,start=1)]
             BibleOrgSysGlobals.alreadyMultiprocessing = True
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
@@ -1711,7 +1768,8 @@ def fullDemo() -> None:
         else: # Just single threaded
             for j, testFolder in enumerate( testFolders, start=1 ):
                 indexString = f'F{j}'
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\ntoMyBible {indexString}/ Export MyBible module for {testFolder}…" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\ntoMyBible {indexString}/ Export MyBible module for {testFolder}…" )
                 exportMyBB( indexString, testFolder )
                 #uB = UnknownBible( testFolder )
                 #result = uB.search( autoLoadAlways=True, autoLoadBooks=True )

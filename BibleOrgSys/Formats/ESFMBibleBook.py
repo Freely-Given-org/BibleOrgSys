@@ -49,7 +49,7 @@ from BibleOrgSys.Bible import Bible, BibleBook
 import usfm_markers_py
 
 
-LAST_MODIFIED_DATE = '2026-05-11' # by RJH
+LAST_MODIFIED_DATE = '2026-10-06' # by RJH
 SHORT_PROGRAM_NAME = "ESFMBibleBook"
 PROGRAM_NAME = "ESFM Bible book handler"
 PROGRAM_VERSION = '0.53'
@@ -98,7 +98,8 @@ class ESFMBibleBook( BibleBook ):
         Note: the base class later on will try to break apart lines with a paragraph marker in the middle --
                 we don't need to worry about doing that here.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"ESFMBibleBook.load( {filename}, {folder} )" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, f"ESFMBibleBook.load( {filename}, {folder} )" )
 
 
         def oldESFMPreprocessing( BBB:str, C:str, V:str, marker, original_text ):
@@ -122,7 +123,8 @@ class ESFMBibleBook( BibleBook ):
                 which were one word in the original, e.g., went_down
             """
             if len(original_text)>5: # Don't display for "blank" lines (like '\\v 10 ')
-                fnPrint( DEBUGGING_THIS_MODULE, f"ESFMBibleBook.oldESFMPreprocessing( {BBB} {C}:{V}, {marker}, '{original_text}' )" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+                    fnPrint( DEBUGGING_THIS_MODULE, f"ESFMBibleBook.oldESFMPreprocessing( {BBB} {C}:{V}, {marker}, '{original_text}' )" )
 
 
             def saveWord( BBB:str, C:str, V:str, word ):
@@ -144,7 +146,8 @@ class ESFMBibleBook( BibleBook ):
                 Returns a character SFM field to be inserted into the line
                     (for better compatibility with the software chain).
                 """
-                fnPrint( DEBUGGING_THIS_MODULE, f"ESFMBibleBook.saveSemanticTag( {BBB} {C}:{V}, '{word}', '{tag}' )" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+                    fnPrint( DEBUGGING_THIS_MODULE, f"ESFMBibleBook.saveSemanticTag( {BBB} {C}:{V}, '{word}', '{tag}' )" )
                 assert word and ' ' not in word
                 assert tag and tag[0]=='=' and len(tag)>=2
                 tagMarker, tagContent = tag[1], tag[2:]
@@ -183,7 +186,8 @@ class ESFMBibleBook( BibleBook ):
                 Returns a character SFM field to be inserted into the line
                     (for better compatibility with the software chain).
                 """
-                fnPrint( DEBUGGING_THIS_MODULE, f"ESFMBibleBook.saveStrongsTag( {BBB}, {C}:{V}, '{word}', '{tag}' )" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+                    fnPrint( DEBUGGING_THIS_MODULE, f"ESFMBibleBook.saveStrongsTag( {BBB}, {C}:{V}, '{word}', '{tag}' )" )
                 assert word and ' ' not in word
                 assert tag and tag[0]=='=' and tag[1]=='S' and len(tag)>=3
                 tagMarker, tagContent = tag[2], tag[3:]
@@ -433,7 +437,8 @@ class ESFMBibleBook( BibleBook ):
 
 
         # Main code for ESFMBibleBook.load
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + f"Loading {filename}…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + f"Loading {filename}…" )
         #self.BBB = BBB
         #self.isSingleChapterBook = bos_books_codes_py.is_single_chapter_book( BBB )
         self.sourceFilename = filename
@@ -482,7 +487,8 @@ class ESFMBibleBook( BibleBook ):
                 self.addPriorityError( 27, C, V, f"Found \\{marker} internal marker on new line in file" )
                 if not lastText.endswith(' '): lastText += ' ' # Not always good to add a space, but it's their fault!
                 lastText +=  '\\' + marker + ' ' + text
-                vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"{self.BBB} {C} {V} Appended {marker}:{lastMarker!r} to get combined line {text}:{lastText!r}" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 4:
+                    vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"{self.BBB} {C} {V} Appended {marker}:{lastMarker!r} to get combined line {text}:{lastText!r}" )
             elif usfm_markers_py.is_note_marker( marker ) \
             or marker and marker.endswith('*') and usfm_markers_py.is_note_marker( marker[:-1] ): # the line begins with a note marker -- append it to the previous line
                 if text:
@@ -494,7 +500,8 @@ class ESFMBibleBook( BibleBook ):
                 self.addPriorityError( 26, C, V, f"Found \\{marker} note marker on new line in file" )
                 if not lastText.endswith(' ') and marker!='f': lastText += ' ' # Not always good to add a space, but it's their fault! Don't do it for footnotes, though.
                 lastText +=  '\\' + marker + ' ' + text
-                vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"{self.BBB} {C} {V} Appended {marker}:{lastMarker!r} to get combined line {text}:{lastText!r}" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 4:
+                    vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"{self.BBB} {C} {V} Appended {marker}:{lastMarker!r} to get combined line {text}:{lastText!r}" )
             else: # the line begins with an unknown marker (ESFM doesn't allow custom markers)
                 if text:
                     loadErrors.append( f"{self.BBB} {C}:{V} Found '\\{marker}' unknown marker at beginning of line with text: {text!r}" )
@@ -557,7 +564,8 @@ class ESFMBibleBook( BibleBook ):
             loads any unique filename into a dict with the value set to None.
         Also checks that the referred file does actually exist.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"ESFMBibleBook.lookForAuxiliaryFilenames( {self.BBB} )" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, f"ESFMBibleBook.lookForAuxiliaryFilenames( {self.BBB} )" )
         for marker,rest in self._rawLines[:10]: # Should be within the first seven lines
             if marker != 'rem': continue
             if rest.startswith( 'WORKDATA ' ):
@@ -614,23 +622,30 @@ def briefDemo() -> None:
     BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     def demoFile( name, filename, folder, BBB ):
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Loading {} from {}{}…".format( BBB, filename, f" from {folder}" if BibleOrgSysGlobals.verbosityLevel > 2 else '' ) )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Loading {} from {}{}…".format( BBB, filename, f" from {folder}" if BibleOrgSysGlobals.verbosityLevel > 2 else '' ) )
         EBB = ESFMBibleBook( name, BBB )
         EBB.load( filename, folder )
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  ID is {EBB.getField( 'id' )!r}" )
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  Header is {EBB.getField( 'h' )!r}" )
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  Main titles are {EBB.getField( 'mt1' )!r} and {EBB.getField( 'mt2' )!r}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  ID is {EBB.getField( 'id' )!r}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  Header is {EBB.getField( 'h' )!r}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  Main titles are {EBB.getField( 'mt1' )!r} and {EBB.getField( 'mt2' )!r}" )
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, EBB )
         EBB.validateMarkers()
         EBBVersification = EBB.getVersification()
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, EBBVersification )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, EBBVersification )
         UBBAddedUnits = EBB.getAddedUnits()
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, UBBAddedUnits )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, UBBAddedUnits )
         discoveryDict = EBB._discover()
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "discoveryDict", discoveryDict )
         EBB.checkBook()
         EBErrors = EBB.getCheckResults()
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, EBErrors )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, EBErrors )
     # end of fullDemoFile
 
 
@@ -651,7 +666,8 @@ def briefDemo() -> None:
         name, testFolder = "Matigsalug", Path( '/mnt/HDs/Matigsalug/Bible/MBTV/' ) # You can put your test folder here
         #name, testFolder = "WEB", Path( '/srv/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/' ) # You can put your test folder here
         if os.access( testFolder, os.R_OK ):
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Scanning {name} from {testFolder}…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Scanning {name} from {testFolder}…" )
             fileList = USFMFilenames.USFMFilenames( testFolder ).getMaximumPossibleFilenameTuples()
             for BBB,filename in fileList:
                 demoFile( name, filename, testFolder, BBB )
@@ -665,23 +681,30 @@ def fullDemo() -> None:
     BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     def demoFile( name, filename, folder, BBB ):
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Loading {} from {}{}…".format( BBB, filename, f" from {folder}" if BibleOrgSysGlobals.verbosityLevel > 2 else '' ) )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Loading {} from {}{}…".format( BBB, filename, f" from {folder}" if BibleOrgSysGlobals.verbosityLevel > 2 else '' ) )
         EBB = ESFMBibleBook( name, BBB )
         EBB.load( filename, folder )
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  ID is {EBB.getField( 'id' )!r}" )
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  Header is {EBB.getField( 'h' )!r}" )
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  Main titles are {EBB.getField( 'mt1' )!r} and {EBB.getField( 'mt2' )!r}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  ID is {EBB.getField( 'id' )!r}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  Header is {EBB.getField( 'h' )!r}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  Main titles are {EBB.getField( 'mt1' )!r} and {EBB.getField( 'mt2' )!r}" )
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, EBB )
         EBB.validateMarkers()
         EBBVersification = EBB.getVersification()
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, EBBVersification )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, EBBVersification )
         UBBAddedUnits = EBB.getAddedUnits()
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, UBBAddedUnits )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, UBBAddedUnits )
         discoveryDict = EBB._discover()
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "discoveryDict", discoveryDict )
         EBB.checkBook()
         EBErrors = EBB.getCheckResults()
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, EBErrors )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, EBErrors )
     # end of fullDemoFile
 
 
@@ -702,7 +725,8 @@ def fullDemo() -> None:
         name, testFolder = "Matigsalug", Path( '/mnt/HDs/Matigsalug/Bible/MBTV/' ) # You can put your test folder here
         #name, testFolder = "WEB", Path( '/srv/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/' ) # You can put your test folder here
         if os.access( testFolder, os.R_OK ):
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Scanning {name} from {testFolder}…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Scanning {name} from {testFolder}…" )
             fileList = USFMFilenames.USFMFilenames( testFolder ).getMaximumPossibleFilenameTuples()
             for BBB,filename in fileList:
                 demoFile( name, filename, testFolder, BBB )

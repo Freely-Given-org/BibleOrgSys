@@ -606,6 +606,18 @@ impl PyInternalBibleEntryList {
             .collect()
     }
 
+    /// Return the clean text of all entries with the given marker,
+    /// joined with single spaces (mirrors the old OBD `getPlainText`).
+    #[pyo3(signature = (marker="v~"))]
+    fn plain_text(&self, marker: &str) -> String {
+        self.inner
+            .iter()
+            .filter(|e| e.marker() == marker)
+            .map(|e| e.clean_text())
+            .collect::<Vec<_>>()
+            .join(" ")
+    }
+
     fn __repr__(&self) -> String {
         format!("InternalBibleEntryList({} entries)", self.inner.len())
     }
@@ -1047,6 +1059,43 @@ impl PyInternalBibleBookCVIndex {
                 )
             })
             .map_err(|_| PyKeyError::new_err(format!("({:?}, {:?})", cv_key.0, cv_key.1)))
+    }
+
+    /// Get verse entries with context for every verse in the given chapter,
+    /// in one call — equivalent to looping over V and calling
+    /// getVerseEntriesWithContext((chapter, V)) in Python (used once per
+    /// chapter per version instead of once per verse).
+    #[pyo3(signature = (chapter, strict=false, complete=false))]
+    fn getChapterVerseEntriesWithContext(
+        &self,
+        chapter: &str,
+        strict: bool,
+        complete: bool,
+    ) -> PyResult<std::collections::HashMap<String, (PyInternalBibleEntryList, Vec<String>)>> {
+        let mut result = std::collections::HashMap::new();
+        for (cv, _entry) in self.inner.iter() {
+            if cv.chapter() != chapter {
+                continue;
+            }
+            match self
+                .inner
+                .get_verse_entries_with_context(cv, strict, complete)
+            {
+                Ok((entries, context)) => {
+                    result.insert(
+                        cv.verse().to_string(),
+                        (
+                            PyInternalBibleEntryList::from(entries),
+                            context.into_iter().map(|s| s.to_string()).collect(),
+                        ),
+                    );
+                }
+                Err(_) => {
+                    continue;
+                }
+            }
+        }
+        Ok(result)
     }
 
     /// Get all entries for a chapter

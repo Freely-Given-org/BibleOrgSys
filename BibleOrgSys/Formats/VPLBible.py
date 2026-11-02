@@ -106,7 +106,7 @@ from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisational
 import bos_books_codes_py
 
 
-LAST_MODIFIED_DATE = '2026-06-22' # by RJH
+LAST_MODIFIED_DATE = '2026-10-06' # by RJH
 SHORT_PROGRAM_NAME = "VPLBible"
 PROGRAM_NAME = "VPL Bible format handler"
 PROGRAM_VERSION = '0.46'
@@ -135,7 +135,8 @@ def VPLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=Fal
     if autoLoad is true and exactly one VPL Bible is found,
         returns the loaded VPLBible object.
     """
-    fnPrint( DEBUGGING_THIS_MODULE, f"VPLBibleFileCheck( {givenFolderName}, {strictCheck}, {autoLoad}, {autoLoadBooks} )" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+        fnPrint( DEBUGGING_THIS_MODULE, f"VPLBibleFileCheck( {givenFolderName}, {strictCheck}, {autoLoad}, {autoLoadBooks} )" )
     if BibleOrgSysGlobals.debugFlag: assert givenFolderName and isinstance( givenFolderName, (str,Path) )
     if BibleOrgSysGlobals.debugFlag: assert autoLoad in (True,False,)
 
@@ -148,7 +149,8 @@ def VPLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=Fal
         return False
 
     # Find all the files and folders in this folder
-    vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f" VPLBibleFileCheck: Looking for files in given {repr(givenFolderName)}" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 4:
+        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f" VPLBibleFileCheck: Looking for files in given {repr(givenFolderName)}" )
     foundFolders, foundFiles = [], []
     for something in os.listdir( givenFolderName ):
         somepath = os.path.join( givenFolderName, something )
@@ -175,7 +177,8 @@ def VPLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=Fal
         elif thisFilename.endswith( '.txt' ):
             if strictCheck or BibleOrgSysGlobals.strictCheckingFlag:
                 firstLines = BibleOrgSysGlobals.peekIntoFile( thisFilename, givenFolderName, numLines=4 )
-                dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Check 1: {firstLines=}" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 1:
+                    dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Check 1: {firstLines=}" )
                 if firstLines is None: continue # seems we couldn't decode the file
                 if firstLines and firstLines[0] and firstLines[0][0]==BibleOrgSysGlobals.BOM:
                     logging.info( f"VPLBibleFileCheck: Detected Unicode Byte Order Marker (BOM) in {thisFilename}" )
@@ -195,17 +198,21 @@ def VPLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=Fal
                                 # NOTE: These are now moved to a separate module ForgeForSwordSearcherBible.py
                                 #if match: vplType = 4
                     if match:
-                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"First line got type #{vplType} {match.group(0)!r} match from {line!r}" )
+                        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"First line got type #{vplType} {match.group(0)!r} match from {line!r}" )
                         break
                     else:
-                        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"VPLBibleFileCheck: (unexpected) line was {thisFilename!r} in {line}" )
+                        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 4:
+                            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"VPLBibleFileCheck: (unexpected) line was {thisFilename!r} in {line}" )
                 else:
-                    vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"VPLBibleFileCheck: Nothing helpful found in {firstLines} from {thisFilename}" )
+                    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 4:
+                        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"VPLBibleFileCheck: Nothing helpful found in {firstLines} from {thisFilename}" )
                     continue
                 lastFilenameFound = thisFilename
             numFound += 1
     if numFound:
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "VPLBibleFileCheck got", numFound, givenFolderName, lastFilenameFound )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, "VPLBibleFileCheck got", numFound, givenFolderName, lastFilenameFound )
         if numFound == 1 and (autoLoad or autoLoadBooks):
             uB = VPLBible( givenFolderName, lastFilenameFound[:-4] ) # Remove the end of the actual filename ".txt"
             if autoLoadBooks: uB.load() # Load and process the file
@@ -221,7 +228,8 @@ def VPLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=Fal
         if not os.access( tryFolderName, os.R_OK ): # The subfolder is not readable
             logging.warning( f"VPLBibleFileCheck: {tryFolderName!r} subfolder is unreadable" )
             continue
-        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"    VPLBibleFileCheck: Looking for files in {tryFolderName}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 4:
+            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"    VPLBibleFileCheck: Looking for files in {tryFolderName}" )
         foundSubfolders, foundSubfiles = [], []
         try:
             for something in os.listdir( tryFolderName ):
@@ -265,14 +273,16 @@ def VPLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=Fal
                         if BibleOrgSysGlobals.debugFlag:
                             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"First line got type #{vplType} {match.group(0)!r} match from {firstLines!r}" )
                     else:
-                        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"VPLBibleFileCheck: (unexpected) first line was {thisFilename!r} in {firstLines}" )
+                        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 4:
+                            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"VPLBibleFileCheck: (unexpected) first line was {thisFilename!r} in {firstLines}" )
                         if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: assert False, "We want to stop here"
                         continue
                 foundProjects.append( (tryFolderName, thisFilename,) )
                 lastFilenameFound = thisFilename
                 numFound += 1
     if numFound:
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "VPLBibleFileCheck foundProjects", numFound, foundProjects )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, "VPLBibleFileCheck foundProjects", numFound, foundProjects )
         if numFound == 1 and (autoLoad or autoLoadBooks):
             if BibleOrgSysGlobals.debugFlag: assert len(foundProjects) == 1
             uB = VPLBible( foundProjects[0][0], foundProjects[0][1][:-4] ) # Remove the end of the actual filename ".txt"
@@ -291,7 +301,8 @@ class VPLBible( Bible ):
         """
         Constructor: just sets up the Bible object.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"VPLBible.__init__( '{sourceFileOrFolder}', gN='{givenName}', gA='{givenAbbreviation}', e='{encoding}' )" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, f"VPLBible.__init__( '{sourceFileOrFolder}', gN='{givenName}', gA='{givenAbbreviation}', e='{encoding}' )" )
         # self.doExtraChecking = DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag
         assert givenName != 'utf-8'
         assert givenAbbreviation != 'utf-8'
@@ -362,7 +373,8 @@ class VPLBible( Bible ):
         """
         Does the work of loading a VPL file into memory.
         """
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Loading {filepath}…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Loading {filepath}…" )
 
         # Preview the file
         vplType = None
@@ -393,9 +405,11 @@ class VPLBible( Bible ):
                     #match = re.search( '^; TITLE:\\s', line )
                     #if match: vplType = 4
                     if match:
-                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"First line got type #{vplType} {match.group(0)!r} match from {line!r}" )
+                        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"First line got type #{vplType} {match.group(0)!r} match from {line!r}" )
                     else:
-                        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"VPLBible.load: (unexpected) first line was {self.sourceFilepath!r} in {line}" )
+                        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 4:
+                            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"VPLBible.load: (unexpected) first line was {self.sourceFilepath!r} in {line}" )
                         if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: assert False, "We want to stop here"
                 if line == 'Chapter 1':
                     vplType = 5
@@ -403,7 +417,8 @@ class VPLBible( Bible ):
                 if line.startswith( 'Genesis 1:1\t'):
                     vplType = 6
                     break
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Set VPL type to {vplType}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Set VPL type to {vplType}" )
 
         # Now process the file
         bookCodeText = lastBookCodeText = BBB = lastBBB = lastChapterNumberString = None
@@ -498,7 +513,8 @@ class VPLBible( Bible ):
                     else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Unexpected number of VPL1 bits", self.givenName, BBB, bookCodeText, chapterNumberString, verseNumberString, len(bits), bits )
 
                     if not bookCodeText and not chapterNumberString and not verseNumberString:
-                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Skipping empty line in {self.givenName} {BBB} {bookCodeText} {chapterNumberString}:{verseNumberString}" )
+                        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Skipping empty line in {self.givenName} {BBB} {bookCodeText} {chapterNumberString}:{verseNumberString}" )
                         continue
                     if BibleOrgSysGlobals.debugFlag: assert 2  <= len(bookCodeText) <= 4
                     if BibleOrgSysGlobals.debugFlag: assert chapterNumberString.isdigit()
@@ -719,7 +735,8 @@ class VPLBible( Bible ):
                         blankLineCount += 1
                         if blankLineCount == 2: # end of book
                             if thisBook is not None:
-                                dPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"  Saving {BBB} book…" )
+                                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 4:
+                                    dPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"  Saving {BBB} book…" )
                                 self.stashBook( thisBook )
                                 thisBook = BBB = None
                                 lastChapterNumber = lastVerseNumber = -1
@@ -740,7 +757,8 @@ class VPLBible( Bible ):
                         ref, text = line.split( '\t' )
                         if ':' not in ref or len(ref) > 30:
                             if chapterNumber==0 and verseNumber==0:
-                                dPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  Ignoring supposedly bad {line=}" )
+                                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 2:
+                                    dPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  Ignoring supposedly bad {line=}" )
                                 continue
                             else:
                                 raise ValueError( f"Ignoring unexpected{line=} from {filepath}" )
@@ -754,7 +772,8 @@ class VPLBible( Bible ):
                             assert False, "We want to stop here"
                         if newBBB != lastBBB:
                             if lastBBB is not None:
-                                vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Saving {BBB} book…" )
+                                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                                    vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Saving {BBB} book…" )
                                 self.stashBook( thisBook )
                             BBB = newBBB
                             assert BBB
@@ -793,7 +812,8 @@ class VPLBible( Bible ):
                 #if not line: continue # Just discard blank lines # Might want to enable this line ????
 
                 # Do the processing for vplTypes 1-4
-                dPrint( 'Normal', DEBUGGING_THIS_MODULE, f"About to process {BBB} {chapterNumber}:{verseNumber} line {lineNumber:,}: '{line}'…" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 2:
+                    dPrint( 'Normal', DEBUGGING_THIS_MODULE, f"About to process {BBB} {chapterNumber}:{verseNumber} line {lineNumber:,}: '{line}'…" )
                 if bookCodeText and chapterNumber and verseNumber:
                     lastChapterNumber = lastVerseNumber = -1
                     if bookCodeText != lastBookCodeText: # We've started a new book
@@ -845,7 +865,8 @@ class VPLBible( Bible ):
                             thisBook.addLine( 'p', '' )
                             verseText = verseText[1:].lstrip()
 
-                        dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'{BBB} {chapterNumberString}:{verseNumberString} = {vText!r}' )
+                        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 1:
+                            dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f'{BBB} {chapterNumberString}:{verseNumberString} = {vText!r}' )
                         thisBook.addLine( 'v', f'{verseNumberString} {verseText}' )
                         lastVerseText = verseText
                         lastVerseNumber = verseNumber
@@ -855,7 +876,8 @@ class VPLBible( Bible ):
 
         # Save the final book
         if thisBook is not None:
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Saving {BBB} book…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Saving {BBB} book…" )
             self.stashBook( thisBook )
     # end of VPLBible._loadFile
 
@@ -866,7 +888,8 @@ class VPLBible( Bible ):
 
         Load a single source file and load book elements.
         """
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Loading {self.sourceFilepath}…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Loading {self.sourceFilepath}…" )
         assert self.sourceFilepath is not None
 
         global BOS66, BOS81, BOSx
@@ -895,7 +918,8 @@ class VPLBible( Bible ):
 
         Finds and loads multiple source files and load book elements.
         """
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Loading books from {self.sourceFolder}…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Loading books from {self.sourceFolder}…" )
         assert self.sourceFilepath is None
 
         settingsDict = {}
@@ -925,11 +949,14 @@ def testVPL( VPLfolder ):
     # Crudely demonstrate the VPL Bible class
     from BibleOrgSys.Reference import VerseReferences
 
-    vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Demonstrating the VPL Bible class…" )
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Test folder is {VPLfolder!r}" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Demonstrating the VPL Bible class…" )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Test folder is {VPLfolder!r}" )
     vb = VPLBible( VPLfolder, "demo" )
     vb.load() # Load and process the file
-    vPrint( 'Normal', DEBUGGING_THIS_MODULE, vb ) # Just print a summary
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, vb ) # Just print a summary
     if BibleOrgSysGlobals.strictCheckingFlag:
         vb.check()
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, UsfmB.books['GEN']._processedLines[0:40] )
@@ -953,7 +980,8 @@ def testVPL( VPLfolder ):
             verseText = vb.getVerseText( svk )
         except KeyError:
             verseText = "Verse not available!"
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, reference, shortText, verseText )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, reference, shortText, verseText )
 # end of testVPL
 
 
@@ -972,10 +1000,12 @@ def briefDemo() -> None:
                     BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'VPLTest2/' ),
                     ) )
         result1 = VPLBibleFileCheck( testFolder )
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nVPL TestA1", result1 )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nVPL TestA1", result1 )
 
         result2 = VPLBibleFileCheck( testFolder, autoLoad=True )
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "VPL TestA2", result2 )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "VPL TestA2", result2 )
         if isinstance( result2, Bible):
             try: result2.loadMetadataTextFile( os.path.join( testFolder, "BooknamesMetadata.txt" ) )
             except FileNotFoundError: pass # it's not compulsory
@@ -989,7 +1019,8 @@ def briefDemo() -> None:
                 result2.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
 
         result3 = VPLBibleFileCheck( testFolder, autoLoadBooks=True )
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "VPL TestA3", result3 )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "VPL TestA3", result3 )
         if isinstance( result3, Bible):
             try: result3.loadMetadataTextFile( os.path.join( testFolder, "BooknamesMetadata.txt" ) )
             except FileNotFoundError: pass # it's not compulsory
@@ -1011,7 +1042,8 @@ def briefDemo() -> None:
             elif os.path.isfile( somepath ): foundFiles.append( something )
 
         if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nTrying all {len(foundFolders)} discovered modules…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nTrying all {len(foundFolders)} discovered modules…" )
             parameters = [folderName for folderName in sorted(foundFolders)]
             BibleOrgSysGlobals.alreadyMultiprocessing = True
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
@@ -1020,7 +1052,8 @@ def briefDemo() -> None:
             BibleOrgSysGlobals.alreadyMultiprocessing = False
         else: # Just single threaded
             for j, someFolder in enumerate( sorted( foundFolders ) ):
-                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nVPL D{j+1}/ Trying {someFolder}" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                    vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nVPL D{j+1}/ Trying {someFolder}" )
                 #myTestFolder = os.path.join( testFolder, someFolder+'/' )
                 testVPL( someFolder )
 # end of VPLBible.briefDemo
@@ -1038,10 +1071,12 @@ def fullDemo() -> None:
                     BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'VPLTest2/' ),
                     ):
             result1 = VPLBibleFileCheck( testFolder )
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nVPL TestA1", result1 )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nVPL TestA1", result1 )
 
             result2 = VPLBibleFileCheck( testFolder, autoLoad=True )
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "VPL TestA2", result2 )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, "VPL TestA2", result2 )
             if isinstance( result2, Bible):
                 try: result2.loadMetadataTextFile( os.path.join( testFolder, "BooknamesMetadata.txt" ) )
                 except FileNotFoundError: pass # it's not compulsory
@@ -1055,7 +1090,8 @@ def fullDemo() -> None:
                     result2.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
 
             result3 = VPLBibleFileCheck( testFolder, autoLoadBooks=True )
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "VPL TestA3", result3 )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, "VPL TestA3", result3 )
             if isinstance( result3, Bible):
                 try: result3.loadMetadataTextFile( os.path.join( testFolder, "BooknamesMetadata.txt" ) )
                 except FileNotFoundError: pass # it's not compulsory
@@ -1077,7 +1113,8 @@ def fullDemo() -> None:
             elif os.path.isfile( somepath ): foundFiles.append( something )
 
         if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nTrying all {len(foundFolders)} discovered modules…" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nTrying all {len(foundFolders)} discovered modules…" )
             parameters = [folderName for folderName in sorted(foundFolders)]
             BibleOrgSysGlobals.alreadyMultiprocessing = True
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
@@ -1086,7 +1123,8 @@ def fullDemo() -> None:
             BibleOrgSysGlobals.alreadyMultiprocessing = False
         else: # Just single threaded
             for j, someFolder in enumerate( sorted( foundFolders ) ):
-                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nVPL D{j+1}/ Trying {someFolder}" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+                    vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nVPL D{j+1}/ Trying {someFolder}" )
                 #myTestFolder = os.path.join( testFolder, someFolder+'/' )
                 testVPL( someFolder )
 # end of VPLBible.fullDemo

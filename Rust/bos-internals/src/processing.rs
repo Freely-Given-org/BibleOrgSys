@@ -190,7 +190,9 @@ pub fn line_fix_and_move_extras_out(
 
     // 5. Generate clean text by removing all markers
     let mut final_clean = final_adj.trim_start().to_string();
-    static MARKER_RE: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"\\\+?[a-z0-9]{1,6}(?:\*| )?").unwrap());
+    // Custom ESFM markers such as \z2hilite exceed six characters. Consume the
+    // complete marker name so its tail cannot become part of a word or word ID.
+    static MARKER_RE: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"\\\+?[a-z0-9]+(?:\*| )?").unwrap());
     final_clean = MARKER_RE.replace_all(&final_clean, "").to_string();
     if final_clean.contains('\\') {
         if have_strict_checking_flag() || cfg!(debug_assertions) {
@@ -592,6 +594,34 @@ mod tests {
             "Hear¦283664 Oh¦283665_heavens¦283665 and¦283666÷give¦283666_ear¦283666 Oh¦283667_earth¦283667 if/because¦283668 YHWH¦283669 he¦283670_has¦283670_spoken¦283670 children¦283671 I¦283672_have¦283672_brought¦283672_up¦283672 and¦283673÷I¦283673_have¦283673_raised¦283673 and¦283674÷they¦283674 they¦283675_have¦283675_rebelled¦283675 against¦283676÷me¦283676."
         );
         assert!(extras.is_empty());
+    }
+
+    #[test]
+    fn test_long_character_markers_preserve_words_and_word_ids() {
+        for (text, expected) in [
+            (
+                r"You¦245763 put strength¦245764 on me for¦245765 \z2hilite battle¦245765\z2hilite* \add ≈like a belt around me\add*.",
+                "You¦245763 put strength¦245764 on me for¦245765 battle¦245765 ≈like a belt around me.",
+            ),
+            (
+                r"You¦245766 made¦245766 \z2hilite my enemies\z2hilite* bow¦245766 down¦245766 to me.",
+                "You¦245766 made¦245766 my enemies bow¦245766 down¦245766 to me.",
+            ),
+            (
+                r"\add \+z2hilite battle¦245765\+z2hilite*\add*, next.",
+                "battle¦245765, next.",
+            ),
+        ] {
+            let mut errors = Vec::new();
+            let (adjusted, clean, extras) = line_fix_and_move_extras_out(
+                text, "18", "39", "PSA", "v~",
+                &ProcessLinesOptions::default(), &mut errors,
+            );
+            assert_eq!(adjusted, text); // Retain original formatting for exports.
+            assert_eq!(clean, expected);
+            assert!(extras.is_empty());
+            assert!(errors.is_empty());
+        }
     }
 
     #[test]

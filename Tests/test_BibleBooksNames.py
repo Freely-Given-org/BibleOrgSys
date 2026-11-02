@@ -25,7 +25,7 @@ from BibleOrgSys.Reference.Converters import BibleBooksNamesConverter
 from BibleOrgSys.Reference import BibleBooksNames
 
 
-LAST_MODIFIED_DATE = '2017-03-29' # by RJH
+LAST_MODIFIED_DATE = '2026-10-06' # by RJH
 PROGRAM_NAME = "Bible Books Names tests"
 PROGRAM_VERSION = '0.32'
 PROGRAM_NAME_VERSION = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
@@ -79,7 +79,8 @@ class BibleBooksNamesConverterTests( unittest.TestCase ):
 
     def test_1070_exportDataToC( self ):
         """ Test the exportDataToC function. """
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Sorry, no C export yet :(" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Sorry, no C export yet :(" )
         #self.assertEqual( self.bbnsc.exportDataToC(), None ) # Basically just make sure that it runs
     # end of test_1070_exportDataToC
 # end of BibleBooksNamesConverterTests class
@@ -277,7 +278,8 @@ if __name__ == '__main__':
     parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
-    vPrint( 'Normal', DEBUGGING_THIS_MODULE, PROGRAM_NAME_VERSION )
+    if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, PROGRAM_NAME_VERSION )
 
     unittest.main() # Automatically runs all of the above tests
 # end of BibleBooksNamesTests.py

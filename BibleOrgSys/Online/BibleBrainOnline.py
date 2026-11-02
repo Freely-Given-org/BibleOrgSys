@@ -64,7 +64,7 @@ from BibleOrgSys.Online.GenericOnlineBible import GenericOnlineBible
 import bos_books_codes_py
 
 
-LAST_MODIFIED_DATE = '2020-07-12' # by RJH
+LAST_MODIFIED_DATE = '2026-10-06' # by RJH
 SHORT_PROGRAM_NAME = "BibleBrainPlatform"
 PROGRAM_NAME = "FCBH Bible Brain Platform online handler"
 PROGRAM_VERSION = '0.24'
@@ -94,10 +94,12 @@ def getSecurityKey():
     Returns the contents of the file.
     """
     for folderpath in KEY_SEARCH_FOLDERPATHS:
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Searching for BibleBrain key file in {folderpath} …" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Searching for BibleBrain key file in {folderpath} …" )
         keyFilepath = folderpath.joinpath( BIBLE_BRAIN_KEY_FILENAME )
         if keyFilepath.is_file():
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"getSecurityKey: found key file in {keyFilepath}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, f"getSecurityKey: found key file in {keyFilepath}" )
             with open( keyFilepath, 'rt', encoding='utf-8' ) as keyFile:
                 return keyFile.read() # Our personal key
     raise FileNotFoundError( f"Cannot find key file {BIBLE_BRAIN_KEY_FILENAME}" )
@@ -115,7 +117,8 @@ class BibleBrainBibles:
         """
         Create the internal Bibles object.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, "BibleBrainBibles.__init__()" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, "BibleBrainBibles.__init__()" )
 
         self.key = getSecurityKey() # Our personal key
         self.URLFixedData = f"?v={BIBLE_BRAIN_VERSION}&key={self.key}"
@@ -141,7 +144,8 @@ class BibleBrainBibles:
 
         Returns None if the data cannot be fetched.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"BibleBrainBibles.getOnlineData( {fieldREST!r} {additionalParameters!r} )" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, f"BibleBrainBibles.getOnlineData( {fieldREST!r} {additionalParameters!r} )" )
 
         requestString = f"{BIBLE_BRAIN_URL_BASE}{fieldREST}{self.URLFixedData}{'&'+additionalParameters if additionalParameters else ''}"
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Request string is", repr(requestString) )
@@ -163,7 +167,8 @@ class BibleBrainBibles:
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "responseSTR", len(responseSTR), repr(responseSTR) )
             return responseObject.json()
         else:
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'contentType', contentType )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'contentType', contentType )
             assert False, "We want to stop here" # Haven't had this contentType before
     # end of BibleBrainBibles.getOnlineData
 
@@ -175,10 +180,12 @@ class BibleBrainBibles:
 
         Returns the DAM ID which is typically something like: ENGNLVN2ET
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"BibleBrainBibles.getDAM( {refNumber} )" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, f"BibleBrainBibles.getDAM( {refNumber} )" )
 
         gotDAM = self.volumeList[refNumber]['dam_id']
-        vPrint( 'Never', DEBUGGING_THIS_MODULE, f"  got DAM='{gotDAM}'" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 5:
+            vPrint( 'Never', DEBUGGING_THIS_MODULE, f"  got DAM='{gotDAM}'" )
         return gotDAM
     # end of BibleBrainBibles.getDAM
 
@@ -206,13 +213,16 @@ class BibleBrainBibles:
                 'english_name': 'Zuni', 'language_code': 'ZUN', 'language_iso_2B': 'zun', 'language_iso': 'zun',
                 'language_iso_1': '', 'language_iso_2T': 'zun'}
         """
-        fnPrint( DEBUGGING_THIS_MODULE, "BibleBrainBibles.fetchAllLanguages()" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, "BibleBrainBibles.fetchAllLanguages()" )
 
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "Downloading list of available languages from FCBH…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, "Downloading list of available languages from FCBH…" )
 
         if self.onlineVersion: # Get a list of available data sets
             self.languageList = self.getOnlineData( "library/language" ) # Get an alphabetically ordered list of dictionaries -- one for each language
-            dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  languageList", len(self.languageList) )#, self.languageList )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 1:
+                dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  languageList", len(self.languageList) )#, self.languageList )
         return self.languageList
     # end of BibleBrainBibles.fetchAllLanguages
 
@@ -238,13 +248,16 @@ class BibleBrainBibles:
             {'version_name': 'Yessan-Mayo Yawu', 'version_code': 'YWV', 'english_name': 'Yessan-Mayo Yawu'}
             {'version_name': 'Ze Zoo Zersion', 'version_code': 'ZZQ', 'english_name': 'Ze Zoo Zersion'}
         """
-        fnPrint( DEBUGGING_THIS_MODULE, "BibleBrainBibles.fetchAllVersions()" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, "BibleBrainBibles.fetchAllVersions()" )
 
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "Downloading list of available versions from FCBH…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, "Downloading list of available versions from FCBH…" )
 
         if self.onlineVersion: # Get a list of available data sets
             self.versionList = self.getOnlineData( 'library/version' ) # Get an alphabetically ordered list of dictionaries -- one for each version
-            dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  versionList", len(self.versionList) )#, self.versionList )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 1:
+                dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  versionList", len(self.versionList) )#, self.versionList )
         return self.versionList
     # end of BibleBrainBibles.fetchAllVersions
 
@@ -302,13 +315,16 @@ class BibleBrainBibles:
                 'language_name': 'Zapoteco de Yatee', 'right_to_left': 'false', 'num_art': '0', 'version_code': 'TBL',
                 'collection_code': 'NT'}
         """
-        fnPrint( DEBUGGING_THIS_MODULE, "BibleBrainBibles.fetchAllVolumes()" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, "BibleBrainBibles.fetchAllVolumes()" )
 
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "Downloading list of available volumes from FCBH…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, "Downloading list of available volumes from FCBH…" )
 
         if self.onlineVersion: # Get a list of available data sets
             self.volumeList = self.getOnlineData( 'library/volume' ) # Get an alphabetically ordered list of dictionaries -- one for each volume
-            dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  volumeList", len(self.volumeList) )#, self.volumeList )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 1:
+                dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  volumeList", len(self.volumeList) )#, self.volumeList )
         return self.volumeList
     # end of BibleBrainBibles.fetchAllVolumes
 
@@ -335,9 +351,11 @@ class BibleBrainBibles:
             'Mam, Northern 1993 Edition' [825, 826]
             'Русский 1876 Synodal Bible' [1246, 1247]
         """
-        fnPrint( DEBUGGING_THIS_MODULE, "BibleBrainBibles.fetchAllTextVolumes()" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, "BibleBrainBibles.fetchAllTextVolumes()" )
 
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "Creating list of available text volumes from FCBH…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, "Creating list of available text volumes from FCBH…" )
 
         if self.volumeList is None:
             self.fetchAllVolumes()
@@ -367,7 +385,8 @@ class BibleBrainBibles:
                     #else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, j, repr(volume['language_name']), repr(volume['volume_name']) )
                     else: vPrint( 'Info', DEBUGGING_THIS_MODULE, "No web delivery in", repr(ourName), "only", volume['delivery'] )
                 elif volume['media'] not in ('audio','video'): vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "No text in", ourName, volume['media'] )
-        dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  volumeNameDict", len(self.volumeNameDict)) #, self.volumeNameDict )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 1:
+            dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  volumeNameDict", len(self.volumeNameDict)) #, self.volumeNameDict )
         return self.volumeNameDict
     # end of BibleBrainBibles.fetchAllTextVolumes
 
@@ -394,9 +413,11 @@ class BibleBrainBibles:
             'Mam, Northern 1993 Edition' [825, 826]
             'Русский 1876 Synodal Bible' [1246, 1247]
         """
-        fnPrint( DEBUGGING_THIS_MODULE, "BibleBrainBibles.fetchAllEnglishTextVolumes()" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, "BibleBrainBibles.fetchAllEnglishTextVolumes()" )
 
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "Creating list of available English text volumes from FCBH…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, "Creating list of available English text volumes from FCBH…" )
 
         if self.volumeList is None:
             self.fetchAllVolumes()
@@ -417,7 +438,8 @@ class BibleBrainBibles:
                             #else: self.EnglishVolumeNameDict[ourName] = [j]
                         else: vPrint( 'Info', DEBUGGING_THIS_MODULE, "No web delivery in", repr(ourName), "only", volume['delivery'] )
                     elif volume['media'] not in ('audio','video'): vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "No text in", ourName, volume['media'] )
-        dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "EnglishVolumeNameDict", len(self.EnglishVolumeNameDict))#, self.EnglishVolumeNameDict )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 1:
+            dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "EnglishVolumeNameDict", len(self.EnglishVolumeNameDict))#, self.EnglishVolumeNameDict )
         return self.EnglishVolumeNameDict
     # end of BibleBrainBibles.fetchAllEnglishTextVolumes
 
@@ -440,7 +462,8 @@ class BibleBrainBibles:
     def searchNames( self, searchText ):
         """
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"BibleBrainBibles.searchNames( {searchText!r} )" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, f"BibleBrainBibles.searchNames( {searchText!r} )" )
 
         searchTextUC = searchText.upper()
         resultsList = []
@@ -473,7 +496,8 @@ class BibleBrainBible( GenericOnlineBible ):
                 1-3: Language code, e.g., ENG
                 4-6: Version code, e.g., ESV
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"BibleBrainBible.__init__( {damRoot!r} )" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, f"BibleBrainBible.__init__( {damRoot!r} )" )
         if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert damRoot and isinstance( damRoot, str ) and len(damRoot)==6
 
@@ -497,7 +521,8 @@ class BibleBrainBible( GenericOnlineBible ):
         #self.bookList = None
         if self.onlineVersion: # Check that this particular resource is available by getting a list of books
             bookList = self.getOnlineData( "library/book", "dam_id="+self.damRoot ) # Get an ordered list of dictionaries -- one for each book
-            vPrint( 'Never', DEBUGGING_THIS_MODULE, "BibleBrainBible.__init__: bookList", len(bookList))#, bookList )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 5:
+                vPrint( 'Never', DEBUGGING_THIS_MODULE, "BibleBrainBible.__init__: bookList", len(bookList))#, bookList )
 
             #if 0:# Get all book codes and English names
                 #bookCodeDictList = self.getOnlineData( "library/bookname", "language_code=ENG" )
@@ -544,9 +569,11 @@ class BibleBrainBible( GenericOnlineBible ):
             Returns the dictionary.
         Returns None if the data cannot be fetched.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"BibleBrainBible.getOnlineData( {fieldREST!r} {additionalParameters!r} )" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, f"BibleBrainBible.getOnlineData( {fieldREST!r} {additionalParameters!r} )" )
 
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Requesting data from {BIBLE_BRAIN_URL_BASE} for {self.damRoot}…" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Requesting data from {BIBLE_BRAIN_URL_BASE} for {self.damRoot}…" )
         requestString = f"{BIBLE_BRAIN_URL_BASE}{fieldREST}{self.URLFixedData}{'&'+additionalParameters if additionalParameters else ''}"
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Request string is", repr(requestString) )
         responseObject = requests.get( requestString )
@@ -561,7 +588,8 @@ class BibleBrainBible( GenericOnlineBible ):
         """
         Equivalent to the one in InternalBible, except we may have to fetch the data.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"BibleBrainBible.getVerseDataList( {key!r} ) for {self.damRoot!r}" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
+            fnPrint( DEBUGGING_THIS_MODULE, f"BibleBrainBible.getVerseDataList( {key!r} ) for {self.damRoot!r}" )
 
         cachedResult = GenericOnlineBible.getCachedVerseDataList( self, key )
         if isinstance( cachedResult, list): return cachedResult
@@ -582,7 +610,8 @@ class BibleBrainBible( GenericOnlineBible ):
                 GenericOnlineBible.cacheVerse( self, key, resultList )
             return resultList
         else: # This version doesn't have this book
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  getVerseDataList: {BBB} not in {self.damRoot} {self.books.keys()}" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  getVerseDataList: {BBB} not in {self.damRoot} {self.books.keys()}" )
     # end of BibleBrainBible.getVerseDataList
 
 
@@ -610,52 +639,69 @@ def briefDemo() -> None:
     BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     if 1: # Test the BibleBrainBibles class
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
         myBibleBrainBibles = BibleBrainBibles()
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, myBibleBrainBibles )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, myBibleBrainBibles )
         #myBibleBrainBibles.load() # takes a minute
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, myBibleBrainBibles )
 
         if 0:
             myBibleBrainBibles.fetchAllLanguages()
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nLanguage list ({len(myBibleBrainBibles.languageList)}):" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nLanguage list ({len(myBibleBrainBibles.languageList)}):" )
             for j, lgDict in enumerate( myBibleBrainBibles.languageList ):
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'Lg', j, repr(lgDict) )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'Lg', j, repr(lgDict) )
 
         if 0:
             myBibleBrainBibles.fetchAllVersions()
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nVersion list ({len(myBibleBrainBibles.versionList)}):" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nVersion list ({len(myBibleBrainBibles.versionList)}):" )
             for j, verDict in enumerate( myBibleBrainBibles.versionList ):
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'Ver', j, repr(verDict) )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'Ver', j, repr(verDict) )
 
         if 0:
             myBibleBrainBibles.fetchAllVolumes()
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nVolume list ({len(myBibleBrainBibles.volumeList)}):" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nVolume list ({len(myBibleBrainBibles.volumeList)}):" )
             for j, volDict in enumerate( myBibleBrainBibles.volumeList ):
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ' ', j, repr(volDict) )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "393", myBibleBrainBibles.volumeList[393] )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "394", myBibleBrainBibles.volumeList[394] )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "395", myBibleBrainBibles.volumeList[395] )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ' ', j, repr(volDict) )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "393", myBibleBrainBibles.volumeList[393] )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "394", myBibleBrainBibles.volumeList[394] )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "395", myBibleBrainBibles.volumeList[395] )
 
         if 0:
             myBibleBrainBibles.fetchAllTextVolumes()
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nVolume name dict ({len(myBibleBrainBibles.volumeNameDict)}):" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nVolume name dict ({len(myBibleBrainBibles.volumeNameDict)}):" )
             for j, someName in enumerate( myBibleBrainBibles.volumeNameDict ):
                 #if 'English' in someName:
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "English:", repr(someName), repr(myBibleBrainBibles.volumeNameDict[someName]) )
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, j, repr(someName), repr(myBibleBrainBibles.volumeNameDict[someName]) )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, j, repr(someName), repr(myBibleBrainBibles.volumeNameDict[someName]) )
                 #if 'English' in someName:
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  English:", repr(someName), repr(myBibleBrainBibles.volumeNameDict[someName]) )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "English search", myBibleBrainBibles.searchNames( "English" ) )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "MS search", myBibleBrainBibles.searchNames( "Salug" ) )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "English search", myBibleBrainBibles.searchNames( "English" ) )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "MS search", myBibleBrainBibles.searchNames( "Salug" ) )
 
         if 1:
             myBibleBrainBibles.fetchAllEnglishTextVolumes()
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nEnglish volume name dict ({len(myBibleBrainBibles.EnglishVolumeNameDict)}):" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nEnglish volume name dict ({len(myBibleBrainBibles.EnglishVolumeNameDict)}):" )
             for j, someName in enumerate( myBibleBrainBibles.EnglishVolumeNameDict ):
                 #if 'English' in someName:
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "English:", repr(someName), repr(myBibleBrainBibles.EnglishVolumeNameDict[someName]) )
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  {j}/ {someName!r} {myBibleBrainBibles.EnglishVolumeNameDict[someName]!r}" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  {j}/ {someName!r} {myBibleBrainBibles.EnglishVolumeNameDict[someName]!r}" )
                 #if 'English' in someName:
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  English:", repr(someName), repr(myBibleBrainBibles.EnglishVolumeNameDict[someName]) )
 
@@ -663,28 +709,38 @@ def briefDemo() -> None:
     testRefs = ( ('GEN','1','1'), ('JER','33','3'), ('MAL','4','6'), ('MAT','1','1'), ('JHN','3','16'), ('JDE','1','14'), ('REV','22','21'), )
 
     if 1: # Test the BibleBrainBible class with the ESV
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
         myBibleBrainBible1 = BibleBrainBible( 'ENGESV' )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, myBibleBrainBible1 )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, myBibleBrainBible1 )
         for testRef in testRefs:
             verseKey = SimpleVerseKey( *testRef )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, verseKey )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " ", myBibleBrainBible1.getVerseDataList( verseKey ) )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, verseKey )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " ", myBibleBrainBible1.getVerseDataList( verseKey ) )
          # Now test the BibleBrainBible class caching
         for testRef in testRefs:
             verseKey = SimpleVerseKey( *testRef )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, verseKey, "cached" )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " ", myBibleBrainBible1.getVerseDataList( verseKey ) )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, verseKey, "cached" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " ", myBibleBrainBible1.getVerseDataList( verseKey ) )
 
 
     if 1: # Test the BibleBrainBible class with the MS
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
         myBibleBrainBible2 = BibleBrainBible( 'MBTWBT' )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, myBibleBrainBible2 )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, myBibleBrainBible2 )
         for testRef in testRefs:
             verseKey = SimpleVerseKey( *testRef )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, verseKey )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " ", myBibleBrainBible2.getVerseDataList( verseKey ) )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, verseKey )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " ", myBibleBrainBible2.getVerseDataList( verseKey ) )
 # end of BibleBrainOnline.briefDemo
 
 def fullDemo() -> None:
@@ -696,52 +752,69 @@ def fullDemo() -> None:
     BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     if 1: # Test the BibleBrainBibles class
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
         myBibleBrainBibles = BibleBrainBibles()
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, myBibleBrainBibles )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, myBibleBrainBibles )
         #myBibleBrainBibles.load() # takes a minute
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, myBibleBrainBibles )
 
         if 0:
             myBibleBrainBibles.fetchAllLanguages()
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nLanguage list ({len(myBibleBrainBibles.languageList)}):" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nLanguage list ({len(myBibleBrainBibles.languageList)}):" )
             for j, lgDict in enumerate( myBibleBrainBibles.languageList ):
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'Lg', j, repr(lgDict) )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'Lg', j, repr(lgDict) )
 
         if 0:
             myBibleBrainBibles.fetchAllVersions()
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nVersion list ({len(myBibleBrainBibles.versionList)}):" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nVersion list ({len(myBibleBrainBibles.versionList)}):" )
             for j, verDict in enumerate( myBibleBrainBibles.versionList ):
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'Ver', j, repr(verDict) )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'Ver', j, repr(verDict) )
 
         if 0:
             myBibleBrainBibles.fetchAllVolumes()
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nVolume list ({len(myBibleBrainBibles.volumeList)}):" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nVolume list ({len(myBibleBrainBibles.volumeList)}):" )
             for j, volDict in enumerate( myBibleBrainBibles.volumeList ):
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ' ', j, repr(volDict) )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "393", myBibleBrainBibles.volumeList[393] )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "394", myBibleBrainBibles.volumeList[394] )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "395", myBibleBrainBibles.volumeList[395] )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ' ', j, repr(volDict) )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "393", myBibleBrainBibles.volumeList[393] )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "394", myBibleBrainBibles.volumeList[394] )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "395", myBibleBrainBibles.volumeList[395] )
 
         if 0:
             myBibleBrainBibles.fetchAllTextVolumes()
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nVolume name dict ({len(myBibleBrainBibles.volumeNameDict)}):" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nVolume name dict ({len(myBibleBrainBibles.volumeNameDict)}):" )
             for j, someName in enumerate( myBibleBrainBibles.volumeNameDict ):
                 #if 'English' in someName:
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "English:", repr(someName), repr(myBibleBrainBibles.volumeNameDict[someName]) )
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, j, repr(someName), repr(myBibleBrainBibles.volumeNameDict[someName]) )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, j, repr(someName), repr(myBibleBrainBibles.volumeNameDict[someName]) )
                 #if 'English' in someName:
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  English:", repr(someName), repr(myBibleBrainBibles.volumeNameDict[someName]) )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "English search", myBibleBrainBibles.searchNames( "English" ) )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "MS search", myBibleBrainBibles.searchNames( "Salug" ) )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "English search", myBibleBrainBibles.searchNames( "English" ) )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "MS search", myBibleBrainBibles.searchNames( "Salug" ) )
 
         if 1:
             myBibleBrainBibles.fetchAllEnglishTextVolumes()
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nEnglish volume name dict ({len(myBibleBrainBibles.EnglishVolumeNameDict)}):" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nEnglish volume name dict ({len(myBibleBrainBibles.EnglishVolumeNameDict)}):" )
             for j, someName in enumerate( myBibleBrainBibles.EnglishVolumeNameDict ):
                 #if 'English' in someName:
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "English:", repr(someName), repr(myBibleBrainBibles.EnglishVolumeNameDict[someName]) )
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  {j}/ {someName!r} {myBibleBrainBibles.EnglishVolumeNameDict[someName]!r}" )
+                if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  {j}/ {someName!r} {myBibleBrainBibles.EnglishVolumeNameDict[someName]!r}" )
                 #if 'English' in someName:
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  English:", repr(someName), repr(myBibleBrainBibles.EnglishVolumeNameDict[someName]) )
 
@@ -749,28 +822,38 @@ def fullDemo() -> None:
     testRefs = ( ('GEN','1','1'), ('JER','33','3'), ('MAL','4','6'), ('MAT','1','1'), ('JHN','3','16'), ('JDE','1','14'), ('REV','22','21'), )
 
     if 1: # Test the BibleBrainBible class with the ESV
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
         myBibleBrainBible1 = BibleBrainBible( 'ENGESV' )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, myBibleBrainBible1 )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, myBibleBrainBible1 )
         for testRef in testRefs:
             verseKey = SimpleVerseKey( *testRef )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, verseKey )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " ", myBibleBrainBible1.getVerseDataList( verseKey ) )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, verseKey )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " ", myBibleBrainBible1.getVerseDataList( verseKey ) )
          # Now test the BibleBrainBible class caching
         for testRef in testRefs:
             verseKey = SimpleVerseKey( *testRef )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, verseKey, "cached" )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " ", myBibleBrainBible1.getVerseDataList( verseKey ) )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, verseKey, "cached" )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " ", myBibleBrainBible1.getVerseDataList( verseKey ) )
 
 
     if 1: # Test the BibleBrainBible class with the MS
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
         myBibleBrainBible2 = BibleBrainBible( 'MBTWBT' )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, myBibleBrainBible2 )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, myBibleBrainBible2 )
         for testRef in testRefs:
             verseKey = SimpleVerseKey( *testRef )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, verseKey )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " ", myBibleBrainBible2.getVerseDataList( verseKey ) )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, verseKey )
+            if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " ", myBibleBrainBible2.getVerseDataList( verseKey ) )
 # end of BibleBrainOnline.fullDemo
 
 if __name__ == '__main__':

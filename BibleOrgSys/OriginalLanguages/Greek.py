@@ -17,6 +17,7 @@ Module handling Greek language particularities.
 
 CHANGELOG:
     2024-02-11 Improve assert test for left-over accents
+    2026-10-04 Use str.translate for removeAccents; fixed removeVowelPointing/removeOtherMarks dropping their flags on the no-argument recursive path
 """
 
 import unicodedata
@@ -25,10 +26,10 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2025-12-10' # by RJH
+LAST_MODIFIED_DATE = '2026-10-06' # by RJH
 SHORT_PROGRAM_NAME = "GreekLanguageHandler"
 PROGRAM_NAME = "Greek language handler"
-PROGRAM_VERSION = '0.12'
+PROGRAM_VERSION = '0.13'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -131,6 +132,11 @@ if BibleOrgSysGlobals.debugFlag: # Check that our tables have no obvious errors
         assert vowels.count(letter)==1
         assert letter not in normalConsonants
 
+# Prebuilt translation table for the hot removeAccents() method
+#   (built once at module load; str.translate is a single C-speed pass,
+#    byte-identical to the previous per-character dict lookup join)
+_GREEK_ACCENT_TRANS = str.maketrans( GREEK_ACCENT_DICT )
+
 
 # Filenames for morphgnt
 MORPHGNT_BOOKLIST = ['MAT', 'MRK', 'LUK', 'JHN', 'ACT', \
@@ -219,7 +225,8 @@ class Greek():
 
     def printUnicodeData( self, text:str|None=None ):
         if text is None: text = self.currentText
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "unicodedata", unicodedata.unidata_version )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "unicodedata", unicodedata.unidata_version )
         #def printUnicodeInfo( text, description ):
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{description}:" )
             #for j,char in enumerate(text):
@@ -237,8 +244,7 @@ class Greek():
         Doesn't cope with punctuation characters yet.
         """
         if text is None: text = self.currentText
-        resultText = ''.join( GREEK_ACCENT_DICT[someChar] if someChar in GREEK_ACCENT_DICT
-                                        else someChar for someChar in text )
+        resultText = text.translate( _GREEK_ACCENT_TRANS )
         # Check
         for cc,char in enumerate( resultText ):
             if char != ' ':
@@ -280,20 +286,29 @@ def briefDemo() -> None:
     mark14 = "Ἐγένετο Ἰωάννης, ὁ βαπτίζων ἐν τῇ ἐρήμῳ, καὶ κηρύσσων βάπτισμα μετανοίας εἰς ἄφεσιν ἁμαρτιῶν."
     mark15 = "Καὶ ἐξεπορεύετο πρὸς αὐτὸν πᾶσα ἡ Ἰουδαία χώρα καὶ οἱ Ἱεροσολυμῖται πάντες, καὶ ἐβαπτίζοντο ὑπʼ αὐτοῦ ἐν τῷ Ἰορδάνῃ ποταμῷ, ἐξομολογούμενοι τὰς ἁμαρτίας αὐτῶν."
     for string in ( mark11, mark12, mark13, mark14, mark15 ):
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
         h = Greek( string )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, h )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, h )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
         h.removeAccents()
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Removed accents" )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, h )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Removed accents" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, h )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
 
         h = Greek( string )
         h.removeOtherMarks()
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Removed other marks" )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, h )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Removed other marks" )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, h )
+        if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
 # end of fullDemo
 
 def fullDemo() -> None:

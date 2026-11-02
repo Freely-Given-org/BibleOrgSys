@@ -84,6 +84,17 @@ This led on to writing modules to provide an API for these datasets which can be
 
 Other modules to import and export various Bible formats can be found in the [Formats](BibleOrgSys/Formats/) folder.
 
+[BOS reference versification mappings](Documentation/VersificationMappings.md)
+include bundled, attributed Copenhagen data, a provisional reference catalogue,
+and an offline coverage audit. The [conversion APIs](Documentation/VersificationMappingAPI.md)
+map references and passages through that catalogue, keeping unsupported and
+ambiguous relationships explicit. No external versification repository is required.
+[Bible-loading integration](Documentation/BibleVersification.md) supports explicit
+declarations, recognised metadata, Bible-level conversions, and saved declarations.
+[Passage retrieval](Documentation/BiblePassages.md) adds `Bible.getMappedPassage`
+and `getPassageData` for complete native text/context portions, including verse
+bridges, suffixes, and disjoint mappings, independently of any renderer.
+
 An internal, indexed Bible resource representation was created as seen in the [Internals](BibleOrgSys/Internals/) folder.
 The internal representation is based on [USFM](https://ubsicap.github.io/usfm/) lines (because USFM is used in real life for MANY Bible translations) along with some additional, custom markers for additional fields and also to ease processing (such as segment end markers).
 
@@ -149,6 +160,7 @@ Eventually the BibleOrgSys became the basis for the Freely-Given.org [Bible Drop
 
 1. The BibleOrgSys is designed to make good use multicore CPUs using the Python multiprocessing library. If, for example, a certain Bible format has each Bible ‘book’ in a separate file, it will try to use all the cores to load them simultaneously. (This can cause any warning messages from processing various ‘books’ to be interspersed.)
 2. The --single (-1) flag is given, then only a single CPU core will be used. This is commonly used for debugging (and is also forced on by the --debug flag) so that progress and warning & error messages are output to the console in a sensible order in order to track down where a fault is occurring.
+3. The `-2` through `-9` flags cap the number of processes at the smaller of the given number and the normal calculated `maxProcesses`. For example, `-4` allows up to four processes, or fewer if the normal limit is lower. Choose only one of `-1` through `-9`; `--debug` still forces a single process.
 
 ## To Do
 
