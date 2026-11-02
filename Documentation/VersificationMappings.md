@@ -55,7 +55,7 @@ Seven entries are added through explicit choices in `reference-policy.json`:
 | USFM code | BOS code | Count source | Treatment |
 | --- | --- | --- | --- |
 | `DAG` | `DNG` | `lxx` | Provisional 12-chapter Greek Daniel composite view. Shared passages and additions still need an explicit bridge. |
-| `LAO` | `LAO` | `vul` | Letter to the Laodiceans, one chapter of 20 verses; the same count also occurs in `eng`. |
+| `LAO` | `LAO` | `vul` | Letter to the Laodiceans, one chapter of 20 verses. BOS English navigation now adopts these reference addresses explicitly; the [Wycliffe import review](WycliffeVersification.md) defines the boundaries and its separate 15–16 group. |
 | `6EZ` | `EZ6` | `vul` | Two-chapter extract view; its relationship to the larger Ezra/Esdras works requires review. |
 | `1MQ` | `MQ1` | `ethiopian_custom` | Provisional 1 Meqabyan counts. |
 | `3MQ` | `MQ3` | `ethiopian_custom` | Provisional 3 Meqabyan counts. |

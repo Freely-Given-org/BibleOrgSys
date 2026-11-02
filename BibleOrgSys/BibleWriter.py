@@ -33,6 +33,7 @@ Contains functions:
             For more details see InternalBible.py, InternalBibleBook.py
     toUSFM2( outputFolderpath:Path|None=None. removeVerseBridges=False )
     toUSFM3( outputFolderpath:Path|None=None. removeVerseBridges=False )
+    toScriptureBurrito( outputFolderpath:Path|None=None, metadataDict=None, **kwargs )
     toESFM( outputFolderpath:Path|None=None )
     toText( outputFolderpath:Path|None=None )
     toVPL( outputFolderpath:Path|None=None )
@@ -799,6 +800,18 @@ class BibleWriter( InternalBible ):
         return True
     # end of BibleWriter.toUSFM2
 
+
+
+    def toScriptureBurrito( self, outputFolderpath:Path|None=None, metadataDict=None, **kwargs ) -> Path:
+        """Export a Scripture Burrito ZIP using explicit publication metadata.
+
+        Returns the archive path. See createScriptureBurritoBible and
+        Documentation/ScriptureBurrito.md for metadata and OET build examples.
+        This is deliberately opt-in: doAllExports cannot invent publication
+        rights, project identifiers, revisions or confidentiality decisions.
+        """
+        from BibleOrgSys.Formats.ScriptureBurritoBible import createScriptureBurritoBible
+        return createScriptureBurritoBible(self, outputFolderpath, metadataDict, **kwargs)
 
 
     def toUSFM3( self, outputFolderpath:Path|None=None, removeVerseBridges=False ):

@@ -43,6 +43,7 @@ CHANGELOG:
     2024-03-21 Add code to handle two word tables (OT and NT) from different source folders
     2026-04-12 Allow for an online folder to be used
     2026-05-12 Upgrade to Rust code and PTX7->PTX8
+    2026-10-30 Allow for three word tables: OT, DC, and NT
 """
 import os
 from pathlib import Path
@@ -61,10 +62,10 @@ from bible_organisational_system import InternalBibleEntryList, InternalBibleEnt
 from BibleOrgSys.Bible import Bible
 
 
-LAST_MODIFIED_DATE = '2026-10-06' # by RJH
+LAST_MODIFIED_DATE = '2026-10-30' # by RJH
 SHORT_PROGRAM_NAME = "ESFMBible"
 PROGRAM_NAME = "ESFM Bible handler"
-PROGRAM_VERSION = '0.78'
+PROGRAM_VERSION = '0.79'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -693,7 +694,8 @@ class ESFMBible( Bible ):
             print( f"lookForAuxiliaryFilenames {self.abbreviation} {self.ESFMWorkData=}" )
             print( f"lookForAuxiliaryFilenames {self.abbreviation} {self.ESFMFileData=}" )
             print( f"lookForAuxiliaryFilenames {self.abbreviation} {self.ESFMWordTables=}" )
-        assert len(self.ESFMWordTables) <= 2, f"Too many ESFM word tables: ({len(self.ESFMWordTables)}) {self.ESFMWordTables.keys()=}" # OT and NT
+        # Allow for OT, DC, and NT word tables
+        assert len(self.ESFMWordTables) <= 3, f"Too many ESFM word tables: ({len(self.ESFMWordTables)}) {self.ESFMWordTables.keys()=}" # OT and NT
     # end of ESFMBible.lookForAuxiliaryFilenames
 
 

@@ -60,16 +60,16 @@ Maintenance instructions from the project owner (for future AI passes):
       historical meanings.
 
 CHANGELOG:
-    2026-10-20 Complete residual inflections and translate a damaged scapegoat phrase from its explicit source gloss
-    2026-10-19 Document the owner's instructions for future vocabulary passes
-    2026-10-17 Add septena and complete plurima/ululate forms; clarify plural fault and charge glosses
-    2026-10-17 Distinguish noun, verb, and adjective senses in ambiguous English glosses
-    2026-10-17 Fix whole-Bible residual forms, ordinal typos, and commentary abbreviations
-    2026-10-17 Fix remaining TEST vocabulary and shorter-word replacement collisions
     2025-03-20 Moved into BOS from OBD (OpenBibleData)
     2026-10-16 Expanded Latin forms from PSA/MAT/MRK spelling checks; ordered longer forms before prefixes
     2026-10-16 Split German and Latin translations into separate modules
     2026-10-16 Expanded Latin translations from whole-Bible spelling results; protected English glosses
+    2026-10-17 Add septena and complete plurima/ululate forms; clarify plural fault and charge glosses
+    2026-10-17 Distinguish noun, verb, and adjective senses in ambiguous English glosses
+    2026-10-17 Fix whole-Bible residual forms, ordinal typos, and commentary abbreviations
+    2026-10-17 Fix remaining TEST vocabulary and shorter-word replacement collisions
+    2026-10-19 Document the owner's instructions for future vocabulary passes
+    2026-10-20 Complete residual inflections and translate a damaged scapegoat phrase from its explicit source gloss
 """
 import re
 

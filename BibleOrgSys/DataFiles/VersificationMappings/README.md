@@ -28,6 +28,7 @@ declarations, metadata resolution, and Bible-level conversions. The structural a
 | `kjv-mapping.json` | Reviewed KJV OT/NT conversion (updated 2026-10-22), preserving all 80 historical book counts while blocking unreviewed Apocrypha conversions. |
 | `bibletags-nt-mapping.json` | Reviewed BibleTags Greek NT profile (2026-10-22): split Acts 19:40–41, original 2 Corinthians 13:12–13; source evidence is recorded in the profile. |
 | `vlt-mapping.json` | Reviewed VLT v3 NT source profile (2026-10-21), including its PHP 1:16-17 ordering; see [the profile guide](../../../Documentation/KJVVersification.md). |
+| `wycliffe-mapping.json` | Wycliffe Zefania LAO review (2026-10-30): explicit English navigation and atomic 15–16 correspondence, preserving OBD's previous `vul` declaration elsewhere. See [the witness review and limits](../../../Documentation/WycliffeVersification.md). |
 | `BOSReference.json` | Generated provisional reference catalogue, using BOS book codes and integer chapter maxima. Each book identifies its source definition. |
 | `coverage-report.json` | Raw structural findings plus compiled reference-address coverage, including unmapped and blocked ranges. |
 | `sniffing-audit-report.json` | All 403 sniffing rules / 1,466 rows, with explicit profile assessments for 556 split/merge rows and reasons for deferred findings. |
@@ -124,5 +125,16 @@ python -m unittest Tests.test_BibleVersificationSupplement
 python -m unittest Tests.test_BibleVersificationSniffingAudit
 ```
 
-`oet-rv-mapping.json` and `oet-lv-mapping.json` declare the reviewed 66-book OET
-source profiles. See [the profile guide](../../../Documentation/OETVersification.md).
+`oet-rv-mapping.json` version 3 declares 81 source books (66 core + 15 DC).
+`oet-lv-mapping.json` version 3 declares 82 (66 core + 14 Brenton DC + Swete
+PSS/ODE). The LV DC mappings are fully bundled and reference-directed, with
+native inventories, attribution, source hashes, chapter shifts and atomic
+split/merge groups. 5,511 RV DC verse requests retrieve corresponding LV
+passages with explicit group expansion; there is no external repository or
+text-matching dependency.
+
+Ordinary Greek Esther intervals and Daniel's Susanna/Bel chapters are mapped.
+Esther additions, Daniel 1–12, Tobit 13:6–10, and LV PSS/ODE remain explicit
+unverified bridges. LV has no LES file and omits some numbered Sirach labels.
+See [the profile guide](../../../Documentation/OETVersification.md) for exact
+limits, suffix semantics, attribution, source evidence and offline tests.

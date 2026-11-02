@@ -50,11 +50,11 @@ Note that this software does write some files to
         which is usually ~/BibleOrgSysData/BOSOutputFiles/
 
 CHANGELOG:
-    2026-10-22 Add explicit partial-passage retrieval for reviewed absent counterparts.
     2024-01-24 add getContextVerseDataRange() function
-    2026-10-12 Add complete native and mapped passage retrieval APIs.
     2025-02-13 Changed special characters in getVerseText() function and add includeNonCanonical parameter
     2026-05-09 Upgraded to bos_books_codes_py
+    2026-10-12 Add complete native and mapped passage retrieval APIs.
+    2026-10-22 Add explicit partial-passage retrieval for reviewed absent counterparts.
 """
 from __future__ import annotations # So we can use typing -> ClassName (before Python 3.10)
 import os
@@ -2441,6 +2441,11 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
 
     def getPassageData(self, references, *, chapterCache=None, combineAdjacent=False):
         """Retrieve an ordered group of native (BBB,C,V[,S]) references.
+
+        V can be a native label such as '21-22', '4b', '4a-4b', or '3,1'.
+        Ranges expand within one chapter; lists retain only their stated order.
+        Use a separate S only with a numeric V. Numeric ranges are bounded to
+        10000 addresses. Invalid labels raise ValueError before loading text.
 
         Returns a tuple of PassagePortion(reference, entries, context), fetching
         the entire group before returning. Numeric bridges are returned once;

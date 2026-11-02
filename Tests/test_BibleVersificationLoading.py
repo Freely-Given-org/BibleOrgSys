@@ -361,7 +361,13 @@ class FormatLoadingTests(BibleTestCase):
                 b.loadBooks()
                 self.assertEqual(b.getVersificationDeclaration()['status'], status)
                 self.assertEqual(b.getVersificationSystemName(), name)
-                self.assertEqual(b.convertToReferenceVersification(*ref(), detailed=True).status, MappingStatus.UNSUPPORTED)
+                if name == 'KJV':
+                    # KJV now has reviewed mappings. It must still retain its
+                    # Philippians ordering rather than becoming an eng alias.
+                    self.assertEqual(b.convertToReferenceVersification(*ref()), ref(32, 1))
+                    self.assertEqual(b.convertToReferenceVersification('PHP','1','16'), ('PHP','1','17',None))
+                else:
+                    self.assertEqual(b.convertToReferenceVersification(*ref(), detailed=True).status, MappingStatus.UNSUPPORTED)
 
     def test_osis_missing_own_work_does_not_use_other_work(self):
         path = self.folder / 'Bible.xml'

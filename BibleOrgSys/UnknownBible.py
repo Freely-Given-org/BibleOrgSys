@@ -105,6 +105,22 @@ class UnknownBible:
         if not self.folderReadable: return None
         if autoLoadAlways or autoLoadBooks: autoLoad = True
 
+        # A burrito is a container, so prefer its manifest over loose text files
+        # inside it. The Rust detector still assumes metadata.json + ingredients/
+        # and cannot identify legacy XML, arbitrary layouts or ZIP burritos.
+        candidate = Path(self.givenFolderName)
+        if ((candidate.is_dir() and any((candidate / name).is_file()
+                for name in ('metadata.json', 'metadata.xml')))
+                or candidate.suffix.lower() == '.zip'):
+            from BibleOrgSys.Formats.ScriptureBurritoBible import ScriptureBurritoBibleFileCheck
+            result = ScriptureBurritoBibleFileCheck(candidate, strictCheck=strictCheck,
+                autoLoad=autoLoad, autoLoadBooks=autoLoadBooks)
+            if result:
+                self.foundType = 'SB Bible'
+                if self._requestedVersification is not None and hasattr(result, 'setVersificationSystem'):
+                    result.setVersificationSystem(self._requestedVersification)
+                return result
+
         # Use the optimized Rust detector
         try:
             detected = bible_organisational_system.detectBibles(str(self.givenFolderName), strictCheck)

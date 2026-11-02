@@ -60,15 +60,15 @@ Maintenance instructions from the project owner (for future AI passes):
       extend reviewedEndGuardWords below instead of adding duplicate '<' entries.
 
 CHANGELOG:
-    2026-10-20 Repair whole-Bible inflections, contractions, historical glosses and word boundaries
-    2026-10-20 Translate beging in birthday accounts and correct the Schalksauge gloss
-    2026-10-19 Document the owner's instructions for future vocabulary passes
-    2026-10-17 Add missing part-of-speech labels to ambiguous English glosses
-    2026-10-17 Translate Nuns before the shorter Nu rule can damage the name
-    2026-10-17 Fix remaining TEST vocabulary and shorter-word replacement collisions
     2025-03-20 Moved into BOS from OBD (OpenBibleData)
     2026-10-16 Split German and Latin translations into separate modules
     2026-10-16 Expanded whole-Bible Luther vocabulary using historical senses
+    2026-10-17 Add missing part-of-speech labels to ambiguous English glosses
+    2026-10-17 Translate Nuns before the shorter Nu rule can damage the name
+    2026-10-17 Fix remaining TEST vocabulary and shorter-word replacement collisions
+    2026-10-19 Document the owner's instructions for future vocabulary passes
+    2026-10-20 Repair whole-Bible inflections, contractions, historical glosses and word boundaries
+    2026-10-20 Translate beging in birthday accounts and correct the Schalksauge gloss
 """
 import re
 

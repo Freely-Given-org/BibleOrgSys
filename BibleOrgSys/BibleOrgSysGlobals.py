@@ -91,17 +91,17 @@ HOUSE STYLE for vPrint/dPrint/fnPrint call sites:
         if the message is actually printed.
 
 CHANGELOG:
+    2023-09-28 Fixed preloadCommonData() to not create new variables
+    2023-10-11 Raised XMLError on XML errors (rather than assert False, "We want to stop here")
+    2024-06-14 Print more info for failed pickles
+    2025-05-07 Remove loadedBibleBooksCodes (because we now use the Rust functions)
+    2025-05-31 Add useful rreplace function
+    2025-11-19 Add mission critical flag to global parameters
+    2026-06-06 Changed CheckXML.. functions to return True/False so can be preceded by 'assert' (then completely ignored with -OO flag)
     2026-10-06 vPrint/dPrint resolve callable (lazy) arguments only when actually printing;
                 added exact-condition guards around vPrint/dPrint/fnPrint call sites
                 throughout the codebase (see Misc/addPrintGuards.py) so message f-strings
                 are no longer built when the message cannot print
-    2023-09-28 Fixed preloadCommonData() to not create new variables
-    2023-10-11 Raised XMLError on XML errors (rather than assert False, "We want to stop here")
-    2024-06-14 Print more info for failed pickles
-    2025-05-31 Add useful rreplace function
-    2025-11-19 Add mission critical flag to global parameters
-    2025-05-07 Remove loadedBibleBooksCodes (because we now use the Rust functions)
-    2026-06-06 Changed CheckXML.. functions to return True/False so can be preceded by 'assert' (then completely ignored with -OO flag)
 """
 import sys
 import logging
@@ -1684,7 +1684,11 @@ def addStandardOptionsAndProcess( parserObject, exportAvailable=False ) -> None:
     EWgroup.add_argument( '-e', '--errors', action='store_true', dest='errors', default=False, help="log errors to console" )
     EWgroup.add_argument( '-w', '--warnings', action='store_true', dest='warnings', default=False, help="log warnings and errors to console" )
     verbosityGroup.add_argument( '-d', '--debug', action='store_true', dest='debug', default=False, help="output even more information for the programmer/debugger" )
-    parserObject.add_argument( '-1', '--single', action='store_true', dest='single', default=False, help="don't use multiprocessing (that’s the digit one)" )
+    multiprocessingGroup = parserObject.add_mutually_exclusive_group()
+    multiprocessingGroup.add_argument( '-1', '--single', action='store_true', dest='single', default=False, help="don't use multiprocessing (that’s the digit one)" )
+    for processLimit in range( 2, 10 ):
+        multiprocessingGroup.add_argument( f'-{processLimit}', action='store_const', dest='maxProcesses', const=processLimit,
+                help=f"use at most {processLimit} processes, limited by the normal calculated maximum" )
     continuationGroup = parserObject.add_argument_group( 'Continuation Group', 'Program continuation controls' )
     maincontinuationGroup = continuationGroup.add_mutually_exclusive_group()
     maincontinuationGroup.add_argument( '-c', '--strict', action='store_true', dest='strict', default=False, help="perform very strict checking of all input" )
@@ -1715,6 +1719,8 @@ def addStandardOptionsAndProcess( parserObject, exportAvailable=False ) -> None:
         maxProcesses = maxProcesses - reservedProcesses
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "maxProcesses", maxProcesses )
     if commandLineArguments.single: maxProcesses = 1
+    elif commandLineArguments.maxProcesses is not None:
+        maxProcesses = min( commandLineArguments.maxProcesses, maxProcesses )
     if debugFlag or DEBUGGING_THIS_MODULE:
         if maxProcesses > 1:
             dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"DEBUG/SINGLE MODE: Reducing maxProcesses from {maxProcesses} down to 1" )

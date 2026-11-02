@@ -94,6 +94,18 @@ mapping round trip. It validates reference syntax, loads available books when
 needed, and retrieves all portions before returning. An empty native request
 returns `()`; an empty mapped request is an invalid mapping.
 
+Native requests also accept verse labels in `V`: `('MRK', '7', '21-22')`
+requests both verses, whether stored separately or as a bridge. Labels such as
+`'4b'`, `'4a-4b'`, and `'3,1'` preserve explicit suffixes or list order; a list
+does not include intervening verses. Ranges stay within one chapter and expand
+to at most 10,000 addresses per label. Reversed or malformed ranges, or a range
+with a separate fourth-field suffix, raise `ValueError` before loading text.
+A missing member still raises `MissingPassageVerseError`.
+
+This shorthand applies to `getPassageData`. Mapping APIs still require individual
+numeric verse addresses, with suffixes in the fourth field. Use
+`passageReferencesFromEntries` below to extract them from stored verse labels.
+
 A stored USFM bridge such as `\v 2-3` is indivisible and is returned once when
 both verses are requested. Requesting just verse 3 also returns that complete
 stored span; this API does not invent a textual division. `portion.reference`
@@ -104,7 +116,8 @@ requested references, not a claim that the text can be sliced that finely.
 
 A whole verse stored as `4a` and `4b` includes both entries. An explicit request
 for `('GEN', 1, 4, 'b')` requires that suffix to exist and never falls back to the
-whole verse or another suffix. Use the four-tuple form for input suffixes.
+whole verse or another suffix. Native retrieval also accepts `('GEN', 1, '4b')`;
+use the four-tuple form for mapping input suffixes.
 Repeated storage spans are deduplicated in request order; identical text in
 different verses remains separate.
 

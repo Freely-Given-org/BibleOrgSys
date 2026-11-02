@@ -21,12 +21,15 @@ On typical Windows installations, Paratext 8 projects are in folders inside
     'C:\\My Paratext 8 Projects' and contain the project settings information
     in a Settings.xml file inside that project folder.
 
-The Paratext 8 Bible (PTX8Bible) object contains USFM 2 or 3 BibleBooks.
+The Paratext 8 Bible (PTX8Bible) object contains USFM 2/3 or enhanced USX BibleBooks.
 
 The raw material for this module is produced by the UBS/SIL Paratext program
     if the File / Backup Project / To File… menu is used.
 
 TODO: Check if PTX8Bible object should be based on USFMBible.
+
+CHANGELOG:
+    2026-10-25 Discover and load enhanced USX resources
 """
 import sys
 import os
@@ -41,11 +44,13 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Bible import Bible
 from BibleOrgSys.InputOutput.USFMFilenames import USFMFilenames
+from BibleOrgSys.InputOutput.USXFilenames import USXFilenames
 from BibleOrgSys.Formats.USFMBibleBook import USFMBibleBook
+from BibleOrgSys.Formats.USXXMLBibleBook import USXXMLBibleBook
 from BibleOrgSys.Reference.LDML import LDMLFile
 
 
-LAST_MODIFIED_DATE = '2026-10-06' # by RJH
+LAST_MODIFIED_DATE = '2026-10-25' # by RJH
 SHORT_PROGRAM_NAME = "Paratext8Bible"
 PROGRAM_NAME = "Paratext-8 Bible handler"
 PROGRAM_VERSION = '0.27'
@@ -101,7 +106,9 @@ def PTX8BibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=Fa
     # Check that there's a USFM Bible here first
     # The current USFM reader accepts both versions. Do not import the removed
     # USFM2Bible module or require a USFM 3 header on an older Paratext project.
-    if not USFMFilenames(givenFolderName).getMaximumPossibleFilenameTuples():
+    enhancedResource = (Path(givenFolderName, 'Settings.xml').is_file()
+                        and bool(USXFilenames(givenFolderName).getConfirmedFilenameTuples()))
+    if not enhancedResource and not USFMFilenames(givenFolderName).getMaximumPossibleFilenameTuples():
         if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
             vPrint( 'Info', DEBUGGING_THIS_MODULE, "PTX8BibleFileCheck: No USFMBible found (preliminary check)")
         return False
@@ -132,7 +139,7 @@ def PTX8BibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=Fa
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "PTX8 numFilesFound1 is", numFilesFound, "Threshold is >=", MARKER_THRESHOLD )
     #for folderName in foundFolders:
         #if folderName.upper().startswith('USX_'): numFoldersFound += 1
-    if numFilesFound >= MARKER_THRESHOLD: numFound += 1
+    if enhancedResource or numFilesFound >= MARKER_THRESHOLD: numFound += 1
 
     ## See if there's an USXBible project here in this given folder
     #numFound = 0
@@ -479,7 +486,7 @@ class PTX8Bible( Bible ):
     """
     Class to load and manipulate Paratext Bible bundles.
 
-    The PTX8Bible object contains USFM 2 or 3 BibleBooks.
+    The PTX8Bible object contains USFM 2/3 or enhanced USX BibleBooks.
         (i.e., there's not PTX8BibleBook object types.)
     """
     def __init__( self, givenFolderName, givenName=None, givenAbbreviation=None, encoding='utf-8', *, versification=None ) -> None:
@@ -593,6 +600,9 @@ class PTX8Bible( Bible ):
 
         # Find the filenames of all our books
         self.maximumPossibleFilenameTuples = self.USFMFilenamesObject.getMaximumPossibleFilenameTuples() # Returns (BBB,filename) 2-tuples
+        if not self.maximumPossibleFilenameTuples:
+            self.USXFilenamesObject = USXFilenames(self.sourceFolder)
+            self.maximumPossibleFilenameTuples = self.USXFilenamesObject.getConfirmedFilenameTuples()
         self.possibleFilenameDict = {}
         for BBB, filename in self.maximumPossibleFilenameTuples:
             self.availableBBBs.add( BBB )
@@ -2881,7 +2891,7 @@ class PTX8Bible( Bible ):
         if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  PTX8Bible: Loading {BBB} from {self.name} from {self.sourceFolder}…" )
         if filename is None and BBB in self.possibleFilenameDict: filename = self.possibleFilenameDict[BBB]
         if filename is None: raise FileNotFoundError( f"PTX8Bible.loadBook: Unable to find file for {BBB}" )
-        UBB = USFMBibleBook( self, BBB )
+        UBB = (USXXMLBibleBook if filename.lower().endswith('.usx') else USFMBibleBook)(self, BBB)
         UBB.load( filename, self.sourceFolder, self.encoding )
         if UBB._rawLines:
             UBB.validateMarkers() # Usually activates InternalBibleBook.processLines()
@@ -2918,7 +2928,7 @@ class PTX8Bible( Bible ):
             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '  ' + f"Loading {BBB} from {self.name} from {self.sourceFolder}…" )
         if filename is None and BBB in self.possibleFilenameDict: filename = self.possibleFilenameDict[BBB]
         if filename is None: raise FileNotFoundError( f"PTX8Bible._loadBookMP: Unable to find file for {BBB}" )
-        UBB = USFMBibleBook( self, BBB )
+        UBB = (USXXMLBibleBook if filename.lower().endswith('.usx') else USFMBibleBook)(self, BBB)
         UBB.load( self.possibleFilenameDict[BBB], self.sourceFolder, self.encoding )
         if UBB._rawLines:
             UBB.validateMarkers() # Usually activates InternalBibleBook.processLines()

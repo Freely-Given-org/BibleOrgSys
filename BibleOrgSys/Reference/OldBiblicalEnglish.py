@@ -86,10 +86,14 @@ Maintenance instructions from the project owner (for future AI passes):
       and add focused regression cases for reported misses and historical senses.
 
 CHANGELOG:
-    2026-10-23 Consolidate further punctuation families using corpus collision evidence
-    2026-10-23 Match KJB-1611 Matthew 24:23 across the added-word span, preserving markup
-    2026-10-20 Repair joined punctuation, damaged letters, stray paragraph markers and numerals
-    2026-10-20 Collapse redundant trailing-punctuation families and preserve necessary guards
+    2025-03-20 Moved into BOS from OBD (OpenBibleData)
+    2026-10-17 Group independent modernisation entries and prepare ordered replacements once
+    2026-10-17 Complete marke/fifti punctuation forms and add triall
+    2026-10-17 Mark unambiguous parts of speech for otherwise ambiguous English glosses
+    2026-10-17 Cover whole-Bible residual spellings and disambiguate wher phrases
+    2026-10-18 Review remaining ordinary spellings, damaged scans, and prefix collisions
+    2026-10-18 Cover missed Matthew 8:9 spellings without changing undressed
+    2026-10-18 Expand whole-Bible spellings, protect longer words, and consolidate equal results
     2026-10-19 Expand Bishops spellings and remove unnecessary capital leading spaces
     2026-10-19 Expand Coverdale ordinary spellings, contextual readings, and capital forms
     2026-10-19 Use British labour spellings and repair hypocrite/sepulchre forms and glosses
@@ -103,21 +107,18 @@ CHANGELOG:
     2026-10-19 Complete missed inflections and repair partial-word results, including devyllis
     2026-10-19 Cover rare corpus spellings and document maintenance instructions
     2026-10-19 Remove unnecessary trailing boundaries and retired table entries
-    2026-10-18 Review remaining ordinary spellings, damaged scans, and prefix collisions
-    2026-10-18 Cover missed Matthew 8:9 spellings without changing undressed
-    2026-10-18 Expand whole-Bible spellings, protect longer words, and consolidate equal results
-    2026-10-17 Group independent modernisation entries and prepare ordered replacements once
-    2026-10-17 Complete marke/fifti punctuation forms and add triall
-    2026-10-17 Mark unambiguous parts of speech for otherwise ambiguous English glosses
-    2026-10-17 Cover whole-Bible residual spellings and disambiguate wher phrases
-    2025-03-20 Moved into BOS from OBD (OpenBibleData)
     2026-10-19 Expand whole-Bible spelling coverage
+    2026-10-20 Repair joined punctuation, damaged letters, stray paragraph markers and numerals
+    2026-10-20 Collapse redundant trailing-punctuation families and preserve necessary guards
+    2026-10-23 Consolidate further punctuation families using corpus collision evidence
+    2026-10-23 Match KJB-1611 Matthew 24:23 across the added-word span, preserving markup
+    2026-10-30 Use James/Ya’akov for James and Iames, matching the OET-RV names table
 """
 import BibleOrgSys.BibleOrgSysGlobals as BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2026-10-23' # by RJH
+LAST_MODIFIED_DATE = '2026-10-30' # by RJH
 SHORT_PROGRAM_NAME = "OldBiblicalEnglish"
 PROGRAM_NAME = "OpenBibleData English Language Handling functions"
 PROGRAM_VERSION = '1.0.12'
@@ -654,6 +655,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
     ((' neckbandes',),' neck-bands'),
     (('neck bande','neckband'),'neck-band'), # Sng 1:11
     (('needle worke','needlework'),'needle-work'), # Psa 45:14
+    ((' newe borne',' new borne',' now borun'),' newborn'), # 1 Peter 2:2
     ((' no thing ',),' nothing '), # Wycl Mat 5:13
     ((' no where ',),' nowhere '), (('oure selues','our selues','oureselues'),'ourselves'), (('ouerbody cote',),'overcoat'),
     ((' out stretched',),' outstretched'), # KJB-1611 Jer 21:5
@@ -723,7 +725,6 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
     (('who so euer','whosoeuer'),'whosoever'),
 
     # One word into two
-
     (('almesdedis','almsdeeds'),'giving_alms/donations'), # Tob 14:11
     (('arme-holes',),'arm holes'), # Jer 38:12
     (('Aswell',),'As well'),((' aswell',),' as well'), # Psa 87:7
@@ -746,6 +747,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
     ((' eated',),' were eating'), # Psa 53:4
     (('euery-day',),'every day'),
     (('ewe-lambe',),'ewe lamb'), # KJB-1611 Lev 14:10
+    (('fellowservants',),'fellow servants'), # KJB-1769 Mat 24:49
     (('Figtree',),'Fig tree'),((' figgetree',' fygetree',' figtree'),' fig tree'), # Hos 2:12
     (('firstripe',),'first ripe'), # Hos 9:10
     (('fish-gate','fishgate','fishe gate'),'fish gate'),(('Fyshgate',),'Fish Gate'), # KJB-1611 NEH 12:39
@@ -2569,7 +2571,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
     ((' cōference',),' conference'),
     ((' conferre ',),' confer '),
     ((' cofessed',),' confessed'),
-    (('cofessynge','confessynge','confessyng','cofessing'),'confessing'), (('confessioun',),'confession'), ((' confesse;',),' confess;'),
+    (('cofessynge','confessynge','confessyng','cōfessing','cofessing'),'confessing'), (('confessioun',),'confession'), ((' confesse;',),' confess;'),
     ((' confesse?',),' confess?'), ((' confesse!',),' confess!'), ((' confesse)',),' confess)'), ((' confesse]',),' confess]'),
     (('Confesse',), 'Confess'), ((' confesse ',),' confess '), ((' confesse,',),' confess,'),
     ((' confesse.',),' confess.'), ((' confesse:',),' confess:'), ((' cofesse',),' confess'), ((' confidece',),' confidence'), (('confydence','cofidence'),'confidence'),
@@ -10271,7 +10273,6 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
     ((' wrongun',' wrungun',' wrage',' wroung'),' wrung'),
     (('Jabes ',), 'Yabesh '), (('Jabes!',), 'Yabesh!'), (('Jabes)',), 'Yabesh)'), (('Jabes,',), 'Yabesh,'), (('Jabes.',), 'Yabesh.'), (('Jabes:',), 'Yabesh:'),
     (('Jabes;',), 'Yabesh;'), (('Jabes?',), 'Yabesh?'), (('Jabes]',), 'Yabesh]'), (('Iaakob','Iacob'),'Yacob'), (('Jah<',),'Yah<'), (('Iah',), 'Yah'),
-    (('Iames','James'),'Yames/Yacob'),
     ((' yarde',),' yard'),
     (('Iauan',),'Yavan'), ((' yanynge',),' yawning'),
     ((' yerelynges',),' yearlings'), ((' yereely',),' yearly'),
@@ -11777,7 +11778,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
     (('Cesarye','Cesarea'),'Caesarea'), # Wycl Mrk 8:27
     (('Cæsar','Cesar'),'Caesar'), (('Daniell','Danyel'),'Daniel'),
     (('Decapoleos',),'Decapolis'), # Wycl Mrk 7:31
-    (('Elias','Helyas'),'Elias/Elijah'), # Mrk 6:15
+    (('Elias','Helyas','Helias'),'Elias/Elijah'), # Mrk 6:15, Mat 11:14
     (('Hester',),'Esther'),
     (('Esayas','Ysaie','Esay'),'Isaiah'), # Mrk 7:6, Mat 3:3
     (('Idumaea','Edoma'),'Idumea'),(('Idume,',),'Idumea,'), # Mrk 3:8 ('Yd' is already changed to 'Id' above)
@@ -11789,6 +11790,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
     (('Galilea ','Galile '),'Galilee '), (('Galile,',),'Galilee,'), (('Galile.','Galil.'),'Galilee.'), (('Galile:',),'Galilee:'), (('Galile;',),'Galilee;'),
     (('Genesareth','Genasareth','Genezareth','Genesaret','Genesar'),'Gennesaret'), (('Gethsamany','Gethsemani'),'Gethsemane'), (('Golgatha',),'Golgotha'), (('Grece',),'Greece'),
     (('Greeke','Greke'),'Greek'), (('Herode',),'Herod'), (('Isahac','Isaak','Ysaac'),'Isaac'), (('Israels',),'Israel’s'), (('Israhel',),'Israel'),
+    (('James','Iames'),'James/Ya’akov'), # James must run first to avoid duplicating the alternative.
     (('IESVS',),'JESUS'), (('IEVVES',),'JEWS'), # Gnva Mat 27:37
     (('IEHOVAH','IEHOUAH'),'YEHOVAH'), (('Iehouah',),'Yehovah'),
     (('Ieremie','Jeremye','Jeremy','Ieremy'),'Yeremiah'), # Wycl or should that be 'Yeremye'

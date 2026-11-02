@@ -3,6 +3,9 @@
 
 Run with BOS's native dependencies installed:
     .venv/bin/python -m unittest discover -s Tests -p test_InternalBiblePassages.py
+
+CHANGELOG:
+    2026-10-31 Cover native range/list/suffix requests and invalid range inputs.
 """
 import logging
 import pickle
@@ -230,6 +233,57 @@ class PassageTests(unittest.TestCase):
         with self.assertRaises(MissingPassageVerseError):
             bible.getPassageData([('GEN',1,3,'c')])
 
+    def test_native_range_request_handles_combined_and_separate_stored_verses(self):
+        for stored, expected_labels in (
+                ('\\v 21-22 Combined text.\n', ['21-22']),
+                ('\\v 21 First text.\n\\v 22 Second text.\n', ['21','22'])):
+            bible = self.bible('\\c 7\n\\p\n'+stored+'\\v 23 Outside.\n','MRK')
+            bible.clearVersificationSystem() # Native retrieval needs no mapping declaration.
+            cache = {}
+            for suffix in ((), (None,), ('',)):
+                for combine in (False,True):
+                    with self.subTest(labels=expected_labels,suffix=suffix,combine=combine):
+                        refs = iter([('MRK','7','21-22',*suffix), ('MRK',7,22)])
+                        portions = bible.getPassageData(refs,chapterCache=cache,combineAdjacent=combine)
+                        labels = [e.getCleanText() for p in portions for e in p.entries if e.getMarker()=='v']
+                        self.assertEqual(labels,expected_labels)
+                        self.assertNotIn('Outside.',self.text(portions))
+                        self.assertEqual(len(portions),1 if combine else len(expected_labels))
+            if expected_labels == ['21-22']:
+                # A returned stored bridge can itself be passed back into retrieval.
+                again = bible.getPassageData([portions[0].reference],chapterCache=cache)
+                self.assertEqual(self.text(again),'Combined text.')
+
+    def test_native_label_requests_preserve_lists_and_explicit_suffixes(self):
+        bible = self.bible('\\c 1\n\\p\n\\v 1 One.\n\\v 2 Excluded.\n\\v 3 Three.\n'
+                           '\\v 4a First part.\n\\v 4b Second part.\n\\v 4c Excluded part.\n')
+        portions = bible.getPassageData([('GEN',1,'3,1')],combineAdjacent=True)
+        self.assertEqual(self.text(portions),'Three. One.')
+        self.assertEqual([p.reference[2] for p in portions],['3','1'])
+        self.assertEqual(self.text(bible.getPassageData([('GEN',1,'4b')])),'Second part.')
+        portions = bible.getPassageData([('GEN',1,'4a-4b')])
+        self.assertEqual(self.text(portions),'First part. Second part.')
+
+    def test_native_range_request_does_not_hide_a_missing_verse(self):
+        bible = self.bible('\\c 7\n\\p\n\\v 21 First.\n\\v 23 Last.\n','MRK')
+        with self.assertRaises(MissingPassageVerseError) as caught:
+            bible.getPassageData([('MRK',7,'21-23')])
+        self.assertEqual(caught.exception.reference,('MRK','7','22'))
+
+    def test_invalid_native_ranges_fail_before_loading_text(self):
+        bible = Bible()
+        for reference in (('MRK',7,'22-21'), ('MRK',7,'21-22','a'),
+                          ('MRK',7,'21-'), ('MRK',7,'21-22-23'), ('MRK',7,'21-8:2'),
+                          ('MRK',7,'21a-21'), ('MRK',7,'21-10021')):
+            with self.subTest(reference=reference), \
+                 patch.object(bible,'loadBookIfNecessary',side_effect=AssertionError('must not load')):
+                with self.assertRaises(ValueError):
+                    bible.getPassageData([reference])
+
+    def test_scalar_mapping_reference_still_rejects_range_labels(self):
+        with self.assertRaises(ValueError):
+            vm.normalize_reference(('MRK','7','21-22'))
+
     def test_lazy_books_and_both_chapter_cache_access_paths(self):
         bible = self.bible('\\c 1\n\\p\n\\v 1-2 Bridge.\n',lazy=True)
         self.assertNotIn('GEN',bible.books)
@@ -250,6 +304,31 @@ class PassageTests(unittest.TestCase):
             result = bible.getPassageData([('GEN',1,1),('GEN',1,2)])
         self.assertIs(bible['GEN']._CVIndex,index)
         self.assertEqual(len(result),1)
+
+    def test_partial_bridges_expand_to_complete_verses_on_both_ends(self):
+        bible = self.bible('\\c 1\n\\p\n\\v 1a First.\n\\v 1b-2a Middle.\n\\v 2b-3 Last.\n')
+        native = bible.getPassageData([('GEN',1,2)])
+        self.assertEqual(self.text(native), 'Middle. Last.')
+        self.assertEqual(self.text(bible.getPassageData([('GEN',1,1,'b')])), 'Middle.')
+        mapped = bible.getMappedPassage('org',[('GEN',1,2)],expandGroups=True)
+        self.assertEqual(self.text(mapped.portions), 'First. Middle. Last.')
+        self.assertEqual(set(mapped.mapping.source_references),
+                         {('GEN','1',str(v),None) for v in (1,2,3)})
+
+    def test_psalm_title_attached_to_first_verse_is_separately_retrievable(self):
+        bible = self.bible('\\c 3\n\\s1 Heading\n\\d David.\n\\q1\n\\v 1 Body.\n','PSA')
+        bible.setVersificationSystem('eng')
+        self.assertEqual(self.text(bible.getPassageData([('PSA',3,0)])), 'David.')
+        self.assertEqual(self.text(bible.getPassageData([('PSA',3,1)])), 'Body.')
+        mapped = bible.getMappedPassage('org',[('PSA',3,1)],expandGroups=True)
+        self.assertEqual(self.text(mapped.portions), 'David.')
+
+    def test_listed_bridge_keeps_only_the_explicit_addresses(self):
+        bible = self.bible('\\c 1\n\\p\n\\v 3,1 Together.\n\\v 2 Separate.\n')
+        mapped = bible.getMappedPassage('org',[('GEN',1,1)],expandGroups=True)
+        self.assertEqual(self.text(mapped.portions), 'Together.')
+        self.assertEqual(set(mapped.mapping.source_references),
+                         {('GEN','1','1',None),('GEN','1','3',None)})
 
     def test_returned_lists_cannot_mutate_cached_passages(self):
         bible = self.bible('\\c 1\n\\p\n\\v 1 One.\n\\v 2 Two.\n')

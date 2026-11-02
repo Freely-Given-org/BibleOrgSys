@@ -94,8 +94,8 @@
     "LAO": {
       "sourceSystem": "vul",
       "role": "additional-book",
-      "status": "counts-only",
-      "reason": "Letter to the Laodiceans has 20 verses in both vul and eng; use the Latin-tradition source. No cross-tradition mapping is asserted."
+      "status": "reviewed-navigation-convention",
+      "reason": "Retain the Latin-tradition vul count of 20. BOS eng navigation explicitly adopts the same reference addresses, with verse 15 the list of qualities, 16 retaining what was heard, and 17 peace, following Marlowe's numbered English rendering of the Latin epistle. The imported Wycliffe Zefania split at 15-16 has a separate reviewed group. This does not certify all Latin or English editions; see wycliffe-mapping.json and Documentation/WycliffeVersification.md."
     },
     "6EZ": {
       "sourceSystem": "vul",

@@ -280,8 +280,11 @@ replaces its identity. An explicit segment mapping also suppresses the whole
 source verse's identity.
 
 - `org` addresses remain unchanged in `BOSReference` where usable. Latin `LAO`
-  is explicitly native to `vul`, which supplies its reference counts. `eng` LAO
-  is still unsupported because that additional bridge has not been established.
+  is explicitly native to `vul`, which supplies its reference counts. BOS `eng`
+  navigation now explicitly adopts the 20 reference addresses for LAO. The
+  `Wycliffe-Zefania` source profile preserves its imported 15–16 split as an
+  atomic group; see [the witness and numbering review](WycliffeVersification.md).
+  This does not certify the numbering of every Latin or English edition.
 - LXX source `DNG` can map through valid explicit rules into reference `DAN`.
   The separate reference `DNG` composite is still blocked. LXX source `EZN`
   uses the 23-chapter combined Ezra/Nehemiah definition: its first chapters map

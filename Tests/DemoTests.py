@@ -26,8 +26,8 @@ This isn't as thorough as the proper test routines
     but it's still much better than nothing.
 
 CHANGELOG:
-    2022-06-04 commented out TokenisedBible test (uncompleted module has been removed)
     2022-04-22 added ScriptureBurritoBible test
+    2022-06-04 commented out TokenisedBible test (uncompleted module has been removed)
 """
 import sys
 import os.path

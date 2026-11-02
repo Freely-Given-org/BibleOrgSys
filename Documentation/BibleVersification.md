@@ -231,6 +231,45 @@ that a partial Bible has the corresponding book or verse loaded/available.
 
 ## Persistence and compatibility
 
+### Reviewed Paratext resources used by the literalness evaluator
+
+`EvaluateBibleLiteralness.py` now uses full local resources for CSB, NLT,
+NIV11, CEVUS06, ESV16UK+, NASB1995, MSG, NRS89+, and NKJV. The enhanced
+editions retain their word groups and link attributes separately from clean
+verse text. ESV is labelled as the 2016 UK edition; NASB remains the 1995 edition.
+
+NASB1995 uses `eng`. The other eight have individual `Resource-<folder>`
+profiles in `DataFiles/VersificationMappings/resource-mappings.json`, restricted
+to the 66-book canon. These fully resolved definitions include the reviewed
+English OT mappings. They are not a general interpreter for custom VRS files.
+The evaluator verifies the settings declaration and VRS checksums before loading
+or accepting a cached Bible. Original metadata remains available as evidence,
+including its unresolved-custom-file diagnostics; the reviewed caller profile
+determines the effective numbering. Caches stay in the workspace's
+`derivedFormats/LiteralnessResources/` folder.
+
+The profiles distinguish the 13-verse endings of 2 Corinthians in CSB, CEV and
+NRSV; ESV's Revelation 12:17 combination; NIV/MSG/NKJV's Revelation 13:1
+combination; NKJV's Philippians 1:16–17 order; and MSG's adjoining Chronicles
+paragraphs. CEV's alternative shorter ending at Mark 16:21–22 has no reference
+counterpart and remains explicitly unmapped. Omitted verses are not replaced by
+same-number text from elsewhere.
+
+Passage retrieval completes stored bridges with partial endpoints (such as
+`1b-2a`) and explicit lists (such as `12,11`) before comparison. Psalm titles
+attached by a loader to verse 1 can be retrieved independently as verse 0,
+without repeating them in the numbered verse.
+
+`Formats.WordAlignmentXML` resolves enhanced `target_links` against the companion
+`BHS` and `GNT` word tables. It retains source IDs, source addresses, lexical and
+morphological attributes, and separate Kethiv/Qere reading labels. The evaluator
+reports body-text link coverage separately from its existing glossary-based
+score; notes and headings are excluded. Unresolved IDs remain visible. Link
+availability is not itself a literalness measure, and an ID is never treated as
+an offset into a different Hebrew or Greek edition.
+
+### Saved Bible declarations
+
 The declaration is saved as a versioned JSON string containing only names and
 metadata evidence. Compiled engine tables are shared separately and never saved
 on a Bible object. Ordinary Python pickle/deepcopy, the minimal BOS attribute

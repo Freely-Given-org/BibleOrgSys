@@ -50,6 +50,7 @@ CHANGELOG:
     2025-11-19 Give better error info for an invalid chapter number
     2026-04-22 Fixed addVerse
     2026-05-20 Detect double-backslash in addLine()
+    2026-10-30 Retrieve ranges starting inside a verse bridge and include each stored span only once.
 """
 import os
 from pathlib import Path
@@ -74,10 +75,10 @@ from usfm_markers_py import to_standard_marker, get_newline_markers_list, is_new
                             USFM_BIBLE_PARAGRAPH_MARKERS, USFM_ALL_BIBLE_PARAGRAPH_MARKERS, USFM_ALL_MARKERS
 
 
-LAST_MODIFIED_DATE = '2026-10-06' # by RJH
+LAST_MODIFIED_DATE = '2026-10-30' # by RJH
 SHORT_PROGRAM_NAME = "InternalBibleBook"
 PROGRAM_NAME = "Internal Bible book handler"
-PROGRAM_VERSION = '1.0.4'
+PROGRAM_VERSION = '1.0.5'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -1787,21 +1788,26 @@ class InternalBibleBook:
         If strict is true, only returns a value if every verse is found.
         If strict is false, logs a critical error and
             returns whatever we have when we fail to find a verse (perhaps because inadequate handling of bridged verses)
+        A numbered verse may be stored inside a bridge (e.g., 1-2); return that
+            complete stored span once, even when both numbers are requested.
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 5: fnPrint( DEBUGGING_THIS_MODULE, f"InternalBibleBook.getContextVerseData( {startBCVReference} to {endBCVReference}) {strict=} for {self.workName} {self.BBB}" )
         assert self.BBB == startBCVReference[0] if isinstance( startBCVReference, tuple ) else startBCVReference.getBBB()
         assert self.BBB == endBCVReference[0] if isinstance( endBCVReference, tuple ) else endBCVReference.getBBB()
         # dPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  InternalBibleBook.getContextVerseData  {startBCVReference} to {endBCVReference}) {strict=} for {self.workName} {self.BBB}" )
 
-        verseEntryList, contextList = self.getContextVerseData( startBCVReference, strict=True )
+        startC, startV = startBCVReference[1:3] if isinstance( startBCVReference, tuple ) else startBCVReference.getCV()
+        endC, endV = endBCVReference[1:3] if isinstance( endBCVReference, tuple ) else endBCVReference.getCV()
+
+        # Range strictness requires coverage, not an exact stored numeric label.
+        # Keep exact lookup for explicit suffixes and introduction pseudo-verses.
+        verseEntryList, contextList = self.getContextVerseData( startBCVReference,
+            strict=startC == '-1' or not startV.isdigit() )
         assert isinstance( verseEntryList, InternalBibleEntryList )
+        seenVerseSpans = {(startC, tuple(entry.getCleanText() for entry in verseEntryList
+                                       if entry.getMarker() == 'v') or (startV,))}
 
-        # Now concatenate the verse lists for the following verses
-        startC = startBCVReference[1] if isinstance( startBCVReference, tuple ) else startBCVReference.getC()
-        startV = startBCVReference[2] if isinstance( startBCVReference, tuple ) else startBCVReference.getV()
-        endC = endBCVReference[1] if isinstance( endBCVReference, tuple ) else endBCVReference.getC()
-        endV = endBCVReference[2] if isinstance( endBCVReference, tuple ) else endBCVReference.getV()
-
+        # Now concatenate the verse lists for the following verses.
         # dPrint( 'Info', DEBUGGING_THIS_MODULE, f"InternalBibleBook.getContextVerseData concatenating {self.workName} {self.BBB} from {startC}:{startV} to {endC}:{endV} {strict=}" )
         intC = int(startC)
         intV = getSmallLeadingInt(startV) + 1 # Handles strings like '4b'
@@ -1816,7 +1822,14 @@ class InternalBibleBook:
             try:
                 thisVerseEntryList = self._CVIndex.getVerseEntries( (strC,strV), strict=False )
                 assert isinstance( thisVerseEntryList, InternalBibleEntryList )
-                verseEntryList += thisVerseEntryList
+                # The lookup for either number of a bridge returns the same
+                # entries, including headings and notes. Deduplicate by stored
+                # labels within the chapter, never by the translated text.
+                verseSpan = (strC, tuple(entry.getCleanText() for entry in thisVerseEntryList
+                                        if entry.getMarker() == 'v') or (strV,))
+                if verseSpan not in seenVerseSpans:
+                    verseEntryList += thisVerseEntryList
+                    seenVerseSpans.add(verseSpan)
             except KeyError as kerr:
                 # dPrint( 'Normal', DEBUGGING_THIS_MODULE, f"    InternalBibleBook.getContextVerseData got KeyError with {strC}:{strV}" )
                 if startC == '-1': # This is expected, because LV doesn't have intros, so endV will be excessive

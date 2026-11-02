@@ -5,6 +5,9 @@
 Public Bible methods delegate here; this module has no application, renderer,
 or navigation dependencies. Mapping results describe references, while portions
 describe the text actually stored (including indivisible USFM verse bridges).
+
+CHANGELOG:
+    2026-10-31 Accept native verse-label ranges/lists before scalar validation.
 """
 from dataclasses import dataclass, replace
 import re
@@ -76,17 +79,44 @@ def _passage_source_description(source, BBB):
 
 def _verse_references(BBB, C, value, source=None):
     """Expand a stored numeric bridge; preserve an explicit verse suffix."""
-    match = re.fullmatch(r'(\d+)([a-z]*)(?:-(\d+))?', value)
+    if re.fullmatch(r'\d+[a-z]*(?:,\d+[a-z]*)+', value):
+        # Some USFM resources explicitly list reordered verses, e.g. MSG's
+        # Acts 27:12,11. This is a list, never an inferred enclosing range.
+        return tuple(dict.fromkeys(ref for label in value.split(',')
+                                   for ref in _verse_references(BBB,C,label,source)))
+    match = re.fullmatch(r'(\d+)([a-z]*)(?:-(\d+)([a-z]*))?', value)
     if not match:
         raise ValueError(f'Unsupported source verse label {BBB} {C}:{value!r} '
                          f'[{_passage_source_description(source, BBB)}]')
-    first, suffix, last = match.groups()
+    first, suffix, last, last_suffix = match.groups()
     if last:
-        if suffix or int(last) < int(first):
+        if int(last) - int(first) >= 10000:
+            raise ValueError(f'Source verse bridge exceeds 10000 addresses: {BBB} {C}:{value!r} '
+                             f'[{_passage_source_description(source, BBB)}]')
+        if int(last) < int(first) or (int(last) == int(first)
+                and (not suffix or not last_suffix or len(suffix) != 1 or len(last_suffix) != 1 or suffix > last_suffix)):
             raise ValueError(f'Unsupported source verse bridge {BBB} {C}:{value!r} '
                              f'[{_passage_source_description(source, BBB)}]')
-        return tuple(normalize_reference((BBB,C,v)) for v in range(int(first),int(last)+1))
+        if int(first) == int(last):
+            return tuple(normalize_reference((BBB,C,first,chr(s)))
+                         for s in range(ord(suffix),ord(last_suffix)+1))
+        return tuple(normalize_reference((BBB,C,v,
+                     suffix if v == int(first) else last_suffix if v == int(last) else None))
+                     for v in range(int(first),int(last)+1))
     return (normalize_reference((BBB,C,first,suffix)),)
+
+
+def _native_reference_points(reference, bible):
+    """Expand a native verse label; keep scalar mapping validation unchanged.
+
+    A separate suffix can accompany a numeric verse, but must not be appended
+    to a range/list or to an already suffixed label with unclear scope.
+    """
+    if (isinstance(reference, (tuple,list)) and len(reference) in (3,4)
+            and isinstance(reference[2], str) and not reference[2].isdecimal()
+            and (len(reference) == 3 or reference[3] in (None,''))):
+        return _verse_references(*reference[:3], source=bible)
+    return (normalize_reference(reference),)
 
 
 def passageReferencesFromEntries(reference, entries, sourceSystem, *, sourceBible=None):
@@ -131,11 +161,11 @@ def passageReferencesFromEntries(reference, entries, sourceSystem, *, sourceBibl
 
 def get_passage_data(bible, references, *, chapter_cache=None, combine_adjacent=False):
     """Implementation of Bible.getPassageData; validate/fetch before returning."""
-    references = tuple(normalize_reference(ref) for ref in references)
+    references = tuple(point for ref in references for point in _native_reference_points(ref,bible))
     cache = {} if chapter_cache is None else chapter_cache
     portions, seen = [], set()
 
-    def fetch(reference):
+    def fetch(reference, *, stored=False):
         BBB, C, V, suffix = reference
         native = (BBB,C,V + (suffix or ''))
         if BBB not in bible and BBB not in bible.availableBBBs:
@@ -153,13 +183,18 @@ def get_passage_data(bible, references, *, chapter_cache=None, combine_adjacent=
                 for (chapter,verse), _entry in index.items() if chapter == C})
         chapter = cache[cache_key]
         key = native[2]
-        if not suffix and key not in chapter:
-            # Non-strict scalar lookup may return only one stored suffix. A
-            # request for the whole verse must include every stored segment.
-            segments = sorted(k for k in chapter if re.fullmatch(re.escape(V)+r'[a-z]+', k))
-            if segments:
-                for segment in segments:
-                    fetch((BBB,C,V,segment[len(V):]))
+        if not stored and V.isdigit() and V != '0':
+            # Include every stored portion touching this whole verse, including
+            # partial bridges (1-2a, 2b-3). Scalar lookup can return just one.
+            labels = [label for label in tuple(chapter)
+                      if re.fullmatch(r'\d+[a-z]*(?:-\d+[a-z]*|(?:,\d+[a-z]*)+)?', label)
+                      and any(ref[2] == V and (not suffix or ref[3] == suffix)
+                              for ref in _verse_references(BBB,C,label,bible))]
+            labels.sort(key=lambda label: (int(re.match(r'\d+', label)[0]),
+                                           _verse_references(BBB,C,label,bible)[0][3] or ''))
+            if labels and labels != [key]:
+                for label in labels:
+                    fetch((BBB,C,label,None), stored=True)
                 return
         if key not in chapter:
             try:
@@ -172,6 +207,39 @@ def get_passage_data(bible, references, *, chapter_cache=None, combine_adjacent=
         if data is None or not data[0]:
             raise MissingPassageVerseError(native)
         entries, context = data
+
+        def leading_titles(values):
+            titles = []
+            for entry in values:
+                if entry.getMarker() == 'v':
+                    break
+                if entry.getMarker() == 'd':
+                    titles.append(entry)
+            return titles
+
+        if key == '0' and not leading_titles(entries):
+            # USX and USFM indexes sometimes attach a Psalm title to verse 1
+            # while verse 0 contains only the chapter marker. Retrieve the title
+            # independently; never copy the numbered verse into its place.
+            for label, (candidate, _context) in chapter.items():
+                if re.fullmatch(r'1(?:[a-z]+|-\d+[a-z]*)?', label):
+                    titles = leading_titles(candidate)
+                    if titles:
+                        entries = InternalBibleEntryList()
+                        for title in titles:
+                            entries.append(title)
+                        break
+        elif key != '0':
+            titles = leading_titles(entries)
+            if titles:
+                detached = InternalBibleEntryList()
+                before_verse = True
+                for entry in entries:
+                    if entry.getMarker() == 'v':
+                        before_verse = False
+                    if not (before_verse and entry.getMarker() == 'd'):
+                        detached.append(entry)
+                entries = detached
         labels = tuple(e.getCleanText() for e in entries if e.getMarker() == 'v')
         span = (BBB,C,labels or (key,))
         if span not in seen:
@@ -264,7 +332,10 @@ def get_mapped_passage(bible, source_system, references, *, chapter_cache=None, 
         if not extra:
             return MappedBiblePassage(replace(result, requested_references=requested), portions, native)
         stored_coverage = tuple(dict.fromkeys((
-            *((*ref[:3], None) if (*ref[:3], None) in result.references else ref for ref in native),
+            # A partial endpoint in an indivisible stored bridge requires the
+            # rest of that verse too. Expansion retrieves all its stored parts
+            # on the next pass before returning an exact complete passage.
+            *((*ref[:3], None) if ref[3] else ref for ref in native),
             *result.references)))
         coverage = bible.convertReferencesToVersification(source_system, stored_coverage, expandGroups=True)
         if coverage.status != MappingStatus.EXACT:

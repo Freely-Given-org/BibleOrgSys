@@ -14,9 +14,10 @@ checked-in reference and coverage report::
     python -m BibleOrgSys.Reference.Converters.BibleVersificationMappingsConverter --check
 
 CHANGELOG:
-    2026-10-22 Bundle the verified BibleTags Greek NT profile.
     2026-10-21 Bundle reviewed KJV NT and VLT v3 mapping profiles.
+    2026-10-22 Bundle the verified BibleTags Greek NT profile.
     2026-10-22 Include KJV OT and explicit OET-RV/OET-LV source profiles.
+    2026-10-30 Bundle the Wycliffe Zefania profile and reviewed LAO navigation convention.
 """
 
 from __future__ import annotations
@@ -109,7 +110,9 @@ def load_bundle(root=None):
         'supplement': _read_json(root.joinpath('mapping-supplement.json')),
         'additionalMappings': [_read_json(root.joinpath(filename)) for filename in
                                ('luther-mapping.json', 'kjv-mapping.json', 'vlt-mapping.json',
-                                'bibletags-nt-mapping.json', 'oet-rv-mapping.json', 'oet-lv-mapping.json')],
+                                'bibletags-nt-mapping.json', 'oet-rv-mapping.json', 'oet-lv-mapping.json',
+                                'wycliffe-mapping.json')]
+                              + _read_json(root.joinpath('resource-mappings.json'))['profiles'],
         'supplementEvidence': _read_json(root.joinpath('Copenhagen', 'versification-sniffing',
                                                       'rules', 'merged_rules.json')),
     }

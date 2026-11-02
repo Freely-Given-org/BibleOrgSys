@@ -25,6 +25,13 @@ from BibleOrgSys.Reference.Converters.BibleVersificationMappingsConverter import
 )
 
 
+LAST_MODIFIED_DATE = '2026-10-31' # by RJH
+SHORT_PROGRAM_NAME = "BibleVersificationMappings"
+PROGRAM_NAME = "Bible versification mappings functions"
+PROGRAM_VERSION = '1.0.0'
+PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+
+
 Reference = tuple[str, str, str, str | None]
 
 
@@ -123,18 +130,18 @@ class UnknownVersificationSystemError(ValueError):
 def normalize_reference(reference) -> Reference:
     """Normalise numbers and empty suffixes; never guess USFM/BOS book aliases."""
     if not isinstance(reference, (tuple, list)) or len(reference) not in (3, 4):
-        raise ValueError('Expected a (BBB, C, V[, S]) reference.')
+        raise ValueError(f"Expected a (BBB, C, V[, S]) reference, not {reference=}")
     bbb, chapter, verse = reference[:3]
     suffix = reference[3] if len(reference) == 4 else None
     if not isinstance(bbb, str) or not re.fullmatch(r'[A-Z0-9]{3}', bbb):
-        raise ValueError('A reference needs a three-character BOS book code.')
+        raise ValueError(f"A reference needs a three-character BOS book code, not {bbb=} from {reference=}")
     for value in (chapter, verse):
         if type(value) not in (str, int) or not re.fullmatch(r'[0-9]+', str(value)):
-            raise ValueError('Chapter and verse must be nonnegative integers or decimal strings.')
+            raise ValueError(f"Chapter and verse must be nonnegative integers or decimal strings, not {value=} from {reference=}")
     if int(chapter) < 1:
-        raise ValueError('Chapter zero and introduction references cannot be mapped.')
+        raise ValueError(f"Chapter zero and introduction references like {reference=} cannot be mapped.")
     if suffix not in (None, '') and (not isinstance(suffix, str) or not re.fullmatch(r'[a-z]+', suffix)):
-        raise ValueError('A verse suffix must contain lowercase letters.')
+        raise ValueError(f"A verse suffix must contain lowercase letters, not {suffix=} from {reference=}")
     return bbb, str(int(chapter)), str(int(verse)), suffix or None
 
 
@@ -609,8 +616,12 @@ class VersificationMappingEngine:
             if name == 'ethiopian_custom':
                 definition['disabledReason'] = bundle['policy']['systemNotes'][name]
             systems[name] = definition
-        # The reference LAO address space is explicitly copied from vul, not from eng.
+        # LAO counts come from vul. BOS English navigation explicitly adopts the
+        # reference's 20 addresses (reference-policy.json); this is not an
+        # identity inferred from equal counts. Wycliffe's imported boundaries
+        # need their separate profile. See Documentation/WycliffeVersification.md.
         systems['vul']['identityBooks']['LAO'] = 'LAO'
+        systems['eng']['mappedVerses']['LAO 1:1-20'] = 'LAO 1:1-20'
         reference_definition['verseZeroReferences'] = sorted(reference_zeros)
         # The reference adopts org numbering; a declared reference title also
         # identifies an org title at the same address.

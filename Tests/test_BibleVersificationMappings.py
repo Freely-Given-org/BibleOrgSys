@@ -411,7 +411,7 @@ class BundledMappingTests(unittest.TestCase):
     def test_latin_native_extension_is_explicitly_supported(self):
         self.assertEqual(self.engine.convert('vul', 'BOSReference', [ref('LAO')]).require_single(), ref('LAO'))
         self.assertEqual(self.engine.convert('BOSReference', 'vul', [ref('LAO')]).require_single(), ref('LAO'))
-        self.assertEqual(self.engine.convert('eng', 'BOSReference', [ref('LAO')]).status, MappingStatus.UNSUPPORTED)
+        self.assertEqual(self.engine.convert('eng', 'BOSReference', [ref('LAO')]).require_single(), ref('LAO'))
 
     def test_vulgate_textual_traditions_remain_unsupported_in_both_directions(self):
         for book in ('TOB', 'JDT', 'SIR'):

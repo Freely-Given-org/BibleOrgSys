@@ -19,6 +19,7 @@ CHANGELOG:
     2024-06-11 Fix bug with XML tail duplication after <char> field inside <note>
     2026-05-26 Handle Rust libraries
     2026-06-25 Better handling of NET XNL fields
+    2026-10-25 Import enhanced Paratext USX while retaining word-group links
 """
 import logging
 import os
@@ -29,11 +30,12 @@ from xml.etree.ElementTree import ElementTree, ParseError
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Bible import Bible, BibleBook
+from BibleOrgSys.Formats.EnhancedUSX import normaliseEnhancedUSX
 import bos_books_codes_py
 import usfm_markers_py
 
 
-LAST_MODIFIED_DATE = '2026-10-06' # by RJH
+LAST_MODIFIED_DATE = '2026-10-25' # by RJH
 SHORT_PROGRAM_NAME = "USXXMLBibleBookHandler"
 PROGRAM_NAME = "USX XML Bible book handler"
 PROGRAM_VERSION = '0.31'
@@ -87,8 +89,7 @@ class USXXMLBibleBook( BibleBook ):
             BibleOrgSysGlobals.checkXMLNoTail( chapterNumberElement, chapterNumberLocation )
             BibleOrgSysGlobals.checkXMLNoSubelements( chapterNumberElement, chapterNumberLocation )
 
-            if ( version is None or version.startswith('3.') ) \
-            and 'eid' in chapterNumberElement.keys():
+            if 'eid' in chapterNumberElement.keys():
                 # It's a chapter end marker
                 BibleOrgSysGlobals.checkXMLNoTail( chapterNumberElement, chapterNumberLocation )
                 chapterEndId = None
@@ -105,6 +106,7 @@ class USXXMLBibleBook( BibleBook ):
             else: # it's a chapter start marker
                 V = '0'
                 # Process the attributes
+                C = chapterNumberElement.get('number', C)
                 chapterStyle = pubNumber = chapterStartId = None
                 for attrib,value in chapterNumberElement.items():
                     if attrib=='number': C = value
@@ -145,8 +147,7 @@ class USXXMLBibleBook( BibleBook ):
             BibleOrgSysGlobals.checkXMLNoText( verseNumberElement, verseNumberLocation )
             BibleOrgSysGlobals.checkXMLNoSubelements( verseNumberElement, verseNumberLocation )
 
-            if ( version is None or version.startswith('3.') ) \
-            and 'eid' in verseNumberElement.keys():
+            if 'eid' in verseNumberElement.keys():
                 # It's a verse end marker
                 BibleOrgSysGlobals.checkXMLNoTail( verseNumberElement, verseNumberLocation )
                 verseEndId = None
@@ -164,6 +165,7 @@ class USXXMLBibleBook( BibleBook ):
 
             else: # it's a verse start marker
                 # Process the attributes first
+                V = verseNumberElement.get('number', V)
                 verseStyle = altNumber = pubNumber = verseStartId = None
                 for attrib,value in verseNumberElement.items():
                     if attrib=='number': V = value
@@ -431,7 +433,8 @@ class USXXMLBibleBook( BibleBook ):
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"USXXMLBibleBook.loadParagraph( {paragraphXML} {paragraphlocation} )" )
 
             # Process the attributes first
-            paragraphStyle = paragraphVerseId = None
+            paragraphStyle = paragraphXML.get('style')
+            paragraphVerseId = None
             for attrib,value in paragraphXML.items():
                 if attrib=='style': paragraphStyle = value # This is basically the USFM marker name
                 elif attrib=='vid':
@@ -439,8 +442,13 @@ class USXXMLBibleBook( BibleBook ):
                     assert paragraphVerseId[:3] in filename
                     assert paragraphVerseId[3] == ' '
                     colonIx = paragraphVerseId.index( ':' )
-                    assert paragraphVerseId[4:colonIx] == C
-                    assert paragraphVerseId[colonIx+1:] == V
+                    if paragraphStyle and paragraphStyle.startswith(('s', 'ms', 'mt', 'imt', 'is', 'toc')):
+                        # A heading can retain the preceding verse's vid even
+                        # after a chapter milestone (e.g. NIV84+ 1CH 26).
+                        pass
+                    else:
+                        assert paragraphVerseId[4:colonIx] == C
+                        assert paragraphVerseId[colonIx+1:] == V
                 else:
                     logging.error( f"CH46 Unprocessed {attrib} attribute ({value}) in {paragraphlocation}" )
                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
@@ -573,6 +581,8 @@ class USXXMLBibleBook( BibleBook ):
             logging.critical( f"Loader parse error in xml file {filename}: {sys.exc_info()[0]} {err}" )
             loadErrors.append( f"Loader parse error in xml file {filename}: {sys.exc_info()[0]} {err}" )
             self.addPriorityError( 100, C, V, f"Loader parse error in xml file {filename}: {err}" )
+            raise ValueError(f'Cannot parse USX source {self.sourceFilepath}: {err}') from err
+        self.enhancedWordGroups = normaliseEnhancedUSX(self.XMLTree, self.BBB)
         if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE:
             assert self.XMLTree # Fail here if we didn't load anything at all
 
@@ -625,6 +635,8 @@ class USXXMLBibleBook( BibleBook ):
                     loadChapterNumberField( element, location )
                 elif element.tag == 'verse': # milestone (not a container in USX)
                     loadVerseNumberField( element, location ) # Not in a paragraph!
+                elif element.tag == 'char': # Enhanced Hebrew can have top-level word groups.
+                    self.appendToLastLine(loadCharField(element, location))
                 elif element.tag == 'para':
                     if C == '-1': V = str( int(V) + 1 ) # first/id line will be -1:0
                     BibleOrgSysGlobals.checkXMLNoTail( element, location )
@@ -764,7 +776,9 @@ class USXXMLBibleBook( BibleBook ):
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "NOTE", BibleOrgSysGlobals.elementStr( element ) )
                     processedNoteField = loadNoteField( element, location )
                     if BibleOrgSysGlobals.strictCheckingFlag: assert '\n' not in processedNoteField
-                    self.appendToLastLine( processedNoteField )
+                    # A note following a chapter must not turn its address into
+                    # e.g. "119\\f" (ESV Psalms).
+                    self.appendToLastLine( (' ' if V == '0' else '') + processedNoteField )
                 else:
                     logging.error( f"DV60 Unprocessed {element.tag} element after {self.BBB} {C}:{V} in {location}" )
                     self.addPriorityError( 1, C, V, f"Unprocessed {element.tag} element" )

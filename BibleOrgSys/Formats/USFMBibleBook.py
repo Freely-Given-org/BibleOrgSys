@@ -22,11 +22,13 @@ CHANGELOG:
     2026-07-02 Try to make uW handling more robust
     2026-08-07 Try to make uW handling more robust again
     2026-08-25 Handle special cases for T4T
+    2026-10-25 Preserve ordinary line-leading character fields and adjacent verse notes
 """
 from typing import Any
 import os
 from pathlib import Path
 import logging
+import re
 
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
@@ -35,7 +37,7 @@ from BibleOrgSys.Bible import Bible, BibleBook
 import usfm_markers_py
 
 
-LAST_MODIFIED_DATE = '2026-10-06' # by RJH
+LAST_MODIFIED_DATE = '2026-10-25'
 SHORT_PROGRAM_NAME = "USFMBibleBook"
 PROGRAM_NAME = "USFM Bible book handler"
 PROGRAM_VERSION = '0.70'
@@ -107,6 +109,10 @@ class USFMBibleBook( BibleBook ):
             # print( f"\n\ndoAddLine( '{addMarker}', '{addText}' ) for {self.workName} {self.BBB} {C}:{V}" )
 
             marker, text = addMarker, addText.replace( '~', ' ' ) # NBSP = Non-breaking space
+            if marker == 'v':
+                # A character/note marker is also an unambiguous delimiter for
+                # the verse label (e.g. CEV's 9\\f), even without a space.
+                text = re.sub(r'^(\d+[a-z]?(?:-\d+[a-z]?)?)(?=\\)', r'\1 ', text)
             # TODO: Why do these next two lines not catch ULT JER ???
             assert not marker.startswith('zaln-e'), f"{self.workName} {self.BBB} {C}:{V} {marker=} shouldn't begin a line"
             if marker.startswith('zaln-e'): print( f"{self.workName} {self.BBB} {C}:{V} {marker=} shouldn't begin a line" ); ALWAYS_STOP
@@ -648,6 +654,14 @@ class USFMBibleBook( BibleBook ):
                     if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 3:
                         dPrint( 'Info', DEBUGGING_THIS_MODULE, f"{self.BBB} {C} {V} AppendedTC {marker}='{text}' to get combined line {lastMarker}='{lastText}'" )
                     marker = text = None # Seems to make no difference
+                elif lastMarker is not None:
+                    # A physical line break does not end a paragraph or verse.
+                    # Keep ordinary character fields such as NLT's line-leading
+                    # \\wj, including any subsequent inline verse markers.
+                    separator = ' ' if lastText and not lastText.endswith(' ') else ''
+                    delimiter = '' if marker.endswith('*') else ' '
+                    lastText += f'{separator}\\{marker}{delimiter}{text}'
+                    marker = text = None
                 else:
                     #dPrint( 'Never', debuggingThisFunction, 'USFM Para Markers', BibleOrgSysGlobals.USFMParagraphMarkers )
                     logging.critical( f"Programming error: USFMBibleBook.load() lost '{self.workName}' {self.BBB}_{C}:{V} text after {lastMarker}='{lastText}': {marker}='{text}'" )
