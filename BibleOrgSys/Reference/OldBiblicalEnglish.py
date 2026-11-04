@@ -118,10 +118,10 @@ import BibleOrgSys.BibleOrgSysGlobals as BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2026-10-30' # by RJH
+LAST_MODIFIED_DATE = '2026-11-03' # by RJH
 SHORT_PROGRAM_NAME = "OldBiblicalEnglish"
 PROGRAM_NAME = "OpenBibleData English Language Handling functions"
-PROGRAM_VERSION = '1.0.12'
+PROGRAM_VERSION = '1.0.13'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -9181,7 +9181,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
     ((' sithis',' tymet'),' times'), ((' tymy',),' time'),
     (('Tyme',), 'Time'),
     ((' timerous',),' timid'),
-    (('Tymothe',), 'Timothy'), ((' tynklinge',' tynkynge',' tinckelyng',' tincklyng',' tinckling',' tinkeling'),' tinkling'),
+    ((' tynklinge',' tynkynge',' tinckelyng',' tincklyng',' tinckling',' tinkeling'),' tinkling'),
     ((' tynne', ' tiyn', ' tyn'), ' tin'),
     ((' typpe',),' tip'),
     ((' tithid',),' tithed'), (('Tythes',), 'Tithes'), (('Tythe',), 'Tithe'),
@@ -11762,7 +11762,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
     (('& ',),'and '),
 
     # Proper nouns
-    (('Abraha ',),'Abraham '), (('Absolon',),'Absolom'),
+    (('Abrahams',),'Abraham’s'),(('Abraha ',),'Abraham '), (('Absolon',),'Absolom'),
     (('Achas',),'Achaz'), # Mat 1:9
     (('Alpheus','Alphey','Alfey','Alphee'),'Alphaeus'),(('Alphe ',),'Alphaeus '),(('Alphe,',),'Alphaeus,'), # Mrk 3:18
     (('Areede',),'Interpret/Explain/Prophesy'),((' arede',),' interpret/explain/prophesy'), # Wycl Mrk 14:65
@@ -11811,7 +11811,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
     (('Sydon',),'Sidon'), # Mrk 7:24
     (('Syon','Sion'),'Zion'),
     (('Thaddeus','Taddeus','Thadee'),'Thaddaeus'), # Mrk 3:18
-    (('Tichicus',),'Tychicus'), (('Tigrys',),'Tigris'),
+    (('Tichicus',),'Tychicus'), (('Tigrys',),'Tigris'), (('Timothie','Tymothe'), 'Timothy'),
     (('Zabulon','zabulon','Sabulon'),'Zebulun'), # Mat 4:5
 
     # Generalised left-overs
