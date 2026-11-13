@@ -113,15 +113,18 @@ CHANGELOG:
     2026-10-23 Consolidate further punctuation families using corpus collision evidence
     2026-10-23 Match KJB-1611 Matthew 24:23 across the added-word span, preserving markup
     2026-10-30 Use James/Ya’akov for James and Iames, matching the OET-RV names table
+    2026-11-12 Only try replacements whose indexed letter group occurs in the text (same results, ~20x faster)
 """
+import heapq
+
 import BibleOrgSys.BibleOrgSysGlobals as BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2026-11-03' # by RJH
+LAST_MODIFIED_DATE = '2026-11-12' # by RJH
 SHORT_PROGRAM_NAME = "OldBiblicalEnglish"
 PROGRAM_NAME = "OpenBibleData English Language Handling functions"
-PROGRAM_VERSION = '1.0.13'
+PROGRAM_VERSION = '1.1.0'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -11766,19 +11769,18 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
     (('Achas',),'Achaz'), # Mat 1:9
     (('Alpheus','Alphey','Alfey','Alphee'),'Alphaeus'),(('Alphe ',),'Alphaeus '),(('Alphe,',),'Alphaeus,'), # Mrk 3:18
     (('Areede',),'Interpret/Explain/Prophesy'),((' arede',),' interpret/explain/prophesy'), # Wycl Mrk 14:65
-    (('Assiriens',),'Assyrians'), (('Baalim','Baalym'),'Baals'), (('Babels',),'Babel’s'), (('Babiloyne','Babilon'),'Babylon'), (('Babilo ',),'Babylon '),
-    (('Babilo,',),'Babylon,'), (('Baptyst','baptist'),'Baptist'), (('Barrabas','Barabas'),'Barabbas'), (('Barne ',),'Barnea '),
+    (('Assiriens',),'Assyrians'), (('Baalim','Baalym'),'Baals'), (('Babels',),'Babel’s'),
+    (('Babiloyne','Babilon'),'Babylon'), (('Babilo ',),'Babylon '),(('Babilo,',),'Babylon,'), (('Babylons',),'Babylon’s'),
+    (('Baptyst','baptist'),'Baptist'), (('Barrabas','Barabas'),'Barabbas'), (('Barne ',),'Barnea '),
     (('Bartholomewe','Bartlemewe','Bartlemew','Bartylmew'),'Bartholomew'), # Mrk 3:18
     (('Beel-zebub','Belzebub','Belsabub'),'Beelzebub'), # Mat 10:25, Mrk 3:22
-
     (('Boos','Booz'),'Boaz'), # Mat 1:5
     (('Cananite',),'Canaanite'), # Mrk 3:18
-
     (('Capharnaum','Cafarnaum'),'Capernaum'),(('Capernau ',),'Capernaum '), # Wycl Mrk 1:21
     (('Cesarye','Cesarea'),'Caesarea'), # Wycl Mrk 8:27
     (('Cæsar','Cesar'),'Caesar'), (('Daniell','Danyel'),'Daniel'),
     (('Decapoleos',),'Decapolis'), # Wycl Mrk 7:31
-    (('Elias','Helyas','Helias'),'Elias/Elijah'), # Mrk 6:15, Mat 11:14
+    (('Elias ','Helyas ','Helias '),'Elias/Elijah '), # Mrk 6:15, Mat 11:14 but protect Eliashib
     (('Hester',),'Esther'),
     (('Esayas','Ysaie','Esay'),'Isaiah'), # Mrk 7:6, Mat 3:3
     (('Idumaea','Edoma'),'Idumea'),(('Idume,',),'Idumea,'), # Mrk 3:8 ('Yd' is already changed to 'Id' above)
@@ -11796,22 +11798,30 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
     (('Ieremie','Jeremye','Jeremy','Ieremy'),'Yeremiah'), # Wycl or should that be 'Yeremye'
     (('Iudas','Ivdas','Judas'),'Yudas'), (('Iudah','Judah'),'Yudah'), (('Iuda ','Juda '),'Yudah '), (('Iudea','Judee','Judaea','Judæa'),'Yudea'), (('Iude',),'Yude'),
     (('Ia',),'Ya'),(('Ie',),'Ye'),(('Iu',),'Yu'), # Left-over proper nouns, e.g., Iabes → Yabes
-    (('Jayrus',),'Yairus'), (('Kadesh Barnea',),'Kadesh-barnea'), (('Marck','Marke'),'Mark'),
+    (('Jacobs',),'Jacob’s'),
+    (('Jayrus',),'Yairus'),
+    (('Joabs',),'Joab’s'),
+    (('Josephs',),'Joseph’s'),
+    (('Kadesh Barnea',),'Kadesh-barnea'), (('Marck','Marke'),'Mark'),
     (('Matthewe','Mathew','Matheu'),'Matthew'), # Mrk 3:18
-    (('Medeis',),'Medes'), (('Nephthali','Neptalym','Nephtali'),'Naphtali'), (('Nabuchodonosor','Nabugodonosor','Nebuchadnezar'),'Nebuchadnezzar'),
-    (('Nineueh',),'Nineveh'), (('Niniue ',),'Nineveh '), (('Nynyue',),'Nineveh'), (('Nineue ',),'Nineveh '), (('Nineve,',),'Nineveh,'), (('Ninive',),'Nineveh'),
-    (('Nineve.',),'Nineveh.'), (('Petre','Petir'),'Peter'), (('Pharao ','Farao '),'Pharaoh '), (('Pharao,','Farao,'),'Pharaoh,'),
+    (('Medeis',),'Medes'), (('Nephthali','Neptalym','Nephtali'),'Naphtali'), (('Nebuchad-nezzar','Nebuchad-rezzar','Nabuchodonosor','Nabugodonosor','Nebuchadnezar'),'Nebuchadnezzar'),
+    (('Nineueh',),'Nineveh'), (('Niniue ','Nineue ','Ninive ','Nynyue '),'Nineveh '),(('Nineve,','Nineue,'),'Nineveh,'),(('Nineve.','Nineue.'),'Nineveh.'),(('Nineve:','Nineue:'),'Nineveh:'),
+    (('Olofernes',),'Holofernes'),
+    (('Petre','Petir'),'Peter'), (('Pharao ','Farao '),'Pharaoh '), (('Pharao,','Farao,'),'Pharaoh,'),
     (('Pharises','pharisees','pharises','Fariseis','Farisees','Farysees'),'Pharisees'), ((' pharise',),' Pharisee'), (('Farise',), 'Pharisee'), # Mat 3:7
-    (('Philippe',),'Philip'), (('Philistim','Philistyne','Filistei'),'Philistine'), (('Pilat,',),'Pilate,'), (('Pilat.',),'Pilate.'),
+    (('Pauls',),'Paul’s'), (('Philippe',),'Philip'), (('Philistim','Philistyne','Filistei'),'Philistine'), (('Pilat,',),'Pilate,'), (('Pilat.',),'Pilate.'),
     (('Pretorium',),'Prætorium'), # Mrk 15:16
     (('Raab',),'Rahab'), # Mat 1:5
     (('SALOMON',),'SOLOMON'), (('Salomon','Salamon'),'Solomon'), (('Samarie',),'Samaria'), (('Sare',),'Sara'),
     (('Sata.',),'Satan.'),(('Sata:',),'Satan:'), # Bshps Mrk 8:33
+    (('Sauls',),'Saul’s'),
     (('Siria','Sirie'),'Syria'), # Mat 4:24
+    (('Steuen',),'Stephen'),
     (('Sydon',),'Sidon'), # Mrk 7:24
     (('Syon','Sion'),'Zion'),
     (('Thaddeus','Taddeus','Thadee'),'Thaddaeus'), # Mrk 3:18
     (('Tichicus',),'Tychicus'), (('Tigrys',),'Tigris'), (('Timothie','Tymothe'), 'Timothy'),
+    (('Tobits',),'Tobit’s'),
     (('Zabulon','zabulon','Sabulon'),'Zebulun'), # Mat 4:5
 
     # Generalised left-overs
@@ -11887,6 +11897,48 @@ _ENGLISH_REPLACEMENTS = {allowOptions: _prepareEnglishReplacements(allowOptions)
                          for allowOptions in (False, True)}
 
 
+def _letterGroups( text:str ) -> set[str]:
+    """Every three- and four-character group in the text (the possible index keys)."""
+    return {text[p:p+4] for p in range(len(text)-3)} | {text[p:p+3] for p in range(len(text)-2)}
+
+def _indexEnglishReplacements( replacements:tuple[tuple[str,str], ...] ) -> tuple[dict[str,tuple[int,...]], tuple[int,...]]:
+    """
+    Index each replacement by the rarest four-character group of its source form
+        (three for a three-character source), so that a call only tries the replacements
+        that could possibly match, instead of all ~94,000 of them.
+    Sources shorter than three characters are always tried.
+    """
+    def sourceGroups( oldWord:str ) -> set[str]:
+        size = 4 if len(oldWord) >= 4 else 3
+        return {oldWord[p:p+size] for p in range(len(oldWord)-size+1)}
+    groupCounts = {}
+    for oldWord,_newWord in replacements:
+        for group in sourceGroups( oldWord ):
+            groupCounts[group] = groupCounts.get( group, 0 ) + 1
+    index, alwaysTry = {}, []
+    for n,(oldWord,_newWord) in enumerate( replacements ):
+        assert oldWord, f"Empty source form at replacement {n}"
+        if len(oldWord) < 3: alwaysTry.append( n )
+        else: index.setdefault( min( sourceGroups(oldWord), key=groupCounts.__getitem__ ), [] ).append( n )
+    return {group:tuple(numbers) for group,numbers in index.items()}, tuple(alwaysTry)
+
+_ENGLISH_REPLACEMENT_INDEXES = {allowOptions: _indexEnglishReplacements(_ENGLISH_REPLACEMENTS[allowOptions])
+                                for allowOptions in (False, True)}
+
+
+def _moderniseEnglishWordsSequentially( htmlStr:str, allowOptions:bool|None=False ) -> str:
+    """
+    The reference implementation: apply every replacement in table order.
+
+    Gives identical results to moderniseEnglishWords (which is much faster),
+        so is kept only for testing that.
+    """
+    for oldWord,newWord in _ENGLISH_REPLACEMENTS[bool(allowOptions)]:
+        htmlStr = htmlStr.replace( oldWord, newWord )
+    return htmlStr
+# end of OldBiblicalEnglish._moderniseEnglishWordsSequentially
+
+
 def moderniseEnglishWords( htmlStr:str, allowOptions:bool|None=False ) -> str:
     """
     Convert ancient English spellings to modern ones.
@@ -11902,8 +11954,29 @@ def moderniseEnglishWords( htmlStr:str, allowOptions:bool|None=False ) -> str:
     if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
         fnPrint( DEBUGGING_THIS_MODULE, f"moderniseEnglishWords( ({len(htmlStr)}) )" )
 
-    for oldWord,newWord in _ENGLISH_REPLACEMENTS[bool(allowOptions)]:
-        htmlStr = htmlStr.replace( oldWord, newWord )
+    # Same results as applying every replacement in table order (see _moderniseEnglishWordsSequentially),
+    #   but only the replacements whose index group occurs in the text are tried (still in table order).
+    # A replacement can create text matched by a later replacement (deliberate chains in the table),
+    #   so after each one, any later replacements indexed by newly created groups are added.
+    replacements = _ENGLISH_REPLACEMENTS[bool(allowOptions)]
+    index, alwaysTry = _ENGLISH_REPLACEMENT_INDEXES[bool(allowOptions)]
+    seenGroups = _letterGroups( htmlStr )
+    queued = set( alwaysTry )
+    for group in seenGroups: queued.update( index.get( group, () ) )
+    queue = list( queued )
+    heapq.heapify( queue )
+    while queue:
+        n = heapq.heappop( queue )
+        oldWord, newWord = replacements[n]
+        if oldWord in htmlStr:
+            htmlStr = htmlStr.replace( oldWord, newWord )
+            newGroups = _letterGroups( htmlStr ) - seenGroups
+            seenGroups |= newGroups
+            for group in newGroups:
+                for laterN in index.get( group, () ):
+                    if laterN > n and laterN not in queued:
+                        queued.add( laterN )
+                        heapq.heappush( queue, laterN )
 
     return htmlStr
 # end of OldBiblicalEnglish.moderniseEnglishWords
