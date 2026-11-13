@@ -4,6 +4,8 @@
 //! - `SectionIndexEntry` - Index entry for a single section
 //! - `InternalBibleBookSectionIndex` - Section index for a book
 
+use std::sync::Arc;
+
 use compact_str::{CompactString, ToCompactString};
 use indexmap::IndexMap;
 use num_format::{Locale, ToFormattedString};
@@ -12,6 +14,9 @@ use num_format::{Locale, ToFormattedString};
 use bos_books_codes::is_chapter_verse_book;
 use crate::bos_markers::{is_end_marker, title_markers};
 use crate::chapter_verse::ChapterVerse;
+use crate::indexes::cv_index::{ContextPool, get_shared_context};
+use crate::marker_ids::MarkerId;
+use crate::rkyv_with::{BoxStrAsString, MarkerAsString, SliceAsVec};
 // use crate::indexes::section_index;
 use crate::parsing::get_small_leading_int;
 use crate::entry_lists::InternalBibleEntryList;
@@ -33,60 +38,62 @@ use crate::{have_strict_checking_flag, verbosity_println};
 /// and contains the range of entries it covers.
 #[derive(Debug, Clone, PartialEq, Eq, rkyv::Archive, rkyv::Serialize, rkyv::Deserialize)]
 pub struct SectionIndexEntry {
-    /// Chapter where this section ends.
-    end_chapter_num_str: CompactString,
-    /// Verse where this section ends.
-    end_verse_num_str: CompactString,
+    // NOTE: The fields are kept small (64 bytes in total) but are archived
+    //          in the same layout as the strings and vector that they used to be.
+    /// Chapter and verse where this section ends.
+    end_cv: ChapterVerse,
     /// Index of the first entry for this section.
     start_index: u32,
     /// Number of entries in this section (inclusive).
     entry_count: u16,
     /// The marker that started this section (e.g., "Headers", "is1", "s1", "c", "c/s1").
     /// Note that "c/s1" should only occur for Psalms (where each chapter is automatically a new section)
-    reason_marker: CompactString,
+    #[rkyv(with = MarkerAsString)]
+    reason_marker: MarkerId,
     /// The section name/heading text.
-    section_name: String,
-    /// Context markers active at this section.
-    context: Vec<CompactString>,
+    #[rkyv(with = BoxStrAsString)]
+    section_name: Box<str>,
+    /// Context markers active at this section (shared with other entries which have the same context).
+    #[rkyv(with = SliceAsVec)]
+    context: Arc<[CompactString]>,
 }
 
 impl SectionIndexEntry {
     /// Create a new section index entry.
     pub fn new(
-        end_chapter: impl Into<CompactString>,
-        end_verse: impl Into<CompactString>,
+        end_chapter: impl AsRef<str>,
+        end_verse: impl AsRef<str>,
         start_index: u32,
         entry_count: u16,
-        reason_marker: impl Into<CompactString>,
-        section_name: impl Into<String>,
+        reason_marker: impl AsRef<str>,
+        section_name: impl AsRef<str>,
         context: Vec<CompactString>,
     ) -> Self {
         Self {
-            end_chapter_num_str: end_chapter.into(),
-            end_verse_num_str: end_verse.into(),
+            end_cv: ChapterVerse::new(end_chapter, end_verse),
             start_index,
             entry_count,
-            reason_marker: reason_marker.into(),
-            section_name: section_name.into(),
-            context,
+            reason_marker: MarkerId::intern(reason_marker.as_ref()),
+            section_name: section_name.as_ref().into(),
+            context: context.into(),
         }
     }
 
     /// Get the ending chapter:verse as a ChapterVerse.
     pub fn end_cv(&self) -> ChapterVerse {
-        ChapterVerse::new(self.end_chapter_num_str.as_str(), self.end_verse_num_str.as_str())
+        self.end_cv.clone()
     }
 
     /// Get the ending chapter number.
     #[inline]
     pub fn end_chapter_num_str(&self) -> &str {
-        &self.end_chapter_num_str
+        self.end_cv.chapter()
     }
 
     /// Get the ending verse number.
     #[inline]
     pub fn end_verse_num_str(&self) -> &str {
-        &self.end_verse_num_str
+        self.end_cv.verse()
     }
 
     /// Get the starting entry index.
@@ -110,7 +117,7 @@ impl SectionIndexEntry {
     /// Get the marker that started this section.
     #[inline]
     pub fn reason_marker(&self) -> &str {
-        &self.reason_marker
+        self.reason_marker.as_str()
     }
 
     /// Get the section name/heading text.
@@ -121,7 +128,7 @@ impl SectionIndexEntry {
 
     /// Get the section name and reason marker as a tuple.
     pub fn section_name_reason(&self) -> (&str, &str) {
-        (&self.section_name, &self.reason_marker)
+        (&self.section_name, self.reason_marker.as_str())
     }
 
     /// Get the context markers.
@@ -257,7 +264,7 @@ impl InternalBibleBookSectionIndex {
         let entries = self
             .line_entries
             .slice(entry.start_index as usize, (entry.end_index() + 1) as usize);
-        Ok((entries, entry.context.clone()))
+        Ok((entries, entry.context.to_vec()))
     }
 
     /// Get the section index entry for a specific starting CV.
@@ -292,12 +299,24 @@ impl InternalBibleBookSectionIndex {
         index_data: IndexMap<ChapterVerse, SectionIndexEntry>,
         line_entries: InternalBibleEntryList,
     ) -> Self {
-        Self {
+        let mut index = Self {
             work_name: work_name.into(),
             bos_book_code: bos_book_code.into(),
             index_data,
             line_entries,
             indexed: true,
+        };
+        index.share_contexts();
+        index
+    }
+
+    /// Make index entries with the same context share one copy of it.
+    ///
+    /// (Each entry gets its own copy when an index is built or deserialised.)
+    pub fn share_contexts(&mut self) {
+        let mut context_pool = ContextPool::new();
+        for index_entry in self.index_data.values_mut() {
+            index_entry.context = get_shared_context(&mut context_pool, &index_entry.context);
         }
     }
 
@@ -941,6 +960,7 @@ impl InternalBibleBookSectionIndex {
             }
         }
         if have_strict_checking_flag() || cfg!(debug_assertions) { println!("Section heading build finished with {} entries", self.index_data.len()); }
+        self.share_contexts();
         self.indexed = true;
 
         if have_strict_checking_flag() || cfg!(debug_assertions) {
@@ -1194,6 +1214,23 @@ mod tests {
         entries.push(InternalBibleEntry::simple("¬chapters", "")); // 46
 
         entries
+    }
+
+    #[test]
+    fn test_section_entries_are_small_and_share_contexts() {
+        assert_eq!(std::mem::size_of::<SectionIndexEntry>(), 64);
+
+        let context = || vec![CompactString::from("chapters"), CompactString::from("c")];
+        let mut index_data = IndexMap::new();
+        index_data.insert(ChapterVerse::new("1", "1"), SectionIndexEntry::new("1", "5", 3, 10, "s1", "First", context()));
+        index_data.insert(ChapterVerse::new("1", "6"), SectionIndexEntry::new("1", "9", 13, 8, "s1", "Second", context()));
+        let section_index = InternalBibleBookSectionIndex::from_serialized("TEST", "GEN", index_data, InternalBibleEntryList::new());
+
+        let first = &section_index.index_data[0];
+        let second = &section_index.index_data[1];
+        assert_eq!((first.end_chapter_num_str(), first.end_verse_num_str(), first.reason_marker(), first.section_name()), ("1", "5", "s1", "First"));
+        assert_eq!(first.context(), second.context());
+        assert!(Arc::ptr_eq(&first.context, &second.context)); // They don't each have their own copy
     }
 
     #[test]

@@ -4,12 +4,14 @@
 //! - `InternalBibleExtra` - Footnotes, cross-references, figures, and other annotations
 //! - `InternalBibleEntry` - A single line/entry of Bible text
 
-use compact_str::CompactString;
+use rkyv::with::Map;
 
 use crate::bos_markers::{ExtraType, custom_content, custom_nesting, is_end_marker};
 use crate::entry_extras::InternalBibleExtraList;
 use crate::error::ValidationError;
 use crate::have_strict_checking_flag;
+use crate::marker_ids::MarkerId;
+use crate::rkyv_with::{BoxStrAsString, MarkerAsString, U32AsUsize};
 
 /// Represents an "extra" element that was extracted from the main text flow.
 ///
@@ -41,9 +43,12 @@ use crate::have_strict_checking_flag;
 #[derive(Debug, Clone, PartialEq, Eq, rkyv::Archive, rkyv::Serialize, rkyv::Deserialize)]
 pub struct InternalBibleExtra {
     extra_type: ExtraType,
-    index: usize,
-    note_text: CompactString,
-    clean_note_text: CompactString,
+    #[rkyv(with = U32AsUsize)]
+    index: u32, // Index into the adjusted text of the (single-line) entry
+    #[rkyv(with = BoxStrAsString)]
+    note_text: Box<str>,
+    #[rkyv(with = BoxStrAsString)]
+    clean_note_text: Box<str>,
 }
 
 impl InternalBibleExtra {
@@ -58,11 +63,11 @@ impl InternalBibleExtra {
     pub fn new(
         extra_type: ExtraType,
         index: usize,
-        note_text: impl Into<CompactString>,
-        clean_note_text: impl Into<CompactString>,
+        note_text: impl AsRef<str>,
+        clean_note_text: impl AsRef<str>,
     ) -> Result<Self, ValidationError> {
-        let note_text = note_text.into();
-        let clean_note_text = clean_note_text.into();
+        let note_text = note_text.as_ref();
+        let clean_note_text = clean_note_text.as_ref();
 
         // Validation
         if note_text.is_empty() {
@@ -77,9 +82,9 @@ impl InternalBibleExtra {
 
         Ok(Self {
             extra_type,
-            index,
-            note_text,
-            clean_note_text,
+            index: Self::index_to_u32(index),
+            note_text: note_text.into(),
+            clean_note_text: clean_note_text.into(),
         })
     }
 
@@ -95,15 +100,21 @@ impl InternalBibleExtra {
     pub fn new_unchecked(
         extra_type: ExtraType,
         index: usize,
-        note_text: impl Into<CompactString>,
-        clean_note_text: impl Into<CompactString>,
+        note_text: impl AsRef<str>,
+        clean_note_text: impl AsRef<str>,
     ) -> Self {
         Self {
             extra_type,
-            index,
-            note_text: note_text.into(),
-            clean_note_text: clean_note_text.into(),
+            index: Self::index_to_u32(index),
+            note_text: note_text.as_ref().into(),
+            clean_note_text: clean_note_text.as_ref().into(),
         }
+    }
+
+    /// The index is stored as a `u32` (as it's an offset into the text of a single line).
+    #[inline]
+    fn index_to_u32(index: usize) -> u32 {
+        u32::try_from(index).expect("Extra index into the adjusted text must fit in a u32")
     }
 
     /// Get the extra type.
@@ -115,7 +126,7 @@ impl InternalBibleExtra {
     /// Get the index into the adjusted text.
     #[inline]
     pub fn index(&self) -> usize {
-        self.index
+        self.index as usize
     }
 
     /// Get the full note text with USFM markers.
@@ -163,6 +174,15 @@ impl std::fmt::Display for InternalBibleExtra {
 /// For end markers (e.g., `¬v`) and added nesting markers (e.g., `intro`),
 /// only `marker` and `original_text` are set; other fields are None.
 ///
+/// # Memory use
+///
+/// A Bible has a few hundred thousand of these entries, so the struct is kept small (72 bytes):
+/// - the markers are stored as two-byte interned IDs (see `MarkerId`)
+/// - the texts are stored as boxed strings (and an empty text doesn't use any heap memory)
+/// - the extras list is a boxed slice (so an empty list doesn't use any heap memory either)
+///
+/// The archived (serialised) layout is the same as if these were all plain strings and vectors.
+///
 /// # Example
 ///
 /// ```
@@ -187,12 +207,17 @@ impl std::fmt::Display for InternalBibleExtra {
 /// ```
 #[derive(Debug, Clone, PartialEq, rkyv::Archive, rkyv::Serialize, rkyv::Deserialize)]
 pub struct InternalBibleEntry {
-    marker: CompactString,
-    original_marker: Option<CompactString>, // Only set for regular entries and only if it differed from marker, None for added nesting and end markers
-    original_text: CompactString,
-    adjusted_text: Option<CompactString>, // None if the same as original_text (no adjustments needed)
+    #[rkyv(with = MarkerAsString)]
+    marker: MarkerId,
+    #[rkyv(with = Map<MarkerAsString>)]
+    original_marker: Option<MarkerId>, // Only set for regular entries, None for added nesting and end markers
+    #[rkyv(with = BoxStrAsString)]
+    original_text: Box<str>,
+    #[rkyv(with = Map<BoxStrAsString>)]
+    adjusted_text: Option<Box<str>>, // None if the same as original_text (no adjustments needed)
     extras: Option<InternalBibleExtraList>, // Extras apply to the adjusted text, None if no extras
-    clean_text: Option<CompactString>, // None if the same as original_text (no adjustments needed)
+    #[rkyv(with = Map<BoxStrAsString>)]
+    clean_text: Option<Box<str>>, // None if the same as adjusted_text (no cleaning needed)
 }
 
 impl InternalBibleEntry {
@@ -205,17 +230,17 @@ impl InternalBibleEntry {
     /// - `clean_text` contains backslashes
     /// - Text fields contain newlines
     pub fn new(
-        marker: impl Into<CompactString>,
-        original_marker: impl Into<CompactString>,
-        original_text: impl Into<CompactString>,
-        adjusted_text: impl Into<CompactString>,
+        marker: impl AsRef<str>,
+        original_marker: impl AsRef<str>,
+        original_text: impl AsRef<str>,
+        adjusted_text: impl AsRef<str>,
         extras: Option<InternalBibleExtraList>,
-        clean_text: impl Into<CompactString>,
+        clean_text: impl AsRef<str>,
     ) -> Result<Self, ValidationError> {
-        let marker = marker.into();
-        let clean_text = clean_text.into().trim().to_string();
-        let adjusted_text = adjusted_text.into();
-        let original_text = original_text.into();
+        let marker = marker.as_ref();
+        let clean_text = clean_text.as_ref().trim();
+        let adjusted_text = adjusted_text.as_ref();
+        let original_text = original_text.as_ref();
 
         // Validate marker
         if marker.is_empty() {
@@ -240,19 +265,14 @@ impl InternalBibleEntry {
             return Err(ValidationError::BackslashInCleanText(format!("{} marker: '{}'", marker, clean_text)));
         }
 
-        // // assert!(clean_text.is_empty() || clean_text.trim_start() == clean_text, "clean_text cannot have leading or trailing whitespace: '{}'", clean_text);
-        // assert!((!["c", "v"].contains(&marker.as_str()) && marker.chars().nth(0) != Some('¬') && original_text.contains('\\'))
-        //         || (clean_text == original_text.trim() && adjusted_text == original_text),
-        //     "For simple markers and end markers, or for simple text, clean_text and adjusted_text must match original_text. Got marker '{}' with clean_text: '{}', adjusted_text: '{}', original_text: '{}'", marker, clean_text, adjusted_text, original_text);
-
-        // We try to save memory here but not storing multiple identical copies of strings
+        // We try to save memory here by not storing multiple identical copies of strings
         //  We don't store the adjusted_text if it's identical to the original text (as it is much of the time, i.e., for verses without notes, xrefs, figs)
         //  nor do we store the clean_text if it's identical to the original text (as it is much of the time, i.e., for plain text verses)
         Ok(Self {
-            marker,
-            original_marker: Some(original_marker.into()),
-            original_text: original_text.clone(),
-            adjusted_text: if adjusted_text==original_text {assert!(extras.is_none()); None} else {Some(adjusted_text)},
+            marker: MarkerId::intern(marker),
+            original_marker: Some(MarkerId::intern(original_marker.as_ref())),
+            original_text: original_text.into(),
+            adjusted_text: if adjusted_text==original_text {assert!(extras.is_none()); None} else {Some(adjusted_text.into())},
             extras,
             clean_text: if clean_text==original_text {None} else {Some(clean_text.into())},
         })
@@ -263,37 +283,34 @@ impl InternalBibleEntry {
     /// Use with caution - prefer `new()` for safety.
     #[inline]
     pub fn new_unchecked(
-        marker: impl Into<CompactString> + Clone, // Clone is needed for assertions
-        original_marker: impl Into<CompactString>,
-        original_text: impl Into<CompactString> + Clone, // Clone is needed for assertions
-        adjusted_text: impl Into<CompactString> + Clone, // Clone is needed for assertions
+        marker: impl AsRef<str>,
+        original_marker: impl AsRef<str>,
+        original_text: impl AsRef<str>,
+        adjusted_text: impl AsRef<str>,
         extras: Option<InternalBibleExtraList>,
-        clean_text: impl Into<CompactString> + Clone, // Clone is needed for assertions
+        clean_text: impl AsRef<str>,
     ) -> Self {
-
-        let binding = clean_text.clone().into();
-        let clean_text = binding.trim();
+        let marker = marker.as_ref();
+        let original_text = original_text.as_ref();
+        let adjusted_text = adjusted_text.as_ref();
+        let clean_text = clean_text.as_ref().trim();
 
         if have_strict_checking_flag() || cfg!(debug_assertions) {
-            assert!(!marker.clone().into().is_empty(), "Marker cannot be empty");
-            assert!(!marker.clone().into().contains('\\') && !marker.clone().into().contains(' ') && !marker.clone().into().contains('*'), "Invalid character in marker: '{}'", marker.clone().into());
-            assert!(clean_text.is_empty() || clean_text.trim() == clean_text, "clean_text cannot have leading whitespace: '{}'", clean_text);
-            assert!(!adjusted_text.clone().into().contains('\n') && !adjusted_text.clone().into().contains('\r'), "Newlines in adjusted_text: '{}'", adjusted_text.clone().into());
+            assert!(!marker.is_empty(), "Marker cannot be empty");
+            assert!(!marker.contains('\\') && !marker.contains(' ') && !marker.contains('*'), "Invalid character in marker: '{}'", marker);
+            assert!(!adjusted_text.contains('\n') && !adjusted_text.contains('\r'), "Newlines in adjusted_text: '{}'", adjusted_text);
             assert!(!clean_text.contains('\n') && !clean_text.contains('\r'), "Newlines in clean_text: '{}'", clean_text);
             assert!(!clean_text.contains('\\'), "Backslash in clean_text: '{}'", clean_text);
-            assert!(!original_text.clone().into().contains('\n') && !original_text.clone().into().contains('\r'), "Newlines in original_text: '{}'", original_text.clone().into());
-            // assert!((!["c", "v"].contains(&marker.clone().into().as_str()) && marker.clone().into().chars().nth(0) != Some('¬') && original_text.clone().into().contains('\\'))
-            //         || (clean_text == original_text.clone().into().trim_start() && adjusted_text.clone().into() == original_text.clone().into()),
-            //     "For simple markers and end markers, or for simple text, clean_text and adjusted_text must match original_text. Got marker '{}' with clean_text: '{}', adjusted_text: '{}', original_text: '{}'", marker.clone().into(), clean_text, adjusted_text.clone().into(), original_text.clone().into());
+            assert!(!original_text.contains('\n') && !original_text.contains('\r'), "Newlines in original_text: '{}'", original_text);
         }
 
         Self {
-            marker: marker.into(),
-            original_marker: Some(original_marker.into()),
-            original_text: original_text.clone().into(),
-            adjusted_text: if adjusted_text.clone().into()==original_text.into() {None} else {Some(adjusted_text.clone().into())},
+            marker: MarkerId::intern(marker),
+            original_marker: Some(MarkerId::intern(original_marker.as_ref())),
+            original_text: original_text.into(),
+            adjusted_text: if adjusted_text==original_text {None} else {Some(adjusted_text.into())},
             extras,
-            clean_text: if clean_text==adjusted_text.into() {None} else {Some(clean_text.into())},
+            clean_text: if clean_text==adjusted_text {None} else {Some(clean_text.into())},
         }
     }
 
@@ -305,17 +322,17 @@ impl InternalBibleEntry {
     ///
     /// Returns `ValidationError` if the marker doesn't start with `¬`.
     pub fn end_marker(
-        marker: impl Into<CompactString>,
-        text: impl Into<CompactString>,
+        marker: impl AsRef<str>,
+        text: impl AsRef<str>,
     ) -> Result<Self, ValidationError> {
-        let marker = marker.into();
-        if !is_end_marker(&marker) {
+        let marker = marker.as_ref();
+        if !is_end_marker(marker) {
             return Err(ValidationError::InvalidEndMarker(marker.to_string()));
         }
         Ok(Self {
-            marker,
+            marker: MarkerId::intern(marker),
             original_marker: None,
-            original_text: text.into(),
+            original_text: text.as_ref().into(),
             adjusted_text: None,
             extras: None,
             clean_text: None,
@@ -325,11 +342,11 @@ impl InternalBibleEntry {
     /// Create an added nesting marker entry (e.g., `intro`, `chapters`).
     ///
     /// These markers are added by BOS to provide structure.
-    pub fn nesting_marker(marker: impl Into<CompactString>) -> Self {
+    pub fn nesting_marker(marker: impl AsRef<str>) -> Self {
         Self {
-            marker: marker.into(),
+            marker: MarkerId::intern(marker.as_ref()),
             original_marker: None,
-            original_text: CompactString::new(""),
+            original_text: "".into(),
             adjusted_text: None,
             extras: None,
             clean_text: None,
@@ -339,13 +356,11 @@ impl InternalBibleEntry {
     /// Create an entry with just marker and clean text.
     ///
     /// Used for simple markers that don't have complex processing.
-    pub fn simple(marker: impl Into<CompactString>, text: impl Into<CompactString>) -> Self {
-        // let marker = marker.into();
-        // let text = text.into();
+    pub fn simple(marker: impl AsRef<str>, text: impl AsRef<str>) -> Self {
         Self {
-            marker: marker.into(),
+            marker: MarkerId::intern(marker.as_ref()),
             original_marker: None,
-            original_text: text.into(),
+            original_text: text.as_ref().into(),
             adjusted_text: None,
             extras: None,
             clean_text: None,
@@ -357,13 +372,20 @@ impl InternalBibleEntry {
     /// Get the (adjusted) marker.
     #[inline]
     pub fn marker(&self) -> &str {
-        &self.marker
+        self.marker.as_str()
+    }
+
+    /// Get the interned ID of the (adjusted) marker
+    ///     (which can be compared faster than the marker strings).
+    #[inline]
+    pub fn marker_id(&self) -> MarkerId {
+        self.marker
     }
 
     /// Get the original marker before adjustment.
     #[inline]
     pub fn original_marker(&self) -> &str {
-        self.original_marker.as_deref().unwrap_or_else(|| self.marker.as_ref())
+        self.original_marker.unwrap_or(self.marker).as_str()
     }
 
     /// Get the adjusted text (notes removed, formatting retained).
@@ -416,19 +438,19 @@ impl InternalBibleEntry {
     /// Check if this is an end marker.
     #[inline]
     pub fn is_end_marker(&self) -> bool {
-        is_end_marker(&self.marker)
+        is_end_marker(self.marker())
     }
 
     /// Check if this is a custom content marker.
     #[inline]
     pub fn is_custom_content(&self) -> bool {
-        custom_content::is_custom_content(&self.marker)
+        custom_content::is_custom_content(self.marker())
     }
 
     /// Check if this is a custom nesting marker.
     #[inline]
     pub fn is_custom_nesting(&self) -> bool {
-        custom_nesting::is_custom_nesting(&self.marker)
+        custom_nesting::is_custom_nesting(self.marker())
     }
 
     /// Check if this entry has extras.
@@ -480,6 +502,13 @@ impl std::fmt::Display for InternalBibleEntry {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn test_entry_sizes() {
+        // These are stored in their hundreds of thousands, so we don't want them to grow accidentally
+        assert_eq!(std::mem::size_of::<InternalBibleEntry>(), 72);
+        assert_eq!(std::mem::size_of::<InternalBibleExtra>(), 40);
+    }
 
     #[test]
     fn test_clean_text_no_underlines_excludes_notes() {

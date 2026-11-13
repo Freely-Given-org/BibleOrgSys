@@ -697,14 +697,14 @@ impl PyCVIndexEntry {
     ///     context: Optional list of context markers
     #[new]
     #[pyo3(signature = (start_index, entry_count, context=None))]
-    fn new(start_index: u32, entry_count: u8, context: Option<Vec<String>>) -> Self {
+    fn new(start_index: u32, entry_count: u16, context: Option<Vec<String>>) -> Self {
         let ctx = context.unwrap_or_default().into_iter().map(|s| s.into()).collect();
         Self {
             inner: CVIndexEntry::new(start_index, entry_count, ctx),
         }
     }
 
-    fn __getnewargs__(&self) -> (usize, u8, Option<Vec<String>>) {
+    fn __getnewargs__(&self) -> (usize, u16, Option<Vec<String>>) {
         (
             self.inner.start_index(),
             self.inner.entry_count(),
@@ -722,7 +722,7 @@ impl PyCVIndexEntry {
 
     /// Get the entry count for this C:V.
     #[getter(entryCount)]
-    fn entry_count(&self) -> u8 {
+    fn entry_count(&self) -> u16 {
         self.inner.entry_count()
     }
 
@@ -750,7 +750,7 @@ impl PyCVIndexEntry {
     }
 
     /// Get the entry count
-    fn getEntryCount(&self) -> u8 {
+    fn getEntryCount(&self) -> u16 {
         self.inner.entry_count()
     }
 
@@ -1170,6 +1170,7 @@ impl PyInternalBibleBookCVIndex {
         let bytes = state.extract::<&[u8]>()?;
         self.inner = rkyv::from_bytes::<InternalBibleBookCVIndex, rkyv::rancor::Error>(bytes)
             .map_err(|e| PyRuntimeError::new_err(e.to_string()))?;
+        self.inner.share_contexts(); // Each index entry gets its own copy of its context when deserialised
         Ok(())
     }
 }

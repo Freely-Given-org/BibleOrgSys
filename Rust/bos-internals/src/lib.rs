@@ -90,11 +90,13 @@ pub mod error;
 pub mod indexes;
 pub mod io;
 pub mod bos_markers;
+pub mod marker_ids;
 pub mod ml_writer;
 pub mod nesting;
 pub mod osis;
 pub mod parsing;
 pub mod processing;
+pub mod rkyv_with;
 pub mod serialization;
 pub mod xml_file;
 pub mod export;
@@ -112,6 +114,7 @@ pub use entry_extras::InternalBibleExtraList;
 pub use error::{BosError, IndexError, LookupError, ParseError, ValidationError};
 pub use indexes::{CVIndexEntry, InternalBibleBookCVIndex, InternalBibleBookSectionIndex, SectionIndexEntry};
 pub use bos_markers::ExtraType;
+pub use marker_ids::MarkerId;
 pub use parsing::{
     UsfmFigureAttributes, WordWithAttributes, abbreviate, get_positive_leading_int,
     get_small_leading_int, parse_figure_attributes, parse_word_attributes,
