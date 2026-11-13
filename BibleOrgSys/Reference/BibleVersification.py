@@ -14,6 +14,8 @@ from xml.etree import ElementTree
 from BibleOrgSys.Reference.BibleVersificationMappings import (
     MappingDiagnostic, MappingStatus, UnknownVersificationSystemError, get_default_mapping_engine,
 )
+from BibleOrgSys.Reference.BookCode import BookCode
+from typing import Self
 
 
 # SIL.Scripture/Versification.cs, ScrVersType (legacy numeric order), and the
@@ -35,14 +37,14 @@ def _system_name(system):
     raise TypeError('A versification must be a BOS system name or BibleVersificationSystem.')
 
 
-def _known_system(name):
+def _known_system(name) -> bool:
     if name in get_default_mapping_engine().get_system_names():
         return True
     from BibleOrgSys.Reference.BibleVersificationSystems import BibleVersificationSystems
     return name in BibleVersificationSystems().loadData()
 
 
-def _resolve_metadata(value, namespace):
+def _resolve_metadata(value, namespace) -> str | None:
     if type(value) not in (str, int):
         return None
     name = str(value).strip()
@@ -66,12 +68,12 @@ class BibleVersificationMixin:
             raise ValueError('Unsupported saved Bible versification declaration version.')
         return state
 
-    def _saveVersificationState(self, state):
+    def _saveVersificationState(self, state) -> None:
         # A string survives both ordinary pickle and the restricted BOS attribute
         # serializer (including dataLevel=1). Read access always returns new objects.
         self._versificationState = json.dumps(state, ensure_ascii=False, sort_keys=True)
 
-    def _restoreVersificationState(self, saved):
+    def _restoreVersificationState(self, saved) -> None:
         """Restore a BOS attribute archive without overriding a new caller choice."""
         explicit = self._readVersificationState()['explicit']
         self._versificationState = saved
@@ -81,7 +83,7 @@ class BibleVersificationMixin:
                 self._recordVersificationMetadata('Saved Bible', 'VersificationSystem', restored['explicit'])
             self.setVersificationSystem(explicit)
 
-    def setVersificationSystem(self, system):
+    def setVersificationSystem(self, system) -> Self:
         """Declare an explicit numbering system, taking precedence over all metadata.
 
         Unknown caller names raise without changing the current declaration.
@@ -96,14 +98,14 @@ class BibleVersificationMixin:
         self._saveVersificationState(state)
         return self
 
-    def clearVersificationSystem(self):
+    def clearVersificationSystem(self) -> Self:
         """Clear the caller override; metadata declarations and conflicts remain."""
         state = self._readVersificationState()
         state['explicit'] = None
         self._saveVersificationState(state)
         return self
 
-    def _recordVersificationMetadata(self, source, field, value, *, namespace='bos', reason=None):
+    def _recordVersificationMetadata(self, source, field, value, *, namespace:str='bos', reason=None) -> None:
         """Replace one source/field observation, retaining independent observations."""
         state = self._readVersificationState()
         record = {'source': source, 'field': field, 'value': value, 'namespace': namespace,
@@ -116,12 +118,12 @@ class BibleVersificationMixin:
         state['metadata'].append(record)
         self._saveVersificationState(state)
 
-    def _clearVersificationMetadataSource(self, source):
+    def _clearVersificationMetadataSource(self, source) -> None:
         state = self._readVersificationState()
         state['metadata'] = [r for r in state['metadata'] if r['source'] != source]
         self._saveVersificationState(state)
 
-    def getVersificationDeclaration(self):
+    def getVersificationDeclaration(self) -> dict:
         """Return detached evidence, resolution status, chosen name, and diagnostics.
 
         With no caller override, every observation must resolve to the same name.
@@ -168,12 +170,12 @@ class BibleVersificationMixin:
         from BibleOrgSys.Reference.BibleVersificationSystems import BibleVersificationSystem
         return BibleVersificationSystem(name)
 
-    def getMappingCapabilities(self):
+    def getMappingCapabilities(self) -> dict:
         declaration = self.getVersificationDeclaration()
         return {**get_default_mapping_engine().capabilities(declaration['system']),
                 'declarationStatus': declaration['status'], 'diagnostics': declaration['diagnostics']}
 
-    def _convertVersification(self, target, references, *, from_reference=False, from_system=None, end=None, expand_groups=False):
+    def _convertVersification(self, target, references, *, from_reference:bool=False, from_system=None, end=None, expand_groups:bool=False):
         engine = get_default_mapping_engine()
         own = self.getVersificationDeclaration()
         incoming = from_reference or from_system is not None
@@ -198,23 +200,23 @@ class BibleVersificationMixin:
             result = replace(result, status=MappingStatus.AMBIGUOUS)
         return replace(result, diagnostics=diagnostics + result.diagnostics)
 
-    def convertToReferenceVersification(self, BBB, C, V, S=None, *, detailed=False):
+    def convertToReferenceVersification(self, BBB:BookCode, C, V, S=None, *, detailed:bool=False):
         result = self.convertReferencesToVersification(get_default_mapping_engine().reference_name, [(BBB, C, V, S)])
         return result if detailed else result.require_single()
 
-    def convertFromReferenceVersification(self, BBB, C, V, S=None, *, detailed=False):
+    def convertFromReferenceVersification(self, BBB:BookCode, C, V, S=None, *, detailed:bool=False):
         result = self.convertReferencesFromReferenceVersification([(BBB, C, V, S)])
         return result if detailed else result.require_single()
 
-    def convertToVersification(self, targetSystem, BBB, C, V, S=None, *, detailed=False):
+    def convertToVersification(self, targetSystem, BBB:BookCode, C, V, S=None, *, detailed:bool=False):
         """Target may be a name, system object, or another Bible's declaration."""
         result = self.convertReferencesToVersification(targetSystem, [(BBB, C, V, S)])
         return result if detailed else result.require_single()
 
-    def convertReferencesToVersification(self, targetSystem, references, *, expandGroups=False):
+    def convertReferencesToVersification(self, targetSystem, references, *, expandGroups:bool=False):
         return self._convertVersification(targetSystem, references, expand_groups=expandGroups)
 
-    def convertReferencesFromVersification(self, sourceSystem, references, *, expandGroups=False):
+    def convertReferencesFromVersification(self, sourceSystem, references, *, expandGroups:bool=False):
         """Convert an external passage into this Bible's declared numbering.
 
         sourceSystem may be a name, system object, or another Bible. Declaration
@@ -236,7 +238,7 @@ class BibleVersificationMixin:
     def convertRangeFromReferenceVersification(self, startRef, endRef):
         return self._convertVersification(None, startRef, from_reference=True, end=endRef)
 
-    def _applyVersificationMetadata(self, metadata_type):
+    def _applyVersificationMetadata(self, metadata_type) -> None:
         supplied = self.suppliedMetadata or {}
         namespace = 'bos'
         source = metadata_type
@@ -260,7 +262,7 @@ class BibleVersificationMixin:
             if field.strip().lower() in ('versification', 'versificationsystem'):
                 self._recordVersificationMetadata(source, field, value, namespace=namespace, reason=reason)
 
-    def _loadVersificationProjectMetadata(self):
+    def _loadVersificationProjectMetadata(self) -> None:
         """Read numbering declarations only from local Settings.xml / SSF companions."""
         folder = Path(self.sourceFolder)
         reason = _project_mapping_reason(folder)
@@ -278,7 +280,7 @@ class BibleVersificationMixin:
             except (OSError, ValueError, ElementTree.ParseError) as error:
                 self._recordVersificationMetadata(path.name, 'Versification', None, reason=f'Cannot read project settings: {error}')
 
-    def _loadOSISVersificationMetadata(self, filepath):
+    def _loadOSISVersificationMetadata(self, filepath) -> None:
         """Scan only the header, on the parent process, before either OSIS parser runs.
 
         Use the work identified by osisIDWork, never osisRefWork (cross-references)
@@ -308,7 +310,7 @@ class BibleVersificationMixin:
             self._recordVersificationMetadata(source, 'refSystem', None, reason=f'Cannot read OSIS header: {error}')
 
 
-def _project_mapping_reason(folder):
+def _project_mapping_reason(folder) -> str | None:
     if folder is None:
         return None
     try:

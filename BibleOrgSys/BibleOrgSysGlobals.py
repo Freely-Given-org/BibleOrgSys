@@ -847,7 +847,7 @@ def totalSize( obj, handlers={} ):
 # File comparisons
 #
 
-def fileCompare( filename1, filename2, folder1=None, folder2=None, printFlag=True, exitCount:int=10 ):
+def fileCompare( filename1, filename2, folder1=None, folder2=None, printFlag:bool=True, exitCount:int=10 ) -> bool | None:
     """
     Compare the two utf-8 files.
     """
@@ -915,7 +915,7 @@ def fileCompare( filename1, filename2, folder1=None, folder2=None, printFlag=Tru
 # end of BibleOrgSysGlobals.fileCompare
 
 
-def fileCompareUSFM( filename1, filename2, folder1=None, folder2=None, printFlag=True, exitCount:int=10 ):
+def fileCompareUSFM( filename1, filename2, folder1=None, folder2=None, printFlag:bool=True, exitCount:int=10 ) -> bool | None:
     """
     Compare the two utf-8 USFM files,
         ignoring little things like \\s vs \\s1.
@@ -1029,7 +1029,7 @@ def fileCompareXML( filename1:str, filename2:str, folder1:str=None, folder2:str=
         logging.critical( f"Unable to parse {filepath2}: {err}" )
         return None
 
-    def compareElements( element1, element2 ):
+    def compareElements( element1, element2 ) -> None:
         """
         """
         nonlocal diffCount, location
@@ -1396,7 +1396,7 @@ def rreplace( s:str, old:str, new:str, num:int ) -> str:
 # Reloading a saved Python object from the cache
 #
 
-def pickleObject( theObject, filename, folderName=None, disassembleObjectFlag=False ):
+def pickleObject( theObject, filename, folderName=None, disassembleObjectFlag:bool=False ) -> bool:
     """
     Writes the object to a .pickle file that can be easily loaded into a Python3 program.
         If folderName is None (or missing), defaults to the default cache folderName specified above.
@@ -1597,7 +1597,7 @@ def introduceProgram( theirName:str, theirPROGRAM_NAME_VERSION:str, theirLastMod
 # end of BibleOrgSysGlobals.introduceProgram function
 
 
-def setDebugFlag( newValue=True ) -> None:
+def setDebugFlag( newValue:bool=True ) -> None:
     """
     Set the debug flag.
     """
@@ -1609,7 +1609,7 @@ def setDebugFlag( newValue=True ) -> None:
 # end of BibleOrgSysGlobals.setDebugFlag
 
 
-def setStrictCheckingFlag( newValue=True ):
+def setStrictCheckingFlag( newValue:bool=True ) -> None:
     """
     See the strict checking flag.
     """
@@ -1622,7 +1622,7 @@ def setStrictCheckingFlag( newValue=True ):
 # end of BibleOrgSysGlobals.setStrictCheckingFlag
 
 
-def setMissionCriticalFlag( newValue=True ):
+def setMissionCriticalFlag( newValue:bool=True ) -> None:
     """
     See the strict checking flag.
     """
@@ -1663,7 +1663,7 @@ def preloadCommonData() -> None:
 # end of BibleOrgSysGlobals.preloadCommonData
 
 
-def addStandardOptionsAndProcess( parserObject, exportAvailable=False ) -> None:
+def addStandardOptionsAndProcess( parserObject, exportAvailable:bool=False ) -> None:
     """
     Add our standardOptions to the command line parser.
     Determine multiprocessing strategy.
@@ -1731,7 +1731,7 @@ def addStandardOptionsAndProcess( parserObject, exportAvailable=False ) -> None:
 # end of BibleOrgSysGlobals.addStandardOptionsAndProcess
 
 
-def printAllGlobals( indent=None ):
+def printAllGlobals( indent=None ) -> None:
     """
     Print all global variables (for debugging usually).
     """
@@ -1751,7 +1751,7 @@ def printAllGlobals( indent=None ):
 # end of BibleOrgSysGlobals.printAllGlobals
 
 
-def elapsedTime( startTime ):
+def elapsedTime( startTime ) -> str:
     """
     Returns a formatted string containing the elapsed time since startTime.
     """
@@ -1770,7 +1770,7 @@ def elapsedTime( startTime ):
 # end of elapsedTime
 
 
-def closedown( cProgName, cProgVersion ):
+def closedown( cProgName, cProgVersion ) -> None:
     """
     Does all the finishing off for the program.
     """

@@ -33,6 +33,7 @@ from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Bible import Bible, BibleBook
 from bible_organisational_system import InternalBibleEntryList, InternalBibleEntry
 from BibleOrgSys.Formats.uWNotesBible import loadYAML
+from BibleOrgSys.Reference.BookCode import BookCode
 
 
 LAST_MODIFIED_DATE = '2026-10-06' # by RJH
@@ -52,7 +53,7 @@ EXTENSION_TO_IGNORE = ( 'ASC', 'BAK', 'BAK2', 'BAK3', 'BAK4', 'BBLX', 'BC', 'CCT
 METADATA_FILENAME = 'manifest.yaml'
 
 
-def uWOBSBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=False, autoLoadBooks:bool=False ):
+def uWOBSBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=False, autoLoadBooks:bool=False ) -> 'bool | uWOBSBible | int | None':
     """
     Given a folder, search for uW OBS Bible files or folders in the folder and in the next level down.
 
@@ -252,7 +253,7 @@ class uWOBSBible( Bible ):
     # end of uWOBSBible.loadMetadata
 
 
-    def loadBook( self, BBB:str ) -> None:
+    def loadBook( self, BBB:BookCode ) -> None:
         """
         Load the requested book into self.books if it's not already loaded.
 
@@ -279,7 +280,7 @@ class uWOBSBible( Bible ):
     # end of uWOBSBible.loadBook
 
 
-    def _loadBookMP( self, BBB:str ) -> BibleBook|None:
+    def _loadBookMP( self, BBB:BookCode ) -> BibleBook|None:
         """
         Multiprocessing version!
         Load the requested book if it's not already loaded (but doesn't save it as that is not safe for multiprocessing)
@@ -344,7 +345,7 @@ class uWOBSBibleBook( BibleBook ):
     Class to load and manipulate a single uW OBS file / book.
     """
 
-    def __init__( self, containerBibleObject:Bible, BBB:str ) -> None:
+    def __init__( self, containerBibleObject:Bible, BBB:BookCode ) -> None:
         """
         Create the uW OBS Bible book object.
         """

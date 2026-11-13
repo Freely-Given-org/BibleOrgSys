@@ -48,7 +48,7 @@ compulsoryFiles = ( 'VERSION.DAT', 'TEXT.DAT', 'TEXTNDX.DAT', ) # Must be UPPERC
 
 
 
-def PierceOnlineBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=False, autoLoadBooks:bool=False ):
+def PierceOnlineBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=False, autoLoadBooks:bool=False ) -> 'bool | PierceOnlineBible | int | None':
     """
     Given a folder, search for Online Bible files or folders in the folder and in the next level down.
 
@@ -170,7 +170,7 @@ class PierceOnlineBible( Bible ):
     # end of PierceOnlineBible.__init__
 
 
-    def load( self ):
+    def load( self ) -> None:
         """
         Load the compressed data file and import book elements.
         """
@@ -178,7 +178,7 @@ class PierceOnlineBible( Bible ):
             vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nLoading from {self.sourceFolder}…" )
 
 
-        def loadPierceOnlineBibleMetadata():
+        def loadPierceOnlineBibleMetadata() -> None:
             """
             Version.Ext contains lines of text.
             """
@@ -255,7 +255,7 @@ class PierceOnlineBible( Bible ):
         chars = ( (129,252), (130,233), (131,226), (133,224), (135,231), (136,234), (137,235), (138,232),
                     (139,239), (140,238), (144,201), (147,244), (150,251), (151,249), (160,225), (161,237),
                     (162,243), (163,250), (164,241), (168,191), (173,161), )
-        def convertChar( intChar ):
+        def convertChar( intChar ) -> str:
             """
             """
             for oldChar,newChar in chars:
@@ -265,7 +265,7 @@ class PierceOnlineBible( Bible ):
 
 
         VBH1s,VBH2s, VBH3s = {}, {}, {}
-        def loadVersion():
+        def loadVersion() -> None:
             """
             Seems to contain two sets of the most common words, one in 8-bit characters and one in 16-bit.
             Maximum character length is 9 characters.
@@ -441,7 +441,7 @@ class PierceOnlineBible( Bible ):
         # end of load.loadVersion
 
 
-        def loadTokenCharacters():
+        def loadTokenCharacters() -> None:
             """
             Seem to be sequences of 8-bit or 16-bit characters (sometimes whole words, sometimes not) with no delimitation
             e.g.,
@@ -492,7 +492,7 @@ class PierceOnlineBible( Bible ):
         # end of load.loadTokenCharacters
 
 
-        def loadVerseTextIndex():
+        def loadVerseTextIndex() -> None:
             """
             Seems to have a header and then 972 3+32-byte or 3+48-byte (CEV) entry lines.
                 972 * 32 = 31,104 = 31,102 verses in KJV + 2 blank at end.
@@ -590,7 +590,7 @@ class PierceOnlineBible( Bible ):
         # end of load.loadVerseTextIndex
 
 
-        def loadBibleText():
+        def loadBibleText() -> None:
             """
             1.6-2.4MB = about 52-80 average bytes per verse.
             Doesn't contain any text -- it's pointers to dictionary words plus some control codes.
@@ -618,7 +618,7 @@ class PierceOnlineBible( Bible ):
         # end of load.loadBibleText
 
 
-        def loadTextOpt():
+        def loadTextOpt() -> None:
             """
             Seems to be a 4-byte binary header
                 then a series of 896 16-bit pointers
@@ -740,7 +740,7 @@ class PierceOnlineBible( Bible ):
         # end of load.loadTextOpt
 
 
-        def loadXrefIndex():
+        def loadXrefIndex() -> None:
             """
             Seems to have a double header and then 417 double entry lines.
                 Line A seems to start with a 3-byte pointer 0..90280 and then 32 bytes
@@ -832,7 +832,7 @@ class PierceOnlineBible( Bible ):
         # end of load.loadXrefIndex
 
 
-        def loadStrongsIndex():
+        def loadStrongsIndex() -> bool | None:
             """
             Seems to have a header and then 277 entry lines.
                 Each line has a 3-byte pointer to Xref.Dat
@@ -918,7 +918,7 @@ class PierceOnlineBible( Bible ):
         # end of load.loadStrongsIndex
 
 
-        def loadXrefData():
+        def loadXrefData() -> None:
             """
             0.6-1.1MB
             """
@@ -955,7 +955,7 @@ class PierceOnlineBible( Bible ):
         # end of load.loadXrefData
 
 
-        def createDictionary():
+        def createDictionary() -> None:
             """
             """
             if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
@@ -1045,7 +1045,7 @@ class PierceOnlineBible( Bible ):
         #end of load.getWord
 
 
-        def findWordInDictionary( searchWord ):
+        def findWordInDictionary( searchWord ) -> list[tuple]:
             """
             A diagnostic reverse dictionary lookup.
             """
@@ -1169,7 +1169,7 @@ class PierceOnlineBible( Bible ):
         # end of getStrongsBytes
 
 
-        def loadBooks():
+        def loadBooks() -> None:
             """
             """
             if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
@@ -1209,7 +1209,7 @@ class PierceOnlineBible( Bible ):
         # end of load.loadBooks
 
 
-        def test():
+        def test() -> None:
             """
             """
             if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
@@ -1302,7 +1302,7 @@ class PierceOnlineBible( Bible ):
 
 
 
-def testOB( TOBfilename ):
+def testOB( TOBfilename ) -> None:
     # Crudely demonstrate the Online Bible class
     from BibleOrgSys.Reference import VerseReferences
     testFolder = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'PierceOnlineBible/' )

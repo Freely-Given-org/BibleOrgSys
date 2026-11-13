@@ -29,6 +29,7 @@ from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.InputOutput.USFMFilenames import USFMFilenames
 from BibleOrgSys.Formats.USFMBibleBook import USFMBibleBook
 from BibleOrgSys.Bible import Bible
+from BibleOrgSys.Reference.BookCode import BookCode
 
 
 
@@ -48,7 +49,7 @@ EXTENSION_TO_IGNORE = ( 'ASC', 'BAK', 'BAK2', 'BAK3', 'BAK4', 'BBLX', 'BC', 'CCT
 
 
 
-def USFMBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=False, autoLoadBooks:bool=False, discountSSF:bool=True ):
+def USFMBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=False, autoLoadBooks:bool=False, discountSSF:bool=True ) -> 'bool | USFMBible | int | None':
     """
     Given a folder, search for USFM Bible files or folders in the folder and in the next level down.
 
@@ -516,7 +517,7 @@ class USFMBible( Bible ):
     # end of USFMBible.__init_
 
 
-    def preload( self ):
+    def preload( self ) -> None:
         """
         Tries to determine USFM filename pattern.
         """
@@ -582,7 +583,7 @@ class USFMBible( Bible ):
     # end of USFMBible.preload
 
 
-    def loadBook( self, BBB:str, filename=None ) -> None:
+    def loadBook( self, BBB:BookCode, filename=None ) -> None:
         """
         Load the requested book into self.books if it's not already loaded.
 
@@ -658,7 +659,7 @@ class USFMBible( Bible ):
     # end of USFMBible._loadBookMP
 
 
-    def loadBooks( self ):
+    def loadBooks( self ) -> None:
         """
         Load all the Bible books.
         """
@@ -699,7 +700,7 @@ class USFMBible( Bible ):
         self.doPostLoadProcessing()
     # end of USFMBible.loadBooks
 
-    def load( self ):
+    def load( self ) -> None:
         self.loadBooks()
 # end of class USFMBible
 

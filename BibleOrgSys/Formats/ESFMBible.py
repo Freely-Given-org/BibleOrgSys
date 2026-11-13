@@ -60,6 +60,7 @@ from BibleOrgSys.InputOutput.ESFMFile import ESFMFile
 from BibleOrgSys.Formats.ESFMBibleBook import ESFMBibleBook, ESFM_SEMANTIC_TAGS
 from bible_organisational_system import InternalBibleEntryList, InternalBibleEntry
 from BibleOrgSys.Bible import Bible
+from BibleOrgSys.Reference.BookCode import BookCode
 
 
 LAST_MODIFIED_DATE = '2026-10-30' # by RJH
@@ -76,7 +77,7 @@ ESFM_WORD_NUMBER_REGEX = re.compile( '¦[1-9][0-9]{0,5}' ) # 1..6 digits (not ac
 
 
 
-def ESFMBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=False, autoLoadBooks:bool=False ):
+def ESFMBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=False, autoLoadBooks:bool=False ) -> 'bool | ESFMBible | int | None':
     """
     Given a folder, search for ESFM Bible files or folders in the folder and in the next level down.
 
@@ -277,7 +278,7 @@ class ESFMBible( Bible ):
     # end of ESFMBible.__init_
 
 
-    def preload( self ):
+    def preload( self ) -> None:
         """
         """
         if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
@@ -441,7 +442,7 @@ class ESFMBible( Bible ):
     ## end of ESFMBible.loadMetadata
 
 
-    def loadSemanticDictionary( self, BBB:str, filename ):
+    def loadSemanticDictionary( self, BBB:BookCode, filename ) -> None:
         """
         """
         if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
@@ -471,7 +472,7 @@ class ESFMBible( Bible ):
     # end of ESFMBible.loadSemanticDictionary
 
 
-    def loadStrongsDictionary( self, BBB:str, filename ):
+    def loadStrongsDictionary( self, BBB:BookCode, filename ) -> None:
         """
         """
         if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
@@ -501,7 +502,7 @@ class ESFMBible( Bible ):
     # end of ESFMBible.loadStrongsDictionary
 
 
-    def loadDictionaries( self ):
+    def loadDictionaries( self ) -> None:
         """
         Attempts to load the spelling, hyphenation, and semantic dictionaries if they exist.
         """
@@ -513,7 +514,7 @@ class ESFMBible( Bible ):
     # end of ESFMBible.loadDictionaries
 
 
-    def loadBook( self, BBB:str, filename=None ):
+    def loadBook( self, BBB:BookCode, filename=None ) -> None:
         """
         Load the requested book if it's not already loaded.
 
@@ -548,7 +549,7 @@ class ESFMBible( Bible ):
     # end of ESFMBible.loadBook
 
 
-    def _loadBookMP( self, BBB_Filename ):
+    def _loadBookMP( self, BBB_Filename ) -> ESFMBibleBook | None:
         """
         Multiprocessing version!
         Load the requested book if it's not already loaded (but doesn't save it as that is not safe for multiprocessing)
@@ -571,7 +572,7 @@ class ESFMBible( Bible ):
     # end of ESFMBible.loadBookMP
 
 
-    def loadBooks( self ):
+    def loadBooks( self ) -> None:
         """
         Load all the books that we can find.
         """
@@ -626,11 +627,11 @@ class ESFMBible( Bible ):
         self.doPostLoadProcessing()
     # end of ESFMBible.loadBooks
 
-    def load( self ):
+    def load( self ) -> None:
         self.loadBooks()
 
 
-    def lookForAuxiliaryFilenames( self ):
+    def lookForAuxiliaryFilenames( self ) -> None:
         """
         Looks into the loaded ESFM books for WORKDATA, FILEDATA, and/or WORDTABLE auxiliary filenames.
             \\id 1JN - Matigsalug Translation v1.0.17
@@ -699,7 +700,7 @@ class ESFMBible( Bible ):
     # end of ESFMBible.lookForAuxiliaryFilenames
 
 
-    def loadESFMWordFile( self, filename ):
+    def loadESFMWordFile( self, filename ) -> None:
         """
         Loads the given filename (in the same folder as the .ESFM files)
             as a list of line strings (Doesn't separate by tabs.)
@@ -732,7 +733,7 @@ class ESFMBible( Bible ):
     # end of ESFMBible.loadESFMWordFile
 
 
-    def livenESFMWordLinks( self, BBB:str, verseList:InternalBibleEntryList, linkTemplate:str, titleTemplate:str|None=None ) -> tuple[InternalBibleEntryList,list[str]|None]:
+    def livenESFMWordLinks( self, BBB:BookCode, verseList:InternalBibleEntryList, linkTemplate:str, titleTemplate:str|None=None ) -> tuple[InternalBibleEntryList,list[str]|None]:
         """
         The link template can be a filename like 'Word_{n}.htm' or an entire link like 'https://SomeSite/words/page_{n}.html'
             The '{n}' gets substituted with the actual word link string of digits.

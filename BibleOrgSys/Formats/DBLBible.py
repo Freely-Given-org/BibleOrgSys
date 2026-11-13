@@ -53,7 +53,7 @@ NUM_REQUIRED_FILENAMES = len(COMPULSORY_FILENAMES) - 1 # Seems styles.xml might 
 POSSIBLE_FOLDERNAMES = ( 'RELEASE' ) # Must all be UPPER-CASE
 
 
-def DBLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=False, autoLoadBooks:bool=False ):
+def DBLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=False, autoLoadBooks:bool=False ) -> 'bool | DBLBible | int | None':
     """
     Given a folder, search for DBL Bible bundles in the folder and in the next level down.
 
@@ -215,7 +215,7 @@ class DBLBible( Bible ):
     """
     Class to load and manipulate DBL Bible bundles.
     """
-    def __init__( self, givenFolderName, givenName=None, encoding='utf-8' ) -> None:
+    def __init__( self, givenFolderName, givenName=None, encoding:str='utf-8' ) -> None:
         """
         Create the internal DBL Bible object.
         """
@@ -251,7 +251,7 @@ class DBLBible( Bible ):
     # end of DBLBible.__init__
 
 
-    def preload( self ):
+    def preload( self ) -> None:
         """
         Load the XML metadata files.
         """
@@ -293,7 +293,7 @@ class DBLBible( Bible ):
     # end of DBLBible.preload
 
 
-    def loadDBLLicense( self ):
+    def loadDBLLicense( self ) -> None:
         """
         Load the metadata.xml file and parse it into the dictionary self.suppliedMetadata.
         """
@@ -360,7 +360,7 @@ class DBLBible( Bible ):
     # end of DBLBible.loadDBLLicense
 
 
-    def loadDBLMetadata( self ):
+    def loadDBLMetadata( self ) -> None:
         """
         Load the metadata.xml file and parse it into the ordered dictionary self.suppliedMetadata.
         """
@@ -373,7 +373,7 @@ class DBLBible( Bible ):
         self.XMLTree = ElementTree().parse( mdFilepath )
         assert self.XMLTree # Fail here if we didn't load anything at all
 
-        def getContents( element, location ):
+        def getContents( element, location ) -> None:
             """
             Load the contents information (which is more nested/complex).
             """
@@ -1214,7 +1214,7 @@ class DBLBible( Bible ):
     # end of DBLBible.loadDBLMetadata
 
 
-    def applySuppliedMetadata( self, applyMetadataType ): # Overrides the default one in InternalBible.py
+    def applySuppliedMetadata( self, applyMetadataType ) -> None: # Overrides the default one in InternalBible.py
         """
         Using the dictionary at self.suppliedMetadata,
             load the fields into self.settingsDict
@@ -1285,7 +1285,7 @@ class DBLBible( Bible ):
     # end of InternalBible.applySuppliedMetadata
 
 
-    def loadDBLStyles( self ):
+    def loadDBLStyles( self ) -> None:
         """
         Load the styles.xml file and parse it into the ordered dictionary self.suppliedMetadata['DBL'].
         """
@@ -1299,7 +1299,7 @@ class DBLBible( Bible ):
         self.XMLTree = ElementTree().parse( styleFilepath )
         assert self.XMLTree # Fail here if we didn't load anything at all
 
-        def getStyle( element, location ):
+        def getStyle( element, location ) -> None:
             """
             Load the contents information (which is more nested/complex).
             """
@@ -1518,7 +1518,7 @@ class DBLBible( Bible ):
     ## end of DBLBible.loadDBLLanguage
 
 
-    def loadBooks( self ):
+    def loadBooks( self ) -> None:
         """
         Load the USX XML Bible text files.
         """
@@ -1607,13 +1607,13 @@ class DBLBible( Bible ):
         self.doPostLoadProcessing()
     # end of DBLBible.loadBooks
 
-    def load( self ):
+    def load( self ) -> None:
         self.loadBooks()
 # end of class DBLBible
 
 
 
-def __processDBLBible( parametersTuple ): # for demo
+def __processDBLBible( parametersTuple ) -> None: # for demo
     """
     Special shim function used below for multiprocessing.
     """

@@ -89,7 +89,7 @@ class USFMFilenames:
     # end of USFMFilenames.__str___
 
 
-    def __len__( self ):
+    def __len__( self ) -> int:
         """
         This method returns the last number of files found.
 
@@ -101,7 +101,7 @@ class USFMFilenames:
     # end of USFMFilenames.__len___
 
 
-    def getFilenameTemplate( self ):
+    def getFilenameTemplate( self ) -> str:
         """
         Returns a pattern/template for USFM filenames.
         """
@@ -109,7 +109,7 @@ class USFMFilenames:
     # end of USFMFilenames.getFilenameTemplate
 
 
-    def getAllFilenames( self ):
+    def getAllFilenames( self ) -> list:
         """
         Return a list of all filenames in our folder.
             This excludes names of subfolders and backup files.
@@ -118,7 +118,7 @@ class USFMFilenames:
     # end of USFMFilenames.getAllFilenames
 
 
-    def getDerivedFilenameTuples( self ):
+    def getDerivedFilenameTuples( self ) -> list:
         """
         Return a theoretical list of valid USFM filenames that match our filename template.
         """
@@ -127,7 +127,7 @@ class USFMFilenames:
     # end of USFMFilenames.getDerivedFilenameTuples
 
 
-    def getConfirmedFilenameTuples( self, strictCheck=False ):
+    def getConfirmedFilenameTuples( self, strictCheck:bool=False ) -> list:
         """
         Return a list of tuples of UPPER CASE book codes with actual (present and readable) USFM filenames.
         """
@@ -142,7 +142,7 @@ class USFMFilenames:
     # end of USFMFilenames.getConfirmedFilenameTuples
 
 
-    def getPossibleFilenameTuplesExt( self ):
+    def getPossibleFilenameTuplesExt( self ) -> list:
         """
         Return a list of filename tuples just derived from the list of files in the folder.
         """
@@ -151,7 +151,7 @@ class USFMFilenames:
     # end of USFMFilenames.getPossibleFilenameTuplesExt
 
 
-    def getPossibleFilenameTuplesInt( self ):
+    def getPossibleFilenameTuplesInt( self ) -> list:
         """
         Return a list of filename tuples which contain book codes internally on the \\id line.
         """
@@ -160,7 +160,7 @@ class USFMFilenames:
     # end of USFMFilenames.getPossibleFilenameTuplesInt
 
 
-    def getMaximumPossibleFilenameTuples( self, strictCheck=False ):
+    def getMaximumPossibleFilenameTuples( self, strictCheck:bool=False ):
         """
         Find the method that finds the maximum number of USFM Bible files.
         """
@@ -179,7 +179,7 @@ class USFMFilenames:
     # end of USFMFilenames.getMaximumPossibleFilenameTuples
 
 
-    def getUnusedFilenames( self ):
+    def getUnusedFilenames( self ) -> list:
         """
         Return a list of filenames which didn't seem to be USFM files.
         """
@@ -190,11 +190,11 @@ class USFMFilenames:
     # end of USFMFilenames.getUnusedFilenames
 
 
-    def getSSFFilenames( self, searchAbove=False, auto=True ):
+    def getSSFFilenames( self, searchAbove:bool=False, auto:bool=True ):
         """
         Return a list of full pathnames of .ssf files in the folder.
         """
-        def getSSFFilenamesHelper( folder ):
+        def getSSFFilenamesHelper( folder ) -> list:
             resultPathlist = []
             try:
                 files = os.listdir( folder )

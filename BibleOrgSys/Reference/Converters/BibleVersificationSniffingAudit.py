@@ -39,7 +39,7 @@ _REVIEW_NOTES = {
 }
 
 
-def sniffing_references(text, system, engine, bundle):
+def sniffing_references(text, system, engine, bundle) -> tuple[tuple, ...]:
     """Expand only complete numeric row addresses using the named domain.
 
     No suffix conversion, missing endpoint, edition label or book-combination
@@ -70,7 +70,7 @@ def sniffing_references(text, system, engine, bundle):
     return tuple(result)
 
 
-def _assess(rule, row_index, kind, values, profile, engine, bundle, corrections):
+def _assess(rule, row_index, kind, values, profile, engine, bundle, corrections) -> dict:
     # A reviewed correction has precedence over incomplete upstream notation.
     reviewed = [c for c in corrections if c['system'] == profile
                 and c['evidence']['copenhagenRule'] == rule['name']
@@ -145,7 +145,7 @@ def _assess(rule, row_index, kind, values, profile, engine, bundle, corrections)
             **observed}
 
 
-def build_sniffing_report(bundle, engine):
+def build_sniffing_report(bundle, engine) -> dict:
     """Inventory all rows, retaining explicit assessments for every split/merge."""
     corrections = bundle['supplement']['corrections']
     rows, type_counts, statuses = [], Counter(), Counter()

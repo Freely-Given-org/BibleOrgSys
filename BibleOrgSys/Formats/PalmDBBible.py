@@ -34,6 +34,7 @@ from binascii import hexlify
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Bible import Bible, BibleBook
+from BibleOrgSys.Reference.BookCode import BookCode
 
 
 LAST_MODIFIED_DATE = '2026-10-06' # by RJH
@@ -49,7 +50,7 @@ filenameEndingsToAccept = ('.PDB',) # Must be UPPERCASE
 
 
 
-def PalmDBBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=False, autoLoadBooks:bool=False ):
+def PalmDBBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=False, autoLoadBooks:bool=False ) -> 'bool | PalmDBBible | int | None':
     """
     Given a folder, search for PDB Bible files or folders in the folder and in the next level down.
 
@@ -161,7 +162,7 @@ class PalmDBBible( Bible ):
     """
     Class for reading, validating, and converting PalmDBBible files.
     """
-    def __init__( self, sourceFolder, givenName, encoding='utf-8' ) -> None:
+    def __init__( self, sourceFolder, givenName, encoding:str='utf-8' ) -> None:
         """
         Constructor: just sets up the Bible object.
         """
@@ -186,7 +187,7 @@ class PalmDBBible( Bible ):
     # end of PalmDBBible.__init__
 
 
-    def load( self ):
+    def load( self ) -> None:
         """
         Load a single source file and load book elements.
         """
@@ -220,7 +221,7 @@ class PalmDBBible( Bible ):
                                   ( '\xe2\x80\x98', '’' ), ( '\xe2\x80\x99', '’' ),
                                   ( '\xe2\x80\x9c', '“' ), ( '\xe2\x80\x9d', '”' ),
                                   ( 'Ã\x83Æ\x92Ã\x82Â¡', 'á' ), ( 'Ã\x83Æ\x92Ã\x82Â©', 'é' ), ( 'Ã\x83Æ\x92Ã\x82Â\xad', 'í' ), )
-        def getBinaryString( binary, numBytes ):
+        def getBinaryString( binary, numBytes ) -> str:
             """
             Gets bytes out of the binary and converts them to characters.
             Stops when numBytes is reached, or a NULL is encountered.
@@ -289,7 +290,7 @@ class PalmDBBible( Bible ):
 
 
         words = []
-        def loadWordlists():
+        def loadWordlists() -> None:
             """
             """
             nonlocal words
@@ -463,7 +464,7 @@ class PalmDBBible( Bible ):
 
 
         hadP = False
-        def saveSegment( BBB:str, C:str, V:str, verseText ):
+        def saveSegment( BBB:BookCode, C:str, V:str, verseText ) -> None:
             """
             Used to save the verse data into the global thisBook.
             """
@@ -866,7 +867,7 @@ class PalmDBBible( Bible ):
 
 
 
-def testPB( TUBfilename ):
+def testPB( TUBfilename ) -> None:
     # Crudely demonstrate the PDB Bible class
     from BibleOrgSys.Reference import VerseReferences
     #TUBfolder = Path( '/srv/Bibles/PalmBiblePlus/' ) # Must be the same as below

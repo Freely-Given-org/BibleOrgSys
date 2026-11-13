@@ -51,6 +51,7 @@ import usfm_markers_py
 from usfm_markers_py import OFTEN_IGNORED_USFM_HEADER_MARKERS, remove_usfm_character_field, replace_usfm_character_fields
 from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
 from BibleOrgSys.Bible import Bible, BibleBook
+from BibleOrgSys.Reference.BookCode import BookCode
 
 
 LAST_MODIFIED_DATE = '2026-10-06' # by RJH
@@ -101,7 +102,7 @@ for count in theWordBookLines: total += count
 assert total == theWordTotalLines
 
 
-def theWordBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=False, autoLoadBooks:bool=False ):
+def theWordBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=False, autoLoadBooks:bool=False ) -> 'bool | theWordBible | int | None':
     """
     Given a folder, search for theWord Bible files or folders in the folder and in the next level down.
 
@@ -209,7 +210,7 @@ def theWordBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool
 
 
 
-def theWordGetBBBCV( lineNumber, volumeType='BOTH' ):
+def theWordGetBBBCV( lineNumber, volumeType:str='BOTH' ):
     """
     Given a line number (0… )
         return BBB, C, V 3-tuple.
@@ -250,7 +251,7 @@ def theWordGetBBBCV( lineNumber, volumeType='BOTH' ):
 
 
 
-def theWordFileCompare( filename1, filename2, folder1=None, folder2=None, printFlag=True, exitCount=10 ):
+def theWordFileCompare( filename1, filename2, folder1=None, folder2=None, printFlag:bool=True, exitCount=10 ) -> bool | None:
     """
     Compare the two files.
     """
@@ -331,7 +332,7 @@ theWordIgnoredIntroMarkers = OFTEN_IGNORED_USFM_HEADER_MARKERS + [
     'ip','ipi','im','imi','ipq','imq','ipr', 'iq1','iq2','iq3','iq4', 'ib', 'ili1','ili2'
     'iot','io1','io2','io3','io4', 'ir','iex','iqt', 'ie', ]
 
-def theWordHandleIntroduction( BBB:str, bookData, ourGlobals ):
+def theWordHandleIntroduction( BBB:BookCode, bookData, ourGlobals ):
     """
     Go through the book introduction (if any) and extract main titles for theWord export.
 
@@ -378,7 +379,7 @@ def theWordHandleIntroduction( BBB:str, bookData, ourGlobals ):
 # end of theWordHandleIntroduction
 
 
-def theWordAdjustLine( BBB:str, C:str, V:str, originalLine:str ):
+def theWordAdjustLine( BBB:BookCode, C:str, V:str, originalLine:str ):
     """
     Handle pseudo-USFM markers within the line (cross-references, footnotes, and character formatting).
 
@@ -504,7 +505,7 @@ def resettheWordMargins( ourGlobals, setKey=None ) -> None:
 # end of resettheWordMargins
 
 
-def handleRTFLine( myName, BBB:str, C:str, V:str, originalLine:str, bookObject, myGlobals ):
+def handleRTFLine( myName, BBB:BookCode, C:str, V:str, originalLine:str, bookObject, myGlobals ) -> None:
     """
     Adjusts the formatting of the line for Bible reference BBB C:V
         and then writes it to the bookObject.
@@ -810,7 +811,7 @@ class theWordBible( Bible ):
     """
     Class for reading, validating, and converting theWordBible files.
     """
-    def __init__( self, sourceFolder, givenFilename, encoding='utf-8' ) -> None:
+    def __init__( self, sourceFolder, givenFilename, encoding:str='utf-8' ) -> None:
         """
         Constructor: just sets up the Bible object.
         """
@@ -836,7 +837,7 @@ class theWordBible( Bible ):
     # end of theWordBible.__init__
 
 
-    def load( self ):
+    def load( self ) -> None:
         """
         Load a single source file and load book elements.
         """
@@ -981,7 +982,7 @@ class theWordBible( Bible ):
 
 
 
-def theWordComposeVerseLine( BBB:str, C:str, V:str, verseData, ourGlobals ):
+def theWordComposeVerseLine( BBB:BookCode, C:str, V:str, verseData, ourGlobals ):
     """
     Composes a single line representing a verse.
 
@@ -1164,7 +1165,7 @@ def theWordComposeVerseLine( BBB:str, C:str, V:str, verseData, ourGlobals ):
 
 
 
-def createTheWordModule( self, outputFolder, controlDict ):
+def createTheWordModule( self, outputFolder, controlDict ) -> bool:
     """
     Create a module for the program theWord.
 
@@ -1174,7 +1175,7 @@ def createTheWordModule( self, outputFolder, controlDict ):
     import zipfile
 
 
-    def writetWBook( writerObject, BBB:str, ourGlobals ):
+    def writetWBook( writerObject, BBB:BookCode, ourGlobals ) -> None:
         """
         Writes a book to the theWord writerObject file.
         """
@@ -1339,7 +1340,7 @@ def createTheWordModule( self, outputFolder, controlDict ):
 
 
 
-def testtWB( indexString, twBfolder, twBfilename ):
+def testtWB( indexString, twBfolder, twBfilename ) -> None:
     """
     Crudely demonstrate the theWord Bible class.
     """

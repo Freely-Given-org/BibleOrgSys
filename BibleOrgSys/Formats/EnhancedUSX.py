@@ -9,9 +9,10 @@ into BOS's processed text are deliberately not inferred from these paths.
 import re
 
 import bos_books_codes_py
+from BibleOrgSys.Reference.BookCode import BookCode
 
 
-def normaliseEnhancedUSX(root, BBB):
+def normaliseEnhancedUSX(root, BBB:BookCode) -> dict | None:
     """Return native (chapter, verse) -> word-group records for enhanced USX.
 
     Ordinary USX is left alone. Enhanced files use a book wrapper and may put
@@ -30,7 +31,7 @@ def normaliseEnhancedUSX(root, BBB):
     groups = {}
     chapter, verse = '-1', '-1'
 
-    def walk(element, path, context='text'):
+    def walk(element, path, context:str='text') -> None:
         nonlocal chapter, verse
         if element.tag == 'chapter':
             if 'eid' in element.attrib:

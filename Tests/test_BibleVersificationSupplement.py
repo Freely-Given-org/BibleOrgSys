@@ -38,11 +38,11 @@ CASES = (
 
 class SupplementTests(unittest.TestCase):
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls) -> None:
         cls.engine = get_default_mapping_engine()
         cls.bundle = load_bundle()
 
-    def test_all_eight_complete_groups_in_both_directions(self):
+    def test_all_eight_complete_groups_in_both_directions(self) -> None:
         for english, hebrew in CASES:
             for reference_system in ('org', 'BOSReference'):
                 with self.subTest(english=english, system=reference_system):
@@ -56,7 +56,7 @@ class SupplementTests(unittest.TestCase):
                     self.assertEqual(self.engine.convert(reference_system, 'eng', hebrew).require_single(), english)
                     self.assertEqual(self.engine.convert('eng', 'eng', [english]).require_single(), english)
 
-    def test_either_half_remains_partial_including_the_previously_exact_half(self):
+    def test_either_half_remains_partial_including_the_previously_exact_half(self) -> None:
         for english, hebrew in CASES:
             for part in hebrew:
                 for source in ('org', 'BOSReference'):
@@ -68,7 +68,7 @@ class SupplementTests(unittest.TestCase):
                         with self.assertRaises(PartialMappingError):
                             result.require_single()
 
-    def test_ranges_and_group_with_following_verse_do_not_duplicate_or_drop_members(self):
+    def test_ranges_and_group_with_following_verse_do_not_duplicate_or_drop_members(self) -> None:
         for english, hebrew in CASES:
             with self.subTest(english=english):
                 ranged = self.engine.convert_range('org', 'eng', hebrew[0], hebrew[-1])
@@ -83,7 +83,7 @@ class SupplementTests(unittest.TestCase):
                 self.assertEqual(self.engine.convert('org', 'eng', forward.references).references,
                                  (english, following_english))
 
-    def test_replaced_ranges_preserve_all_surrounding_number_shifts(self):
+    def test_replaced_ranges_preserve_all_surrounding_number_shifts(self) -> None:
         checks = [(ref('NUM', 25, 18), ref('NUM', 25, 18)),
                   (ref('SA1', 20, 41), ref('SA1', 20, 41)),
                   (ref('KI1', 22, 42), ref('KI1', 22, 42)),
@@ -97,13 +97,13 @@ class SupplementTests(unittest.TestCase):
                 self.assertEqual(self.engine.convert('eng', 'org', [english]).require_single(), hebrew)
                 self.assertEqual(self.engine.convert('org', 'eng', [hebrew]).require_single(), english)
 
-    def test_compiled_audit_detects_all_eight_original_gaps_and_their_resolution(self):
+    def test_compiled_audit_detects_all_eight_original_gaps_and_their_resolution(self) -> None:
         before = deepcopy(self.bundle)
         before['supplement']['corrections'] = before['supplement']['corrections'][8:]
         original = VersificationMappingEngine.from_bundled_data(bundle=before).audit_reference_coverage('eng')
         corrected = self.engine.audit_reference_coverage('eng')
 
-        def missing(coverage):
+        def missing(coverage) -> set[str]:
             return {p for b in coverage['books'].values() for r in b['unmappedRanges']
                     for p in parse_reference_span(r).points()}
 
@@ -116,7 +116,7 @@ class SupplementTests(unittest.TestCase):
             self.assertEqual(corrected['books'][book]['unmappedCount'], 0)
         self.assertGreater(corrected['blockedCount'], 0)  # Other unresolved bridges remain explicit.
 
-    def test_supplement_preserves_raw_sources_and_has_pinned_evidence_for_every_correction(self):
+    def test_supplement_preserves_raw_sources_and_has_pinned_evidence_for_every_correction(self) -> None:
         before = deepcopy(self.bundle)
         VersificationMappingEngine.from_bundled_data(bundle=self.bundle)
         self.assertEqual(before, self.bundle)
@@ -130,8 +130,8 @@ class SupplementTests(unittest.TestCase):
             self.assertIn(next(iter(row['ranges'][correction['evidence']['copenhagenRangeIndex']])),
                           ('SubdividedVerse', 'MergedVerses'))
 
-    def test_stale_conflicting_or_unsubstantiated_corrections_are_rejected(self):
-        def check(change, message):
+    def test_stale_conflicting_or_unsubstantiated_corrections_are_rejected(self) -> None:
+        def check(change, message) -> None:
             bundle = deepcopy(self.bundle)
             change(bundle)
             with self.assertRaisesRegex(VersificationDataError, message):
@@ -145,7 +145,7 @@ class SupplementTests(unittest.TestCase):
         check(lambda b: b['supplement']['corrections'].append(deepcopy(b['supplement']['corrections'][0])), 'Duplicate')
         check(lambda b: b['systems']['eng']['mappedVerses'].__setitem__('NUM 26:1', 'NUM 26:1'), 'overlaps')
 
-    def test_supplement_content_changes_result_revision_even_if_version_is_not_bumped(self):
+    def test_supplement_content_changes_result_revision_even_if_version_is_not_bumped(self) -> None:
         changed = deepcopy(self.bundle)
         changed['supplement']['corrections'][0]['reason'] += ' Additional verification.'
         other = VersificationMappingEngine.from_bundled_data(bundle=changed)
@@ -154,7 +154,7 @@ class SupplementTests(unittest.TestCase):
 
 
 class ExplicitGroupAndAuditTests(unittest.TestCase):
-    def test_lists_preserve_order_and_can_cross_books_on_either_side(self):
+    def test_lists_preserve_order_and_can_cross_books_on_either_side(self) -> None:
         counts = {'GEN': [2, 2], 'EXO': [2]}
         engine = VersificationMappingEngine({'maxVerses': counts}, {'custom': {
             'maxVerses': counts,
@@ -166,7 +166,7 @@ class ExplicitGroupAndAuditTests(unittest.TestCase):
         self.assertEqual(inverse.references, (ref('GEN', 1, 2), ref('GEN', 2, 1)))
         self.assertEqual(engine.convert('custom', 'BOSReference', [ref('GEN', 1, 2)]).status, MappingStatus.PARTIAL)
 
-    def test_invalid_group_lists_are_quarantined_in_both_directions(self):
+    def test_invalid_group_lists_are_quarantined_in_both_directions(self) -> None:
         for target in ([], ['GEN 1:1', 'GEN 1:1'], ['GEN 1:2-1'], ['GEN 1:1', 'GEN 1:99'],
                        ['GEN 1:1', 'GEN 1:1a'], ['GEN 1:1;', 'GEN 2:1']):
             with self.subTest(target=target):
@@ -177,7 +177,7 @@ class ExplicitGroupAndAuditTests(unittest.TestCase):
                 for source, dest in (('a', 'BOSReference'), ('BOSReference', 'a')):
                     self.assertNotEqual(engine.convert(source, dest, [ref('GEN', 1, 1)]).status, MappingStatus.EXACT)
 
-    def test_audit_distinguishes_missing_quarantined_and_group_member_addresses(self):
+    def test_audit_distinguishes_missing_quarantined_and_group_member_addresses(self) -> None:
         engine = VersificationMappingEngine({'maxVerses': {'GEN': [5]}}, {'a': {
             'maxVerses': {'GEN': [5]},
             'groupMappings': [{'source': 'GEN 1:1', 'target': ['GEN 1:1-2']}],
@@ -192,7 +192,7 @@ class ExplicitGroupAndAuditTests(unittest.TestCase):
 @unittest.skipUnless(importlib.util.find_spec('bos_books_codes_py') and importlib.util.find_spec('bible_organisational_system'),
                      'Bible integration needs BOS native dependencies; use .venv/bin/python.')
 class SupplementBibleIntegrationTests(unittest.TestCase):
-    def test_public_single_plural_and_range_apis_preserve_group_contract(self):
+    def test_public_single_plural_and_range_apis_preserve_group_contract(self) -> None:
         from BibleOrgSys.Bible import Bible
         from BibleOrgSys.Reference.BibleVersificationSystems import BibleVersificationSystem
         for factory in (lambda name: Bible(versification=name), BibleVersificationSystem):
@@ -208,7 +208,7 @@ class SupplementBibleIntegrationTests(unittest.TestCase):
                     self.assertEqual(original.convertReferencesToVersification('eng', group).require_single(), source)
                     self.assertEqual(original.convertRangeToVersification('eng', group[0], group[-1]).require_single(), source)
 
-    def test_mapped_passage_fetches_both_native_parts_and_rejects_partial_inverse(self):
+    def test_mapped_passage_fetches_both_native_parts_and_rejects_partial_inverse(self) -> None:
         from BibleOrgSys.Formats.USFMBible import USFMBible
         prior_logging = logging.root.manager.disable
         logging.disable(logging.CRITICAL)

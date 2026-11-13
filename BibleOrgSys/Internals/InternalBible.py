@@ -73,6 +73,7 @@ from BibleOrgSys.Internals.InternalBibleBook import BCV_VERSION, BOS_EXTRA_TYPES
 from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
 from BibleOrgSys.Reference.BibleVersification import BibleVersificationMixin
 import bos_books_codes_py
+from BibleOrgSys.Reference.BookCode import BookCode
 
 
 LAST_MODIFIED_DATE = '2026-10-22' # by RJH
@@ -177,7 +178,7 @@ class InternalBible(BibleVersificationMixin):
     # end of InternalBible.__str__
 
 
-    def __len__( self ):
+    def __len__( self ) -> int:
         """
         This method returns the number of loaded books in the Bible.
         """
@@ -187,7 +188,7 @@ class InternalBible(BibleVersificationMixin):
     # end of InternalBible.__len__
 
 
-    def __contains__( self, BBB:str ):
+    def __contains__( self, BBB:BookCode ) -> bool:
         """
         This method checks whether the Bible (as loaded so far) contains the BBB book.
 
@@ -238,7 +239,7 @@ class InternalBible(BibleVersificationMixin):
     # end of InternalBible.__iter__
 
 
-    def discoverProperties( self ):
+    def discoverProperties( self ) -> None:
         """
         This is a diagnostic function which lists the properties of various types of internal Bibles.
 
@@ -288,7 +289,7 @@ class InternalBible(BibleVersificationMixin):
     #end of InternalBible.discoverProperties
 
 
-    def containsAnyOT39Books( self ):
+    def containsAnyOT39Books( self ) -> bool:
         """
         Returns True if any of the 39 common OT books are present.
         """
@@ -300,7 +301,7 @@ class InternalBible(BibleVersificationMixin):
     #end of InternalBible.containsAnyOT39Books
 
 
-    def containsAnyNT27Books( self ):
+    def containsAnyNT27Books( self ) -> bool:
         """
         Returns True if any of the 27 common NT books are present.
         """
@@ -312,7 +313,7 @@ class InternalBible(BibleVersificationMixin):
     #end of InternalBible.containsAnyNT27Books
 
 
-    def __getNames( self ):
+    def __getNames( self ) -> None:
         """
         Try to improve our names from supplied metadata in self.settingsDict.
 
@@ -360,7 +361,7 @@ class InternalBible(BibleVersificationMixin):
     # end of InternalBible.getAName
 
 
-    def loadBookIfNecessary( self, BBB:str ) -> None:
+    def loadBookIfNecessary( self, BBB:BookCode ) -> None:
         """
         Checks to see if a requested book has already been loaded
             or already failed at loading.
@@ -398,7 +399,7 @@ class InternalBible(BibleVersificationMixin):
     # end of InternalBible.loadBookIfNecessary
 
 
-    def reloadBook( self, BBB:str ):
+    def reloadBook( self, BBB:BookCode ) -> None:
         """
         Tries to load or reload a book (perhaps because we changed it on disk).
         """
@@ -415,7 +416,7 @@ class InternalBible(BibleVersificationMixin):
     # end of InternalBible.reloadBook
 
 
-    def reProcessBook( self, BBB:str ):
+    def reProcessBook( self, BBB:BookCode ) -> None:
         """
         Tries to re-index a loaded book.
         """
@@ -434,7 +435,7 @@ class InternalBible(BibleVersificationMixin):
     # end of InternalBible.reProcessBook
 
 
-    def doPostLoadProcessing( self ):
+    def doPostLoadProcessing( self ) -> None:
         """
         This method should be called once all books are loaded to do critical book-keeping.
 
@@ -476,7 +477,7 @@ class InternalBible(BibleVersificationMixin):
     ## end of InternalBible.unloadBooks
 
 
-    def loadMetadataTextFile( self, mdFilepath ):
+    def loadMetadataTextFile( self, mdFilepath ) -> None:
         """
         Load the fields from the given metadata text file into self.suppliedMetadata['File']
             and then copy them into self.settingsDict.
@@ -484,7 +485,7 @@ class InternalBible(BibleVersificationMixin):
         See https://Freely-Given.org/Software/BibleDropBox/Metadata.html for
             a description of the format and the typical, allowed fields.
         """
-        def saveMetadataField( fieldName, contents ):
+        def saveMetadataField( fieldName, contents ) -> None:
             """
             Save an entry in the settings dictionary
                 but check for duplicates first.
@@ -557,7 +558,7 @@ class InternalBible(BibleVersificationMixin):
     # end of InternalBible.loadMetadataTextFile
 
 
-    def applySuppliedMetadata( self, applyMetadataType ):
+    def applySuppliedMetadata( self, applyMetadataType ) -> None:
         """
         Using the dictionary at self.suppliedMetadata[applyMetadataType],
             load the fields into self.settingsDict
@@ -896,7 +897,7 @@ class InternalBible(BibleVersificationMixin):
     # end of InternalBible.getSetting
 
 
-    def getAssumedBookName( self, BBB:str ):
+    def getAssumedBookName( self, BBB:BookCode ):
         """
         Gets the assumed book name for the given book reference code.
 
@@ -909,7 +910,7 @@ class InternalBible(BibleVersificationMixin):
     # end of InternalBible.getAssumedBookName
 
 
-    def getLongTOCName( self, BBB:str ):
+    def getLongTOCName( self, BBB:BookCode ):
         """
         Gets the long table of contents book name for the given book reference code.
         """
@@ -919,7 +920,7 @@ class InternalBible(BibleVersificationMixin):
     # end of InternalBible.getLongTOCName
 
 
-    def getShortTOCName( self, BBB:str ):
+    def getShortTOCName( self, BBB:BookCode ):
         """Gets the short table of contents book name for the given book reference code."""
         if BibleOrgSysGlobals.debugFlag: assert bos_books_codes_py.is_valid_bos_book_code( BBB )
         try: return self.books[BBB].shortTOCName
@@ -927,7 +928,7 @@ class InternalBible(BibleVersificationMixin):
     # end of InternalBible.getShortTOCName
 
 
-    def getBooknameAbbreviation( self, BBB:str ):
+    def getBooknameAbbreviation( self, BBB:BookCode ):
         """Gets the book abbreviation for the given book reference code."""
         if BibleOrgSysGlobals.debugFlag: assert bos_books_codes_py.is_valid_bos_book_code( BBB )
         try: return self.books[BBB].booknameAbbreviation
@@ -935,7 +936,7 @@ class InternalBible(BibleVersificationMixin):
     # end of InternalBible.getBooknameAbbreviation
 
 
-    def getBookList( self ):
+    def getBookList( self ) -> list:
         """
         Returns a list of loaded book codes.
         """
@@ -1117,7 +1118,7 @@ class InternalBible(BibleVersificationMixin):
                 obj.bookNeedsReloading[bbb] = True
 
         # Override loadBook to use the fast container
-        def fastLoadBook( self_obj, BBB:str, filename=None ):
+        def fastLoadBook( self_obj, BBB:BookCode, filename=None ) -> None:
              if BBB in self_obj.books: return
              from BibleOrgSys.Internals.InternalBibleBook import InternalBibleBook
              bookObject = InternalBibleBook( 'NoneYet—StillUnpickling', BBB )
@@ -1145,7 +1146,7 @@ class InternalBible(BibleVersificationMixin):
     # end of InternalBible.unpickleFast
 
 
-    def guessXRefBBB( self, referenceString:str ) -> str:
+    def guessXRefBBB( self, referenceString:str ) -> BookCode:
         """
         Attempt to return a book reference code given a book reference code (e.g., 'PRO'),
                 a book name (e.g., Proverbs) or abbreviation (e.g., Prv).
@@ -1405,7 +1406,7 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
     # end of InternalBible.discover
 
 
-    def __aggregateDiscoveryResults( self ):
+    def __aggregateDiscoveryResults( self ) -> None:
         """
         Assuming that the individual discoveryResults have been collected for each book,
             puts them all together.
@@ -1605,7 +1606,7 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
     #     return self.books[BBB]._makeBookSectionIndex()
     # # end of _makeBookSectionIndexMP
 
-    def makeSectionIndex( self ):
+    def makeSectionIndex( self ) -> None:
         """
         Runs self.discover() first if necessary.
 
@@ -1657,7 +1658,7 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
     # end of InternalBible.makeSectionIndex()
 
 
-    def check( self, givenBookList=None ):
+    def check( self, givenBookList=None ) -> None:
         """
         Runs self.discover() first if necessary.
 
@@ -1701,7 +1702,7 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
     # end of InternalBible.check
 
 
-    def doExtensiveChecks( self, givenOutputFolderName=None, ntFinished=None, otFinished=None, dcFinished=None, allFinished=None ):
+    def doExtensiveChecks( self, givenOutputFolderName=None, ntFinished=None, otFinished=None, dcFinished=None, allFinished=None ) -> bool | None:
         """
         If the output folder is specified, it is expected that it's already created.
         Otherwise a new subfolder is created in the current folder.
@@ -1733,7 +1734,7 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
     #end of InternalBible.doExtensiveChecks
 
 
-    def getCheckResults( self, givenBookList=None ):
+    def getCheckResults( self, givenBookList=None ) -> dict[str, dict]:
         """
         Returns the error dictionary.
             All keys ending in 'Errors' give lists of strings.
@@ -1764,7 +1765,7 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
         """
         if givenBookList is None: givenBookList = self.books.keys() # this is a dict
 
-        def appendList( BBB:str, errorDict, firstKey, secondKey=None ):
+        def appendList( BBB:BookCode, errorDict, firstKey, secondKey=None ) -> None:
             """Appends a list to the ALL BOOKS errors."""
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  appendList", BBB, firstKey, secondKey )
             if secondKey is None:
@@ -1779,7 +1780,7 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
                 errorDict['All Books'][firstKey][secondKey].extend( errorDict[BBB][firstKey][secondKey] )
         # end of getCheckResults.appendList
 
-        def mergeCount( BBB:str, errorDict, firstKey:str, secondKey:str|None=None ) -> None:
+        def mergeCount( BBB:BookCode, errorDict, firstKey:str, secondKey:str|None=None ) -> None:
             """Merges the counts together."""
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  mergeCount", BBB, firstKey, secondKey )
             if secondKey is None:
@@ -1797,7 +1798,7 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
                                                                                 else errorDict['All Books'][firstKey][secondKey][something] + errorDict[BBB][firstKey][secondKey][something]
         # end of getCheckResults.mergeCount
 
-        def getCapsList( lcWord, lcTotal, wordDict ):
+        def getCapsList( lcWord, lcTotal, wordDict ) -> list:
             """ Given that a lower case word has a lowercase count of lcTotal,
                 search wordDict to find all the ways that it occurs
                 and return this as a list sorted with the most frequent first."""
@@ -2370,7 +2371,7 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
     # end of InternalBible.makeErrorHTML
 
 
-    def getNumChapters( self, BBB:str ) -> int:
+    def getNumChapters( self, BBB:BookCode ) -> int:
         """
         Returns the number of chapters (int) in the given book.
         Returns None if we don't have that book.
@@ -2388,7 +2389,7 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
     # end of InternalBible.getNumChapters
 
 
-    def getNumVerses( self, BBB:str, C:str|int ) -> int:
+    def getNumVerses( self, BBB:BookCode, C:str|int ) -> int:
         """
         Returns the number of verses (int) in the given book and chapter.
         Returns None if we don't have that book.
@@ -2439,7 +2440,7 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
     # end of InternalBible.getContextVerseData
 
 
-    def getPassageData(self, references, *, chapterCache=None, combineAdjacent=False):
+    def getPassageData(self, references, *, chapterCache=None, combineAdjacent:bool=False):
         """Retrieve an ordered group of native (BBB,C,V[,S]) references.
 
         V can be a native label such as '21-22', '4b', '4a-4b', or '3,1'.
@@ -2464,7 +2465,7 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
             chapter_cache=chapterCache, combine_adjacent=combineAdjacent)
 
 
-    def getMappedPassage(self, sourceSystem, references, *, chapterCache=None, combineAdjacent=False, expandGroups=False, allowAbsent=False):
+    def getMappedPassage(self, sourceSystem, references, *, chapterCache=None, combineAdjacent:bool=False, expandGroups:bool=False, allowAbsent:bool=False):
         """Map a complete external passage into this Bible and retrieve its text.
 
         sourceSystem is a name, BibleVersificationSystem, or another Bible.
@@ -2494,7 +2495,7 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
             chapter_cache=chapterCache, combine_adjacent=combineAdjacent, expand_groups=expandGroups, allow_absent=allowAbsent)
 
 
-    def getContextVerseDataRange( self, startBCVReference:SimpleVerseKey|tuple[str,str,str,str], endBCVReference:SimpleVerseKey|tuple[str,str,str,str], strict=True ) -> tuple[InternalBibleEntryList,list[str]]|None:
+    def getContextVerseDataRange( self, startBCVReference:SimpleVerseKey|tuple[str,str,str,str], endBCVReference:SimpleVerseKey|tuple[str,str,str,str], strict:bool=True ) -> tuple[InternalBibleEntryList,list[str]]|None:
         """
         Search for a Bible reference
             and return a 2-tuple containing
@@ -2823,7 +2824,7 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
     # end of InternalBible.findText
 
 
-    def writeBOSBCVFiles( self, outputFolderpath ):
+    def writeBOSBCVFiles( self, outputFolderpath ) -> None:
         """
         Write the internal pseudoUSFM out directly with one file per verse.
         """

@@ -36,48 +36,48 @@ DEBUGGING_THIS_MODULE = False
 class BibleBooksNamesConverterTests( unittest.TestCase ):
     """ Unit tests for the BibleBooksNamesConverter object. """
 
-    def setUp( self ):
+    def setUp( self ) -> None:
         parser = BibleOrgSysGlobals.setup( PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
         # BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
         BibleOrgSysGlobals.preloadCommonData()
         # Create the BibleBooksNamesConverter object
         self.bbnsc = BibleBooksNamesConverter.BibleBooksNamesConverter().loadSystems() # Doesn't reload the XML unnecessarily :)
 
-    def test_1010_str( self ):
+    def test_1010_str( self ) -> None:
         """ Test the __str__ function. """
         result = str( self.bbnsc )
         self.assertTrue( isinstance( result, str ) )
         self.assertTrue( len(result) > 20 )
     # end of test_1010_str
 
-    def test_1020_len( self ):
+    def test_1020_len( self ) -> None:
         """ Test the __len__ function. """
         self.assertTrue( 3 < len(self.bbnsc) < 20 ) # The number of loaded systems
     # end of test_1020_len
 
-    def test_1030_importDataToPython( self ):
+    def test_1030_importDataToPython( self ) -> None:
         """ Test the importDataToPython function. """
         result = self.bbnsc.importDataToPython()
         self.assertTrue( isinstance( result, tuple ) )
         self.assertEqual( len(result), 2 )
     # end of test_1030_importDataToPython
 
-    def test_1040_pickle( self ):
+    def test_1040_pickle( self ) -> None:
         """ Test the pickle function. """
         self.assertEqual( self.bbnsc.pickle(), None ) # Basically just make sure that it runs
     # end of test_1040_pickle
 
-    def test_1050_exportDataToPython( self ):
+    def test_1050_exportDataToPython( self ) -> None:
         """ Test the exportDataToPython function. """
         self.assertEqual( self.bbnsc.exportDataToPython(), None ) # Basically just make sure that it runs
     # end of test_1050_exportDataToPython
 
-    def test_1060_exportDataToJSON( self ):
+    def test_1060_exportDataToJSON( self ) -> None:
         """ Test the exportDataToJSON function. """
         self.assertEqual( self.bbnsc.exportDataToJSON(), None ) # Basically just make sure that it runs
     # end of test_1060_exportDataToJSON
 
-    def test_1070_exportDataToC( self ):
+    def test_1070_exportDataToC( self ) -> None:
         """ Test the exportDataToC function. """
         if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Sorry, no C export yet :(" )
@@ -89,26 +89,26 @@ class BibleBooksNamesConverterTests( unittest.TestCase ):
 class BibleBooksNamesSystemsTests( unittest.TestCase ):
     """ Unit tests for the BibleBooksNamesSystems object. """
 
-    def setUp( self ):
+    def setUp( self ) -> None:
         parser = BibleOrgSysGlobals.setup( PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
         # BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
         BibleOrgSysGlobals.preloadCommonData()
         # Create the BibleBooksNamesSystems object
         self.bbnss = BibleBooksNames.BibleBooksNamesSystems().loadData() # Doesn't reload the XML unnecessarily :)
 
-    def test_2010_str( self ):
+    def test_2010_str( self ) -> None:
         """ Test the __str__ function. """
         result = str( self.bbnss )
         self.assertTrue( isinstance( result, str ) )
         self.assertTrue( len(result) > 20 )
     # end of test_2010_str
 
-    def test_2020_len( self ):
+    def test_2020_len( self ) -> None:
         """ Test the __len__ function. """
         self.assertTrue( 3 < len(self.bbnss) < 20 ) # The number of loaded systems
     # end of test_2020_len
 
-    def test_2030_contains( self ):
+    def test_2030_contains( self ) -> None:
         """ Test the __contains__ function. """
         for goodName in ('eng_traditional','deu_traditional','mbt',):
             self.assertTrue( goodName in self.bbnss )
@@ -116,7 +116,7 @@ class BibleBooksNamesSystemsTests( unittest.TestCase ):
             self.assertFalse( badName in self.bbnss )
     # end of test_2030_contains
 
-    def test_2040_getAvailableBooksNamesSystemNames( self ):
+    def test_2040_getAvailableBooksNamesSystemNames( self ) -> None:
         """ Test the getAvailableBooksNamesSystemNames function. """
         results = self.bbnss.getAvailableBooksNamesSystemNames()
         self.assertTrue( isinstance( results, list ) )
@@ -142,7 +142,7 @@ class BibleBooksNamesSystemsTests( unittest.TestCase ):
         for name in ('',): self.assertTrue( name in results )
     # end of test_2040_getAvailableBooksNamesSystemNames
 
-    def test_2050_getAvailableLanguageCodes( self ):
+    def test_2050_getAvailableLanguageCodes( self ) -> None:
         """ Test the getAvailableLanguageCodes function. """
         results = self.bbnss.getAvailableLanguageCodes()
         self.assertTrue( isinstance( results, set ) )
@@ -153,7 +153,7 @@ class BibleBooksNamesSystemsTests( unittest.TestCase ):
         for name in ('eng','fra','deu',): self.assertTrue( name in results )
     # end of test_2050_getAvailableLanguageCodes
 
-    def test_2060_getBooksNamesSystem( self ):
+    def test_2060_getBooksNamesSystem( self ) -> None:
         """ Test the getBooksNamesSystem function. """
         results = self.bbnss.getBooksNamesSystem( "eng_traditional" )
         self.assertTrue( isinstance( results, tuple ) )
@@ -187,7 +187,7 @@ class BibleBooksNamesSystemsTests( unittest.TestCase ):
 class BibleBooksNamesSystemTests( unittest.TestCase ):
     """ Unit tests for the BibleBooksNamesSystem object. """
 
-    def setUp( self ):
+    def setUp( self ) -> None:
         parser = BibleOrgSysGlobals.setup( PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
         # BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
         BibleOrgSysGlobals.preloadCommonData()
@@ -196,19 +196,19 @@ class BibleBooksNamesSystemTests( unittest.TestCase ):
         sampleBookList = ['GEN','EXO','LEV','NUM','DEU','JOS','JDG','SA1','SA2','KI1','KI2','ZEC','MAL']
         self.bbns = BibleBooksNames.BibleBooksNamesSystem( self.systemName, sampleBookList ) # Doesn't reload the XML unnecessarily :)
 
-    def test_3010_str( self ):
+    def test_3010_str( self ) -> None:
         """ Test the __str__ function. """
         result = str( self.bbns )
         self.assertTrue( isinstance( result, str ) )
         self.assertTrue( len(result) > 20 )
     # end of test_3010_str
 
-    def test_3020_getBooksNamesSystemName( self ):
+    def test_3020_getBooksNamesSystemName( self ) -> None:
         """ Test the getBooksNamesSystemName function. """
         self.assertEqual( self.bbns.getBooksNamesSystemName(), self.systemName )
     # end of test_3020_getBooksNamesSystemName
 
-    def test_3030_getBookName( self ):
+    def test_3030_getBookName( self ) -> None:
         """ Test the getBookName function. """
         for BBB,name in (('GEN','Genesis',),('EXO','Exodus'),('MAL','Malachi'),):
             result = self.bbns.getBookName( BBB )
@@ -217,7 +217,7 @@ class BibleBooksNamesSystemTests( unittest.TestCase ):
             self.assertRaises( KeyError, self.bbns.getBookName, badBBB )
     # end of test_3030_getBookName
 
-    def test_3040_getBookAbbreviation( self ):
+    def test_3040_getBookAbbreviation( self ) -> None:
         """ Test the getBookAbbreviation function. """
         for BBB,name in (('GEN','Gen',),('EXO','Exo'),('MAL','Mal'),):
             result = self.bbns.getBookAbbreviation( BBB )
@@ -226,7 +226,7 @@ class BibleBooksNamesSystemTests( unittest.TestCase ):
             self.assertRaises( KeyError, self.bbns.getBookAbbreviation, badBBB )
     # end of test_3040_getBookAbbreviation
 
-    def test_3050_getBBBFromText( self ):
+    def test_3050_getBBBFromText( self ) -> None:
         """ Test the getBBBFromText function. """
         tests = ( ('GEN',('GEN','Gen','Ge','G')),    ('EXO',('Exo','Exd','eX','E','e')),    ('MAL',('Mal','MALACHI','MaLaChI')), )
         for BBB,inputs in tests:
@@ -237,7 +237,7 @@ class BibleBooksNamesSystemTests( unittest.TestCase ):
             self.assertEqual( self.bbns.getBBBFromText(badInput), None )
     # end of test_3050_getBBBFromText
 
-    def test_3060_getDivisionAbbreviation( self ):
+    def test_3060_getDivisionAbbreviation( self ) -> None:
         """ Test the getDivisionAbbreviation function. """
         tests = ( ('OT',('OT','Ot','oT','Old', 'oLdTeSt')), )
         for divisionStandardAbbreviation,inputs in tests:
@@ -248,7 +248,7 @@ class BibleBooksNamesSystemTests( unittest.TestCase ):
             self.assertEqual( self.bbns.getDivisionAbbreviation(badInput), None )
     # end of test_3060_getDivisionAbbreviation
 
-    def test_3070_getDivisionBooklist( self ):
+    def test_3070_getDivisionBooklist( self ) -> None:
         """ Test the getDivisionBooklist function. """
         tests = ( ('OT',('OT','Ot','oT','Old', 'oLdTeSt')), )
         for divisionStandardAbbreviation,inputs in tests:

@@ -55,6 +55,7 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
 from BibleOrgSys.Bible import Bible, BibleBook
+from BibleOrgSys.Reference.BookCode import BookCode
 
 
 LAST_MODIFIED_DATE = '2026-10-06' # by RJH
@@ -73,7 +74,7 @@ EXTENSION_TO_IGNORE = ( 'ASC', 'BAK', 'BAK2', 'BAK3', 'BAK4', 'BBLX', 'BC', 'CCT
 
 
 
-def VerseViewXMLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=False, autoLoadBooks:bool=False ):
+def VerseViewXMLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=False, autoLoadBooks:bool=False ) -> 'bool | VerseViewXMLBible | int | None':
     """
     Given a folder, search for VerseView XML Bible files or folders in the folder and in the next level down.
 
@@ -215,7 +216,7 @@ class VerseViewXMLBible( Bible ):
     verseTag = 'v'
 
 
-    def __init__( self, sourceFolder, givenName, encoding='utf-8' ) -> None:
+    def __init__( self, sourceFolder, givenName, encoding:str='utf-8' ) -> None:
         """
         Constructor: just sets up the VerseView Bible object.
         """
@@ -245,7 +246,7 @@ class VerseViewXMLBible( Bible ):
     # end of VerseViewXMLBible.__init__
 
 
-    def load( self ):
+    def load( self ) -> None:
         """
         Load a single source XML file and load book elements.
         """
@@ -327,7 +328,7 @@ class VerseViewXMLBible( Bible ):
 
 
 
-    def __validateAndExtractBook( self, book, bookNumber ):
+    def __validateAndExtractBook( self, book, bookNumber ) -> None:
         """
         Check/validate and extract book data from the given XML book record
             finding chapter subelements.
@@ -376,7 +377,7 @@ class VerseViewXMLBible( Bible ):
     # end of VerseViewXMLBible.__validateAndExtractBook
 
 
-    def __validateAndExtractChapter( self, BBB:str, thisBook, chapter ):
+    def __validateAndExtractChapter( self, BBB:BookCode, thisBook, chapter ) -> None:
         """
         Check/validate and extract chapter data from the given XML book record
             finding and saving chapter numbers and
@@ -405,7 +406,7 @@ class VerseViewXMLBible( Bible ):
     # end of VerseViewXMLBible.__validateAndExtractChapter
 
 
-    def __validateAndExtractVerse( self, BBB:str, chapterNumber, thisBook, verse ):
+    def __validateAndExtractVerse( self, BBB:BookCode, chapterNumber, thisBook, verse ) -> None:
         """
         Check/validate and extract verse data from the given XML book record
             finding and saving verse elements.

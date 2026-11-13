@@ -22,6 +22,7 @@ from BibleOrgSys.Misc.singleton import singleton
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
+from typing import Self
 
 
 LAST_MODIFIED_DATE = '2026-10-06' # by RJH
@@ -53,7 +54,7 @@ class BibleReferencesLinks:
     # end of BibleReferencesLinks.__init__
 
 
-    def loadData( self ):
+    def loadData( self ) -> Self:
         """ Loads the index file (if not done already). """
         if not self.__Index: # We need to load it once -- don't do this unnecessarily
             # See if we can load from the pickle file (faster than loading from the XML)
@@ -129,7 +130,7 @@ class BibleReferencesLinks:
         return self.__getEntry( verseKey )
     # end of BibleReferencesLinks.getFullRelatedPassagesList
 
-    def getRelatedPassagesList( self, verseKey ):
+    def getRelatedPassagesList( self, verseKey ) -> list[tuple] | None:
         """
         Given a verse key, return a list containing 2-tuples:
             0: Link type ('QuotedOTReference','AlludedOTReference','PossibleOTReference')

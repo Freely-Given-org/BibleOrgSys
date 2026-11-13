@@ -40,6 +40,7 @@ from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.OriginalLanguages import Greek
 from BibleOrgSys.Bible import Bible, BibleBook
 from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
+from BibleOrgSys.Reference.BookCode import BookCode
 
 
 LAST_MODIFIED_DATE = '2026-10-06' # by RJH
@@ -123,7 +124,7 @@ class GreekNT( Bible ):
     ## end of __str__
 
 
-    def loadBooks( self ):
+    def loadBooks( self ) -> None:
         """
         """
         if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
@@ -144,11 +145,11 @@ class GreekNT( Bible ):
         self.doPostLoadProcessing()
     # end of loadBooks
 
-    def load( self ):
+    def load( self ) -> None:
         self.loadBooks()
 
 
-    def loadBook( self, BBB:str ) -> None:
+    def loadBook( self, BBB:BookCode ) -> None:
         if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
             fnPrint( DEBUGGING_THIS_MODULE, f"GreekNT.loadBook( {BBB} )" )
         filename = Greek.morphgntFilenameDict[BBB]
@@ -247,7 +248,7 @@ class GreekNT( Bible ):
     # end of loadBook
 
 
-    def analyzeWords( self ):
+    def analyzeWords( self ) -> None:
         """
         Go through the NT data and do some filing and sorting of the Greek words.
 

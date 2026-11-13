@@ -330,7 +330,7 @@ class Door43CatalogResources:
     # end of Door43CatalogResources.getBibleResourceDict
 
 
-    def searchBibles( self, languageCode=None, BibleTitle=None ):
+    def searchBibles( self, languageCode=None, BibleTitle=None ) -> dict | list[dict]:
         """
         Search thru the list of available online Bibles to find
             a match of the optional language and optional title.

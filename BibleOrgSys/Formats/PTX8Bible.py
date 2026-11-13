@@ -48,6 +48,7 @@ from BibleOrgSys.InputOutput.USXFilenames import USXFilenames
 from BibleOrgSys.Formats.USFMBibleBook import USFMBibleBook
 from BibleOrgSys.Formats.USXXMLBibleBook import USXXMLBibleBook
 from BibleOrgSys.Reference.LDML import LDMLFile
+from BibleOrgSys.Reference.BookCode import BookCode
 
 
 LAST_MODIFIED_DATE = '2026-10-25' # by RJH
@@ -75,7 +76,7 @@ EXPECTED_FOLDER_NAMES = ( 'Figures', 'PrintDraft', 'Interlinear_en', 'shared', #
 
 
 
-def PTX8BibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=False, autoLoadBooks:bool=False ):
+def PTX8BibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=False, autoLoadBooks:bool=False ) -> 'bool | PTX8Bible | int | None':
     """
     Given a folder, search for Paratext Bible bundles in the folder and in the next level down.
 
@@ -247,7 +248,7 @@ def getFlagFromText( subelement ):
 
 # The following loadPTX8…() functions are placed here because
 #   they are also used by the DBL and/or other Bible importers
-def loadPTX8ProjectData( BibleObject, sourceFolder, encoding='utf-8' ):
+def loadPTX8ProjectData( BibleObject, sourceFolder, encoding:str='utf-8' ) -> dict:
     """
     Process the Paratext 8 project settings data file (XML) from the given filepath into PTXSettingsDict.
 
@@ -311,7 +312,7 @@ def loadPTX8ProjectData( BibleObject, sourceFolder, encoding='utf-8' ):
 
 
 
-def loadPTX8Languages( BibleObject ):
+def loadPTX8Languages( BibleObject ) -> dict | None:
     """
     Load the something.ldml files (which are LDML XML files) and parse them into the dictionary PTXLanguages.
 
@@ -365,7 +366,7 @@ def loadPTX8Languages( BibleObject ):
 
 
 
-def loadPTX8Versifications( BibleObject ):
+def loadPTX8Versifications( BibleObject ) -> dict | None:
     """
     Load the versification files (which is a text file)
         and parse it into the dictionary PTXVersifications.
@@ -489,7 +490,7 @@ class PTX8Bible( Bible ):
     The PTX8Bible object contains USFM 2/3 or enhanced USX BibleBooks.
         (i.e., there's not PTX8BibleBook object types.)
     """
-    def __init__( self, givenFolderName, givenName=None, givenAbbreviation=None, encoding='utf-8', *, versification=None ) -> None:
+    def __init__( self, givenFolderName, givenName=None, givenAbbreviation=None, encoding:str='utf-8', *, versification=None ) -> None:
         """
         Create the internal Paratext Bible object.
         """
@@ -526,7 +527,7 @@ class PTX8Bible( Bible ):
     # end of PTX8Bible.__init__
 
 
-    def preload( self ):
+    def preload( self ) -> None:
         """
         Loads the settings file if it can be found.
         Loads other metadata files that are provided.
@@ -539,7 +540,7 @@ class PTX8Bible( Bible ):
 
         #if self.suppliedMetadata is None: self.suppliedMetadata = {}
 
-        def recurseFolder( folderpath, level=1 ):
+        def recurseFolder( folderpath, level=1 ) -> None:
             """
             """
             if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
@@ -692,7 +693,7 @@ class PTX8Bible( Bible ):
     # end of PTX8Bible.preload
 
 
-    def loadPTX8Autocorrects( self ):
+    def loadPTX8Autocorrects( self ) -> None:
         """
         Load the AutoCorrect.txt file (which is a text file)
             and parse it into the ordered dictionary PTXAutocorrects.
@@ -747,7 +748,7 @@ class PTX8Bible( Bible ):
     # end of PTX8Bible.loadPTX8Autocorrects
 
 
-    def loadPTX8BooksNames( self ):
+    def loadPTX8BooksNames( self ) -> None:
         """
         Load the BookNames.xml file (if it exists) and parse it into the dictionary self.suppliedMetadata.
         """
@@ -815,7 +816,7 @@ class PTX8Bible( Bible ):
     # end of PTX8Bible.loadPTX8BooksNames
 
 
-    def loadPTX8Lexicon( self ):
+    def loadPTX8Lexicon( self ) -> None:
         """
         Load the Lexicon.xml file (if it exists) and parse it into the dictionary self.suppliedMetadata.
         """
@@ -833,7 +834,7 @@ class PTX8Bible( Bible ):
         lexiconDict = { 'Entries':{} }
         #loadErrors:list[str] = []
 
-        def processLexiconItem( element, treeLocation ):
+        def processLexiconItem( element, treeLocation ) -> None:
             """
             """
             if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
@@ -968,7 +969,7 @@ class PTX8Bible( Bible ):
     # end of PTX8Bible.loadPTX8Lexicon
 
 
-    def loadPTX8ProjectUserAccess( self ):
+    def loadPTX8ProjectUserAccess( self ) -> None:
         """
         Load the ProjectUsers.xml file (if it exists) and parse it into the dictionary self.suppliedMetadata.
         """
@@ -1107,7 +1108,7 @@ class PTX8Bible( Bible ):
     # end of PTX8Bible.loadPTX8ProjectUserAccess
 
 
-    def loadPTX8Canons( self ):
+    def loadPTX8Canons( self ) -> None:
         """
         Load the Canons.xml file (if it exists) and parse it into the dictionary self.suppliedMetadata.
         """
@@ -1210,7 +1211,7 @@ class PTX8Bible( Bible ):
     # end of PTX8Bible.loadPTX8Canons
 
 
-    def loadPTX8CheckingStatus( self ):
+    def loadPTX8CheckingStatus( self ) -> None:
         """
         Load the CheckingStatus.xml file (if it exists) and parse it into the dictionary self.suppliedMetadata.
         """
@@ -1293,7 +1294,7 @@ class PTX8Bible( Bible ):
     # end of PTX8Bible.loadPTX8CheckingStatus
 
 
-    def loadPTX8CommentTags( self ):
+    def loadPTX8CommentTags( self ) -> None:
         """
         Load the CommentTags_*.xml files (if they exist) and parse them into the dictionary self.suppliedMetadata['PTX8'].
         """
@@ -1361,7 +1362,7 @@ class PTX8Bible( Bible ):
     # end of PTX8Bible.loadPTX8CommentTags
 
 
-    def loadPTX8DerivedTranslationStatus( self ):
+    def loadPTX8DerivedTranslationStatus( self ) -> None:
         """
         Load the DerivedTranslationStatus.xml file (if it exists)
             and parse it into the dictionary self.suppliedMetadata.
@@ -1440,7 +1441,7 @@ class PTX8Bible( Bible ):
     # end of PTX8Bible.loadPTX8DerivedTranslationStatus
 
 
-    def loadPTX8Licence( self ):
+    def loadPTX8Licence( self ) -> None:
         """
         Load the license.json file and parse it into the dictionary.
         """
@@ -1475,7 +1476,7 @@ class PTX8Bible( Bible ):
     # end of PTX8Bible.loadPTX8Licence
 
 
-    def loadPTX8Notes( self ):
+    def loadPTX8Notes( self ) -> None:
         """
         Load the Notes_*.xml files (if they exist) and parse them into the dictionary self.suppliedMetadata['PTX8'].
         """
@@ -1624,7 +1625,7 @@ class PTX8Bible( Bible ):
     # end of PTX8Bible.loadPTX8Notes
 
 
-    def loadPTX8ParallelPassageStatus( self ):
+    def loadPTX8ParallelPassageStatus( self ) -> None:
         """
         Load the ParallelPassageStatus.xml file (if it exists) and parse it into the dictionary self.suppliedMetadata.
         """
@@ -1720,7 +1721,7 @@ class PTX8Bible( Bible ):
     # end of PTX8Bible.loadPTX8ParallelPassageStatus
 
 
-    def loadPTX8ProjectBiblicalTerms( self ):
+    def loadPTX8ProjectBiblicalTerms( self ) -> None:
         """
         Load the BiblicalTerms*.xml file (if it exists) and parse it into the dictionary self.suppliedMetadata['PTX8'].
         """
@@ -1820,7 +1821,7 @@ class PTX8Bible( Bible ):
     # end of PTX8Bible.loadPTX8ProjectBiblicalTerms
 
 
-    def loadPTX8ProjectProgress( self ):
+    def loadPTX8ProjectProgress( self ) -> None:
         """
         Load the Progress*.xml file (if it exists) and parse it into the dictionary self.suppliedMetadata['PTX8'].
         """
@@ -2147,7 +2148,7 @@ class PTX8Bible( Bible ):
     # end of PTX8Bible.loadPTX8ProjectProgress
 
 
-    def loadPTX8ProjectProgressCSV( self ):
+    def loadPTX8ProjectProgressCSV( self ) -> None:
         """
         Load the Progress*.xml file (if it exists) and parse it into the dictionary self.suppliedMetadata['PTX8'].
         """
@@ -2182,7 +2183,7 @@ class PTX8Bible( Bible ):
     # end of PTX8Bible.loadPTX8ProjectProgressCSV
 
 
-    def loadPTX8PrintConfig( self ):
+    def loadPTX8PrintConfig( self ) -> None:
         """
         Load the PrintConfig*.xml file (if it exists) and parse it into the dictionary self.suppliedMetadata['PTX8'].
         """
@@ -2282,7 +2283,7 @@ class PTX8Bible( Bible ):
     # end of PTX8Bible.loadPTX8PrintConfig
 
 
-    def loadPTX8PrintDraftChanges( self ):
+    def loadPTX8PrintDraftChanges( self ) -> None:
         """
         Load the AutoCorrect.txt file (which is a text file)
             and parse it into the ordered dictionary PTXPrintDraftChanges.
@@ -2321,7 +2322,7 @@ class PTX8Bible( Bible ):
         # end of processUnicode
 
 
-        def processPrintDraftChangesLine( line, lineNumber ):
+        def processPrintDraftChangesLine( line, lineNumber ) -> None:
             """
             Uses a state machine to process the line from the PrintDraftChanges files.
 
@@ -2447,7 +2448,7 @@ class PTX8Bible( Bible ):
     # end of PTX8Bible.loadPTX8PrintDraftChanges
 
 
-    def loadPTX8SpellingStatus( self ):
+    def loadPTX8SpellingStatus( self ) -> None:
         """
         Load the SpellingStatus.xml file (if it exists) and parse it into the dictionary self.suppliedMetadata.
         """
@@ -2524,7 +2525,7 @@ class PTX8Bible( Bible ):
     # end of PTX8Bible.loadPTX8SpellingStatus
 
 
-    def loadPTX8Styles( self ):
+    def loadPTX8Styles( self ) -> None:
         """
         Load the something.sty file (which is a SFM file) and parse it into the dictionary PTXStyles.
         """
@@ -2616,7 +2617,7 @@ class PTX8Bible( Bible ):
     # end of PTX8Bible.loadPTX8Styles
 
 
-    def loadPTX8TermRenderings( self ):
+    def loadPTX8TermRenderings( self ) -> None:
         """
         Load the TermRenderings*.xml file (if it exists) and parse it into the dictionary self.suppliedMetadata['PTX8'].
         """
@@ -2729,7 +2730,7 @@ class PTX8Bible( Bible ):
     # end of PTX8Bible.loadPTX8TermRenderings
 
 
-    def loadUniqueId( self ):
+    def loadUniqueId( self ) -> None:
         """
         Load the unique.id file (if it exists) and parse it into the dictionary self.suppliedMetadata.
 
@@ -2766,7 +2767,7 @@ class PTX8Bible( Bible ):
     # end of PTX8Bible.loadUniqueId
 
 
-    def loadPTX8WordAnalyses( self ):
+    def loadPTX8WordAnalyses( self ) -> None:
         """
         Load the WordAnalyses.xml file (if it exists) and parse it into the dictionary self.suppliedMetadata.
         """
@@ -2785,7 +2786,7 @@ class PTX8Bible( Bible ):
         #loadErrors:list[str] = []
 
 
-        def processWordAnalysis( word, element, treeLocation ):
+        def processWordAnalysis( word, element, treeLocation ) -> dict:
             """
             """
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"processWordAnalysis( {word} )" )
@@ -2870,7 +2871,7 @@ class PTX8Bible( Bible ):
 
 
 
-    def loadBook( self, BBB:str, filename=None ):
+    def loadBook( self, BBB:BookCode, filename=None ) -> None:
         """
         Load the requested book into self.books if it's not already loaded.
 
@@ -2904,7 +2905,7 @@ class PTX8Bible( Bible ):
     # end of PTX8Bible.loadBook
 
 
-    def _loadBookMP( self, BBB_Filename_Tuple ):
+    def _loadBookMP( self, BBB_Filename_Tuple ) -> USXXMLBibleBook | USFMBibleBook | None:
         """
         Multiprocessing version!
         Load the requested book if it's not already loaded (but doesn't save it as that is not safe for multiprocessing)
@@ -2939,7 +2940,7 @@ class PTX8Bible( Bible ):
     # end of PTX8Bible._loadBookMP
 
 
-    def loadBooks( self ):
+    def loadBooks( self ) -> None:
         """
         Load all the books.
         """
@@ -2978,11 +2979,11 @@ class PTX8Bible( Bible ):
         self.doPostLoadProcessing()
     # end of PTX8Bible.loadBooks
 
-    def load( self ):
+    def load( self ) -> None:
         self.loadBooks()
 
 
-    def discoverPTX8( self ):
+    def discoverPTX8( self ) -> None:
         """
         Discover statistics from BibleOrgSys.Formats.PTX8 metadata files
             and put the results into self.discoveryResults list (which must already exist)
@@ -3012,7 +3013,7 @@ class PTX8Bible( Bible ):
 
 
 
-def __processPTX8Bible( parametersTuple ): # for demo
+def __processPTX8Bible( parametersTuple ) -> None: # for demo
     """
     Special shim function used below for multiprocessing.
     """

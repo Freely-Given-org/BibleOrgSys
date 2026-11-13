@@ -33,6 +33,7 @@ from BibleOrgSys.Bible import Bible, BibleBook
 from BibleOrgSys.Internals.InternalBibleBook import BOS_CUSTOM_NESTING_MARKERS
 from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
 import bos_books_codes_py
+from BibleOrgSys.Reference.BookCode import BookCode
 
 
 LAST_MODIFIED_DATE = '2026-10-06' # by RJH
@@ -48,7 +49,7 @@ FILENAME_ENDING = '.EPUB' # Must be UPPERCASE
 
 
 
-def EpubBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=False, autoLoadBooks:bool=False ):
+def EpubBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=False, autoLoadBooks:bool=False ) -> 'bool | EpubBible | int | None':
     """
     Given a folder, search for EPub Bible files or folders in the folder and in the next level down.
 
@@ -139,7 +140,7 @@ def EpubBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=Fa
 
 
 
-def createEpubBible( BibleObject, outputFolder=None ):
+def createEpubBible( BibleObject, outputFolder=None ) -> bool:
     """
     Write the pseudo USFM out into the compressed EPub format.
 
@@ -278,7 +279,7 @@ class EpubBible( Bible ):
     # end of EpubBible.__init__
 
 
-    def preload( self ):
+    def preload( self ) -> None:
         """
         Load the compressed data file and import book objects.
         """
@@ -419,7 +420,7 @@ class EpubBible( Bible ):
     # end of EpubBible.preload
 
     NAME_SPACE = '{http://www.w3.org/1999/xhtml}'
-    def loadBook( self, BBB ):
+    def loadBook( self, BBB:BookCode ) -> None:
         """
         Load the requested book out of the zipped container.
         """
@@ -628,7 +629,7 @@ class EpubBible( Bible ):
     # end of EpubBible.load
 
 
-    def load( self ):
+    def load( self ) -> None:
         """
         Load all the books out of the zipped container.
         """

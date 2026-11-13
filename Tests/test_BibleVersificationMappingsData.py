@@ -32,19 +32,19 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 DATA_ROOT = REPO_ROOT / 'BibleOrgSys/DataFiles/VersificationMappings'
 
 
-def tiny_system(**changes):
+def tiny_system(**changes) -> dict:
     return {'maxVerses': {'GEN': ['5'], 'EXO': ['5']}, 'mappedVerses': {},
             'excludedVerses': [], 'partialVerses': {}, **changes}
 
 
 class BundledDataTests(unittest.TestCase):
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls) -> None:
         cls.bundle = converter.load_bundle()
         cls.reference = converter.build_reference(cls.bundle)
         cls.report = converter.build_coverage_report(cls.bundle, cls.reference)
 
-    def test_snapshot_is_pinned_and_attributed(self):
+    def test_snapshot_is_pinned_and_attributed(self) -> None:
         manifest = self.bundle['manifest']
         self.assertEqual(manifest['snapshotCommit'], '519af776ab65d89a51e37f750779250f940459ef')
         self.assertEqual(manifest['dataLicense'], 'CC-BY-SA-4.0')
@@ -55,12 +55,12 @@ class BundledDataTests(unittest.TestCase):
                 payload = (DATA_ROOT / entry['path']).read_bytes()
                 self.assertEqual(hashlib.sha256(payload).hexdigest(), entry['sha256'])
 
-    def test_reference_and_report_are_reproducible(self):
+    def test_reference_and_report_are_reproducible(self) -> None:
         for name, text in converter.generated_documents(self.bundle).items():
             with self.subTest(file=name):
                 self.assertEqual((DATA_ROOT / name).read_text(encoding='utf-8'), text)
 
-    def test_reference_retains_all_original_counts(self):
+    def test_reference_retains_all_original_counts(self) -> None:
         original = self.bundle['systems']['org']['maxVerses']
         self.assertEqual(len(original), 95)
         for usfm, counts in original.items():
@@ -69,7 +69,7 @@ class BundledDataTests(unittest.TestCase):
                 self.assertEqual(self.reference['books'][bbb]['maxVerses'], list(map(int, counts)))
                 self.assertEqual(self.reference['books'][bbb]['sourceSystem'], 'org')
 
-    def test_hebrew_and_greek_core_is_identified_separately(self):
+    def test_hebrew_and_greek_core_is_identified_separately(self) -> None:
         core = {bbb: book for bbb, book in self.reference['books'].items() if book['role'] == 'core-book'}
         self.assertEqual(len(core), 66)
         # Hebrew Joel and Malachi retain their original chapter divisions.
@@ -78,7 +78,7 @@ class BundledDataTests(unittest.TestCase):
         self.assertEqual(len(core['MAT']['maxVerses']), 28)
         self.assertNotIn('TOB', core)
 
-    def test_extensions_have_explicit_sources_and_no_inferred_equivalence(self):
+    def test_extensions_have_explicit_sources_and_no_inferred_equivalence(self) -> None:
         self.assertEqual(len(self.reference['books']), 102)
         self.assertFalse(self.reference['conversionReady'])
         self.assertEqual(self.reference['version'], '1-draft')
@@ -94,7 +94,7 @@ class BundledDataTests(unittest.TestCase):
                 self.assertEqual(book['maxVerses'], list(map(int, self.bundle['systems'][source]['maxVerses'][usfm])))
                 self.assertTrue(book['notes'])
 
-    def test_composite_daniel_does_not_expand_the_hebrew_core(self):
+    def test_composite_daniel_does_not_expand_the_hebrew_core(self) -> None:
         self.assertEqual(len(self.reference['books']['DAN']['maxVerses']), 12)
         self.assertEqual(len(self.reference['books']['DNG']['maxVerses']), 12)
         self.assertEqual(self.reference['books']['DNG']['role'], 'composite-view')
@@ -103,12 +103,12 @@ class BundledDataTests(unittest.TestCase):
         self.assertIn('SUS', self.reference['books'])
         self.assertIn('BEL', self.reference['books'])
 
-    def test_latin_extensions_keep_their_native_book_identity(self):
+    def test_latin_extensions_keep_their_native_book_identity(self) -> None:
         self.assertEqual(self.reference['books']['LAO']['maxVerses'], [20])
         self.assertEqual(self.reference['books']['EZ6']['maxVerses'], [63, 78])
         self.assertEqual(self.reference['books']['EZ6']['role'], 'extract-view')
 
-    def test_vulgate_textual_gaps_are_blocked_even_without_explicit_rules(self):
+    def test_vulgate_textual_gaps_are_blocked_even_without_explicit_rules(self) -> None:
         vul = self.report['systems']['vul']
         self.assertEqual(len(vul['documentedRestrictions']), 1)
         for book in ('TOB', 'JDT', 'SIR'):
@@ -118,14 +118,14 @@ class BundledDataTests(unittest.TestCase):
                 self.assertEqual(coverage['explicitMappingRuleCount'], 0)
                 self.assertFalse(coverage['identityMappingAssumed'])
 
-    def test_no_source_system_claims_conversion_or_identity_coverage(self):
+    def test_no_source_system_claims_conversion_or_identity_coverage(self) -> None:
         for name, audit in self.report['systems'].items():
             with self.subTest(system=name):
                 self.assertFalse(audit['conversionReady'])
                 self.assertEqual(audit['mappingTargetSystem'], 'org')
                 self.assertTrue(all(not b['identityMappingAssumed'] for b in audit['books'].values()))
 
-    def test_original_missing_daniel_and_verse_68_are_preserved_as_findings(self):
+    def test_original_missing_daniel_and_verse_68_are_preserved_as_findings(self) -> None:
         issues = self.report['systems']['org']['issues']
         undefined = [i for i in issues if i['code'] == 'UNDEFINED_BOOK']
         self.assertEqual(len(undefined), 8)
@@ -136,7 +136,7 @@ class BundledDataTests(unittest.TestCase):
         self.assertIn('DNG', self.reference['books'])
         self.assertEqual(self.reference['books']['PAZ']['maxVerses'], [67])
 
-    def test_reversed_vulgate_range_is_not_silently_repaired(self):
+    def test_reversed_vulgate_range_is_not_silently_repaired(self) -> None:
         rules = self.bundle['systems']['vul']['mappedVerses']
         self.assertEqual(rules['DAG 3:52-23'], 'S3Y 1:30-31')
         findings = [i for i in self.report['systems']['vul']['issues'] if i['code'] == 'REVERSED_RANGE']
@@ -144,13 +144,13 @@ class BundledDataTests(unittest.TestCase):
         self.assertEqual(findings[0]['reference'], 'DAG 3:52-23')
         self.assertEqual(self.bundle['policy']['corrections'], [])
 
-    def test_lettered_esther_and_lxx_whitespace_need_explicit_policies(self):
+    def test_lettered_esther_and_lxx_whitespace_need_explicit_policies(self) -> None:
         self.assertIn('ESG 1:1a', self.report['systems']['eng']['letteredReferences'])
         self.assertGreater(self.report['systems']['eng']['issueCounts']['UNDECLARED_SEGMENT'], 0)
         self.assertEqual(self.report['systems']['lxx']['issueCounts']['SEGMENT_LABEL_WHITESPACE'], 74)
         self.assertEqual(self.bundle['systems']['lxx']['partialVerses']['EXO 28:29'], ['-', 'a '])
 
-    def test_ethiopian_counts_are_not_implicitly_filled_in(self):
+    def test_ethiopian_counts_are_not_implicitly_filled_in(self) -> None:
         data = self.bundle['systems']['ethiopian_custom']
         self.assertEqual(len(data['maxVerses']['EXO']), 3)
         self.assertNotIn('basedOn', data)
@@ -159,20 +159,20 @@ class BundledDataTests(unittest.TestCase):
         self.assertIn('INCOMPLETE_CUSTOM_COUNTS', audit['issueCounts'])
         self.assertEqual(audit['books']['EXO']['status'], 'underspecified-custom-counts')
 
-    def test_custom_sample_exercises_omissions_merges_and_inheritance(self):
+    def test_custom_sample_exercises_omissions_merges_and_inheritance(self) -> None:
         sample = self.report['sampleCustomDefinition']
         self.assertEqual(sample['excludedVerseEntryCount'], 49)
         self.assertEqual(sample['mergedVerseEntryCount'], 29)
         self.assertIn('INHERITANCE_NOT_RESOLVED', sample['issueCounts'])
         self.assertEqual(self.report['inheritanceIssues'], [])
 
-    def test_known_bos_gaps_are_visible(self):
+    def test_known_bos_gaps_are_visible(self) -> None:
         self.assertEqual(self.report['legacyBooksMissingFromReference'],
                          ['BA2', 'DNA', 'ESA', 'EZ5', 'EZN', 'LBA', 'MQ2', 'PS3'])
         self.assertEqual(self.report['booksMissingFromReferenceByLegacySystem']['BibMaxRef'],
                          ['BA2', 'LBA', 'MQ2', 'PS3'])
 
-    def test_crosswalk_matches_existing_bos_book_catalogue(self):
+    def test_crosswalk_matches_existing_bos_book_catalogue(self) -> None:
         xml_path = REPO_ROOT / 'BibleOrgSys/DataFiles/BibleBooksCodes.xml'
         self.assertEqual(hashlib.sha256(xml_path.read_bytes()).hexdigest(), self.bundle['bookCodes']['sourceSHA256'])
         allowed = {}
@@ -185,7 +185,7 @@ class BundledDataTests(unittest.TestCase):
                 self.assertIn(entry['bosCode'], allowed[usfm])
                 self.assertEqual(set(entry['alternatives']), allowed[usfm] - {entry['bosCode']})
 
-    def test_lxx_ezra_uses_source_context_only(self):
+    def test_lxx_ezra_uses_source_context_only(self) -> None:
         crosswalk = self.bundle['bookCodes']
         self.assertEqual(converter.bos_book_code('EZR', 'lxx', crosswalk), 'EZN')
         self.assertEqual(converter.bos_book_code('EZR', 'org', crosswalk), 'EZR')
@@ -195,30 +195,30 @@ class BundledDataTests(unittest.TestCase):
         with self.assertRaises(converter.VersificationDataError):
             converter.bos_book_code('ZZZ', 'org', crosswalk)
 
-    def test_legacy_inventory_snapshot_matches_bos(self):
+    def test_legacy_inventory_snapshot_matches_bos(self) -> None:
         path = REPO_ROOT / self.bundle['legacy']['source']
         self.assertEqual(hashlib.sha256(path.read_bytes()).hexdigest(), self.bundle['legacy']['sourceSHA256'])
         legacy = json.loads(path.read_text())
         self.assertEqual(self.bundle['legacy']['systems'], {s: list(d['CV']) for s, d in legacy.items()})
 
-    def test_building_and_auditing_do_not_mutate_source_data(self):
+    def test_building_and_auditing_do_not_mutate_source_data(self) -> None:
         before = deepcopy(self.bundle)
         converter.generated_documents(self.bundle)
         self.assertEqual(self.bundle, before)
 
-    def test_policy_cannot_replace_a_core_book(self):
+    def test_policy_cannot_replace_a_core_book(self) -> None:
         bundle = deepcopy(self.bundle)
         bundle['policy']['extensions']['GEN'] = bundle['policy']['extensions']['LAO']
         with self.assertRaisesRegex(converter.VersificationDataError, 'replace a base book'):
             converter.build_reference(bundle)
 
-    def test_policy_cannot_point_to_absent_counts(self):
+    def test_policy_cannot_point_to_absent_counts(self) -> None:
         bundle = deepcopy(self.bundle)
         bundle['policy']['extensions']['LAO']['sourceSystem'] = 'org'
         with self.assertRaisesRegex(converter.VersificationDataError, 'Missing reference count source'):
             converter.build_reference(bundle)
 
-    def test_reference_code_collisions_are_not_overwritten(self):
+    def test_reference_code_collisions_are_not_overwritten(self) -> None:
         bundle = deepcopy(self.bundle)
         bundle['bookCodes']['books']['LAO']['bosCode'] = 'GEN'
         with self.assertRaisesRegex(converter.VersificationDataError, 'Two reference entries'):
@@ -226,34 +226,34 @@ class BundledDataTests(unittest.TestCase):
 
 
 class RangeAndAuditTests(unittest.TestCase):
-    def test_numeric_range_and_zero_title(self):
+    def test_numeric_range_and_zero_title(self) -> None:
         span = converter.parse_reference_span('PSA 90:0-2')
         self.assertEqual(span.points(), ('PSA 90:0', 'PSA 90:1', 'PSA 90:2'))
 
-    def test_single_suffix_is_preserved(self):
+    def test_single_suffix_is_preserved(self) -> None:
         self.assertEqual(converter.parse_reference_span('ESG 1:1a').points(), ('ESG 1:1a',))
 
-    def test_suffix_ranges_are_not_expanded_without_an_inventory(self):
+    def test_suffix_ranges_are_not_expanded_without_an_inventory(self) -> None:
         self.assertIsNone(converter.parse_reference_span('ESG 1:1a-1c').points())
         self.assertIsNone(converter.parse_reference_span('ESG 1:1a-2b').points())
 
-    def test_huge_ranges_do_not_allocate_unbounded_lists(self):
+    def test_huge_ranges_do_not_allocate_unbounded_lists(self) -> None:
         self.assertIsNone(converter.parse_reference_span('GEN 1:1-99999999').points())
 
-    def test_invalid_references_fail_explicitly(self):
+    def test_invalid_references_fail_explicitly(self) -> None:
         for reference in ('DAG 3:52-23', 'GEN 1:3c-3a', 'GEN 0:1', 'GEN -1:1', 'GEN 1:-1',
                           'GEN 1:1-2:3', 'GEN 1:1,3', 'XYZ', '', None):
             with self.subTest(reference=reference), self.assertRaises(converter.VersificationDataError):
                 converter.parse_reference_span(reference)
 
-    def test_unequal_ranges_are_not_zipped(self):
+    def test_unequal_ranges_are_not_zipped(self) -> None:
         data = tiny_system(mappedVerses={'GEN 1:1-3': 'EXO 1:1'})
         result = converter.audit_system('example', data, tiny_system())
         issue = next(i for i in result['issues'] if i['code'] == 'UNEQUAL_RANGE_LENGTHS')
         self.assertEqual((issue['sourceLength'], issue['targetLength']), (3, 1))
         self.assertEqual(issue['source'], 'GEN 1:1-3')
 
-    def test_overlapping_rules_keep_all_relationships(self):
+    def test_overlapping_rules_keep_all_relationships(self) -> None:
         data = tiny_system(mappedVerses={'GEN 1:1-2': 'EXO 1:1-2', 'GEN 1:2-3': 'EXO 1:2-3'})
         result = converter.audit_system('example', data, tiny_system())
         for code, point in [('SOURCE_OVERLAP', 'GEN 1:2'), ('TARGET_OVERLAP', 'EXO 1:2')]:
@@ -262,20 +262,20 @@ class RangeAndAuditTests(unittest.TestCase):
                 self.assertEqual(issue['references'], [point])
                 self.assertEqual(len(issue['rules']), 2)
 
-    def test_many_to_one_inverse_collision_is_retained(self):
+    def test_many_to_one_inverse_collision_is_retained(self) -> None:
         data = tiny_system(mappedVerses={'GEN 1:1': 'EXO 1:1', 'GEN 1:2': 'EXO 1:1'})
         result = converter.audit_system('example', data, tiny_system())
         issue = next(i for i in result['issues'] if i['code'] == 'TARGET_OVERLAP')
         self.assertEqual({r['source'] for r in issue['rules']}, {'GEN 1:1', 'GEN 1:2'})
 
-    def test_source_and_destination_bounds_use_different_systems(self):
+    def test_source_and_destination_bounds_use_different_systems(self) -> None:
         data = tiny_system(maxVerses={'GEN': ['8']}, mappedVerses={'GEN 1:8': 'EXO 1:6'})
         result = converter.audit_system('example', data, tiny_system())
         issues = [i for i in result['issues'] if i['code'] == 'VERSE_OUTSIDE_COUNTS']
         self.assertEqual(len(issues), 1)
         self.assertEqual(issues[0]['role'], 'target')
 
-    def test_omissions_merges_and_partial_refs_are_also_checked(self):
+    def test_omissions_merges_and_partial_refs_are_also_checked(self) -> None:
         data = tiny_system(excludedVerses=['GEN 2:1'], mergedVerses=['GEN 1:4-7'],
                            partialVerses={'EXO 1:6': ['a', 'b']})
         result = converter.audit_system('example', data, tiny_system())
@@ -283,37 +283,37 @@ class RangeAndAuditTests(unittest.TestCase):
         locations = {i['location'] for i in result['issues'] if i['code'] == 'VERSE_OUTSIDE_COUNTS'}
         self.assertEqual(locations, {'mergedVerses/0', 'partialVerses/EXO 1:6'})
 
-    def test_zero_titles_are_observed_without_assuming_universal_zero_support(self):
+    def test_zero_titles_are_observed_without_assuming_universal_zero_support(self) -> None:
         data = tiny_system(mappedVerses={'GEN 1:0': 'EXO 1:0'})
         result = converter.audit_system('example', data, tiny_system())
         self.assertEqual(result['verseZeroReferences'], ['EXO 1:0', 'GEN 1:0'])
         self.assertNotIn('REFERENCE_SYNTAX', result['issueCounts'])
 
-    def test_invalid_counts_are_not_coerced(self):
+    def test_invalid_counts_are_not_coerced(self) -> None:
         for counts in ([True], [-1], [1.5], ['-1'], ['1.5'], [], '31'):
             with self.subTest(counts=counts):
                 result = converter.audit_system('bad', tiny_system(maxVerses={'GEN': counts}), tiny_system())
                 self.assertIn('INVALID_COUNTS', result['issueCounts'])
 
-    def test_invalid_and_duplicate_partial_labels(self):
+    def test_invalid_and_duplicate_partial_labels(self) -> None:
         for labels, code in [([], 'INVALID_SEGMENT_LABELS'), ([3], 'INVALID_SEGMENT_LABELS'),
                              (['a', 'a'], 'DUPLICATE_SEGMENT_LABEL'), (['a '], 'SEGMENT_LABEL_WHITESPACE')]:
             with self.subTest(labels=labels):
                 result = converter.audit_system('bad', tiny_system(partialVerses={'GEN 1:1': labels}), tiny_system())
                 self.assertIn(code, result['issueCounts'])
 
-    def test_unknown_field_is_recorded(self):
+    def test_unknown_field_is_recorded(self) -> None:
         result = converter.audit_system('bad', tiny_system(typo=[]), tiny_system())
         self.assertIn('UNKNOWN_FIELD', result['issueCounts'])
 
-    def test_unknown_and_cyclic_inheritance(self):
+    def test_unknown_and_cyclic_inheritance(self) -> None:
         definitions = {'a': {'basedOn': 'b'}, 'b': {'basedOn': 'a'}, 'c': {'basedOn': 'missing'}}
         self.assertEqual(converter.audit_inheritance(definitions), [
             {'code': 'INHERITANCE_CYCLE', 'systems': ['a', 'b']},
             {'code': 'UNKNOWN_BASE', 'system': 'c', 'base': 'missing'},
         ])
 
-    def test_inheritance_does_not_fill_in_missing_counts(self):
+    def test_inheritance_does_not_fill_in_missing_counts(self) -> None:
         data = tiny_system(basedOn='org', maxVerses={'GEN': ['1']}, mappedVerses={'GEN 1:2': 'GEN 1:2'})
         result = converter.audit_system('custom', data, tiny_system())
         self.assertIn('INHERITANCE_NOT_RESOLVED', result['issueCounts'])
@@ -325,7 +325,7 @@ class RangeAndAuditTests(unittest.TestCase):
 class IntegrityAndDistributionTests(unittest.TestCase):
     @unittest.skipUnless(os.environ.get('BOS_VERSIFICATION_TEST_WHEEL'),
                          'Set BOS_VERSIFICATION_TEST_WHEEL to test a built wheel as well as zip resources.')
-    def test_built_wheel_contains_and_audits_the_complete_bundle(self):
+    def test_built_wheel_contains_and_audits_the_complete_bundle(self) -> None:
         wheel = Path(os.environ['BOS_VERSIFICATION_TEST_WHEEL']).resolve()
         with zipfile.ZipFile(wheel) as archive:
             self.assertEqual(len(archive.namelist()), len(set(archive.namelist())))
@@ -365,7 +365,7 @@ class IntegrityAndDistributionTests(unittest.TestCase):
                                     cwd=temporary, capture_output=True, text=True, timeout=30)
             self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
-    def test_modified_source_fails_checksum_verification(self):
+    def test_modified_source_fails_checksum_verification(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary) / 'bundle'
             shutil.copytree(DATA_ROOT, root)
@@ -374,7 +374,7 @@ class IntegrityAndDistributionTests(unittest.TestCase):
             with self.assertRaisesRegex(converter.VersificationDataError, 'checksum mismatch'):
                 converter.load_bundle(root)
 
-    def test_modified_supplement_evidence_fails_checksum_verification(self):
+    def test_modified_supplement_evidence_fails_checksum_verification(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary) / 'bundle'
             shutil.copytree(DATA_ROOT, root)
@@ -383,7 +383,7 @@ class IntegrityAndDistributionTests(unittest.TestCase):
             with self.assertRaisesRegex(converter.VersificationDataError, 'checksum mismatch'):
                 converter.load_bundle(root)
 
-    def test_incomplete_manifest_cannot_skip_checksum_verification(self):
+    def test_incomplete_manifest_cannot_skip_checksum_verification(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary) / 'bundle'
             shutil.copytree(DATA_ROOT, root)
@@ -394,7 +394,7 @@ class IntegrityAndDistributionTests(unittest.TestCase):
             with self.assertRaisesRegex(converter.VersificationDataError, 'each bundled source exactly once'):
                 converter.load_bundle(root)
 
-    def test_duplicate_json_keys_are_rejected_even_with_updated_checksum(self):
+    def test_duplicate_json_keys_are_rejected_even_with_updated_checksum(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary) / 'bundle'
             shutil.copytree(DATA_ROOT, root)
@@ -408,7 +408,7 @@ class IntegrityAndDistributionTests(unittest.TestCase):
             with self.assertRaisesRegex(converter.VersificationDataError, 'Duplicate JSON key'):
                 converter.load_bundle(root)
 
-    def test_check_detects_stale_outputs_and_write_reproduces_them(self):
+    def test_check_detects_stale_outputs_and_write_reproduces_them(self) -> None:
         with tempfile.TemporaryDirectory() as temporary, redirect_stdout(io.StringIO()):
             self.assertEqual(converter.main(['--write', '--output-dir', temporary]), 0)
             self.assertEqual(converter.main(['--check', '--output-dir', temporary]), 0)
@@ -417,7 +417,7 @@ class IntegrityAndDistributionTests(unittest.TestCase):
                 converter.main(['--check', '--output-dir', temporary])
             self.assertEqual(error.exception.code, 1)
 
-    def test_zip_resources_work_without_checkout_native_modules_or_site_packages(self):
+    def test_zip_resources_work_without_checkout_native_modules_or_site_packages(self) -> None:
         # A deliberately minimal distribution catches undeclared imports and
         # filesystem-path assumptions independently of the maintainer's checkout.
         with tempfile.TemporaryDirectory() as temporary:
@@ -427,7 +427,9 @@ class IntegrityAndDistributionTests(unittest.TestCase):
                                  'BibleOrgSys/Reference/Converters/__init__.py',
                                  'BibleOrgSys/Reference/Converters/BibleVersificationMappingsConverter.py',
                                  'BibleOrgSys/Reference/Converters/BibleVersificationSniffingAudit.py',
-                                 'BibleOrgSys/Reference/BibleVersificationMappings.py'):
+                                 'BibleOrgSys/Reference/BibleVersificationMappings.py',
+                                 'BibleOrgSys/Reference/VerseRef.py',
+                                 'BibleOrgSys/Reference/BookCode.py'):
                     output.write(REPO_ROOT / relative, relative)
                 for path in DATA_ROOT.rglob('*'):
                     if path.is_file():

@@ -200,7 +200,7 @@ class HebrewLexiconSimple:
 
     This class doesn't deal at all with XML, only with Python dictionaries, etc.
     """
-    def __init__( self, XMLFolder=None, preload=False ) -> None:
+    def __init__( self, XMLFolder=None, preload:bool=False ) -> None:
         """
         Constructor: expects the filepath of the source XML file.
         Loads (and crudely validates the XML file) into an element tree.
@@ -213,7 +213,7 @@ class HebrewLexiconSimple:
     # end of HebrewLexiconSimple.__init__
 
 
-    def load( self ):
+    def load( self ) -> None:
         """
         Load the actual lexicon (slow).
         """
@@ -461,7 +461,7 @@ class HebrewLexiconSimple:
     # end of HebrewLexiconSimple.getBrDrBrEntryField
 
 
-    def getBrDrBrEntryHTML( self, key, getFull=False ):
+    def getBrDrBrEntryHTML( self, key, getFull:bool=False ) -> str | None:
         """Render BDB mixed-content XML without changing its wording or punctuation.
 
         ``key`` is a BDB identifier such as ``a.ab.ab``. Missing entries return
@@ -483,14 +483,14 @@ class HebrewLexiconSimple:
         inlineClasses = {'pos':'POS', 'stem':'Stem', 'asp':'Asp', 'def':'Def', 'em':'Em'}
         escape = BibleOrgSysGlobals.makeSafeXML
 
-        def text(value):
+        def text(value) -> str:
             # XML indentation is not prose; keep nonbreaking spaces intact.
             return escape(re.sub(r'[\t\r\n ]+', ' ', value or ''))
 
         def tagName(element):
             return element.tag.removeprefix(namespace)
 
-        def renderInline(element, location):
+        def renderInline(element, location) -> str:
             tag = tagName(element)
             if tag in ('status', 'page'):
                 return '' # Editorial status/print page boundaries are not prose.
@@ -517,18 +517,18 @@ class HebrewLexiconSimple:
                 return f'<span class="ref"{attributes}>{content}</span>'
             raise ValueError(f'BDB {key} {location}: unrecognised XML element <{tag}>')
 
-        def renderBlocks(element, location, prefix=''):
+        def renderBlocks(element, location, prefix:str=''):
             # Each recursive call owns its paragraphs and list. Hebrew words
             # remain inline; only a sense boundary ends a paragraph.
             blocks, inline, senses = [], [prefix, text(element.text)], []
 
-            def flushParagraph():
+            def flushParagraph() -> None:
                 paragraph = ''.join(inline).strip()
                 if paragraph:
                     blocks.append(f'<p>{paragraph}</p>')
                 inline.clear()
 
-            def flushSenses():
+            def flushSenses() -> None:
                 if senses:
                     blocks.append('<ul>\n' + '\n'.join(senses) + '\n</ul>')
                     senses.clear()
@@ -577,7 +577,7 @@ class HebrewLexicon( HebrewLexiconSimple ):
     It automagically accepts Hebrew and Greek Strong's numbers (like H123 and G532)
         plus BrDrBr (Hebrew) codes (like a.gq.ab).
     """
-    def __init__( self, XMLFolder=None, preload=False ) -> None:
+    def __init__( self, XMLFolder=None, preload:bool=False ) -> None:
         """
         Constructor: expects the filepath of the source XML file.
         Loads (and crudely validates the XML file) into an element tree.

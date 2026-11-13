@@ -86,7 +86,7 @@ KEY_SEARCH_FOLDERPATHS = (
 
 
 
-def getSecurityKey():
+def getSecurityKey() -> str:
     """
     See if we can find the personal key code either in the current folder
         or in other potential folders.
@@ -329,7 +329,7 @@ class BibleBrainBibles:
     # end of BibleBrainBibles.fetchAllVolumes
 
 
-    def fetchAllTextVolumes( self ):
+    def fetchAllTextVolumes( self ) -> dict:
         """
         Download the volume lists from FCBH if necessary. (This can be quite slow.)
 
@@ -391,7 +391,7 @@ class BibleBrainBibles:
     # end of BibleBrainBibles.fetchAllTextVolumes
 
 
-    def fetchAllEnglishTextVolumes( self ):
+    def fetchAllEnglishTextVolumes( self ) -> dict:
         """
         Download the volume lists from FCBH if necessary. (This can be quite slow.)
 
@@ -459,7 +459,7 @@ class BibleBrainBibles:
     # end of BibleBrainBibles.__str__
 
 
-    def searchNames( self, searchText ):
+    def searchNames( self, searchText ) -> list[tuple]:
         """
         """
         if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
@@ -584,7 +584,7 @@ class BibleBrainBible( GenericOnlineBible ):
     # end of BibleBrainBible.getOnlineData
 
 
-    def getVerseDataList( self, key ):
+    def getVerseDataList( self, key ) -> list | None:
         """
         Equivalent to the one in InternalBible, except we may have to fetch the data.
         """

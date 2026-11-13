@@ -36,26 +36,26 @@ DEBUGGING_THIS_MODULE = False
 class USFM3MarkersConverterTests( unittest.TestCase ):
     """ Unit tests for the _USFM3MarkersConverter object. """
 
-    def setUp( self ):
+    def setUp( self ) -> None:
         parser = BibleOrgSysGlobals.setup( PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
         # BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
         BibleOrgSysGlobals.preloadCommonData()
         # Create the USFM3MarkersConverter object
         self.UMc = USFM3MarkersConverter.USFM3MarkersConverter().loadAndValidate() # Doesn't reload the XML unnecessarily :)
 
-    def test_1010_str( self ):
+    def test_1010_str( self ) -> None:
         """ Test the __str__ function. """
         result = str( self.UMc )
         self.assertTrue( isinstance( result, str ) )
         self.assertTrue( len(result) > 20 )
     # end of test_1010_str
 
-    def test_1020_len( self ):
+    def test_1020_len( self ) -> None:
         """ Test the __len__ function. """
         self.assertTrue( 100 < len(self.UMc) < 255 ) # The number of USFM markers
     # end of test_1020_len
 
-    def test_1030_importDataToPython( self ):
+    def test_1030_importDataToPython( self ) -> None:
         """ Test the importDataToPython function. """
         result = self.UMc.importDataToPython()
         self.assertTrue( isinstance( result, dict ) )
@@ -68,22 +68,22 @@ class USFM3MarkersConverterTests( unittest.TestCase ):
             self.assertTrue( 3 < len(result[dictName]) < 220 )
     # end of test_1030_importDataToPython
 
-    def test_1040_pickle( self ):
+    def test_1040_pickle( self ) -> None:
         """ Test the pickle function. """
         self.assertEqual( self.UMc.pickle(), None ) # Basically just make sure that it runs
     # end of test_1040_pickle
 
-    def test_1050_exportDataToPython( self ):
+    def test_1050_exportDataToPython( self ) -> None:
         """ Test the exportDataToPython function. """
         self.assertEqual( self.UMc.exportDataToPython(), None ) # Basically just make sure that it runs
     # end of test_1050_exportDataToPython
 
-    def test_1060_exportDataToJSON( self ):
+    def test_1060_exportDataToJSON( self ) -> None:
         """ Test the exportDataToJSON function. """
         self.assertEqual( self.UMc.exportDataToJSON(), None ) # Basically just make sure that it runs
     # end of test_1060_exportDataToJSON
 
-    def test_1070_exportDataToC( self ):
+    def test_1070_exportDataToC( self ) -> None:
         """ Test the exportDataToC function. """
         self.assertEqual( self.UMc.exportDataToC(), None ) # Basically just make sure that it runs
     # end of test_1070_exportDataToC
@@ -93,26 +93,26 @@ class USFM3MarkersConverterTests( unittest.TestCase ):
 class USFM3MarkersTests( unittest.TestCase ):
     """ Unit tests for the USFM3Markers object. """
 
-    def setUp( self ):
+    def setUp( self ) -> None:
         parser = BibleOrgSysGlobals.setup( PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
         # BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
         BibleOrgSysGlobals.preloadCommonData()
         # Create the USFM3Markers object
         self.UMs = USFM3Markers.USFM3Markers().loadData() # Doesn't reload the XML unnecessarily :)
 
-    def test_2010_str( self ):
+    def test_2010_str( self ) -> None:
         """ Test the __str__ function. """
         result = str( self.UMs )
         self.assertTrue( isinstance( result, str ) )
         self.assertTrue( len(result) > 40 )
     # end of test_2010_str
 
-    def test_2020_len( self ):
+    def test_2020_len( self ) -> None:
         """ Test the __len__ function. """
         self.assertTrue( len(self.UMs) > 110 )
     # end of test_2020_len
 
-    def test_2030_contains( self ):
+    def test_2030_contains( self ) -> None:
         """ Test the __contains__ function. """
         for goodMarker in ( 'h', 'q', 'p', 'c', 'v', 'q1', 'q2', 'q3', 'em', ):
             self.assertTrue( goodMarker in self.UMs )
@@ -120,7 +120,7 @@ class USFM3MarkersTests( unittest.TestCase ):
             self.assertFalse( badMarker in self.UMs )
     # end of test_2030_contains
 
-    def test_2040_isValidMarker( self ):
+    def test_2040_isValidMarker( self ) -> None:
         """ Test the isValidMarker function. """
         for goodMarker in ( 'h', 'q', 'p', 'c', 'v', 'q1', 'q2', 'q3', 'em', ):
             self.assertTrue( self.UMs.isValidMarker(goodMarker) )
@@ -128,7 +128,7 @@ class USFM3MarkersTests( unittest.TestCase ):
             self.assertFalse( self.UMs.isValidMarker(badMarker) )
     # end of test_2040_isValidMarker
 
-    def test_2050_is_newline_marker( self ):
+    def test_2050_is_newline_marker( self ) -> None:
         """ Test the is_newline_marker function. """
         for simpleMarker in ( 'p', 'c', 'b', 'v', 'toc1', ):
             self.assertTrue( self.UMs.is_newline_marker(simpleMarker) )
@@ -144,7 +144,7 @@ class USFM3MarkersTests( unittest.TestCase ):
             self.assertFalse( self.UMs.is_newline_marker(badMarker) )
     # end of test_2050_is_newline_marker
 
-    def test_2060_isInternalMarker( self ):
+    def test_2060_isInternalMarker( self ) -> None:
         """ Test the isInternalMarker function. """
         for simpleMarker in ( 'f', 'ft', 'x', 'xq', 'em', ):
             self.assertTrue( self.UMs.isInternalMarker(simpleMarker) )
@@ -160,7 +160,7 @@ class USFM3MarkersTests( unittest.TestCase ):
             self.assertFalse( self.UMs.isInternalMarker(badMarker) )
     # end of test_2060_is_newline_marker
 
-    def test_2065_isDeprecatedMarker( self ):
+    def test_2065_isDeprecatedMarker( self ) -> None:
         """ Test the isDeprecatedMarker function. """
         for simpleMarker in ( 'pdi', 'pde', 'wr', 'ps', ):
             self.assertTrue( self.UMs.isDeprecatedMarker(simpleMarker) )
@@ -176,7 +176,7 @@ class USFM3MarkersTests( unittest.TestCase ):
             self.assertFalse( self.UMs.isDeprecatedMarker(badMarker) )
     # end of test_2065_isDeprecatedMarker
 
-    def test_2070_isCompulsoryMarker( self ):
+    def test_2070_isCompulsoryMarker( self ) -> None:
         """ Test the isCompulsoryMarker function. """
         for simpleMarker in ( 'id', 'c', 'v', 'h', ):
             self.assertTrue( self.UMs.isCompulsoryMarker(simpleMarker) )
@@ -190,7 +190,7 @@ class USFM3MarkersTests( unittest.TestCase ):
             self.assertFalse( self.UMs.isCompulsoryMarker(badMarker) )
     # end of test_2070_isCompulsoryMarker
 
-    def test_2080_isNumberableMarker( self ):
+    def test_2080_isNumberableMarker( self ) -> None:
         """ Test the isNumberableMarker function. """
         for simpleMarker in ( 's', 'q', 'ili', ):
             self.assertTrue( self.UMs.isNumberableMarker(simpleMarker) )
@@ -202,7 +202,7 @@ class USFM3MarkersTests( unittest.TestCase ):
             self.assertFalse( self.UMs.isNumberableMarker(badMarker) )
     # end of test_2080_isNumberableMarker
 
-    def test_2085_isNestingMarker( self ):
+    def test_2085_isNestingMarker( self ) -> None:
         """ Test the isNestingMarker function. """
         for simpleMarker in ( 'it', 'nd', 'bk', 'em', 'wj', ):
             self.assertTrue( self.UMs.isNestingMarker(simpleMarker) )
@@ -214,7 +214,7 @@ class USFM3MarkersTests( unittest.TestCase ):
             self.assertFalse( self.UMs.isNestingMarker(badMarker) )
     # end of test_2085_isNestingMarker
 
-    def test_2090_isPrinted( self ):
+    def test_2090_isPrinted( self ) -> None:
         """ Test the isPrinted function. """
         for numberedMarker in ( 'q1', 'q2', 'q3', 's1', 'ili1', 'ili2' ):
             self.assertTrue( self.UMs.isPrinted(numberedMarker) )
@@ -226,7 +226,7 @@ class USFM3MarkersTests( unittest.TestCase ):
             self.assertFalse( self.UMs.isPrinted(badMarker) )
     # end of test_2090_isPrinted
 
-    def test_2100_getMarkerClosureType( self ):
+    def test_2100_getMarkerClosureType( self ) -> None:
         """ Test the getMarkerClosureType function. """
         for simpleMarker in ( 'f', 'ft', 'x', 'xq', 'em', 'wj', 'ndx', ):
             self.assertTrue( self.UMs.getMarkerClosureType(simpleMarker) in ('A','O',) )
@@ -238,7 +238,7 @@ class USFM3MarkersTests( unittest.TestCase ):
             self.assertFalse( self.UMs.getMarkerClosureType(badMarker) )
     # end of test_2100_getMarkerClosureType
 
-    def test_2105_getMarkerContentType( self ):
+    def test_2105_getMarkerContentType( self ) -> None:
         """ Test the getMarkerContentType function. """
         for simpleMarker in ( 'c', 'v', 'f', 'ft', 'x', 'xq', 'em', 'wj', 'ndx', ):
             self.assertTrue( self.UMs.getMarkerContentType(simpleMarker) == 'A' )
@@ -254,7 +254,7 @@ class USFM3MarkersTests( unittest.TestCase ):
             self.assertFalse( self.UMs.getMarkerContentType(badMarker) )
     # end of test_2105_getMarkerContentType
 
-    def test_2110_to_raw_marker( self ):
+    def test_2110_to_raw_marker( self ) -> None:
         """ Test the to_raw_marker function. """
         for simpleMarker in ( 'h', 'q', 'p', 'c', 'b', 'v', 'toc1', 'em', ):
             self.assertEqual( self.UMs.to_raw_marker(simpleMarker), simpleMarker )
@@ -264,7 +264,7 @@ class USFM3MarkersTests( unittest.TestCase ):
             self.assertRaises( KeyError, self.UMs.to_raw_marker, badMarker )
     # end of test_2110_to_raw_marker
 
-    def test_2120_to_standard_marker( self ):
+    def test_2120_to_standard_marker( self ) -> None:
         """ Test the to_standard_marker function. """
         for simpleMarker in ( 'h', 'p', 'c', 'b', 'v', 'toc1', 'em', ):
             self.assertEqual( self.UMs.to_standard_marker(simpleMarker), simpleMarker )
@@ -276,7 +276,7 @@ class USFM3MarkersTests( unittest.TestCase ):
             self.assertRaises( KeyError, self.UMs.to_standard_marker, badMarker )
     # end of test_2120_to_standard_marker
 
-    def test_2130_markerOccursIn( self ):
+    def test_2130_markerOccursIn( self ) -> None:
         """ Test the markerOccursIn function. """
         for marker in ( 'h', 's', 'q', 'ili', 'q1', 'q2', 'q3', 's1', 'ili1', 'ili2', 'p', 'b', 'toc1', 'f', 'ft', 'x', 'xq', 'em', ):
             result = self.UMs.markerOccursIn( marker )
@@ -285,7 +285,7 @@ class USFM3MarkersTests( unittest.TestCase ):
             self.assertRaises( KeyError, self.UMs.markerOccursIn, badMarker )
     # end of test_2130_markerOccursIn
 
-    def test_2140_getMarkerEnglishName( self ):
+    def test_2140_getMarkerEnglishName( self ) -> None:
         """ Test the getMarkerEnglishName function. """
         for marker in ( 'h', 's', 'q', 'ili', 'q1', 'q2', 'q3', 's1', 'ili1', 'ili2', 'p', 'b', 'toc1', 'f', 'ft', 'x', 'xq', 'em', ):
             result = self.UMs.getMarkerEnglishName( marker )
@@ -295,7 +295,7 @@ class USFM3MarkersTests( unittest.TestCase ):
             self.assertRaises( KeyError, self.UMs.getMarkerEnglishName, badMarker )
     # end of test_2140_getMarkerEnglishName
 
-    def test_2150_getMarkerDescription( self ):
+    def test_2150_getMarkerDescription( self ) -> None:
         """ Test the getMarkerDescription function. """
         for marker in ( 'h', 's', 'q', 'ili', 'q1', 'q2', 'q3', 's1', 'ili1', 'ili2', 'p', 'b', 'toc1', 'f', 'ft', 'x', 'xq', 'em', ):
             result = self.UMs.getMarkerDescription( marker )
@@ -306,7 +306,7 @@ class USFM3MarkersTests( unittest.TestCase ):
             self.assertRaises( KeyError, self.UMs.getMarkerDescription, badMarker )
     # end of test_2150_getMarkerDescription
 
-    def test_2160_getOccursInList( self ):
+    def test_2160_getOccursInList( self ) -> None:
         """ Test the getOccursInList function. """
         result = self.UMs.getOccursInList()
         self.assertTrue( isinstance( result , list ) )
@@ -318,7 +318,7 @@ class USFM3MarkersTests( unittest.TestCase ):
             self.assertTrue( name in result )
     #end of test_2160_getOccursInList
 
-    def test_2170_get_newline_markers_list( self ):
+    def test_2170_get_newline_markers_list( self ) -> None:
         """ Test the get_newline_markers_list function. """
         result = self.UMs.get_newline_markers_list( 'Raw' )
         self.assertTrue( isinstance( result , list ) )
@@ -335,7 +335,7 @@ class USFM3MarkersTests( unittest.TestCase ):
             self.assertFalse( badMarker in result )
     #end of test_2170_get_newline_markers_list
 
-    def test_2172_get_newline_markers_list( self ):
+    def test_2172_get_newline_markers_list( self ) -> None:
         """ Test the get_newline_markers_list function. """
         result = self.UMs.get_newline_markers_list( 'Numbered' )
         self.assertTrue( isinstance( result , list ) )
@@ -352,7 +352,7 @@ class USFM3MarkersTests( unittest.TestCase ):
             self.assertFalse( badMarker in result )
     #end of test_2172_get_newline_markers_list
 
-    def test_2174_get_newline_markers_list( self ):
+    def test_2174_get_newline_markers_list( self ) -> None:
         """ Test the get_newline_markers_list function. """
         result = self.UMs.get_newline_markers_list( 'Combined' )
         self.assertTrue( isinstance( result , list ) )
@@ -369,7 +369,7 @@ class USFM3MarkersTests( unittest.TestCase ):
             self.assertFalse( badMarker in result )
     #end of test_2174_get_newline_markers_list
 
-    def test_2176_get_newline_markers_list( self ):
+    def test_2176_get_newline_markers_list( self ) -> None:
         """ Test the get_newline_markers_list function. """
         result = self.UMs.get_newline_markers_list( 'CanonicalText' )
         self.assertTrue( isinstance( result , list ) )
@@ -386,7 +386,7 @@ class USFM3MarkersTests( unittest.TestCase ):
             self.assertFalse( badMarker in result )
     #end of test_2176_get_newline_markers_list
 
-    def test_2180_getInternalMarkersList( self ):
+    def test_2180_getInternalMarkersList( self ) -> None:
         """ Test the getInternalMarkersList function. """
         result = self.UMs.getInternalMarkersList()
         self.assertTrue( isinstance( result , list ) )
@@ -403,7 +403,7 @@ class USFM3MarkersTests( unittest.TestCase ):
             self.assertFalse( badMarker in result )
     #end of test_2180_getInternalMarkersList
 
-    def test_2190_getCharacterMarkersList( self ):
+    def test_2190_getCharacterMarkersList( self ) -> None:
         """ Test the getCharacterMarkersList function. """
         result1 = self.UMs.getCharacterMarkersList()
         self.assertTrue( isinstance( result1, list ) )
@@ -505,7 +505,7 @@ class USFM3MarkersTests( unittest.TestCase ):
             self.assertTrue( testCase in result8 )
     #end of test_2190_getCharacterMarkersList
 
-    def test_2200_getTypicalNoteSets( self ):
+    def test_2200_getTypicalNoteSets( self ) -> None:
         """ Test the getTypicalNoteSets function. """
         result1 = self.UMs.getTypicalNoteSets()
         result2 = self.UMs.getTypicalNoteSets( 'All' )
@@ -534,7 +534,7 @@ class USFM3MarkersTests( unittest.TestCase ):
         self.assertEqual( result5, None )
     #end of test_2200_getTypicalNoteSets
 
-    def test_2210_get_marker_list_from_text( self ):
+    def test_2210_get_marker_list_from_text( self ) -> None:
         """ Test the get_marker_list_from_text function. """
         self.assertEqual( self.UMs.get_marker_list_from_text(''), [] )
         self.assertEqual( self.UMs.get_marker_list_from_text('This is just plain text.'), [] )

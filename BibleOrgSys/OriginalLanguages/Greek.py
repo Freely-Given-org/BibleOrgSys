@@ -223,7 +223,7 @@ class Greek():
         return result
     # end of __str__
 
-    def printUnicodeData( self, text:str|None=None ):
+    def printUnicodeData( self, text:str|None=None ) -> None:
         if text is None: text = self.currentText
         if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "unicodedata", unicodedata.unidata_version )

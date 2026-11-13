@@ -94,7 +94,7 @@ class UnknownBible:
     # end of UnknownBible.__str__
 
 
-    def search( self, strictCheck=True, autoLoad=False, autoLoadAlways=False, autoLoadBooks=False ):
+    def search( self, strictCheck:bool=True, autoLoad:bool=False, autoLoadAlways:bool=False, autoLoadBooks:bool=False ):
         """
         Search our folder to find what if any Bible versions can be found.
         Optimized version using Rust-based parallel detection.

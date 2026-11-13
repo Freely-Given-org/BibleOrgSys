@@ -1298,7 +1298,7 @@ def load_OET_RV_Haggai() -> ESFMBible|None:
     return EsfmBib
 # end of load_OET_RV_Haggai
 
-def test_CV_index( thisBible:ESFMBible ):
+def test_CV_index( thisBible:ESFMBible ) -> None:
     """
     63 index entries created from 188 data entries
     3.0 average data entries per index entry
@@ -1405,7 +1405,7 @@ def test_CV_index( thisBible:ESFMBible ):
         vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"OET-RV CV index for {BBB} matches expectations." )
 # end of test_CV_index
 
-def test_section_index( thisBible:ESFMBible ):
+def test_section_index( thisBible:ESFMBible ) -> None:
     """
     7 index entries created from 188 data entries
     26.9 average data entries per index entry

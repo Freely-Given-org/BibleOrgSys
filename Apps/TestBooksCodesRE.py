@@ -50,7 +50,7 @@ BBB_RE = '([A-PR-XZ][A-EG-VX-Z1][A-WYZ1-6])' # Copy into VerseReferences.py
 OSIS_BOOK_RE = '([1-5A-EG-JL-PRSTVWZ][BCEJKMPSTa-ehimoprsuxz](?:[AJMa-eghik-pr-v](?:[DEPacdeghklmnrstuvz](?:[Gachnrsz](?:[nrst][ah]?)?)?)?)?)' # Copy into VerseReferences.py
 
 
-def doBBB():
+def doBBB() -> None:
     if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\ndoBBB" )
     Letter0, Letter1, Letter2 = defaultdict( int ), defaultdict( int ), defaultdict( int )
@@ -77,7 +77,7 @@ def doBBB():
 # end of doBBB
 
 
-def doOSIS():
+def doOSIS() -> None:
     if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\ndoOSIS" )
     minL, maxL = 999, 0

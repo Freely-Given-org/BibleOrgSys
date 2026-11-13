@@ -1,0 +1,3433 @@
+{
+  "formatVersion": 1,
+  "version": "4",
+  "referenceVersion": "1-draft",
+  "dataLicense": "CC-BY-SA-4.0",
+  "name": "OET-RV",
+  "scope": "Explicit 82-book OET-RV source profile: 66 core books, 15 previously reviewed DC books, and Latin-tradition LAO with reviewed reference boundaries. Earlier reviewed mappings and unresolved intervals are retained. LAO 1:1-20 maps individually to the BOS reference; this does not claim identical textual readings.",
+  "evidence": {
+    "source": "OpenEnglishTranslation--OET translatedTexts ESFM, inspected 2026-10-22",
+    "method": "RV source: Acts 19 has verses 40 and 41; 2 Corinthians 13:12 combines both greetings and 13:13 is the blessing; Philippians 1:16 selfish ambition, 1:17 love; 3 John has 15 verses; Revelation 12 has 18. OT follows standard English numbering.",
+    "attribution": "OT definitions use Copenhagen Alliance data and the BOS supplement (CC BY-SA 4.0); see source-manifest.json. NT uses the reviewed VLT and BibleTagsNT boundaries.",
+    "boundaryWitnesses": [
+      {
+        "path": "translatedTexts/ReadersVersion/OET-RV_ACT.ESFM",
+        "sha256": "37e4fa340c84098183106c0d83b6e153aacbc0a92cc2b88ab73dac6127bc8204"
+      },
+      {
+        "path": "translatedTexts/ReadersVersion/OET-RV_CO2.ESFM",
+        "sha256": "aee4a71925bdf18faadf1c2995bc7f789371f10763789d5fa36f2ffca89429dc"
+      },
+      {
+        "path": "translatedTexts/ReadersVersion/OET-RV_PHP.ESFM",
+        "sha256": "fdde503a8a462b634592f9a5ef1ebd1844768cb503dfbca12ce8e035b2a1d375"
+      },
+      {
+        "path": "translatedTexts/ReadersVersion/OET-RV_JN3.ESFM",
+        "sha256": "f16a459c46776fb21805921bda174e7f3508a4a5061b6abdcaf017959717ec54"
+      },
+      {
+        "path": "translatedTexts/ReadersVersion/OET-RV_REV.ESFM",
+        "sha256": "a97fc285468120179d360ee8da0873de00e625ee6c1a7d3ec16b0c81adf0a588"
+      }
+    ],
+    "deuterocanonicalReview": {
+      "date": "2026-10-29",
+      "sourceRepository": "https://github.com/Freely-Given-org/OpenEnglishTranslation--OET",
+      "method": "Native chapter maxima, missing labels and stored bridges were inventoried from all 15 local RV DC ESFM files. Copenhagen sniffing rules identify candidate differences; exceptional boundaries were checked against RV and the Greek LXX USFM witnesses. Shared numbering uses the Copenhagen org address convention; equal counts alone are not evidence for exceptional chapters. Mappings describe passage addresses, not manuscript-level textual identity. No Bible text or external runtime dependency is included.",
+      "attribution": "RV DC source headers credit the public-domain World English Bible British Edition (eBible.org). Copenhagen Alliance versification data is CC BY-SA 4.0, attributed in source-manifest.json and Copenhagen/LICENSE.md. This BOS address review is distributed with the profile under CC BY-SA 4.0.",
+      "sourceFiles": [
+        {
+          "bosBook": "BAR",
+          "path": "translatedTexts/ReadersVersion/OET-RV_BAR.ESFM",
+          "usfmId": "BAR",
+          "sha256": "6ff9076b1188b6f7f979fe7283a365880ce2c2e2b0253be47982ff0ec28cdad5",
+          "storedVerseBridges": [],
+          "missingVerseLabels": []
+        },
+        {
+          "bosBook": "DNG",
+          "path": "translatedTexts/ReadersVersion/OET-RV_DAG.ESFM",
+          "usfmId": "DAG",
+          "sha256": "33cdfdbab581178672e66a139c71a58a347dc310acc63e34090240634f570da6",
+          "storedVerseBridges": [],
+          "missingVerseLabels": []
+        },
+        {
+          "bosBook": "GES",
+          "path": "translatedTexts/ReadersVersion/OET-RV_ES1.ESFM",
+          "usfmId": "1ES",
+          "sha256": "c73e3c82ad3dc71a360ecf953c1c5c44a4b1d17a64f9e4ae45f61cd89614a511",
+          "storedVerseBridges": [],
+          "missingVerseLabels": []
+        },
+        {
+          "bosBook": "LES",
+          "path": "translatedTexts/ReadersVersion/OET-RV_ES2.ESFM",
+          "usfmId": "2ES",
+          "sha256": "98d1467db6912926c87112864e7b8c8f00d78c4a4efe3273f50facfcbb39211f",
+          "storedVerseBridges": [],
+          "missingVerseLabels": []
+        },
+        {
+          "bosBook": "ESG",
+          "path": "translatedTexts/ReadersVersion/OET-RV_ESG.ESFM",
+          "usfmId": "ESG",
+          "sha256": "0190bcd6173b7e7eb729589d4423eecc5f0c32839f5c701da319b78e2aa47a64",
+          "storedVerseBridges": [],
+          "missingVerseLabels": [
+            "ESG 4:6",
+            "ESG 9:5",
+            "ESG 9:30"
+          ]
+        },
+        {
+          "bosBook": "JDT",
+          "path": "translatedTexts/ReadersVersion/OET-RV_JDT.ESFM",
+          "usfmId": "JDT",
+          "sha256": "e55bc564d8e7b8233651c3662820f894561fc1fa23f77fbfe841e416e84737dc",
+          "storedVerseBridges": [],
+          "missingVerseLabels": []
+        },
+        {
+          "bosBook": "MA1",
+          "path": "translatedTexts/ReadersVersion/OET-RV_MA1.ESFM",
+          "usfmId": "1MA",
+          "sha256": "c8cabdcccb9e8da410f558fefafcf76139d21d90ebcffdb1e39b0ebe1edfa39f",
+          "storedVerseBridges": [],
+          "missingVerseLabels": []
+        },
+        {
+          "bosBook": "MA2",
+          "path": "translatedTexts/ReadersVersion/OET-RV_MA2.ESFM",
+          "usfmId": "2MA",
+          "sha256": "2f2b7af1ff8002651b158bd4c378889599f645d4c331fbe64db543969d54acac",
+          "storedVerseBridges": [],
+          "missingVerseLabels": []
+        },
+        {
+          "bosBook": "MA3",
+          "path": "translatedTexts/ReadersVersion/OET-RV_MA3.ESFM",
+          "usfmId": "3MA",
+          "sha256": "b42ca4e0a995e33c0887eb8ca059e1c1b9200423da3c92b1bf5800f9e4628d36",
+          "storedVerseBridges": [],
+          "missingVerseLabels": []
+        },
+        {
+          "bosBook": "MA4",
+          "path": "translatedTexts/ReadersVersion/OET-RV_MA4.ESFM",
+          "usfmId": "4MA",
+          "sha256": "274083b9e88170f1dc332d44587c34fbbbe92c1a2b792a5300d5e8d2f19e225f",
+          "storedVerseBridges": [
+            "MA4 8:28-29"
+          ],
+          "missingVerseLabels": []
+        },
+        {
+          "bosBook": "MAN",
+          "path": "translatedTexts/ReadersVersion/OET-RV_MAN.ESFM",
+          "usfmId": "MAN",
+          "sha256": "41231000edb5a95fd0dc1ff2cf296ba765fc3fe4e61c7e13cd7471e79eb0f641",
+          "storedVerseBridges": [],
+          "missingVerseLabels": []
+        },
+        {
+          "bosBook": "PS2",
+          "path": "translatedTexts/ReadersVersion/OET-RV_PS2.ESFM",
+          "usfmId": "PS2",
+          "sha256": "bec024d52ab3217d5ca2edf3b0b46b494b43ba7cadaa42086848a8f417739297",
+          "storedVerseBridges": [],
+          "missingVerseLabels": []
+        },
+        {
+          "bosBook": "SIR",
+          "path": "translatedTexts/ReadersVersion/OET-RV_SIR.ESFM",
+          "usfmId": "SIR",
+          "sha256": "6c3bd63e350af06bea54cbcb73cd95352ad7a0120abd3dfab4822d4c248e3ffb",
+          "storedVerseBridges": [
+            "SIR 11:15-16",
+            "SIR 16:15-16",
+            "SIR 19:18-19",
+            "SIR 22:9-10",
+            "SIR 26:19-27"
+          ],
+          "missingVerseLabels": []
+        },
+        {
+          "bosBook": "TOB",
+          "path": "translatedTexts/ReadersVersion/OET-RV_TOB.ESFM",
+          "usfmId": "TOB",
+          "sha256": "3d88fd53632655caae38118b8c98bac6aee81ffac14deb01ca5f8e0867918443",
+          "storedVerseBridges": [],
+          "missingVerseLabels": []
+        },
+        {
+          "bosBook": "WIS",
+          "path": "translatedTexts/ReadersVersion/OET-RV_WIS.ESFM",
+          "usfmId": "WIS",
+          "sha256": "c5928843179a612f055471d18f6ae577a40608d145d9ba9e7b45e8a7a69db4b3",
+          "storedVerseBridges": [],
+          "missingVerseLabels": []
+        }
+      ],
+      "referenceWitnesses": [
+        {
+          "collection": "LXX USFM",
+          "path": "68TOB.LXX",
+          "sha256": "4be16ae11c8b10b8c13d4ceabb41733a204c032bfa11c00779ea0b8b84b59416"
+        },
+        {
+          "collection": "LXX USFM",
+          "path": "69JDT.LXX",
+          "sha256": "9a628125bfbc938a1aa0f6cca05c7dbb5063b6f282c362f781f1d174c12e5848"
+        },
+        {
+          "collection": "LXX USFM",
+          "path": "71WIS.LXX",
+          "sha256": "b8e5192212939cf01a7040676b852bf53b5c94bf00b5bf812732218d0cf7972a"
+        },
+        {
+          "collection": "LXX USFM",
+          "path": "72SIR.LXX",
+          "sha256": "62c894949cf420ac0be4f5700a5212a94191964c6d6ab09c4200fb0a9108a8ab"
+        },
+        {
+          "collection": "LXX USFM",
+          "path": "73BAR.LXX",
+          "sha256": "30f8f2cf6c9addff17ec7c967841e313ce8ec54caaede3d509f4e842b38602d8"
+        },
+        {
+          "collection": "LXX USFM",
+          "path": "74LJE.LXX",
+          "sha256": "1c44a3c247625a3ba84be9a0864c2a4d1829ff723026fdb6bba79c234e91a5a2"
+        },
+        {
+          "collection": "LXX USFM",
+          "path": "814MA.LXX",
+          "sha256": "16d2fb5166cb436ba9f9c4a12e133c247adad030b3d998f1805fa184d4ee66df"
+        },
+        {
+          "collection": "LXX USFM",
+          "path": "821ES.LXX",
+          "sha256": "b2d592467c3f0d618824a9dc3c97aec599a90389fe88b00b8c81c2bc5798268f"
+        },
+        {
+          "collection": "World English Bible British Edition",
+          "path": "custom.vrs",
+          "sha256": "f8076328b48f8eec1bc0413e87ef8eaa76a3ece27c7049f5d0d593bbade6550a",
+          "attribution": "Michael Johnson, World English Bible project; public-domain source used by the RV DC files."
+        }
+      ],
+      "reviewedRelations": [
+        {
+          "id": "oet-rv-dc-01",
+          "source": "BAR 3:34",
+          "target": "BAR 3:34-35",
+          "kind": "atomic",
+          "reason": "Stars shine, are called, and answer in one RV verse."
+        },
+        {
+          "source": "BAR 3:35-37",
+          "target": "BAR 3:36-38",
+          "kind": "positional",
+          "reason": "Numbering after the combined star passage."
+        },
+        {
+          "source": "BAR 6:1-49",
+          "target": "LJE 1:1-49",
+          "kind": "positional",
+          "reason": "Letter of Jeremiah is RV Baruch chapter 6."
+        },
+        {
+          "id": "oet-rv-dc-04",
+          "source": "BAR 6:50-51",
+          "target": "LJE 1:50",
+          "kind": "atomic",
+          "reason": "Wooden idols and their known inability form one reference verse."
+        },
+        {
+          "source": "BAR 6:52-73",
+          "target": "LJE 1:51-72",
+          "kind": "positional",
+          "reason": "The org Letter ends at 72, not the alternative Greek 73."
+        },
+        {
+          "source": "JDT 16:1",
+          "target": "JDT 15:14",
+          "kind": "positional",
+          "reason": "The song introduction precedes the reference chapter boundary."
+        },
+        {
+          "source": "JDT 16:2-7",
+          "target": "JDT 16:1-6",
+          "kind": "positional",
+          "reason": "Song opening through Judith overcoming the mighty man."
+        },
+        {
+          "id": "oet-rv-dc-08",
+          "source": "JDT 16:8",
+          "target": "JDT 16:7-8",
+          "kind": "atomic",
+          "reason": "Clothing, ointment, hair and linen attire occupy one RV verse."
+        },
+        {
+          "id": "oet-rv-dc-09",
+          "source": "WIS 17:9-10",
+          "target": "WIS 17:9",
+          "kind": "atomic",
+          "reason": "Vermin, fear and refusal to look at the air."
+        },
+        {
+          "source": "WIS 17:11-21",
+          "target": "WIS 17:10-20",
+          "kind": "positional",
+          "reason": "Numbering after the combined fear passage."
+        },
+        {
+          "source": "MA4 7:24",
+          "target": "MA4 8:1",
+          "kind": "positional",
+          "reason": "The introductory account of the seven young men."
+        },
+        {
+          "id": "oet-rv-dc-12",
+          "source": [
+            "MA4 7:25",
+            "MA4 8:1"
+          ],
+          "target": "MA4 8:2",
+          "kind": "atomic",
+          "reason": "The defeated tyrant summons the other Hebrew prisoners."
+        },
+        {
+          "source": "MA4 8:2-27",
+          "target": "MA4 8:3-28",
+          "kind": "positional",
+          "reason": "The interrogation follows the shifted chapter boundary."
+        },
+        {
+          "id": "oet-rv-dc-14",
+          "source": "MA4 8:28-29",
+          "target": "MA4 8:29",
+          "kind": "atomic",
+          "reason": "RV stores the speech introduction and answer as the bridge 28-29."
+        },
+        {
+          "id": "oet-rv-dc-15",
+          "source": "MA4 12:14-15",
+          "target": "MA4 12:14",
+          "kind": "atomic",
+          "reason": "Fulfilled piety and punishment of the tyrant."
+        },
+        {
+          "source": "MA4 12:16-20",
+          "target": "MA4 12:15-19",
+          "kind": "positional",
+          "reason": "Numbering after the combined declaration."
+        },
+        {
+          "id": "oet-rv-dc-17",
+          "source": "GES 1:3-5",
+          "target": "GES 1:3-5",
+          "kind": "atomic",
+          "reason": "Ark carrying, preparations and David/Solomon instructions cross verse boundaries."
+        },
+        {
+          "id": "oet-rv-dc-18",
+          "source": "GES 1:10",
+          "target": "GES 1:10-11",
+          "kind": "atomic",
+          "reason": "Priests and Levites stand in order with unleavened bread."
+        },
+        {
+          "source": "GES 1:11",
+          "target": "GES 1:12",
+          "kind": "positional",
+          "reason": "Family divisions and the instructions of Moses."
+        },
+        {
+          "id": "oet-rv-dc-20",
+          "source": "GES 1:12-14",
+          "target": "GES 1:13-14",
+          "kind": "atomic",
+          "reason": "Cooking, serving and preparation for the priests overlap RV verse 13."
+        },
+        {
+          "id": "oet-rv-dc-21",
+          "source": "GES 1:15-16",
+          "target": "GES 1:15",
+          "kind": "atomic",
+          "reason": "Singers and gatekeepers."
+        },
+        {
+          "id": "oet-rv-dc-22",
+          "source": "GES 1:17-18",
+          "target": "GES 1:16",
+          "kind": "atomic",
+          "reason": "Passover and altar sacrifices."
+        },
+        {
+          "source": "GES 1:19-50",
+          "target": "GES 1:17-48",
+          "kind": "positional",
+          "reason": "Numbering through the appeal to return."
+        },
+        {
+          "id": "oet-rv-dc-24",
+          "source": "GES 1:51-52",
+          "target": "GES 1:49",
+          "kind": "atomic",
+          "reason": "Mocking the prophets and the order to bring the Chaldean kings."
+        },
+        {
+          "source": "GES 1:53-58",
+          "target": "GES 1:50-55",
+          "kind": "positional",
+          "reason": "Remainder of the chapter."
+        },
+        {
+          "id": "oet-rv-dc-26",
+          "source": "GES 2:1-2",
+          "target": "GES 2:1",
+          "kind": "atomic",
+          "reason": "Cyrus accession and the stirring of his spirit."
+        },
+        {
+          "id": "oet-rv-dc-27",
+          "source": "GES 2:3-4",
+          "target": "GES 2:2",
+          "kind": "atomic",
+          "reason": "Cyrus proclamation."
+        },
+        {
+          "id": "oet-rv-dc-28",
+          "source": "GES 2:6-7",
+          "target": "GES 2:4",
+          "kind": "atomic",
+          "reason": "Return and rebuilding."
+        },
+        {
+          "id": "oet-rv-dc-29",
+          "source": "GES 2:11-12",
+          "target": "GES 2:8",
+          "kind": "atomic",
+          "reason": "Vessels delivered to Sanabassar."
+        },
+        {
+          "id": "oet-rv-dc-30",
+          "source": "GES 2:13",
+          "target": "GES 2:9-10",
+          "kind": "atomic",
+          "reason": "Inventory of vessels."
+        },
+        {
+          "id": "oet-rv-dc-31",
+          "source": "GES 2:14-15",
+          "target": "GES 2:11",
+          "kind": "atomic",
+          "reason": "Total and transport of the vessels."
+        },
+        {
+          "id": "oet-rv-dc-32",
+          "source": "GES 2:20-21",
+          "target": "GES 2:16",
+          "kind": "atomic",
+          "reason": "Loss of royal revenue."
+        },
+        {
+          "id": "oet-rv-dc-33",
+          "source": "GES 2:22-23",
+          "target": "GES 2:17",
+          "kind": "atomic",
+          "reason": "Search of records and the rebellious city."
+        },
+        {
+          "id": "oet-rv-dc-34",
+          "source": "GES 2:26",
+          "target": "GES 2:20-21",
+          "kind": "atomic",
+          "reason": "Reading the letter and searching records."
+        },
+        {
+          "id": "oet-rv-dc-35",
+          "source": "GES 2:28-29",
+          "target": "GES 2:23-24",
+          "kind": "atomic",
+          "reason": "Orders to halt rebuilding overlap the two verse boundaries."
+        },
+        {
+          "id": "oet-rv-dc-36",
+          "source": "GES 2:30",
+          "target": "GES 2:25-26",
+          "kind": "atomic",
+          "reason": "Stopping the builders and suspension until Darius."
+        },
+        {
+          "source": "GES 2:5",
+          "target": "GES 2:3",
+          "kind": "positional",
+          "reason": "Numbering between the reviewed groups."
+        },
+        {
+          "source": "GES 2:8-10",
+          "target": "GES 2:5-7",
+          "kind": "positional",
+          "reason": "Numbering between the reviewed groups."
+        },
+        {
+          "source": "GES 2:16-19",
+          "target": "GES 2:12-15",
+          "kind": "positional",
+          "reason": "Numbering between the reviewed groups."
+        },
+        {
+          "source": "GES 2:24-25",
+          "target": "GES 2:18-19",
+          "kind": "positional",
+          "reason": "Numbering between the reviewed groups."
+        },
+        {
+          "source": "GES 2:27",
+          "target": "GES 2:22",
+          "kind": "positional",
+          "reason": "Numbering between the reviewed groups."
+        },
+        {
+          "id": "oet-rv-dc-42",
+          "source": "GES 5:41-42",
+          "target": "GES 5:41",
+          "kind": "atomic",
+          "reason": "Population and servants counted together."
+        },
+        {
+          "source": "GES 5:43-53",
+          "target": "GES 5:42-52",
+          "kind": "positional",
+          "reason": "Numbering through the start of sacrifices."
+        },
+        {
+          "id": "oet-rv-dc-44",
+          "source": "GES 5:54-55",
+          "target": "GES 5:53",
+          "kind": "atomic",
+          "reason": "Payment of workers and transport of cedar."
+        },
+        {
+          "source": "GES 5:56-57",
+          "target": "GES 5:54-55",
+          "kind": "positional",
+          "reason": "Start of building and foundation date."
+        },
+        {
+          "id": "oet-rv-dc-46",
+          "source": "GES 5:58-60",
+          "target": "GES 5:56-57",
+          "kind": "atomic",
+          "reason": "RV verse 58 crosses from Levite appointment into the builders and musical worship."
+        },
+        {
+          "source": "GES 5:61-72",
+          "target": "GES 5:58-69",
+          "kind": "positional",
+          "reason": "Praise, reaction and opposition."
+        },
+        {
+          "id": "oet-rv-dc-48",
+          "source": "GES 5:73",
+          "target": "GES 5:70-71",
+          "kind": "atomic",
+          "reason": "Opposition under Cyrus and the delay until Darius."
+        },
+        {
+          "id": "oet-rv-dc-49",
+          "source": "GES 6:8-9",
+          "target": "GES 6:8",
+          "kind": "atomic",
+          "reason": "Letter opening and description of construction."
+        },
+        {
+          "source": "GES 6:10-34",
+          "target": "GES 6:9-33",
+          "kind": "positional",
+          "reason": "Numbering after the letter opening."
+        },
+        {
+          "id": "oet-rv-dc-51",
+          "source": "GES 8:43-44",
+          "target": "GES 8:43",
+          "kind": "atomic",
+          "reason": "Names of the messengers."
+        },
+        {
+          "id": "oet-rv-dc-52",
+          "source": "GES 8:50",
+          "target": "GES 8:49-50",
+          "kind": "atomic",
+          "reason": "Fast and petition for a safe journey."
+        },
+        {
+          "id": "oet-rv-dc-53",
+          "source": "GES 8:56-57",
+          "target": "GES 8:56",
+          "kind": "atomic",
+          "reason": "Silver, gold and vessels."
+        },
+        {
+          "id": "oet-rv-dc-54",
+          "source": "GES 8:63-64",
+          "target": "GES 8:62",
+          "kind": "atomic",
+          "reason": "Recipients and recorded weights."
+        },
+        {
+          "id": "oet-rv-dc-55",
+          "source": "GES 8:65-66",
+          "target": "GES 8:63",
+          "kind": "atomic",
+          "reason": "Sacrificial animals."
+        },
+        {
+          "id": "oet-rv-dc-56",
+          "source": "GES 8:93-94",
+          "target": "GES 8:90",
+          "kind": "atomic",
+          "reason": "The oath and its qualification according to the law."
+        },
+        {
+          "source": "GES 8:45-49",
+          "target": "GES 8:44-48",
+          "kind": "positional",
+          "reason": "Numbering between the reviewed groups."
+        },
+        {
+          "source": "GES 8:58-62",
+          "target": "GES 8:57-61",
+          "kind": "positional",
+          "reason": "Numbering between the reviewed groups."
+        },
+        {
+          "source": "GES 8:67-92",
+          "target": "GES 8:64-89",
+          "kind": "positional",
+          "reason": "Numbering between the reviewed groups."
+        },
+        {
+          "source": "GES 8:95-96",
+          "target": "GES 8:91-92",
+          "kind": "positional",
+          "reason": "Arise and take action; oath of the leaders."
+        },
+        {
+          "id": "oet-rv-dc-61",
+          "source": "SIR 35:4-5",
+          "target": "SIR 35:4",
+          "kind": "atomic",
+          "reason": "Do not appear empty and the reason for the command."
+        },
+        {
+          "source": "SIR 35:6-11",
+          "target": "SIR 35:5-10",
+          "kind": "positional",
+          "reason": "Offerings through sevenfold repayment."
+        },
+        {
+          "id": "oet-rv-dc-63",
+          "source": "SIR 35:12",
+          "target": "SIR 35:11-12",
+          "kind": "atomic",
+          "reason": "Rejecting bribes and impartial judgement."
+        },
+        {
+          "id": "oet-rv-dc-64",
+          "source": "SIR 35:17",
+          "target": "SIR 35:17-18",
+          "kind": "atomic",
+          "reason": "The humble prayer and divine judgement."
+        },
+        {
+          "id": "oet-rv-dc-65",
+          "source": "SIR 35:18",
+          "target": "SIR 35:19-21",
+          "kind": "atomic",
+          "reason": "Divine action against the unmerciful and arrogant."
+        },
+        {
+          "id": "oet-rv-dc-66",
+          "source": "SIR 35:19",
+          "target": "SIR 35:22-23",
+          "kind": "atomic",
+          "reason": "Recompense and judgement for the people."
+        },
+        {
+          "source": "SIR 35:20",
+          "target": "SIR 35:24",
+          "kind": "positional",
+          "reason": "Mercy compared with rain in drought."
+        },
+        {
+          "id": "oet-rv-dc-68",
+          "source": "SIR 36:1-2",
+          "target": "SIR 36:1",
+          "kind": "atomic",
+          "reason": "Mercy and fear among the nations."
+        },
+        {
+          "source": "SIR 36:3-16",
+          "target": "SIR 36:2-15",
+          "kind": "positional",
+          "reason": "Petitions through reward for those who wait."
+        },
+        {
+          "id": "oet-rv-dc-70",
+          "source": "SIR 36:17",
+          "target": "SIR 36:16-17",
+          "kind": "atomic",
+          "reason": "Hear the prayer so all the earth knows God."
+        },
+        {
+          "id": "oet-rv-dc-71",
+          "source": "SIR 36:26",
+          "target": "SIR 36:26-27",
+          "kind": "atomic",
+          "reason": "The wandering robber and man without a home."
+        },
+        {
+          "id": "oet-rv-dc-72",
+          "source": "SIR 41:3-4",
+          "target": "SIR 41:3-4",
+          "kind": "atomic",
+          "reason": "The sentence on all flesh moves across the verse boundary."
+        },
+        {
+          "id": "oet-rv-dc-73",
+          "source": "SIR 41:18-21",
+          "target": "SIR 41:18-23",
+          "kind": "atomic",
+          "reason": "The list of shameful acts crosses all intervening verse boundaries."
+        },
+        {
+          "id": "oet-rv-dc-74",
+          "source": "SIR 41:22",
+          "target": "SIR 41:24-25",
+          "kind": "atomic",
+          "reason": "Meddling with a maid and insulting friends after giving."
+        },
+        {
+          "source": "SIR 41:23-24",
+          "target": "SIR 41:26-27",
+          "kind": "positional",
+          "reason": "Revealing secrets and the concluding blessing."
+        },
+        {
+          "source": "TOB 1:1-22",
+          "target": "TOB 1:1-22",
+          "kind": "positional",
+          "reason": "Shared chapter numbering outside the reviewed exceptional chapters."
+        },
+        {
+          "source": "TOB 2:1-14",
+          "target": "TOB 2:1-14",
+          "kind": "positional",
+          "reason": "Shared chapter numbering outside the reviewed exceptional chapters."
+        },
+        {
+          "source": "TOB 3:1-17",
+          "target": "TOB 3:1-17",
+          "kind": "positional",
+          "reason": "Shared chapter numbering outside the reviewed exceptional chapters."
+        },
+        {
+          "source": "TOB 4:1-21",
+          "target": "TOB 4:1-21",
+          "kind": "positional",
+          "reason": "Shared chapter numbering outside the reviewed exceptional chapters."
+        },
+        {
+          "source": "TOB 8:1-21",
+          "target": "TOB 8:1-21",
+          "kind": "positional",
+          "reason": "Shared chapter numbering outside the reviewed exceptional chapters."
+        },
+        {
+          "source": "TOB 9:1-6",
+          "target": "TOB 9:1-6",
+          "kind": "positional",
+          "reason": "Shared chapter numbering outside the reviewed exceptional chapters."
+        },
+        {
+          "source": "TOB 12:1-22",
+          "target": "TOB 12:1-22",
+          "kind": "positional",
+          "reason": "Shared chapter numbering outside the reviewed exceptional chapters."
+        },
+        {
+          "source": "TOB 14:1-15",
+          "target": "TOB 14:1-15",
+          "kind": "positional",
+          "reason": "Shared chapter numbering outside the reviewed exceptional chapters."
+        },
+        {
+          "source": "TOB 5:1-3",
+          "target": "TOB 5:1-3",
+          "kind": "positional",
+          "reason": "Journey instructions."
+        },
+        {
+          "id": "oet-rv-dc-85",
+          "source": "TOB 5:4-5",
+          "target": "TOB 5:4-5",
+          "kind": "atomic",
+          "reason": "Recognition of the angel crosses the verse boundary."
+        },
+        {
+          "source": "TOB 5:6-7",
+          "target": "TOB 5:6-7",
+          "kind": "positional",
+          "reason": "The route and request to wait."
+        },
+        {
+          "id": "oet-rv-dc-87",
+          "source": "TOB 5:8",
+          "target": "TOB 5:8-9",
+          "kind": "atomic",
+          "reason": "Waiting and reporting to the father."
+        },
+        {
+          "source": "TOB 5:9-22",
+          "target": "TOB 5:10-23",
+          "kind": "positional",
+          "reason": "Meeting the father through the end of the mother’s weeping."
+        },
+        {
+          "source": "TOB 6:1-4",
+          "target": "TOB 6:1-4",
+          "kind": "positional",
+          "reason": "Journey and catching the fish."
+        },
+        {
+          "id": "oet-rv-dc-90",
+          "source": "TOB 6:5",
+          "target": "TOB 6:5-6",
+          "kind": "atomic",
+          "reason": "Cooking the fish and continuing to Media."
+        },
+        {
+          "source": "TOB 6:6-9",
+          "target": "TOB 6:7-10",
+          "kind": "positional",
+          "reason": "Uses of the fish through approach to Ecbatana."
+        },
+        {
+          "id": "oet-rv-dc-92",
+          "source": "TOB 6:10-12",
+          "target": "TOB 6:11-13",
+          "kind": "atomic",
+          "reason": "Raguel, inheritance, Sarah and the marriage proposal overlap the boundaries."
+        },
+        {
+          "source": "TOB 6:13-15",
+          "target": "TOB 6:14-16",
+          "kind": "positional",
+          "reason": "Seven husbands, fear and the father’s instruction."
+        },
+        {
+          "id": "oet-rv-dc-94",
+          "source": "TOB 6:16-17",
+          "target": "TOB 6:17-19",
+          "kind": "atomic",
+          "reason": "Burning incense, flight of the demon, prayer and love for Sarah."
+        },
+        {
+          "source": "TOB 7:1-3",
+          "target": "TOB 7:1-3",
+          "kind": "positional",
+          "reason": "Arrival, resemblance and origin."
+        },
+        {
+          "id": "oet-rv-dc-96",
+          "source": "TOB 7:4-5",
+          "target": "TOB 7:4-5",
+          "kind": "atomic",
+          "reason": "The question about Tobit’s health crosses the boundary."
+        },
+        {
+          "id": "oet-rv-dc-97",
+          "source": "TOB 7:6-7",
+          "target": "TOB 7:6",
+          "kind": "atomic",
+          "reason": "Greeting, blessing and tears."
+        },
+        {
+          "id": "oet-rv-dc-98",
+          "source": "TOB 7:8",
+          "target": "TOB 7:7-9",
+          "kind": "atomic",
+          "reason": "Family tears, hospitality and the proposal."
+        },
+        {
+          "id": "oet-rv-dc-99",
+          "source": "TOB 7:9-10",
+          "target": "TOB 7:10",
+          "kind": "atomic",
+          "reason": "Invitation to eat and the right to marry."
+        },
+        {
+          "id": "oet-rv-dc-100",
+          "source": "TOB 7:11-12",
+          "target": "TOB 7:11-12",
+          "kind": "atomic",
+          "reason": "The covenant request crosses the boundary."
+        },
+        {
+          "source": "TOB 7:13",
+          "target": "TOB 7:13",
+          "kind": "positional",
+          "reason": "Giving Sarah in marriage."
+        },
+        {
+          "id": "oet-rv-dc-102",
+          "source": "TOB 7:14-15",
+          "target": "TOB 7:14",
+          "kind": "atomic",
+          "reason": "Contract and start of the meal."
+        },
+        {
+          "source": "TOB 7:16-18",
+          "target": "TOB 7:15-17",
+          "kind": "positional",
+          "reason": "Preparing the chamber and comforting Sarah."
+        },
+        {
+          "source": "TOB 10:1-6",
+          "target": "TOB 10:1-6",
+          "kind": "positional",
+          "reason": "Waiting parents."
+        },
+        {
+          "id": "oet-rv-dc-105",
+          "source": "TOB 10:7",
+          "target": "TOB 10:7-8",
+          "kind": "atomic",
+          "reason": "Anna’s wait and Tobias’s request to leave."
+        },
+        {
+          "id": "oet-rv-dc-106",
+          "source": "TOB 10:8-9",
+          "target": "TOB 10:9",
+          "kind": "atomic",
+          "reason": "Invitation to stay and refusal."
+        },
+        {
+          "source": "TOB 10:10-11",
+          "target": "TOB 10:10-11",
+          "kind": "positional",
+          "reason": "Gifts and blessing."
+        },
+        {
+          "id": "oet-rv-dc-108",
+          "source": "TOB 10:12",
+          "target": "TOB 10:12-13",
+          "kind": "atomic",
+          "reason": "Farewells to Sarah and Tobias."
+        },
+        {
+          "id": "oet-rv-dc-109",
+          "source": "TOB 11:1-2",
+          "target": [
+            "TOB 10:14",
+            "TOB 11:1-2"
+          ],
+          "kind": "atomic",
+          "reason": "Departure and Raphael’s opening question cross the chapter boundary."
+        },
+        {
+          "source": "TOB 11:3-19",
+          "target": "TOB 11:3-19",
+          "kind": "positional",
+          "reason": "Return to Nineveh after the opening exchange."
+        },
+        {
+          "id": "oet-rv-dc-111",
+          "source": "TOB 13:1-2",
+          "target": "TOB 13:1-2",
+          "kind": "atomic",
+          "reason": "Opening blessing begins in reference verse 2 but RV verse 1."
+        },
+        {
+          "source": "TOB 13:3-5",
+          "target": "TOB 13:3-5",
+          "kind": "positional",
+          "reason": "Acknowledgement among the nations and gathering."
+        },
+        {
+          "source": "TOB 13:11-12",
+          "target": "TOB 13:13-14",
+          "kind": "positional",
+          "reason": "Nations bringing gifts and curses/blessings."
+        },
+        {
+          "id": "oet-rv-dc-114",
+          "source": "TOB 13:13-15",
+          "target": "TOB 13:15-16",
+          "kind": "atomic",
+          "reason": "Rejoicing, blessings and the soul’s praise cross the boundaries."
+        },
+        {
+          "id": "oet-rv-dc-115",
+          "source": "TOB 13:16-17",
+          "target": "TOB 13:17",
+          "kind": "atomic",
+          "reason": "Precious stones, walls, towers and streets."
+        },
+        {
+          "source": "TOB 13:18",
+          "target": "TOB 13:18",
+          "kind": "positional",
+          "reason": "Final praise."
+        }
+      ],
+      "unresolvedRanges": {
+        "TOB 13:6-10": "The full reference passage around the Greek witness lacuna is not verified. The Brenton/RV correspondence alone cannot establish the missing reference boundaries. No identity fallback or assertion of absent text is made.",
+        "ESG 1:1; 3:13; 4:17-47; 5:1-2; 8:12; 10:3-14": "Integrated additions require a reviewed reference segment convention. Ordinary intervals are explicitly mapped; no whole-book identity is declared.",
+        "DNG 1-12": "The provisional reference composite remains unresolved. Mapping these chapters to Hebrew DAN would introduce duplicate candidates within this profile. Chapters 13-14 are explicitly mapped to SUS/BEL instead."
+      },
+      "notes": [
+        "Canonical BOS codes GES, LES and DNG correspond to source filenames ES1, ES2 and DAG; existing local ESFM book-code normalization handles them.",
+        "Baruch chapter 6 maps to the separate LJE reference book; it is not an additional source book.",
+        "Stored verse bridges are recorded as source evidence, not blindly turned into semantic mergedVerses: several Sirach bridges contain only editorial omission notes.",
+        "Sirach’s prologue stays outside numbered scripture. The Greek USFM witness stores its wisdom opening at 1:1h; this is not adopted as an RV suffix.",
+        "The reference remains 1-draft. The reviewed 66-book RV mappings and pinned Copenhagen files are unchanged. LV DC mappings and partial ESG/DNG support are recorded in version 3."
+      ],
+      "partialBookReview": {
+        "date": "2026-10-29",
+        "method": "Enable only the ordinary ESG intervals specified in definition.mappedVerses and the standalone SUS/BEL bridges in DNG 13-14; reviewed against the LV Brenton source and Greek .LXX witnesses. Additions in ESG and DNG 1-12 remain unsupported by absence of any declared edge or identity fallback. See OET-LV evidence.deuterocanonicalReview for source hashes.",
+        "notes": "This narrows the version 2 whole-book restrictions; earlier unresolved-book notes apply only to the remaining intervals."
+      }
+    },
+    "laodiceansReview": {
+      "date": "2026-10-30",
+      "sourceRepository": "https://github.com/Freely-Given-org/OpenEnglishTranslation--OET",
+      "sourceFiles": [
+        {
+          "bosBook": "LAO",
+          "usfmId": "LAO",
+          "path": "translatedTexts/ReadersVersion/OET-RV_LAO.ESFM",
+          "sha256": "9aa447aed45e849a9eaef9586e926afff3bc214d432c5e381878825edf63bc93",
+          "chapterMaxima": [
+            20
+          ],
+          "storedLabelCount": 20,
+          "missingLabels": [],
+          "storedVerseBridges": []
+        }
+      ],
+      "assemblyWitnesses": [
+        {
+          "path": "scripts/DC/README.md",
+          "sha256": "a8f9f3ab58deb48c42a11365c892a09fb94868f284f845c4b8230dfd8177191c"
+        },
+        {
+          "path": "scripts/build_OET-LV_DC.py",
+          "sha256": "10d27d9fa856ff3194dc7a4632a3ea7951cfadf656ebcb6e9e7c1923d541942d"
+        },
+        {
+          "path": "intermediateTexts/DC_sources/Lightfoot-1875.html",
+          "sha256": "792d85add364d0328666376d4a2e9daed7556643d3b8483c63ac4b0a8c447129"
+        },
+        {
+          "path": "intermediateTexts/DC_sources/James-1924-LAO.html",
+          "sha256": "72486aaa42e683a37b5362bdcf3075ab854af74c98a4e373cf61e68310c8a73d"
+        }
+      ],
+      "method": "Compared the actual 20 ESFM verses, Lightfoot Latin (1875, pp. 353-355), James English (1924, pp. 478-479), and the numbered English boundary witness used by BOS reference-policy LAO. All 20 numbered passage boundaries correspond individually. This is a passage-address review, not an assertion of identical readings or approval of the draft translation.",
+      "boundaryConvention": {
+        "1-14": "Greeting, thanks, warning, work, bonds, salvation, living/dying, unity, obedience, God at work, action, rejoicing, requests: each passage stays within its corresponding numbered verse.",
+        "15": "Complete list of qualities and instruction to do them.",
+        "16": "Retain what was heard and received.",
+        "17": "Peace. This is the final clause of printed Lightfoot 16, explicitly split by the OET importer.",
+        "18": "Greeting from the holy ones.",
+        "19": "Grace blessing.",
+        "20": "Reciprocal reading with the Colossians."
+      },
+      "comparisonURLs": [
+        "https://www.gutenberg.org/files/50857/50857-h/50857-h.htm",
+        "https://en.wikisource.org/wiki/The_Apocryphal_New_Testament_(1924)/Epistles/The_Epistle_to_the_Laodiceans",
+        "https://www.bible-researcher.com/laodiceans.html"
+      ],
+      "limits": "Wycliffe-Zefania 15-16 remains an atomic group when converting to/from OET. No holy-kiss greeting is substituted for verse 17. Neither a common 20-verse count nor this review certifies every Latin witness. Individual word alignment is outside this profile.",
+      "attribution": "Lightfoot and James are public-domain editions. OET text is CC BY-SA 4.0. The Marlowe rendering was consulted only to compare boundaries with the existing BOS convention; no copyrighted translation text is bundled. This address review uses the profile CC-BY-SA-4.0 licence."
+    }
+  },
+  "definition": {
+    "maxVerses": {
+      "GEN": [
+        "31",
+        "25",
+        "24",
+        "26",
+        "32",
+        "22",
+        "24",
+        "22",
+        "29",
+        "32",
+        "32",
+        "20",
+        "18",
+        "24",
+        "21",
+        "16",
+        "27",
+        "33",
+        "38",
+        "18",
+        "34",
+        "24",
+        "20",
+        "67",
+        "34",
+        "35",
+        "46",
+        "22",
+        "35",
+        "43",
+        "55",
+        "32",
+        "20",
+        "31",
+        "29",
+        "43",
+        "36",
+        "30",
+        "23",
+        "23",
+        "57",
+        "38",
+        "34",
+        "34",
+        "28",
+        "34",
+        "31",
+        "22",
+        "33",
+        "26"
+      ],
+      "EXO": [
+        "22",
+        "25",
+        "22",
+        "31",
+        "23",
+        "30",
+        "25",
+        "32",
+        "35",
+        "29",
+        "10",
+        "51",
+        "22",
+        "31",
+        "27",
+        "36",
+        "16",
+        "27",
+        "25",
+        "26",
+        "36",
+        "31",
+        "33",
+        "18",
+        "40",
+        "37",
+        "21",
+        "43",
+        "46",
+        "38",
+        "18",
+        "35",
+        "23",
+        "35",
+        "35",
+        "38",
+        "29",
+        "31",
+        "43",
+        "38"
+      ],
+      "LEV": [
+        "17",
+        "16",
+        "17",
+        "35",
+        "19",
+        "30",
+        "38",
+        "36",
+        "24",
+        "20",
+        "47",
+        "8",
+        "59",
+        "57",
+        "33",
+        "34",
+        "16",
+        "30",
+        "37",
+        "27",
+        "24",
+        "33",
+        "44",
+        "23",
+        "55",
+        "46",
+        "34"
+      ],
+      "NUM": [
+        "54",
+        "34",
+        "51",
+        "49",
+        "31",
+        "27",
+        "89",
+        "26",
+        "23",
+        "36",
+        "35",
+        "16",
+        "33",
+        "45",
+        "41",
+        "50",
+        "13",
+        "32",
+        "22",
+        "29",
+        "35",
+        "41",
+        "30",
+        "25",
+        "18",
+        "65",
+        "23",
+        "31",
+        "40",
+        "16",
+        "54",
+        "42",
+        "56",
+        "29",
+        "34",
+        "13"
+      ],
+      "DEU": [
+        "46",
+        "37",
+        "29",
+        "49",
+        "33",
+        "25",
+        "26",
+        "20",
+        "29",
+        "22",
+        "32",
+        "32",
+        "18",
+        "29",
+        "23",
+        "22",
+        "20",
+        "22",
+        "21",
+        "20",
+        "23",
+        "30",
+        "25",
+        "22",
+        "19",
+        "19",
+        "26",
+        "68",
+        "29",
+        "20",
+        "30",
+        "52",
+        "29",
+        "12"
+      ],
+      "JOS": [
+        "18",
+        "24",
+        "17",
+        "24",
+        "15",
+        "27",
+        "26",
+        "35",
+        "27",
+        "43",
+        "23",
+        "24",
+        "33",
+        "15",
+        "63",
+        "10",
+        "18",
+        "28",
+        "51",
+        "9",
+        "45",
+        "34",
+        "16",
+        "33"
+      ],
+      "JDG": [
+        "36",
+        "23",
+        "31",
+        "24",
+        "31",
+        "40",
+        "25",
+        "35",
+        "57",
+        "18",
+        "40",
+        "15",
+        "25",
+        "20",
+        "20",
+        "31",
+        "13",
+        "31",
+        "30",
+        "48",
+        "25"
+      ],
+      "RUT": [
+        "22",
+        "23",
+        "18",
+        "22"
+      ],
+      "SA1": [
+        "28",
+        "36",
+        "21",
+        "22",
+        "12",
+        "21",
+        "17",
+        "22",
+        "27",
+        "27",
+        "15",
+        "25",
+        "23",
+        "52",
+        "35",
+        "23",
+        "58",
+        "30",
+        "24",
+        "42",
+        "15",
+        "23",
+        "29",
+        "22",
+        "44",
+        "25",
+        "12",
+        "25",
+        "11",
+        "31",
+        "13"
+      ],
+      "SA2": [
+        "27",
+        "32",
+        "39",
+        "12",
+        "25",
+        "23",
+        "29",
+        "18",
+        "13",
+        "19",
+        "27",
+        "31",
+        "39",
+        "33",
+        "37",
+        "23",
+        "29",
+        "33",
+        "43",
+        "26",
+        "22",
+        "51",
+        "39",
+        "25"
+      ],
+      "KI1": [
+        "53",
+        "46",
+        "28",
+        "34",
+        "18",
+        "38",
+        "51",
+        "66",
+        "28",
+        "29",
+        "43",
+        "33",
+        "34",
+        "31",
+        "34",
+        "34",
+        "24",
+        "46",
+        "21",
+        "43",
+        "29",
+        "53"
+      ],
+      "KI2": [
+        "18",
+        "25",
+        "27",
+        "44",
+        "27",
+        "33",
+        "20",
+        "29",
+        "37",
+        "36",
+        "21",
+        "21",
+        "25",
+        "29",
+        "38",
+        "20",
+        "41",
+        "37",
+        "37",
+        "21",
+        "26",
+        "20",
+        "37",
+        "20",
+        "30"
+      ],
+      "CH1": [
+        "54",
+        "55",
+        "24",
+        "43",
+        "26",
+        "81",
+        "40",
+        "40",
+        "44",
+        "14",
+        "47",
+        "40",
+        "14",
+        "17",
+        "29",
+        "43",
+        "27",
+        "17",
+        "19",
+        "8",
+        "30",
+        "19",
+        "32",
+        "31",
+        "31",
+        "32",
+        "34",
+        "21",
+        "30"
+      ],
+      "CH2": [
+        "17",
+        "18",
+        "17",
+        "22",
+        "14",
+        "42",
+        "22",
+        "18",
+        "31",
+        "19",
+        "23",
+        "16",
+        "22",
+        "15",
+        "19",
+        "14",
+        "19",
+        "34",
+        "11",
+        "37",
+        "20",
+        "12",
+        "21",
+        "27",
+        "28",
+        "23",
+        "9",
+        "27",
+        "36",
+        "27",
+        "21",
+        "33",
+        "25",
+        "33",
+        "27",
+        "23"
+      ],
+      "EZR": [
+        "11",
+        "70",
+        "13",
+        "24",
+        "17",
+        "22",
+        "28",
+        "36",
+        "15",
+        "44"
+      ],
+      "NEH": [
+        "11",
+        "20",
+        "32",
+        "23",
+        "19",
+        "19",
+        "73",
+        "18",
+        "38",
+        "39",
+        "36",
+        "47",
+        "31"
+      ],
+      "EST": [
+        "22",
+        "23",
+        "15",
+        "17",
+        "14",
+        "14",
+        "10",
+        "17",
+        "32",
+        "3"
+      ],
+      "JOB": [
+        "22",
+        "13",
+        "26",
+        "21",
+        "27",
+        "30",
+        "21",
+        "22",
+        "35",
+        "22",
+        "20",
+        "25",
+        "28",
+        "22",
+        "35",
+        "22",
+        "16",
+        "21",
+        "29",
+        "29",
+        "34",
+        "30",
+        "17",
+        "25",
+        "6",
+        "14",
+        "23",
+        "28",
+        "25",
+        "31",
+        "40",
+        "22",
+        "33",
+        "37",
+        "16",
+        "33",
+        "24",
+        "41",
+        "30",
+        "24",
+        "34",
+        "17"
+      ],
+      "PSA": [
+        "6",
+        "12",
+        "8",
+        "8",
+        "12",
+        "10",
+        "17",
+        "9",
+        "20",
+        "18",
+        "7",
+        "8",
+        "6",
+        "7",
+        "5",
+        "11",
+        "15",
+        "50",
+        "14",
+        "9",
+        "13",
+        "31",
+        "6",
+        "10",
+        "22",
+        "12",
+        "14",
+        "9",
+        "11",
+        "12",
+        "24",
+        "11",
+        "22",
+        "22",
+        "28",
+        "12",
+        "40",
+        "22",
+        "13",
+        "17",
+        "13",
+        "11",
+        "5",
+        "26",
+        "17",
+        "11",
+        "9",
+        "14",
+        "20",
+        "23",
+        "19",
+        "9",
+        "6",
+        "7",
+        "23",
+        "13",
+        "11",
+        "11",
+        "17",
+        "12",
+        "8",
+        "12",
+        "11",
+        "10",
+        "13",
+        "20",
+        "7",
+        "35",
+        "36",
+        "5",
+        "24",
+        "20",
+        "28",
+        "23",
+        "10",
+        "12",
+        "20",
+        "72",
+        "13",
+        "19",
+        "16",
+        "8",
+        "18",
+        "12",
+        "13",
+        "17",
+        "7",
+        "18",
+        "52",
+        "17",
+        "16",
+        "15",
+        "5",
+        "23",
+        "11",
+        "13",
+        "12",
+        "9",
+        "9",
+        "5",
+        "8",
+        "28",
+        "22",
+        "35",
+        "45",
+        "48",
+        "43",
+        "13",
+        "31",
+        "7",
+        "10",
+        "10",
+        "9",
+        "8",
+        "18",
+        "19",
+        "2",
+        "29",
+        "176",
+        "7",
+        "8",
+        "9",
+        "4",
+        "8",
+        "5",
+        "6",
+        "5",
+        "6",
+        "8",
+        "8",
+        "3",
+        "18",
+        "3",
+        "3",
+        "21",
+        "26",
+        "9",
+        "8",
+        "24",
+        "13",
+        "10",
+        "7",
+        "12",
+        "15",
+        "21",
+        "10",
+        "20",
+        "14",
+        "9",
+        "6"
+      ],
+      "PRO": [
+        "33",
+        "22",
+        "35",
+        "27",
+        "23",
+        "35",
+        "27",
+        "36",
+        "18",
+        "32",
+        "31",
+        "28",
+        "25",
+        "35",
+        "33",
+        "33",
+        "28",
+        "24",
+        "29",
+        "30",
+        "31",
+        "29",
+        "35",
+        "34",
+        "28",
+        "28",
+        "27",
+        "28",
+        "27",
+        "33",
+        "31"
+      ],
+      "ECC": [
+        "18",
+        "26",
+        "22",
+        "16",
+        "20",
+        "12",
+        "29",
+        "17",
+        "18",
+        "20",
+        "10",
+        "14"
+      ],
+      "SNG": [
+        "17",
+        "17",
+        "11",
+        "16",
+        "16",
+        "13",
+        "13",
+        "14"
+      ],
+      "ISA": [
+        "31",
+        "22",
+        "26",
+        "6",
+        "30",
+        "13",
+        "25",
+        "22",
+        "21",
+        "34",
+        "16",
+        "6",
+        "22",
+        "32",
+        "9",
+        "14",
+        "14",
+        "7",
+        "25",
+        "6",
+        "17",
+        "25",
+        "18",
+        "23",
+        "12",
+        "21",
+        "13",
+        "29",
+        "24",
+        "33",
+        "9",
+        "20",
+        "24",
+        "17",
+        "10",
+        "22",
+        "38",
+        "22",
+        "8",
+        "31",
+        "29",
+        "25",
+        "28",
+        "28",
+        "25",
+        "13",
+        "15",
+        "22",
+        "26",
+        "11",
+        "23",
+        "15",
+        "12",
+        "17",
+        "13",
+        "12",
+        "21",
+        "14",
+        "21",
+        "22",
+        "11",
+        "12",
+        "19",
+        "12",
+        "25",
+        "24"
+      ],
+      "JER": [
+        "19",
+        "37",
+        "25",
+        "31",
+        "31",
+        "30",
+        "34",
+        "22",
+        "26",
+        "25",
+        "23",
+        "17",
+        "27",
+        "22",
+        "21",
+        "21",
+        "27",
+        "23",
+        "15",
+        "18",
+        "14",
+        "30",
+        "40",
+        "10",
+        "38",
+        "24",
+        "22",
+        "17",
+        "32",
+        "24",
+        "40",
+        "44",
+        "26",
+        "22",
+        "19",
+        "32",
+        "21",
+        "28",
+        "18",
+        "16",
+        "18",
+        "22",
+        "13",
+        "30",
+        "5",
+        "28",
+        "7",
+        "47",
+        "39",
+        "46",
+        "64",
+        "34"
+      ],
+      "LAM": [
+        "22",
+        "22",
+        "66",
+        "22",
+        "22"
+      ],
+      "EZE": [
+        "28",
+        "10",
+        "27",
+        "17",
+        "17",
+        "14",
+        "27",
+        "18",
+        "11",
+        "22",
+        "25",
+        "28",
+        "23",
+        "23",
+        "8",
+        "63",
+        "24",
+        "32",
+        "14",
+        "49",
+        "32",
+        "31",
+        "49",
+        "27",
+        "17",
+        "21",
+        "36",
+        "26",
+        "21",
+        "26",
+        "18",
+        "32",
+        "33",
+        "31",
+        "15",
+        "38",
+        "28",
+        "23",
+        "29",
+        "49",
+        "26",
+        "20",
+        "27",
+        "31",
+        "25",
+        "24",
+        "23",
+        "35"
+      ],
+      "DAN": [
+        "21",
+        "49",
+        "30",
+        "37",
+        "31",
+        "28",
+        "28",
+        "27",
+        "27",
+        "21",
+        "45",
+        "13"
+      ],
+      "HOS": [
+        "11",
+        "23",
+        "5",
+        "19",
+        "15",
+        "11",
+        "16",
+        "14",
+        "17",
+        "15",
+        "12",
+        "14",
+        "16",
+        "9"
+      ],
+      "JOL": [
+        "20",
+        "32",
+        "21"
+      ],
+      "AMO": [
+        "15",
+        "16",
+        "15",
+        "13",
+        "27",
+        "14",
+        "17",
+        "14",
+        "15"
+      ],
+      "OBA": [
+        "21"
+      ],
+      "JNA": [
+        "17",
+        "10",
+        "10",
+        "11"
+      ],
+      "MIC": [
+        "16",
+        "13",
+        "12",
+        "13",
+        "15",
+        "16",
+        "20"
+      ],
+      "NAH": [
+        "15",
+        "13",
+        "19"
+      ],
+      "HAB": [
+        "17",
+        "20",
+        "19"
+      ],
+      "ZEP": [
+        "18",
+        "15",
+        "20"
+      ],
+      "HAG": [
+        "15",
+        "23"
+      ],
+      "ZEC": [
+        "21",
+        "13",
+        "10",
+        "14",
+        "11",
+        "15",
+        "14",
+        "23",
+        "17",
+        "12",
+        "17",
+        "14",
+        "9",
+        "21"
+      ],
+      "MAL": [
+        "14",
+        "17",
+        "18",
+        "6"
+      ],
+      "MAT": [
+        25,
+        23,
+        17,
+        25,
+        48,
+        34,
+        29,
+        34,
+        38,
+        42,
+        30,
+        50,
+        58,
+        36,
+        39,
+        28,
+        27,
+        35,
+        30,
+        34,
+        46,
+        46,
+        39,
+        51,
+        46,
+        75,
+        66,
+        20
+      ],
+      "MRK": [
+        45,
+        28,
+        35,
+        41,
+        43,
+        56,
+        37,
+        38,
+        50,
+        52,
+        33,
+        44,
+        37,
+        72,
+        47,
+        20
+      ],
+      "LUK": [
+        80,
+        52,
+        38,
+        44,
+        39,
+        49,
+        50,
+        56,
+        62,
+        42,
+        54,
+        59,
+        35,
+        35,
+        32,
+        31,
+        37,
+        43,
+        48,
+        47,
+        38,
+        71,
+        56,
+        53
+      ],
+      "JHN": [
+        51,
+        25,
+        36,
+        54,
+        47,
+        71,
+        53,
+        59,
+        41,
+        42,
+        57,
+        50,
+        38,
+        31,
+        27,
+        33,
+        26,
+        40,
+        42,
+        31,
+        25
+      ],
+      "ACT": [
+        26,
+        47,
+        26,
+        37,
+        42,
+        15,
+        60,
+        40,
+        43,
+        48,
+        30,
+        25,
+        52,
+        28,
+        41,
+        40,
+        34,
+        28,
+        41,
+        38,
+        40,
+        30,
+        35,
+        27,
+        27,
+        32,
+        44,
+        31
+      ],
+      "ROM": [
+        32,
+        29,
+        31,
+        25,
+        21,
+        23,
+        25,
+        39,
+        33,
+        21,
+        36,
+        21,
+        14,
+        23,
+        33,
+        27
+      ],
+      "CO1": [
+        31,
+        16,
+        23,
+        21,
+        13,
+        20,
+        40,
+        13,
+        27,
+        33,
+        34,
+        31,
+        13,
+        40,
+        58,
+        24
+      ],
+      "CO2": [
+        24,
+        17,
+        18,
+        18,
+        21,
+        18,
+        16,
+        24,
+        15,
+        18,
+        33,
+        21,
+        13
+      ],
+      "GAL": [
+        24,
+        21,
+        29,
+        31,
+        26,
+        18
+      ],
+      "EPH": [
+        23,
+        22,
+        21,
+        32,
+        33,
+        24
+      ],
+      "PHP": [
+        30,
+        30,
+        21,
+        23
+      ],
+      "COL": [
+        29,
+        23,
+        25,
+        18
+      ],
+      "TH1": [
+        10,
+        20,
+        13,
+        18,
+        28
+      ],
+      "TH2": [
+        12,
+        17,
+        18
+      ],
+      "TI1": [
+        20,
+        15,
+        16,
+        16,
+        25,
+        21
+      ],
+      "TI2": [
+        18,
+        26,
+        17,
+        22
+      ],
+      "TIT": [
+        16,
+        15,
+        15
+      ],
+      "PHM": [
+        25
+      ],
+      "HEB": [
+        14,
+        18,
+        19,
+        16,
+        14,
+        20,
+        28,
+        13,
+        28,
+        39,
+        40,
+        29,
+        25
+      ],
+      "JAM": [
+        27,
+        26,
+        18,
+        17,
+        20
+      ],
+      "PE1": [
+        25,
+        25,
+        22,
+        19,
+        14
+      ],
+      "PE2": [
+        21,
+        22,
+        18
+      ],
+      "JN1": [
+        10,
+        29,
+        24,
+        21,
+        21
+      ],
+      "JN2": [
+        13
+      ],
+      "JN3": [
+        15
+      ],
+      "JDE": [
+        25
+      ],
+      "REV": [
+        20,
+        29,
+        22,
+        11,
+        14,
+        17,
+        17,
+        13,
+        21,
+        11,
+        19,
+        18,
+        18,
+        20,
+        8,
+        21,
+        18,
+        24,
+        21,
+        15,
+        27,
+        21
+      ],
+      "BAR": [
+        "22",
+        "35",
+        "37",
+        "37",
+        "9",
+        "73"
+      ],
+      "DNG": [
+        "21",
+        "49",
+        "97",
+        "37",
+        "31",
+        "28",
+        "28",
+        "27",
+        "27",
+        "21",
+        "45",
+        "13",
+        "64",
+        "42"
+      ],
+      "GES": [
+        "58",
+        "30",
+        "24",
+        "63",
+        "73",
+        "34",
+        "15",
+        "96",
+        "55"
+      ],
+      "LES": [
+        "40",
+        "48",
+        "36",
+        "52",
+        "56",
+        "59",
+        "140",
+        "63",
+        "47",
+        "59",
+        "46",
+        "51",
+        "58",
+        "48",
+        "63",
+        "78"
+      ],
+      "ESG": [
+        "22",
+        "23",
+        "15",
+        "47",
+        "14",
+        "14",
+        "10",
+        "17",
+        "32",
+        "14"
+      ],
+      "JDT": [
+        "16",
+        "28",
+        "10",
+        "15",
+        "24",
+        "21",
+        "32",
+        "36",
+        "14",
+        "23",
+        "23",
+        "20",
+        "20",
+        "19",
+        "13",
+        "25"
+      ],
+      "MA1": [
+        "64",
+        "70",
+        "60",
+        "61",
+        "68",
+        "63",
+        "50",
+        "32",
+        "73",
+        "89",
+        "74",
+        "53",
+        "53",
+        "49",
+        "41",
+        "24"
+      ],
+      "MA2": [
+        "36",
+        "32",
+        "40",
+        "50",
+        "27",
+        "31",
+        "42",
+        "36",
+        "29",
+        "38",
+        "38",
+        "45",
+        "26",
+        "46",
+        "39"
+      ],
+      "MA3": [
+        "29",
+        "33",
+        "30",
+        "21",
+        "51",
+        "41",
+        "23"
+      ],
+      "MA4": [
+        "35",
+        "24",
+        "21",
+        "26",
+        "38",
+        "35",
+        "25",
+        "29",
+        "32",
+        "21",
+        "27",
+        "20",
+        "27",
+        "20",
+        "32",
+        "25",
+        "24",
+        "24"
+      ],
+      "MAN": [
+        "15"
+      ],
+      "PS2": [
+        "7"
+      ],
+      "SIR": [
+        "30",
+        "18",
+        "31",
+        "31",
+        "15",
+        "37",
+        "36",
+        "19",
+        "18",
+        "31",
+        "34",
+        "18",
+        "26",
+        "27",
+        "20",
+        "30",
+        "32",
+        "33",
+        "30",
+        "32",
+        "28",
+        "27",
+        "28",
+        "34",
+        "26",
+        "29",
+        "30",
+        "26",
+        "28",
+        "25",
+        "31",
+        "24",
+        "33",
+        "26",
+        "20",
+        "26",
+        "31",
+        "34",
+        "35",
+        "30",
+        "24",
+        "25",
+        "33",
+        "23",
+        "26",
+        "20",
+        "25",
+        "25",
+        "16",
+        "29",
+        "30"
+      ],
+      "TOB": [
+        "22",
+        "14",
+        "17",
+        "21",
+        "22",
+        "17",
+        "18",
+        "21",
+        "6",
+        "12",
+        "19",
+        "22",
+        "18",
+        "15"
+      ],
+      "WIS": [
+        "16",
+        "24",
+        "19",
+        "20",
+        "23",
+        "25",
+        "30",
+        "21",
+        "18",
+        "21",
+        "26",
+        "27",
+        "19",
+        "31",
+        "19",
+        "29",
+        "21",
+        "25",
+        "22"
+      ],
+      "LAO": [
+        "20"
+      ]
+    },
+    "mappedVerses": {
+      "GEN 31:55": "GEN 32:1",
+      "GEN 32:1-32": "GEN 32:2-33",
+      "EXO 8:1-4": "EXO 7:26-29",
+      "EXO 8:5-32": "EXO 8:1-28",
+      "EXO 22:1": "EXO 21:37",
+      "EXO 22:2-31": "EXO 22:1-30",
+      "LEV 6:1-7": "LEV 5:20-26",
+      "LEV 6:8-30": "LEV 6:1-23",
+      "NUM 16:36-50": "NUM 17:1-15",
+      "NUM 17:1-13": "NUM 17:16-28",
+      "NUM 29:40": "NUM 30:1",
+      "NUM 30:1-16": "NUM 30:2-17",
+      "DEU 12:32": "DEU 13:1",
+      "DEU 13:1-18": "DEU 13:2-19",
+      "DEU 22:30": "DEU 23:1",
+      "DEU 23:1-25": "DEU 23:2-26",
+      "DEU 29:1": "DEU 28:69",
+      "DEU 29:2-29": "DEU 29:1-28",
+      "SA1 21:1-15": "SA1 21:2-16",
+      "SA1 23:29": "SA1 24:1",
+      "SA1 24:1-22": "SA1 24:2-23",
+      "SA2 18:33": "SA2 19:1",
+      "SA2 19:1-43": "SA2 19:2-44",
+      "KI1 4:21-34": "KI1 5:1-14",
+      "KI1 5:1-18": "KI1 5:15-32",
+      "KI2 11:21": "KI2 12:1",
+      "KI2 12:1-21": "KI2 12:2-22",
+      "CH1 6:1-15": "CH1 5:27-41",
+      "CH1 6:16-81": "CH1 6:1-66",
+      "CH2 2:1": "CH2 1:18",
+      "CH2 2:2-18": "CH2 2:1-17",
+      "CH2 14:1": "CH2 13:23",
+      "CH2 14:2-15": "CH2 14:1-14",
+      "NEH 4:1-6": "NEH 3:33-38",
+      "NEH 4:7-23": "NEH 4:1-17",
+      "NEH 7:69-73": "NEH 7:68-72",
+      "NEH 9:38": "NEH 10:1",
+      "NEH 10:1-39": "NEH 10:2-40",
+      "JOB 41:1-8": "JOB 40:25-32",
+      "JOB 41:9-34": "JOB 41:1-26",
+      "PSA 3:0-8": "PSA 3:1-9",
+      "PSA 4:0-8": "PSA 4:1-9",
+      "PSA 5:0-12": "PSA 5:1-13",
+      "PSA 6:0-10": "PSA 6:1-11",
+      "PSA 7:0-17": "PSA 7:1-18",
+      "PSA 8:0-9": "PSA 8:1-10",
+      "PSA 9:0-20": "PSA 9:1-21",
+      "PSA 12:0-8": "PSA 12:1-9",
+      "PSA 18:0-50": "PSA 18:1-51",
+      "PSA 19:0-14": "PSA 19:1-15",
+      "PSA 20:0-9": "PSA 20:1-10",
+      "PSA 21:0-13": "PSA 21:1-14",
+      "PSA 22:0-31": "PSA 22:1-32",
+      "PSA 30:0-12": "PSA 30:1-13",
+      "PSA 31:0-24": "PSA 31:1-25",
+      "PSA 34:0-22": "PSA 34:1-23",
+      "PSA 36:0-12": "PSA 36:1-13",
+      "PSA 38:0-22": "PSA 38:1-23",
+      "PSA 39:0-13": "PSA 39:1-14",
+      "PSA 40:0-17": "PSA 40:1-18",
+      "PSA 41:0-13": "PSA 41:1-14",
+      "PSA 42:0-11": "PSA 42:1-12",
+      "PSA 44:0-26": "PSA 44:1-27",
+      "PSA 45:0-17": "PSA 45:1-18",
+      "PSA 46:0-11": "PSA 46:1-12",
+      "PSA 47:0-9": "PSA 47:1-10",
+      "PSA 48:0-14": "PSA 48:1-15",
+      "PSA 49:0-20": "PSA 49:1-21",
+      "PSA 51:1-19": "PSA 51:3-21",
+      "PSA 52:1-9": "PSA 52:3-11",
+      "PSA 53:0-6": "PSA 53:1-7",
+      "PSA 54:1-7": "PSA 54:3-9",
+      "PSA 55:0-23": "PSA 55:1-24",
+      "PSA 56:0-13": "PSA 56:1-14",
+      "PSA 57:0-11": "PSA 57:1-12",
+      "PSA 58:0-11": "PSA 58:1-12",
+      "PSA 59:0-17": "PSA 59:1-18",
+      "PSA 60:1-12": "PSA 60:3-14",
+      "PSA 61:0-8": "PSA 61:1-9",
+      "PSA 62:0-12": "PSA 62:1-13",
+      "PSA 63:0-11": "PSA 63:1-12",
+      "PSA 64:0-10": "PSA 64:1-11",
+      "PSA 65:0-13": "PSA 65:1-14",
+      "PSA 67:0-7": "PSA 67:1-8",
+      "PSA 68:0-35": "PSA 68:1-36",
+      "PSA 69:0-36": "PSA 69:1-37",
+      "PSA 70:0-5": "PSA 70:1-6",
+      "PSA 75:0-10": "PSA 75:1-11",
+      "PSA 76:0-12": "PSA 76:1-13",
+      "PSA 77:0-20": "PSA 77:1-21",
+      "PSA 80:0-19": "PSA 80:1-20",
+      "PSA 81:0-16": "PSA 81:1-17",
+      "PSA 83:0-18": "PSA 83:1-19",
+      "PSA 84:0-12": "PSA 84:1-13",
+      "PSA 85:0-13": "PSA 85:1-14",
+      "PSA 88:0-18": "PSA 88:1-19",
+      "PSA 89:0-52": "PSA 89:1-53",
+      "PSA 92:0-15": "PSA 92:1-16",
+      "PSA 102:0-28": "PSA 102:1-29",
+      "PSA 108:0-13": "PSA 108:1-14",
+      "PSA 140:0-13": "PSA 140:1-14",
+      "PSA 142:0-7": "PSA 142:1-8",
+      "ECC 5:1": "ECC 4:17",
+      "ECC 5:2-20": "ECC 5:1-19",
+      "SNG 6:13": "SNG 7:1",
+      "SNG 7:1-13": "SNG 7:2-14",
+      "ISA 9:1": "ISA 8:23",
+      "ISA 9:2-21": "ISA 9:1-20",
+      "ISA 64:2-12": "ISA 64:1-11",
+      "JER 9:1": "JER 8:23",
+      "JER 9:2-26": "JER 9:1-25",
+      "EZE 20:45-46": "EZE 21:1-2",
+      "EZE 20:47": "EZE 21:3",
+      "EZE 20:48-49": "EZE 21:4-5",
+      "EZE 21:1-32": "EZE 21:6-37",
+      "DAN 4:1-3": "DAN 3:31-33",
+      "DAN 4:4-37": "DAN 4:1-34",
+      "DAN 5:31": "DAN 6:1",
+      "DAN 6:1-28": "DAN 6:2-29",
+      "HOS 1:10-11": "HOS 2:1-2",
+      "HOS 2:1-23": "HOS 2:3-25",
+      "HOS 11:12": "HOS 12:1",
+      "HOS 12:1-14": "HOS 12:2-15",
+      "HOS 13:16": "HOS 14:1",
+      "HOS 14:1-9": "HOS 14:2-10",
+      "JOL 2:28-32": "JOL 3:1-5",
+      "JOL 3:1-21": "JOL 4:1-21",
+      "JNA 1:17": "JNA 2:1",
+      "JNA 2:1-10": "JNA 2:2-11",
+      "MIC 5:1": "MIC 4:14",
+      "MIC 5:2-15": "MIC 5:1-14",
+      "NAH 1:15": "NAH 2:1",
+      "NAH 2:1-13": "NAH 2:2-14",
+      "ZEC 1:18-21": "ZEC 2:1-4",
+      "ZEC 2:1-13": "ZEC 2:5-17",
+      "MAL 4:1-6": "MAL 3:19-24",
+      "KI1 22:44-53": "KI1 22:45-54",
+      "CH1 12:5-40": "CH1 12:6-41",
+      "PSA 13:0": "PSA 13:1",
+      "PSA 13:1": "PSA 13:2",
+      "PSA 13:2": "PSA 13:3",
+      "PSA 13:3": "PSA 13:4",
+      "PSA 13:4": "PSA 13:5",
+      "PHP 1:16": "PHP 1:17",
+      "PHP 1:17": "PHP 1:16",
+      "BAR 3:35-37": "BAR 3:36-38",
+      "BAR 6:1-49": "LJE 1:1-49",
+      "BAR 6:52-73": "LJE 1:51-72",
+      "JDT 16:1": "JDT 15:14",
+      "JDT 16:2-7": "JDT 16:1-6",
+      "WIS 17:11-21": "WIS 17:10-20",
+      "MA4 7:24": "MA4 8:1",
+      "MA4 8:2-27": "MA4 8:3-28",
+      "MA4 12:16-20": "MA4 12:15-19",
+      "GES 1:11": "GES 1:12",
+      "GES 1:19-50": "GES 1:17-48",
+      "GES 1:53-58": "GES 1:50-55",
+      "GES 2:5": "GES 2:3",
+      "GES 2:8-10": "GES 2:5-7",
+      "GES 2:16-19": "GES 2:12-15",
+      "GES 2:24-25": "GES 2:18-19",
+      "GES 2:27": "GES 2:22",
+      "GES 5:43-53": "GES 5:42-52",
+      "GES 5:56-57": "GES 5:54-55",
+      "GES 5:61-72": "GES 5:58-69",
+      "GES 6:10-34": "GES 6:9-33",
+      "GES 8:45-49": "GES 8:44-48",
+      "GES 8:58-62": "GES 8:57-61",
+      "GES 8:67-92": "GES 8:64-89",
+      "GES 8:95-96": "GES 8:91-92",
+      "SIR 35:6-11": "SIR 35:5-10",
+      "SIR 35:20": "SIR 35:24",
+      "SIR 36:3-16": "SIR 36:2-15",
+      "SIR 41:23-24": "SIR 41:26-27",
+      "TOB 1:1-22": "TOB 1:1-22",
+      "TOB 2:1-14": "TOB 2:1-14",
+      "TOB 3:1-17": "TOB 3:1-17",
+      "TOB 4:1-21": "TOB 4:1-21",
+      "TOB 8:1-21": "TOB 8:1-21",
+      "TOB 9:1-6": "TOB 9:1-6",
+      "TOB 12:1-22": "TOB 12:1-22",
+      "TOB 14:1-15": "TOB 14:1-15",
+      "TOB 5:1-3": "TOB 5:1-3",
+      "TOB 5:6-7": "TOB 5:6-7",
+      "TOB 5:9-22": "TOB 5:10-23",
+      "TOB 6:1-4": "TOB 6:1-4",
+      "TOB 6:6-9": "TOB 6:7-10",
+      "TOB 6:13-15": "TOB 6:14-16",
+      "TOB 7:1-3": "TOB 7:1-3",
+      "TOB 7:13": "TOB 7:13",
+      "TOB 7:16-18": "TOB 7:15-17",
+      "TOB 10:1-6": "TOB 10:1-6",
+      "TOB 10:10-11": "TOB 10:10-11",
+      "TOB 11:3-19": "TOB 11:3-19",
+      "TOB 13:3-5": "TOB 13:3-5",
+      "TOB 13:11-12": "TOB 13:13-14",
+      "TOB 13:18": "TOB 13:18",
+      "ESG 1:2-22": "ESG 1:2-22",
+      "ESG 2:1-23": "ESG 2:1-23",
+      "ESG 3:1-12": "ESG 3:1-12",
+      "ESG 3:14-15": "ESG 3:14-15",
+      "ESG 4:1-5": "ESG 4:1-5",
+      "ESG 4:7-16": "ESG 4:7-16",
+      "ESG 5:3-14": "ESG 5:3-14",
+      "ESG 6:1-14": "ESG 6:1-14",
+      "ESG 7:1-10": "ESG 7:1-10",
+      "ESG 8:1-11": "ESG 8:1-11",
+      "ESG 8:13-17": "ESG 8:13-17",
+      "ESG 9:1-4": "ESG 9:1-4",
+      "ESG 9:6-29": "ESG 9:6-29",
+      "ESG 9:31-32": "ESG 9:31-32",
+      "ESG 10:1-2": "ESG 10:1-2",
+      "DNG 13:1-64": "SUS 1:1-64",
+      "DNG 14:1-42": "BEL 1:1-42",
+      "LAO 1:1-20": "LAO 1:1-20"
+    },
+    "excludedVerses": [
+      "ESG 4:6",
+      "ESG 9:5",
+      "ESG 9:30"
+    ],
+    "mergedVerses": [],
+    "partialVerses": {},
+    "identityBooks": {
+      "GEN": "GEN",
+      "EXO": "EXO",
+      "LEV": "LEV",
+      "NUM": "NUM",
+      "DEU": "DEU",
+      "JOS": "JOS",
+      "JDG": "JDG",
+      "RUT": "RUT",
+      "SA1": "SA1",
+      "SA2": "SA2",
+      "KI1": "KI1",
+      "KI2": "KI2",
+      "CH1": "CH1",
+      "CH2": "CH2",
+      "EZR": "EZR",
+      "NEH": "NEH",
+      "EST": "EST",
+      "JOB": "JOB",
+      "PSA": "PSA",
+      "PRO": "PRO",
+      "ECC": "ECC",
+      "SNG": "SNG",
+      "ISA": "ISA",
+      "JER": "JER",
+      "LAM": "LAM",
+      "EZE": "EZE",
+      "DAN": "DAN",
+      "HOS": "HOS",
+      "JOL": "JOL",
+      "AMO": "AMO",
+      "OBA": "OBA",
+      "JNA": "JNA",
+      "MIC": "MIC",
+      "NAH": "NAH",
+      "HAB": "HAB",
+      "ZEP": "ZEP",
+      "HAG": "HAG",
+      "ZEC": "ZEC",
+      "MAL": "MAL",
+      "MAT": "MAT",
+      "MRK": "MRK",
+      "LUK": "LUK",
+      "JHN": "JHN",
+      "ACT": "ACT",
+      "ROM": "ROM",
+      "CO1": "CO1",
+      "CO2": "CO2",
+      "GAL": "GAL",
+      "EPH": "EPH",
+      "PHP": "PHP",
+      "COL": "COL",
+      "TH1": "TH1",
+      "TH2": "TH2",
+      "TI1": "TI1",
+      "TI2": "TI2",
+      "TIT": "TIT",
+      "PHM": "PHM",
+      "HEB": "HEB",
+      "JAM": "JAM",
+      "PE1": "PE1",
+      "PE2": "PE2",
+      "JN1": "JN1",
+      "JN2": "JN2",
+      "JN3": "JN3",
+      "JDE": "JDE",
+      "REV": "REV",
+      "BAR": "BAR",
+      "GES": "GES",
+      "LES": "LES",
+      "JDT": "JDT",
+      "MA1": "MA1",
+      "MA2": "MA2",
+      "MA3": "MA3",
+      "MA4": "MA4",
+      "MAN": "MAN",
+      "PS2": "PS2",
+      "SIR": "SIR",
+      "WIS": "WIS"
+    },
+    "verseZeroReferences": [
+      "PSA 102:0",
+      "PSA 108:0",
+      "PSA 12:0",
+      "PSA 13:0",
+      "PSA 140:0",
+      "PSA 142:0",
+      "PSA 18:0",
+      "PSA 19:0",
+      "PSA 20:0",
+      "PSA 21:0",
+      "PSA 22:0",
+      "PSA 30:0",
+      "PSA 31:0",
+      "PSA 34:0",
+      "PSA 36:0",
+      "PSA 38:0",
+      "PSA 39:0",
+      "PSA 3:0",
+      "PSA 40:0",
+      "PSA 41:0",
+      "PSA 42:0",
+      "PSA 44:0",
+      "PSA 45:0",
+      "PSA 46:0",
+      "PSA 47:0",
+      "PSA 48:0",
+      "PSA 49:0",
+      "PSA 4:0",
+      "PSA 51:0",
+      "PSA 52:0",
+      "PSA 53:0",
+      "PSA 54:0",
+      "PSA 55:0",
+      "PSA 56:0",
+      "PSA 57:0",
+      "PSA 58:0",
+      "PSA 59:0",
+      "PSA 5:0",
+      "PSA 60:0",
+      "PSA 61:0",
+      "PSA 62:0",
+      "PSA 63:0",
+      "PSA 64:0",
+      "PSA 65:0",
+      "PSA 67:0",
+      "PSA 68:0",
+      "PSA 69:0",
+      "PSA 6:0",
+      "PSA 70:0",
+      "PSA 75:0",
+      "PSA 76:0",
+      "PSA 77:0",
+      "PSA 7:0",
+      "PSA 80:0",
+      "PSA 81:0",
+      "PSA 83:0",
+      "PSA 84:0",
+      "PSA 85:0",
+      "PSA 88:0",
+      "PSA 89:0",
+      "PSA 8:0",
+      "PSA 92:0",
+      "PSA 9:0"
+    ],
+    "unsupportedBooks": {},
+    "groupMappings": [
+      {
+        "source": [
+          "NUM 26:1"
+        ],
+        "target": [
+          "NUM 25:19",
+          "NUM 26:1"
+        ],
+        "provenance": "BOS supplement eng-num-26-1 revision 3"
+      },
+      {
+        "source": [
+          "SA1 20:42"
+        ],
+        "target": [
+          "SA1 20:42",
+          "SA1 21:1"
+        ],
+        "provenance": "BOS supplement eng-sa1-20-42 revision 3"
+      },
+      {
+        "source": [
+          "KI1 22:43"
+        ],
+        "target": [
+          "KI1 22:43-44"
+        ],
+        "provenance": "BOS supplement eng-ki1-22-43 revision 3"
+      },
+      {
+        "source": [
+          "CH1 12:4"
+        ],
+        "target": [
+          "CH1 12:4-5"
+        ],
+        "provenance": "BOS supplement eng-ch1-12-4 revision 3"
+      },
+      {
+        "source": [
+          "PSA 51:0"
+        ],
+        "target": [
+          "PSA 51:1-2"
+        ],
+        "provenance": "BOS supplement eng-psa-51-title revision 3"
+      },
+      {
+        "source": [
+          "PSA 52:0"
+        ],
+        "target": [
+          "PSA 52:1-2"
+        ],
+        "provenance": "BOS supplement eng-psa-52-title revision 3"
+      },
+      {
+        "source": [
+          "PSA 54:0"
+        ],
+        "target": [
+          "PSA 54:1-2"
+        ],
+        "provenance": "BOS supplement eng-psa-54-title revision 3"
+      },
+      {
+        "source": [
+          "PSA 60:0"
+        ],
+        "target": [
+          "PSA 60:1-2"
+        ],
+        "provenance": "BOS supplement eng-psa-60-title revision 3"
+      },
+      {
+        "source": [
+          "PSA 13:5-6"
+        ],
+        "target": [
+          "PSA 13:6"
+        ],
+        "provenance": "BOS supplement eng-psa-13-5-6 revision 3"
+      },
+      {
+        "source": [
+          "ISA 63:19",
+          "ISA 64:1"
+        ],
+        "target": [
+          "ISA 63:19"
+        ],
+        "provenance": "BOS supplement eng-isa-63-19 revision 3"
+      },
+      {
+        "source": "ACT 19:40-41",
+        "target": "ACT 19:40",
+        "provenance": "BibleTags Greek: speech and dismissal in separate verses; Macula/org combines both."
+      },
+      {
+        "source": "BAR 3:34",
+        "target": "BAR 3:34-35",
+        "provenance": "OET-RV DC review 2026-10-29: oet-rv-dc-01; Stars shine, are called, and answer in one RV verse."
+      },
+      {
+        "source": "BAR 6:50-51",
+        "target": "LJE 1:50",
+        "provenance": "OET-RV DC review 2026-10-29: oet-rv-dc-04; Wooden idols and their known inability form one reference verse."
+      },
+      {
+        "source": "JDT 16:8",
+        "target": "JDT 16:7-8",
+        "provenance": "OET-RV DC review 2026-10-29: oet-rv-dc-08; Clothing, ointment, hair and linen attire occupy one RV verse."
+      },
+      {
+        "source": "WIS 17:9-10",
+        "target": "WIS 17:9",
+        "provenance": "OET-RV DC review 2026-10-29: oet-rv-dc-09; Vermin, fear and refusal to look at the air."
+      },
+      {
+        "source": [
+          "MA4 7:25",
+          "MA4 8:1"
+        ],
+        "target": "MA4 8:2",
+        "provenance": "OET-RV DC review 2026-10-29: oet-rv-dc-12; The defeated tyrant summons the other Hebrew prisoners."
+      },
+      {
+        "source": "MA4 8:28-29",
+        "target": "MA4 8:29",
+        "provenance": "OET-RV DC review 2026-10-29: oet-rv-dc-14; RV stores the speech introduction and answer as the bridge 28-29."
+      },
+      {
+        "source": "MA4 12:14-15",
+        "target": "MA4 12:14",
+        "provenance": "OET-RV DC review 2026-10-29: oet-rv-dc-15; Fulfilled piety and punishment of the tyrant."
+      },
+      {
+        "source": "GES 1:3-5",
+        "target": "GES 1:3-5",
+        "provenance": "OET-RV DC review 2026-10-29: oet-rv-dc-17; Ark carrying, preparations and David/Solomon instructions cross verse boundaries."
+      },
+      {
+        "source": "GES 1:10",
+        "target": "GES 1:10-11",
+        "provenance": "OET-RV DC review 2026-10-29: oet-rv-dc-18; Priests and Levites stand in order with unleavened bread."
+      },
+      {
+        "source": "GES 1:12-14",
+        "target": "GES 1:13-14",
+        "provenance": "OET-RV DC review 2026-10-29: oet-rv-dc-20; Cooking, serving and preparation for the priests overlap RV verse 13."
+      },
+      {
+        "source": "GES 1:15-16",
+        "target": "GES 1:15",
+        "provenance": "OET-RV DC review 2026-10-29: oet-rv-dc-21; Singers and gatekeepers."
+      },
+      {
+        "source": "GES 1:17-18",
+        "target": "GES 1:16",
+        "provenance": "OET-RV DC review 2026-10-29: oet-rv-dc-22; Passover and altar sacrifices."
+      },
+      {
+        "source": "GES 1:51-52",
+        "target": "GES 1:49",
+        "provenance": "OET-RV DC review 2026-10-29: oet-rv-dc-24; Mocking the prophets and the order to bring the Chaldean kings."
+      },
+      {
+        "source": "GES 2:1-2",
+        "target": "GES 2:1",
+        "provenance": "OET-RV DC review 2026-10-29: oet-rv-dc-26; Cyrus accession and the stirring of his spirit."
+      },
+      {
+        "source": "GES 2:3-4",
+        "target": "GES 2:2",
+        "provenance": "OET-RV DC review 2026-10-29: oet-rv-dc-27; Cyrus proclamation."
+      },
+      {
+        "source": "GES 2:6-7",
+        "target": "GES 2:4",
+        "provenance": "OET-RV DC review 2026-10-29: oet-rv-dc-28; Return and rebuilding."
+      },
+      {
+        "source": "GES 2:11-12",
+        "target": "GES 2:8",
+        "provenance": "OET-RV DC review 2026-10-29: oet-rv-dc-29; Vessels delivered to Sanabassar."
+      },
+      {
+        "source": "GES 2:13",
+        "target": "GES 2:9-10",
+        "provenance": "OET-RV DC review 2026-10-29: oet-rv-dc-30; Inventory of vessels."
+      },
+      {
+        "source": "GES 2:14-15",
+        "target": "GES 2:11",
+        "provenance": "OET-RV DC review 2026-10-29: oet-rv-dc-31; Total and transport of the vessels."
+      },
+      {
+        "source": "GES 2:20-21",
+        "target": "GES 2:16",
+        "provenance": "OET-RV DC review 2026-10-29: oet-rv-dc-32; Loss of royal revenue."
+      },
+      {
+        "source": "GES 2:22-23",
+        "target": "GES 2:17",
+        "provenance": "OET-RV DC review 2026-10-29: oet-rv-dc-33; Search of records and the rebellious city."
+      },
+      {
+        "source": "GES 2:26",
+        "target": "GES 2:20-21",
+        "provenance": "OET-RV DC review 2026-10-29: oet-rv-dc-34; Reading the letter and searching records."
+      },
+      {
+        "source": "GES 2:28-29",
+        "target": "GES 2:23-24",
+        "provenance": "OET-RV DC review 2026-10-29: oet-rv-dc-35; Orders to halt rebuilding overlap the two verse boundaries."
+      },
+      {
+        "source": "GES 2:30",
+        "target": "GES 2:25-26",
+        "provenance": "OET-RV DC review 2026-10-29: oet-rv-dc-36; Stopping the builders and suspension until Darius."
+      },
+      {
+        "source": "GES 5:41-42",
+        "target": "GES 5:41",
+        "provenance": "OET-RV DC review 2026-10-29: oet-rv-dc-42; Population and servants counted together."
+      },
+      {
+        "source": "GES 5:54-55",
+        "target": "GES 5:53",
+        "provenance": "OET-RV DC review 2026-10-29: oet-rv-dc-44; Payment of workers and transport of cedar."
+      },
+      {
+        "source": "GES 5:58-60",
+        "target": "GES 5:56-57",
+        "provenance": "OET-RV DC review 2026-10-29: oet-rv-dc-46; RV verse 58 crosses from Levite appointment into the builders and musical worship."
+      },
+      {
+        "source": "GES 5:73",
+        "target": "GES 5:70-71",
+        "provenance": "OET-RV DC review 2026-10-29: oet-rv-dc-48; Opposition under Cyrus and the delay until Darius."
+      },
+      {
+        "source": "GES 6:8-9",
+        "target": "GES 6:8",
+        "provenance": "OET-RV DC review 2026-10-29: oet-rv-dc-49; Letter opening and description of construction."
+      },
+      {
+        "source": "GES 8:43-44",
+        "target": "GES 8:43",
+        "provenance": "OET-RV DC review 2026-10-29: oet-rv-dc-51; Names of the messengers."
+      },
+      {
+        "source": "GES 8:50",
+        "target": "GES 8:49-50",
+        "provenance": "OET-RV DC review 2026-10-29: oet-rv-dc-52; Fast and petition for a safe journey."
+      },
+      {
+        "source": "GES 8:56-57",
+        "target": "GES 8:56",
+        "provenance": "OET-RV DC review 2026-10-29: oet-rv-dc-53; Silver, gold and vessels."
+      },
+      {
+        "source": "GES 8:63-64",
+        "target": "GES 8:62",
+        "provenance": "OET-RV DC review 2026-10-29: oet-rv-dc-54; Recipients and recorded weights."
+      },
+      {
+        "source": "GES 8:65-66",
+        "target": "GES 8:63",
+        "provenance": "OET-RV DC review 2026-10-29: oet-rv-dc-55; Sacrificial animals."
+      },
+      {
+        "source": "GES 8:93-94",
+        "target": "GES 8:90",
+        "provenance": "OET-RV DC review 2026-10-29: oet-rv-dc-56; The oath and its qualification according to the law."
+      },
+      {
+        "source": "SIR 35:4-5",
+        "target": "SIR 35:4",
+        "provenance": "OET-RV DC review 2026-10-29: oet-rv-dc-61; Do not appear empty and the reason for the command."
+      },
+      {
+        "source": "SIR 35:12",
+        "target": "SIR 35:11-12",
+        "provenance": "OET-RV DC review 2026-10-29: oet-rv-dc-63; Rejecting bribes and impartial judgement."
+      },
+      {
+        "source": "SIR 35:17",
+        "target": "SIR 35:17-18",
+        "provenance": "OET-RV DC review 2026-10-29: oet-rv-dc-64; The humble prayer and divine judgement."
+      },
+      {
+        "source": "SIR 35:18",
+        "target": "SIR 35:19-21",
+        "provenance": "OET-RV DC review 2026-10-29: oet-rv-dc-65; Divine action against the unmerciful and arrogant."
+      },
+      {
+        "source": "SIR 35:19",
+        "target": "SIR 35:22-23",
+        "provenance": "OET-RV DC review 2026-10-29: oet-rv-dc-66; Recompense and judgement for the people."
+      },
+      {
+        "source": "SIR 36:1-2",
+        "target": "SIR 36:1",
+        "provenance": "OET-RV DC review 2026-10-29: oet-rv-dc-68; Mercy and fear among the nations."
+      },
+      {
+        "source": "SIR 36:17",
+        "target": "SIR 36:16-17",
+        "provenance": "OET-RV DC review 2026-10-29: oet-rv-dc-70; Hear the prayer so all the earth knows God."
+      },
+      {
+        "source": "SIR 36:26",
+        "target": "SIR 36:26-27",
+        "provenance": "OET-RV DC review 2026-10-29: oet-rv-dc-71; The wandering robber and man without a home."
+      },
+      {
+        "source": "SIR 41:3-4",
+        "target": "SIR 41:3-4",
+        "provenance": "OET-RV DC review 2026-10-29: oet-rv-dc-72; The sentence on all flesh moves across the verse boundary."
+      },
+      {
+        "source": "SIR 41:18-21",
+        "target": "SIR 41:18-23",
+        "provenance": "OET-RV DC review 2026-10-29: oet-rv-dc-73; The list of shameful acts crosses all intervening verse boundaries."
+      },
+      {
+        "source": "SIR 41:22",
+        "target": "SIR 41:24-25",
+        "provenance": "OET-RV DC review 2026-10-29: oet-rv-dc-74; Meddling with a maid and insulting friends after giving."
+      },
+      {
+        "source": "TOB 5:4-5",
+        "target": "TOB 5:4-5",
+        "provenance": "OET-RV DC review 2026-10-29: oet-rv-dc-85; Recognition of the angel crosses the verse boundary."
+      },
+      {
+        "source": "TOB 5:8",
+        "target": "TOB 5:8-9",
+        "provenance": "OET-RV DC review 2026-10-29: oet-rv-dc-87; Waiting and reporting to the father."
+      },
+      {
+        "source": "TOB 6:5",
+        "target": "TOB 6:5-6",
+        "provenance": "OET-RV DC review 2026-10-29: oet-rv-dc-90; Cooking the fish and continuing to Media."
+      },
+      {
+        "source": "TOB 6:10-12",
+        "target": "TOB 6:11-13",
+        "provenance": "OET-RV DC review 2026-10-29: oet-rv-dc-92; Raguel, inheritance, Sarah and the marriage proposal overlap the boundaries."
+      },
+      {
+        "source": "TOB 6:16-17",
+        "target": "TOB 6:17-19",
+        "provenance": "OET-RV DC review 2026-10-29: oet-rv-dc-94; Burning incense, flight of the demon, prayer and love for Sarah."
+      },
+      {
+        "source": "TOB 7:4-5",
+        "target": "TOB 7:4-5",
+        "provenance": "OET-RV DC review 2026-10-29: oet-rv-dc-96; The question about Tobit’s health crosses the boundary."
+      },
+      {
+        "source": "TOB 7:6-7",
+        "target": "TOB 7:6",
+        "provenance": "OET-RV DC review 2026-10-29: oet-rv-dc-97; Greeting, blessing and tears."
+      },
+      {
+        "source": "TOB 7:8",
+        "target": "TOB 7:7-9",
+        "provenance": "OET-RV DC review 2026-10-29: oet-rv-dc-98; Family tears, hospitality and the proposal."
+      },
+      {
+        "source": "TOB 7:9-10",
+        "target": "TOB 7:10",
+        "provenance": "OET-RV DC review 2026-10-29: oet-rv-dc-99; Invitation to eat and the right to marry."
+      },
+      {
+        "source": "TOB 7:11-12",
+        "target": "TOB 7:11-12",
+        "provenance": "OET-RV DC review 2026-10-29: oet-rv-dc-100; The covenant request crosses the boundary."
+      },
+      {
+        "source": "TOB 7:14-15",
+        "target": "TOB 7:14",
+        "provenance": "OET-RV DC review 2026-10-29: oet-rv-dc-102; Contract and start of the meal."
+      },
+      {
+        "source": "TOB 10:7",
+        "target": "TOB 10:7-8",
+        "provenance": "OET-RV DC review 2026-10-29: oet-rv-dc-105; Anna’s wait and Tobias’s request to leave."
+      },
+      {
+        "source": "TOB 10:8-9",
+        "target": "TOB 10:9",
+        "provenance": "OET-RV DC review 2026-10-29: oet-rv-dc-106; Invitation to stay and refusal."
+      },
+      {
+        "source": "TOB 10:12",
+        "target": "TOB 10:12-13",
+        "provenance": "OET-RV DC review 2026-10-29: oet-rv-dc-108; Farewells to Sarah and Tobias."
+      },
+      {
+        "source": "TOB 11:1-2",
+        "target": [
+          "TOB 10:14",
+          "TOB 11:1-2"
+        ],
+        "provenance": "OET-RV DC review 2026-10-29: oet-rv-dc-109; Departure and Raphael’s opening question cross the chapter boundary."
+      },
+      {
+        "source": "TOB 13:1-2",
+        "target": "TOB 13:1-2",
+        "provenance": "OET-RV DC review 2026-10-29: oet-rv-dc-111; Opening blessing begins in reference verse 2 but RV verse 1."
+      },
+      {
+        "source": "TOB 13:13-15",
+        "target": "TOB 13:15-16",
+        "provenance": "OET-RV DC review 2026-10-29: oet-rv-dc-114; Rejoicing, blessings and the soul’s praise cross the boundaries."
+      },
+      {
+        "source": "TOB 13:16-17",
+        "target": "TOB 13:17",
+        "provenance": "OET-RV DC review 2026-10-29: oet-rv-dc-115; Precious stones, walls, towers and streets."
+      }
+    ],
+    "unmappedVerses": {
+      "NEH 7:68": "The horses and mules listed in this verse are absent from the Hebrew reference text. No same-number substitute is valid.",
+      "SIR 20:32": "RV contains only an editorial note that the verse is omitted by the best authorities; the org reference chapter ends before this label. There is no numbered reference counterpart.",
+      "SIR 23:28": "RV contains only an editorial note that the verse is omitted by the best authorities; the org reference chapter ends before this label. There is no numbered reference counterpart."
+    }
+  }
+}

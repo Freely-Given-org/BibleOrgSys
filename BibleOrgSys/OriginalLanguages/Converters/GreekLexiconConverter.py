@@ -304,7 +304,7 @@ class GreekStrongsFileConverter:
     # end of GreekStrongsFileConverter.validateEntry
 
 
-    def importDataToPython( self ):
+    def importDataToPython( self ) -> dict | None:
         """
         Loads (and pivots) the data (not including the header) into suitable Python containers to use in a Python program.
         (Of course, you can just use the elementTree in self.XMLTree if you prefer.)

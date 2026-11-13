@@ -100,7 +100,7 @@ EXTENSION_TO_IGNORE = ('ZIP', 'BAK', 'BAK2', 'BAK3', 'BAK4', 'LOG', 'HTM','HTML'
 
 
 
-def UnboundBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=False, autoLoadBooks:bool=False ):
+def UnboundBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=False, autoLoadBooks:bool=False ) -> 'bool | UnboundBible | int | None':
     """
     Given a folder, search for Unbound Bible files or folders in the folder and in the next level down.
 
@@ -226,7 +226,7 @@ class UnboundBible( Bible ):
     """
     Class for reading, validating, and converting UnboundBible files.
     """
-    def __init__( self, sourceFolder, givenName, encoding='utf-8' ) -> None:
+    def __init__( self, sourceFolder, givenName, encoding:str='utf-8' ) -> None:
         """
         Constructor: just sets up the Bible object.
         """
@@ -249,7 +249,7 @@ class UnboundBible( Bible ):
     # end of UnboundBible.__init__
 
 
-    def load( self ):
+    def load( self ) -> None:
         """
         Load a single source file and load book elements.
         """
@@ -375,7 +375,7 @@ class UnboundBible( Bible ):
 
 
 
-def testUB( TUBfilename ):
+def testUB( TUBfilename ) -> None:
     # Crudely demonstrate the Unbound Bible class
     from BibleOrgSys.Reference import VerseReferences
     testFolder = BibleOrgSysGlobals.BOS_LIBRARY_BASE_FOLDERPATH.joinpath( '../../../../../../srv/Bibles/Biola Unbound modules/' ) # Must be the same as below

@@ -21,6 +21,8 @@ import logging
 
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
+from types import TracebackType
+from typing import Optional, Type
 
 
 LAST_MODIFIED_DATE = '2026-10-06' # by RJH
@@ -36,7 +38,7 @@ DEBUGGING_THIS_MODULE = False
 class TextFile:
     """
     """
-    def __init__( self, filepath=None, folderpath=None, filename=None, encoding=None, autoLoad=True ) -> None:
+    def __init__( self, filepath=None, folderpath=None, filename=None, encoding=None, autoLoad:bool=True ) -> None:
         if BibleOrgSysGlobals.debugFlag or DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.verbosityLevel>2:
             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"TextFile.__init__( {folderpath!r}, {filename!r}, {encoding!r}, {autoLoad!r}, {filepath} )" )
 
@@ -65,7 +67,7 @@ class TextFile:
     # end of TextFile.__enter__
 
 
-    def replace( self, findString, replaceString, replaceCount=None ):
+    def replace( self, findString, replaceString, replaceCount=None ) -> None:
         if BibleOrgSysGlobals.debugFlag or DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.verbosityLevel>2:
             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"TextFile.replace( {replaceString!r}, {replaceCount!r}, {findString} )" )
         assert self.fileText is not None
@@ -77,7 +79,7 @@ class TextFile:
     # end of TextFile.replace
 
 
-    def save( self ):
+    def save( self ) -> None:
         if BibleOrgSysGlobals.debugFlag or DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.verbosityLevel>2:
             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "TextFile.save()" )
         assert self.fileText is not None
@@ -89,7 +91,7 @@ class TextFile:
     # end of TextFile.save
 
 
-    def saveAs( self, filepath=None, folderpath=None, filename=None, encoding=None ):
+    def saveAs( self, filepath=None, folderpath=None, filename=None, encoding=None ) -> None:
         if BibleOrgSysGlobals.debugFlag or DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.verbosityLevel>1:
             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"TextFile.saveAs( {folderpath!r}, {filename!r}, {encoding!r}, {filepath} )" )
         assert self.fileText is not None
@@ -109,12 +111,12 @@ class TextFile:
     # end of TextFile.saveAs
 
 
-    def __exit__( self, exc_type, exc_value, traceback ):
+    def __exit__( self, exc_type: Optional[Type[BaseException]], exc_value: Optional[BaseException], traceback: Optional[TracebackType] ) -> None:
         if self.changed: self.save()
     # end of TextFile.__exit__
 
 
-    def __del__( self ):
+    def __del__( self ) -> None:
         if self.changed:
             logging.critical( f"TextFile: {self.filename!r} wasn't saved!!!" )
     # end of TextFile.__del__

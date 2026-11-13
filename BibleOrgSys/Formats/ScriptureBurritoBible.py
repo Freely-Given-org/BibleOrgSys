@@ -47,6 +47,7 @@ from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Bible import Bible
 from BibleOrgSys.Formats.USFMBibleBook import USFMBibleBook
 from BibleOrgSys.Formats.USXXMLBibleBook import USXXMLBibleBook
+from BibleOrgSys.Reference.BookCode import BookCode
 
 
 LAST_MODIFIED_DATE = '2026-10-27'
@@ -74,7 +75,7 @@ _PERIPHERAL_ROLES = {'FRT': 'preface', 'INT': 'introduction', 'BAK': 'x-backMatt
                      'GLO': 'glo', 'CNC': 'cnc', 'TDX': 'tdx', 'NDX': 'ndx'}
 
 
-def _safe_relative_path(name):
+def _safe_relative_path(name) -> PurePosixPath:
     """A portable ingredient path, confined to the bundle even on Windows."""
     if not isinstance(name, str) or not name or any(c in name for c in '\\:?*"><|\x00'):
         raise ValueError(f'Invalid Scripture Burrito ingredient path: {name!r}')
@@ -86,7 +87,7 @@ def _safe_relative_path(name):
 
 class _Bundle:
     """Read folders and ZIPs without extracting untrusted archive members."""
-    def __init__(self, path, burritoPath=None):
+    def __init__(self, path, burritoPath=None) -> None:
         self.path = Path(path)
         self.prefix = ''
         if burritoPath is not None:
@@ -143,7 +144,7 @@ def _xml_root(data):
     return ET.fromstring(data)
 
 
-def _legacy_xml_metadata(data):
+def _legacy_xml_metadata(data) -> dict:
     """Project the 0.1 XML fields needed by the reader; retain the original too."""
     root = _xml_root(data)
     for element in root.iter():
@@ -174,7 +175,7 @@ def _legacy_xml_metadata(data):
     return metadata
 
 
-def _read_metadata(bundle, *, allowWrapper=False):
+def _read_metadata(bundle, *, allowWrapper:bool=False) -> dict:
     data = bundle.read(bundle.metadataName)
     metadata = (_legacy_xml_metadata(data) if bundle.metadataName.endswith('.xml')
                 else json.loads(data.decode('utf-8-sig')))
@@ -192,7 +193,7 @@ def _read_metadata(bundle, *, allowWrapper=False):
     return metadata
 
 
-def _ingredient_format(name, descriptor):
+def _ingredient_format(name, descriptor) -> str | None:
     mime = descriptor.get('mimeType', '').split(';', 1)[0].strip().lower()
     suffix = PurePosixPath(name).suffix.lower()
     if mime in _USFM_MIMES:
@@ -216,7 +217,7 @@ def _ingredient_format(name, descriptor):
     return None
 
 
-def _ingredient_scope(descriptor):
+def _ingredient_scope(descriptor) -> dict:
     scope = descriptor.get('scope')
     if scope is not None:
         if not isinstance(scope, dict):
@@ -263,7 +264,7 @@ def _usj_to_usx(document):
     return convert(document)
 
 
-def _text_books(data, filetype):
+def _text_books(data, filetype) -> list:
     """Return (USFM code, parser type, bytes), including multi-book ingredients."""
     if filetype == 'USFM':
         text = data.decode('utf-8-sig')
@@ -294,11 +295,11 @@ def _text_books(data, filetype):
     return results
 
 
-def ScriptureBurritoBibleFileCheck(givenFolderName, strictCheck=True, autoLoad=False, autoLoadBooks=False):
+def ScriptureBurritoBibleFileCheck(givenFolderName, strictCheck:bool=True, autoLoad:bool=False, autoLoadBooks:bool=False) -> 'bool | ScriptureBurritoBible | int | None':
     """Find a text burrito in a folder/ZIP or one directory level below it."""
     path = Path(givenFolderName)
     if not path.exists(): return False
-    def find_burritos(candidate):
+    def find_burritos(candidate) -> list:
         try:
             metadata = _read_metadata(_Bundle(candidate), allowWrapper=True)
             if metadata.get('format') == 'scripture burrito wrapper':
@@ -339,8 +340,8 @@ class ScriptureBurritoBible(Bible):
     ``verifyIntegrity`` checks declared sizes and hashes (old examples use dummy
     checksums, hence this is opt-in). ZIPs can also have one enclosing directory.
     """
-    def __init__(self, givenFolderName, givenName=None, encoding='utf-8', *,
-                 preferredFormat='USFM', verifyIntegrity=False, burritoPath=None):
+    def __init__(self, givenFolderName, givenName=None, encoding:str='utf-8', *,
+                 preferredFormat:str='USFM', verifyIntegrity:bool=False, burritoPath=None) -> None:
         super().__init__()
         if preferredFormat not in ('USFM', 'USX', 'USJ'):
             raise ValueError('preferredFormat must be USFM, USX or USJ')
@@ -353,13 +354,13 @@ class ScriptureBurritoBible(Bible):
         self._bookSources = {}
         self.ingredientFormats = {}
 
-    def preload(self):
+    def preload(self) -> None:
         if self.preloadDone: return
         self.loadSBMetadata()
         self.applySuppliedMetadata('SB')
         self.preloadDone = True
 
-    def loadSBMetadata(self):
+    def loadSBMetadata(self) -> None:
         bundle = _Bundle(self.sourceFilepath, self.burritoPath)
         metadata = _read_metadata(bundle)
         if self.suppliedMetadata is None: self.suppliedMetadata = {}
@@ -449,7 +450,7 @@ class ScriptureBurritoBible(Bible):
         # Keep arbitrary future fields, nested arrays, false and zero verbatim in
         # suppliedMetadata, rather than flattening them into a lossy string map.
 
-    def _loadBookMP(self, BBB_Filename_duple):
+    def _loadBookMP(self, BBB_Filename_duple) -> USFMBibleBook | USXXMLBibleBook:
         BBB, _ = BBB_Filename_duple
         name, parserType = self._bookSources[BBB]
         data = _Bundle(self.sourceFilepath, self.burritoPath).read(name)
@@ -469,7 +470,7 @@ class ScriptureBurritoBible(Bible):
                 return book
         raise ValueError(f'Ingredient {name} no longer contains {BBB}')
 
-    def loadBook(self, BBB, filename=None):
+    def loadBook(self, BBB:BookCode, filename=None) -> None:
         if not self.preloadDone: self.preload()
         if BBB in self.books and not self.bookNeedsReloading.get(BBB): return
         if BBB not in self._bookSources: raise KeyError(f'No Scripture Burrito ingredient for {BBB}')
@@ -480,7 +481,7 @@ class ScriptureBurritoBible(Bible):
         self.triedLoadingBook[BBB] = True
         self.bookNeedsReloading[BBB] = False
 
-    def loadBooks(self):
+    def loadBooks(self) -> None:
         if not self.preloadDone: self.preload()
         if not self._bookSources:
             raise ValueError('This Scripture Burrito contains no supported USFM, USX or USJ Bible text')
@@ -490,11 +491,11 @@ class ScriptureBurritoBible(Bible):
             self.loadBook(BBB)
         self.doPostLoadProcessing()
 
-    def load(self):
+    def load(self) -> None:
         self.loadBooks()
 
 
-def _verify_ingredient(name, data, descriptor):
+def _verify_ingredient(name, data, descriptor) -> None:
     if 'size' in descriptor and descriptor['size'] != len(data):
         raise ValueError(f'Ingredient size mismatch: {name}')
     checksums = descriptor.get('checksum', {})
@@ -508,7 +509,7 @@ def _verify_ingredient(name, data, descriptor):
             raise ValueError(f'Ingredient {algorithm} checksum mismatch: {name}')
 
 
-def _publication_scope(data, kind):
+def _publication_scope(data, kind) -> list:
     """Describe observed verse numbers, never claim unwritten chapters/books.
 
     SB 1.0 cannot express verse zero or verse suffixes: retain those bytes, and
@@ -553,7 +554,7 @@ def _publication_scope(data, kind):
     return selectors
 
 
-def _validate_export_metadata(metadata):
+def _validate_export_metadata(metadata) -> None:
     """Required publication decisions and common errors, without dependencies.
 
     This is not a replacement for upstream JSON Schema validation.
@@ -566,7 +567,7 @@ def _validate_export_metadata(metadata):
             raise ValueError(f'{field} must be an object')
     if not isinstance(metadata['confidential'], bool):
         raise ValueError('confidential must be a boolean')
-    def localized(value):
+    def localized(value) -> bool:
         return isinstance(value, dict) and bool(value) and all(isinstance(v, str) and v for v in value.values())
     identification = metadata['identification']
     if not localized(identification.get('name')):
@@ -620,7 +621,7 @@ def _validate_export_metadata(metadata):
 
 
 def createScriptureBurritoBible(bibleObject, outputFolderpath=None, metadataDict=None, *,
-        sourceFiles=None, extraIngredients=None, filename=None, validationSchema=None, schemaVersion=None):
+        sourceFiles=None, extraIngredients=None, filename=None, validationSchema=None, schemaVersion=None) -> Path:
     """Write a complete ZIP and return its Path; replace an old ZIP only on success.
 
     ``metadataDict`` is a native SB metadata template (or a JSON filename).
@@ -687,7 +688,7 @@ def createScriptureBurritoBible(bibleObject, outputFolderpath=None, metadataDict
         if not isinstance(version, str) or not re.fullmatch(r'\d+\.\d+(\..+)?', version):
             raise ValueError('Supply flavor.usfmVersion for the publication files')
         files, ingredients, scope = {}, {}, {}
-        def add(name, data, descriptor):
+        def add(name, data, descriptor) -> None:
             _safe_relative_path(name)
             if name in files or name in _METADATA_FILENAMES:
                 raise ValueError(f'Duplicate/reserved ingredient path {name}')
@@ -754,7 +755,7 @@ def createScriptureBurritoBible(bibleObject, outputFolderpath=None, metadataDict
     return destination
 
 
-def _validate_schema(metadata, schemaPath):
+def _validate_schema(metadata, schemaPath) -> None:
     """Resolve the upstream split schema entirely offline."""
     try:
         import jsonschema
@@ -779,7 +780,7 @@ def _validate_schema(metadata, schemaPath):
     validator(schema, registry=registry, format_checker=jsonschema.FormatChecker()).validate(metadata)
 
 
-def __processScriptureBurritoBible( parametersTuple ): # for demo
+def __processScriptureBurritoBible( parametersTuple ) -> None: # for demo
     """
     Special shim function used below for multiprocessing.
     """

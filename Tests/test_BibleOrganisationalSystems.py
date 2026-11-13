@@ -37,48 +37,48 @@ DEBUGGING_THIS_MODULE = False
 class BibleOrganisationalSystemsConverterTests(unittest.TestCase):
     """ Unit tests for the BibleOrganisationalSystemsConverter object. """
 
-    def setUp( self ):
+    def setUp( self ) -> None:
         parser = BibleOrgSysGlobals.setup( PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
         # BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
         BibleOrgSysGlobals.preloadCommonData()
         # Create the BibleOrganisationalSystemsConverter object
         self.bossc = BibleOrganisationalSystemsConverter.BibleOrganisationalSystemsConverter().loadAndValidate() # Doesn't reload the XML unnecessarily :)
 
-    def test_1010_str( self ):
+    def test_1010_str( self ) -> None:
         """ Test the __str__ function. """
         result = str( self.bossc )
         self.assertTrue( isinstance( result, str ) )
         self.assertTrue( len(result) > 20 )
     # end of test_1010_str
 
-    def test_1020_len( self ):
+    def test_1020_len( self ) -> None:
         """ Test the __len__ function. """
         self.assertTrue( 150 < len(self.bossc) < 250 ) # The number of loaded items
     # end of test_1020_len
 
-    def test_1030_importDataToPython( self ):
+    def test_1030_importDataToPython( self ) -> None:
         """ Test the importDataToPython function. """
         result = self.bossc.importDataToPython()
         self.assertTrue( isinstance( result, tuple ) )
         self.assertEqual( len(result), 3 )
     # end of test_1030_importDataToPython
 
-    def test_1040_pickle( self ):
+    def test_1040_pickle( self ) -> None:
         """ Test the pickle function. """
         self.assertEqual( self.bossc.pickle(), None ) # Basically just make sure that it runs
     # end of test_1040_pickle
 
-    def test_1050_exportDataToPython( self ):
+    def test_1050_exportDataToPython( self ) -> None:
         """ Test the exportDataToPython function. """
         self.assertEqual( self.bossc.exportDataToPython(), None ) # Basically just make sure that it runs
     # end of test_1050_exportDataToPython
 
-    def test_1060_exportDataToJSON( self ):
+    def test_1060_exportDataToJSON( self ) -> None:
         """ Test the exportDataToJSON function. """
         self.assertEqual( self.bossc.exportDataToJSON(), None ) # Basically just make sure that it runs
     # end of test_1060_exportDataToJSON
 
-    def test_1070_exportDataToC( self ):
+    def test_1070_exportDataToC( self ) -> None:
         """ Test the exportDataToC function. """
         if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Sorry, no C export yet :(" )
@@ -90,26 +90,26 @@ class BibleOrganisationalSystemsConverterTests(unittest.TestCase):
 class BibleOrganisationalSystemsTests(unittest.TestCase):
     """ Unit tests for the BibleOrganisationalSystems object. """
 
-    def setUp( self ):
+    def setUp( self ) -> None:
         parser = BibleOrgSysGlobals.setup( PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
         # BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
         BibleOrgSysGlobals.preloadCommonData()
         # Create the BibleOrganisationalSystems object
         self.boss = BibleOrganisationalSystems.BibleOrganisationalSystems().loadData() # Doesn't reload the XML unnecessarily :)
 
-    def test_2010_str( self ):
+    def test_2010_str( self ) -> None:
         """ Test the __str__ function. """
         result = str( self.boss )
         self.assertTrue( isinstance( result, str ) )
         self.assertTrue( len(result) > 20 )
     # end of test_2010_str
 
-    def test_2020_len( self ):
+    def test_2020_len( self ) -> None:
         """ Test the __len__ function. """
         self.assertTrue( 150 < len(self.boss) < 250 ) # The number of loaded systems
     # end of test_2020_len
 
-    def test_2030_getAvailableOrganizationalSystemNames( self ):
+    def test_2030_getAvailableOrganizationalSystemNames( self ) -> None:
         """ Test the getAvailableOrganizationalSystemNames function. """
         results = self.boss.getAvailableOrganizationalSystemNames()
         self.assertTrue( isinstance( results, list ) )
@@ -126,7 +126,7 @@ class BibleOrganisationalSystemsTests(unittest.TestCase):
     #    for badName in ("KJV2011","Gnt92","NewRSV",): self.assertFalse( self.boss.isValidOrganizationalSystemName(badName) )
     ## end of test_2040_getAvailableOrganizationalSystemNames
 
-    def test_2050_getOrganizationalSystem( self ):
+    def test_2050_getOrganizationalSystem( self ) -> None:
         """ Test the getOrganizationalSystem function. """
         for goodName in ('HEB','NTG','KJV-1611',"GNT","NRSV","NIV-2011","LUT",):
             results = self.boss.getOrganizationalSystem( goodName )
@@ -162,7 +162,7 @@ class BibleOrganisationalSystemsTests(unittest.TestCase):
 class BibleOrganisationalSystemTests(unittest.TestCase):
     """ Unit tests for the BibleOrganisationalSystem object. """
 
-    def setUp( self ):
+    def setUp( self ) -> None:
         parser = BibleOrgSysGlobals.setup( PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
         # BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
         BibleOrgSysGlobals.preloadCommonData()
@@ -170,7 +170,7 @@ class BibleOrganisationalSystemTests(unittest.TestCase):
         self.systemName = 'KJV-1638'
         self.bos = BibleOrganisationalSystems.BibleOrganisationalSystem( self.systemName ) # Doesn't reload the XML unnecessarily :)
 
-    def test_3010_str( self ):
+    def test_3010_str( self ) -> None:
         """ Test the __str__ function. """
         result = str( self.bos )
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'str result', result )
@@ -178,12 +178,12 @@ class BibleOrganisationalSystemTests(unittest.TestCase):
         self.assertTrue( len(result) > 20 )
     # end of test_3010_str
 
-    def test_3020_getOrganizationalSystemName( self ):
+    def test_3020_getOrganizationalSystemName( self ) -> None:
         """ Test the getOrganizationalSystemName function. """
         self.assertEqual( self.bos.getOrganizationalSystemName(), self.systemName )
     # end of test_3020_getOrganizationalSystemName
 
-    def test_3030_getOrganizationalSystemType( self ):
+    def test_3030_getOrganizationalSystemType( self ) -> None:
         """ Test the getOrganizationalSystemType function. """
         result = self.bos.getOrganizationalSystemType()
         self.assertTrue( isinstance( result, str ) )
@@ -191,7 +191,7 @@ class BibleOrganisationalSystemTests(unittest.TestCase):
         self.assertTrue( result in ('edition','revision',) )
     # end of test_3030_getOrganizationalSystemType
 
-    def test_3040_getMoreBasicTypes( self ):
+    def test_3040_getMoreBasicTypes( self ) -> None:
         """ Test the getMoreBasicTypes function. """
         results = self.bos.getMoreBasicTypes()
         self.assertTrue( isinstance( results, tuple ) )
@@ -200,7 +200,7 @@ class BibleOrganisationalSystemTests(unittest.TestCase):
             self.assertTrue( result in ('revision','translation','original',) )
     # end of test_3040_getMoreBasicTypes
 
-    def test_3050_getOrganizationalSystemValue( self ):
+    def test_3050_getOrganizationalSystemValue( self ) -> None:
         """ Test the getOrganizationalSystemValue function. """
         results = self.bos.getOrganizationalSystemValue( 'derivedFrom' )
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, '\n\n3050 results', results )
@@ -209,7 +209,7 @@ class BibleOrganisationalSystemTests(unittest.TestCase):
             self.assertTrue( isinstance( result, str ) )
     # end of test_3050_getOrganizationalSystemValue
 
-    def test_3060_containsBook( self ):
+    def test_3060_containsBook( self ) -> None:
         """ Test the containsBook function. """
         for goodBBB in ('GEN','MAL','MAT','REV'):
             result = self.bos.containsBook( goodBBB )
@@ -223,7 +223,7 @@ class BibleOrganisationalSystemTests(unittest.TestCase):
             self.assertFalse( result )
     # end of test_3060_containsBook
 
-    def test_3070_getBookList( self ):
+    def test_3070_getBookList( self ) -> None:
         """ Test the getBookList function. """
         results = self.bos.getBookList()
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, '\n\n3070 results', results )
@@ -232,7 +232,7 @@ class BibleOrganisationalSystemTests(unittest.TestCase):
             self.assertTrue( isinstance( result, str ) )
     # end of test_3070_getBookList
 
-    def test_3080_isValidBCVRef( self ):
+    def test_3080_isValidBCVRef( self ) -> None:
         """ Test the isValidBCVRef function. """
         result = self.bos.isValidBCVRef( ('GEN','1','1',''), "Test-3080" )
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, '\n\n3080 result', result )
@@ -242,7 +242,7 @@ class BibleOrganisationalSystemTests(unittest.TestCase):
 
 
     # Tests of the BibleVersificationSystem subclass
-    def test_3200_getNumChapters( self ):
+    def test_3200_getNumChapters( self ) -> None:
         """ Test the getNumChapters function. """
         for BBB,value in (('GEN',50),('MAT',28), ):
             self.assertEqual( self.bos.getNumChapters(BBB), value )
@@ -250,7 +250,7 @@ class BibleOrganisationalSystemTests(unittest.TestCase):
             self.assertRaises( KeyError, self.bos.getNumChapters, badBBB )
     # end of test_3200_getNumChapters
 
-    def test_3210_getNumVerses( self ):
+    def test_3210_getNumVerses( self ) -> None:
         """ Test the getNumVerses function. """
         for BBB,C,value in (('GEN','1',31),('GEN','50',26),('MAT','28',20), ):
             self.assertEqual( self.bos.getNumVerses(BBB,C), value )
@@ -260,7 +260,7 @@ class BibleOrganisationalSystemTests(unittest.TestCase):
             self.assertRaises( KeyError, self.bos.getNumVerses, BBB, badC )
     # end of test_3210_getNumVerses
 
-    def test_3220_isSingleChapterBook( self ):
+    def test_3220_isSingleChapterBook( self ) -> None:
         """ Test the isSingleChapterBook function. """
         for BBB in ('PHM','JDE', ):
             self.assertTrue( self.bos.isSingleChapterBook(BBB) )
@@ -270,7 +270,7 @@ class BibleOrganisationalSystemTests(unittest.TestCase):
             self.assertRaises( KeyError, self.bos.isSingleChapterBook, badBBB )
     # end of test_3220_isSingleChapterBook
 
-    def test_3230_getNumVersesList( self ):
+    def test_3230_getNumVersesList( self ) -> None:
         """ Test the getNumVersesList function. """
         for BBB in ('GEN','MAT','JDE',):
             result = self.bos.getNumVersesList( BBB )

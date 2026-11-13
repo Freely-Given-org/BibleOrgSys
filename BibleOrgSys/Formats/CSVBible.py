@@ -72,7 +72,7 @@ EXTENSION_TO_IGNORE = ('ZIP', 'BAK', 'BAK2', 'BAK3', 'BAK4', 'LOG', 'HTM','HTML'
 
 
 
-def CSVBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=False, autoLoadBooks:bool=False ):
+def CSVBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=False, autoLoadBooks:bool=False ) -> 'bool | CSVBible | int | None':
     """
     Given a folder, search for CSV or TSV Bible files or folders in the folder and in the next level down.
 
@@ -653,7 +653,7 @@ class CSVBible( Bible ):
         assert len(tsv_column_headers) >= 20
 
         lastMarker = lastText = None
-        def addLine( marker:str, text:str, ref:str, bookObject):
+        def addLine( marker:str, text:str, ref:str, bookObject) -> None:
             """
             """
             nonlocal lastMarker, lastText
@@ -667,7 +667,7 @@ class CSVBible( Bible ):
             # if ref.startswith( 'MAT_1:3' ): assert False, "We want to stop here"
         # end of addLine
             
-        def appendToLastLine( extraText:str, ref:str, bookObject):
+        def appendToLastLine( extraText:str, ref:str, bookObject) -> None:
             """
             """
             nonlocal lastText
@@ -1306,7 +1306,7 @@ class CSVBible( Bible ):
             self.stashBook( thisBook )
     # end of CSVBible._loadBereanWoordTable
 
-    def load( self ):
+    def load( self ) -> None:
         """
         Assumes self.sourceFilepath is set
             (If not, use loadBooks() instead.)
@@ -1389,7 +1389,7 @@ class CSVBible( Bible ):
 
 
 
-def testCSV( CSVfolder ):
+def testCSV( CSVfolder ) -> None:
     # Crudely demonstrate the CSV Bible class
     from BibleOrgSys.Reference import VerseReferences
 
@@ -1493,7 +1493,7 @@ def briefDemo() -> None:
 BEREAN_SPREADSHEET_DEMO_BOOKS = ('AMO', 'MRK', 'EPH') # A representative OT + two NT books for the speed test
 
 
-def speedComparisonDemo():
+def speedComparisonDemo() -> None:
     """
     Times loading the whole Berean (BibleHub) spreadsheet word-table Bible versus loading
     just a few requested books, and verifies that the requested books' verse text matches.

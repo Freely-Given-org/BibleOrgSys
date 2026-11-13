@@ -44,6 +44,7 @@ import re
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Bible import Bible, BibleBook
+from BibleOrgSys.Reference.BookCode import BookCode
 
 
 LAST_MODIFIED_DATE = '2026-10-06' # by RJH
@@ -340,7 +341,7 @@ def loadYAML( YAMLFilepath ) -> dict[str,Any]:
 
 
 
-def uWNotesBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=False, autoLoadBooks:bool=False ):
+def uWNotesBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=False, autoLoadBooks:bool=False ) -> 'bool | uWNotesBible | int | None':
     """
     Given a folder, search for uW Notes Bible files or folders in the folder and in the next level down.
 
@@ -539,7 +540,7 @@ class uWNotesBible( Bible ):
     # end of uWNotesBible.loadMetadata
 
 
-    def loadBook( self, BBB:str ) -> None:
+    def loadBook( self, BBB:BookCode ) -> None:
         """
         Load the requested book into self.books if it's not already loaded.
 
@@ -566,7 +567,7 @@ class uWNotesBible( Bible ):
     # end of uWNotesBible.loadBook
 
 
-    def _loadBookMP( self, BBB:str ) -> BibleBook|None:
+    def _loadBookMP( self, BBB:BookCode ) -> BibleBook|None:
         """
         Multiprocessing version!
         Load the requested book if it's not already loaded (but doesn't save it as that is not safe for multiprocessing)
@@ -631,7 +632,7 @@ class uWNotesBibleBook( BibleBook ):
     Class to load and manipulate a single uW Notes file / book.
     """
 
-    def __init__( self, containerBibleObject:Bible, BBB:str ) -> None:
+    def __init__( self, containerBibleObject:Bible, BBB:BookCode ) -> None:
         """
         Create the uW Notes Bible book object.
         """

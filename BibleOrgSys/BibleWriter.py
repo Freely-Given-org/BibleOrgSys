@@ -102,6 +102,7 @@ from BibleOrgSys.Reference.BibleReferences import BibleReferenceList
 from BibleOrgSys.Misc.NoisyReplaceFunctions import noisyRegExDeleteAll
 import usfm_markers_py
 from usfm_markers_py import OFTEN_IGNORED_USFM_HEADER_MARKERS, USFM_ALL_INTRODUCTION_MARKERS, USFM_PRECHAPTER_MARKERS
+from BibleOrgSys.Reference.BookCode import BookCode
 
 
 LAST_MODIFIED_DATE = '2026-10-06' # by RJH
@@ -501,7 +502,7 @@ class BibleWriter( InternalBible ):
     # end of BibleWriter.makeLists
 
 
-    def toBOSBCV( self, outputFolderpath:Path|None=None ):
+    def toBOSBCV( self, outputFolderpath:Path|None=None ) -> bool:
         """
         Write the internal pseudoUSFM out directly with one file per verse.
         """
@@ -535,7 +536,7 @@ class BibleWriter( InternalBible ):
 
 
 
-    def toPseudoUSFM( self, outputFolderpath:Path|None=None ):
+    def toPseudoUSFM( self, outputFolderpath:Path|None=None ) -> bool:
         """
         Write the pseudo USFM out directly (for debugging, etc.).
             May write the rawLines 2-tuples to .rSFM files (if _rawLines still exists)
@@ -625,7 +626,7 @@ class BibleWriter( InternalBible ):
 
 
 
-    def toUSFM2( self, outputFolderpath:Path|None=None, removeVerseBridges=False ):
+    def toUSFM2( self, outputFolderpath:Path|None=None, removeVerseBridges:bool=False ) -> bool:
         """
         Adjust the pseudo USFM and write the USFM2 files.
 
@@ -814,7 +815,7 @@ class BibleWriter( InternalBible ):
         return createScriptureBurritoBible(self, outputFolderpath, metadataDict, **kwargs)
 
 
-    def toUSFM3( self, outputFolderpath:Path|None=None, removeVerseBridges=False ):
+    def toUSFM3( self, outputFolderpath:Path|None=None, removeVerseBridges:bool=False ) -> bool:
         """
         Adjust the pseudo USFM and write the USFM3 files.
 
@@ -1158,7 +1159,7 @@ class BibleWriter( InternalBible ):
 
 
 
-    def toText( self, outputFolderpath:Path|None=None ):
+    def toText( self, outputFolderpath:Path|None=None ) -> bool:
         """
         Write the pseudo USFM out into a simple plain-text format.
             The format varies, depending on whether or not there are paragraph markers in the text.
@@ -1210,7 +1211,7 @@ class BibleWriter( InternalBible ):
         except ImportError:
             pass
 
-        def writeTextFile( BBB:str, internalBibleBookData, columnWidth, wtfOutputFolder, withBOMFlag ):
+        def writeTextFile( BBB:BookCode, internalBibleBookData, columnWidth, wtfOutputFolder, withBOMFlag ) -> None:
             """
             Helper function to write the actual text file
             """
@@ -1297,7 +1298,7 @@ class BibleWriter( InternalBible ):
 
 
 
-    def toVPL( self, outputFolderpath:Path|None=None ):
+    def toVPL( self, outputFolderpath:Path|None=None ) -> bool:
         """
         Write the pseudo USFM out into some simple verse-per-line formats.
         """
@@ -1420,7 +1421,7 @@ class BibleWriter( InternalBible ):
 
 
 
-    def toMarkdown( self, outputFolderpath:Path|None=None ):
+    def toMarkdown( self, outputFolderpath:Path|None=None ) -> bool:
         """
         Write the Bible data out into GFM markdown format.
             The format varies, depending on whether or not there are paragraph markers in the text.
@@ -1435,7 +1436,7 @@ class BibleWriter( InternalBible ):
 
         ignoredMarkers = set()
 
-        def __formatMarkdownVerseText( BBB:str, C:str, V:str, givenText:str, extras ):
+        def __formatMarkdownVerseText( BBB:BookCode, C:str, V:str, givenText:str, extras ):
             """
             Format character codes within the text into Markdown
             """
@@ -1470,7 +1471,7 @@ class BibleWriter( InternalBible ):
                 # end of liveCV
 
 
-                def processNote( rawFootnoteContents, noteType ):
+                def processNote( rawFootnoteContents, noteType ) -> str:
                     """
                     Return the MD for the processed footnote or endnote.
                     It also accumulates MD in ourGlobals for the end notes.
@@ -1558,7 +1559,7 @@ class BibleWriter( InternalBible ):
                 # end of __formatMarkdownVerseText.processNote
 
 
-                def processXRef( MDxref ):
+                def processXRef( MDxref ) -> str:
                     """
                     Return the MD for the processed cross-reference (xref).
                     It also accumulates MD in ourGlobals for the end notes.
@@ -1619,7 +1620,7 @@ class BibleWriter( InternalBible ):
                 # end of __formatMarkdownVerseText.processXRef
 
 
-                def processFigure( MDfigure ):
+                def processFigure( MDfigure ) -> str:
                     """
                     Return the MD for the processed figure.
 
@@ -1822,7 +1823,7 @@ class BibleWriter( InternalBible ):
 
 
 
-    def __formatHTMLVerseText( BBB:str, C:str, V:str, givenText:str, extras:InternalBibleExtraList, ourGlobals:dict ):
+    def __formatHTMLVerseText( BBB:BookCode, C:str, V:str, givenText:str, extras:InternalBibleExtraList, ourGlobals:dict ):
         """
         Format character codes within the text into HTML
 
@@ -1833,7 +1834,7 @@ class BibleWriter( InternalBible ):
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"__formatHTMLVerseText( {repr(givenText)}, {len(extras)}, {ourGlobals.keys()} )" )
         if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag: assert givenText or extras
 
-        def handleExtras( text:str, extras:InternalBibleExtraList, ourGlobals:dict ):
+        def handleExtras( text:str, extras:InternalBibleExtraList, ourGlobals:dict ) -> str:
             """
             Returns the HTML5 text with footnotes and xrefs processed.
             It also accumulates HTML5 in ourGlobals for the end notes.
@@ -1860,7 +1861,7 @@ class BibleWriter( InternalBible ):
             # end of liveCV
 
 
-            def processNote( rawFootnoteContents, ourGlobals, noteType ):
+            def processNote( rawFootnoteContents, ourGlobals, noteType ) -> str:
                 """
                 Return the HTML5 for the processed footnote or endnote.
                 It also accumulates HTML5 in ourGlobals for the end notes.
@@ -1948,7 +1949,7 @@ class BibleWriter( InternalBible ):
             # end of __formatHTMLVerseText.processNote
 
 
-            def processXRef( HTML5xref, ourGlobals ):
+            def processXRef( HTML5xref, ourGlobals ) -> str:
                 """
                 Return the HTML5 for the processed cross-reference (xref).
                 It also accumulates HTML5 in ourGlobals for the end notes.
@@ -2009,7 +2010,7 @@ class BibleWriter( InternalBible ):
             # end of __formatHTMLVerseText.processXRef
 
 
-            def processFigure( HTML5figure, ourGlobals ):
+            def processFigure( HTML5figure, ourGlobals ) -> str:
                 """
                 Return the HTML5 for the processed figure.
 
@@ -2135,7 +2136,7 @@ class BibleWriter( InternalBible ):
     # end of __formatHTMLVerseText
 
 
-    def toHTML5( self, outputFolderpath:Path|None=None, controlDict=None, validationSchema=None, humanReadable=True ):
+    def toHTML5( self, outputFolderpath:Path|None=None, controlDict=None, validationSchema=None, humanReadable:bool=True ) -> tuple | bool:
         """
         Using settings from the given control file,
             converts the USFM information to UTF-8 HTML files.
@@ -2170,7 +2171,7 @@ class BibleWriter( InternalBible ):
         ignoredMarkers, unhandledMarkers = set(), set()
 
 
-        def writeHeader( writerObject, myBBB ):
+        def writeHeader( writerObject, myBBB:BookCode ) -> None:
             """
             Writes the HTML5 header to the HTML writerObject.
             MyBBB can be the book code or 'home' or 'about'.
@@ -2228,7 +2229,7 @@ class BibleWriter( InternalBible ):
         # end of toHTML5.writeHeader
 
 
-        def writeEndNotes( writerObject, ourGlobals ):
+        def writeEndNotes( writerObject, ourGlobals ) -> None:
             """
             Writes the HTML5 end notes (footnotes, endnotes, and cross-references) to the HTML writerObject.
 
@@ -2272,7 +2273,7 @@ class BibleWriter( InternalBible ):
         # end of toHTML5.writeEndNotes
 
 
-        def writeFooter( writerObject ):
+        def writeFooter( writerObject ) -> None:
             """Writes the HTML5 footer to the HTML writerObject."""
             writerObject.writeLineOpen( 'footer' )
             writerObject.writeLineOpen( 'p', ('class','footerLine') )
@@ -2286,7 +2287,7 @@ class BibleWriter( InternalBible ):
         # end of toHTML5.writeFooter
 
 
-        def convertToPageReference( refTuple ):
+        def convertToPageReference( refTuple ) -> str | None:
             """
             Given a reference 4-tuple like ('LUK','15','18','')
                 convert it to an HTML link.
@@ -2342,7 +2343,7 @@ class BibleWriter( InternalBible ):
         # end of toHTML5.createSectionCrossReference
 
 
-        def writeHomePage():
+        def writeHomePage() -> None:
             if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
                 vPrint( 'Normal', DEBUGGING_THIS_MODULE, "    Creating HTML5 home/index page…" )
             xw = MLWriter( 'index.html', WEBoutputFolder, 'HTML' )
@@ -2357,7 +2358,7 @@ class BibleWriter( InternalBible ):
         # end of toHTML5.writeHomePage
 
 
-        def writeAboutPage():
+        def writeAboutPage() -> None:
             if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
                 vPrint( 'Normal', DEBUGGING_THIS_MODULE, "    Creating HTML5 about page…" )
             xw = MLWriter( 'about.html', WEBoutputFolder, 'HTML' )
@@ -2373,7 +2374,7 @@ class BibleWriter( InternalBible ):
         # end of toHTML5.writeAboutPage
 
 
-        def writeHTML5Book( writerObject, BBB:str, bkData, ourGlobals ):
+        def writeHTML5Book( writerObject, BBB:BookCode, bkData, ourGlobals ) -> None:
             """
             Writes a book to the HTML5 writerObject.
             """
@@ -3141,7 +3142,7 @@ class BibleWriter( InternalBible ):
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, len(reversedCompressions), reversedCompressions )
 
 
-        def writeCompressions():
+        def writeCompressions() -> None:
             """
             """
             if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
@@ -3244,7 +3245,7 @@ class BibleWriter( InternalBible ):
                 list of division names
                 list of book names and abbreviations
             """
-            def getDivisionName( BBB:str, doneAny=None, doneBooks=None ):
+            def getDivisionName( BBB:BookCode, doneAny=None, doneBooks=None ):
                 """ Given a book code, return the division name. """
                 result = ''
                 if bos_books_codes_py.is_old_testament_nr( BBB ) or BBB == 'PS2':
@@ -3316,12 +3317,12 @@ class BibleWriter( InternalBible ):
         # end of _toBibleDoorJSONCHTML.writeBDBookNames
 
 
-        def writeBDBookAsJSON( BBB:str, bookData ) -> None:
+        def writeBDBookAsJSON( BBB:BookCode, bookData ) -> None:
             """
             Creates json data files for the entire book in one folder,
                 and for each chapter (for RAM challenged devices) in another folder.
             """
-            def writeBDChapter( BBB:str, chapter:str, cData ) -> None:
+            def writeBDChapter( BBB:BookCode, chapter:str, cData ) -> None:
                 """
                 """
                 filepath = os.path.join( chapterOutputFolderJSON, f'{BBB}_{chapter}.{BDDataFormatVersion}.json' )
@@ -3369,7 +3370,7 @@ class BibleWriter( InternalBible ):
         # end of _toBibleDoorJSONCHTML.writeBDBookAsJSON
 
 
-        def writeBDBookAsHTML( BBB:str, bookData, currentUncompressedIndex, currentCompressedIndex ) -> None:
+        def writeBDBookAsHTML( BBB:BookCode, bookData, currentUncompressedIndex, currentCompressedIndex ) -> None:
             """
             If the book has section headings, breaks it by section
                 otherwise breaks the book by chapter.
@@ -3818,7 +3819,7 @@ class BibleWriter( InternalBible ):
             if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
                 vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  Fixing and writing main uncompressed index…" )
 
-            def toInt( CVstring ):
+            def toInt( CVstring ) -> int:
                 try: return int( CVstring )
                 except ValueError:
                     #if self.doExtraChecking: assert CVstring
@@ -3848,7 +3849,7 @@ class BibleWriter( InternalBible ):
             if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
                 vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  Fixing and writing main compressed index…" )
 
-            def toInt( CVstring ):
+            def toInt( CVstring ) -> int:
                 try: return int( CVstring )
                 except ValueError:
                     #if self.doExtraChecking: assert CVstring
@@ -3957,7 +3958,7 @@ class BibleWriter( InternalBible ):
 
 
 
-    def toUSX2XML( self, outputFolderpath:Path|None=None, controlDict=None, validationSchema=None ):
+    def toUSX2XML( self, outputFolderpath:Path|None=None, controlDict=None, validationSchema=None ) -> tuple | bool:
         """
         DEPRECATED
 
@@ -3988,7 +3989,7 @@ class BibleWriter( InternalBible ):
 
         ignoredMarkers, unhandledMarkers, unhandledBooks = set(), set(), []
 
-        def writeUSXBook( BBB:str, bkData ):
+        def writeUSXBook( BBB:BookCode, bkData ) -> tuple | None:
             """ Writes a book to the filesFolder. """
 
             def handleInternalTextMarkersForUSX2( original_text ):
@@ -4120,7 +4121,7 @@ class BibleWriter( InternalBible ):
                     return USXxrefXML
                 # end of toUSX2XML.processXRef
 
-                def processFootnote( USXfootnote ):
+                def processFootnote( USXfootnote ) -> str:
                     """
                     Return the USX XML for the processed footnote.
 
@@ -4514,7 +4515,7 @@ class BibleWriter( InternalBible ):
 
 
 
-    def toUSXXML( self, outputFolderpath:Path|None=None, controlDict=None, validationSchema=None ):
+    def toUSXXML( self, outputFolderpath:Path|None=None, controlDict=None, validationSchema=None ) -> bool:
         """
         Or toUSX3XML
 
@@ -4551,7 +4552,7 @@ class BibleWriter( InternalBible ):
 
 
 
-    def toUSFXXML( self, outputFolderpath:Path|None=None, controlDict=None, validationSchema=None ):
+    def toUSFXXML( self, outputFolderpath:Path|None=None, controlDict=None, validationSchema=None ) -> tuple | bool:
         """
         Using settings from the given control file,
             converts the USFM information to UTF-8 USFX XML files.
@@ -4577,7 +4578,7 @@ class BibleWriter( InternalBible ):
 
         ignoredMarkers, unhandledMarkers, unhandledBooks = set(), set(), []
 
-        def writeUSFXBook( xw, BBB:str, bkData ):
+        def writeUSFXBook( xw, BBB:BookCode, bkData ) -> None:
             """ Writes a book to the given USFX XML writerObject. """
 
             def handleInternalTextMarkersForUSFX( original_text ):
@@ -5015,7 +5016,7 @@ class BibleWriter( InternalBible ):
 
 
 
-    def _writeSwordLocale( self, name, description, BibleOrganisationalSystem, getBookNameFunction, localeFilepath ):
+    def _writeSwordLocale( self, name, description, BibleOrganisationalSystem, getBookNameFunction, localeFilepath ) -> None:
         """
         Writes a UTF-8 Sword locale file containing the book names and abbreviations.
         """
@@ -5100,7 +5101,7 @@ class BibleWriter( InternalBible ):
 
 
 
-    def toOSISXML( self, outputFolderpath:Path|None=None, controlDict=None, validationSchema=None ):
+    def toOSISXML( self, outputFolderpath:Path|None=None, controlDict=None, validationSchema=None ) -> tuple | bool:
         """
         Using settings from the given control file,
             converts the USFM information to one or more UTF-8 OSIS XML files.
@@ -5164,7 +5165,7 @@ class BibleWriter( InternalBible ):
                 #if BBB in self.books:
                     #SwLocFile.write( f'{bos_books_codes_py.get_english_name_nr(BBB).upper()}={bos_books_codes_py.bos_to_sword_book_code(BBB)}\n' ) # Write the UPPER CASE language book name and the Sword abbreviation
 
-        def writeHeader( writerObject ):
+        def writeHeader( writerObject ) -> None:
             """
             Writes the OSIS header to the OSIS XML writerObject.
             """
@@ -5195,12 +5196,12 @@ class BibleWriter( InternalBible ):
         toOSISGlobals = { "verseRef":'', "XRefNum":0, "FootnoteNum":0, "lastRef":'', "OneChapterOSISBookCodes":bos_books_codes_py.get_osis_single_chapter_books_list() } # These are our global variables
 
 
-        def writeOSISBook( writerObject, BBB:str, bkData ):
+        def writeOSISBook( writerObject, BBB:BookCode, bkData ) -> None:
             """
             Writes a book to the OSIS XML writerObject.
             """
 
-            def checkOSISText( textToCheck, checkLeftovers=True ):
+            def checkOSISText( textToCheck, checkLeftovers:bool=True ):
                 """
                 Handle some general backslash codes and warn about any others still unprocessed.
                 """
@@ -5254,7 +5255,7 @@ class BibleWriter( InternalBible ):
                 Convert cross-references and footnotes and return the adjusted verse text.
                 """
 
-                def processXRef( USFMxref ):
+                def processXRef( USFMxref ) -> str:
                     """
                     Return the OSIS code for the processed cross-reference (xref).
 
@@ -5414,7 +5415,7 @@ class BibleWriter( InternalBible ):
                 return verse
             # end of toOSISXML.processXRefsAndFootnotes
 
-            def writeVerseStart( writerObject, BBB:str, chapterRef, verseNumberText ):
+            def writeVerseStart( writerObject, BBB:BookCode, chapterRef, verseNumberText ) -> None:
                 """
                 Processes and writes a verse milestone to the OSIS XML writerObject.
                     <verse sID="Gen.1.31" osisID="Gen.1.31"/>
@@ -5463,7 +5464,7 @@ class BibleWriter( InternalBible ):
                 ##writerObject.writeLineOpenSelfclose( 'verse', ('eID',sID) )
             # end of toOSISXML.writeVerseStart
 
-            def closeAnyOpenMajorSection():
+            def closeAnyOpenMajorSection() -> None:
                 """ Close a <div> if it's open. """
                 nonlocal haveOpenMajorSection
                 if haveOpenMajorSection:
@@ -5471,7 +5472,7 @@ class BibleWriter( InternalBible ):
                     haveOpenMajorSection = False
             # end of toOSISXML.closeAnyOpenMajorSection
 
-            def closeAnyOpenSection():
+            def closeAnyOpenSection() -> None:
                 """ Close a <div> if it's open. """
                 nonlocal haveOpenL, haveOpenLG, haveOpenParagraph, haveOpenSubsection
                 nonlocal haveOpenSection
@@ -5496,7 +5497,7 @@ class BibleWriter( InternalBible ):
                     haveOpenSection = False
             # end of toOSISXML.closeAnyOpenSection
 
-            def closeAnyOpenSubsection():
+            def closeAnyOpenSubsection() -> None:
                 """ Close a <div> if it's open. """
                 nonlocal haveOpenSubsection
                 if haveOpenSubsection:
@@ -5504,7 +5505,7 @@ class BibleWriter( InternalBible ):
                     haveOpenSubsection = False
             # end of toOSISXML.closeAnyOpenSubsection
 
-            def closeAnyOpenParagraph():
+            def closeAnyOpenParagraph() -> None:
                 """ Close a <p> if it's open. """
                 nonlocal haveOpenParagraph
                 if haveOpenParagraph:
@@ -5512,7 +5513,7 @@ class BibleWriter( InternalBible ):
                     haveOpenParagraph = False
             # end of toOSISXML.closeAnyOpenParagraph
 
-            def closeAnyOpenLG():
+            def closeAnyOpenLG() -> None:
                 """ Close a <lg> if it's open. """
                 nonlocal haveOpenLG
                 if haveOpenLG:
@@ -5521,7 +5522,7 @@ class BibleWriter( InternalBible ):
                     haveOpenLG = False
             # end of toOSISXML.closeAnyOpenLG
 
-            def closeAnyOpenL():
+            def closeAnyOpenL() -> None:
                 """ Close a <l> if it's open. """
                 nonlocal haveOpenL
                 if haveOpenL:
@@ -5856,7 +5857,7 @@ class BibleWriter( InternalBible ):
 
 
 
-    def toZefaniaXML( self, outputFolderpath:Path|None=None, controlDict=None, validationSchema=None ):
+    def toZefaniaXML( self, outputFolderpath:Path|None=None, controlDict=None, validationSchema=None ) -> tuple | bool:
         """
         Using settings from the given control file,
             converts the USFM information to a UTF-8 Zefania XML file.
@@ -5901,7 +5902,7 @@ class BibleWriter( InternalBible ):
 
         ignoredMarkers, unhandledMarkers, unhandledBooks = set(), set(), []
 
-        def writeHeader( writerObject ):
+        def writeHeader( writerObject ) -> None:
             """
             Writes the Zefania header to the Zefania XML writerObject.
             """
@@ -5925,7 +5926,7 @@ class BibleWriter( InternalBible ):
 
         toZefGlobals = { 'verseRef':'', 'XRefNum':0, 'FootnoteNum':0, 'lastRef':'', 'OneChapterOSISBookCodes':bos_books_codes_py.get_osis_single_chapter_books_list() } # These are our global variables
 
-        def writeZefBook( writerObject, BBB:str, bkData ):
+        def writeZefBook( writerObject, BBB:BookCode, bkData ) -> None:
             """
             Writes a book to the Zefania XML writerObject.
             """
@@ -5936,7 +5937,7 @@ class BibleWriter( InternalBible ):
                 unhandledBooks.append( BBB )
                 return
 
-            def handleVerseNumber( BBB:str, C:str, V:str, givenText ):
+            def handleVerseNumber( BBB:BookCode, C:str, V:str, givenText ):
                 """
                 Given verse text, return two strings to be used later.
                 """
@@ -5966,7 +5967,7 @@ class BibleWriter( InternalBible ):
                 return verseNumberString, endVerseNumberString
             # end of toZefaniaXML.handleVerseNumber
 
-            def checkZefaniaText( textToCheck, checkLeftovers=True ):
+            def checkZefaniaText( textToCheck, checkLeftovers:bool=True ):
                 """
                 Handle some general backslash codes and warn about any others still unprocessed.
                 """
@@ -6368,7 +6369,7 @@ class BibleWriter( InternalBible ):
 
 
 
-    def toHaggaiXML( self, outputFolderpath:Path|None=None, controlDict=None, validationSchema=None ):
+    def toHaggaiXML( self, outputFolderpath:Path|None=None, controlDict=None, validationSchema=None ) -> tuple | bool:
         """
         Using settings from the given control file,
             converts the USFM information to a UTF-8 Haggai XML file.
@@ -6395,7 +6396,7 @@ class BibleWriter( InternalBible ):
 
         ignoredMarkers, unhandledMarkers, unhandledBooks = set(), set(), []
 
-        def writeHeader( writerObject ):
+        def writeHeader( writerObject ) -> None:
             """
             Writes the Haggai header to the Haggai XML writerObject.
             """
@@ -6417,7 +6418,7 @@ class BibleWriter( InternalBible ):
             writerObject.writeLineClose( 'INFORMATION' )
         # end of toHaggaiXML.writeHeader
 
-        def writeHagBook( writerObject, BBB:str, bkData ):
+        def writeHagBook( writerObject, BBB:BookCode, bkData ) -> None:
             """
             Writes a book to the Haggai XML writerObject.
             """
@@ -6596,7 +6597,7 @@ class BibleWriter( InternalBible ):
 
 
 
-    def toSwordModule( self, outputFolderpath:Path|None=None, controlDict=None, validationSchema=None ):
+    def toSwordModule( self, outputFolderpath:Path|None=None, controlDict=None, validationSchema=None ) -> tuple | bool:
         """
         Using settings from the given control file,
             converts the USFM information to a UTF-8 OSIS-XML-based Sword module.
@@ -6686,7 +6687,7 @@ class BibleWriter( InternalBible ):
         toSwordGlobals = { 'currentID':0, "idStack":[], "verseRef":'', "XRefNum":0, "FootnoteNum":0, "lastRef":'', 'offset':0, 'length':0, "OneChapterOSISBookCodes":bos_books_codes_py.get_osis_single_chapter_books_list() } # These are our global variables
 
 
-        def makeConfFile( modsdFolder, compressedFlag ):
+        def makeConfFile( modsdFolder, compressedFlag ) -> None:
             """ Make a conf file for the Sword modules. """
             emailAddress = contactName = "Unknown"
             adjustedProjectName = self.projectName.lower().replace( ' ', '_' )
@@ -6746,7 +6747,7 @@ class BibleWriter( InternalBible ):
         # end of makeConfFile
 
 
-        def writeIndexEntry( writerObject, indexFile ):
+        def writeIndexEntry( writerObject, indexFile ) -> None:
             """ Writes a newline to the main file and an entry to the index file. """
             writerObject.writeNewLine()
             writerObject._writeToBuffer( "IDX " ) # temp … XXXXXXX
@@ -6755,7 +6756,7 @@ class BibleWriter( InternalBible ):
             toSwordGlobals['length'] = 0 # Reset
         # end of toSwordModule.writeIndexEntry
 
-        def writeSwordBook( writerObject, ix, BBB:str, bkData ):
+        def writeSwordBook( writerObject, ix, BBB:BookCode, bkData ) -> None:
             """ Writes a Bible book to the output files. """
 
             def checkSwordText( textToCheck ):
@@ -6799,7 +6800,7 @@ class BibleWriter( InternalBible ):
                 Convert cross-references and footnotes and return the adjusted verse text.
                 """
 
-                def processXRef( USFMxref ):
+                def processXRef( USFMxref ) -> str:
                     """
                     Return the OSIS code for the processed cross-reference (xref).
 
@@ -6918,7 +6919,7 @@ class BibleWriter( InternalBible ):
             # end of toSwordModule.processXRefsAndFootnotes
 
 
-            def writeVerseStart( writerObject, BBB:str, chapterRef, verseNumberString ):
+            def writeVerseStart( writerObject, BBB:BookCode, chapterRef, verseNumberString ) -> None:
                 """
                 Processes and writes a verse to the OSIS XML writerObject.
                     <verse sID="Gen.1.31" osisID="Gen.1.31"/>
@@ -6964,7 +6965,7 @@ class BibleWriter( InternalBible ):
                 #writeIndexEntry( writerObject, indexFile )
             # end of toSwordModule.writeVerseStart
 
-            def closeAnyOpenMajorSection():
+            def closeAnyOpenMajorSection() -> None:
                 """ Close a <div> if it's open. """
                 nonlocal haveOpenMajorSection
                 if haveOpenMajorSection:
@@ -6972,7 +6973,7 @@ class BibleWriter( InternalBible ):
                     haveOpenMajorSection = False
             # end of toSwordModule.closeAnyOpenMajorSection
 
-            def closeAnyOpenSection():
+            def closeAnyOpenSection() -> None:
                 """ Close a <div> if it's open. """
                 nonlocal haveOpenSection
                 if haveOpenSection:
@@ -6980,7 +6981,7 @@ class BibleWriter( InternalBible ):
                     haveOpenSection = False
             # end of toSwordModule.closeAnyOpenSection
 
-            def closeAnyOpenSubsection():
+            def closeAnyOpenSubsection() -> None:
                 """ Close a <div> if it's open. """
                 nonlocal haveOpenSubsection
                 if haveOpenSubsection:
@@ -6988,7 +6989,7 @@ class BibleWriter( InternalBible ):
                     haveOpenSubsection = False
             # end of toSwordModule.closeAnyOpenSubsection
 
-            def closeAnyOpenParagraph():
+            def closeAnyOpenParagraph() -> None:
                 """ Close a <p> if it's open. """
                 nonlocal haveOpenParagraph
                 if haveOpenParagraph:
@@ -6996,7 +6997,7 @@ class BibleWriter( InternalBible ):
                     haveOpenParagraph = False
             # end of toSwordModule.closeAnyOpenParagraph
 
-            def closeAnyOpenLG():
+            def closeAnyOpenLG() -> None:
                 """ Close a <lg> if it's open. """
                 nonlocal haveOpenLG
                 if haveOpenLG:
@@ -7004,7 +7005,7 @@ class BibleWriter( InternalBible ):
                     haveOpenLG = False
             # end of toSwordModule.closeAnyOpenLG
 
-            def closeAnyOpenL():
+            def closeAnyOpenL() -> None:
                 """ Close a <l> if it's open. """
                 nonlocal haveOpenL
                 if haveOpenL:
@@ -7012,13 +7013,13 @@ class BibleWriter( InternalBible ):
                     haveOpenL = False
             # end of toSwordModule.closeAnyOpenL
 
-            def getNextID():
+            def getNextID() -> str:
                 """ Returns the next sID sequence code. """
                 toSwordGlobals['currentID'] += 1
                 return f"gen{toSwordGlobals['currentID']}"
             # end of toSwordModule.getNextID
 
-            def getSID():
+            def getSID() -> tuple[str, str]:
                 """ Returns a tuple containing ('sID', getNextID() ). """
                 ID = getNextID()
                 toSwordGlobals['idStack'].append( ID )
@@ -7329,7 +7330,7 @@ class BibleWriter( InternalBible ):
 
 
 
-    def totheWord( self, outputFolderpath:Path|None=None, controlDict=None ):
+    def totheWord( self, outputFolderpath:Path|None=None, controlDict=None ) -> bool:
         """
         Using settings from the given control file,
             converts the USFM information to a UTF-8 theWord file.
@@ -7359,7 +7360,7 @@ class BibleWriter( InternalBible ):
 
 
 
-    def toMySword( self, outputFolderpath:Path|None=None, controlDict=None ):
+    def toMySword( self, outputFolderpath:Path|None=None, controlDict=None ) -> bool:
         """
         Using settings from the given control file,
             converts the USFM information to a UTF-8 MySword file.
@@ -7389,7 +7390,7 @@ class BibleWriter( InternalBible ):
 
 
 
-    def toESword( self, outputFolderpath:Path|None=None, controlDict=None ):
+    def toESword( self, outputFolderpath:Path|None=None, controlDict=None ) -> bool:
         """
         Using settings from the given control file,
             converts the USFM information to a UTF-8 e-Sword file.
@@ -7419,7 +7420,7 @@ class BibleWriter( InternalBible ):
 
 
 
-    def toMyBible( self, outputFolderpath:Path|None=None, controlDict=None ):
+    def toMyBible( self, outputFolderpath:Path|None=None, controlDict=None ) -> bool:
         """
         Using settings from the given control file,
             converts the internal Bible information to a UTF-8 MyBible SQLite3 database file
@@ -7450,7 +7451,7 @@ class BibleWriter( InternalBible ):
 
 
 
-    def toSwordSearcher( self, outputFolderpath:Path|None=None ):
+    def toSwordSearcher( self, outputFolderpath:Path|None=None ) -> bool:
         """
         Write the pseudo USFM out into the SwordSearcher pre-Forge format.
         """
@@ -7476,7 +7477,7 @@ class BibleWriter( InternalBible ):
         ignoredMarkers, unhandledMarkers, unhandledBooks = set(), set(), []
 
 
-        def writeSSHeader( writer ):
+        def writeSSHeader( writer ) -> None:
             """
             Write the header data
             """
@@ -7485,7 +7486,7 @@ class BibleWriter( InternalBible ):
         # end of toSwordSearcher.writeSSHeader
 
 
-        def writeSSBook( writer, BBB:str, bookObject ):
+        def writeSSBook( writer, BBB:BookCode, bookObject ) -> None:
             """
             Convert the internal Bible data to SwordSearcher pre-Forge output.
             """
@@ -7590,7 +7591,7 @@ class BibleWriter( InternalBible ):
 
 
 
-    def toDrupalBible( self, outputFolderpath:Path|None=None ):
+    def toDrupalBible( self, outputFolderpath:Path|None=None ) -> bool:
         """
         Write the pseudo USFM out into the DrupalBible format.
         """
@@ -7610,7 +7611,7 @@ class BibleWriter( InternalBible ):
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, '\nsettings', dir(self.settingsDict) )
 
 
-        def writeDrupalBibleHeader( writer ):
+        def writeDrupalBibleHeader( writer ) -> None:
             """
             Write the header data
             """
@@ -7625,7 +7626,7 @@ class BibleWriter( InternalBible ):
         # end of toDrupalBible.writeDrupalBibleHeader
 
 
-        def writeDrupalBibleChapters( writer ):
+        def writeDrupalBibleChapters( writer ) -> None:
             """
             Write the header data
             """
@@ -7645,7 +7646,7 @@ class BibleWriter( InternalBible ):
         # end of toDrupalBible.writeDrupalBibleChapters
 
 
-        def doDrupalTextFormat( givenTextField ):
+        def doDrupalTextFormat( givenTextField ) -> str:
             """
             """
             textField = givenTextField
@@ -7666,7 +7667,7 @@ class BibleWriter( InternalBible ):
         # end of doDrupalTextFormat
 
 
-        def writeDrupalBibleBook( writer, BBB:str, bookObject ):
+        def writeDrupalBibleBook( writer, BBB:BookCode, bookObject ) -> None:
             """
             Convert the internal Bible data to DrupalBible output.
             """
@@ -7780,7 +7781,7 @@ class BibleWriter( InternalBible ):
 
 
 
-    def toPhotoBible( self, outputFolderpath:Path|None=None ):
+    def toPhotoBible( self, outputFolderpath:Path|None=None ) -> bool:
         """
         Write the internal Bible format out into small JPEG (photo) files
             that can be downloaded into a cheap (non-Java) camera phone.
@@ -7894,7 +7895,7 @@ class BibleWriter( InternalBible ):
 
 
         lastFontcolor = lastFontsize = lastFontname = None # We keep track of these to avoid unnecessary duplicates
-        def renderLine( across, down, text, fontsize, fontname, fontcolor ):
+        def renderLine( across, down, text, fontsize, fontname, fontcolor ) -> list:
             """
             Returns a list of commands to render the given text in a line.
             Tries to avoid including superfluous font and other commands.
@@ -7942,7 +7943,7 @@ class BibleWriter( InternalBible ):
         ## end of toPhotoBible.renderVerseNumbers
 
 
-        def renderPage( BBB:str, C:str, bookName, text, jpegFilepath, fontsize=None ):
+        def renderPage( BBB:BookCode, C:str, bookName, text, jpegFilepath, fontsize=None ):
             """
             Creates a "blank" JPEG file
                 and then writes lines across the top of the background image.
@@ -8133,7 +8134,7 @@ class BibleWriter( InternalBible ):
         # end of toPhotoBible.renderPage
 
 
-        def renderChapterText( BBB:str, BBBnum, bookName, bookAbbrev, C:str, intC, maxChapters, numVerses, text, bookFolderName, fontsize=None ):
+        def renderChapterText( BBB:BookCode, BBBnum, bookName, bookAbbrev, C:str, intC, maxChapters, numVerses, text, bookFolderName, fontsize=None ) -> int:
             """
             Creates as many JPEG image files as needed to display the chapter
                 and puts them in an appropriate (created) folder.
@@ -8358,7 +8359,7 @@ class BibleWriter( InternalBible ):
     # end of BibleWriter.toPhotoBible
 
 
-    def toODF( self, outputFolderpath:Path|None=None ):
+    def toODF( self, outputFolderpath:Path|None=None ) -> bool:
         """
         Write the internal Bible format out into Open Document Format (ODF)
             suitable for opening in LibreOffice or OpenOffice.
@@ -8390,7 +8391,7 @@ class BibleWriter( InternalBible ):
         #ODF_HARD_SPACE = uno.getConstantByName( "com.sun.star.text.ControlCharacter.HARD_SPACE" )
         #ODF_APPEND_PARAGRAPH = uno.getConstantByName( "com.sun.star.text.ControlCharacter.APPEND_PARAGRAPH" )
 
-        def isServiceManagerRunning():
+        def isServiceManagerRunning() -> bool:
             """
             Checks to see if the LibreOffice ServiceManager is in the list of running tasks
             """
@@ -8403,7 +8404,7 @@ class BibleWriter( InternalBible ):
             return False
         # end of isServiceManagerRunning
 
-        def startLibreOfficeServiceManager():
+        def startLibreOfficeServiceManager() -> None:
             """
             """
             if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.verbosityLevel > 1:
@@ -8485,7 +8486,7 @@ class BibleWriter( InternalBible ):
                             'em':'Emphasis Text', 'bd':'Bold Text', 'it':'Italic Text', 'bdit':'Bold Italic Text', 'sc':'Small Caps Text', }
 
 
-        def setupStyles( styleFamilies ):
+        def setupStyles( styleFamilies ) -> None:
             """
             Defines new styles that are not in the template (yet).
 
@@ -9147,14 +9148,14 @@ class BibleWriter( InternalBible ):
         # end of toODF.setupStyles
 
 
-        def insertFormattedODFText( BBB:str, C:str, V:str, givenText:str, extras:InternalBibleExtraList, document, textCursor, defaultCharacterStyleName ):
+        def insertFormattedODFText( BBB:BookCode, C:str, V:str, givenText:str, extras:InternalBibleExtraList, document, textCursor, defaultCharacterStyleName ) -> None:
             """
             Format character codes within the text into ODF
             """
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"insertFormattedODFText( {repr(givenText)}, {len(extras)}, {ourGlobals.keys()} )" )
             if self.doExtraChecking: assert givenText or extras
 
-            def handleExtras( text, extras ):
+            def handleExtras( text, extras ) -> None:
                 """
                 Returns the MD text with footnotes and xrefs processed.
                 It also accumulates MD in ourGlobals for the end notes.
@@ -9180,7 +9181,7 @@ class BibleWriter( InternalBible ):
                 # end of insertFormattedODFText.liveCV
 
 
-            def processNote( noteType, rawFootnoteContents, document, textCursor ):
+            def processNote( noteType, rawFootnoteContents, document, textCursor ) -> None:
                 """
                 Inserts the footnote or endnote into the ODF document.
 
@@ -9225,7 +9226,7 @@ class BibleWriter( InternalBible ):
             # end of insertFormattedODFText.processNote
 
 
-            def processCrossReference( rawXRef, document, textCursor ):
+            def processCrossReference( rawXRef, document, textCursor ) -> None:
                 """
                 Inserts the cross-reference into the ODF document as a footnote.
 
@@ -9268,7 +9269,7 @@ class BibleWriter( InternalBible ):
             # end of insertFormattedODFText.processCrossReference
 
 
-            def processFigure( extraText, document, textCursor ):
+            def processFigure( extraText, document, textCursor ) -> None:
                 """
                 Inserts the figure into the ODF document.
 
@@ -9293,7 +9294,7 @@ class BibleWriter( InternalBible ):
             # end of insertFormattedODFText.processFigure
 
 
-            def handleTextSubsegment( textSegment ):
+            def handleTextSubsegment( textSegment ) -> None:
                 """
                 Insert a text segment, complete with the correct character styles if any.
                 """
@@ -9339,7 +9340,7 @@ class BibleWriter( InternalBible ):
                     document.Text.insertString( textCursor, textSegment, 0 )
             # end of insertFormattedODFText.handleTextSubsegment
 
-            def handleTextSegment( textSegment ):
+            def handleTextSegment( textSegment ) -> None:
                 """
                 Insert a text segment, complete with the correct character styles if any.
                 """
@@ -9389,7 +9390,7 @@ class BibleWriter( InternalBible ):
         # end of toODF.insertFormattedODFText
 
 
-        def createODFBook( bookNum, BBB:str, bookObject ):
+        def createODFBook( bookNum, BBB:BookCode, bookObject ) -> bool:
             """
             Returns a True/False result
             """
@@ -9426,7 +9427,7 @@ class BibleWriter( InternalBible ):
             else: logger.critical( "toODF: Don't know how to set up running header user text field programmatically yet" )
 
             firstEverParagraphFlag = True
-            def insertODFParagraph( BBB:str, C:str, V:str, paragraphStyleName, text, extras:InternalBibleExtraList, document, textCursor, defaultCharacterStyleName ):
+            def insertODFParagraph( BBB:BookCode, C:str, V:str, paragraphStyleName, text, extras:InternalBibleExtraList, document, textCursor, defaultCharacterStyleName ) -> None:
                 """
                 Given some text and the paragraph stylename (and the default character stylename)
                     start a new paragraph and insert the text.
@@ -9641,7 +9642,7 @@ class BibleWriter( InternalBible ):
                     if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
                         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Timeout for {BBB} is {timeoutSeconds}s" )
                     class ODFTimeoutException( Exception ): pass
-                    def TimeoutHandler( signum, frame ):
+                    def TimeoutHandler( signum, frame ) -> None:
                         logger.critical( f"createODFBook( {BBB} ) went too long!" )
                         raise ODFTimeoutException( f"ODF writer timed out on {BBB}" )
                     # end of TimeoutHandler
@@ -9758,7 +9759,7 @@ class BibleWriter( InternalBible ):
                              's1':'BibleSectionHeading', 's2':'BibleSectionHeadingTwo', 's3':'BibleSectionHeadingThree', 's4':'BibleSectionHeadingFour',
                              'is1':'BibleIntroSectionHeading', 'is2':'BibleIntroSectionHeadingTwo', 'is3':'BibleIntroSectionHeadingThree', 'is4':'BibleIntroSectionHeadingFour', }
 
-        def writeTeXHeader( writer ):
+        def writeTeXHeader( writer ) -> None:
             """
             Write the XeTeX header data — the file can be processed with xelatex
                 I had to run "sudo apt-get install fonts-linuxlibertine" first.
@@ -9843,7 +9844,7 @@ class BibleWriter( InternalBible ):
         # end of toTeX:texText
 
 
-        def makePDFs( BBB:str, texFilepath, timeout ):
+        def makePDFs( BBB:BookCode, texFilepath, timeout ) -> None:
             """
             Call xelatex to make the Bible PDF file(s) from the .tex file.
             """

@@ -95,7 +95,7 @@ class USXFilenames:
     # end of USXFilenames.getFilenameTemplate
 
 
-    def getDerivedFilenameTuples( self ):
+    def getDerivedFilenameTuples( self ) -> list:
         """
         Return a list of valid USX filenames that match our filename template.
         """
@@ -103,7 +103,7 @@ class USXFilenames:
     # end of USXFilenames.getDerivedFilenameTuples
 
 
-    def getConfirmedFilenameTuples( self, strictCheck:bool=False ):
+    def getConfirmedFilenameTuples( self, strictCheck:bool=False ) -> list:
         """
         Return a list of tuples of UPPER CASE book codes with actual (present and readable) USX filenames.
         """
@@ -126,7 +126,7 @@ class USXFilenames:
     # end of USXFilenames.getPossibleFilenameTuples
 
 
-    def getUnusedFilenames( self ):
+    def getUnusedFilenames( self ) -> list:
         """
         Return a list of filenames which didn't match the USFX template.
         """

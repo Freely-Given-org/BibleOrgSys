@@ -26,6 +26,7 @@ from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
 #from BibleReferences import BibleSingleReference, BibleReferenceList
 from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey, FlexibleVersesKey
+from typing import Self
 
 
 LAST_MODIFIED_DATE = '2026-10-06' # by RJH
@@ -73,7 +74,7 @@ class BibleReferencesLinksConverter:
     # end of BibleReferencesLinksConverter.__init__
 
 
-    def loadAndValidate( self, XMLFileOrFilepath=None ):
+    def loadAndValidate( self, XMLFileOrFilepath=None ) -> Self:
         """
         Loads (and crudely validates the XML file) into an element tree.
             Allows the filepath of the source XML file to be specified, otherwise uses the default.
@@ -93,7 +94,7 @@ class BibleReferencesLinksConverter:
     # end of BibleReferencesLinksConverter.loadAndValidate
 
 
-    def __load( self, XMLFileOrFilepath ):
+    def __load( self, XMLFileOrFilepath ) -> None:
         """
         Load the source XML file and remove the header from the tree.
         Also, extracts some useful elements from the header element.
@@ -138,7 +139,7 @@ class BibleReferencesLinksConverter:
     # end of BibleReferencesLinksConverter.__load
 
 
-    def __validate( self ):
+    def __validate( self ) -> None:
         """
         Check/validate the loaded data.
         """
@@ -246,7 +247,7 @@ class BibleReferencesLinksConverter:
     # end of BibleReferencesLinksConverter.__str__
 
 
-    def __len__( self ):
+    def __len__( self ) -> int:
         """
         Returns the number of references links loaded.
         """
@@ -259,7 +260,7 @@ class BibleReferencesLinksConverter:
         Loads (and pivots) the data (not including the header) into suitable Python containers to use in a Python program.
         (Of course, you can just use the elementTree in self._XMLTree if you prefer.)
         """
-        def makeList( parameter1, parameter2 ):
+        def makeList( parameter1, parameter2 ) -> list:
             """
             Returns a list containing all parameters. Parameter1 may already be a list.
             """
@@ -434,7 +435,7 @@ class BibleReferencesLinksConverter:
     # end of BibleReferencesLinksConverter.importDataToPython
 
 
-    def pickle( self, filepath=None ):
+    def pickle( self, filepath=None ) -> None:
         """
         Writes the information tables to a .pickle file that can be easily loaded into a Python3 program.
         """
@@ -457,7 +458,7 @@ class BibleReferencesLinksConverter:
     # end of BibleReferencesLinksConverter.pickle
 
 
-    def exportDataWithIndex( self, filepath=None ):
+    def exportDataWithIndex( self, filepath=None ) -> None:
         """
         Writes the information tables to a .pickle index file and .json file that can be easily loaded into a Java program.
 
@@ -493,11 +494,11 @@ class BibleReferencesLinksConverter:
     # end of BibleReferencesLinksConverter.exportDataWithIndex
 
 
-    def exportDataToPython( self, filepath=None ):
+    def exportDataToPython( self, filepath=None ) -> None:
         """
         Writes the information tables to a .py file that can be cut and pasted into a Python program.
         """
-        def exportPythonDictOrList( theFile, theDictOrList, dictName, keyComment, fieldsComment ):
+        def exportPythonDictOrList( theFile, theDictOrList, dictName, keyComment, fieldsComment ) -> None:
             """Exports theDictOrList to theFile."""
             assert theDictOrList
             raise Exception( "Not written yet" )
@@ -544,7 +545,7 @@ class BibleReferencesLinksConverter:
     # end of BibleReferencesLinksConverter.exportDataToPython
 
 
-    def exportDataToJSON( self, filepath=None ):
+    def exportDataToJSON( self, filepath=None ) -> None:
         """
         Writes the information tables to a .json file that can be easily loaded into a Java program.
 
@@ -581,15 +582,15 @@ class BibleReferencesLinksConverter:
     # end of BibleReferencesLinksConverter.exportDataToJSON
 
 
-    def exportDataToC( self, filepath=None ):
+    def exportDataToC( self, filepath=None ) -> None:
         """
         Writes the information tables to a .h and .c files that can be included in c and c++ programs.
 
         NOTE: The (optional) filepath should not have the file extension specified -- this is added automatically.
         """
-        def exportPythonDict( hFile, cFile, theDict, dictName, sortedBy, structure ):
+        def exportPythonDict( hFile, cFile, theDict, dictName, sortedBy, structure ) -> None:
             """ Exports theDict to the .h and .c files. """
-            def convertEntry( entry ):
+            def convertEntry( entry ) -> str:
                 """ Convert special characters in an entry… """
                 result = ""
                 if isinstance( entry, str ):

@@ -123,7 +123,7 @@ EXTENSION_TO_IGNORE = ('ZIP', 'BAK', 'BAK2', 'BAK3', 'BAK4', 'LOG', 'HTM','HTML'
 
 
 
-def VPLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=False, autoLoadBooks:bool=False ):
+def VPLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=False, autoLoadBooks:bool=False ) -> 'bool | VPLBible | int | None':
     """
     Given a folder, search for VPL Bible files or folders in the folder and in the next level down.
 
@@ -881,7 +881,7 @@ class VPLBible( Bible ):
             self.stashBook( thisBook )
     # end of VPLBible._loadFile
 
-    def load( self ):
+    def load( self ) -> None:
         """
         Assumes self.sourceFilepath is set
             (If not, use loadBooks() instead.)
@@ -911,7 +911,7 @@ class VPLBible( Bible ):
         self.doPostLoadProcessing()
     # end of VPLBible.load
 
-    def loadBooks( self ):
+    def loadBooks( self ) -> None:
         """
         Assumes self.sourceFilepath is not set
             (If not, use load() instead.)
@@ -945,7 +945,7 @@ class VPLBible( Bible ):
 
 
 
-def testVPL( VPLfolder ):
+def testVPL( VPLfolder ) -> None:
     # Crudely demonstrate the VPL Bible class
     from BibleOrgSys.Reference import VerseReferences
 

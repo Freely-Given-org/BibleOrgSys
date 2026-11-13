@@ -55,7 +55,7 @@ class SFMLines:
     def __init__(self) -> None:
         self.lines = []
 
-    def __str__(self):
+    def __str__(self) -> str:
         """
         This method returns the string representation of a SFM lines object.
 
@@ -68,7 +68,7 @@ class SFMLines:
             result += ('\n' if result else '') + str( line )
         return result
 
-    def read( self, SFMFilepath:str, ignoreSFMs:list|tuple|None=None, encoding:str|None=None ):
+    def read( self, SFMFilepath:str, ignoreSFMs:list|tuple|None=None, encoding:str|None=None ) -> None:
         """
         Read a simple SFM (Standard Format Marker) file into a list of tuples.
 
@@ -109,7 +109,7 @@ class SFMRecords:
     def __init__(self) -> None:
         self.records = []
 
-    def __str__(self):
+    def __str__(self) -> str:
         """
         This method returns the string representation of a SFM lines object.
 
@@ -124,7 +124,7 @@ class SFMRecords:
         return result
 
 
-    def read( self, SFMFilepath:str, key:str|None=None, ignoreSFMs:list|tuple|None=None, ignoreEntries:list|tuple|None=None, changePairs:list|None=None, encoding:str|None=None ):
+    def read( self, SFMFilepath:str, key:str|None=None, ignoreSFMs:list|tuple|None=None, ignoreEntries:list|tuple|None=None, changePairs:list|None=None, encoding:str|None=None ) -> None:
         """
         Read a simple SFM (Standard Format Marker) file into a list of lists of tuples.
 
@@ -189,7 +189,7 @@ class SFMRecords:
     # end of SFMRecords.analyze
 
 
-    def copyToDict( self, internalStructure ):
+    def copyToDict( self, internalStructure ) -> dict:
         """
         self.records is a list of lists.
 

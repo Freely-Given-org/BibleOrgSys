@@ -54,6 +54,7 @@ from BibleOrgSys.Bible import Bible, BibleBook
 from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
 from BibleOrgSys.Online.SwordInstallManager import processConfLines, ALL_SWORD_CONF_FIELD_NAMES, \
                                     TECHNICAL_SWORD_CONF_FIELD_NAMES, DEFAULT_SWORD_CONF_ENCODING
+from BibleOrgSys.Reference.BookCode import BookCode
 
 
 
@@ -110,7 +111,7 @@ class SwordModuleConfiguration:
     # end of SwordModuleConfiguration.__init__
 
 
-    def loadConf( self ):
+    def loadConf( self ) -> None:
         """
         Load the Sword module conf file into a dictionary.
 
@@ -282,7 +283,7 @@ class SwordModule():
         return self.SwordModuleConfiguration.name
 
 
-    def loadRawLD( self ):
+    def loadRawLD( self ) -> None:
         """
         Load an uncompressed lexicon / dictionary type module.
         """
@@ -339,7 +340,7 @@ class SwordModule():
     # end of SwordModule.loadRawLD
 
 
-    def decompressChunk( self, compressedChunk ):
+    def decompressChunk( self, compressedChunk ) -> bytes:
         """
         Decrypt if necessary, and then decompress (using zlib) a chunk of a work.
         """
@@ -385,7 +386,7 @@ class SwordModule():
             return u, rsum, keyPos
         # end of keyRand
 
-        def initialize( key ):
+        def initialize( key ) -> None:
             nonlocal cards, rotor, ratchet, avalanche, lastPlain, lastCipher
             # Key size may be up to 256 bytes.
             # Pass phrases may be used directly, with longer length compensating for the low entropy expected in such keys.
@@ -425,7 +426,7 @@ class SwordModule():
             return lastPlain
         # end of decryptByte
 
-        def decryptBlock( thisBytes, keyStr ):
+        def decryptBlock( thisBytes, keyStr ) -> bytearray:
             initialize( str.encode( keyStr ) )
             result = bytearray()
             for thisByte in thisBytes:
@@ -439,7 +440,7 @@ class SwordModule():
     # end of SwordModule.decompressChunk
 
 
-    def loadCompressedLD( self ):
+    def loadCompressedLD( self ) -> None:
         """
         Load a compressed lexicon / dictionary type module.
         """
@@ -626,7 +627,7 @@ class SwordModule():
     # end of SwordModule.loadCompressedLD
 
 
-    def expandLD( self ):
+    def expandLD( self ) -> None:
         """
         Expand a lexicon / dictionary.
         """
@@ -680,7 +681,7 @@ class SwordModule():
     # end of SwordModule.expandLD
 
 
-    def loadRawGenBook( self ):
+    def loadRawGenBook( self ) -> None:
         """
         """
         if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
@@ -817,7 +818,7 @@ class SwordModule():
     # end of SwordModule.loadRawGenBook
 
 
-    def createChapterOffsets( self, versificationString ):
+    def createChapterOffsets( self, versificationString ) -> None:
         """
         Create a list of chapter offsets (organised by book) to allow direct access to the chapter information.
 
@@ -946,7 +947,7 @@ class SwordModule():
     # end of SwordModule.createChapterOffsets
 
 
-    def loadVersifiedBibleData( self, requestedBBB:str|None=None ):
+    def loadVersifiedBibleData( self, requestedBBB:BookCode|None=None ) -> None:
         """
         Loads data from a Sword module that is structured into chapters and verses.
 
@@ -1223,7 +1224,7 @@ class SwordModule():
     # end of SwordModule.loadVersifiedBibleData
 
 
-    def loadBooks( self, inMemoryFlag:bool=False ):
+    def loadBooks( self, inMemoryFlag:bool=False ) -> bool | None:
         """
         Load the Sword module index into memory (and possibly also the data)
         """
@@ -1318,7 +1319,7 @@ class SwordModule():
     # end of SwordModule.loadBooks
 
 
-    def loadBook( self, BBB:str, inMemoryFlag:bool=False ):
+    def loadBook( self, BBB:BookCode, inMemoryFlag:bool=False ) -> bool | None:
         """
         Load the Sword module index into memory (and possibly also the data)
         """
@@ -1439,7 +1440,7 @@ class SwordModule():
         return self.SwordModuleConfiguration.encoding
 
 
-    def getDescription( self ):
+    def getDescription( self ) -> str:
         """
         """
         return "XYZ!"
@@ -1470,7 +1471,7 @@ class SwordModule():
     # end of SwordModule.convertNTIndexToReference
 
 
-    def getVersifiedOffset( self, BBB:str, C:str, V:str, offsetType=0 ): # The 0 selects the OTNTOffset (1 is OTOffset, 2 is NTOffset)
+    def getVersifiedOffset( self, BBB:BookCode, C:str, V:str, offsetType=0 ): # The 0 selects the OTNTOffset (1 is OTOffset, 2 is NTOffset)
         """
         Get the OTNTOffset for a given reference. (All parameters must be strings.)
 
@@ -1674,7 +1675,7 @@ class SwordModule():
     ## end of SwordModule.preprocessRawGenBookEntry
 
 
-    def filterToHTML( self, rawData, BBB:str=None, C:str=None, V:str=None ):
+    def filterToHTML( self, rawData, BBB:BookCode=None, C:str=None, V:str=None ):
         """
         Does preprocessing on the raw data from the module.
 
@@ -1718,7 +1719,7 @@ class SwordModule():
     # end of SwordModule.filterToHTML
 
 
-    def filterToUSFM( self, rawData, BBB:str, C:str, V ):
+    def filterToUSFM( self, rawData, BBB:BookCode, C:str, V ):
         """
         Does preprocessing on the raw data from the module.
         """
@@ -1774,7 +1775,7 @@ class SwordModule():
 
 
 
-    def test( self, testArray=None ):
+    def test( self, testArray=None ) -> dict | None:
         """
         Temporary code (should be in test suite).
 
@@ -1942,7 +1943,7 @@ class SwordBibleModule( SwordModule, Bible ):
     # end of SwordBibleModule.__init__
 
 
-    def loadBooks( self, inMemoryFlag=False ):
+    def loadBooks( self, inMemoryFlag:bool=False ) -> bool | None:
         """
         Loads a versified Sword module indexes into memory
             and then reads the data and saves it all in our internal format.
@@ -2008,7 +2009,7 @@ class SwordBibleModule( SwordModule, Bible ):
     # end of SwordBibleModule.loadBooks
 
 
-    def loadBook( self, BBB:str ):
+    def loadBook( self, BBB:BookCode ):
         """
         Loads a versified Sword module indexes into memory
             and then reads the data and saves it all in our internal format.
@@ -2179,7 +2180,7 @@ class SwordModules:
     # end of SwordModules.__init__
 
 
-    def augmentModules( self, newPath, someFlag ):
+    def augmentModules( self, newPath, someFlag ) -> None:
         """
         Adds another path to search for modules in.
         """
@@ -2196,7 +2197,7 @@ class SwordModules:
     # end of SwordModules.augmentModules
 
 
-    def __loadAllConfs( self ):
+    def __loadAllConfs( self ) -> None:
         """
         Load all the conf files that we can find.
         """
@@ -2227,7 +2228,7 @@ class SwordModules:
     # end of SwordModules.__loadAllConfs
 
 
-    def __loadConfs( self, loadFolder ):
+    def __loadConfs( self, loadFolder ) -> int:
         """
         Loads the .conf files for all the Sword modules that we can find.
 
@@ -2319,7 +2320,7 @@ class SwordModules:
     # end of __str__
 
 
-    def getModules( self ):
+    def getModules( self ) -> list[str] | None:
         """
         For Sword compatibility
         """
@@ -2338,7 +2339,7 @@ class SwordModules:
     # end of SwordModules.getModules
 
 
-    def getAvailableModuleCodes( self, onlyModuleTypes=None ):
+    def getAvailableModuleCodes( self, onlyModuleTypes=None ) -> list | None:
         """
         Module type is a list of strings for the type(s) of modules to include.
 
@@ -2410,7 +2411,7 @@ class SwordModules:
     # end of SwordModules.getAvailableModuleCodeDuples
 
 
-    def getModule( self, moduleRoughName ):
+    def getModule( self, moduleRoughName ) -> SwordModule:
         """
         For Sword compatibility
         """
@@ -2442,7 +2443,7 @@ class SwordModules:
     # end of SwordModules.loadModule
 
 
-    def loadAllModules( self, inMemoryFlag=False ):
+    def loadAllModules( self, inMemoryFlag:bool=False ) -> int:
         """
         Loads all the module indexes or data into memory.
 
@@ -2512,7 +2513,7 @@ class SwordModules:
     # end of SwordModules.loadAllModules
 
 
-    def testAll( self ):
+    def testAll( self ) -> None:
         """
         Runs the module test function on each module.
         """

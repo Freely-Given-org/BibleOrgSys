@@ -485,7 +485,7 @@ class SwordInstallManager():
     # end of SwordInstallManager._getConfFile
 
 
-    def installModule( self, moduleName:str ):
+    def installModule( self, moduleName:str ) -> bool:
         """
         Install the requested module from the remote repository.
         """

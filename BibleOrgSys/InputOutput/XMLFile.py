@@ -161,7 +161,7 @@ def briefDemo() -> None:
     # osisSchemaFile = os.path.join( AutoProcessesFolder, 'sword-tools/thml2osis/xslt/tests/osisCore.2.1.1.xsd' )
     # usxSchemaFile = os.path.join( AutoProcessesFolder, 'VariousScripts/usx 1.rng' )
 
-    def doTest( folder, filenameList, schema=None ):
+    def doTest( folder, filenameList, schema=None ) -> None:
         for testFilename in filenameList:
             xf = XMLFile( testFilename, folder, schema=schema )
             if os.access( xf.sourceFilepath, os.R_OK ):

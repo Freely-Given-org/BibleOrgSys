@@ -425,7 +425,7 @@ def compareBooksPedantic( book1, book2,
         matchingPairs=DEFAULT_MATCHING_PAIRS, # For both Bibles
         illegalCompleteLineRegexes1=DEFAULT_ILLEGAL_COMPLETE_LINE_REGEXES_VERNACULAR, # For book1
         illegalCompleteLineRegexes2=DEFAULT_ILLEGAL_COMPLETE_LINE_REGEXES_BACK_TRANSLATION, # For book2
-        breakOnOne=False ) -> list[tuple[tuple[str,str,str],str]]:
+        breakOnOne:bool=False ) -> list[tuple[tuple[str,str,str],str]]:
     """
     Given two Bible book objects, compare the two carefully
         and return differences.
@@ -825,7 +825,7 @@ def segmentizeBooks( book1:BibleBook, book2:BibleBook ) -> tuple[list,list]:
 
 
 
-def analyzeWordsInSegment( reference, segmentAList, segmentBList, dictAB, resultsList ):
+def analyzeWordsInSegment( reference, segmentAList, segmentBList, dictAB, resultsList ) -> None:
     """
     """
     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nanalyzeWordsInSegment( {reference}, {segmentAList}, {segmentBList}, {len(dictAB)}, … )" )
@@ -916,7 +916,7 @@ def analyzeWordsInSegment( reference, segmentAList, segmentBList, dictAB, result
 # end of analyzeWordsInSegment
 
 
-def analyzeWords( segmentList, dict12=None, dict21=None ):
+def analyzeWords( segmentList, dict12=None, dict21=None ) -> list:
     """
     Given a list of segments (mostly sentences) from two different but closely related versions,
         use the given dictionaries to check that the corresponding word(s) are in the related version.
@@ -1030,7 +1030,7 @@ def compareBibles( Bible1, Bible2,
         matchingPairs=DEFAULT_MATCHING_PAIRS, # For both Bibles
         illegalCompleteLineRegexes1=DEFAULT_ILLEGAL_COMPLETE_LINE_REGEXES_VERNACULAR, # For book1
         illegalCompleteLineRegexes2=DEFAULT_ILLEGAL_COMPLETE_LINE_REGEXES_BACK_TRANSLATION, # For book2
-        breakOnOne=False ):
+        breakOnOne:bool=False ) -> dict:
     """
     Runs a series of checks and count on each book of the Bible
         in order to try to determine what are the normal standards.

@@ -35,6 +35,7 @@ from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.InputOutput.USFMFile import USFMFile
 from BibleOrgSys.Bible import Bible, BibleBook
 import usfm_markers_py
+from BibleOrgSys.Reference.BookCode import BookCode
 
 
 LAST_MODIFIED_DATE = '2026-10-25'
@@ -55,7 +56,7 @@ class USFMBibleBook( BibleBook ):
     Class to load and manipulate a single USFM file / book.
     """
 
-    def __init__( self, containerBibleObject:Bible, BBB:str ) -> None:
+    def __init__( self, containerBibleObject:Bible, BBB:BookCode ) -> None:
         """
         Create the USFM Bible book object.
         """
@@ -777,7 +778,7 @@ def briefDemo() -> None:
     """
     BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
-    def demoFile( name, filename, folder, BBB, encoding ):
+    def demoFile( name, filename, folder, BBB:BookCode, encoding ) -> None:
         if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
             vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Loading {} from {}{}…".format( BBB, filename, f" from {folder}" if BibleOrgSysGlobals.verbosityLevel > 2 else '' ) )
         UBB = USFMBibleBook( name, BBB )
@@ -847,7 +848,7 @@ def fullDemo() -> None:
     """
     BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
-    def demoFile( name, filename, folder, BBB, encoding ):
+    def demoFile( name, filename, folder, BBB:BookCode, encoding ) -> None:
         if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
             vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Loading {} from {}{}…".format( BBB, filename, f" from {folder}" if BibleOrgSysGlobals.verbosityLevel > 2 else '' ) )
         UBB = USFMBibleBook( name, BBB )

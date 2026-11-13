@@ -109,7 +109,7 @@ class LDMLFile:
     # end of LDMLFile.__init__
 
 
-    def load( self ):
+    def load( self ) -> dict:
         """
         Load the something.ldml file (which is an LDML file) and parse it into the dictionary PTXLanguages.
 

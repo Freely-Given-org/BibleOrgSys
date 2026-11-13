@@ -54,7 +54,7 @@ class ESFMFile:
     # end of ESFMFile.__init__
 
 
-    def __str__(self):
+    def __str__(self) -> str:
         """
         This method returns the string representation of a SFM lines object.
 
@@ -69,7 +69,7 @@ class ESFMFile:
     # end of ESFMFile.__str__
 
 
-    def read( self, esfm_filepath:str, ignoreSFMs:list|tuple|None=None ):
+    def read( self, esfm_filepath:str, ignoreSFMs:list|tuple|None=None ) -> None:
         """Read a simple ESFM (Enhanced Standard Format Marker) file into a list of tuples.
 
         @param esfm_filepath: The filename or URL

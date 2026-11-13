@@ -57,6 +57,8 @@ from BibleOrgSys.Reference.BibleVersificationSystems import BibleVersificationSy
 from BibleOrgSys.Reference.BibleBooksNames import BibleBooksNamesSystem
 from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
 import bos_books_codes_py
+from BibleOrgSys.Reference.BookCode import BookCode
+from typing import Self
 
 
 LAST_MODIFIED_DATE = '2026-10-06' # by RJH
@@ -84,7 +86,7 @@ class BibleOrganisationalSystems:
         self.__dataDict = self.__indexDict = self.__combinedIndexDict = None # We'll import into this in loadData
     # end of BibleOrganisationalSystems.__init__
 
-    def loadData( self, XMLFileOrFilepath=None ):
+    def loadData( self, XMLFileOrFilepath=None ) -> Self:
         """ Loads the pickle or XML data file and imports it to dictionary format (if not done already). """
         result = None
         if not self.__dataDict or not self.__indexDict: # Don't do this unnecessarily
@@ -140,7 +142,7 @@ class BibleOrganisationalSystems:
     # end of BibleOrganisationalSystems.__str__
 
 
-    def __len__( self ):
+    def __len__( self ) -> int:
         """
         Return the number of loaded systems.
         """
@@ -151,7 +153,7 @@ class BibleOrganisationalSystems:
     # end of BibleOrganisationalSystems.__len__
 
 
-    def getAvailableOrganisationalSystemNames( self, extended=False ):
+    def getAvailableOrganisationalSystemNames( self, extended:bool=False ) -> list:
         """
         Returns a list of available system name strings.
         """
@@ -167,7 +169,7 @@ class BibleOrganisationalSystems:
     # end of BibleOrganisationalSystems.getAvailableOrganisationalSystemNames
 
 
-    def getOrganisationalSystem( self, systemName, suppressErrors=False ):
+    def getOrganisationalSystem( self, systemName, suppressErrors:bool=False ):
         """
         Accepts combined names (like KJV-1611_edition) or basic names (like KJV-1611).
 
@@ -201,7 +203,7 @@ class BibleOrganisationalSystems:
     # end of BibleOrganisationalSystems.getOrganisationalSystem
 
 
-    def getOrganisationalSystemValue( self, systemName, valueName, suppressErrors=False ):
+    def getOrganisationalSystemValue( self, systemName, valueName, suppressErrors:bool=False ):
         """
         Gets a value for the system.
         """
@@ -253,7 +255,7 @@ class BibleOrganisationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
         """
         def getOrganisationalSystemValue( valueName ):
             """ Gets a value for the system. """
-            def getMoreBasicTypes():
+            def getMoreBasicTypes() -> tuple[str, ...]:
                 """ Returns a list of more basic (original) types. """
                 ix = BibleOrgSysGlobals.ALLOWED_ORGANISATIONAL_TYPES.index( self.__dataDict["type"] )
                 return BibleOrgSysGlobals.ALLOWED_ORGANISATIONAL_TYPES[ix+1:]
@@ -367,7 +369,7 @@ class BibleOrganisationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
     # end of BibleOrganisationalSystem.getOrganisationalSystemType
 
 
-    def getMoreBasicTypes( self ):
+    def getMoreBasicTypes( self ) -> tuple[str, ...]:
         """ Returns a list of more basic (original) types. """
         ix = BibleOrgSysGlobals.ALLOWED_ORGANISATIONAL_TYPES.index( self.__dataDict["type"] )
         return BibleOrgSysGlobals.ALLOWED_ORGANISATIONAL_TYPES[ix+1:]
@@ -422,7 +424,7 @@ class BibleOrganisationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
     # end of BibleOrganisationalSystem.getBookList
 
 
-    def containsBook( self, BBB:str ):
+    def containsBook( self, BBB:BookCode ) -> bool:
         """
         Returns True or False if this book is in this system.
         """
@@ -444,7 +446,7 @@ class BibleOrganisationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
     # end of BibleOrganisationalSystem.getFirstBookCode
 
 
-    def getPreviousBookCode( self, BBB:str ):
+    def getPreviousBookCode( self, BBB:BookCode ):
         """
         Returns the book (if any) before the given one.
         """
@@ -456,7 +458,7 @@ class BibleOrganisationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
     # end of BibleOrganisationalSystem.getNextBookCode
 
 
-    def getNextBookCode( self, BBB:str ):
+    def getNextBookCode( self, BBB:BookCode ):
         """ Returns the book (if any) after the given one. """
         while True:
             nextCode = BibleBookOrderSystem.getNextBookCode( self, BBB )
@@ -466,7 +468,7 @@ class BibleOrganisationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
     # end of BibleOrganisationalSystem.getNextBookCode
 
 
-    def getAlternativeBBBIfNecessary( self, BBB:str ):
+    def getAlternativeBBBIfNecessary( self, BBB:BookCode ):
         """
         If BBB is not in this BOS, try to return an alternative that is.
 
@@ -479,7 +481,7 @@ class BibleOrganisationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
     # end of BibleOrganisationalSystem.getAlternativeBBBIfNecessary
 
 
-    def getNumVersesList( self, BBB:str, allowAlternatives=False ):
+    def getNumVersesList( self, BBB:BookCode, allowAlternatives:bool=False ):
         """
         Returns a list containing an integer for each chapter indicating the number of verses.
 
@@ -507,7 +509,7 @@ class BibleOrganisationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
     # end of BibleOrganisationalSystem.getNumVersesList
 
 
-    def isValidBCVRef( self, referenceTuple, referenceString, extended=False ):
+    def isValidBCVRef( self, referenceTuple, referenceString, extended:bool=False ):
         """
         Returns True/False indicating if the given reference is valid in this system.
         Extended flag allows chapter and verse numbers of zero.
@@ -534,7 +536,7 @@ class BibleOrganisationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
 
 
     __absoluteVerseDict = {}
-    def __makeAbsoluteVerseList( self ):
+    def __makeAbsoluteVerseList( self ) -> None:
         """
         Make up a list of four-tuples containing
             BBB, chapterNumber, firstVerseNumber, lastVerseNumber
@@ -550,7 +552,7 @@ class BibleOrganisationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
     # end of BibleOrganisationalSystem.__makeAbsoluteVerseList
 
 
-    def getAbsoluteVerseNumber( self, BBB:str, C:str, V ):
+    def getAbsoluteVerseNumber( self, BBB:BookCode, C:str, V ):
         """
         Convert the given reference (in this versification system)
             to an absolute verse number.

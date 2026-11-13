@@ -24,6 +24,7 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint, LARGE_DUMMY_VALUE
 from BibleOrgSys.Bible import Bible, BibleBook
 from bible_organisational_system import InternalBibleEntryList, InternalBibleEntry
+from BibleOrgSys.Reference.BookCode import BookCode
 
 
 LAST_MODIFIED_DATE = '2026-10-06' # by RJH
@@ -43,7 +44,7 @@ EXTENSION_TO_IGNORE = ( 'ASC', 'BAK', 'BAK2', 'BAK3', 'BAK4', 'BBLX', 'BC', 'CCT
 METADATA_FILENAME = 'Metadata.txt'
 
 
-def BCVBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=False, autoLoadBooks:bool=False ):
+def BCVBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=False, autoLoadBooks:bool=False ) -> 'bool | BCVBible | int | None':
     """
     Given a folder, search for BCV Bible files or folders in the folder and in the next level down.
 
@@ -175,7 +176,7 @@ class BCVBible( Bible ):
     # end of BCVBible.__init_
 
 
-    def preload( self ):
+    def preload( self ) -> None:
         """
         Loads the Metadata file if it can be found.
         """
@@ -221,7 +222,7 @@ class BCVBible( Bible ):
     # end of BCVBible.preload
 
 
-    def loadMetadata( self, metadataFilepath ):
+    def loadMetadata( self, metadataFilepath ) -> None:
         """
         Process the metadata from the given filepath.
 
@@ -300,7 +301,7 @@ class BCVBible( Bible ):
     # end of BCVBible.loadMetadata
 
 
-    def loadBook( self, BBB:str ):
+    def loadBook( self, BBB:BookCode ) -> None:
         """
         Load the requested book into self.books if it's not already loaded.
 
@@ -326,7 +327,7 @@ class BCVBible( Bible ):
     # end of BCVBible.loadBook
 
 
-    def _loadBookMP( self, BBB:str ) -> BibleBook|None:
+    def _loadBookMP( self, BBB:BookCode ) -> BibleBook|None:
         """
         Multiprocessing version!
         Load the requested book if it's not already loaded (but doesn't save it as that is not safe for multiprocessing)
@@ -347,7 +348,7 @@ class BCVBible( Bible ):
     # end of BCVBible.loadBookMP
 
 
-    def loadBooks( self ):
+    def loadBooks( self ) -> None:
         """
         Load all the books.
         """
@@ -389,7 +390,7 @@ class BCVBibleBook( BibleBook ):
     Class to load and manipulate a single BCV file / book.
     """
 
-    def __init__( self, containerBibleObject:Bible, BBB:str ) -> None:
+    def __init__( self, containerBibleObject:Bible, BBB:BookCode ) -> None:
         """
         Create the BCV Bible book object.
         """
@@ -399,7 +400,7 @@ class BCVBibleBook( BibleBook ):
     # end of BCVBibleBook.__init__
 
 
-    def loadBookMetadata( self, metadataFilepath ):
+    def loadBookMetadata( self, metadataFilepath ) -> None:
         """
         Process the metadata from the given filepath.
 
@@ -457,7 +458,7 @@ class BCVBibleBook( BibleBook ):
     # end of BCVBibleBook.loadBookMetadata
 
 
-    def load( self, folder ):
+    def load( self, folder ) -> None:
         """
         Load the BCV Bible book from a folder.
 
@@ -470,7 +471,7 @@ class BCVBibleBook( BibleBook ):
                 we don't need to worry about that here.
         """
 
-        def doaddLine( originalMarker, original_text ):
+        def doaddLine( originalMarker, original_text ) -> None:
             """
             Check for newLine markers within the line (if so, break the line) and save the information in our database.
 

@@ -36,7 +36,7 @@ DEBUGGING_THIS_MODULE = False
 class USFMFilenamesTests1( unittest.TestCase ):
     """ Unit tests for the USFMFilenames object. """
 
-    def setUp( self ):
+    def setUp( self ) -> None:
         parser = BibleOrgSysGlobals.setup( PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
         # BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
         BibleOrgSysGlobals.preloadCommonData()
@@ -45,14 +45,14 @@ class USFMFilenamesTests1( unittest.TestCase ):
             self.UFns = USFMFilenames.USFMFilenames( testFolder )
         else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Sorry, test folder '{testFolder}' doesn't exist on this computer." )
 
-    def test_010_str( self ):
+    def test_010_str( self ) -> None:
         """ Test the __str__ function. """
         result = str( self.UFns )
         self.assertTrue( isinstance( result, str ) )
         self.assertGreater( len(result), 20 )
     # end of test_010_str
 
-    def test_020_len( self ):
+    def test_020_len( self ) -> None:
         """ Test the __len__ function. """
         result = len( self.UFns ) # Should be zero coz we haven't tried to get any lists yet
         self.assertEqual( result, 0 )
@@ -62,7 +62,7 @@ class USFMFilenamesTests1( unittest.TestCase ):
         self.assertGreater( result, 2 )
     # end of test_020_len
 
-    def test_030_getFilenameTemplate( self ):
+    def test_030_getFilenameTemplate( self ) -> None:
         """ Test the getFilenameTemplate function. """
         result = self.UFns.getFilenameTemplate()
         self.assertTrue( isinstance( result, str ) )
@@ -74,7 +74,7 @@ class USFMFilenamesTests1( unittest.TestCase ):
         self.assertTrue( 'bbb' in result or 'BBB' in result )
     # end of test_030_getFilenameTemplate
 
-    def test_040_getDerivedFilenameTuples( self ):
+    def test_040_getDerivedFilenameTuples( self ) -> None:
         """ Test the getDerivedFilenameTuples function. """
         results = self.UFns.getDerivedFilenameTuples()
         self.assertTrue( isinstance( results, list ) )
@@ -88,7 +88,7 @@ class USFMFilenamesTests1( unittest.TestCase ):
             self.assertGreater( len(result[1]), 10 ) # Filename, e.g., lll08RUT.SCP
     # end of test_040_getDerivedFilenameTuples
 
-    def test_050_getConfirmedFilenameTuples( self ):
+    def test_050_getConfirmedFilenameTuples( self ) -> None:
         """ Test the getConfirmedFilenameTuples function. """
         results = self.UFns.getConfirmedFilenameTuples()
         self.assertTrue( isinstance( results, list ) )
@@ -102,7 +102,7 @@ class USFMFilenamesTests1( unittest.TestCase ):
             self.assertGreater( len(result[1]), 10 ) # Filename, e.g., lll08RUT.SCP
     # end of test_050_getConfirmedFilenames
 
-    def test_052_getUnusedFilenames( self ):
+    def test_052_getUnusedFilenames( self ) -> None:
         """ Test the getUnusedFilenames function. """
         junkResults = self.UFns.getConfirmedFilenameTuples()
         results = self.UFns.getUnusedFilenames()
@@ -114,7 +114,7 @@ class USFMFilenamesTests1( unittest.TestCase ):
             self.assertTrue( isinstance( result, str ) )
     # end of test_052_getUnusedFilenames
 
-    def test_060_getPossibleFilenameTuplesExt( self ):
+    def test_060_getPossibleFilenameTuplesExt( self ) -> None:
         """ Test the getPossibleFilenameTuplesExt function. """
         results = self.UFns.getPossibleFilenameTuplesExt()
         self.assertTrue( isinstance( results, list ) )
@@ -128,7 +128,7 @@ class USFMFilenamesTests1( unittest.TestCase ):
             self.assertGreater( len(result[1]), 10 ) # Filename, e.g., lll08RUT.SCP
     # end of test_060_getPossibleFilenameTuplesExt
 
-    def test_062_getUnusedFilenames( self ):
+    def test_062_getUnusedFilenames( self ) -> None:
         """ Test the getUnusedFilenames function. """
         junkResults = self.UFns.getPossibleFilenameTuplesExt()
         results = self.UFns.getUnusedFilenames()
@@ -140,7 +140,7 @@ class USFMFilenamesTests1( unittest.TestCase ):
             self.assertTrue( isinstance( result, str ) )
     # end of test_062_getUnusedFilenames
 
-    def test_070_getPossibleFilenameTuplesInt( self ):
+    def test_070_getPossibleFilenameTuplesInt( self ) -> None:
         """ Test the getPossibleFilenameTuplesInt function. """
         results = self.UFns.getPossibleFilenameTuplesInt()
         self.assertTrue( isinstance( results, list ) )
@@ -154,7 +154,7 @@ class USFMFilenamesTests1( unittest.TestCase ):
             self.assertGreater( len(result[1]), 10 ) # Filename, e.g., lll08RUT.SCP
     # end of test_070_getPossibleFilenameTuplesInt
 
-    def test_072_getUnusedFilenames( self ):
+    def test_072_getUnusedFilenames( self ) -> None:
         """ Test the getUnusedFilenames function. """
         junkResults = self.UFns.getPossibleFilenameTuplesInt()
         results = self.UFns.getUnusedFilenames()
@@ -166,7 +166,7 @@ class USFMFilenamesTests1( unittest.TestCase ):
             self.assertTrue( isinstance( result, str ) )
     # end of test_072_getUnusedFilenames
 
-    def test_080_getMaximumPossibleFilenameTuples( self ):
+    def test_080_getMaximumPossibleFilenameTuples( self ) -> None:
         """ Test the getMaximumPossibleFilenameTuples function. """
         results = self.UFns.getMaximumPossibleFilenameTuples()
         self.assertTrue( isinstance( results, list ) )
@@ -180,7 +180,7 @@ class USFMFilenamesTests1( unittest.TestCase ):
             self.assertGreater( len(result[1]), 10 ) # Filename, e.g., lll08RUT.SCP
     # end of test_080_getMaximumPossibleFilenameTuples
 
-    def test_082_getUnusedFilenames( self ):
+    def test_082_getUnusedFilenames( self ) -> None:
         """ Test the getUnusedFilenames function. """
         junkResults = self.UFns.getMaximumPossibleFilenameTuples()
         results = self.UFns.getUnusedFilenames()
@@ -192,7 +192,7 @@ class USFMFilenamesTests1( unittest.TestCase ):
             self.assertTrue( isinstance( result, str ) )
     # end of test_082_getUnusedFilenames
 
-    def test_090_getSSFFilenames( self ):
+    def test_090_getSSFFilenames( self ) -> None:
         """ Test the getSSFFilenames function. """
         results = self.UFns.getSSFFilenames()
         self.assertTrue( isinstance( results, list ) )
@@ -216,7 +216,7 @@ class USFMFilenamesTests1( unittest.TestCase ):
 class USFMFilenamesTests2( unittest.TestCase ):
     """ Unit tests for the USFMFilenames object. """
 
-    def setUp( self ):
+    def setUp( self ) -> None:
         parser = BibleOrgSysGlobals.setup( PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
         # BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
         BibleOrgSysGlobals.preloadCommonData()
@@ -225,14 +225,14 @@ class USFMFilenamesTests2( unittest.TestCase ):
             self.UFns = USFMFilenames.USFMFilenames( testFolder )
         else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Sorry, test folder '{testFolder}' doesn't exist on this computer." )
 
-    def test_010_str( self ):
+    def test_010_str( self ) -> None:
         """ Test the __str__ function. """
         result = str( self.UFns )
         self.assertTrue( isinstance( result, str ) )
         self.assertGreater( len(result), 20 )
     # end of test_010_str
 
-    def test_020_len( self ):
+    def test_020_len( self ) -> None:
         """ Test the __len__ function. """
         result = len( self.UFns ) # Should be zero coz we haven't tried to get any lists yet
         self.assertEqual( result, 0 )
@@ -242,7 +242,7 @@ class USFMFilenamesTests2( unittest.TestCase ):
         self.assertGreater( result, 2 )
     # end of test_020_len
 
-    def test_030_getFilenameTemplate( self ):
+    def test_030_getFilenameTemplate( self ) -> None:
         """ Test the getFilenameTemplate function. """
         result = self.UFns.getFilenameTemplate()
         self.assertTrue( isinstance( result, str ) )
@@ -254,7 +254,7 @@ class USFMFilenamesTests2( unittest.TestCase ):
         self.assertTrue( 'bbb' in result or 'BBB' in result )
     # end of test_030_getFilenameTemplate
 
-    def test_040_getDerivedFilenameTuples( self ):
+    def test_040_getDerivedFilenameTuples( self ) -> None:
         """ Test the getDerivedFilenameTuples function. """
         results = self.UFns.getDerivedFilenameTuples()
         self.assertTrue( isinstance( results, list ) )
@@ -268,7 +268,7 @@ class USFMFilenamesTests2( unittest.TestCase ):
             self.assertGreater( len(result[1]), 10 ) # Filename, e.g., lll08RUT.SCP
     # end of test_040_getDerivedFilenameTuples
 
-    def test_050_getConfirmedFilenameTuples( self ):
+    def test_050_getConfirmedFilenameTuples( self ) -> None:
         """ Test the getConfirmedFilenameTuples function. """
         results = self.UFns.getConfirmedFilenameTuples()
         self.assertTrue( isinstance( results, list ) )
@@ -282,7 +282,7 @@ class USFMFilenamesTests2( unittest.TestCase ):
             self.assertGreater( len(result[1]), 10 ) # Filename, e.g., lll08RUT.SCP
     # end of test_050_getConfirmedFilenames
 
-    def test_052_getUnusedFilenames( self ):
+    def test_052_getUnusedFilenames( self ) -> None:
         """ Test the getUnusedFilenames function. """
         junkResults = self.UFns.getConfirmedFilenameTuples()
         results = self.UFns.getUnusedFilenames()
@@ -294,7 +294,7 @@ class USFMFilenamesTests2( unittest.TestCase ):
             self.assertTrue( isinstance( result, str ) )
     # end of test_052_getUnusedFilenames
 
-    def test_060_getPossibleFilenameTuplesExt( self ):
+    def test_060_getPossibleFilenameTuplesExt( self ) -> None:
         """ Test the getPossibleFilenameTuplesExt function. """
         results = self.UFns.getPossibleFilenameTuplesExt()
         self.assertTrue( isinstance( results, list ) )
@@ -308,7 +308,7 @@ class USFMFilenamesTests2( unittest.TestCase ):
             self.assertGreater( len(result[1]), 10 ) # Filename, e.g., lll08RUT.SCP
     # end of test_060_getPossibleFilenameTuplesExt
 
-    def test_062_getUnusedFilenames( self ):
+    def test_062_getUnusedFilenames( self ) -> None:
         """ Test the getUnusedFilenames function. """
         junkResults = self.UFns.getPossibleFilenameTuplesExt()
         results = self.UFns.getUnusedFilenames()
@@ -320,7 +320,7 @@ class USFMFilenamesTests2( unittest.TestCase ):
             self.assertTrue( isinstance( result, str ) )
     # end of test_062_getUnusedFilenames
 
-    def test_070_getPossibleFilenameTuplesInt( self ):
+    def test_070_getPossibleFilenameTuplesInt( self ) -> None:
         """ Test the getPossibleFilenameTuplesInt function. """
         results = self.UFns.getPossibleFilenameTuplesInt()
         self.assertTrue( isinstance( results, list ) )
@@ -334,7 +334,7 @@ class USFMFilenamesTests2( unittest.TestCase ):
             self.assertGreater( len(result[1]), 10 ) # Filename, e.g., lll08RUT.SCP
     # end of test_070_getPossibleFilenameTuplesInt
 
-    def test_072_getUnusedFilenames( self ):
+    def test_072_getUnusedFilenames( self ) -> None:
         """ Test the getUnusedFilenames function. """
         junkResults = self.UFns.getPossibleFilenameTuplesInt()
         results = self.UFns.getUnusedFilenames()
@@ -346,7 +346,7 @@ class USFMFilenamesTests2( unittest.TestCase ):
             self.assertTrue( isinstance( result, str ) )
     # end of test_072_getUnusedFilenames
 
-    def test_080_getMaximumPossibleFilenameTuples( self ):
+    def test_080_getMaximumPossibleFilenameTuples( self ) -> None:
         """ Test the getMaximumPossibleFilenameTuples function. """
         results = self.UFns.getMaximumPossibleFilenameTuples()
         self.assertTrue( isinstance( results, list ) )
@@ -360,7 +360,7 @@ class USFMFilenamesTests2( unittest.TestCase ):
             self.assertGreater( len(result[1]), 10 ) # Filename, e.g., lll08RUT.SCP
     # end of test_080_getMaximumPossibleFilenameTuples
 
-    def test_082_getUnusedFilenames( self ):
+    def test_082_getUnusedFilenames( self ) -> None:
         """ Test the getUnusedFilenames function. """
         junkResults = self.UFns.getMaximumPossibleFilenameTuples()
         results = self.UFns.getUnusedFilenames()
@@ -372,7 +372,7 @@ class USFMFilenamesTests2( unittest.TestCase ):
             self.assertTrue( isinstance( result, str ) )
     # end of test_082_getUnusedFilenames
 
-    def test_090_getSSFFilenames( self ):
+    def test_090_getSSFFilenames( self ) -> None:
         """ Test the getSSFFilenames function. """
         results = self.UFns.getSSFFilenames()
         self.assertTrue( isinstance( results, list ) )

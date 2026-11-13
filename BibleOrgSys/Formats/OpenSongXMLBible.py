@@ -69,6 +69,7 @@ from BibleOrgSys.Bible import Bible, BibleBook
 from usfm_markers_py import OFTEN_IGNORED_USFM_HEADER_MARKERS, USFM_ALL_INTRODUCTION_MARKERS, \
                             USFM_PRECHAPTER_MARKERS, USFM_BIBLE_PARAGRAPH_MARKERS
 from BibleOrgSys.InputOutput.MLWriter import MLWriter
+from BibleOrgSys.Reference.BookCode import BookCode
 
 
 LAST_MODIFIED_DATE = '2026-10-06' # by RJH
@@ -88,7 +89,7 @@ BibleBooksNames = None
 
 
 
-def OpenSongXMLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=False, autoLoadBooks:bool=False ):
+def OpenSongXMLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=False, autoLoadBooks:bool=False ) -> 'bool | OpenSongXMLBible | int | None':
     """
     Given a folder, search for OpenSong XML Bible files or folders in the folder and in the next level down.
 
@@ -215,7 +216,7 @@ def OpenSongXMLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:
 
 
 
-def createOpenSongXML( BibleObject, outputFolder=None, controlDict=None, validationSchema=None ):
+def createOpenSongXML( BibleObject, outputFolder=None, controlDict=None, validationSchema=None ) -> tuple | bool:
     """
     Using settings from the given control file,
         converts the USFM information to a UTF-8 OpenSong XML file.
@@ -229,7 +230,7 @@ def createOpenSongXML( BibleObject, outputFolder=None, controlDict=None, validat
 
     ignoredMarkers, unhandledMarkers, unhandledBooks = set(), set(), []
 
-    def writeOpenSongBook( writerObject, BBB:str, bkData ):
+    def writeOpenSongBook( writerObject, BBB:BookCode, bkData ) -> None:
         """Writes a book to the OpenSong XML writerObject."""
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'BIBLEBOOK', [('bnumber',bos_books_codes_py.get_reference_number(BBB)), ('bname',bos_books_codes_py.get_english_name_nr(BBB)), ('bsname',bos_books_codes_py.bos_to_osis_book_code(BBB))] )
         OSISAbbrev = bos_books_codes_py.bos_to_osis_book_code( BBB )
@@ -371,7 +372,7 @@ class OpenSongXMLBible( Bible ):
     verseTag = 'v'
 
 
-    def __init__( self, sourceFolder, givenName, encoding='utf-8' ) -> None:
+    def __init__( self, sourceFolder, givenName, encoding:str='utf-8' ) -> None:
         """
         Constructor: just sets up the XML Bible file converter object.
         """
@@ -403,7 +404,7 @@ class OpenSongXMLBible( Bible ):
     # end of OpenSongXMLBible.__init__
 
 
-    def load( self ):
+    def load( self ) -> None:
         """
         Load a single source XML file and load book elements.
         """
@@ -443,7 +444,7 @@ class OpenSongXMLBible( Bible ):
     # end of OpenSongXMLBible.load
 
 
-    def __validateAndExtractBook( self, book ):
+    def __validateAndExtractBook( self, book ) -> None:
         """
         Check/validate and extract book data from the given XML book record
             finding chapter subelements.
@@ -496,7 +497,7 @@ class OpenSongXMLBible( Bible ):
     # end of OpenSongXMLBible.__validateAndExtractBook
 
 
-    def __validateAndExtractChapter( self, BBB:str, thisBook, chapter ):
+    def __validateAndExtractChapter( self, BBB:BookCode, thisBook, chapter ) -> None:
         """
         Check/validate and extract chapter data from the given XML book record
             finding and saving chapter numbers and

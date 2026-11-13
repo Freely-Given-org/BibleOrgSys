@@ -46,7 +46,7 @@ DEBUGGING_THIS_MODULE = False
 
 
 
-def USFMBookCompare( filepath1, filepath2, file1Name='file1', file2Name='file2' ):
+def USFMBookCompare( filepath1, filepath2, file1Name:str='file1', file2Name:str='file2' ) -> dict:
     """
     """
     if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:

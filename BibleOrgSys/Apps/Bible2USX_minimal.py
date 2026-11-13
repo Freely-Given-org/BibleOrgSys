@@ -38,7 +38,7 @@ PROGRAM_NAME = "Bible to USX (minimal)"
 PROGRAM_VERSION = '0.09'
 
 
-def run():
+def run() -> None:
     # Configure basic Bible Organisational System (BOS) set-up
     parser = BibleOrgSysGlobals.setup( PROGRAM_NAME, PROGRAM_VERSION )
     parser.add_argument( "inputBibleFileOrFolder", help="path/to/BibleFileOrFolder" )

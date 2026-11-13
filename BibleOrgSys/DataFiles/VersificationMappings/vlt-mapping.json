@@ -1,0 +1,86 @@
+{
+  "formatVersion": 1,
+  "version": "1",
+  "referenceVersion": "1-draft",
+  "dataLicense": "CC0-1.0",
+  "name": "VLT",
+  "scope": "VLT v3 New Testament numbering in the 167,161-row OET input word table. Original NT chapter/verse divisions with PHP 1:16-17 in KJV order. This is an explicit source profile, not an alias for every Greek text or for the OET Old Testament.",
+  "evidence": {
+    "source": {
+      "path": "OpenEnglishTranslation--OET/intermediateTexts/modified_source_VLT_ESFM/OET-LV_NT_word_table.10columns.tsv",
+      "sha256": "2a0a9bfd489e4b1e988922bc13d4da0543a9c5db4af818837673a87253db0a47"
+    },
+    "rowCount": 167161,
+    "verseCount": 7957,
+    "method": "Every native NT verse address agrees with the org inventory. Text confirms combined ACT 19:40 and CO2 13:12, separate JN3 1:15 and REV 12:18, and the reordered PHP 1:16-17. VLT input rows and the derived OET-LV PHP ESFM both place selfish preaching in 1:16 and loving preaching in 1:17. Do not infer the profile from counts alone.",
+    "philippiansWitness": {
+      "path": "OpenEnglishTranslation--OET/derivedTexts/auto_edited_VLT_ESFM/OET-LV_PHP.ESFM",
+      "sha256": "793e2490ff1b500e7ff0e0c5e9bb8b9152e7e7d33547309a5905a1cae59e155f"
+    },
+    "reference": "BOSReference 1-draft. PHP differs from org ordering; KJV and Luther corroborate this ordering tradition."
+  },
+  "definition": {
+    "maxVerses": {
+      "MAT": [25, 23, 17, 25, 48, 34, 29, 34, 38, 42, 30, 50, 58, 36, 39, 28, 27, 35, 30, 34, 46, 46, 39, 51, 46, 75, 66, 20],
+      "MRK": [45, 28, 35, 41, 43, 56, 37, 38, 50, 52, 33, 44, 37, 72, 47, 20],
+      "LUK": [80, 52, 38, 44, 39, 49, 50, 56, 62, 42, 54, 59, 35, 35, 32, 31, 37, 43, 48, 47, 38, 71, 56, 53],
+      "JHN": [51, 25, 36, 54, 47, 71, 53, 59, 41, 42, 57, 50, 38, 31, 27, 33, 26, 40, 42, 31, 25],
+      "ACT": [26, 47, 26, 37, 42, 15, 60, 40, 43, 48, 30, 25, 52, 28, 41, 40, 34, 28, 40, 38, 40, 30, 35, 27, 27, 32, 44, 31],
+      "ROM": [32, 29, 31, 25, 21, 23, 25, 39, 33, 21, 36, 21, 14, 23, 33, 27],
+      "CO1": [31, 16, 23, 21, 13, 20, 40, 13, 27, 33, 34, 31, 13, 40, 58, 24],
+      "CO2": [24, 17, 18, 18, 21, 18, 16, 24, 15, 18, 33, 21, 13],
+      "GAL": [24, 21, 29, 31, 26, 18],
+      "EPH": [23, 22, 21, 32, 33, 24],
+      "PHP": [30, 30, 21, 23],
+      "COL": [29, 23, 25, 18],
+      "TH1": [10, 20, 13, 18, 28],
+      "TH2": [12, 17, 18],
+      "TI1": [20, 15, 16, 16, 25, 21],
+      "TI2": [18, 26, 17, 22],
+      "TIT": [16, 15, 15],
+      "PHM": [25],
+      "HEB": [14, 18, 19, 16, 14, 20, 28, 13, 28, 39, 40, 29, 25],
+      "JAM": [27, 26, 18, 17, 20],
+      "PE1": [25, 25, 22, 19, 14],
+      "PE2": [21, 22, 18],
+      "JN1": [10, 29, 24, 21, 21],
+      "JN2": [13],
+      "JN3": [15],
+      "JDE": [25],
+      "REV": [20, 29, 22, 11, 14, 17, 17, 13, 21, 11, 19, 18, 18, 20, 8, 21, 18, 24, 21, 15, 27, 21]
+    },
+    "identityBooks": {
+      "MAT": "MAT",
+      "MRK": "MRK",
+      "LUK": "LUK",
+      "JHN": "JHN",
+      "ACT": "ACT",
+      "ROM": "ROM",
+      "CO1": "CO1",
+      "CO2": "CO2",
+      "GAL": "GAL",
+      "EPH": "EPH",
+      "PHP": "PHP",
+      "COL": "COL",
+      "TH1": "TH1",
+      "TH2": "TH2",
+      "TI1": "TI1",
+      "TI2": "TI2",
+      "TIT": "TIT",
+      "PHM": "PHM",
+      "HEB": "HEB",
+      "JAM": "JAM",
+      "PE1": "PE1",
+      "PE2": "PE2",
+      "JN1": "JN1",
+      "JN2": "JN2",
+      "JN3": "JN3",
+      "JDE": "JDE",
+      "REV": "REV"
+    },
+    "mappedVerses": {
+      "PHP 1:16": "PHP 1:17",
+      "PHP 1:17": "PHP 1:16"
+    }
+  }
+}

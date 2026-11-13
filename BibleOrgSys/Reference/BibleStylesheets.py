@@ -24,6 +24,7 @@ from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 #from BibleOrgSys.Misc.singleton import singleton
 from BibleOrgSys.InputOutput import SFMFile
 from usfm_markers_py import USFM_ALL_MARKERS
+from typing import Self
 
 LAST_MODIFIED_DATE = '2026-10-06' # by RJH
 SHORT_PROGRAM_NAME = "BibleStylesheets"
@@ -240,7 +241,7 @@ class BibleStylesheet():
     # end of BibleStylesheet.__init__
 
 
-    def loadDefault( self ):
+    def loadDefault( self ) -> Self:
         """
         Load the above styles
             and copy any unformatted styles not explicitly declared.
@@ -258,7 +259,7 @@ class BibleStylesheet():
     # end of BibleStylesheet.loadDefault
 
 
-    def load( self, sourceFolder, filename ):
+    def load( self, sourceFolder, filename ) -> Self:
         """
         """
         self.sourceFolder = sourceFolder
@@ -281,7 +282,7 @@ class BibleStylesheet():
     # end of BibleStylesheet.load
 
 
-    def validate( self ):
+    def validate( self ) -> None:
         """
         """
         from BibleOrgSys.Internals.InternalBibleBook import BOS_ALL_CUSTOM_MARKERS
@@ -320,12 +321,12 @@ class BibleStylesheet():
             #export the marker
     # end of BibleStylesheet.importParatextStylesheet
 
-    def __eq__( self, other ):
+    def __eq__( self, other ) -> bool:
         if type( other ) is type( self ): return self.__dict__ == other.__dict__
         return False
-    def __ne__(self, other): return not self.__eq__(other)
+    def __ne__(self, other) -> bool: return not self.__eq__(other)
 
-    def __len__( self ):
+    def __len__( self ) -> int:
         if self.recordsDB: return len( self.recordsDB.records )
         return 0
     # end of BibleStylesheet.__len__
@@ -372,7 +373,7 @@ class BibleStylesheet():
         return self.dataDict[USFMKey][StyleKey]
     # end of BibleStylesheet.getValue
 
-    def getTKStyles( self ):
+    def getTKStyles( self ) -> dict:
         """
         Returns a dictionary of USFM codes paired with the corresponding tkinter style dictionary.
         """
@@ -397,7 +398,7 @@ class ParatextStylesheet():
     # end of ParatextStylesheet.__init__
 
 
-    def load( self, sourceFolder, filename:str, encoding='utf-8' ):
+    def load( self, sourceFolder, filename:str, encoding:str='utf-8' ) -> Self:
         self.sourceFolder = sourceFolder
         self.filename = filename
         self.encoding = encoding
@@ -418,7 +419,7 @@ class ParatextStylesheet():
     # end of ParatextStylesheet.load
 
 
-    def validate( self ):
+    def validate( self ) -> None:
         for USFMMarker in self.dataDict:
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, USFMMarker )
             if USFMMarker not in USFM_ALL_MARKERS:
@@ -426,12 +427,12 @@ class ParatextStylesheet():
     # end of ParatextStylesheet.load
 
 
-    def __eq__( self, other ):
+    def __eq__( self, other ) -> bool:
         if type( other ) is type( self ): return self.__dict__ == other.__dict__
         return False
-    def __ne__(self, other): return not self.__eq__(other)
+    def __ne__(self, other) -> bool: return not self.__eq__(other)
 
-    def __len__( self ):
+    def __len__( self ) -> int:
         if self.recordsDB: return len( self.recordsDB.records )
         return 0
     # end of ParatextStylesheet.__len__

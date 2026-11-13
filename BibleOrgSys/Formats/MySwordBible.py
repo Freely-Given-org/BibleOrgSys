@@ -59,6 +59,7 @@ from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Bible import Bible, BibleBook
 from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
 from BibleOrgSys.Formats.theWordBible import handleRTFLine
+from BibleOrgSys.Reference.BookCode import BookCode
 
 
 
@@ -67,7 +68,7 @@ BIBLE_FILENAME_ENDINGS_TO_ACCEPT = ('.BBL.MYBIBLE',) # Must be UPPERCASE
 
 
 
-def MySwordBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=False, autoLoadBooks:bool=False ):
+def MySwordBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=False, autoLoadBooks:bool=False ) -> 'bool | MySwordBible | int | None':
     """
     Given a folder, search for MySword Bible files or folders in the folder and in the next level down.
 
@@ -182,7 +183,7 @@ class MySwordBible( Bible ):
     """
     Class for reading, validating, and converting MySwordBible files.
     """
-    def __init__( self, sourceFolder, givenFilename, encoding='utf-8' ) -> None:
+    def __init__( self, sourceFolder, givenFilename, encoding:str='utf-8' ) -> None:
         """
         Constructor: just sets up the Bible object.
         """
@@ -208,7 +209,7 @@ class MySwordBible( Bible ):
     # end of MySwordBible.__init__
 
 
-    def preload( self ):
+    def preload( self ) -> None:
         """
         Load the metadata from the SQLite3 database.
         """
@@ -247,7 +248,7 @@ class MySwordBible( Bible ):
     # end of MySwordBible.preload
 
 
-    def load( self ):
+    def load( self ) -> None:
         """
         Load all the books out of the SQLite3 database.
         """
@@ -354,7 +355,7 @@ class MySwordBible( Bible ):
     # end of MySwordBible.load
 
 
-    def loadBook( self, BBB:str ):
+    def loadBook( self, BBB:BookCode ) -> None:
         """
         Load the requested book out of the SQLite3 database.
         """
@@ -453,7 +454,7 @@ class MySwordBible( Bible ):
 
 
 
-def createMySwordModule( self, outputFolder, controlDict ):
+def createMySwordModule( self, outputFolder, controlDict ) -> bool:
     """
     Create a SQLite3 database module for the program MySword.
 
@@ -463,7 +464,7 @@ def createMySwordModule( self, outputFolder, controlDict ):
     from BibleOrgSys.Internals.InternalBibleBook import BOS_CUSTOM_NESTING_MARKERS, BOS_NESTING_MARKERS
     from BibleOrgSys.Formats.theWordBible import theWordOTBookLines, theWordNTBookLines, theWordBookLines, theWordHandleIntroduction, theWordComposeVerseLine
 
-    def writeMSBook( sqlObject, BBB:str, ourGlobals ):
+    def writeMSBook( sqlObject, BBB:BookCode, ourGlobals ) -> None:
         """
         Writes a book to the MySword sqlObject file.
         """
@@ -658,7 +659,7 @@ def createMySwordModule( self, outputFolder, controlDict ):
 
 
 
-def testMySwB( indexString, MySwBfolder, MySwBfilename ):
+def testMySwB( indexString, MySwBfolder, MySwBfilename ) -> None:
     """
     Crudely demonstrate the MySword Bible class.
     """

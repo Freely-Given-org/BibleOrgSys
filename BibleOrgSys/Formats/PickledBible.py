@@ -49,6 +49,7 @@ from BibleOrgSys.Internals.InternalBible import InternalBible
 from BibleOrgSys.Internals.InternalBibleBook import InternalBibleBook
 from bible_organisational_system import InternalBibleEntryList
 from bible_organisational_system import InternalBibleBookCVIndex, InternalBibleBookSectionIndex
+from BibleOrgSys.Reference.BookCode import BookCode
 
 
 LAST_MODIFIED_DATE = '2026-10-06' # by RJH
@@ -335,7 +336,7 @@ def createPickledBible( BibleObject:Bible, outputFolder=None, metadataDict:dict[
 
 
 
-def _loadObjectAttributes( pickleFileObject, BibleObject ):
+def _loadObjectAttributes( pickleFileObject, BibleObject ) -> int:
     """
     Load the saved attributes for the BibleObject.
 
@@ -366,7 +367,7 @@ def _loadObjectAttributes( pickleFileObject, BibleObject ):
     return loadedCount
 # end of PickledBible._loadObjectAttributes
 
-def _getObjectAttributesDict( pickleFileObject, selected=None ):
+def _getObjectAttributesDict( pickleFileObject, selected=None ) -> dict:
     """
     Load the saved attributes for the BibleObject into a dictionary.
 
@@ -399,7 +400,7 @@ def _getObjectAttributesDict( pickleFileObject, selected=None ):
 
 
 
-def getZippedPickledBibleDetails( zipFilepath, extended=False ):
+def getZippedPickledBibleDetails( zipFilepath, extended:bool=False ) -> dict:
     """
     Given the filepath to a zipped pickled Bible module,
         return a dictionary containing some details about the pickled module.
@@ -426,7 +427,7 @@ def getZippedPickledBibleDetails( zipFilepath, extended=False ):
     return pB.pickleVersionData
 # end of getZippedPickledBibleDetails
 
-def getZippedPickledBiblesDetails( zipFolderpath, extended=False ):
+def getZippedPickledBiblesDetails( zipFolderpath, extended:bool=False ) -> list:
     """
     Given the filepath to a zipped pickled Bible module,
         return a dictionary containing some details about the pickled module.
@@ -666,7 +667,7 @@ class PickledBible( Bible ):
     # end of PickledBible.preload
 
 
-    def _loadBookEssentials( self, BBB:str ):
+    def _loadBookEssentials( self, BBB:BookCode ) -> InternalBibleBook:
         """
         Load the requested book and return the new bookObject.
 
@@ -714,7 +715,7 @@ class PickledBible( Bible ):
     # end of PickledBible._loadBookEssentials
 
 
-    def loadBook( self, BBB:str ):
+    def loadBook( self, BBB:BookCode ) -> None:
         """
         Load the requested book into self.books if it's not already loaded.
 
@@ -738,7 +739,7 @@ class PickledBible( Bible ):
     # end of PickledBible.loadBook
 
 
-    def _loadBookMP( self, BBB:str ) -> BibleBook|None:
+    def _loadBookMP( self, BBB:BookCode ) -> BibleBook|None:
         """
         Multiprocessing version!
         Load the requested book if it's not already loaded (but doesn't save it as that is not safe for multiprocessing)
@@ -800,7 +801,7 @@ class PickledBible( Bible ):
         self.doPostLoadProcessing()
     # end of PickledBible.loadBooks
 
-    def load( self ):
+    def load( self ) -> None:
         self.loadBooks()
 # end of class PickledBible
 

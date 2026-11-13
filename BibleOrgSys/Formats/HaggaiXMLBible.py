@@ -55,6 +55,7 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
 from BibleOrgSys.Bible import Bible, BibleBook
+from BibleOrgSys.Reference.BookCode import BookCode
 
 
 LAST_MODIFIED_DATE = '2026-10-06' # by RJH
@@ -73,7 +74,7 @@ EXTENSION_TO_IGNORE = ( 'ASC', 'BAK', 'BAK2', 'BAK3', 'BAK4', 'BBLX', 'BC', 'CCT
 
 
 
-def HaggaiXMLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=False, autoLoadBooks:bool=False ):
+def HaggaiXMLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=False, autoLoadBooks:bool=False ) -> 'bool | HaggaiXMLBible | int | None':
     """
     Given a folder, search for Haggai XML Bible files or folders in the folder and in the next level down.
 
@@ -213,7 +214,7 @@ class HaggaiXMLBible( Bible ):
     breakTag = 'BR'
 
 
-    def __init__( self, sourceFolder, givenName, encoding='utf-8' ) -> None:
+    def __init__( self, sourceFolder, givenName, encoding:str='utf-8' ) -> None:
         """
         Constructor: just sets up the Haggai Bible object.
         """
@@ -243,7 +244,7 @@ class HaggaiXMLBible( Bible ):
     # end of HaggaiXMLBible.__init__
 
 
-    def load( self ):
+    def load( self ) -> None:
         """
         Load a single source XML file and load book elements.
         """
@@ -308,7 +309,7 @@ class HaggaiXMLBible( Bible ):
     # end of HaggaiXMLBible.load
 
 
-    def __validateAndExtractHeader( self ):
+    def __validateAndExtractHeader( self ) -> None:
         """
         Extracts information out of the header record, such as:
             <INFORMATION>
@@ -440,7 +441,7 @@ class HaggaiXMLBible( Bible ):
     # end of HaggaiXMLBible.__validateAndExtractHeader
 
 
-    def __validateAndExtractBook( self, book ):
+    def __validateAndExtractBook( self, book ) -> None:
         """
         Check/validate and extract book data from the given XML book record
             finding chapter subelements.
@@ -492,7 +493,7 @@ class HaggaiXMLBible( Bible ):
     # end of HaggaiXMLBible.__validateAndExtractBook
 
 
-    def __validateAndExtractChapter( self, BBB:str, thisBook, chapter ):
+    def __validateAndExtractChapter( self, BBB:BookCode, thisBook, chapter ) -> None:
         """
         Check/validate and extract chapter data from the given XML book record
             finding and saving chapter numbers and
@@ -542,7 +543,7 @@ class HaggaiXMLBible( Bible ):
     # end of HaggaiXMLBible.__validateAndExtractChapter
 
 
-    def __validateAndExtractParagraph( self, BBB:str, chapterNumber, thisBook, paragraph ):
+    def __validateAndExtractParagraph( self, BBB:BookCode, chapterNumber, thisBook, paragraph ) -> None:
         """
         Check/validate and extract paragraph data from the given XML book record
             finding and saving paragraphs and
@@ -585,7 +586,7 @@ class HaggaiXMLBible( Bible ):
     # end of HaggaiXMLBible.__validateAndExtractParagraph
 
 
-    def __validateAndExtractVerse( self, BBB:str, chapterNumber, thisBook, verse ):
+    def __validateAndExtractVerse( self, BBB:BookCode, chapterNumber, thisBook, verse ) -> None:
         """
         Check/validate and extract verse data from the given XML book record
             finding and saving verse elements.

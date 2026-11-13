@@ -43,7 +43,7 @@ DEBUGGING_THIS_MODULE = False
 
 
 
-def noisyFind( text:str, this:str, reporterFunction=None ):
+def noisyFind( text:str, this:str, reporterFunction=None ) -> None:
     """
     """
     if reporterFunction is None: reporterFunction = print
@@ -56,7 +56,7 @@ def noisyFind( text:str, this:str, reporterFunction=None ):
 # end of noisyFind
 
 
-def noisyRegExFind( text:str, this:str, reporterFunction=None ):
+def noisyRegExFind( text:str, this:str, reporterFunction=None ) -> None:
     """
     """
     if reporterFunction is None: reporterFunction = print

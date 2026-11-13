@@ -57,7 +57,7 @@ ISOLanguages = ISO_639_3_Languages().loadData()
 
 
 
-def LEBXMLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=False, autoLoadBooks:bool=False ):
+def LEBXMLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=False, autoLoadBooks:bool=False ) -> 'bool | LEBXMLBible | int | None':
     """
     Given a folder, search for LEB XML Bible files or folders in the folder and in the next level down.
 
@@ -251,7 +251,7 @@ class LEBXMLBible( Bible ):
     treeTag = 'leb'
 
 
-    def __init__( self, sourceFileOrFolder, givenName=None, givenAbbreviation=None, encoding='utf-8' ) -> None:
+    def __init__( self, sourceFileOrFolder, givenName=None, givenAbbreviation=None, encoding:str='utf-8' ) -> None:
         """
         Constructor: just sets up the LEB Bible object.
 
@@ -357,7 +357,7 @@ class LEBXMLBible( Bible ):
     # end of LEBXMLBible.__init__
 
 
-    def loadBooks( self ):
+    def loadBooks( self ) -> None:
         """
         Loads the LEB XML file or files.
         """
@@ -402,7 +402,7 @@ class LEBXMLBible( Bible ):
         self.doPostLoadProcessing()
     # end of LEBXMLBible.loadBooks()
 
-    def load( self ):
+    def load( self ) -> None:
         self.loadBooks()
 
 
@@ -487,7 +487,7 @@ class LEBXMLBible( Bible ):
     # end of appendToLastLine
 
 
-    def processTitle( self, element, loadErrors ):
+    def processTitle( self, element, loadErrors ) -> None:
         """
         """
         if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
@@ -495,7 +495,7 @@ class LEBXMLBible( Bible ):
     # end of processTitle
 
 
-    def processLicense( self, element, loadErrors ):
+    def processLicense( self, element, loadErrors ) -> None:
         """
         """
         if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
@@ -503,7 +503,7 @@ class LEBXMLBible( Bible ):
     # end of processLicense
 
 
-    def processTrademark( self, element, loadErrors ):
+    def processTrademark( self, element, loadErrors ) -> None:
         """
         """
         if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
@@ -511,7 +511,7 @@ class LEBXMLBible( Bible ):
     # end of processTrademark
 
 
-    def processPreface( self, element, loadErrors ):
+    def processPreface( self, element, loadErrors ) -> None:
         """
         """
         if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
@@ -519,7 +519,7 @@ class LEBXMLBible( Bible ):
     # end of processPreface
 
 
-    def processBook( self, bookElement, bookList, loadErrors ):
+    def processBook( self, bookElement, bookList, loadErrors ) -> None:
         """
         """
         if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
@@ -597,7 +597,7 @@ class LEBXMLBible( Bible ):
     # end of processBook
 
 
-    def processChapter( self, chapterElement, thisBook, loadErrors ):
+    def processChapter( self, chapterElement, thisBook, loadErrors ) -> None:
         """
         """
         if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
@@ -664,7 +664,7 @@ class LEBXMLBible( Bible ):
     # end of processChapter
 
 
-    def processBlock( self, blockElement, thisBook, loadErrors ):
+    def processBlock( self, blockElement, thisBook, loadErrors ) -> None:
         """
         Processes a block of indented paragraphs
         """
@@ -690,7 +690,7 @@ class LEBXMLBible( Bible ):
     # end of processBlock
 
 
-    def processParagraph( self, element, thisBook, loadErrors, indentedBlock=False ):
+    def processParagraph( self, element, thisBook, loadErrors, indentedBlock:bool=False ) -> None:
         """
         Note: We also get blank paragraphs like "<p />" (which we change to /b's).
         """
@@ -834,7 +834,7 @@ class LEBXMLBible( Bible ):
     # end of processParagraph
 
 
-    def processList( self, listElement, thisBook, loadErrors ):
+    def processList( self, listElement, thisBook, loadErrors ) -> None:
         """
         """
         if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
@@ -1041,7 +1041,7 @@ class LEBXMLBible( Bible ):
                 assert False, "We want to stop here"
     # end of processList
 
-    def processNote( self, noteElement, thisBook, loadErrors ):
+    def processNote( self, noteElement, thisBook, loadErrors ) -> None:
         """
         """
         if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
@@ -1224,7 +1224,7 @@ class LEBXMLBible( Bible ):
         # if DEBUGGING_THIS_FUNCTION: assert False, "We want to stop here"
     # end of processNote
 
-    def processSpan( self, spanElement, thisBook, loadErrors ):
+    def processSpan( self, spanElement, thisBook, loadErrors ) -> None:
         """
         """
         if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:

@@ -70,7 +70,7 @@ EXTENSION_TO_IGNORE = ('ZIP', 'BAK', 'BAK2', 'BAK3', 'BAK4', 'LOG', 'HTM','HTML'
                       'STY', 'LDS', 'SSF', 'VRS', 'ASC', 'CSS', 'ODT','DOC', 'JAR', 'SAV', 'SAVE', ) # Must be UPPERCASE
 
 
-def ForgeForSwordSearcherBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=False, autoLoadBooks:bool=False ):
+def ForgeForSwordSearcherBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=False, autoLoadBooks:bool=False ) -> 'bool | ForgeForSwordSearcherBible | int | None':
     """
     Given a folder, search for ForgeForSwordSearcher Bible files or folders in the folder and in the next level down.
 
@@ -214,7 +214,7 @@ class ForgeForSwordSearcherBible( Bible ):
     """
     Class for reading, validating, and converting ForgeForSwordSearcherBible files.
     """
-    def __init__( self, sourceFolder, givenName, encoding='utf-8' ) -> None:
+    def __init__( self, sourceFolder, givenName, encoding:str='utf-8' ) -> None:
         """
         Constructor: just sets up the Bible object.
         """
@@ -237,7 +237,7 @@ class ForgeForSwordSearcherBible( Bible ):
     # end of ForgeForSwordSearcherBible.__init__
 
 
-    def load( self ):
+    def load( self ) -> None:
         """
         Load a single source file and load book elements.
         """
@@ -464,7 +464,7 @@ class ForgeForSwordSearcherBible( Bible ):
 
 
 
-def testForge4SS( F4SSFolder ):
+def testForge4SS( F4SSFolder ) -> None:
     # Crudely demonstrate the Forge for SwordSearcher Bible class
     from BibleOrgSys.Reference import VerseReferences
 

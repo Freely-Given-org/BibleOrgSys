@@ -57,7 +57,7 @@ DEBUGGING_THIS_MODULE = False
 # # end of readListFile
 
 
-def readControlFile( folder, filename, controls, haveLog=True, debug=False ):
+def readControlFile( folder, filename, controls, haveLog:bool=True, debug:bool=False ) -> None:
     """
     Read and parse a control (text) file into the given list.
     """
@@ -102,7 +102,7 @@ def readControlFile( folder, filename, controls, haveLog=True, debug=False ):
 # end of readControlFile
 
 
-def booleanValue ( value ):
+def booleanValue ( value ) -> bool | None:
     """Return True or False is value is something sensible.
         Else return None."""
 

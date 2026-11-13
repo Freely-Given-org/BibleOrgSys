@@ -73,6 +73,7 @@ from usfm_markers_py import to_standard_marker, get_newline_markers_list, is_new
                             USFM_ALL_TITLE_MARKERS, USFM_ALL_INTRODUCTION_MARKERS, \
                             USFM_ALL_SECTION_HEADING_MARKERS, \
                             USFM_BIBLE_PARAGRAPH_MARKERS, USFM_ALL_BIBLE_PARAGRAPH_MARKERS, USFM_ALL_MARKERS
+from BibleOrgSys.Reference.BookCode import BookCode
 
 
 LAST_MODIFIED_DATE = '2026-10-30' # by RJH
@@ -195,7 +196,7 @@ def hasClosingPunctuation( text:str ) -> bool:
 # end of hasClosingPunctuation
 
 
-def cleanUWalignments( workAbbreviation:str, BBB:str, originalAlignments:list[tuple[str,str,str,str,str]] ) \
+def cleanUWalignments( workAbbreviation:str, BBB:BookCode, originalAlignments:list[tuple[str,str,str,str,str]] ) \
                         -> list[tuple[str,str,list[tuple[str,str,str,str,str,str,str]],str,list[tuple[str,str,str]]]]:
     """
     Cleans up the unfoldingWord alignment info for the given book
@@ -362,7 +363,7 @@ class InternalBibleBook:
     The load routine (which populates self._rawLines) by calling addLine must be provided by the superclass.
     """
 
-    def __init__( self, parameter1, BBB:str ) -> None:
+    def __init__( self, parameter1, BBB:BookCode ) -> None:
         """
         Create the internal Bible book object.
 
@@ -776,7 +777,7 @@ class InternalBibleBook:
     # (Removed addVerseStartMarkers as it is now implemented in Rust)
 
 
-    def reorderRawOsisLines( self ):
+    def reorderRawOsisLines( self ) -> None:
         """
         Using self._rawLines from OSIS input, reorder them before further processing.
         This is because processing the XML provides the markers in a different order from USFM
@@ -1778,7 +1779,7 @@ class InternalBibleBook:
     # end of InternalBibleBook.getContextVerseData
 
 
-    def getContextVerseDataRange( self, startBCVReference:SimpleVerseKey|tuple[str,str,str,str], endBCVReference:SimpleVerseKey|tuple[str,str,str,str], strict=True ) -> tuple[InternalBibleEntryList,list[str]]:
+    def getContextVerseDataRange( self, startBCVReference:SimpleVerseKey|tuple[str,str,str,str], endBCVReference:SimpleVerseKey|tuple[str,str,str,str], strict:bool=True ) -> tuple[InternalBibleEntryList,list[str]]:
         """
         Returns an InternalBibleEntryList for an inclusive range of consecutive verses
             plus a list containing the context of the verses.
@@ -1988,7 +1989,7 @@ def fullDemo() -> None:
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, IBB )
 
     from BibleOrgSys.Formats.USFMBibleBook import USFMBibleBook
-    def demoFile( name, filename, folder, BBB ):
+    def demoFile( name, filename, folder, BBB:BookCode ) -> None:
         if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
             vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Loading {} from {}{}…".format( BBB, filename, f" from {folder}" if BibleOrgSysGlobals.verbosityLevel > 2 else '' ) )
         UBB = USFMBibleBook( name, BBB )

@@ -386,7 +386,7 @@ impl InternalBibleEntry {
 
     /// Get the clean text with ESFM underlines converted to spaces.
     pub fn clean_text_no_underlines(&self) -> String {
-        self.clean_text.as_deref().unwrap_or_else(|| self.original_text.as_ref())
+        self.clean_text() // Falls back to the adjusted text (not the original text which might still contain notes)
             .replace("_ _", " ")
             .replace("_ ", " ")
             .replace(" _", " ")
@@ -480,6 +480,22 @@ impl std::fmt::Display for InternalBibleEntry {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn test_clean_text_no_underlines_excludes_notes() {
+        // A verse with a cross-reference but no character formatting:
+        //  the clean text is the same as the adjusted text (so it isn't stored separately)
+        let entry = InternalBibleEntry::new_unchecked(
+            "v~",
+            "v~",
+            r"In \x + \xo 1:1 \xt Psal. 33.6.\x*the beginning_of time",
+            "In the beginning_of time",
+            None,
+            "In the beginning_of time",
+        );
+        assert_eq!(entry.clean_text(), "In the beginning_of time");
+        assert_eq!(entry.clean_text_no_underlines(), "In the beginning of time");
+    }
 
     #[test]
     fn test_internal_bible_extra_new() {

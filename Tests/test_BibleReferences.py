@@ -37,14 +37,14 @@ DEBUGGING_THIS_MODULE = False
 class BibleReferencesTests( unittest.TestCase ):
     """ Unit tests for the BibleReferences object. """
 
-    def setUp( self ):
+    def setUp( self ) -> None:
         parser = BibleOrgSysGlobals.setup( PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
         # BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
         BibleOrgSysGlobals.preloadCommonData()
         # Create the BibleOrganisationalSystems objects
         self.BOS = BibleOrganisationalSystems.BibleOrganisationalSystem( "RSV" )
 
-    def test_100_BibleSingleReference( self ):
+    def test_100_BibleSingleReference( self ) -> None:
         """ Test the BibleSingleReference function. """
         BSR = BibleReferences.BibleSingleReference( self.BOS )
         result = str( BSR )
@@ -101,7 +101,7 @@ class BibleReferencesTests( unittest.TestCase ):
             #self.assertTrue( 0 <= len(result[5]) <= 1 )
     # end of test_100_BibleSingleReference
 
-    def test_200_BibleSingleReferences( self ):
+    def test_200_BibleSingleReferences( self ) -> None:
         """ Test the BibleSingleReferences function. """
         BSRs = BibleReferences.BibleSingleReferences( self.BOS )
         result = str( BSRs )
@@ -179,7 +179,7 @@ class BibleReferencesTests( unittest.TestCase ):
                 self.assertTrue( 0 <= len(r4) <= 1 )
     # end of test_200_BibleSingleReferences
 
-    def test_300_BibleReferenceList( self ):
+    def test_300_BibleReferenceList( self ) -> None:
         """ Test the BibleReferenceList function. """
         BRL = BibleReferences.BibleReferenceList( self.BOS )
         result = str( BRL )
@@ -257,7 +257,7 @@ class BibleReferencesTests( unittest.TestCase ):
                 self.assertTrue( 0 <= len(r4) <= 1 )
     # end of test_300_BibleReferenceList
 
-    def test_400_BibleAnchorReference( self ):
+    def test_400_BibleAnchorReference( self ) -> None:
         """ Test the BibleAnchorReference function. """
         # Test ones that should work
         for ourBBB, ourC, ourV, ourAnchor in ( ('GEN','17','25', '17:25'), \
@@ -270,7 +270,7 @@ class BibleReferencesTests( unittest.TestCase ):
             self.assertTrue( BAR.matchesAnchorString( ourAnchor ) )
     # end of test_400_BibleAnchorReference
 
-    def test_410_BibleAnchorReference( self ):
+    def test_410_BibleAnchorReference( self ) -> None:
         """ Test the BibleAnchorReference function. """
         # Test ones that shouldn't work
         for ourBBB, ourC, ourV, ourAnchor in ( ('GEN','17','25', '17:5'), \

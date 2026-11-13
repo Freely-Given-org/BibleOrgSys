@@ -104,7 +104,7 @@ def getElapsedTimeString( moduleName:str, elapsedSeconds ):
 # end of getElapsedTimeString
 
 
-def publishResultLine( line, printFlag:bool=True ):
+def publishResultLine( line, printFlag:bool=True ) -> None:
     """
     Given a string, print it plus save it to the results file.
     """
@@ -113,7 +113,7 @@ def publishResultLine( line, printFlag:bool=True ):
 # end of publishResultLine
 
 
-def formatAndPublish( timeList ):
+def formatAndPublish( timeList ) -> None:
     """
     The parameter is a list of 2-tuples containing (moduleName, timeInSeconds).
     """
@@ -1691,7 +1691,7 @@ def doAll( testType:str, failures:list[str], failureDetails:list[str],
 # end of doAll
 
 
-def main():
+def main() -> None:
     """
     Short program to demonstrate/test the above class(es).
 

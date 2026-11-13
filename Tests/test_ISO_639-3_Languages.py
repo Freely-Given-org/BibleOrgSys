@@ -37,41 +37,41 @@ DEBUGGING_THIS_MODULE = False
 class ISO_639_3_LanguagesConverterTests( unittest.TestCase ):
     """ Unit tests for the _ISO_639_3_LanguagesConverter object. """
 
-    def setUp( self ):
+    def setUp( self ) -> None:
         parser = BibleOrgSysGlobals.setup( PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
         # BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
         BibleOrgSysGlobals.preloadCommonData()
         # Create the ISO_639_3_LanguagesConverter object
         self.isoLgC = ISO_639_3_LanguagesConverter.ISO_639_3_LanguagesConverter().loadAndValidate() # Doesn't reload the XML unnecessarily :)
 
-    def test_1010_len( self ):
+    def test_1010_len( self ) -> None:
         """ Test the __len__ function. """
         self.assertTrue( 7_800 < len(self.isoLgC) < 8_000 ) # The number of loaded systems
     # end of test_1010_len
 
-    def test_1020_importDataToPython( self ):
+    def test_1020_importDataToPython( self ) -> None:
         """ Test the importDataToPython function. """
         result = self.isoLgC.importDataToPython()
         self.assertTrue( isinstance( result, tuple ) )
         self.assertEqual( len(result), 2 )
     # end of test_1020_importDataToPython
 
-    def test_1030_pickle( self ):
+    def test_1030_pickle( self ) -> None:
         """ Test the pickle function. """
         self.assertEqual( self.isoLgC.pickle(), None ) # Basically just make sure that it runs
     # end of test_1030_pickle
 
-    def test_1040_exportDataToPython( self ):
+    def test_1040_exportDataToPython( self ) -> None:
         """ Test the exportDataToPython function. """
         self.assertEqual( self.isoLgC.exportDataToPython(), None ) # Basically just make sure that it runs
     # end of test_1040_importDataToPython
 
-    def test_1050_exportDataToJSON( self ):
+    def test_1050_exportDataToJSON( self ) -> None:
         """ Test the exportDataToJSON function. """
         self.assertEqual( self.isoLgC.exportDataToJSON(), None ) # Basically just make sure that it runs
     # end of test_1050_exportDataToJSON
 
-    def test_1060_exportDataToC( self ):
+    def test_1060_exportDataToC( self ) -> None:
         """ Test the exportDataToC function. """
         self.assertEqual( self.isoLgC.exportDataToC(), None ) # Basically just make sure that it runs
     # end of test_1060_exportDataToC
@@ -84,19 +84,19 @@ class ISO_639_3_LanguagesTests( unittest.TestCase ):
     goodCodes = ('aba','eng','mbt','ara','aaa','zzj',)
     badCodes = ('abaa','Eng','qwq','zzz','17','123',)
 
-    def setUp( self ):
+    def setUp( self ) -> None:
         parser = BibleOrgSysGlobals.setup( PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
         # BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
         BibleOrgSysGlobals.preloadCommonData()
         # Create the ISO_639_3_Languages object
         self.isoLgs = ISO_639_3_Languages.ISO_639_3_Languages().loadData() # Doesn't reload the XML unnecessarily :)
 
-    def test_2010_len( self ):
+    def test_2010_len( self ) -> None:
         """ Test the __len__ function. """
         self.assertTrue( len(self.isoLgs) > 7000 )
     # end of test_2010_len
 
-    def test_2020_isValidLanguageCode( self ):
+    def test_2020_isValidLanguageCode( self ) -> None:
         """ Test the isValidLanguageCode function. """
         for goodCode in ISO_639_3_LanguagesTests.goodCodes:
             self.assertTrue( self.isoLgs.isValidLanguageCode( goodCode ) )
@@ -104,7 +104,7 @@ class ISO_639_3_LanguagesTests( unittest.TestCase ):
             self.assertFalse( self.isoLgs.isValidLanguageCode( badCode ) )
     # end of test_2020_isValidLanguageCode
 
-    def test_2030_getLanguageName( self ):
+    def test_2030_getLanguageName( self ) -> None:
         """ Test the getLanguageName function. """
         for goodCode in ISO_639_3_LanguagesTests.goodCodes:
             result = self.isoLgs.getLanguageName( goodCode )
@@ -117,7 +117,7 @@ class ISO_639_3_LanguagesTests( unittest.TestCase ):
             self.assertRaises( KeyError, self.isoLgs.getLanguageName, badCode )
     # end of test_2030_getLanguageName
 
-    def test_2040_getScope( self ):
+    def test_2040_getScope( self ) -> None:
         """ Test the getScope function. """
         for goodCode in ISO_639_3_LanguagesTests.goodCodes:
             result = self.isoLgs.getScope( goodCode )
@@ -133,7 +133,7 @@ class ISO_639_3_LanguagesTests( unittest.TestCase ):
             self.assertRaises( KeyError, self.isoLgs.getScope, badCode )
     # end of test_2040_getScope
 
-    def test_2050_getType( self ):
+    def test_2050_getType( self ) -> None:
         """ Test the getType function. """
         for goodCode in ISO_639_3_LanguagesTests.goodCodes:
             result = self.isoLgs.getType( goodCode )
@@ -153,7 +153,7 @@ class ISO_639_3_LanguagesTests( unittest.TestCase ):
             self.assertRaises( KeyError, self.isoLgs.getType, badCode )
     # end of test_2050_getScope
 
-    def test_2060_getPart1Code( self ):
+    def test_2060_getPart1Code( self ) -> None:
         """ Test the getPart1Code function. """
         for goodCode in ISO_639_3_LanguagesTests.goodCodes:
             result = self.isoLgs.getPart1Code( goodCode )
@@ -173,7 +173,7 @@ class ISO_639_3_LanguagesTests( unittest.TestCase ):
             self.assertRaises( KeyError, self.isoLgs.getPart1Code, badCode )
     # end of test_2060_getPart1Code
 
-    def test_2070_getPart2Code( self ):
+    def test_2070_getPart2Code( self ) -> None:
         """ Test the getPart2Code function. """
         for goodCode in ISO_639_3_LanguagesTests.goodCodes:
             result = self.isoLgs.getPart2Code( goodCode )
@@ -193,7 +193,7 @@ class ISO_639_3_LanguagesTests( unittest.TestCase ):
             self.assertRaises( KeyError, self.isoLgs.getPart2Code, badCode )
     # end of test_2070_getPart1Code
 
-    def test_2080_getLanguageCode( self ):
+    def test_2080_getLanguageCode( self ) -> None:
         """ Test the getLanguageCode function. """
         for goodName in ('English','english','ENGLISH','French','German','Manobo, Matigsalug',):
             result = self.isoLgs.getLanguageCode( goodName )
@@ -206,7 +206,7 @@ class ISO_639_3_LanguagesTests( unittest.TestCase ):
             self.assertEqual( self.isoLgs.getLanguageCode(badName), None )
     # end of test_2080_getScope
 
-    def test_2090_getNameMatches( self ):
+    def test_2090_getNameMatches( self ) -> None:
         """ Test the getNameMatches function. """
         for goodName in ('English','english','ENGLISH','French','German','Manobo, Matigsalug',):
             result = self.isoLgs.getNameMatches( goodName )
