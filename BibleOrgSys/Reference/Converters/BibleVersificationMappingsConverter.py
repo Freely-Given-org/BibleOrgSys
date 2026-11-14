@@ -30,6 +30,7 @@ from importlib.resources import files
 import json
 from pathlib import Path
 import re
+import sys
 
 
 STANDARD_SYSTEMS = ('org', 'eng', 'lxx', 'vul', 'rsc', 'rso', 'ethiopian_custom')
@@ -50,6 +51,7 @@ def _unique_object(pairs) -> dict:
     for key, value in pairs:
         if key in result:
             raise VersificationDataError(f'Duplicate JSON key: {key!r}')
+        if len(key) == 3: key = sys.intern(key) # So the many book code keys (like 'GEN') share one string object
         result[key] = value
     return result
 
@@ -247,7 +249,7 @@ def parse_reference_span(text: str) -> ReferenceSpan:
     if last < first or (last == first and first_suffix and last_suffix
                         and last_suffix < first_suffix):
         raise VersificationDataError(f'Reversed range: {text!r}')
-    return ReferenceSpan(book, int(chapter), first, last, first_suffix, last_suffix, is_range)
+    return ReferenceSpan(sys.intern(book), int(chapter), first, last, first_suffix, last_suffix, is_range)
 
 
 def audit_system(name: str, definition: dict, base: dict, *, incomplete_counts:bool=False) -> dict:

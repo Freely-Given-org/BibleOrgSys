@@ -57,7 +57,7 @@ from BibleOrgSys.Reference.BibleVersificationSystems import BibleVersificationSy
 from BibleOrgSys.Reference.BibleBooksNames import BibleBooksNamesSystem
 from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
 import bos_books_codes_py
-from BibleOrgSys.Reference.BookCode import BookCode
+from BibleOrgSys.Reference.BookCode import BookCode, internBookCodes
 from typing import Self
 
 
@@ -107,7 +107,7 @@ class BibleOrganisationalSystems:
                     if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
                         vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Loading pickle file {standardPickleFilepath}…" )
                     with open( standardPickleFilepath, 'rb') as pickleFile:
-                        result = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
+                        result = internBookCodes( pickle.load( pickleFile ) ) # The protocol version used is detected automatically, so we do not have to specify it
                     self.__dataDict, self.__indexDict, self.__combinedIndexDict = result
                     return self # So this command can be chained after the object creation
             # else: # We have to load the XML (much slower)

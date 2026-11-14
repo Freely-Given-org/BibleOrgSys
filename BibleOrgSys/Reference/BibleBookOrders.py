@@ -22,7 +22,7 @@ import logging
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 import bos_books_codes_py
-from BibleOrgSys.Reference.BookCode import BookCode
+from BibleOrgSys.Reference.BookCode import BookCode, internBookCodes
 from typing import Self
 
 
@@ -76,8 +76,8 @@ class BibleBookOrderSystems:
                     if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
                         vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Loading pickle file {standardPickleFilepath}…" )
                     with open( standardPickleFilepath, 'rb') as pickleFile:
-                        self.__DataDicts = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
-                        self.__DataLists = pickle.load( pickleFile )
+                        self.__DataDicts = internBookCodes( pickle.load( pickleFile ) ) # The protocol version used is detected automatically, so we do not have to specify it
+                        self.__DataLists = internBookCodes( pickle.load( pickleFile ) )
                     return self # So this command can be chained after the object creation
                 elif DEBUGGING_THIS_MODULE:
                     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "BibleBookOrders pickle file can't be loaded!" )
@@ -89,8 +89,8 @@ class BibleBookOrderSystems:
                     if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
                         vPrint( 'Info', DEBUGGING_THIS_MODULE, f"NOT TESTED -- CODE MAY NEED ADJUSTING -- Loading json file {standardJsonFilepath}…" )
                     with open( standardJsonFilepath, 'rb') as JsonFile:
-                        self.__DataDicts = json.load( JsonFile )
-                        self.__DataLists = json.load( JsonFile )
+                        self.__DataDicts = internBookCodes( json.load( JsonFile ) )
+                        self.__DataLists = internBookCodes( json.load( JsonFile ) )
                     # # NOTE: We have to convert str referenceNumber keys back to ints
                     # self.__DataDicts['referenceNumberDict'] = { int(key):value \
                     #             for key,value in self.__DataDicts['referenceNumberDict'].items() }

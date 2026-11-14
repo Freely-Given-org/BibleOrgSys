@@ -20,12 +20,13 @@ point for that.
 from __future__ import annotations
 
 import re
+import sys
 
 
-LAST_MODIFIED_DATE = '2026-11-04' # by Claude
+LAST_MODIFIED_DATE = '2026-11-14' # by Claude
 SHORT_PROGRAM_NAME = "BookCode"
 PROGRAM_NAME = "BOS book code type"
-PROGRAM_VERSION = '1.0.0'
+PROGRAM_VERSION = '1.1.0'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 
@@ -46,4 +47,35 @@ def makeBookCode( text:str ) -> BookCode:
     """Return text as a BookCode, raising ValueError if it has the wrong form."""
     if not isBookCodeFormat(text):
         raise ValueError(f"A BOS book code is three characters from A-Z or 0-9, not {text!r}")
-    return text
+    return sys.intern(text) # So that all the stored copies of this book code share the one string object
+
+
+def internBookCodes( data:object ) -> object:
+    """Make every book code in a (possibly nested) dict, list, or tuple share one string object.
+
+    Book codes that come out of a JSON or pickle file, or that are sliced out of a line of text,
+    are separate string objects (taking about 48 bytes each) even when they have the same value.
+    This replaces each one (whether a dict key, a dict value, or a list or tuple item) with
+    the interned copy, which then costs nothing beyond the reference to it.
+
+    Dicts and lists are updated in place (dict key order is kept).
+    Tuples can't be changed, so a new tuple is made if anything inside it changed.
+    Returns the given object (or its replacement if it was a string or a tuple).
+    """
+    dataType = type( data )
+    if dataType is str:
+        return sys.intern(data) if len(data)==3 and BOOK_CODE_PATTERN.fullmatch(data) is not None else data
+    if dataType is dict:
+        newItems = [(internBookCodes(key) if type(key) in (str,tuple) else key, internBookCodes(value)) for key,value in data.items()]
+        if any( newKey is not key or newValue is not value for (newKey,newValue),(key,value) in zip(newItems, data.items()) ):
+            data.clear()
+            data.update( newItems )
+    elif dataType is list:
+        for j,item in enumerate( data ):
+            newItem = internBookCodes( item )
+            if newItem is not item: data[j] = newItem
+    elif dataType is tuple:
+        newItems = [internBookCodes( item ) for item in data]
+        if any( newItem is not item for newItem,item in zip(newItems, data) ):
+            return tuple( newItems )
+    return data

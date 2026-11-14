@@ -75,7 +75,7 @@ import bos_books_codes_py
 from BibleOrgSys.Reference.BibleVersificationMappings import (
     get_default_mapping_engine, UnknownVersificationSystemError,
 )
-from BibleOrgSys.Reference.BookCode import BookCode
+from BibleOrgSys.Reference.BookCode import BookCode, internBookCodes
 from typing import Self
 
 
@@ -144,7 +144,7 @@ class BibleVersificationSystems:
                         if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
                             vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Loading pickle file {standardPickleFilepath}…" )
                         with open( standardPickleFilepath, 'rb') as pickleFile:
-                            self.__DataDict = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
+                            self.__DataDict = internBookCodes( pickle.load( pickleFile ) ) # The protocol version used is detected automatically, so we do not have to specify it
                         self.__addMappingSystems()
                         return self # So this command can be chained after the object creation
                     elif DEBUGGING_THIS_MODULE:
@@ -157,7 +157,7 @@ class BibleVersificationSystems:
                         if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
                             vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Loading json file {standardJsonFilepath}…" )
                         with open( standardJsonFilepath, 'rb') as JsonFile:
-                            self.__DataDict = json.load( JsonFile )
+                            self.__DataDict = internBookCodes( json.load( JsonFile ) )
                         self.__addMappingSystems()
                         # # NOTE: We have to convert str referenceNumber keys back to ints
                         # self.__DataDict['referenceNumberDict'] = { int(key):value \
