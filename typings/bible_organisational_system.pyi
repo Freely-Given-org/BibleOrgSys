@@ -898,6 +898,14 @@ class InternalBibleBookCVIndex:
     ) -> tuple[InternalBibleEntryList, list[str]]:
         """Get verse entries with context for a (C,V) tuple key."""
 
+    def getChapterVerseLabels(self, chapter: str) -> list:
+        """
+        Get the stored verse labels (e.g., '0', '1', '2-3', '4a') for the given chapter, in book order.
+
+        This is much cheaper than fetching all the entries for the chapter
+        when the caller only needs to know which verses (and verse bridges) exist.
+        """
+
     def getChapterVerseEntriesWithContext(
         self, chapter: str, strict: bool = False, complete: bool = False
     ) -> dict[str, tuple[InternalBibleEntryList, list[str]]]:

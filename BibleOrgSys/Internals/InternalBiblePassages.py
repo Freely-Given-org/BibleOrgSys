@@ -11,6 +11,7 @@ CHANGELOG:
     2026-11-04 Use named VerseRef fields instead of numeric tuple indexes.
 """
 from dataclasses import dataclass, replace
+from functools import lru_cache
 import re
 from typing import NamedTuple
 
@@ -80,26 +81,41 @@ def _passage_source_description(source, BBB:BookCode):
     return f'versification {_system_name(source)} (Bible not supplied)'
 
 
-def _verse_references(BBB:BookCode, C, value, source=None) -> tuple[VerseRef, ...]:
-    """Expand a stored numeric bridge; preserve an explicit verse suffix."""
-    if re.fullmatch(r'\d+[a-z]*(?:,\d+[a-z]*)+', value):
+# These patterns are used for every verse of every edition, so they're compiled once here
+_VERSE_LIST_LABEL = re.compile(r'\d+[a-z]*(?:,\d+[a-z]*)+') # e.g., '12,11'
+_VERSE_OR_BRIDGE_LABEL = re.compile(r'(\d+)([a-z]*)(?:-(\d+)([a-z]*))?') # e.g., '5', '5a', '5-7', '5b-6a'
+_STORED_VERSE_LABEL = re.compile(r'\d+[a-z]*(?:-\d+[a-z]*|(?:,\d+[a-z]*)+)?') # Any of the above
+_FIRST_VERSE_LABEL = re.compile(r'1(?:[a-z]+|-\d+[a-z]*)?') # e.g., '1a', '1-2' (but not plain '1')
+_LEADING_DIGITS = re.compile(r'\d+')
+
+
+class _UnsupportedVerseLabel(ValueError):
+    """Raised by _expand_verse_label; _verse_references adds the source description."""
+
+
+@lru_cache(maxsize=262_144)
+def _expand_verse_label(BBB:BookCode, C, value) -> tuple[VerseRef, ...]:
+    """Expand one stored verse label into its references.
+
+    The same (book, chapter, label) is looked up again and again (for every edition,
+    and every time that any verse in its chapter is fetched), so the results are remembered.
+    (Failures aren't remembered: they're raised again each time.)
+    """
+    if _VERSE_LIST_LABEL.fullmatch(value):
         # Some USFM resources explicitly list reordered verses, e.g. MSG's
         # Acts 27:12,11. This is a list, never an inferred enclosing range.
         return tuple(dict.fromkeys(ref for label in value.split(',')
-                                   for ref in _verse_references(BBB,C,label,source)))
-    match = re.fullmatch(r'(\d+)([a-z]*)(?:-(\d+)([a-z]*))?', value)
+                                   for ref in _expand_verse_label(BBB,C,label)))
+    match = _VERSE_OR_BRIDGE_LABEL.fullmatch(value)
     if not match:
-        raise ValueError(f'Unsupported source verse label {BBB} {C}:{value!r} '
-                         f'[{_passage_source_description(source, BBB)}]')
+        raise _UnsupportedVerseLabel(f'Unsupported source verse label {BBB} {C}:{value!r}')
     first, suffix, last, last_suffix = match.groups()
     if last:
         if int(last) - int(first) >= 10000:
-            raise ValueError(f'Source verse bridge exceeds 10000 addresses: {BBB} {C}:{value!r} '
-                             f'[{_passage_source_description(source, BBB)}]')
+            raise _UnsupportedVerseLabel(f'Source verse bridge exceeds 10000 addresses: {BBB} {C}:{value!r}')
         if int(last) < int(first) or (int(last) == int(first)
                 and (not suffix or not last_suffix or len(suffix) != 1 or len(last_suffix) != 1 or suffix > last_suffix)):
-            raise ValueError(f'Unsupported source verse bridge {BBB} {C}:{value!r} '
-                             f'[{_passage_source_description(source, BBB)}]')
+            raise _UnsupportedVerseLabel(f'Unsupported source verse bridge {BBB} {C}:{value!r}')
         if int(first) == int(last):
             return tuple(normalize_reference((BBB,C,first,chr(s)))
                          for s in range(ord(suffix),ord(last_suffix)+1))
@@ -107,6 +123,99 @@ def _verse_references(BBB:BookCode, C, value, source=None) -> tuple[VerseRef, ..
                      suffix if v == int(first) else last_suffix if v == int(last) else None))
                      for v in range(int(first),int(last)+1))
     return (normalize_reference((BBB,C,first,suffix)),)
+
+
+def _verse_references(BBB:BookCode, C, value, source=None) -> tuple[VerseRef, ...]:
+    """Expand a stored numeric bridge; preserve an explicit verse suffix."""
+    try:
+        return _expand_verse_label(BBB, C, value)
+    except _UnsupportedVerseLabel as error:
+        raise ValueError(f'{error} [{_passage_source_description(source, BBB)}]') from None
+    except TypeError: # Unhashable parameters can't be remembered (and are probably wrong anyway)
+        return _expand_verse_label.__wrapped__(BBB, C, value)
+
+
+@lru_cache(maxsize=32_768)
+def _labels_by_verse(BBB:BookCode, C, labels:tuple[str, ...]) -> dict:
+    """Map each verse number in a chapter to the (label, references) pairs of the stored portions touching it.
+
+    Most editions have exactly the same labels in a given chapter, and the same chapter
+    is asked about for verse after verse, so the results are remembered.
+    """
+    labelsByVerse = {}
+    for label in labels:
+        if _STORED_VERSE_LABEL.fullmatch(label):
+            refs = _expand_verse_label(BBB, C, label)
+            if len(refs) == 1:
+                labelsByVerse.setdefault(refs[0].V, []).append((label, refs))
+            else: # A bridge or list (but only add this label once for each verse number)
+                versesDone = set()
+                for ref in refs:
+                    if ref.V not in versesDone:
+                        versesDone.add(ref.V)
+                        labelsByVerse.setdefault(ref.V, []).append((label, refs))
+    return labelsByVerse
+
+
+class _ChapterPassageData:
+    """The stored verse labels of one chapter of one edition, with their entries fetched only when needed.
+
+    Fetching one verse needs to know every stored label in its chapter
+    (because a verse can be stored inside bridges like '1-2a' and '2b-3'),
+    but it doesn't need the entries of the other verses.
+    So we get the list of labels (which is cheap) but only get entries for the labels that are asked for.
+    """
+    __slots__ = ('bible', 'BBB', 'C', 'index', 'labels', 'data', '_labelsByVerse', '_numLabelsIndexed')
+
+    def __init__(self, bible, BBB:BookCode, C:str, data:dict|None=None) -> None:
+        """A caller can supply the complete data for the chapter (a dict of label -> (entries, context))."""
+        self.bible, self.BBB, self.C = bible, BBB, C
+        self.index = index = bible.books[BBB]._CVIndex
+        self.data = {} # label -> (entries, context)
+        if data is None:
+            labelGetter = getattr(index, 'getChapterVerseLabels', None)
+            if labelGetter:
+                self.labels = labelGetter(C)
+            else: # Support installed native BOS indexes predating the labels getter.
+                bulkGetter = getattr(index, 'getChapterVerseEntriesWithContext', None)
+                if bulkGetter:
+                    data = bulkGetter(C)
+                else:
+                    self.labels = [verse for (chapter,verse), _entry in index.items() if chapter == C]
+        if data is not None:
+            self.data = data
+            self.labels = list(data)
+        self._labelsByVerse, self._numLabelsIndexed = None, -1
+
+    def __contains__(self, label:str) -> bool:
+        return label in self.data or label in self.labels
+
+    def get(self, label:str):
+        """Return (entries, context) for a stored label of this chapter."""
+        try: return self.data[label]
+        except KeyError: pass
+        result = self.data[label] = self.index.getVerseEntriesWithContext((self.C,label), True, False)
+        return result
+
+    def add(self, label:str, data) -> None:
+        """Remember data which was found for a label that isn't itself stored, e.g., a verse inside a bridge."""
+        if label not in self.labels:
+            self.labels.append(label)
+        self.data[label] = data
+
+    def labels_touching(self, V:str, suffix) -> list[str]:
+        """Return (in order) every label with a stored portion touching the given whole verse or verse segment."""
+        if self._numLabelsIndexed != len(self.labels):
+            try:
+                self._labelsByVerse = _labels_by_verse(self.BBB, self.C, tuple(self.labels))
+            except _UnsupportedVerseLabel as error:
+                raise ValueError(f'{error} [{_passage_source_description(self.bible, self.BBB)}]') from None
+            self._numLabelsIndexed = len(self.labels)
+        found = [(label, refs) for label, refs in self._labelsByVerse.get(V, ())
+                 if not suffix or any(ref.V == V and ref.S == suffix for ref in refs)]
+        if len(found) > 1:
+            found.sort(key=lambda labelRefs: (int(_LEADING_DIGITS.match(labelRefs[0])[0]), labelRefs[1][0].S or ''))
+        return [label for label, _refs in found]
 
 
 def _native_reference_points(reference, bible) -> tuple[VerseRef, ...] | tuple[VerseRef]:
@@ -178,23 +287,15 @@ def get_passage_data(bible, references, *, chapter_cache=None, combine_adjacent:
         if BBB not in bible:
             raise MissingPassageBookError(native)
         cache_key = (id(bible),BBB,C)
-        if cache_key not in cache:
-            index = bible.books[BBB]._CVIndex
-            bulk_getter = getattr(index, 'getChapterVerseEntriesWithContext', None)
-            # Support installed native BOS indexes predating the bulk getter.
-            cache[cache_key] = (bulk_getter(C) if bulk_getter else {
-                verse: bible.getContextVerseData((BBB,C,verse), strict=True)
-                for (chapter,verse), _entry in index.items() if chapter == C})
-        chapter = cache[cache_key]
+        try: chapter = cache[cache_key]
+        except KeyError:
+            chapter = cache[cache_key] = _ChapterPassageData(bible, BBB, C)
+        if type(chapter) is dict: # The caller supplied the chapter's data in their cache
+            chapter = cache[cache_key] = _ChapterPassageData(bible, BBB, C, chapter)
         if not stored and V.isdigit() and V != '0':
             # Include every stored portion touching this whole verse, including
             # partial bridges (1-2a, 2b-3). Scalar lookup can return just one.
-            labels = [label for label in tuple(chapter)
-                      if re.fullmatch(r'\d+[a-z]*(?:-\d+[a-z]*|(?:,\d+[a-z]*)+)?', label)
-                      and any(ref.V == V and (not suffix or ref.S == suffix)
-                              for ref in _verse_references(BBB,C,label,bible))]
-            labels.sort(key=lambda label: (int(re.match(r'\d+', label)[0]),
-                                           _verse_references(BBB,C,label,bible)[0].S or ''))
+            labels = chapter.labels_touching(V, suffix)
             if labels and labels != [key]:
                 for label in labels:
                     fetch((BBB,C,label,None), stored=True)
@@ -203,10 +304,10 @@ def get_passage_data(bible, references, *, chapter_cache=None, combine_adjacent:
             try:
                 # Four-tuple legacy access ignores S: pass the suffix in V.
                 # Numeric lookups can match a bridge; suffixes must be exact.
-                chapter[key] = bible.getContextVerseData(native, strict=bool(suffix))
+                chapter.add(key, bible.getContextVerseData(native, strict=bool(suffix)))
             except KeyError as error:
                 raise MissingPassageVerseError(native) from error
-        data = chapter[key]
+        data = chapter.get(key)
         if data is None:
             raise MissingPassageVerseError(native)
         entries, context = data
@@ -226,8 +327,9 @@ def get_passage_data(bible, references, *, chapter_cache=None, combine_adjacent:
             # USX and USFM indexes sometimes attach a Psalm title to verse 1
             # while verse 0 contains only the chapter marker. Retrieve the title
             # independently; never copy the numbered verse into its place.
-            for label, (candidate, _context) in chapter.items():
-                if re.fullmatch(r'1(?:[a-z]+|-\d+[a-z]*)?', label):
+            for label in tuple(chapter.labels):
+                if _FIRST_VERSE_LABEL.fullmatch(label):
+                    candidate, _context = chapter.get(label)
                     titles = leading_titles(candidate)
                     if titles:
                         entries = InternalBibleEntryList()

@@ -1061,6 +1061,20 @@ impl PyInternalBibleBookCVIndex {
             .map_err(|_| PyKeyError::new_err(format!("({:?}, {:?})", cv_key.0, cv_key.1)))
     }
 
+    /// Get the stored verse labels (e.g., '0', '1', '2-3', '4a') for the given chapter, in book order.
+    ///
+    /// This is much cheaper than fetching all the entries for the chapter
+    /// when the caller only needs to know which verses (and verse bridges) exist.
+    fn getChapterVerseLabels<'py>(&self, py: Python<'py>, chapter: &str) -> PyResult<Bound<'py, pyo3::types::PyList>> {
+        let list = pyo3::types::PyList::empty(py);
+        for (cv, _entry) in self.inner.iter() {
+            if cv.chapter() == chapter {
+                list.append(cv.verse())?;
+            }
+        }
+        Ok(list)
+    }
+
     /// Get verse entries with context for every verse in the given chapter,
     /// in one call — equivalent to looping over V and calling
     /// getVerseEntriesWithContext((chapter, V)) in Python (used once per

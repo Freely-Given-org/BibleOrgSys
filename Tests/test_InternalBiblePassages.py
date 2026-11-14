@@ -306,6 +306,27 @@ class PassageTests(unittest.TestCase):
         self.assertIs(bible['GEN']._CVIndex,index)
         self.assertEqual(len(result),1)
 
+    def test_chapter_entries_are_only_fetched_for_the_verses_needed(self) -> None:
+        bible = self.bible('\\c 1\n\\p\n\\v 1 One.\n\\v 2-3 Bridge.\n\\v 4 Four.\n\\c 2\n\\p\n\\v 1 Other.\n')
+        index = bible['GEN']._CVIndex
+        self.assertEqual(index.getChapterVerseLabels('1'), ['0','1','2-3','4'])
+        self.assertEqual(index.getChapterVerseLabels('2'), ['0','1'])
+        self.assertEqual(index.getChapterVerseLabels('3'), [])
+        cache = {}
+        self.assertEqual(self.text(bible.getPassageData([('GEN',1,3)],chapterCache=cache)),'Bridge.')
+        chapter = cache[(id(bible),'GEN','1')]
+        self.assertEqual(chapter.labels, ['0','1','2-3','4']) # We know about all the verses
+        self.assertEqual(list(chapter.data), ['2-3']) # but only fetched the one that was needed
+        self.assertEqual(self.text(bible.getPassageData([('GEN',1,1),('GEN',1,4)],chapterCache=cache)),'One. Four.')
+        self.assertEqual(list(chapter.data), ['2-3','1','4'])
+
+    def test_repeated_conversions_return_the_remembered_result(self) -> None:
+        engine = vm.get_default_mapping_engine()
+        first = engine.convert('eng','org',[('MAL',4,1)])
+        self.assertIs(engine.convert('eng','org',[('MAL','4','1')]), first)
+        self.assertIsNot(engine.convert('org','eng',[('MAL',4,1)]), first)
+        self.assertEqual(engine.convert('eng','org',[]).status, MappingStatus.INVALID)
+
     def test_partial_bridges_expand_to_complete_verses_on_both_ends(self) -> None:
         bible = self.bible('\\c 1\n\\p\n\\v 1a First.\n\\v 1b-2a Middle.\n\\v 2b-3 Last.\n')
         native = bible.getPassageData([('GEN',1,2)])

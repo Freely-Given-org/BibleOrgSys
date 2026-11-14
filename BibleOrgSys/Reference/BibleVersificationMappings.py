@@ -19,6 +19,7 @@ from functools import lru_cache
 import hashlib
 import json
 import re
+import sys
 
 from BibleOrgSys.Reference.Converters.BibleVersificationMappingsConverter import (
     VersificationDataError, bos_book_code, build_reference, load_bundle, parse_reference_span,
@@ -131,6 +132,10 @@ class UnknownVersificationSystemError(ValueError):
     pass
 
 
+_DECIMAL_DIGITS = re.compile(r'[0-9]+') # Compiled once here because normalize_reference is called very often
+_LOWERCASE_LETTERS = re.compile(r'[a-z]+')
+
+
 def normalize_reference(reference) -> Reference:
     """Normalise numbers and empty suffixes; never guess USFM/BOS book aliases."""
     if not isinstance(reference, (tuple, list)) or len(reference) not in (3, 4):
@@ -140,13 +145,13 @@ def normalize_reference(reference) -> Reference:
     if not isBookCodeFormat(bbb):
         raise ValueError(f"A reference needs a three-character BOS book code, not {bbb=} from {reference=}")
     for value in (chapter, verse):
-        if type(value) not in (str, int) or not re.fullmatch(r'[0-9]+', str(value)):
+        if type(value) not in (str, int) or not _DECIMAL_DIGITS.fullmatch(str(value)):
             raise ValueError(f"Chapter and verse must be nonnegative integers or decimal strings, not {value=} from {reference=}")
     if int(chapter) < 1:
         raise ValueError(f"Chapter zero and introduction references like {reference=} cannot be mapped.")
-    if suffix not in (None, '') and (not isinstance(suffix, str) or not re.fullmatch(r'[a-z]+', suffix)):
+    if suffix not in (None, '') and (not isinstance(suffix, str) or not _LOWERCASE_LETTERS.fullmatch(suffix)):
         raise ValueError(f"A verse suffix must contain lowercase letters, not {suffix=} from {reference=}")
-    return VerseRef(bbb, str(int(chapter)), str(int(verse)), suffix or None)
+    return VerseRef(sys.intern(bbb), str(int(chapter)), str(int(verse)), suffix or None)
 
 
 def _unique(values) -> tuple:
@@ -588,6 +593,9 @@ class VersificationMappingEngine:
         self._domains[reference_name] = self._reference
         self._blocked_reference_books = frozenset(blocked_reference_books)
         self._tables = {}
+        # Nothing above changes after this point and results are immutable, so they can be remembered:
+        #   the same verse is typically converted again for every edition which uses the same versification.
+        self._convert_results = {} # (source_system, target_system, references) -> MappingResult
 
     @classmethod
     def from_bundled_data(cls, *, bundle=None) -> Self:
@@ -793,7 +801,19 @@ class VersificationMappingEngine:
             return MappingResult(source_system, target_system, (), MappingStatus.INVALID,
                                  diagnostics=(MappingDiagnostic('REFERENCE_SYNTAX', str(error), source_system),),
                                  reference_version=self.reference_version, data_revision=self.data_revision)
+        try:
+            return self._convert_results[(source_system, target_system, references)]
+        except KeyError: pass
+        except TypeError: # An unhashable system name can't be remembered
+            return self._convert_normalized(source_system, target_system, references)
+        if len(self._convert_results) >= 500_000: # Stop the memory use from growing without limit
+            self._convert_results.clear()
+        result = self._convert_results[(source_system, target_system, references)] \
+               = self._convert_normalized(source_system, target_system, references)
+        return result
 
+    def _convert_normalized(self, source_system, target_system, references) -> MappingResult:
+        """Do the actual work of convert() for an already normalised, non-empty tuple of references."""
         def result(status, candidates=(), diagnostics=(), provenance=()) -> MappingResult:
             return MappingResult(source_system, target_system, references, status,
                 references=candidates[0] if status == MappingStatus.EXACT else (),
