@@ -271,7 +271,7 @@ class SwordInstallManager():
         if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
             fnPrint( DEBUGGING_THIS_MODULE, "SwordInstallManager.isUserDisclaimerConfirmed()" )
 
-        prompt1 = _("\nAlthough Install Manager provides a convenient way for installing and upgrading SWORD " \
+        prompt1 = ("\nAlthough Install Manager provides a convenient way for installing and upgrading SWORD " \
                     "components, it also uses a systematic method for accessing sites which gives packet " \
                     "sniffers a target to lock into for singling out users.\n" \
                     "IF YOU LIVE IN A PERSECUTED COUNTRY AND DO NOT WISH TO RISK DETECTION, YOU SHOULD " \

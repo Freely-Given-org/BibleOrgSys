@@ -2980,7 +2980,7 @@ class BibleWriter( InternalBible ):
             filename = f'{BBB}.{BDDataFormatVersion}.bd.idx'
             filepath = os.path.join( bookOutputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
             if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
-                vPrint( 'Info', DEBUGGING_THIS_MODULE, '  toBDText: ' + _(f"Writing {filepath!r}…") )
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, '  toBDText: ' + f"Writing {filepath!r}…" )
             outputBytes = json.dumps( newBookIndexList, ensure_ascii=False, indent=jsonIndent ).encode( 'utf-8' )
             with open( filepath, 'wb' ) as jsonFile:
                 jsonFile.write( outputBytes )
@@ -2992,7 +2992,7 @@ class BibleWriter( InternalBible ):
         if unhandledMarkers:
             logger.error( f"_toBibleDoorText: Unhandled markers were {unhandledMarkers}" )
             if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
-                vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + _(f"WARNING: Unhandled _toBibleDoorText markers were {unhandledMarkers}") )
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + f"WARNING: Unhandled _toBibleDoorText markers were {unhandledMarkers}" )
 
         # Now create the bz2 file
         if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
@@ -7103,7 +7103,7 @@ class BibleWriter( InternalBible ):
                         writerObject.writeLineOpen( 'div', ('type',"introduction") )
                         haveOpenIntro = True
                     if not haveOpenOutline: # Shouldn't happen but we'll try our best
-                        logger.warning( _(f"toSwordModule: {toSwordGlobals['verseRef']} Have an {marker} not in an outline section—opening an outline section" ) )
+                        logger.warning( f"toSwordModule: {toSwordGlobals['verseRef']} Have an {marker} not in an outline section—opening an outline section" )
                         closeAnyOpenParagraph()
                         writerObject.writeLineOpenSelfclose( 'div', [getSID(), ('type',"outline")] )
                         writerObject.writeLineOpen( 'list' )

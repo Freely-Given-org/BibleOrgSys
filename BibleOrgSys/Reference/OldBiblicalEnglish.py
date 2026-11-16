@@ -114,6 +114,7 @@ CHANGELOG:
     2026-10-23 Match KJB-1611 Matthew 24:23 across the added-word span, preserving markup
     2026-10-30 Use James/Ya’akov for James and Iames, matching the OET-RV names table
     2026-11-12 Only try replacements whose indexed letter group occurs in the text (same results, ~20x faster)
+    2026-11-17 Modernise noone at every ending (and noone-day/nooneday as noonday), drachme(s) and pilled/pilleth
 """
 import heapq
 
@@ -121,10 +122,10 @@ import BibleOrgSys.BibleOrgSysGlobals as BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2026-11-12' # by RJH
+LAST_MODIFIED_DATE = '2026-11-17' # by RJH
 SHORT_PROGRAM_NAME = "OldBiblicalEnglish"
 PROGRAM_NAME = "OpenBibleData English Language Handling functions"
-PROGRAM_VERSION = '1.1.0'
+PROGRAM_VERSION = '1.1.1'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -4129,7 +4130,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
     ((' doo;',),' do;'), ((' doo!',),' do!'), ((' doo)',),' do)'), ((' doo]',),' do]'),
     (('Doo',), 'Do'),
     (('Doe ',), 'Do '), ((' doo ',' doe '),' do '), ((' doe,',' doo,'),' do,'), ((' doe.',' doo.'),' do.'), ((' doe?',' doo?'),' do?'), ((' doe:',' doo:'),' do:'),
-    ((' dragmes',),' drachmas'), ((' draffis',),' drafts'), (('Dragos',), 'Dragons'),
+    ((' dragmes',),' drachmas'), ((' drachme',),' drachma'), # Also drachmes ((' draffis',),' drafts'), (('Dragos',), 'Dragons'),
     ((' dragouns',' dragos'),' dragons'), ((' drago ',),' dragon '), ((' drago,',),' dragon,'), ((' drago.',),' dragon.'), ((' drago:',),' dragon:'), ((' drago;',),' dragon;'), ((' drago?',),' dragon?'),
     ((' drago!',),' dragon!'), ((' drago)',),' dragon)'), ((' drago]',),' dragon]'),
     ((' dragun',' dragoun'),' dragon'), ((' dragge ',),' drag '),
@@ -6667,8 +6668,8 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
     (('Noma:',), 'No_man:'), (('Noma;',), 'No_man;'), (('Noma?',), 'No_man?'), (('Noma!',), 'No_man!'), (('Noma)',), 'No_man)'), (('Noma]',), 'No_man]'),
     ((' nobilitie',),' nobility'), ((' noblere',),' nobler'),
     ((' nobleste',),' noblest'), ((' nobli',),' nobly'), ((' noysed',),' noised'), ((' noyse',),' noise'),
-    ((' noysome',' noysom'),' noisome'), ((' noone ',),' noon '),
-    ((' noone,',),' noon,'), ((' northwinde',),' north wind'), (('Northside',), 'North_side'),
+    ((' noysome',' noysom'),' noisome'), ((' noone-day',' nooneday'),' noonday'), ((' noone',),' noon'), # Also noonetide
+    ((' northwinde',),' north wind'), (('Northside',), 'North_side'),
     ((' northsyde',' northside'),' north_side'), ((' northun',' northren',' northen'),' northern'), (('Northwarde',),'Northward'), (('northwarde',),'northward'), ((' noorth',),' north'),
     ((' northe ',),' north '), ((' northe,',),' north,'), ((' northe.',),' north.'), ((' northe:',),' north:'), ((' northe;',),' north;'), ((' northe?',),' north?'),
     ((' northe!',),' north!'), ((' northe)',),' north)'), ((' northe]',),' north]'),
@@ -6972,7 +6973,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
     ((' pease ',),' peas '), ((' pease,',),' peas,'), ((' pease.',),' peas.'), ((' pease:',),' peas:'), ((' pease;',),' peas;'), ((' pease?',),' peas?'), ((' pease!',),' peas!'),
     ((' pease)',),' peas)'), ((' pease]',),' peas]'),
     ((' peckes',),' pecks'),
-    ((' peculier',),' peculiar'), ((' pedegrees',),' pedigrees'),
+    ((' peculier',),' peculiar'), ((' pedegrees',),' pedigrees'), ((' pilled',),' pilled/peeled'), ((' pilleth',),' pilleth/peels'),
     ((' peepeth',' pepeth'),' peepeth/peeps'), ((' peepe ',),' peep '), ((' peepe,',),' peep,'), ((' peepe.',),' peep.'), ((' peepe:',),' peep:'), ((' peepe;',),' peep;'), ((' peepe?',),' peep?'), ((' peepe!',),' peep!'),
     ((' peepe)',),' peep)'), ((' peepe]',),' peep]'),
     ((' peeris',),' peers'), (('Pellicanes',), 'Pelicans'),

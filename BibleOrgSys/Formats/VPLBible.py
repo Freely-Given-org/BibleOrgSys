@@ -360,7 +360,7 @@ class VPLBible( Bible ):
                     if os.path.isfile( self.sourceFilepath ): # We would expect any/all of these to be files, not folders, but double-check
                         break
                 else:
-                    logging.critical( _(f"VPLBible: Unable to discover a single filename in {self.sourceFolder}") )
+                    logging.critical( f"VPLBible: Unable to discover a single filename in {self.sourceFolder}" )
                     self.sourceFilename = self.sourceFilepath = None
 
         if self.sourceFilepath: # Do a preliminary check on the readability of our file

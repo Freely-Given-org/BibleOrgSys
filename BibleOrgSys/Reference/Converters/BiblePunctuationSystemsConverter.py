@@ -265,7 +265,7 @@ class BiblePunctuationSystemsConverter:
                                 differenceCount += 1
                                 if not firstTag:
                                     firstTag = tag
-                                    description = _(f" (-->{punctuationDict[tag]}<-- versus -->{checkSystemDataDict[tag]}<--)" )
+                                    description = f" (-->{punctuationDict[tag]}<-- versus -->{checkSystemDataDict[tag]}<--)"
                         if differenceCount==1:
                             logging.warning( f"{punctuationSystemCode} and {checkSystemCode} punctuation systems differ only by {firstTag}{description}" )
 

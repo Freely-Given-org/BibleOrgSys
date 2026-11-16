@@ -132,7 +132,7 @@ class BibleReferencesLinksConverter:
                     else:
                         logging.warning( "Missing work element in header" )
             else:
-                logging.warning( _(f"Missing header element (looking for {self._headerTag!r} tag)" ) )
+                logging.warning( f"Missing header element (looking for {self._headerTag!r} tag)" )
             if header.tail is not None and header.tail.strip(): logging.error( f"Unexpected {header.tail!r} tail data after header" )
         else:
             logging.error( f"Expected to load {self._treeTag!r} but got {self._XMLTree.tag!r}" )
