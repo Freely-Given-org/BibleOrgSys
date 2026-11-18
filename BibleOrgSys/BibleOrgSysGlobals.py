@@ -102,6 +102,8 @@ CHANGELOG:
                 added exact-condition guards around vPrint/dPrint/fnPrint call sites
                 throughout the codebase (see Misc/addPrintGuards.py) so message f-strings
                 are no longer built when the message cannot print
+    2026-11-18 pickleObject writes via a temporary file, so a failed or interrupted pickle
+                can't leave a truncated .pickle file behind (which would look newer than its sources)
 """
 import sys
 import logging
@@ -149,10 +151,10 @@ BOOKLIST_88 = BOOKLIST_OT39 + BOOKLIST_DC22 + BOOKLIST_NT27
 assert len( BOOKLIST_88 ) == 88
 
 
-LAST_MODIFIED_DATE = '2026-10-06' # by RJH
+LAST_MODIFIED_DATE = '2026-11-18' # by RJH
 SHORT_PROGRAM_NAME = "BibleOrgSysGlobals"
 PROGRAM_NAME = "BibleOrgSys (BOS) Globals"
-PROGRAM_VERSION = '0.97'
+PROGRAM_VERSION = '0.98'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -1444,19 +1446,28 @@ def pickleObject( theObject, filename, folderName=None, disassembleObjectFlag:bo
                     pickleObject( a, f, folderName, disassembleObjectFlag=True )
             else: dPrint( 'Quiet', DEBUGGING_THIS_MODULE, '  skip' )
 
-    with open( filepath, 'wb' ) as pickleOutputFile:
-        try:
-            pickle.dump( theObject, pickleOutputFile, pickle.HIGHEST_PROTOCOL )
-        except pickle.PicklingError as err:
-            logging.critical( f"BibleOrgSysGlobals: Unexpected error in pickleObject: {sys.exc_info()[0]} {err}" )
-            logging.critical( f"BibleOrgSysGlobals.pickleObject: Unable to pickle into {filename}" )
-            for k,v in theObject.__dict__.items(): # Adapted from https://stackoverflow.com/questions/30499341/establishing-why-an-object-cant-be-pickled
-                try: pickle.dumps(v)
-                except:
-                    badAttribute = k
-                    logging.critical( f"Can't pickle {badAttribute=} when pickling {type(v)} from {type(theObject)}" )
-                    # break
-            return False
+    # Write to a temporary file in the same folder, then rename it into place,
+    #   so that a failed or interrupted pickle never leaves a truncated file at filepath
+    #   (and any previous complete pickle stays untouched until the new one is complete)
+    filepath = Path( filepath )
+    temporaryFilepath = filepath.with_name( f'{filepath.name}.{os.getpid()}.tmp' )
+    try:
+        with open( temporaryFilepath, 'wb' ) as pickleOutputFile:
+            try:
+                pickle.dump( theObject, pickleOutputFile, pickle.HIGHEST_PROTOCOL )
+            except pickle.PicklingError as err:
+                logging.critical( f"BibleOrgSysGlobals: Unexpected error in pickleObject: {sys.exc_info()[0]} {err}" )
+                logging.critical( f"BibleOrgSysGlobals.pickleObject: Unable to pickle into {filename}" )
+                for k,v in theObject.__dict__.items(): # Adapted from https://stackoverflow.com/questions/30499341/establishing-why-an-object-cant-be-pickled
+                    try: pickle.dumps(v)
+                    except:
+                        badAttribute = k
+                        logging.critical( f"Can't pickle {badAttribute=} when pickling {type(v)} from {type(theObject)}" )
+                        # break
+                return False
+        os.replace( temporaryFilepath, filepath ) # Atomic on the same filesystem
+    finally:
+        temporaryFilepath.unlink( missing_ok=True ) # Only still exists if something went wrong
     return True
 # end of BibleOrgSysGlobals.pickleObject
 
