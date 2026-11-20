@@ -7,6 +7,7 @@ use std::ops::{Index, IndexMut};
 use std::slice::{Iter, IterMut};
 
 use crate::entry::{InternalBibleExtra};
+use crate::rkyv_with::SliceAsVec;
 
 /// A specialized list for holding `InternalBibleExtra` items.
 ///
@@ -31,7 +32,10 @@ use crate::entry::{InternalBibleExtra};
 /// ```
 #[derive(Debug, Clone, Default, PartialEq, rkyv::Archive, rkyv::Serialize, rkyv::Deserialize)]
 pub struct InternalBibleExtraList {
-    data: Vec<InternalBibleExtra>,
+    // Most lists are empty or only have one or two extras and they're rarely changed after creation,
+    //  so a boxed slice (two words, and no heap memory if empty) is used rather than a vector (three words).
+    #[rkyv(with = SliceAsVec)]
+    data: Box<[InternalBibleExtra]>,
 }
 
 impl InternalBibleExtraList {
@@ -43,16 +47,22 @@ impl InternalBibleExtraList {
 
     /// Create a new list with pre-allocated capacity.
     #[inline]
-    pub fn with_capacity(capacity: usize) -> Self {
-        Self {
-            data: Vec::with_capacity(capacity),
-        }
+    pub fn with_capacity(_capacity: usize) -> Self {
+        Self::default() // The storage is always exactly the size of the contents
     }
 
     /// Create a list from an existing vector.
     #[inline]
     pub fn from_vec(data: Vec<InternalBibleExtra>) -> Self {
-        Self { data }
+        Self { data: data.into_boxed_slice() }
+    }
+
+    /// Apply a change to the extras as a vector.
+    fn modify<R>(&mut self, change: impl FnOnce(&mut Vec<InternalBibleExtra>) -> R) -> R {
+        let mut vec = std::mem::take(&mut self.data).into_vec();
+        let result = change(&mut vec);
+        self.data = vec.into_boxed_slice();
+        result
     }
 
     /// Get the number of extras.
@@ -70,25 +80,25 @@ impl InternalBibleExtraList {
     /// Add an extra to the end of the list.
     #[inline]
     pub fn push(&mut self, extra: InternalBibleExtra) {
-        self.data.push(extra);
+        self.modify(|vec| vec.push(extra));
     }
 
     /// Remove and return the last extra.
     #[inline]
     pub fn pop(&mut self) -> Option<InternalBibleExtra> {
-        self.data.pop()
+        self.modify(|vec| vec.pop())
     }
 
     /// Extend with another list.
     #[inline]
     pub fn extend(&mut self, other: &InternalBibleExtraList) {
-        self.data.extend(other.data.iter().cloned());
+        self.modify(|vec| vec.extend(other.data.iter().cloned()));
     }
 
     /// Clear all extras.
     #[inline]
     pub fn clear(&mut self) {
-        self.data.clear();
+        self.data = Box::default();
     }
 
     /// Get an iterator over the extras.
@@ -165,7 +175,7 @@ impl InternalBibleExtraList {
     /// Get the underlying vector.
     #[inline]
     pub fn into_vec(self) -> Vec<InternalBibleExtra> {
-        self.data
+        self.data.into_vec()
     }
 
     /// Get a reference to the underlying slice.
@@ -214,7 +224,7 @@ impl IntoIterator for InternalBibleExtraList {
     type IntoIter = std::vec::IntoIter<InternalBibleExtra>;
 
     fn into_iter(self) -> Self::IntoIter {
-        self.data.into_iter()
+        self.data.into_vec().into_iter()
     }
 }
 

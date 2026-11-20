@@ -50,7 +50,7 @@ FILENAME_ENDING = '.EWB' # Must be UPPERCASE
 
 
 
-def EasyWorshipBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=False, autoLoadBooks:bool=False ):
+def EasyWorshipBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=False, autoLoadBooks:bool=False ) -> 'bool | EasyWorshipBible | int | None':
     """
     Given a folder, search for EasyWorship Bible files or folders in the folder and in the next level down.
 
@@ -141,7 +141,7 @@ def EasyWorshipBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:
 
 
 
-def createEasyWorshipBible( BibleObject, outputFolder=None ):
+def createEasyWorshipBible( BibleObject, outputFolder=None ) -> bool:
     """
     Write the pseudo USFM out into the compressed EasyWorship format.
 
@@ -394,7 +394,7 @@ class EasyWorshipBible( Bible ):
     # end of EasyWorshipBible.__init__
 
 
-    def load( self ):
+    def load( self ) -> dict[str, tuple]:
         """
         Load the compressed data file and import book objects.
         """

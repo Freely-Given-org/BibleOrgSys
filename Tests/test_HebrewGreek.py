@@ -27,7 +27,7 @@ class HebrewStripTestCase(unittest.TestCase):
     """Characterisation tests capturing the *current* behaviour of Hebrew.py
        strip methods before optimising them."""
 
-    def test_removeCantillationMarks(self):
+    def test_removeCantillationMarks(self) -> None:
         for text in HEBREW_SAMPLES:
             h = Hebrew.Hebrew(text)
             result = h.removeCantillationMarks()
@@ -35,28 +35,28 @@ class HebrewStripTestCase(unittest.TestCase):
             for mark in Hebrew.cantillationMarks:
                 self.assertNotIn(mark, result)
 
-    def test_removeCantillationMarks_withMeteg(self):
+    def test_removeCantillationMarks_withMeteg(self) -> None:
         for text in HEBREW_SAMPLES:
             h = Hebrew.Hebrew(text)
             result = h.removeCantillationMarks(removeMetegOrSiluq=True)
             for mark in Hebrew.cantillationMarks:
                 self.assertNotIn(mark, result)
 
-    def test_removeVowelPointing(self):
+    def test_removeVowelPointing(self) -> None:
         for text in HEBREW_SAMPLES:
             h = Hebrew.Hebrew(text)
             result = h.removeVowelPointing()
             for point in Hebrew.vowelPoints:
                 self.assertNotIn(point, result)
 
-    def test_removeVowelPointing_withMeteg(self):
+    def test_removeVowelPointing_withMeteg(self) -> None:
         for text in HEBREW_SAMPLES:
             h = Hebrew.Hebrew(text)
             result = h.removeVowelPointing(removeMetegOrSiluq=True)
             for point in Hebrew.vowelPoints:
                 self.assertNotIn(point, result)
 
-    def test_removeOtherMarks(self):
+    def test_removeOtherMarks(self) -> None:
         for text in HEBREW_SAMPLES:
             h = Hebrew.Hebrew(text)
             result = h.removeOtherMarks()
@@ -64,14 +64,14 @@ class HebrewStripTestCase(unittest.TestCase):
                 self.assertNotIn(mark, result)
             self.assertNotIn(Hebrew.metegOrSiluq, result)
 
-    def test_removeOtherMarks_keepSinShinDots(self):
+    def test_removeOtherMarks_keepSinShinDots(self) -> None:
         for text in HEBREW_SAMPLES:
             h = Hebrew.Hebrew(text)
             result = h.removeOtherMarks(removeSinShinDots=False)
             self.assertNotIn(Hebrew.metegOrSiluq, result)
             self.assertNotIn(Hebrew.dageshOrMapiq, result)
 
-    def test_exact_outputs(self):
+    def test_exact_outputs(self) -> None:
         """Byte-exact current outputs (golden values) — these must not change."""
         text = HEBREW_SAMPLES[0]
         self.assertEqual(
@@ -93,13 +93,13 @@ class GreekStripTestCase(unittest.TestCase):
     """Characterisation tests capturing the *current* behaviour of Greek.py
        strip methods before optimising them."""
 
-    def test_removeAccents(self):
+    def test_removeAccents(self) -> None:
         for text in GREEK_SAMPLES:
             g = Greek.Greek(text)
             result = g.removeAccents()
             self.assertIsInstance(result, str)
 
-    def test_exact_outputs(self):
+    def test_exact_outputs(self) -> None:
         """Byte-exact current outputs (golden values) — these must not change."""
         self.assertEqual(
             Greek.Greek("Ἀρχὴ").removeAccents(),
@@ -115,7 +115,7 @@ class GreekStripTestCase(unittest.TestCase):
         )
         self.assertEqual(Greek.Greek("").removeAccents(), "")
 
-    def test_removeOtherMarks_isIdentity(self):
+    def test_removeOtherMarks_isIdentity(self) -> None:
         # Currently a no-op for all input
         for text in GREEK_SAMPLES:
             self.assertEqual(Greek.Greek(text).removeOtherMarks(), text)

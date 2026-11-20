@@ -19,6 +19,8 @@ use std::collections::HashMap;
 use indexmap::IndexMap;
 use usfm_markers::normalize_marker;
 
+use bos_books_codes::is_chapter_verse_book;
+
 use crate::bos_markers::intro_list_markers::is_intro_list;
 use crate::bos_markers::main_text_list_markers::is_main_text_list;
 use crate::bos_markers::{
@@ -311,6 +313,10 @@ fn validate_preverse_marker_insertions(processed_lines: &InternalBibleEntryList)
 pub fn add_nesting_markers(
     entries: InternalBibleEntryList, work_name: &str, bos_book_code: &str,
 ) -> InternalBibleEntryList {
+    // Books like FRT, INT, GLS, BAK, etc., don't normally have any chapters or verses,
+    //  so the checks below that paragraphs, sections, and verses are inside a chapter only apply to the other books.
+    let expect_chapters = is_chapter_verse_book(bos_book_code);
+
     log::info!(
         "    add_nesting_markers for {} {} started with {} entries",
         work_name,
@@ -685,6 +691,14 @@ pub fn add_nesting_markers(
             }
 
             if !open_markers.iter().any(|m| m == "chapters") {
+                // The headers and/or introduction would normally have been closed above,
+                //  but they're not at the top of the stack if something else was opened inside them,
+                //  e.g., a (usually empty) paragraph or a section heading before the first chapter marker,
+                //  so make sure that they're closed (along with any introduction outline or list) before we start the chapters.
+                while let Some(pos) = open_markers.iter().rposition(|m| ["headers", "intro", "is1", "iot", "ilist"].contains(&m.as_str())) {
+                    let m = open_markers.remove(pos);
+                    new_lines.push(InternalBibleEntry::end_marker(format!("¬{}", m), "").unwrap());
+                }
                 new_lines.push(InternalBibleEntry::nesting_marker("chapters"));
                 open_markers.push(CompactString::from("chapters"));
             }
@@ -823,7 +837,9 @@ pub fn add_nesting_markers(
                 new_lines.push(InternalBibleEntry::end_marker("¬ms1", "").unwrap());
             }
 
-            if open_markers.contains(&CompactString::from("s1")) || open_markers.contains(&CompactString::from("p")) || open_markers.contains(&CompactString::from("v")) {
+            if (have_strict_checking_flag() || cfg!(debug_assertions))
+            && expect_chapters
+            && (open_markers.contains(&CompactString::from("s1")) || open_markers.contains(&CompactString::from("p")) || open_markers.contains(&CompactString::from("v"))) {
                 assert!(open_markers.contains(&CompactString::from("c")), "open_markers=[{}]", open_markers.join(", ")); }
 
             // If this current preverse marker is before a section heading, close any open section now so the end marker precedes the v=.
@@ -850,7 +866,9 @@ pub fn add_nesting_markers(
                 last_s_marker = None;
             }
             current_verse = CompactString::from(text);
-            if open_markers.contains(&CompactString::from("s1")) || open_markers.contains(&CompactString::from("p")) || open_markers.contains(&CompactString::from("v")) {
+            if (have_strict_checking_flag() || cfg!(debug_assertions))
+            && expect_chapters
+            && (open_markers.contains(&CompactString::from("s1")) || open_markers.contains(&CompactString::from("p")) || open_markers.contains(&CompactString::from("v"))) {
                 assert!(open_markers.contains(&CompactString::from("c")), "open_markers=[{}]", open_markers.join(", ")); }
         // Not true if it precedes a s2 section heading
         // assert!(!open_markers.contains(&CompactString::from("s1")), "last_s_marker='{}' open_markers=[{}]", last_s_marker.as_deref().unwrap_or("None"), open_markers.join(", "));
@@ -1190,7 +1208,7 @@ pub fn add_nesting_markers(
         if have_strict_checking_flag() || cfg!(debug_assertions) {
             let last_pushed_marker = new_lines.iter().last().map(|e| e.marker().to_string());
             if let Some(last_pushed) = last_pushed_marker {
-                if marker == "s1" && !["FRT","INT"].contains(&bos_book_code) {
+                if marker == "s1" && expect_chapters {
                     assert_ne!(last_pushed, "¬s1"); } // Should be "v="
             }
         }
@@ -1199,7 +1217,11 @@ pub fn add_nesting_markers(
         new_lines.push(entry.clone()); // Push this current marker and entry
         
         last_marker = Some(marker_owned);
-        if !["FRT","INT"].contains(&bos_book_code)
+        // NOTE: Some Bibles have a paragraph marker or a section heading before the first chapter marker,
+        //          i.e., while the headers or introduction are still open, so we have to allow that.
+        if (have_strict_checking_flag() || cfg!(debug_assertions))
+        && expect_chapters
+        && !open_markers.iter().any(|m| m == "headers" || m == "intro")
         && (open_markers.contains(&CompactString::from("s1")) || open_markers.contains(&CompactString::from("p")) || open_markers.contains(&CompactString::from("v"))) {
             assert!(open_markers.contains(&CompactString::from("c")), "open_markers=[{}]", open_markers.join(", "));
         }
@@ -1207,7 +1229,7 @@ pub fn add_nesting_markers(
 
     // Close any left-over open markers
     if (have_strict_checking_flag() || cfg!(debug_assertions))
-    && !["FRT","INT"].contains(&bos_book_code)
+    && expect_chapters
     && (open_markers.contains(&CompactString::from("s1")) || open_markers.contains(&CompactString::from("p")) || open_markers.contains(&CompactString::from("v"))) {
         assert!(open_markers.contains(&CompactString::from("c")) && open_markers.contains(&CompactString::from("chapters")),
             "add_nesting_markers() finished processing {} {} entries but open_markers is missing 'c' or 'chapters': {:?}",
@@ -1513,6 +1535,98 @@ mod tests {
             [
                 "chapters",
                 "c", "p", "v","v~","¬v", "v","v~","¬v", "¬p", "¬c",
+                "¬chapters"
+            ]
+        );
+    }
+
+    #[test]
+    fn test_add_nesting_markers_books_without_chapters() {
+        // Front matter, glossaries, etc., don't normally have chapters or verses (so the strict checks mustn't expect them)
+        set_strict_checking_flag( true );
+        for bos_book_code in ["FRT", "INT", "BAK", "OTH", "GLS", "IXT"] {
+            assert!(!bos_books_codes::is_chapter_verse_book(bos_book_code), "{bos_book_code}");
+            let mut list = InternalBibleEntryList::new();
+            list.push(InternalBibleEntry::simple("id", bos_book_code));
+            list.push(InternalBibleEntry::simple("mt1", "Title"));
+            list.push(InternalBibleEntry::simple("s1", "Section heading"));
+            list.push(InternalBibleEntry::simple("p", ""));
+            list.push(InternalBibleEntry::simple("p~", "Paragraph text."));
+            list.push(InternalBibleEntry::simple("ms1", "Major section heading"));
+            list.push(InternalBibleEntry::simple("s1", "Second section heading"));
+            list.push(InternalBibleEntry::simple("p", ""));
+            list.push(InternalBibleEntry::simple("p~", "More paragraph text."));
+
+            let list = add_additional_markers(list, "No chapters test entries", bos_book_code);
+
+            let markers = list.iter().map(|e| e.marker()).collect::<Vec<_>>();
+            assert!(!markers.contains(&"chapters") && !markers.contains(&"c"), "{bos_book_code} {markers:?}");
+            for marker in ["id", "mt1", "s1", "p", "p~", "ms1"] {
+                assert!(markers.contains(&marker), "{bos_book_code} lost {marker} from {markers:?}");
+            }
+        }
+        for bos_book_code in ["GEN", "PSA", "OBA", "MAT", "SIR"] {
+            assert!(bos_books_codes::is_chapter_verse_book(bos_book_code), "{bos_book_code}");
+        }
+    }
+
+    #[test]
+    fn test_add_nesting_markers_paragraph_before_first_chapter() {
+        // Some Bibles (e.g., older ASV and WEB files) have a \p before the \c 1
+        set_strict_checking_flag( true );
+        let mut list = InternalBibleEntryList::new();
+        list.push(InternalBibleEntry::simple("id", "EXO"));
+        list.push(InternalBibleEntry::simple("h", "Exodus"));
+        list.push(InternalBibleEntry::simple("mt1", "Exodus"));
+        list.push(InternalBibleEntry::simple("p", ""));
+        list.push(InternalBibleEntry::simple("c", "1"));
+        list.push(InternalBibleEntry::simple("v", "1"));
+        list.push(InternalBibleEntry::simple("v~", "Verse one text."));
+        list.push(InternalBibleEntry::simple("c", "2"));
+        list.push(InternalBibleEntry::simple("v", "1"));
+        list.push(InternalBibleEntry::simple("v~", "Verse one text."));
+
+        let list = add_additional_markers(list, "Paragraph before chapter test entries", "EXO");
+
+        assert_eq!(
+            list.iter().filter_map(|e| Some(e.marker())).collect::<Vec<_>>(),
+            [
+                "id",
+                "headers", "h", "mt1", "p", "¬p", "¬headers", // The headers must be closed before the chapters start
+                "chapters",
+                "c", "v","v~","¬v", "¬c",
+                "c", "v","v~","¬v", "¬c",
+                "¬chapters"
+            ]
+        );
+    }
+
+    #[test]
+    fn test_add_nesting_markers_title_repeated_after_intro_outline() {
+        // Some Bibles repeat the main title after the introduction (so a second headers block is opened inside the intro)
+        set_strict_checking_flag( true );
+        let mut list = InternalBibleEntryList::new();
+        list.push(InternalBibleEntry::simple("id", "MAT"));
+        list.push(InternalBibleEntry::simple("mt1", "Matthew"));
+        list.push(InternalBibleEntry::simple("ip", "Introduction paragraph."));
+        list.push(InternalBibleEntry::simple("iot", "Outline"));
+        list.push(InternalBibleEntry::simple("io1", "Outline entry"));
+        list.push(InternalBibleEntry::simple("mt1", "Matthew"));
+        list.push(InternalBibleEntry::simple("c", "1"));
+        list.push(InternalBibleEntry::simple("p", ""));
+        list.push(InternalBibleEntry::simple("v", "1"));
+        list.push(InternalBibleEntry::simple("v~", "Verse one text."));
+
+        let list = add_additional_markers(list, "Repeated title test entries", "MAT");
+
+        assert_eq!(
+            list.iter().filter_map(|e| Some(e.marker())).collect::<Vec<_>>(),
+            [
+                "id",
+                "headers", "mt1", "¬headers",
+                "intro", "ip", "iot", "io1", "headers", "mt1", "¬headers", "¬iot", "¬intro", // The intro must be closed before the chapters start
+                "chapters",
+                "c", "p", "v","v~","¬v", "¬p", "¬c",
                 "¬chapters"
             ]
         );

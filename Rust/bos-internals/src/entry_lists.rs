@@ -5,13 +5,62 @@
 
 use std::ops::{Index, IndexMut};
 use std::slice::{Iter, IterMut};
+use std::sync::Arc;
+
+use rkyv::rancor::Fallible;
+use rkyv::ser::{Allocator, Writer};
+use rkyv::vec::{ArchivedVec, VecResolver};
+use rkyv::with::{ArchiveWith, DeserializeWith, SerializeWith};
+use rkyv::{Archive, Deserialize, Place, Serialize};
 
 use crate::entry::{InternalBibleEntry};
+
+/// rkyv wrapper that archives an `Arc<Vec<T>>` exactly like a plain `Vec<T>`.
+///
+/// This keeps the on-disk .BOSBible layout unchanged,
+/// even though the in-memory list is now reference-counted.
+pub struct SharedVecAsVec;
+
+impl<T: Archive> ArchiveWith<Arc<Vec<T>>> for SharedVecAsVec {
+    type Archived = ArchivedVec<T::Archived>;
+    type Resolver = VecResolver;
+
+    fn resolve_with(field: &Arc<Vec<T>>, resolver: Self::Resolver, out: Place<Self::Archived>) {
+        ArchivedVec::resolve_from_len(field.len(), resolver, out);
+    }
+}
+
+impl<T, S> SerializeWith<Arc<Vec<T>>, S> for SharedVecAsVec
+where
+    T: Serialize<S>,
+    S: Fallible + Allocator + Writer + ?Sized,
+{
+    fn serialize_with(field: &Arc<Vec<T>>, serializer: &mut S) -> Result<Self::Resolver, S::Error> {
+        ArchivedVec::serialize_from_slice(field.as_slice(), serializer)
+    }
+}
+
+impl<T, D> DeserializeWith<ArchivedVec<T::Archived>, Arc<Vec<T>>, D> for SharedVecAsVec
+where
+    T: Archive,
+    D: Fallible + ?Sized,
+    ArchivedVec<T::Archived>: Deserialize<Vec<T>, D>,
+{
+    fn deserialize_with(field: &ArchivedVec<T::Archived>, deserializer: &mut D) -> Result<Arc<Vec<T>>, D::Error> {
+        Ok(Arc::new(field.deserialize(deserializer)?))
+    }
+}
 
 /// A specialized list for holding `InternalBibleEntry` items.
 ///
 /// This represents the processed lines of a Bible book,
 /// stored internally as `_processedLines` in Python.
+///
+/// The entries are held behind an `Arc`, so cloning a list is cheap
+/// (the processed lines, the CV index, and the section index of a book
+/// all share one copy of the entries rather than holding one each).
+/// Mutating a list that is shared copies the entries first (copy-on-write),
+/// so each list still behaves as an independent value.
 ///
 /// # Example
 ///
@@ -26,7 +75,8 @@ use crate::entry::{InternalBibleEntry};
 /// ```
 #[derive(Debug, Clone, Default, rkyv::Archive, rkyv::Serialize, rkyv::Deserialize)]
 pub struct InternalBibleEntryList {
-    data: Vec<InternalBibleEntry>,
+    #[rkyv(with = SharedVecAsVec)]
+    data: Arc<Vec<InternalBibleEntry>>,
 }
 
 impl InternalBibleEntryList {
@@ -40,14 +90,26 @@ impl InternalBibleEntryList {
     #[inline]
     pub fn with_capacity(capacity: usize) -> Self {
         Self {
-            data: Vec::with_capacity(capacity),
+            data: Arc::new(Vec::with_capacity(capacity)),
         }
     }
 
     /// Create a list from an existing vector.
     #[inline]
     pub fn from_vec(data: Vec<InternalBibleEntry>) -> Self {
-        Self { data }
+        Self { data: Arc::new(data) }
+    }
+
+    /// Check whether two lists share the same underlying storage.
+    #[inline]
+    pub fn shares_storage_with(&self, other: &InternalBibleEntryList) -> bool {
+        Arc::ptr_eq(&self.data, &other.data)
+    }
+
+    /// Get mutable access to the entries, copying them first if they're shared.
+    #[inline]
+    fn data_mut(&mut self) -> &mut Vec<InternalBibleEntry> {
+        Arc::make_mut(&mut self.data)
     }
 
     /// Get the number of entries.
@@ -65,25 +127,25 @@ impl InternalBibleEntryList {
     /// Add an entry to the end of the list.
     #[inline]
     pub fn push(&mut self, entry: InternalBibleEntry) {
-        self.data.push(entry);
+        self.data_mut().push(entry);
     }
 
     /// Remove and return the last entry.
     #[inline]
     pub fn pop(&mut self) -> Option<InternalBibleEntry> {
-        self.data.pop()
+        self.data_mut().pop()
     }
 
     /// Extend with another list.
     #[inline]
     pub fn extend(&mut self, other: &InternalBibleEntryList) {
-        self.data.extend(other.data.iter().cloned());
+        self.data_mut().extend(other.data.iter().cloned());
     }
 
     /// Clear all entries.
     #[inline]
     pub fn clear(&mut self) {
-        self.data.clear();
+        self.data_mut().clear();
     }
 
     /// Get an iterator over the entries.
@@ -95,16 +157,14 @@ impl InternalBibleEntryList {
     /// Get a mutable iterator over the entries.
     #[inline]
     pub fn iter_mut(&mut self) -> IterMut<'_, InternalBibleEntry> {
-        self.data.iter_mut()
+        self.data_mut().iter_mut()
     }
 
     /// Get a slice of entries as a new list.
     pub fn slice(&self, start: usize, end: usize) -> Self {
         let end = end.min(self.data.len());
         let start = start.min(end);
-        Self {
-            data: self.data[start..end].to_vec(),
-        }
+        Self::from_vec(self.data[start..end].to_vec())
     }
 
     /// Search for the first entry with the given marker.
@@ -138,7 +198,7 @@ impl InternalBibleEntryList {
     /// Get a mutable reference to the last entry.
     #[inline]
     pub fn last_mut(&mut self) -> Option<&mut InternalBibleEntry> {
-        self.data.last_mut()
+        self.data_mut().last_mut()
     }
 
     /// Get the first entry.
@@ -150,7 +210,7 @@ impl InternalBibleEntryList {
     /// Get the underlying vector.
     #[inline]
     pub fn into_vec(self) -> Vec<InternalBibleEntry> {
-        self.data
+        Arc::unwrap_or_clone(self.data)
     }
 
     /// Get a reference to the underlying slice.
@@ -168,7 +228,7 @@ impl InternalBibleEntryList {
     /// Get a mutable entry by index, returning None if out of bounds.
     #[inline]
     pub fn get_mut(&mut self, index: usize) -> Option<&mut InternalBibleEntry> {
-        self.data.get_mut(index)
+        self.data_mut().get_mut(index)
     }
 }
 
@@ -182,7 +242,7 @@ impl Index<usize> for InternalBibleEntryList {
 
 impl IndexMut<usize> for InternalBibleEntryList {
     fn index_mut(&mut self, index: usize) -> &mut Self::Output {
-        &mut self.data[index]
+        &mut self.data_mut()[index]
     }
 }
 
@@ -200,7 +260,7 @@ impl IntoIterator for InternalBibleEntryList {
     type IntoIter = std::vec::IntoIter<InternalBibleEntry>;
 
     fn into_iter(self) -> Self::IntoIter {
-        self.data.into_iter()
+        self.into_vec().into_iter()
     }
 }
 
@@ -208,14 +268,14 @@ impl std::ops::Add for InternalBibleEntryList {
     type Output = Self;
 
     fn add(mut self, other: Self) -> Self {
-        self.data.extend(other.data);
+        self.data_mut().extend(other.into_vec());
         self
     }
 }
 
 impl std::ops::AddAssign for InternalBibleEntryList {
     fn add_assign(&mut self, other: Self) {
-        self.data.extend(other.data);
+        self.data_mut().extend(other.into_vec());
     }
 }
 
@@ -276,6 +336,21 @@ mod tests {
         assert_eq!(list.len(), 3);
         assert_eq!(list[0].marker(), "c");
         assert_eq!(list[1].marker(), "v");
+    }
+
+    #[test]
+    fn test_entry_list_clone_shares_until_mutated() {
+        let mut list = InternalBibleEntryList::new();
+        list.push(InternalBibleEntry::simple("c", "1"));
+        list.push(InternalBibleEntry::simple("v", "1"));
+
+        let mut copy = list.clone();
+        assert!(copy.shares_storage_with(&list));
+
+        copy.push(InternalBibleEntry::simple("v~", "In the beginning..."));
+        assert!(!copy.shares_storage_with(&list));
+        assert_eq!(list.len(), 2); // The original must be unaffected
+        assert_eq!(copy.len(), 3);
     }
 
     #[test]

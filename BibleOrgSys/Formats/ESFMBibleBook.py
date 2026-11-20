@@ -47,6 +47,7 @@ from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.InputOutput.ESFMFile import ESFMFile
 from BibleOrgSys.Bible import Bible, BibleBook
 import usfm_markers_py
+from BibleOrgSys.Reference.BookCode import BookCode
 
 
 LAST_MODIFIED_DATE = '2026-10-06' # by RJH
@@ -70,7 +71,7 @@ class ESFMBibleBook( BibleBook ):
     Class to load and manipulate a single ESFM file / book.
     """
 
-    def __init__( self, containerBibleObject:Bible, BBB:str ) -> None:
+    def __init__( self, containerBibleObject:Bible, BBB:BookCode ) -> None:
         """
         Create the ESFM Bible book object.
         """
@@ -86,7 +87,7 @@ class ESFMBibleBook( BibleBook ):
     # end of __init__
 
 
-    def load( self, filename, folder=None ):
+    def load( self, filename, folder=None ) -> None:
         """
         Load the ESFM Bible book from a file.
 
@@ -102,7 +103,7 @@ class ESFMBibleBook( BibleBook ):
             fnPrint( DEBUGGING_THIS_MODULE, f"ESFMBibleBook.load( {filename}, {folder} )" )
 
 
-        def oldESFMPreprocessing( BBB:str, C:str, V:str, marker, original_text ):
+        def oldESFMPreprocessing( BBB:BookCode, C:str, V:str, marker, original_text ):
             """
             Converts ESFM tagging to pseudo-USFM codes for easier handling later on.
 
@@ -127,14 +128,14 @@ class ESFMBibleBook( BibleBook ):
                     fnPrint( DEBUGGING_THIS_MODULE, f"ESFMBibleBook.oldESFMPreprocessing( {BBB} {C}:{V}, {marker}, '{original_text}' )" )
 
 
-            def saveWord( BBB:str, C:str, V:str, word ):
+            def saveWord( BBB:BookCode, C:str, V:str, word ) -> None:
                 """
                 """
                 # fnPrint( DEBUGGING_THIS_MODULE, f"ESFMBibleBook.saveWord( {BBB}, {C}:{V}, '{word}' )" )
                 assert word and ' ' not in word
             # end of saveWord
 
-            def saveSemanticTag( BBB:str, C:str, V:str, word, tag ):
+            def saveSemanticTag( BBB:BookCode, C:str, V:str, word, tag ) -> str:
                 """
                 Fills the semantic dictionary with keys:
                     'Tag errors': contains a list of 4-tuples (BBB,C,V,errorWord)
@@ -181,7 +182,7 @@ class ESFMBibleBook( BibleBook ):
             # end of saveSemanticTag
 
 
-            def saveStrongsTag( BBB:str, C:str, V:str, word, tag ):
+            def saveStrongsTag( BBB:BookCode, C:str, V:str, word, tag ) -> str:
                 """
                 Returns a character SFM field to be inserted into the line
                     (for better compatibility with the software chain).
@@ -376,7 +377,7 @@ class ESFMBibleBook( BibleBook ):
         # end of ESFMBibleBook.load.oldESFMPreprocessing
 
 
-        def doAddLine( originalMarker, original_text ):
+        def doAddLine( originalMarker, original_text ) -> None:
             """
             Check for newLine markers within the line (if so, break the line)
                 and save the information in our database.
@@ -548,7 +549,7 @@ class ESFMBibleBook( BibleBook ):
     # end of ESFMBibleBook.load
 
 
-    def lookForAuxiliaryFilenames( self ):
+    def lookForAuxiliaryFilenames( self ) -> None:
         """
         Looks into the loaded ESFM book for WORKDATA, FILEDATA, and/or WORDTABLE auxiliary filenames.
             \\id 1JN - Matigsalug Translation v1.0.17
@@ -621,7 +622,7 @@ def briefDemo() -> None:
     """
     BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
-    def demoFile( name, filename, folder, BBB ):
+    def demoFile( name, filename, folder, BBB:BookCode ) -> None:
         if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
             vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Loading {} from {}{}…".format( BBB, filename, f" from {folder}" if BibleOrgSysGlobals.verbosityLevel > 2 else '' ) )
         EBB = ESFMBibleBook( name, BBB )
@@ -680,7 +681,7 @@ def fullDemo() -> None:
     """
     BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
-    def demoFile( name, filename, folder, BBB ):
+    def demoFile( name, filename, folder, BBB:BookCode ) -> None:
         if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
             vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Loading {} from {}{}…".format( BBB, filename, f" from {folder}" if BibleOrgSysGlobals.verbosityLevel > 2 else '' ) )
         EBB = ESFMBibleBook( name, BBB )

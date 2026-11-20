@@ -4,6 +4,9 @@
 //! - `CVIndexEntry` - Index entry for a single C:V reference
 //! - `InternalBibleBookCVIndex` - Full CV index for a book
 
+use std::collections::HashSet;
+use std::sync::Arc;
+
 use compact_str::CompactString;
 use indexmap::IndexMap;
 // use log::trace;
@@ -14,6 +17,7 @@ use crate::bos_markers::{regular_nesting, custom_nesting, is_end_marker};
 use crate::chapter_verse::ChapterVerse;
 use crate::entry_lists::InternalBibleEntryList;
 use crate::error::{IndexError, LookupError};
+use crate::rkyv_with::SliceAsVec;
 use crate::{have_strict_checking_flag, verbosity_println};
 
 /// An entry in the CV index, representing a single Chapter:Verse reference.
@@ -27,15 +31,42 @@ pub struct CVIndexEntry {
     /// Index of the first entry for this C:V in the entry list.
     start_index: u32,
     /// Number of entries for this C:V.
-    entry_count: u8,
+    entry_count: u16,
     /// Context markers that were open at this point (e.g., `["chapters", "c", "p"]`).
-    context: Vec<CompactString>,
+    ///
+    /// A book has thousands of index entries but only a few distinct contexts,
+    /// so within an index, entries with the same context share one copy of it.
+    #[rkyv(with = SliceAsVec)]
+    context: Arc<[CompactString]>,
+}
+
+/// The distinct contexts for an index (so that index entries can share them).
+pub(crate) type ContextPool = HashSet<Arc<[CompactString]>>;
+
+/// Get the shared copy of the given context from the pool (adding it if necessary).
+pub(crate) fn get_shared_context(pool: &mut ContextPool, context: &[CompactString]) -> Arc<[CompactString]> {
+    if let Some(shared_context) = pool.get(context) {
+        return Arc::clone(shared_context);
+    }
+    let shared_context: Arc<[CompactString]> = context.into();
+    pool.insert(Arc::clone(&shared_context));
+    shared_context
 }
 
 impl CVIndexEntry {
     /// Create a new CV index entry.
     #[inline]
-    pub fn new(start_index: u32, entry_count: u8, context: Vec<CompactString>) -> Self {
+    pub fn new(start_index: u32, entry_count: u16, context: Vec<CompactString>) -> Self {
+        Self {
+            start_index,
+            entry_count,
+            context: context.into(),
+        }
+    }
+
+    /// Create a new CV index entry that shares its context with other entries.
+    #[inline]
+    fn new_with_shared_context(start_index: u32, entry_count: u16, context: Arc<[CompactString]>) -> Self {
         Self {
             start_index,
             entry_count,
@@ -51,7 +82,7 @@ impl CVIndexEntry {
 
     /// Get the entry count for this C:V.
     #[inline]
-    pub fn entry_count(&self) -> u8 {
+    pub fn entry_count(&self) -> u16 {
         self.entry_count
     }
 
@@ -248,7 +279,7 @@ impl InternalBibleBookCVIndex {
             && self.bos_book_code() != "MRK" && cv.chapter() != "16" { // The optional endings of Mrk have more complexities
                 self.validate_entries_for_verse(cv, &entries);
             }
-            let context = entry.context.clone();
+            let context = entry.context.to_vec();
 
             // If complete and verse is 1, prepend verse 0 entries
             if complete && cv.verse() == "1" {
@@ -273,7 +304,7 @@ impl InternalBibleBookCVIndex {
         for (key, entry) in &self.index_data {
             if key.chapter() == cv.chapter() && key.contains_verse(desired_v) {
                 let entries = self.line_entries.slice(entry.start_index(), entry.next_start_index());
-                return Ok((entries, entry.context.clone()));
+                return Ok((entries, entry.context.to_vec()));
             }
         }
 
@@ -384,12 +415,25 @@ impl InternalBibleBookCVIndex {
         index_data: IndexMap<ChapterVerse, CVIndexEntry>,
         line_entries: InternalBibleEntryList,
     ) -> Self {
-        Self {
+        let mut index = Self {
             work_name: work_name.into(),
             bos_book_code: bos_book_code.into(),
             index_data,
             line_entries,
             indexed: true,
+        };
+        index.share_contexts();
+        index
+    }
+
+    /// Make index entries with the same context share one copy of it.
+    ///
+    /// The contexts are already shared when an index is built,
+    /// but each entry gets its own copy when an index is deserialised.
+    pub fn share_contexts(&mut self) {
+        let mut context_pool = ContextPool::new();
+        for index_entry in self.index_data.values_mut() {
+            index_entry.context = get_shared_context(&mut context_pool, &index_entry.context);
         }
     }
 
@@ -412,6 +456,7 @@ impl InternalBibleBookCVIndex {
         let mut current_start_line_index: usize = 0;
         let mut context: Vec<CompactString> = Vec::new();
         let mut current_context: Vec<CompactString> = Vec::new();
+        let mut context_pool = ContextPool::new();
         let mut last_start_line_index = 0;
         let mut last_end_line_index = 0;
         
@@ -469,7 +514,8 @@ impl InternalBibleBookCVIndex {
             && !["ms1","ms2","ms3","mr"].contains(&next_marker) {
                 // Finish previous CV
                 let cv = ChapterVerse::new(current_chapter.as_str(), current_verse.as_str());
-                let line_entry_count = (i - current_start_line_index) as u8;
+                let line_entry_count = u16::try_from(i - current_start_line_index)
+                    .map_err(|_| IndexError::TooManyEntries(cv.clone(), i - current_start_line_index))?;
                 // // Double-check that all verse markers in this range have the same verse number (to catch any inconsistencies)
                 // for entry in self.entries.slice(current_start, i) {
                 //     if entry.marker() == "v" || entry.marker() == "v=" || entry.marker() == "¬v" {
@@ -508,7 +554,7 @@ impl InternalBibleBookCVIndex {
                             self.work_name(), self.bos_book_code(), cv);
                 }
                 self.index_data
-                    .insert(cv, CVIndexEntry::new(current_start_line_index as u32, line_entry_count, current_context.clone()));
+                    .insert(cv, CVIndexEntry::new_with_shared_context(current_start_line_index as u32, line_entry_count, get_shared_context(&mut context_pool, &current_context)));
                 last_start_line_index = current_start_line_index;
                 last_end_line_index = current_end_line_index;
 
@@ -538,7 +584,8 @@ impl InternalBibleBookCVIndex {
 
         // Finish last CV
         let cv = ChapterVerse::new(current_chapter.as_str(), current_verse.as_str());
-        let line_entry_count = (self.line_entries.len() - current_start_line_index) as u8;
+        let line_entry_count = u16::try_from(self.line_entries.len() - current_start_line_index)
+            .map_err(|_| IndexError::TooManyEntries(cv.clone(), self.line_entries.len() - current_start_line_index))?;
         let current_end_line_index = current_start_line_index + line_entry_count as usize - 1;
         if have_strict_checking_flag() || cfg!(debug_assertions) {
             assert!(current_start_line_index > last_end_line_index || current_start_line_index==0,
@@ -551,7 +598,7 @@ impl InternalBibleBookCVIndex {
                     last_end_line_index, current_start_line_index, line_entry_count, current_end_line_index);
             assert!(!self.index_data.contains_key(&cv), "At end, about to lose existing {} {} CV index entry for {}", self.work_name(), self.bos_book_code(), cv);
             }
-        self.index_data.insert(cv, CVIndexEntry::new(current_start_line_index as u32, line_entry_count, current_context));
+        self.index_data.insert(cv, CVIndexEntry::new_with_shared_context(current_start_line_index as u32, line_entry_count, get_shared_context(&mut context_pool, &current_context)));
         self.indexed = true;
 
         if have_strict_checking_flag() || cfg!(debug_assertions) {
@@ -755,6 +802,57 @@ mod tests {
         entries.push(InternalBibleEntry::end_marker("¬chapters", "").expect("Fail")); // 25
 
         entries
+    }
+
+    #[test]
+    fn test_index_entries_share_contexts() {
+        let mut entries = InternalBibleEntryList::new();
+        for (marker, text) in [("id", "GEN"), ("chapters", ""), ("c", "1"),
+                    ("v", "1"), ("v~", "First."), ("¬v", "1"),
+                    ("v", "2"), ("v~", "Second."), ("¬v", "2"),
+                    ("v", "3"), ("v~", "Third."), ("¬v", "3"), ("¬c", "1"), ("¬chapters", "")] {
+            entries.push(crate::entry::InternalBibleEntry::simple(marker, text));
+        }
+        let mut cv_index = InternalBibleBookCVIndex::new("TEST", "GEN");
+        cv_index.build(entries).unwrap();
+
+        let entry2 = cv_index.get_index_entry(&ChapterVerse::new("1", "2")).unwrap();
+        let entry3 = cv_index.get_index_entry(&ChapterVerse::new("1", "3")).unwrap();
+        assert_eq!(entry2.context(), entry3.context());
+        assert!(Arc::ptr_eq(&entry2.context, &entry3.context)); // They don't each have their own copy
+        assert_eq!(std::mem::size_of::<CVIndexEntry>(), 24);
+    }
+
+    #[test]
+    fn test_too_many_entries_in_verse_is_an_error() {
+        // The entry count is stored in a u16, so an over-long verse must be reported, not silently truncated
+        let build_with = |text_line_count: usize| {
+            let mut entries = InternalBibleEntryList::new();
+            for (marker, text) in [("id", "GEN"), ("chapters", ""), ("c", "1"), ("v", "1")] {
+                entries.push(crate::entry::InternalBibleEntry::simple(marker, text));
+            }
+            for _ in 0..text_line_count {
+                entries.push(crate::entry::InternalBibleEntry::simple("v~", "Text."));
+            }
+            for (marker, text) in [("¬v", "1"), ("v", "2"), ("v~", "Second."), ("¬v", "2"), ("¬c", "1"), ("¬chapters", "")] {
+                entries.push(crate::entry::InternalBibleEntry::simple(marker, text));
+            }
+            let mut cv_index = InternalBibleBookCVIndex::new("TEST", "GEN");
+            cv_index.build(entries).map(|_| cv_index)
+        };
+
+        // 65,533 text lines plus v and ¬v is exactly 65,535 entries, which still fits
+        let cv_index = build_with(65_533).unwrap();
+        assert_eq!(cv_index.get_index_entry(&ChapterVerse::new("1", "1")).unwrap().entry_count(), 65_535);
+
+        // One more is too many
+        match build_with(65_534) {
+            Err(IndexError::TooManyEntries(cv, count)) => {
+                assert_eq!(cv, ChapterVerse::new("1", "1"));
+                assert_eq!(count, 65_536);
+            }
+            other => panic!("Expected TooManyEntries, got {:?}", other.map(|_| ())),
+        }
     }
 
     #[test]

@@ -17,7 +17,7 @@ class ParallelTaskError(RuntimeError):
     """A task failed, its result could not be transported, or a worker exited."""
 
 
-def _run_chunk(sender, function, chunk):
+def _run_chunk(sender, function, chunk) -> None:
     try:
         results = []
         for index, item in chunk:
@@ -34,7 +34,7 @@ def _run_chunk(sender, function, chunk):
         sender.close()
 
 
-def _stop_workers(workers):
+def _stop_workers(workers) -> None:
     """Stop every remaining worker, including one ignoring SIGTERM."""
     for process in workers:
         if process.is_alive():
@@ -50,7 +50,7 @@ def _stop_workers(workers):
         process.join(max(0, deadline - time.monotonic()))
 
 
-def run_parallel(function, items, *, processes, context=None, chunksize=None, labels=None):
+def run_parallel(function, items, *, processes, context=None, chunksize=None, labels=None) -> list:
     """Return results in input order, stopping all workers on the first failure.
 
     context accepts a multiprocessing context (e.g. explicit fork for large
@@ -75,7 +75,7 @@ def run_parallel(function, items, *, processes, context=None, chunksize=None, la
     worker_name = f'{function.__module__}.{getattr(function, "__qualname__", type(function).__qualname__)}'
     results, active, next_index = [None] * len(items), {}, 0
 
-    def task_name(index):
+    def task_name(index) -> str:
         return f'{index+1} ({labels[index]})' if labels is not None else str(index+1)
 
     def chunk_name(first, last):

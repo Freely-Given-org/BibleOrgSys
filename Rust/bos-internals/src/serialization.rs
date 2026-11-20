@@ -11,7 +11,10 @@ use crate::chapter_verse::ChapterVerse;
 use indexmap::IndexMap;
 use crate::error::BosError;
 
-const BOS_BIBLE_VERSION: u32 = 3;
+// v4 widened the CV index entry count from u8 to u16.
+//  The archived layout only differs in what was a zeroed padding byte, so v3 files are still read correctly.
+const BOS_BIBLE_VERSION: u32 = 4;
+const OLDEST_READABLE_BOS_BIBLE_VERSION: u32 = 3;
 
 /// Structure representing a serialized Bible book.
 #[derive(Archive, Serialize, Deserialize)]
@@ -62,8 +65,8 @@ pub fn load_bos_bible<P: AsRef<Path>+Clone>(path: P) -> Result<BOSBibleFile, Bos
         crate::error::BosError::Parse(crate::error::ParseError::Generic(format!("Deserialization error: {}", e)))
     })?;
 
-    if deserialized.version < BOS_BIBLE_VERSION {
-        panic!("Serialised file from {} was v{} not v{}", path.as_ref().to_str().unwrap(), deserialized.version, BOS_BIBLE_VERSION);
+    if deserialized.version < OLDEST_READABLE_BOS_BIBLE_VERSION {
+        panic!("Serialised file from {} was v{} not v{}–v{}", path.as_ref().to_str().unwrap(), deserialized.version, OLDEST_READABLE_BOS_BIBLE_VERSION, BOS_BIBLE_VERSION);
     }
     
     Ok(deserialized)

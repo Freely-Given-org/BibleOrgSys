@@ -118,7 +118,7 @@ def findMultilineStringTokenSpans( source:str ) -> list[tuple[int,int]]:
 
 class FileResult:
     """Statistics and the new source text for one processed file."""
-    def __init__( self, filepath:Path ):
+    def __init__( self, filepath:Path ) -> None:
         self.filepath = filepath
         self.wrapped = 0
         self.alreadyGuarded = 0

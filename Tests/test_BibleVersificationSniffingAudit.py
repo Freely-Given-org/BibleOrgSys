@@ -76,7 +76,7 @@ NEW_CASES = (
 )
 
 
-def refs(text):
+def refs(text) -> tuple[tuple, ...]:
     result = []
     for span in text.split(';'):
         for point in parse_reference_span(span).points():
@@ -88,11 +88,11 @@ def refs(text):
 
 class ReviewedSniffingCorrectionsTests(unittest.TestCase):
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls) -> None:
         cls.bundle = load_bundle()
         cls.engine = get_default_mapping_engine()
 
-    def test_all_46_revision_2_groups_both_directions_and_via_reference(self):
+    def test_all_46_revision_2_groups_both_directions_and_via_reference(self) -> None:
         self.assertEqual(len(NEW_CASES), 46)
         actual = {(c['system'], refs(';'.join(c['source'])), refs(';'.join(c['target'])))
                   for c in self.bundle['supplement']['corrections'][8:54]}
@@ -110,7 +110,7 @@ class ReviewedSniffingCorrectionsTests(unittest.TestCase):
                     self.assertEqual(self.engine.convert_range(profile, original, source[0], source[-1]).references, target)
                     self.assertEqual(self.engine.convert_range(original, profile, target[0], target[-1]).references, source)
 
-    def test_every_proper_subset_is_partial_even_when_old_singleton_was_exact(self):
+    def test_every_proper_subset_is_partial_even_when_old_singleton_was_exact(self) -> None:
         for profile, a, b in NEW_CASES:
             for source, target, group in ((profile, 'org', refs(a)), ('org', profile, refs(b))):
                 for size in range(1, len(group)):
@@ -122,7 +122,7 @@ class ReviewedSniffingCorrectionsTests(unittest.TestCase):
                             with self.assertRaises(PartialMappingError):
                                 result.require_single()
 
-    def test_opt_in_expansion_completes_every_reviewed_group(self):
+    def test_opt_in_expansion_completes_every_reviewed_group(self) -> None:
         for profile,a,b in NEW_CASES:
             for source,target,group,destination in ((profile,'org',refs(a),refs(b)),
                                                      ('org',profile,refs(b),refs(a))):
@@ -134,7 +134,7 @@ class ReviewedSniffingCorrectionsTests(unittest.TestCase):
                         self.assertEqual(result.references,destination)
                         self.assertEqual(result.requested_references,(member,))
 
-    def test_unaffected_members_of_all_touched_chapters_keep_their_results(self):
+    def test_unaffected_members_of_all_touched_chapters_keep_their_results(self) -> None:
         old = deepcopy(self.bundle)
         old['supplement']['corrections'] = old['supplement']['corrections'][:8]
         previous = VersificationMappingEngine.from_bundled_data(bundle=old)
@@ -155,7 +155,7 @@ class ReviewedSniffingCorrectionsTests(unittest.TestCase):
                             self.assertEqual((after.status, after.references, after.alternatives),
                                              (before.status, before.references, before.alternatives))
 
-    def test_revision_2_numeric_groups_agree_with_their_exact_evidence_columns(self):
+    def test_revision_2_numeric_groups_agree_with_their_exact_evidence_columns(self) -> None:
         rules = {r['name']: r for r in self.bundle['supplementEvidence']}
         for correction in self.bundle['supplement']['corrections'][8:54]:
             if correction['id'] == 'vul-num-26-1':
@@ -174,7 +174,7 @@ class ReviewedSniffingCorrectionsTests(unittest.TestCase):
                             point = sniffing_references(condition.strip()[:-5], system, self.engine, self.bundle)[0]
                             self.assertEqual(correction[role + 'ChapterCounts'][point[0] + ' ' + point[1]], int(point[2]))
 
-    def test_stale_counts_and_invalid_evidence_row_fail_closed(self):
+    def test_stale_counts_and_invalid_evidence_row_fail_closed(self) -> None:
         for role in ('sourceChapterCounts', 'referenceChapterCounts'):
             bundle = deepcopy(self.bundle)
             counts = bundle['supplement']['corrections'][8][role]
@@ -187,7 +187,7 @@ class ReviewedSniffingCorrectionsTests(unittest.TestCase):
             with self.assertRaisesRegex(VersificationDataError, 'evidence row'):
                 VersificationMappingEngine.from_bundled_data(bundle=bundle)
 
-    def test_composition_between_latin_english_and_original_keeps_atomic_groups(self):
+    def test_composition_between_latin_english_and_original_keeps_atomic_groups(self) -> None:
         cases = (
             ('vul', 'eng', 'PSA 12:1', 'PSA 13:0-1'),
             ('eng', 'vul', 'ISA 63:19;ISA 64:1', 'ISA 63:19;ISA 64:1'),
@@ -201,12 +201,12 @@ class ReviewedSniffingCorrectionsTests(unittest.TestCase):
 
 class SniffingInventoryTests(unittest.TestCase):
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls) -> None:
         cls.bundle = load_bundle()
         cls.engine = get_default_mapping_engine()
         cls.report = build_sniffing_report(cls.bundle, cls.engine)
 
-    def test_every_original_row_is_accounted_for_without_modifying_inputs(self):
+    def test_every_original_row_is_accounted_for_without_modifying_inputs(self) -> None:
         self.assertEqual((self.report['ruleCount'], self.report['rowCount'], self.report['splitMergeRowCount']),
                          (403, 1466, 556))
         before = deepcopy(self.bundle)
@@ -233,7 +233,7 @@ class SniffingInventoryTests(unittest.TestCase):
         self.assertEqual(counts['positional-alignment-covered'], 236)
         self.assertEqual(counts['title-convention-covered'], 59)
 
-    def test_conflicting_profiles_qualified_editions_and_malformed_rows_remain_explicit(self):
+    def test_conflicting_profiles_qualified_editions_and_malformed_rows_remain_explicit(self) -> None:
         rows = {(r['ruleIndex'], r['rangeIndex']): r for r in self.report['rows']}
         for key, profile, status, reason in (
             ((31, 0), 'lxx', 'candidate-needs-review', '29'),
@@ -253,7 +253,7 @@ class SniffingInventoryTests(unittest.TestCase):
         for book in ('SIR', 'TOB', 'JDT'):
             self.assertEqual(self.engine.convert('vul', 'org', [(book, 1, 1)]).status, MappingStatus.UNSUPPORTED)
 
-    def test_parser_does_not_complete_punctuation_segments_or_absent_endpoints(self):
+    def test_parser_does_not_complete_punctuation_segments_or_absent_endpoints(self) -> None:
         for value in ('Num.25:19;', 'Gen.5:31.1', 'Absent', 'Psa.125:6-7', 'Neh.3:30', 'Gen.2:2-1'):
             with self.subTest(value=value), self.assertRaises(ValueError):
                 sniffing_references(value, 'lxx' if value.startswith('Neh') else 'vul', self.engine, self.bundle)
@@ -264,7 +264,7 @@ class SniffingInventoryTests(unittest.TestCase):
 @unittest.skipUnless(importlib.util.find_spec('bos_books_codes_py') and importlib.util.find_spec('bible_organisational_system'),
                      'Native Bible integration requires the BOS project environment.')
 class SniffingBibleIntegrationTests(unittest.TestCase):
-    def test_loaded_passages_include_every_member_in_both_directions(self):
+    def test_loaded_passages_include_every_member_in_both_directions(self) -> None:
         from BibleOrgSys.Formats.USFMBible import USFMBible
         previous_logging = logging.root.manager.disable
         logging.disable(logging.CRITICAL)

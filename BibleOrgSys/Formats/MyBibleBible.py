@@ -84,6 +84,7 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Bible import Bible, BibleBook
 from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
+from BibleOrgSys.Reference.BookCode import BookCode
 
 
 LAST_MODIFIED_DATE = '2026-10-06' # by RJH
@@ -211,7 +212,7 @@ assert len(BOOKNUMBER_TABLE) == len(BOOK_TABLE)
 
 
 
-def MyBibleBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=False, autoLoadBooks:bool=False ):
+def MyBibleBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=False, autoLoadBooks:bool=False ) -> 'bool | MyBibleBible | int | None':
     """
     Given a folder, search for MyBible Bible files or folders in the folder and in the next level down.
 
@@ -326,7 +327,7 @@ class MyBibleBible( Bible ):
     """
     Class for reading, validating, and converting MyBibleBible files.
     """
-    def __init__( self, sourceFolder, givenFilename, encoding='utf-8' ) -> None:
+    def __init__( self, sourceFolder, givenFilename, encoding:str='utf-8' ) -> None:
         """
         Constructor: just sets up the Bible object.
         """
@@ -352,7 +353,7 @@ class MyBibleBible( Bible ):
     # end of MyBibleBible.__init__
 
 
-    def preload( self ):
+    def preload( self ) -> None:
         """
         Load the metadata from the SQLite3 database.
         """
@@ -486,7 +487,7 @@ class MyBibleBible( Bible ):
     # end of MyBibleBible.preload
 
 
-    def loadBooks( self ):
+    def loadBooks( self ) -> None:
         """
         Load all the books out of the SQLite3 database.
         """
@@ -510,7 +511,7 @@ class MyBibleBible( Bible ):
     # end of MyBibleBible.loadBooks
 
 
-    def loadBook( self, BBB:str ):
+    def loadBook( self, BBB:BookCode ) -> None:
         """
         Load the requested book out of the SQLite3 database.
         """
@@ -534,7 +535,7 @@ class MyBibleBible( Bible ):
     # end of MyBibleBible.loadBook
 
 
-    def __loadBibleBook( self, BBB:str ):
+    def __loadBibleBook( self, BBB:BookCode ) -> None:
         """
         Load the requested Bible book out of the SQLite3 database.
         """
@@ -542,7 +543,7 @@ class MyBibleBible( Bible ):
             fnPrint( DEBUGGING_THIS_MODULE, f"__loadBibleBook( {BBB} )" )
 
         lastC = None
-        def importVerseLine( name, BBB:str, C:str, V:str, originalLine, bookObject ):
+        def importVerseLine( name, BBB:BookCode, C:str, V:str, originalLine, bookObject ) -> None:
             """
             Change MyBible format codes to our codes
                 and then add the line to the given bookObject
@@ -648,7 +649,7 @@ class MyBibleBible( Bible ):
     # end of MyBibleBible.__loadBibleBook
 
 
-    def __loadBibleCommentaryBook( self, BBB:str ):
+    def __loadBibleCommentaryBook( self, BBB:BookCode ) -> None:
         """
         Load the requested Bible book out of the SQLite3 database.
         """
@@ -656,7 +657,7 @@ class MyBibleBible( Bible ):
             fnPrint( DEBUGGING_THIS_MODULE, f"__loadBibleCommentaryBook( {BBB} )" )
 
         lastC = None
-        def importCommentaryLine( name, BBB:str, C:str, V:str, footnoteNumber, originalLine, bookObject ):
+        def importCommentaryLine( name, BBB:BookCode, C:str, V:str, footnoteNumber, originalLine, bookObject ) -> None:
             """
             Change MyBible format codes to our codes
                 and then add the line to the given bookObject
@@ -781,7 +782,7 @@ def createMyBibleModule( self, outputFolder, controlDict ) -> bool:
     from BibleOrgSys.Internals.InternalBibleBook import BOS_CUSTOM_NESTING_MARKERS, BOS_NESTING_MARKERS
     from BibleOrgSys.Formats.theWordBible import theWordOTBookLines, theWordNTBookLines, theWordBookLines, theWordIgnoredIntroMarkers
 
-    def adjustLine( BBB:str, C:str, V:str, originalLine ):
+    def adjustLine( BBB:BookCode, C:str, V:str, originalLine ):
         """
         Handle pseudo-USFM markers within the line (cross-references, footnotes, and character formatting).
 
@@ -943,7 +944,7 @@ def createMyBibleModule( self, outputFolder, controlDict ) -> bool:
     ## end of toMyBible.handleIntroduction
 
 
-    def composeVerseLine( BBB:str, C:str, V:str, verseData, ourGlobals ):
+    def composeVerseLine( BBB:BookCode, C:str, V:str, verseData, ourGlobals ):
         """
         Composes a single line representing a verse.
 
@@ -1100,7 +1101,7 @@ def createMyBibleModule( self, outputFolder, controlDict ) -> bool:
     # end of toMyBible.composeVerseLine
 
 
-    def writeMyBibleBook( sqlObject, BBB:str, nBBB, bkData, ourGlobals ):
+    def writeMyBibleBook( sqlObject, BBB:BookCode, nBBB, bkData, ourGlobals ) -> bool:
         """
         Writes a book to the MyBible sqlObject file.
         """

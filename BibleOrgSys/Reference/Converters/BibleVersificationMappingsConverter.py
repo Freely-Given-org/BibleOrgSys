@@ -30,6 +30,7 @@ from importlib.resources import files
 import json
 from pathlib import Path
 import re
+import sys
 
 
 STANDARD_SYSTEMS = ('org', 'eng', 'lxx', 'vul', 'rsc', 'rso', 'ethiopian_custom')
@@ -45,11 +46,12 @@ class VersificationDataError(ValueError):
     """Bundled data is corrupt, structurally unusable, or cannot be reproduced."""
 
 
-def _unique_object(pairs):
+def _unique_object(pairs) -> dict:
     result = {}
     for key, value in pairs:
         if key in result:
             raise VersificationDataError(f'Duplicate JSON key: {key!r}')
+        if len(key) == 3: key = sys.intern(key) # So the many book code keys (like 'GEN') share one string object
         result[key] = value
     return result
 
@@ -70,7 +72,7 @@ def _relative_resource(root, relative):
     return root.joinpath(*parts)
 
 
-def load_bundle(root=None):
+def load_bundle(root=None) -> dict:
     """Read and verify the local snapshot; return new mutable objects each time.
 
     ``root`` is an optional directory containing a complete copy of the bundle,
@@ -133,7 +135,7 @@ def bos_book_code(usfm_book: str, system: str, book_codes: dict) -> str:
         raise VersificationDataError(f'Unknown source book code: {usfm_book}') from error
 
 
-def _verse_counts(values):
+def _verse_counts(values) -> list[int]:
     if not isinstance(values, list) or not values:
         raise VersificationDataError('Chapter counts must be a nonempty list')
     result = []
@@ -247,10 +249,10 @@ def parse_reference_span(text: str) -> ReferenceSpan:
     if last < first or (last == first and first_suffix and last_suffix
                         and last_suffix < first_suffix):
         raise VersificationDataError(f'Reversed range: {text!r}')
-    return ReferenceSpan(book, int(chapter), first, last, first_suffix, last_suffix, is_range)
+    return ReferenceSpan(sys.intern(book), int(chapter), first, last, first_suffix, last_suffix, is_range)
 
 
-def audit_system(name: str, definition: dict, base: dict, *, incomplete_counts=False) -> dict:
+def audit_system(name: str, definition: dict, base: dict, *, incomplete_counts:bool=False) -> dict:
     """Inspect one definition without correcting or resolving its mapping rules.
 
     ``base`` describes mapping destinations (org for the standard files). Bound
@@ -260,7 +262,7 @@ def audit_system(name: str, definition: dict, base: dict, *, incomplete_counts=F
     """
     issues = []
 
-    def issue(code, location, message, severity='review', **details):
+    def issue(code, location, message, severity:str='review', **details) -> None:
         issues.append(dict(code=code, severity=severity, location=location,
                            message=message, **details))
 
@@ -294,7 +296,7 @@ def audit_system(name: str, definition: dict, base: dict, *, incomplete_counts=F
     zero_refs = set()
     suffix_refs = set()
 
-    def inspect_reference(text, role, location):
+    def inspect_reference(text, role, location) -> ReferenceSpan | None:
         try:
             span = parse_reference_span(text)
         except VersificationDataError as error:

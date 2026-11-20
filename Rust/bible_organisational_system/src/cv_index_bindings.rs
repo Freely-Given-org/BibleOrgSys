@@ -697,14 +697,14 @@ impl PyCVIndexEntry {
     ///     context: Optional list of context markers
     #[new]
     #[pyo3(signature = (start_index, entry_count, context=None))]
-    fn new(start_index: u32, entry_count: u8, context: Option<Vec<String>>) -> Self {
+    fn new(start_index: u32, entry_count: u16, context: Option<Vec<String>>) -> Self {
         let ctx = context.unwrap_or_default().into_iter().map(|s| s.into()).collect();
         Self {
             inner: CVIndexEntry::new(start_index, entry_count, ctx),
         }
     }
 
-    fn __getnewargs__(&self) -> (usize, u8, Option<Vec<String>>) {
+    fn __getnewargs__(&self) -> (usize, u16, Option<Vec<String>>) {
         (
             self.inner.start_index(),
             self.inner.entry_count(),
@@ -722,7 +722,7 @@ impl PyCVIndexEntry {
 
     /// Get the entry count for this C:V.
     #[getter(entryCount)]
-    fn entry_count(&self) -> u8 {
+    fn entry_count(&self) -> u16 {
         self.inner.entry_count()
     }
 
@@ -750,7 +750,7 @@ impl PyCVIndexEntry {
     }
 
     /// Get the entry count
-    fn getEntryCount(&self) -> u8 {
+    fn getEntryCount(&self) -> u16 {
         self.inner.entry_count()
     }
 
@@ -1061,6 +1061,20 @@ impl PyInternalBibleBookCVIndex {
             .map_err(|_| PyKeyError::new_err(format!("({:?}, {:?})", cv_key.0, cv_key.1)))
     }
 
+    /// Get the stored verse labels (e.g., '0', '1', '2-3', '4a') for the given chapter, in book order.
+    ///
+    /// This is much cheaper than fetching all the entries for the chapter
+    /// when the caller only needs to know which verses (and verse bridges) exist.
+    fn getChapterVerseLabels<'py>(&self, py: Python<'py>, chapter: &str) -> PyResult<Bound<'py, pyo3::types::PyList>> {
+        let list = pyo3::types::PyList::empty(py);
+        for (cv, _entry) in self.inner.iter() {
+            if cv.chapter() == chapter {
+                list.append(cv.verse())?;
+            }
+        }
+        Ok(list)
+    }
+
     /// Get verse entries with context for every verse in the given chapter,
     /// in one call — equivalent to looping over V and calling
     /// getVerseEntriesWithContext((chapter, V)) in Python (used once per
@@ -1170,6 +1184,7 @@ impl PyInternalBibleBookCVIndex {
         let bytes = state.extract::<&[u8]>()?;
         self.inner = rkyv::from_bytes::<InternalBibleBookCVIndex, rkyv::rancor::Error>(bytes)
             .map_err(|e| PyRuntimeError::new_err(e.to_string()))?;
+        self.inner.share_contexts(); // Each index entry gets its own copy of its context when deserialised
         Ok(())
     }
 }

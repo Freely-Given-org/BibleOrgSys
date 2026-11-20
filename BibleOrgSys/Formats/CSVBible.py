@@ -42,6 +42,7 @@ CHANGELOG:
     2025-11-20 Added our wordtables for BibleHub TSV spreadsheet/table format
     2026-02-03 Updated for changes in BibleHub TSV spreadsheet format with improved column names
     2026-08-29 Speed up Berean loads when only a few books are specified to be loaded
+    2026-11-16 Handle renamed RP-GNT CSV files (MAR, ACT24)
 """
 from pathlib import Path
 import logging
@@ -57,10 +58,10 @@ from BibleOrgSys.OriginalLanguages import Hebrew, Greek
 import bos_books_codes_py
 
 
-LAST_MODIFIED_DATE = '2026-10-06' # by RJH
+LAST_MODIFIED_DATE = '2026-11-16' # by RJH
 SHORT_PROGRAM_NAME = "CSVBible"
 PROGRAM_NAME = "CSV Bible format handler"
-PROGRAM_VERSION = '0.60'
+PROGRAM_VERSION = '0.61'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -72,7 +73,7 @@ EXTENSION_TO_IGNORE = ('ZIP', 'BAK', 'BAK2', 'BAK3', 'BAK4', 'LOG', 'HTM','HTML'
 
 
 
-def CSVBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=False, autoLoadBooks:bool=False ):
+def CSVBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=False, autoLoadBooks:bool=False ) -> 'bool | CSVBible | int | None':
     """
     Given a folder, search for CSV or TSV Bible files or folders in the folder and in the next level down.
 
@@ -264,7 +265,7 @@ class CSVBible( Bible ):
                             self.sourceBookFileExtension = filename[-3:]
                             break
                 else: # no files found
-                    logging.critical( _(f"CSVBible: Unable to discover a single filename in {self.sourceFolder}") )
+                    logging.critical( f"CSVBible: Unable to discover a single filename in {self.sourceFolder}" )
         self.specifiedBooks = None
     # end of CSVBible.__init__
 
@@ -381,7 +382,7 @@ class CSVBible( Bible ):
                     filename = thisFilepath.stem
                     if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 3:
                         dPrint( 'Info', DEBUGGING_THIS_MODULE, f"{filename=}" )
-                    try: BBB = {'AC':'ACT', 'JOH':'JHN', 'MT':'MAT', 'JUDE':'JDE', '1JO':'JN1','2JO':'JN2','3JO':'JN3'}[filename]
+                    try: BBB = {'AC':'ACT', 'JOH':'JHN', 'MT':'MAT', 'MAR':'MRK', 'JUDE':'JDE', '1JO':'JN1','2JO':'JN2','3JO':'JN3'}[filename]
                     except KeyError: pass # no problem
                     if not BBB:
                         if len(filename) == 3:
@@ -401,7 +402,7 @@ class CSVBible( Bible ):
                                     break
                             if not BBB:
                                 for Uuu in bos_books_codes_py.get_all_usfm_abbreviations():
-                                    if Uuu.upper().startswith( filename.upper ):
+                                    if Uuu.upper().startswith( filename.upper() ):
                                         BBB = bos_books_codes_py.usfm_abbrev_to_bos_book_code( Uuu )
                                         break
                     if BBB:
@@ -653,7 +654,7 @@ class CSVBible( Bible ):
         assert len(tsv_column_headers) >= 20
 
         lastMarker = lastText = None
-        def addLine( marker:str, text:str, ref:str, bookObject):
+        def addLine( marker:str, text:str, ref:str, bookObject) -> None:
             """
             """
             nonlocal lastMarker, lastText
@@ -667,7 +668,7 @@ class CSVBible( Bible ):
             # if ref.startswith( 'MAT_1:3' ): assert False, "We want to stop here"
         # end of addLine
             
-        def appendToLastLine( extraText:str, ref:str, bookObject):
+        def appendToLastLine( extraText:str, ref:str, bookObject) -> None:
             """
             """
             nonlocal lastText
@@ -1306,7 +1307,7 @@ class CSVBible( Bible ):
             self.stashBook( thisBook )
     # end of CSVBible._loadBereanWoordTable
 
-    def load( self ):
+    def load( self ) -> None:
         """
         Assumes self.sourceFilepath is set
             (If not, use loadBooks() instead.)
@@ -1341,10 +1342,10 @@ class CSVBible( Bible ):
             # dPrint( 'Info', DEBUGGING_THIS_MODULE, f"  {filename=}" )
             if filename.endswith( f'.{self.sourceBookFileExtension}' ):
                 filenameStart = filename[:-4]
-                if filenameStart == 'AC24': # from RP-GNT
-                    continue # Not sure what this is
+                if filenameStart in ('AC24','ACT24'): # from RP-GNT (renamed upstream 2023)
+                    continue # Alternative longer reading of Acts 24:6-8 (not in the main ACT file)
                 if filenameStart == 'PA': # from RP-GNT
-                    continue # Not sure what this is
+                    continue # Pericope Adulterae (John 7:53-8:11) -- already included in the main JOH file
                 BBB = bos_books_codes_py.english_name_to_bos_book_code( filenameStart )
                 if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 3:
                     dPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Got {BBB=} from {filenameStart=}")
@@ -1389,7 +1390,7 @@ class CSVBible( Bible ):
 
 
 
-def testCSV( CSVfolder ):
+def testCSV( CSVfolder ) -> None:
     # Crudely demonstrate the CSV Bible class
     from BibleOrgSys.Reference import VerseReferences
 
@@ -1493,7 +1494,7 @@ def briefDemo() -> None:
 BEREAN_SPREADSHEET_DEMO_BOOKS = ('AMO', 'MRK', 'EPH') # A representative OT + two NT books for the speed test
 
 
-def speedComparisonDemo():
+def speedComparisonDemo() -> None:
     """
     Times loading the whole Berean (BibleHub) spreadsheet word-table Bible versus loading
     just a few requested books, and verifies that the requested books' verse text matches.

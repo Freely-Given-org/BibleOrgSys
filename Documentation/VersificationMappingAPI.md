@@ -81,6 +81,10 @@ be used independently of the native dependencies used by the older BOS modules.
 The input is an ordered iterable of three- or four-element reference tuples.
 Repeated inputs are stably deduplicated. Empty passages, malformed references,
 and requesting both a whole verse and one of its segments are invalid.
+Returned references are `VerseRef` named tuples (from
+`BibleOrgSys.Reference.VerseRef`) with fields `BBB`, `C`, `V` and `S`. They
+still compare and hash equal to plain `(BBB, C, V, S)` tuples, so existing
+tuple code keeps working; `str(ref)` gives a display form such as `GEN 32:1`.
 
 | Status | Meaning | Default single-reference API |
 | --- | --- | --- |

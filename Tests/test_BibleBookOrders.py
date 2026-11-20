@@ -38,48 +38,48 @@ DEBUGGING_THIS_MODULE = False
 class BibleBookOrdersConverterTests( unittest.TestCase ):
     """ Unit tests for the _BibleBookOrdersConverter object. """
 
-    def setUp( self ):
+    def setUp( self ) -> None:
         parser = BibleOrgSysGlobals.setup( PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
         # BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
         BibleOrgSysGlobals.preloadCommonData()
         # Create the BibleBookOrdersConverter object
         self.bbosc = BibleBookOrdersConverter.BibleBookOrdersConverter().loadSystems() # Doesn't reload the XML unnecessarily :)
 
-    def test_1005_str( self ):
+    def test_1005_str( self ) -> None:
         """ Test the __str__ function. """
         result = str( self.bbosc )
         self.assertTrue( isinstance( result, str ) )
         self.assertTrue( len(result) > 20 )
     # end of test_1005_str
 
-    def test_1010_len( self ):
+    def test_1010_len( self ) -> None:
         """ Test the __len__ function. """
         self.assertTrue( 10 < len(self.bbosc) < 50 ) # The number of loaded systems
     # end of test_1010_len
 
-    def test_1020_importDataToPython( self ):
+    def test_1020_importDataToPython( self ) -> None:
         """ Test the importDataToPython function. """
         result = self.bbosc.importDataToPython()
         self.assertTrue( isinstance( result, tuple ) )
         self.assertEqual( len(result), 2 )
     # end of test_1020_importDataToPython
 
-    def test_1030_pickle( self ):
+    def test_1030_pickle( self ) -> None:
         """ Test the pickle function. """
         self.assertEqual( self.bbosc.pickle(), None ) # Basically just make sure that it runs
     # end of test_1030_pickle
 
-    def test_1040_exportDataToPython( self ):
+    def test_1040_exportDataToPython( self ) -> None:
         """ Test the exportDataToPython function. """
         self.assertEqual( self.bbosc.exportDataToPython(), None ) # Basically just make sure that it runs
     # end of test_1040_exportDataToPython
 
-    def test_1050_exportDataToJSON( self ):
+    def test_1050_exportDataToJSON( self ) -> None:
         """ Test the exportDataToJSON function. """
         self.assertEqual( self.bbosc.exportDataToJSON(), None ) # Basically just make sure that it runs
     # end of test_1050_exportDataToJSON
 
-    def test_1060_exportDataToC( self ):
+    def test_1060_exportDataToC( self ) -> None:
         """ Test the exportDataToC function. """
         self.assertEqual( self.bbosc.exportDataToC(), None ) # Basically just make sure that it runs
     # end of test_1060_exportDataToC
@@ -89,26 +89,26 @@ class BibleBookOrdersConverterTests( unittest.TestCase ):
 class BibleBookOrderSystemsTests( unittest.TestCase ):
     """ Unit tests for the BibleBookOrderSystems object. """
 
-    def setUp( self ):
+    def setUp( self ) -> None:
         parser = BibleOrgSysGlobals.setup( PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
         # BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
         BibleOrgSysGlobals.preloadCommonData()
         # Create the BibleBookOrderSystems object
         self.bboss = BibleBookOrders.BibleBookOrderSystems().loadData() # Doesn't reload the XML unnecessarily :)
 
-    def test_2005_str( self ):
+    def test_2005_str( self ) -> None:
         """ Test the __str__ function. """
         result = str( self.bboss )
         self.assertTrue( isinstance( result, str ) )
         self.assertTrue( len(result) > 20 )
     # end of test_2005_str
 
-    def test_2010_len( self ):
+    def test_2010_len( self ) -> None:
         """ Test the __len__ function. """
         self.assertTrue( 10 < len(self.bboss) < 50 ) # The number of loaded systems
     # end of test_2010_len
 
-    def test_2020_contains( self ):
+    def test_2020_contains( self ) -> None:
         """ Test the __contains__ function. """
         for goodName in ('EuropeanBible','VulgateBible','LutheranBible',):
             self.assertTrue( goodName in self.bboss )
@@ -116,7 +116,7 @@ class BibleBookOrderSystemsTests( unittest.TestCase ):
             self.assertFalse( badName in self.bboss )
     # end of test_2020_contains
 
-    def test_2030_getAvailableBookOrderSystemNames( self ):
+    def test_2030_getAvailableBookOrderSystemNames( self ) -> None:
         """ Test the getAvailableBookOrderSystemNames function. """
         results = self.bboss.getAvailableBookOrderSystemNames()
         self.assertTrue( isinstance( results, list ) )
@@ -127,7 +127,7 @@ class BibleBookOrderSystemsTests( unittest.TestCase ):
         for name in ("EuropeanBible",): self.assertTrue( name in results )
     # end of test_2030_getAvailableBookOrderSystemNames
 
-    def test_2040_getBookOrderSystem( self ):
+    def test_2040_getBookOrderSystem( self ) -> None:
         """ Test the getBookOrderSystem function. """
         results = self.bboss.getBookOrderSystem( "EuropeanBible" )
         self.assertTrue( isinstance( results, tuple ) )
@@ -140,14 +140,14 @@ class BibleBookOrderSystemsTests( unittest.TestCase ):
         self.assertEqual( self.bboss.getBookOrderSystem('SomeName'), None )
     # end of test_2040_getBookOrderSystem
 
-    def test_2050_numBooks( self ):
+    def test_2050_numBooks( self ) -> None:
         """ Test the numBooks function. """
         self.assertEqual( self.bboss.numBooks("EuropeanBible"), 73 )
         self.assertRaises( KeyError, self.bboss.numBooks, 'XYZ' )
         self.assertRaises( KeyError, self.bboss.numBooks, 'SomeName' )
     # end of test_2050_numBooks
 
-    def test_2060_containsBook( self ):
+    def test_2060_containsBook( self ) -> None:
         """ Test the containsBook function. """
         version = "EuropeanBible"
         for goodBBB in ('GEN','MAL','MAT','CO1','REV',):
@@ -159,7 +159,7 @@ class BibleBookOrderSystemsTests( unittest.TestCase ):
         self.assertRaises( KeyError, self.bboss.containsBook, version,'MAT' )
     # end of test_060_containsBook
 
-    def test_2070_getBookOrderList( self ):
+    def test_2070_getBookOrderList( self ) -> None:
         """ Test the getBookOrderList function. """
         for (name, count, books,) in ( ("EuropeanBible",73,('GEN','MAL','MAT','REV',)), ("EuropeanBible",73,('GEN','MAL',)), ("EuropeanBible",73,('MAT','REV',)), ):
             results = self.bboss.getBookOrderList( name )
@@ -170,7 +170,7 @@ class BibleBookOrderSystemsTests( unittest.TestCase ):
             for BBB in books: self.assertTrue( BBB in results )
     # end of test_2070_getBookOrderList
 
-    def test_2080_checkBookOrderSystem( self ):
+    def test_2080_checkBookOrderSystem( self ) -> None:
         """ Test the checkBookOrderSystem function.
             It returns the number of matched systems. """
         self.assertEqual( self.bboss.checkBookOrderSystem( "myGoodTest", \
@@ -184,7 +184,7 @@ class BibleBookOrderSystemsTests( unittest.TestCase ):
 class BibleBookOrderSystemTests( unittest.TestCase ):
     """ Unit tests for the BibleBookOrderSystem object. """
 
-    def setUp( self ):
+    def setUp( self ) -> None:
         parser = BibleOrgSysGlobals.setup( PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
         # BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
         BibleOrgSysGlobals.preloadCommonData()
@@ -192,20 +192,20 @@ class BibleBookOrderSystemTests( unittest.TestCase ):
         self.systemName = "EuropeanBible"
         self.bbos = BibleBookOrders.BibleBookOrderSystem( self.systemName ) # Doesn't reload the XML unnecessarily :)
 
-    def test_3005_str( self ):
+    def test_3005_str( self ) -> None:
         """ Test the __str__ function. """
         result = str( self.bbos )
         self.assertTrue( isinstance( result, str ) )
         self.assertTrue( len(result) > 20 )
     # end of test_3005_str
 
-    def test_3010_numBooks( self ):
+    def test_3010_numBooks( self ) -> None:
         """ Test the __len__ and numBooks functions. """
         self.assertEqual( len(self.bbos), 73 )
         self.assertEqual( self.bbos.numBooks(), 73 )
     # end of test_3010_numBooks
 
-    def test_3020_contains( self ):
+    def test_3020_contains( self ) -> None:
         """ Test the __contains__ function. """
         for BBB in ('GEN','MAL','MAT','CO1','REV'):
             self.assertTrue( BBB in self.bbos )
@@ -213,7 +213,7 @@ class BibleBookOrderSystemTests( unittest.TestCase ):
             self.assertFalse( BBB in self.bbos )
     # end of test_3020_contains
 
-    def test_3030_containsBook( self ):
+    def test_3030_containsBook( self ) -> None:
         """ Test the containsBook function. """
         self.assertTrue( self.bbos.containsBook('GEN') )
         self.assertTrue( self.bbos.containsBook('MAL') )
@@ -226,12 +226,12 @@ class BibleBookOrderSystemTests( unittest.TestCase ):
         #self.assertFalse( self.bbos.containsBook('MA1') )
     # end of test_3030_containsBook
 
-    def test_3040_getBookOrderSystemName( self ):
+    def test_3040_getBookOrderSystemName( self ) -> None:
         """ Test the getBookOrderSystemName function. """
         self.assertEqual( self.bbos.getBookOrderSystemName(), self.systemName )
     # end of test_3040_getBookOrderSystemName
 
-    def test_3050_getBookOrderPosition( self ):
+    def test_3050_getBookOrderPosition( self ) -> None:
         """ Test the getBookOrderPosition function. """
         self.assertEqual( self.bbos.getBookOrderPosition('GEN'), 1 )
         #self.assertEqual( self.bbos.getBookOrderPosition('MAL'), 39 )
@@ -242,7 +242,7 @@ class BibleBookOrderSystemTests( unittest.TestCase ):
             self.assertRaises( KeyError, self.bbos.getBookOrderPosition, badBBB )
     # end of test_3050_getBookOrderPosition
 
-    def test_3060_getBookAtOrderPosition( self ):
+    def test_3060_getBookAtOrderPosition( self ) -> None:
         """ Test the getBookAtOrderPosition function. """
         self.assertEqual( self.bbos.getBookAtOrderPosition(1), 'GEN' )
         #self.assertEqual( self.bbos.getBookAtOrderPosition(39), 'MAL' )
@@ -253,7 +253,7 @@ class BibleBookOrderSystemTests( unittest.TestCase ):
             self.assertRaises( KeyError, self.bbos.getBookAtOrderPosition, position )
     # end of test_3060_getBookAtOrderPosition
 
-    def test_3070_getBookOrderList( self ):
+    def test_3070_getBookOrderList( self ) -> None:
         """ Test the getSingleChapterBooksList function. """
         results = self.bbos.getBookOrderList()
         self.assertTrue( isinstance( results, list ) )
@@ -263,7 +263,7 @@ class BibleBookOrderSystemTests( unittest.TestCase ):
         for BBB in ('OBA','PHM','JN2','JN3','JDE',): self.assertTrue( BBB in results )
     # end of test_3070_getBookOrderList
 
-    def test_3080_getNextBookCode( self ):
+    def test_3080_getNextBookCode( self ) -> None:
         """ Test the getNextBookCode function. """
         self.assertEqual( self.bbos.getNextBookCode('GEN'), 'EXO' )
         self.assertEqual( self.bbos.getNextBookCode('ZEC'), 'MAL' )
@@ -274,7 +274,7 @@ class BibleBookOrderSystemTests( unittest.TestCase ):
         self.assertRaises( KeyError, self.bbos.getNextBookCode, 'Gen' )
     # end of test_3080_getNextBookCode
 
-    def test_3090_correctlyOrdered( self ):
+    def test_3090_correctlyOrdered( self ) -> None:
         """ Test the correctlyOrdered function. """
         self.assertTrue( self.bbos.correctlyOrdered('GEN','EXO') )
         self.assertTrue( self.bbos.correctlyOrdered('GEN','LEV') )

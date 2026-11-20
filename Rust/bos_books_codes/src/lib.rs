@@ -8443,6 +8443,8 @@ pub fn tidy_bbb(bbb: &str, title_case: bool, allow_four_chars: bool, insert_char
 
     if allow_four_chars {
         match bbb {
+            "DEU" => return CompactString::new("DEUT"),
+            "JOS" => return CompactString::new("JOSH"),
             "RUT" => return CompactString::new("RUTH"),
             "SA1" => return format_compact!("1{}SAM", insert_char),
             "SA2" => return format_compact!("2{}SAM", insert_char),
@@ -8450,12 +8452,11 @@ pub fn tidy_bbb(bbb: &str, title_case: bool, allow_four_chars: bool, insert_char
             "CH2" => return format_compact!("2{}CHR", insert_char),
             "EZR" => return CompactString::new("EZRA"),
             "PRO" => return CompactString::new("PROV"),
+            "EZE" => return CompactString::new("EZEK"),
             "JOL" => return CompactString::new("JOEL"),
+            "OBA" => return CompactString::new("OBAD"),
             "AMO" => return CompactString::new("AMOS"),
-            "MA1" => return format_compact!("1{}MAC", insert_char),
-            "MA2" => return format_compact!("2{}MAC", insert_char),
-            "MA3" => return format_compact!("3{}MAC", insert_char),
-            "MA4" => return format_compact!("4{}MAC", insert_char),
+
             "MRK" => return CompactString::new("MARK"),
             "LUK" => return CompactString::new("LUKE"),
             "JHN" => return CompactString::new("JOHN"),
@@ -8470,6 +8471,18 @@ pub fn tidy_bbb(bbb: &str, title_case: bool, allow_four_chars: bool, insert_char
             "JN2" => return format_compact!("2{}JHN", insert_char),
             "JN3" => return format_compact!("3{}JHN", insert_char),
             "JDE" => return CompactString::new("JUDE"),
+
+            "PAZ" => return format_compact!("PR{}AZ", insert_char),
+            "LJE" => return format_compact!("L{}JER", insert_char),
+            "DNG" => return format_compact!("G{}DAN", insert_char),
+            "GES" => return format_compact!("G{}ESD", insert_char),
+            "LES" => return format_compact!("L{}ESD", insert_char),
+            "MA1" => return format_compact!("1{}MAC", insert_char),
+            "MA2" => return format_compact!("2{}MAC", insert_char),
+            "MA3" => return format_compact!("3{}MAC", insert_char),
+            "MA4" => return format_compact!("4{}MAC", insert_char),
+            "LAO" => return CompactString::new("LAOD"),
+
             _ => {}
         }
     }

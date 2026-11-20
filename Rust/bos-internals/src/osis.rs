@@ -140,7 +140,7 @@ fn parse_header(content: &str) -> HashMap<String, String> {
 
 fn parse_osis_slice(slice: &str, initial_bbb: Option<&str>) -> Vec<(String, String)> {
     let mut reader = Reader::from_str(slice);
-    reader.config_mut().trim_text(true);
+    reader.config_mut().trim_text(false); // We trim in handle_text() so that spaces in mixed note content are kept
     let mut state = ParserState::default();
     if let Some(bbb) = initial_bbb {
         state.current_bbb = Some(bbb.to_string());
@@ -253,10 +253,7 @@ fn parse_osis_slice(slice: &str, initial_bbb: Option<&str>) -> Vec<(String, Stri
                 let text = quick_xml::escape::unescape(&decoded)
                     .map(|c| c.into_owned())
                     .unwrap_or_default(); // 2. Unescape the decoded string using the standalone escape module
-                let cleaned = clean_text(&text);
-                if !cleaned.is_empty() {
-                    state.current_text.push_str(&cleaned);
-                }
+                handle_text(&mut state, &text);
             }
             Ok(Event::Eof) => break,
             _ => {}
@@ -269,7 +266,7 @@ fn parse_osis_slice(slice: &str, initial_bbb: Option<&str>) -> Vec<(String, Stri
 
 fn parse_osis_single_threaded(content: &str) -> HashMap<String, Vec<(String, String)>> {
     let mut reader = Reader::from_str(content);
-    reader.config_mut().trim_text(true);
+    reader.config_mut().trim_text(false); // We trim in handle_text() so that spaces in mixed note content are kept
     let mut state = ParserState::default();
     let mut buf = Vec::new();
     let mut books = HashMap::new();
@@ -389,10 +386,7 @@ fn parse_osis_single_threaded(content: &str) -> HashMap<String, Vec<(String, Str
                 let text = quick_xml::escape::unescape(&decoded)
                     .map(|c| c.into_owned())
                     .unwrap_or_default(); // 2. Unescape the decoded string using the standalone escape module
-                let cleaned = clean_text(&text);
-                if !cleaned.is_empty() {
-                    state.current_text.push_str(&cleaned);
-                }
+                handle_text(&mut state, &text);
             }
             Ok(Event::Eof) => break,
             _ => {}
@@ -558,9 +552,32 @@ fn flush_current_line(state: &mut ParserState) {
             if state.current_v.is_some() { "v~".to_string() } else { "XXXp~".to_string() }
         });
         let normalized = normalize_marker(&marker);
-        let text = std::mem::take(&mut state.current_text);
+        let mut text = std::mem::take(&mut state.current_text);
+        text.truncate(text.trim_end().len()); // Note text can end with a space that preceded a following element
         state.raw_lines.push((normalized.to_string(), text));
     }
+}
+
+/// Adds element text to the current line.
+///
+/// Outside notes, text is trimmed (whitespace between elements is just XML formatting).
+/// Inside notes, the content can be mixed, e.g.,
+///     <note type="exegesis">WLC has this word divided as <rdg>הניס</rdg>.</note>
+/// so spaces next to inline elements are kept (but whitespace-only formatting text is still ignored).
+fn handle_text(state: &mut ParserState, text: &str) {
+    let cleaned = clean_text(text);
+    let trimmed = cleaned.trim();
+    if trimmed.is_empty() { return; }
+    if !state.tag_stack.iter().any(|tag| tag == "note") {
+        state.current_text.push_str(trimmed);
+        return;
+    }
+    let to_add = if state.current_text.is_empty() || state.current_text.ends_with(' ') {
+        cleaned.trim_start()
+    } else {
+        cleaned.as_str()
+    };
+    state.current_text.push_str(to_add);
 }
 
 fn clean_text(s: &str) -> String {
@@ -569,4 +586,31 @@ fn clean_text(s: &str) -> String {
         result = result.replace("  ", " ");
     }
     result
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    const JER_48_44: &str = r#"<div type="book" osisID="Jer"><chapter osisID="Jer.48"><verse osisID="Jer.48.44">
+          <w type="x-ketiv" lemma="d/5211" morph="HTd/Vqrmsa" id="24PtS">ה/ניס</w>
+          <note type="exegesis">WLC has this word divided as <rdg>הניס</rdg>.</note>
+          <note type="variant">
+            <catchWord>הניס</catchWord>
+            <rdg type="x-qere">
+              <w lemma="d/5127" n="1.2.0.0" morph="HTd/Vqrmsa" id="24Rwm">הַ/נָּ֞ס</w>
+            </rdg>
+          </note>
+          <w lemma="m/6440" morph="HR/Ncbpc" id="24Vrx">מִ/פְּנֵ֤י</w>
+        </verse></chapter></div>"#;
+
+    #[test]
+    fn note_with_inline_rdg_keeps_spaces() {
+        let lines = parse_osis_slice(JER_48_44, Some("JER"));
+        assert!(lines.contains(&("f".to_string(), "WLC has this word divided as הניס.".to_string())), "{lines:?}");
+        // Whitespace-only formatting inside the variant note mustn't leak into the catchWord
+        assert!(lines.contains(&("f".to_string(), "הניס".to_string())), "{lines:?}");
+        // Nor create any extra lines
+        assert!(lines.iter().all(|(_, text)| text.trim() == text), "{lines:?}");
+    }
 }

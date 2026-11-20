@@ -24,6 +24,7 @@ from xml.etree.ElementTree import ElementTree
 from BibleOrgSys.Misc.singleton import singleton
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
+from typing import Self
 
 
 LAST_MODIFIED_DATE = '2026-10-06' # by RJH
@@ -67,7 +68,7 @@ class BibleBookOrdersConverter:
         self.__DataDicts, self.__DataLists = {}, {} # Used for import
     # end of __init__
 
-    def loadSystems( self, XMLFolder=None ):
+    def loadSystems( self, XMLFolder=None ) -> Self:
         """
         Load and pre-process the specified book order systems.
         """
@@ -129,7 +130,7 @@ class BibleBookOrdersConverter:
         return self
     # end of loadSystems
 
-    def __validateSystem( self, bookOrderTree, systemName ):
+    def __validateSystem( self, bookOrderTree, systemName ) -> None:
         """ Do a semi-automatic check of the XML file validity. """
         assert bookOrderTree
 
@@ -237,7 +238,7 @@ class BibleBookOrdersConverter:
         return result
     # end of __str__
 
-    def __len__( self ):
+    def __len__( self ) -> int:
         """ Returns the number of systems loaded. """
         return len( self._XMLSystems )
     # end of __len__
@@ -297,7 +298,7 @@ class BibleBookOrdersConverter:
         return self.__DataDicts, self.__DataLists
     # end of importDataToPython
 
-    def pickle( self, filepath=None ):
+    def pickle( self, filepath=None ) -> None:
         """
         Writes the information tables to a .pickle file that can be easily loaded into a Python3 program.
         """
@@ -318,11 +319,11 @@ class BibleBookOrdersConverter:
             pickle.dump( self.__DataLists, pickleFile )
     # end of pickle
 
-    def exportDataToPython( self, filepath=None ):
+    def exportDataToPython( self, filepath=None ) -> None:
         """
         Writes the information tables to a .py file that can be cut and pasted into a Python program.
         """
-        def exportPythonDict( theFile, theDict, dictName, keyComment, fieldsComment ):
+        def exportPythonDict( theFile, theDict, dictName, keyComment, fieldsComment ) -> None:
             """Exports theDict to theFile."""
             theFile.write( f'  "{dictName}": {{\n    # Key is{keyComment}\n    # Fields are:{fieldsComment}\n' )
             for dictKey in theDict.keys():
@@ -362,7 +363,7 @@ class BibleBookOrdersConverter:
             myFile.write( f"# end of {os.path.basename(filepath)}" )
     # end of exportDataToPython
 
-    def exportDataToJSON( self, filepath=None ):
+    def exportDataToJSON( self, filepath=None ) -> None:
         """
         Writes the information tables to a .json file that can be easily loaded into a Java program.
 
@@ -381,11 +382,11 @@ class BibleBookOrdersConverter:
             json.dump( self.__DataDicts, myFile, ensure_ascii=False, indent=2 )
     # end of exportDataToJSON
 
-    def exportDataToC( self, filepath=None ):
+    def exportDataToC( self, filepath=None ) -> None:
         """
         Writes the information tables to a .h file that can be included in c and c++ programs.
         """
-        def writeStructure( hFile, structName, structure ):
+        def writeStructure( hFile, structName, structure ) -> None:
             """ Writes a typedef to the .h file. """
             hFile.write( f"typedef struct{structName}EntryStruct {{\n" )
             for declaration in structure.split(';'):
@@ -394,9 +395,9 @@ class BibleBookOrdersConverter:
             hFile.write( f"}}{structName}Entry;\n\n" )
         # end of writeStructure
 
-        def exportPythonDict( cFile, theDict, dictName, structName, sortedBy, structure ):
+        def exportPythonDict( cFile, theDict, dictName, structName, sortedBy, structure ) -> None:
             """ Exports theDict to the .h and .c files. """
-            def convertEntry( entry ):
+            def convertEntry( entry ) -> str:
                 """ Convert special characters in an entry… """
                 result = ""
                 if isinstance( entry, int ): result += str(entry)

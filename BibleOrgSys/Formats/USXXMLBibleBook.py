@@ -33,6 +33,7 @@ from BibleOrgSys.Bible import Bible, BibleBook
 from BibleOrgSys.Formats.EnhancedUSX import normaliseEnhancedUSX
 import bos_books_codes_py
 import usfm_markers_py
+from BibleOrgSys.Reference.BookCode import BookCode
 
 
 LAST_MODIFIED_DATE = '2026-10-25' # by RJH
@@ -52,7 +53,7 @@ class USXXMLBibleBook( BibleBook ):
     """
     Class to load, validate, and manipulate a single Bible book in USX XML.
     """
-    def __init__( self, containerBibleObject:Bible, BBB:str ) -> None:
+    def __init__( self, containerBibleObject:Bible, BBB:BookCode ) -> None:
         """
         Create the USX Bible book object.
         """
@@ -421,7 +422,7 @@ class USXXMLBibleBook( BibleBook ):
         # end of load.loadNoteField
 
 
-        def loadParagraph( paragraphXML, paragraphlocation ):
+        def loadParagraph( paragraphXML, paragraphlocation ) -> None:
             """
             Load a paragraph from the USX XML.
             In this context, paragraph means heading and intro lines,

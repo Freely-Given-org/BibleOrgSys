@@ -45,6 +45,7 @@ from xml.etree.ElementTree import ElementTree, ParseError
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Bible import Bible, BibleBook
+from BibleOrgSys.Reference.BookCode import BookCode
 
 
 LAST_MODIFIED_DATE = '2026-10-06' # by RJH
@@ -63,7 +64,7 @@ EXTENSION_TO_IGNORE = ( 'ASC', 'BAK', 'BAK2', 'BAK3', 'BAK4', 'BBLX', 'BC', 'CCT
 
 
 
-def USFXXMLBibleFileCheck( sourceFolder, strictCheck:bool=True, autoLoad:bool=False, autoLoadBooks:bool=False ):
+def USFXXMLBibleFileCheck( sourceFolder, strictCheck:bool=True, autoLoad:bool=False, autoLoadBooks:bool=False ) -> 'bool | USFXXMLBible | int | None':
     """
     Given a folder, search for USFX XML Bible files or folders in the folder and in the next level down.
 
@@ -204,7 +205,7 @@ class USFXXMLBible( Bible ):
     Class to load and manipulate USFX Bibles.
 
     """
-    def __init__( self, sourceFolder, givenName=None, encoding='utf-8' ) -> None:
+    def __init__( self, sourceFolder, givenName=None, encoding:str='utf-8' ) -> None:
         """
         Create the internal USFX Bible object.
         """
@@ -274,7 +275,7 @@ class USFXXMLBible( Bible ):
     # end of USFXXMLBible.__init_
 
 
-    def load( self ):
+    def load( self ) -> None:
         """
         Load the XML data file -- we should already know the filepath.
         """
@@ -380,7 +381,7 @@ class USFXXMLBible( Bible ):
     # end of USFXXMLBible.load
 
 
-    def loadBook( self, bookElement ):
+    def loadBook( self, bookElement ) -> None:
         """
         Load the book container from the XML data file.
         """
@@ -575,7 +576,7 @@ class USFXXMLBible( Bible ):
     # end of USFXXMLBible.loadBook
 
 
-    def loadParagraph( self, paragraphElement, paragraphLocation, BBB:str, C ):
+    def loadParagraph( self, paragraphElement, paragraphLocation, BBB:BookCode, C ):
         """
         Load the paragraph (p or q) container from the XML data file.
         """
@@ -720,7 +721,7 @@ class USFXXMLBible( Bible ):
     # end of USFXXMLBible.loadParagraph
 
 
-    def loadWordFormatting( self, element, location, BBB:str, C:str, V ):
+    def loadWordFormatting( self, element, location, BBB:BookCode, C:str, V ) -> None:
         """
         """
         marker, text, tail = element.tag, clean(element.text), clean(element.tail)
@@ -750,7 +751,7 @@ class USFXXMLBible( Bible ):
         self.thisBook.appendToLastLine( f"\\{marker}*{(' '+tail) if tail else ''}" )
 
 
-    def loadCharacterFormatting( self, element, location, BBB:str, C:str, V ):
+    def loadCharacterFormatting( self, element, location, BBB:BookCode, C:str, V ) -> None:
         """
         """
         marker, text, tail = element.tag, clean(element.text), clean(element.tail)
@@ -771,7 +772,7 @@ class USFXXMLBible( Bible ):
     # end of USFXXMLBible.loadCharacterFormatting
 
 
-    def loadFigure( self, element, location ):
+    def loadFigure( self, element, location ) -> None:
         """
         """
         BibleOrgSysGlobals.checkXMLNoText( element, location, 'ff36' )
@@ -793,7 +794,7 @@ class USFXXMLBible( Bible ):
     # end of USFXXMLBible.loadFigure
 
 
-    def loadTable( self, element, location, BBB:str, C:str, V ):
+    def loadTable( self, element, location, BBB:BookCode, C:str, V ) -> None:
         """
         """
         if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
@@ -847,7 +848,7 @@ class USFXXMLBible( Bible ):
     # end of USFXXMLBible.loadTable
 
 
-    def loadFootnote( self, element, location, BBB:str, C:str, V ):
+    def loadFootnote( self, element, location, BBB:BookCode, C:str, V ) -> None:
         """
         Handles footnote fields, including xt field.
         """
@@ -931,7 +932,7 @@ class USFXXMLBible( Bible ):
     # end of USFXXMLBible.loadFootnote
 
 
-    def loadCrossreference( self, element, location ):
+    def loadCrossreference( self, element, location ) -> None:
         """
         Has to handle: <x caller="+"><ref tgt="EXO.30.12">Exodus 30:12</ref></x>
         """

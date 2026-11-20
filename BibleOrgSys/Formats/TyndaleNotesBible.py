@@ -24,6 +24,8 @@ There might be several notes for one verse.
 Some verses might have no notes.
 
 CHANGELOG:
+    2026-11-16 Group items by book before loading (keeping the file order within each book)
+                (Tyndale ThemeNotes.xml has some out-of-order items, which caused earlier notes in that book to be lost)
 """
 import os
 from pathlib import Path
@@ -36,10 +38,10 @@ from BibleOrgSys.Bible import Bible, BibleBook
 import bos_books_codes_py
 
 
-LAST_MODIFIED_DATE = '2026-10-06' # by RJH
+LAST_MODIFIED_DATE = '2026-11-16' # by RJH
 SHORT_PROGRAM_NAME = "TyndaleNotesBible"
 PROGRAM_NAME = "Tyndale Bible Notes handler"
-PROGRAM_VERSION = '0.21'
+PROGRAM_VERSION = '0.22'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -179,7 +181,7 @@ class TyndaleNotesBible( Bible ):
             self.sourceFolder = self.sourceFilepath.parent
             self.sourceFilename = self.sourceFilepath.name
         else:
-            logging.critical( _(f"TyndaleNotesBible: Unable to discover a single filename in {sourceFilepath}") )
+            logging.critical( f"TyndaleNotesBible: Unable to discover a single filename in {sourceFilepath}" )
             self.sourceFilename = self.sourceFilepath = None
     # end of TyndaleNotesBible.__init_
 
@@ -224,7 +226,24 @@ class TyndaleNotesBible( Bible ):
                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: assert False, "We want to stop here"
             assert self.releaseVersion == '1.25'
 
-            for element in self.XMLTree:
+            def itemSortKey( element ) -> int:
+                """
+                Returns the book reference number from the item's first reference (e.g., 'Ps.62.1-12' or 'Psalm.142'),
+                    so that all the items for each book are together
+                    even if the source file isn't, e.g., ThemeNotes.xml has 'TheSovereigntyOfGod' (2Kgs.13.3-5) amongst the Romans notes.
+                Within a book we keep the file order, because section overview notes
+                    (e.g., name='Josh.7.1-12.24' with refs='Josh.10.1-12.24') deliberately come before the verse notes.
+                """
+                refsElement = element.find( 'refs' )
+                if refsElement is None or not refsElement.text: return 0 # Will be caught (with a better message) by the main loop
+                bits = refsElement.text.split('-')[0].split('.')
+                OSISBkCode = bits[0] + ('s' if bits[0].endswith('Thes') else '') # Same adjustment as below
+                BBB = bos_books_codes_py.english_name_to_bos_book_code( OSISBkCode )
+                if not BBB:
+                    logging.critical( f"TyndaleNotesBible: Unable to determine book for {element.get('name')!r} from {refsElement.text!r}" )
+                    return 0
+                return bos_books_codes_py.get_reference_number( BBB )
+            for element in sorted( self.XMLTree, key=itemSortKey ): # sorted() is stable, so items within a book keep the file order
                 location = f"{topLocation}-{element.tag}"
                 if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 3:
                     dPrint( 'Info', DEBUGGING_THIS_MODULE, f"{element} {element.text=}" )

@@ -22,6 +22,8 @@ from BibleOrgSys.Misc.singleton import singleton
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 import bos_books_codes_py
+from BibleOrgSys.Reference.BookCode import BookCode, internBookCodes
+from typing import Self
 
 
 LAST_MODIFIED_DATE = '2026-10-06' # by RJH
@@ -43,7 +45,7 @@ def expandBibleNamesInputs ( systemName, divisionsNamesDict, booknameLeadersDict
     Returns divisions name and book name ordered dictionaries, all UPPER CASE, sorted with longest first.
     """
 
-    def expandAbbrevs( UCString, value, originalDict, tempDict, theAmbigSet ):
+    def expandAbbrevs( UCString, value, originalDict, tempDict, theAmbigSet ) -> None:
         """
         Progressively remove characters off the end of the (UPPER CASE) UCString, plus also remove internal spaces.
             trying to find unambiguous shortcuts which the user could use.
@@ -204,7 +206,7 @@ class BibleBooksNamesSystems:
         self.__DataDicts, self.__ExpandedDicts = None, None # We'll import into this in loadData
     # end of BibleBooksNamesSystems.__init__
 
-    def loadData( self, XMLFolder=None ):
+    def loadData( self, XMLFolder=None ) -> Self:
         """
         Loads the XML data file and imports it to dictionary format (if not done already).
         """
@@ -226,7 +228,7 @@ class BibleBooksNamesSystems:
                     if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
                         vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Loading pickle file {standardPickleFilepath}…" )
                     with open( standardPickleFilepath, 'rb') as pickleFile:
-                        self.__DataDicts = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
+                        self.__DataDicts = internBookCodes( pickle.load( pickleFile ) ) # The protocol version used is detected automatically, so we do not have to specify it
                         # self.__ExpandedDicts = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
                     return self # So this command can be chained after the object creation
                 elif DEBUGGING_THIS_MODULE:
@@ -239,7 +241,7 @@ class BibleBooksNamesSystems:
                     if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
                         vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Loading json file {standardJsonFilepath}…" )
                     with open( standardJsonFilepath, 'rb') as JsonFile:
-                        self.__DataDicts = json.load( JsonFile )
+                        self.__DataDicts = internBookCodes( json.load( JsonFile ) )
                         # self.__ExpandedDicts = json.load( JsonFile )
                     # # NOTE: We have to convert str referenceNumber keys back to ints
                     # self.__DataDict['referenceNumberDict'] = { int(key):value \
@@ -299,7 +301,7 @@ class BibleBooksNamesSystems:
     # end of BibleBooksNamesSystems.__str__
 
 
-    def __len__( self ):
+    def __len__( self ) -> int:
         """
         Returns the number of book names systems loaded.
         """
@@ -307,7 +309,7 @@ class BibleBooksNamesSystems:
     # end of BibleBooksNamesSystems.__len__
 
 
-    def __contains__( self, name ):
+    def __contains__( self, name ) -> bool:
         """
         Returns True/False if the name is in this system.
         """
@@ -315,7 +317,7 @@ class BibleBooksNamesSystems:
     # end of BibleBooksNamesSystems.__contains__
 
 
-    def getAvailableBooksNamesSystemNames( self, languageCode=None ):
+    def getAvailableBooksNamesSystemNames( self, languageCode=None ) -> list:
         """
         Returns a list of available system name strings.
         """
@@ -332,7 +334,7 @@ class BibleBooksNamesSystems:
     # end of BibleBooksNamesSystems.getAvailableBooksNamesSystemNames
 
 
-    def getAvailableLanguageCodes( self ):
+    def getAvailableLanguageCodes( self ) -> set:
         """
         Returns a list of available ISO 639-3 language code strings.
         """
@@ -345,7 +347,7 @@ class BibleBooksNamesSystems:
     # end of BibleBooksNamesSystems.getAvailableLanguageCodes
 
 
-    def getBBBFromText( self, bookNameOrAbbreviation:str ) -> str|None:
+    def getBBBFromText( self, bookNameOrAbbreviation:str ) -> BookCode|None:
         """
         Get the referenceAbbreviation from the given book name or abbreviation.
                 (Automatically converts to upper case before comparing strings.)
@@ -496,7 +498,7 @@ class BibleBooksNamesSystem:
     # end of BibleBooksNamesSystem.getBooksNamesSystemName
 
 
-    def getBookName( self, BBB:str ):
+    def getBookName( self, BBB:BookCode ):
         """
         Get the default book name from the given referenceAbbreviation.
         """
@@ -506,7 +508,7 @@ class BibleBooksNamesSystem:
     # end of BibleBooksNamesSystem.getBookName
 
 
-    def getBookAbbreviation( self, BBB:str ) -> str:
+    def getBookAbbreviation( self, BBB:BookCode ) -> str:
         """
         Get the default book abbreviation from the given referenceAbbreviation.
         """
@@ -515,7 +517,7 @@ class BibleBooksNamesSystem:
     # end of BibleBooksNamesSystem.getBookAbbreviation
 
 
-    def getBBBFromText( self, bookNameOrAbbreviation:str ) -> str|None:
+    def getBBBFromText( self, bookNameOrAbbreviation:str ) -> BookCode|None:
         """
         Get the referenceAbbreviation from the given book name or abbreviation.
                 (Automatically converts to upper case before comparing strings.)

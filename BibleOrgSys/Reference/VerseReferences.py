@@ -62,6 +62,7 @@ import logging
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 import bos_books_codes_py
+from BibleOrgSys.Reference.BookCode import BookCode
 
 
 LAST_MODIFIED_DATE = '2026-10-06' # by RJH
@@ -185,7 +186,7 @@ class SimpleVerseKey():
     A BCVS string to be parsed can also be passed as the first (and only) parameter.
         e.g. 'SA2_12:9b'
     """
-    def __init__( self, BBB:str, C:str=None, V:str=None, SI=None, OSIS=False, ignoreParseErrors=False ) -> None:
+    def __init__( self, BBB:BookCode, C:str=None, V:str=None, SI=None, OSIS:bool=False, ignoreParseErrors:bool=False ) -> None:
         """
         """
         if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
@@ -234,21 +235,21 @@ class SimpleVerseKey():
         if type( other ) is type( self ):
             return self.BBB==other.BBB and self.C==other.C and self.V==other.V and self.S==other.S
         return False
-    def __ne__(self, other): return not self.__eq__(other)
+    def __ne__(self, other) -> bool: return not self.__eq__(other)
 
-    def __repr__(self): return self.__str__()
+    def __repr__(self) -> str: return self.__str__()
     def __str__( self ) -> str: return f"SimpleVerseKey object: {self.getShortText()}"
-    def getShortText( self ):
+    def getShortText( self ) -> str:
         return f"{self.BBB} {self.C}:{self.V}{self.S if self.I is None else ('!'+self.I)}"
         #except AttributeError: return 'Invalid'
-    def getVerseKeyText( self ):
+    def getVerseKeyText( self ) -> str:
         return f"{self.BBB}_{self.C}:{self.V}{'!' if self.S or self.I else ''}{self.S if self.I is None else self.I}"
 
-    def makeHash( self ): # return a short, unambiguous string suitable for use as a key in a dictionary
+    def makeHash( self ) -> str: # return a short, unambiguous string suitable for use as a key in a dictionary
         return f"{self.BBB}_{self.C}:{self.V}!{self.S if self.I is None else self.I}"
-    def __hash__( self ): return hash( self.makeHash() )
+    def __hash__( self ) -> int: return hash( self.makeHash() )
 
-    def __len__( self ): return 4
+    def __len__( self ) -> int: return 4
     def __getitem__( self, keyIndex ):
         if keyIndex==0: return self.BBB
         elif keyIndex==1: return self.C
@@ -271,7 +272,7 @@ class SimpleVerseKey():
     def getCVS( self ): return self.C, self.V, self.S
     def getCVI( self ): return self.C, self.V, self.I
 
-    def getChapterNumberInt( self ):
+    def getChapterNumberInt( self ) -> int | None:
         try: return int( self.C )
         except ValueError:
             logging.warning( "getChapterNumberInt: " + f"Unusual C value: {repr(self.C)}" )
@@ -283,7 +284,7 @@ class SimpleVerseKey():
             return None
     # end of SimpleVerseKey.getChapterNumberInt
 
-    def getVerseNumberInt( self ):
+    def getVerseNumberInt( self ) -> int | None:
         try: return int( self.V )
         except ValueError:
             logging.warning( "getVerseNumberInt: " + f"Unusual V value: {repr(self.V)}" )
@@ -297,7 +298,7 @@ class SimpleVerseKey():
 
     def getOSISBookAbbreviation( self ):
         return bos_books_codes_py.bos_to_osis_book_code( self.BBB )
-    def getOSISReference( self ):
+    def getOSISReference( self ) -> str:
         return f'{self.getOSISBookAbbreviation()}.{self.C}.{self.V}'
 
     def __iter__( self ):
@@ -315,7 +316,7 @@ class SimpleVerseKey():
     # end of SimpleVerseKey.getIncludedVerses
 
 
-    def parseReferenceString( self, referenceString ):
+    def parseReferenceString( self, referenceString ) -> bool:
         """
         Parses a string, expecting something like "SA2_19:5b"
 
@@ -358,7 +359,7 @@ class SimpleVerseKey():
     # end of SimpleVerseKey.parseReferenceString
 
 
-    def parseOSISString( self, referenceString ):
+    def parseOSISString( self, referenceString ) -> bool:
         """
         Parses a string, expecting something like "SA2_19:5b"
 
@@ -404,7 +405,7 @@ class SimpleVersesKey():
     A string to be parsed can also be passed as the first (and only) parameter.
         e.g. "SA2_12:9b"
     """
-    def __init__( self, referenceString, OSIS=False, ignoreParseErrors=False ) -> None:
+    def __init__( self, referenceString, OSIS:bool=False, ignoreParseErrors:bool=False ) -> None:
         """
         """
         if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
@@ -419,14 +420,14 @@ class SimpleVersesKey():
             raise TypeError
     # end of SimpleVersesKey.__init__
 
-    def __eq__( self, other ):
+    def __eq__( self, other ) -> bool:
         if type( other ) is type( self ): return self.__dict__ == other.__dict__
         return False
-    def __ne__(self, other): return not self.__eq__(other)
+    def __ne__(self, other) -> bool: return not self.__eq__(other)
 
-    def __repr__(self): return self.__str__()
+    def __repr__(self) -> str: return self.__str__()
     def __str__( self ) -> str: return f"SimpleVersesKey object: {self.getShortText()}"
-    def getShortText( self ):
+    def getShortText( self ) -> str:
         return ', '.join( [svk.getShortText() for svk in self.verseKeysList] )
         # resultStr = ''
         # for svk in self.verseKeysList:
@@ -468,7 +469,7 @@ class SimpleVersesKey():
     # end of SimpleVersesKey.getIncludedVerses
 
 
-    def parseReferenceString( self, referenceString ):
+    def parseReferenceString( self, referenceString ) -> bool:
         """
         Parses a string, expecting something like "SA2_19:5b"
 
@@ -705,7 +706,7 @@ class SimpleVersesKey():
     # end of SimpleVersesKey.parseReferenceString
 
 
-    def parseOSISString( self, referenceString ):
+    def parseOSISString( self, referenceString ) -> bool:
         """
         Parses a string, expecting something like "SA2_19:5b"
 
@@ -799,7 +800,7 @@ class VerseRangeKey():
             "SA2_12:22–13:2" (with en-dash)
             "GEN 18"
     """
-    def __init__( self, referenceString, OSIS=False, ignoreParseErrors=False ) -> None:
+    def __init__( self, referenceString, OSIS:bool=False, ignoreParseErrors:bool=False ) -> None:
         """
         """
         if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
@@ -814,14 +815,14 @@ class VerseRangeKey():
             raise TypeError
     # end of VerseRangeKey.__init__
 
-    def __eq__( self, other ):
+    def __eq__( self, other ) -> bool:
         if type( other ) is type( self ): return self.__dict__ == other.__dict__
         return False
-    def __ne__(self, other): return not self.__eq__(other)
+    def __ne__(self, other) -> bool: return not self.__eq__(other)
 
-    def __repr__(self): return self.__str__()
+    def __repr__(self) -> str: return self.__str__()
     def __str__( self ) -> str: return f"VerseRangeKey object: {self.getShortText()}"
-    def getShortText( self ):
+    def getShortText( self ) -> str:
         return f'{self.rangeStart.getShortText()}-{self.rangeEnd.getShortText()}'
         #if self.keyType=='V-V': return f"{self.BBB} {self.C}:{self.V1}(?:!{self.S1})?-{self.V2}(?:!{self.S2})?"
         #if self.keyType=='CV-CV': return f"{self.BBB} {self.C}:{self.V1}(?:!{self.S1})?-{self.C2}:{self.V2}(?:!{self.S2})?"
@@ -829,7 +830,7 @@ class VerseRangeKey():
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, self.keyType ); assert False, "We want to stop here"
 
 
-    def getVerseKeyText( self ):
+    def getVerseKeyText( self ) -> str:
         resultStr = self.rangeStart.getVerseKeyText()
         BBB, C, V, S = self.rangeEnd.getBCVS()
         if BBB == self.rangeStart.getBBB():
@@ -855,7 +856,7 @@ class VerseRangeKey():
     # end of SimpleVerseKey.getIncludedVerses
 
 
-    def parseReferenceString( self, referenceString ):
+    def parseReferenceString( self, referenceString ) -> bool:
         """
         Parses a string, expecting something like "SA2_19:5b"
 
@@ -938,7 +939,7 @@ class VerseRangeKey():
     # end of VerseRangeKey.parseReferenceString
 
 
-    def parseOSISString( self, referenceString ):
+    def parseOSISString( self, referenceString ) -> bool:
         """
         Parses a string, expecting something like "SA2_19:5b"
 
@@ -1034,7 +1035,7 @@ class FlexibleVersesKey():
             "SA2_12:22–13:2" (with en-dash)
             "GEN 18"
     """
-    def __init__( self, referenceString, OSIS=False ) -> None:
+    def __init__( self, referenceString, OSIS:bool=False ) -> None:
         """
         """
         if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
@@ -1048,12 +1049,12 @@ class FlexibleVersesKey():
             raise TypeError
     # end of FlexibleVersesKey.__init__
 
-    def __eq__( self, other ):
+    def __eq__( self, other ) -> bool:
         if type( other ) is type( self ): return self.__dict__ == other.__dict__
         return False
-    def __ne__(self, other): return not self.__eq__(other)
+    def __ne__(self, other) -> bool: return not self.__eq__(other)
 
-    def __repr__(self): return self.__str__()
+    def __repr__(self) -> str: return self.__str__()
     def __str__( self ) -> str: return f"FlexibleVersesKey object: {self.getShortText()}"
     def getShortText( self ):
         resultText = ''
@@ -1089,7 +1090,7 @@ class FlexibleVersesKey():
     # end of FlexibleVersesKey.__iter__
 
 
-    def getIncludedVerses( self ):
+    def getIncludedVerses( self ) -> list:
         """
         """
         resultList = []
@@ -1099,7 +1100,7 @@ class FlexibleVersesKey():
     # end of FlexibleVersesKey.getIncludedVerses
 
 
-    def parseReferenceString( self, referenceString ):
+    def parseReferenceString( self, referenceString ) -> bool:
         """
         Parses a string, expecting something like "SA2_19:5b"
 
@@ -1611,7 +1612,7 @@ class FlexibleVersesKey():
     # end of FlexibleVersesKey.parseReferenceString
 
 
-    def parseOSISString( self, referenceString ):
+    def parseOSISString( self, referenceString ) -> bool:
         """
         Parses a string, expecting something like "SA2_19:5b"
 

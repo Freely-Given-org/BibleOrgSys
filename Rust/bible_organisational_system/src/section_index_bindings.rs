@@ -360,6 +360,7 @@ impl PyInternalBibleBookSectionIndex {
         let bytes = state.extract::<&[u8]>()?;
         self.inner = rkyv::from_bytes::<InternalBibleBookSectionIndex, rkyv::rancor::Error>(bytes)
             .map_err(|e| PyRuntimeError::new_err(e.to_string()))?;
+        self.inner.share_contexts();
         Ok(())
     }
 }

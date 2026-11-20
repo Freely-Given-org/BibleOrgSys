@@ -21,6 +21,7 @@ import os
 from BibleOrgSys.Misc.singleton import singleton
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
+from typing import Self
 
 
 LAST_MODIFIED_DATE = '2026-10-06' # by RJH
@@ -63,7 +64,7 @@ class ISO_639_3_Languages:
         return result
     # end of ISO_639_3_Languages.__str__
 
-    def loadData( self, XMLFileOrFilepath=None ):
+    def loadData( self, XMLFileOrFilepath=None ) -> Self:
         """ Loads the pickle or XML data file and imports it to dictionary format (if not done already). """
         if not self.__IDDict and not self.__NameDict: # Don't do this unnecessarily
             if XMLFileOrFilepath is None:
@@ -93,12 +94,12 @@ class ISO_639_3_Languages:
         return self # So this command can be chained after the object creation
     # end of ISO_639_3_Languages.loadData
 
-    def __len__( self ):
+    def __len__( self ) -> int:
         """ Returns the number of languages loaded. """
         assert len(self.__IDDict) >= len(self.__NameDict)
         return len(self.__IDDict)
 
-    def isValidLanguageCode( self, ccc ):
+    def isValidLanguageCode( self, ccc ) -> bool:
         """ Returns True or False. """
         return ccc in self.__IDDict
 
@@ -136,7 +137,7 @@ class ISO_639_3_Languages:
         UCName = name.upper() # Convert to UPPERCASE for searching
         if UCName in self.__NameDict: return self.__NameDict[UCName]
 
-    def getNameMatches( self, namePortion ):
+    def getNameMatches( self, namePortion ) -> list:
         """ Return a list of matching names for the given part of a name.
             This is slow because it is a brute-force search.
         """

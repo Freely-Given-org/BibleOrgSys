@@ -87,14 +87,14 @@ class MLWriter:
         self._rust_inner.halt_on_errors = self.haltOnErrors
 
     @property
-    def spaceBeforeSelfcloseTag(self):
+    def spaceBeforeSelfcloseTag(self) -> bool:
         return False # Rust impl manages this now, but we can set it if needed
     @spaceBeforeSelfcloseTag.setter
-    def spaceBeforeSelfcloseTag(self, value):
+    def spaceBeforeSelfcloseTag(self, value) -> None:
         self._rust_inner.space_before_selfclose_tag = value
 
     @property
-    def linesWritten(self):
+    def linesWritten(self) -> int:
         return self._rust_inner.lines_written
 
     def __str__( self ) -> str:

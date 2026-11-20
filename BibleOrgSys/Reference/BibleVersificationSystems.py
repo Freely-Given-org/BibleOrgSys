@@ -75,9 +75,11 @@ import bos_books_codes_py
 from BibleOrgSys.Reference.BibleVersificationMappings import (
     get_default_mapping_engine, UnknownVersificationSystemError,
 )
+from BibleOrgSys.Reference.BookCode import BookCode, internBookCodes
+from typing import Self
 
 
-LAST_MODIFIED_DATE = '2026-10-12'
+LAST_MODIFIED_DATE = '2026-11-04' # by Claude
 SHORT_PROGRAM_NAME = "BibleVersificationSystems"
 PROGRAM_NAME = "Bible Versification Systems handler"
 PROGRAM_VERSION = '0.70'
@@ -105,7 +107,7 @@ class BibleVersificationSystems:
     # end of BibleVersificationSystems.__init__
 
 
-    def loadData( self, XMLFolder=None ):
+    def loadData( self, XMLFolder=None ) -> Self:
         """
         Loads the XML data file and imports it to dictionary format (if not done already).
         """
@@ -142,7 +144,7 @@ class BibleVersificationSystems:
                         if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
                             vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Loading pickle file {standardPickleFilepath}…" )
                         with open( standardPickleFilepath, 'rb') as pickleFile:
-                            self.__DataDict = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
+                            self.__DataDict = internBookCodes( pickle.load( pickleFile ) ) # The protocol version used is detected automatically, so we do not have to specify it
                         self.__addMappingSystems()
                         return self # So this command can be chained after the object creation
                     elif DEBUGGING_THIS_MODULE:
@@ -155,7 +157,7 @@ class BibleVersificationSystems:
                         if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 3:
                             vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Loading json file {standardJsonFilepath}…" )
                         with open( standardJsonFilepath, 'rb') as JsonFile:
-                            self.__DataDict = json.load( JsonFile )
+                            self.__DataDict = internBookCodes( json.load( JsonFile ) )
                         self.__addMappingSystems()
                         # # NOTE: We have to convert str referenceNumber keys back to ints
                         # self.__DataDict['referenceNumberDict'] = { int(key):value \
@@ -248,19 +250,19 @@ class BibleVersificationSystems:
     # end of BibleVersificationSystems.__len__
 
 
-    def __contains__( self, systemName ):
+    def __contains__( self, systemName ) -> bool:
         """ Returns True/False if the systemName is in this system. """
         return systemName in self.__DataDict
     # end of BibleVersificationSystems.__contains__
 
 
-    def getAvailableVersificationSystemNames( self ):
+    def getAvailableVersificationSystemNames( self ) -> list:
         """ Returns a list of available system name strings. """
         return [systemName for systemName in self.__DataDict]
     # end of BibleVersificationSystems.getAvailableVersificationSystemNames
 
 
-    def isValidVersificationSystemName( self, systemName ):
+    def isValidVersificationSystemName( self, systemName ) -> bool:
         """ Returns True or False. """
         return systemName in self.__DataDict
     # end of BibleVersificationSystems.isValidVersificationSystemName
@@ -276,14 +278,14 @@ class BibleVersificationSystems:
     # end of BibleVersificationSystems.getVersificationSystem
 
 
-    def __addMappingSystems(self):
+    def __addMappingSystems(self) -> None:
         """Keep historical count systems and exact upstream names independently available."""
         engine = get_default_mapping_engine()
         for name in engine.get_system_names():
             self.__DataDict[name] = engine.get_legacy_tables(name)
 
 
-    def compareVersificationSystems( self, system1Name, system2Name=None ):
+    def compareVersificationSystems( self, system1Name, system2Name=None ) -> None:
         """ Compares a given versification system against one, some, or all versification systems.
             system2Name can be a string or a list of strings.
         Prints the output of the comparison(s).
@@ -417,7 +419,7 @@ class BibleVersificationSystems:
     # end of BibleVersificationSystems.compareVersificationSystems
 
 
-    def checkVersificationSystem( self, thisSystemName, versificationSchemeToCheck, extraVerseInfoToCheck=None ):
+    def checkVersificationSystem( self, thisSystemName, versificationSchemeToCheck, extraVerseInfoToCheck=None ) -> int:
         """
         Check the given versification scheme against all the loaded systems.
         Create a new versification file if it doesn't match any.
@@ -453,12 +455,12 @@ class BibleVersificationSystems:
                         if not isinstance(numVersesToCheck,str): raise Exception( "Verse programming error" )
                         if chapterToCheck in CVData[BBB]: # That chapter number is in our scheme
                             if CVData[BBB][chapterToCheck] != numVersesToCheck:
-                                theseErrors += ("\n" if theseErrors else "") + "    " + f"Doesn't match {numVersesToCheck!r} system at {versificationSystemCode} {BBB} verse {chapterToCheck}"
+                                theseErrors += ("\n" if theseErrors else "") + "    " + f"Doesn't match {versificationSystemCode!r} system at {BBB} chapter {chapterToCheck} ({numVersesToCheck} verses vs {CVData[BBB][chapterToCheck]})"
                                 if bookMismatchCount==0 and chapterMismatchCount==0 and verseMismatchCount==0:
                                     rememberedBBB, rememberedChapter, rememberedVerses1, rememberedVerses2 = BBB, chapterToCheck, CVData[BBB][chapterToCheck], numVersesToCheck
                                 verseMismatchCount += 1
                         else: # Our scheme doesn't have that chapter number
-                            theseErrors += ("\n" if theseErrors else "") + "    " + f"Doesn't match {numVersesToCheck!r} system at {versificationSystemCode} chapter {BBB} ({chapterToCheck} verses)"
+                            theseErrors += ("\n" if theseErrors else "") + "    " + f"Doesn't match {versificationSystemCode!r} system: no {BBB} chapter {chapterToCheck} ({numVersesToCheck} verses)"
                             chapterMismatchCount += 1
                 else:
                     theseErrors += ("\n" if theseErrors else "") + "    " + f"Can't find {BBB} bookcode in {versificationSystemCode}"
@@ -537,24 +539,24 @@ class BibleVersificationSystems:
 
             if bookMismatchCount or chapterMismatchCount or verseMismatchCount or omittedVerseMismatchCount or combinedVerseMismatchCount or reorderedVerseMismatchCount:
                 if omittedVersesToCheck:
-                    thisError = "    " + f"Doesn't match {omittedVerseMismatchCount!r} system ({versificationSystemCode} book mismatches, {bookMismatchCount} chapter mismatches, {chapterMismatchCount} verse mismatches, {verseMismatchCount} omitted-verse mismatches)"
+                    thisError = "    " + f"Doesn't match {versificationSystemCode!r} system ({bookMismatchCount} book mismatches, {chapterMismatchCount} chapter mismatches, {verseMismatchCount} verse mismatches, {omittedVerseMismatchCount} omitted-verse mismatches)"
                     if omittedVerseMismatchCount == 1:
                         thisError += "\n      " + f"Omitted verse mismatch was {rememberedOmission[0]} {rememberedOmission[1]}:{rememberedOmission[2]} omitted in {rememberedOmission[3]} but present in {rememberedOmission[4]}"
                     elif BibleOrgSysGlobals.verbosityLevel>2 and bookMismatchCount==0 and chapterMismatchCount==0 and omittedVerseMismatchCount>0:
                         thisError += "\n      " + f"First omitted verse mismatch was {rememberedOmission[0]} {rememberedOmission[1]}:{rememberedOmission[2]} omitted in {rememberedOmission[3]} but present in {rememberedOmission[4]}"
                 elif combinedVersesToCheck: # only display one of these systems
-                    thisError = "    " + f"Doesn't match {omittedVerseMismatchCount!r} system ({versificationSystemCode} book mismatches, {bookMismatchCount} chapter mismatches, {chapterMismatchCount} verse mismatches, {verseMismatchCount} combined-verse mismatches)"
+                    thisError = "    " + f"Doesn't match {versificationSystemCode!r} system ({bookMismatchCount} book mismatches, {chapterMismatchCount} chapter mismatches, {verseMismatchCount} verse mismatches, {combinedVerseMismatchCount} combined-verse mismatches)"
                     if combinedVerseMismatchCount == 1:
                         thisError += "\n      " + f"Combined verse mismatch was {rememberedCombination[0]} {rememberedCombination[1]}:{rememberedCombination[2]} between {rememberedCombination[3]} and {rememberedCombination[4]}"
                     elif BibleOrgSysGlobals.verbosityLevel>2 and bookMismatchCount==0 and chapterMismatchCount==0 and combinedVerseMismatchCount>0:
-                        thisError += "\n      " + f"First combined verse mismatch was {rememberedCombination[0]} {rememberedCombination[1]}:{rememberedCombination[2]} omitted in {rememberedCombination[3]} but present in {rememberedCombination[4]}"
+                        thisError += "\n      " + f"First combined verse mismatch was {rememberedCombination[0]} {rememberedCombination[1]}:{rememberedCombination[2]} between {rememberedCombination[3]} and {rememberedCombination[4]}"
                 elif reorderedVersesToCheck:
-                    thisError = "    " + f"Doesn't match {omittedVerseMismatchCount!r} system ({versificationSystemCode} book mismatches, {bookMismatchCount} chapter mismatches, {chapterMismatchCount} verse mismatches, {verseMismatchCount} reordered-verse mismatches)"
+                    thisError = "    " + f"Doesn't match {versificationSystemCode!r} system ({bookMismatchCount} book mismatches, {chapterMismatchCount} chapter mismatches, {verseMismatchCount} verse mismatches, {reorderedVerseMismatchCount} reordered-verse mismatches)"
                     if reorderedVerseMismatchCount == 1:
                         thisError += "\n      " + f"Reordered verse mismatch was {rememberedReordering[0]} {rememberedReordering[1]}:{rememberedReordering[2]} between {rememberedReordering[3]} and {rememberedReordering[4]}"
-                    elif BibleOrgSysGlobals.verbosityLevel>2 and bookMismatchCount==0 and chapterMismatchCount==0 and reorderedVerseMismatchCount>0: thisError += "\n      " + f"First reordered verse mismatch was {rememberedReordering[0]} {rememberedReordering[1]}:{rememberedReordering[2]} omitted in {rememberedReordering[3]} but present in {rememberedReordering[4]}"
+                    elif BibleOrgSysGlobals.verbosityLevel>2 and bookMismatchCount==0 and chapterMismatchCount==0 and reorderedVerseMismatchCount>0: thisError += "\n      " + f"First reordered verse mismatch was {rememberedReordering[0]} {rememberedReordering[1]}:{rememberedReordering[2]} between {rememberedReordering[3]} and {rememberedReordering[4]}"
                 else:
-                    thisError = "    " + f"Doesn't match {verseMismatchCount!r} system ({versificationSystemCode} book mismatches, {bookMismatchCount} chapter mismatches, {chapterMismatchCount} verse mismatches)"
+                    thisError = "    " + f"Doesn't match {versificationSystemCode!r} system ({bookMismatchCount} book mismatches, {chapterMismatchCount} chapter mismatches, {verseMismatchCount} verse mismatches)"
                 if bookMismatchCount==0 and chapterMismatchCount==0 and verseMismatchCount==1:
                     thisError += "\n      " + f"{thisSystemName} {rememberedBBB} chapter {rememberedChapter} had {rememberedVerses2} verses but {versificationSystemCode} had {rememberedVerses1}"
                 theseErrors += ("\n" if theseErrors else "") + thisError
@@ -698,7 +700,7 @@ class BibleVersificationSystem:
     # end of BibleVersificationSystem.__len__
 
 
-    def __contains__( self, BBB:str ):
+    def __contains__( self, BBB:BookCode ) -> bool:
         """
         Returns True/False if the book is in this system.
         """
@@ -717,7 +719,7 @@ class BibleVersificationSystem:
     # end of BibleVersificationSystem.__iter__
 
 
-    def numAvailableBooks( self ):
+    def numAvailableBooks( self ) -> int:
         """
         Returns the number of available books in the versification system.
 
@@ -735,7 +737,7 @@ class BibleVersificationSystem:
     # end of BibleVersificationSystem.getVersificationSystemName
 
 
-    def getNumChapters( self, BBB:str ):
+    def getNumChapters( self, BBB:BookCode ) -> int | None:
         """
         Returns the number of chapters (int) in the given book.
         Returns None if we don't have any chapter information for this book.
@@ -748,7 +750,7 @@ class BibleVersificationSystem:
     # end of BibleVersificationSystem.getNumChapters
 
 
-    def isSingleChapterBook( self, BBB:str ):
+    def isSingleChapterBook( self, BBB:BookCode ):
         """
         Returns True/False to indicate if this book only contains a single chapter.
         Returns None if we don't have any chapter information for this book.
@@ -761,7 +763,7 @@ class BibleVersificationSystem:
     # end of BibleVersificationSystem.isSingleChapterBook
 
 
-    def getNumVerses( self, BBB:str, C:str ) -> int:
+    def getNumVerses( self, BBB:BookCode, C:str ) -> int:
         """
         C is normally a string.
 
@@ -781,7 +783,7 @@ class BibleVersificationSystem:
     # end of BibleVersificationSystem.getNumVerses
 
 
-    def getNumVersesList( self, BBB:str ) -> list[int]:
+    def getNumVersesList( self, BBB:BookCode ) -> list[int]:
         """
         Returns a list containing an integer for each chapter indicating the number of verses.
 
@@ -795,7 +797,7 @@ class BibleVersificationSystem:
     # end of BibleVersificationSystem.getNumVersesList
 
 
-    def getTotalNumVerses( self, BBB:str ) -> int:
+    def getTotalNumVerses( self, BBB:BookCode ) -> int:
         """
         Returns an integer indicating the total number of verses in the book.
         """
@@ -807,7 +809,7 @@ class BibleVersificationSystem:
     # end of BibleVersificationSystem.getTotalNumVerses
 
 
-    def getOmittedVerseList( self, BBB:str, fullRefs=False ):
+    def getOmittedVerseList( self, BBB:BookCode, fullRefs:bool=False ):
         """ Returns a list of (C,V) tuples noting omitted verses in the given book.
 
         If fullRefs are requested, the list consists of (BBB,C,V) tuples instead. """
@@ -819,7 +821,7 @@ class BibleVersificationSystem:
     # end of BibleVersificationSystem.getOmittedVerseList
 
 
-    def isOmittedVerse( self, referenceTuple ):
+    def isOmittedVerse( self, referenceTuple ) -> bool:
         """ Returns True/False indicating if the given reference is omitted in this system. """
         BBB, C, V, S = referenceTuple
         if isinstance(C, int): # Just double-check the parameter
@@ -844,7 +846,7 @@ class BibleVersificationSystem:
     # end of BibleVersificationSystem.getAuxiliaryVerseList
 
 
-    def isValidBCVRef( self, referenceTuple, referenceString=None, extended=False ):
+    def isValidBCVRef( self, referenceTuple, referenceString=None, extended:bool=False ) -> bool:
         """
         Returns True/False indicating if the given reference is valid in this system.
         Extended flag allows chapter and verse numbers of zero
@@ -878,7 +880,7 @@ class BibleVersificationSystem:
     # end of BibleVersificationSystem.isValidBCVRef
 
 
-    def expandCVRange( self, startRef, endRef, referenceString=None, bookOrderSystem=None ):
+    def expandCVRange( self, startRef, endRef, referenceString=None, bookOrderSystem=None ) -> list[tuple] | None:
         """ Returns a list containing all valid references (inclusive) between the given values. """
         if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
             fnPrint( DEBUGGING_THIS_MODULE, "BibleVersificationSystem.expandCVRange:", startRef, endRef, referenceString, bookOrderSystem )
@@ -983,7 +985,7 @@ class BibleVersificationSystem:
     # end of BibleVersificationSystem.expandCVRange
 
 
-    def convertToReferenceVersification( self, BBB:str, C:str, V:str, S=None, *, detailed=False ):
+    def convertToReferenceVersification( self, BBB:BookCode, C:str, V:str, S=None, *, detailed:bool=False ):
         """
         Convert the given reference (in this versification system)
             to the reference versification.
@@ -997,7 +999,7 @@ class BibleVersificationSystem:
     # end of BibleVersificationSystem.convertToReferenceVersification
 
 
-    def convertFromReferenceVersification( self, refBBB, refC, refV, refS=None, *, detailed=False ):
+    def convertFromReferenceVersification( self, refBBB:BookCode, refC, refV, refS=None, *, detailed:bool=False ):
         """
         Convert the given reference in the reference versification system
             to this versification.
@@ -1011,7 +1013,7 @@ class BibleVersificationSystem:
     # end of BibleVersificationSystem.convertfromReferenceVersification
 
 
-    def convertToVersification(self, targetSystem, BBB, C, V, S=None, *, detailed=False):
+    def convertToVersification(self, targetSystem, BBB:BookCode, C, V, S=None, *, detailed:bool=False):
         """Convert via BOSReference; targetSystem is a system name or system object."""
         result = self.convertReferencesToVersification(targetSystem, [(BBB, C, V, S)])
         return result if detailed else result.require_single()

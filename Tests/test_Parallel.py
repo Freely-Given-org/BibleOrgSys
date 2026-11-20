@@ -13,7 +13,7 @@ from BibleOrgSys.Misc.Parallel import ParallelTaskError, run_parallel
 
 
 class UnpicklableError(Exception):
-    def __init__(self, detail):
+    def __init__(self, detail) -> None:
         self.detail = detail
         super().__init__(detail['message'])
 
@@ -45,12 +45,12 @@ def task(argument):
     return value
 
 
-def mapping_error(_):
+def mapping_error(_) -> None:
     from BibleOrgSys.Reference.BibleVersificationMappings import MappingResult, MappingStatus, PartialMappingError
     raise PartialMappingError(MappingResult('eng','org',(('ACT','19','41',None),),MappingStatus.PARTIAL))
 
 
-def scenario(name):
+def scenario(name) -> None:
     context = multiprocessing.get_context('fork')
     started = time.monotonic()
     if name == 'order':
@@ -103,7 +103,7 @@ def scenario(name):
 
 @unittest.skipUnless('fork' in multiprocessing.get_all_start_methods(), 'fork process tests')
 class ParallelTests(unittest.TestCase):
-    def run_scenario(self, name):
+    def run_scenario(self, name) -> None:
         process = subprocess.Popen([sys.executable,str(Path(__file__).resolve()),'--scenario',name],
             stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True,start_new_session=True)
         try:
@@ -114,17 +114,17 @@ class ParallelTests(unittest.TestCase):
             self.fail(f'{name} hung beyond the outer deadline:\n{out}\n{err}')
         self.assertEqual(process.returncode,0,f'{name}:\n{out}\n{err}')
 
-    def test_success_results_keep_input_order(self): self.run_scenario('order')
-    def test_fresh_workers_do_not_share_task_accumulators(self): self.run_scenario('fresh')
-    def test_spawn_context_also_works(self): self.run_scenario('spawn')
-    def test_fast_error_does_not_wait_for_slow_job(self): self.run_scenario('fail')
-    def test_abrupt_worker_death_does_not_lose_a_result(self): self.run_scenario('death')
-    def test_exit_zero_without_result_is_still_failure(self): self.run_scenario('zero_exit')
-    def test_system_exit_is_reported(self): self.run_scenario('system_exit')
-    def test_keyboard_interrupt_in_worker_is_reported(self): self.run_scenario('interrupt')
-    def test_unpicklable_exception_preserves_traceback(self): self.run_scenario('custom_error')
-    def test_unpicklable_result_is_reported(self): self.run_scenario('unpicklable_result')
-    def test_bos_exception_survives_existing_pool_transport(self): self.run_scenario('mapping_pickle')
+    def test_success_results_keep_input_order(self) -> None: self.run_scenario('order')
+    def test_fresh_workers_do_not_share_task_accumulators(self) -> None: self.run_scenario('fresh')
+    def test_spawn_context_also_works(self) -> None: self.run_scenario('spawn')
+    def test_fast_error_does_not_wait_for_slow_job(self) -> None: self.run_scenario('fail')
+    def test_abrupt_worker_death_does_not_lose_a_result(self) -> None: self.run_scenario('death')
+    def test_exit_zero_without_result_is_still_failure(self) -> None: self.run_scenario('zero_exit')
+    def test_system_exit_is_reported(self) -> None: self.run_scenario('system_exit')
+    def test_keyboard_interrupt_in_worker_is_reported(self) -> None: self.run_scenario('interrupt')
+    def test_unpicklable_exception_preserves_traceback(self) -> None: self.run_scenario('custom_error')
+    def test_unpicklable_result_is_reported(self) -> None: self.run_scenario('unpicklable_result')
+    def test_bos_exception_survives_existing_pool_transport(self) -> None: self.run_scenario('mapping_pickle')
 
 
 if __name__ == '__main__':

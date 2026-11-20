@@ -30,6 +30,7 @@ from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 #from BibleOrgSys.Misc.singleton import singleton
 from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
 from bible_organisational_system import InternalBibleEntryList, InternalBibleEntry
+from BibleOrgSys.Reference.BookCode import BookCode
 
 
 LAST_MODIFIED_DATE = '2026-10-06' # by RJH
@@ -132,7 +133,7 @@ def replaceFixedPairs( replacementList, verseLine ):
 
 
 
-def filterOSISVerseLine( osisVerseString, moduleName, BBB:str, C:str, V ):
+def filterOSISVerseLine( osisVerseString, moduleName, BBB:BookCode, C:str, V ):
     """
     Given a verse entry string made up of OSIS segments,
         convert it into our internal format
@@ -155,7 +156,7 @@ def filterOSISVerseLine( osisVerseString, moduleName, BBB:str, C:str, V ):
     haveFootnoteFlag = False
 
 
-    def handleOSISWordAttributes( attributeString ):
+    def handleOSISWordAttributes( attributeString ) -> str:
         """
         Handle OSIS XML attributes from the <w …> field.
 
@@ -814,7 +815,7 @@ def filterOSISVerseLine( osisVerseString, moduleName, BBB:str, C:str, V ):
 # end of filterOSISVerseLine
 
 
-def importOSISVerseLine( osisVerseString, thisBook, moduleName, BBB:str, C:str, V ):
+def importOSISVerseLine( osisVerseString, thisBook, moduleName, BBB:BookCode, C:str, V ) -> None:
     """
     Given a verse entry string made up of OSIS segments,
         convert it into our internal format
@@ -844,7 +845,7 @@ def importOSISVerseLine( osisVerseString, thisBook, moduleName, BBB:str, C:str, 
 
 
 
-def filterGBFVerseLine( gbfVerseString, moduleName, BBB:str, C:str, V ):
+def filterGBFVerseLine( gbfVerseString, moduleName, BBB:BookCode, C:str, V ):
     """
     Given a verse entry string made up of GBF (General Bible Format) segments,
         convert it into our internal format.
@@ -990,7 +991,7 @@ def filterGBFVerseLine( gbfVerseString, moduleName, BBB:str, C:str, V ):
     return verseLine
 # end of filterGBFVerseLine
 
-def importGBFVerseLine( gbfVerseString, thisBook, moduleName, BBB:str, C:str, V ):
+def importGBFVerseLine( gbfVerseString, thisBook, moduleName, BBB:BookCode, C:str, V ) -> None:
     """
     Given a verse entry string made up of GBF (General Bible Format) segments,
         convert it into our internal format
@@ -1015,7 +1016,7 @@ def importGBFVerseLine( gbfVerseString, thisBook, moduleName, BBB:str, C:str, V 
 
 
 
-def filterTHMLVerseLine( thmlVerseString, moduleName, BBB:str, C:str, V ):
+def filterTHMLVerseLine( thmlVerseString, moduleName, BBB:BookCode, C:str, V ):
     """
     Given a verse entry string made up of THML segments,
         convert it into our internal format.
@@ -1106,7 +1107,7 @@ def filterTHMLVerseLine( thmlVerseString, moduleName, BBB:str, C:str, V ):
     return verseLine
 # end of filterTHMLVerseLine
 
-def importTHMLVerseLine( thmlVerseString, thisBookObject, moduleName, BBB:str, C:str, V ):
+def importTHMLVerseLine( thmlVerseString, thisBookObject, moduleName, BBB:BookCode, C:str, V ) -> None:
     """
     Given a verse entry string made up of THML segments,
         convert it into our internal format
@@ -1210,7 +1211,7 @@ class SwordInterface():
     # end of SwordInterface.getAvailableModuleCodes
 
 
-    def getAvailableModuleCodeDuples( self, onlyModuleTypes=None ):
+    def getAvailableModuleCodeDuples( self, onlyModuleTypes=None ) -> list[tuple] | None:
         """
         Module type is a list of strings for the type(s) of modules to include.
 
@@ -1272,7 +1273,7 @@ class SwordInterface():
     # end of SwordInterface.getModule
 
 
-    def loadBook( self, BBB:str, BibleObject, moduleAbbreviation:str='KJV' ) -> None:
+    def loadBook( self, BBB:BookCode, BibleObject, moduleAbbreviation:str='KJV' ) -> None:
         """
         Load the given book from a Sword Module into the given BibleObject.
         """
@@ -1397,7 +1398,7 @@ class SwordInterface():
     # end of SwordInterface.loadBook
 
 
-    def loadBooks( self, BibleObject, moduleAbbreviation:str='KJV' ):
+    def loadBooks( self, BibleObject, moduleAbbreviation:str='KJV' ) -> None:
         """
         Load all the books from a Sword Module into the given BibleObject.
         """
@@ -1527,7 +1528,7 @@ class SwordInterface():
     # end of SwordInterface.loadBooks
 
 
-    def makeKey( self, BBB:str, C:str, V ):
+    def makeKey( self, BBB:BookCode, C:str, V ):
         #if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE:
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"SwordInterface.makeKey( {BBB} {C}:{V} )" )
 
@@ -1613,7 +1614,7 @@ class SwordInterface():
     # end of SwordInterface.getContextVerseData
 
 
-    def getVerseDataList( self, module, key ):
+    def getVerseDataList( self, module, key ) -> list[tuple] | InternalBibleEntryList | None:
         """
         Overrides the one in InternalBible?
             No, it has different parameters (two instead of one).
@@ -1710,7 +1711,7 @@ class SwordInterface():
 # end of class SwordInterface
 
 
-def getBCV( BCV, moduleAbbreviation='KJV' ): # Very slow -- for testing only
+def getBCV( BCV, moduleAbbreviation:str='KJV' ): # Very slow -- for testing only
     """
     """
     if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE:
@@ -1738,7 +1739,7 @@ def briefDemo() -> None:
             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Sword Version string", Sword.SWORD_VERSION_STR )
         library = Sword.SWMgr()
 
-    def Find( attribute ):
+    def Find( attribute ) -> None:
         """
         Search for methods and attributes
         """
@@ -1911,7 +1912,7 @@ def briefDemo() -> None:
         module = library.getModule( 'Westminster' )
         if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nmodule {module.getName()} ({module.getType()}) {module.getDescription()!r}" )
-        def getGenBookTOC( tk, parent ):
+        def getGenBookTOC( tk, parent ) -> None:
             if tk is None: # obtain one from the module
                 tk = Sword.TreeKey_castTo( module.getKey() ) # Only works for gen books
             if tk and tk.firstChild():
@@ -2064,7 +2065,7 @@ def fullDemo() -> None:
         # 'setCipherKey', 'setGlobalOption', 'sysConfig', 'this']
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nlibrary getHomeDir", library.getHomeDir().getRawData() ) # Fails
 
-    def Find( attribute ):
+    def Find( attribute ) -> None:
         """
         Search for methods and attributes
         """
@@ -2240,7 +2241,7 @@ def fullDemo() -> None:
         module = library.getModule( 'Westminster' )
         if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 1:
             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nmodule {module.getName()} ({module.getType()}) {module.getDescription()!r}" )
-        def getGenBookTOC( tk, parent ):
+        def getGenBookTOC( tk, parent ) -> None:
             if tk is None: # obtain one from the module
                 tk = Sword.TreeKey_castTo( module.getKey() ) # Only works for gen books
             if tk and tk.firstChild():

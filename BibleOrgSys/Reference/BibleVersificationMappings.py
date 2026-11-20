@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: MPL-2.0
 """Conservative, offline verse-reference mapping through BOSReference.
 
-References use BOS book codes and (BBB, chapter, verse, suffix) tuples. Results
-are immutable and distinguish an exact group from competing alternatives.
+References use BOS book codes and VerseRef (BBB, C, V, S) named tuples, which
+remain equal to plain (BBB, chapter, verse, suffix) tuples. Results are immutable and distinguish an exact group from competing alternatives.
 Only an exact singleton can be returned by the legacy four-tuple APIs.
 
 See Documentation/VersificationMappingAPI.md for the contract, policy, and
@@ -19,20 +19,25 @@ from functools import lru_cache
 import hashlib
 import json
 import re
+import sys
 
 from BibleOrgSys.Reference.Converters.BibleVersificationMappingsConverter import (
     VersificationDataError, bos_book_code, build_reference, load_bundle, parse_reference_span,
 )
+from BibleOrgSys.Reference.BookCode import isBookCodeFormat
+from BibleOrgSys.Reference.VerseRef import VerseRef
+from typing import Self
 
 
-LAST_MODIFIED_DATE = '2026-10-31' # by RJH
+LAST_MODIFIED_DATE = '2026-11-04' # by Claude
 SHORT_PROGRAM_NAME = "BibleVersificationMappings"
 PROGRAM_NAME = "Bible versification mappings functions"
-PROGRAM_VERSION = '1.0.0'
+PROGRAM_VERSION = '1.0.1'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 
-Reference = tuple[str, str, str, str | None]
+# Kept as an alias for existing annotations; VerseRef is a tuple subclass.
+Reference = VerseRef
 
 
 class MappingStatus(str, Enum):
@@ -71,7 +76,7 @@ class MappingResult:
     requested_references: tuple[Reference, ...] = ()
 
     @property
-    def is_expanded(self):
+    def is_expanded(self) -> bool:
         return bool(self.requested_references and
                     set(self.requested_references) != set(self.source_references))
 
@@ -91,7 +96,7 @@ class MappingResult:
 
 
 class VersificationMappingError(ValueError):
-    def __init__(self, result: MappingResult):
+    def __init__(self, result: MappingResult) -> None:
         self.result = result
         reason = result.diagnostics[0].message if result.diagnostics else 'The result contains multiple references.'
         super().__init__(f'{result.source_system} → {result.target_system}: {result.status.value}: {reason}')
@@ -127,42 +132,60 @@ class UnknownVersificationSystemError(ValueError):
     pass
 
 
+_DECIMAL_DIGITS = re.compile(r'[0-9]+') # Compiled once here because normalize_reference is called very often
+_LOWERCASE_LETTERS = re.compile(r'[a-z]+')
+
+
 def normalize_reference(reference) -> Reference:
     """Normalise numbers and empty suffixes; never guess USFM/BOS book aliases."""
     if not isinstance(reference, (tuple, list)) or len(reference) not in (3, 4):
         raise ValueError(f"Expected a (BBB, C, V[, S]) reference, not {reference=}")
     bbb, chapter, verse = reference[:3]
     suffix = reference[3] if len(reference) == 4 else None
-    if not isinstance(bbb, str) or not re.fullmatch(r'[A-Z0-9]{3}', bbb):
+    if not isBookCodeFormat(bbb):
         raise ValueError(f"A reference needs a three-character BOS book code, not {bbb=} from {reference=}")
     for value in (chapter, verse):
-        if type(value) not in (str, int) or not re.fullmatch(r'[0-9]+', str(value)):
+        if type(value) not in (str, int) or not _DECIMAL_DIGITS.fullmatch(str(value)):
             raise ValueError(f"Chapter and verse must be nonnegative integers or decimal strings, not {value=} from {reference=}")
     if int(chapter) < 1:
         raise ValueError(f"Chapter zero and introduction references like {reference=} cannot be mapped.")
-    if suffix not in (None, '') and (not isinstance(suffix, str) or not re.fullmatch(r'[a-z]+', suffix)):
+    if suffix not in (None, '') and (not isinstance(suffix, str) or not _LOWERCASE_LETTERS.fullmatch(suffix)):
         raise ValueError(f"A verse suffix must contain lowercase letters, not {suffix=} from {reference=}")
-    return bbb, str(int(chapter)), str(int(verse)), suffix or None
+    return VerseRef(sys.intern(bbb), str(int(chapter)), str(int(verse)), suffix or None)
 
 
-def _unique(values):
+def _unique(values) -> tuple:
     return tuple(dict.fromkeys(values))
 
 
-def _points(text):
+def _points(text) -> tuple[VerseRef, ...]:
     span = parse_reference_span(text)
     points = span.points()
     if points is None:
         raise VersificationDataError('Segment ranges need an explicit segment inventory; range not expanded.')
-    return tuple((span.book, str(span.chapter), str(v), span.first_suffix or None)
+    return tuple(VerseRef(span.book, str(span.chapter), str(v), span.first_suffix or None)
                  for v in range(span.first, span.last + 1))
 
 
-def _whole(reference):
-    return reference[:3] + (None,)
+def _whole(reference) -> VerseRef:
+    """The whole verse containing reference (any 3- or 4-tuple), without its segment."""
+    return VerseRef(*reference[:3])
 
 
-def _group_points(value):
+def _in_scope(ref, book, chapter) -> bool:
+    """True if ref falls within a (book, chapter) scope; None matches anything."""
+    return (book is None or book == ref.BBB) and (chapter is None or chapter == ref.C)
+
+
+@dataclass
+class _VerseRun:
+    """A run of consecutive verses within one chapter, for coverage reports."""
+    chapter: int
+    first: int
+    last: int
+
+
+def _group_points(value) -> tuple:
     """Expand an explicit ordered group; lists can cross chapters or books.
 
     The span parser remains deliberately limited to a single chapter. No
@@ -174,12 +197,12 @@ def _group_points(value):
     result = tuple(ref for span in spans for ref in _points(span))
     if len(result) > 10000 or len(set(result)) != len(result):
         raise VersificationDataError('Mapping groups must be distinct and contain at most 10000 references.')
-    if any(r[3] and _whole(r) in result for r in result):
+    if any(r.S and _whole(r) in result for r in result):
         raise VersificationDataError('A mapping group cannot mix a whole verse with its segment.')
     return result
 
 
-def _apply_supplement(systems, reference_definition, bundle):
+def _apply_supplement(systems, reference_definition, bundle) -> str:
     """Apply reviewed replacements to adapted copies, failing on stale evidence.
 
     Corrections replace complete raw rules, explicitly restating any surviving
@@ -273,7 +296,7 @@ class _Relation:
 
 
 class _Domain:
-    def __init__(self, name, definition):
+    def __init__(self, name, definition) -> None:
         self.name = name
         self.counts = {}
         for book, counts in definition.get('maxVerses', {}).items():
@@ -294,6 +317,7 @@ class _Domain:
         self.merged = tuple(_points(text) for text in definition.get('mergedVerses', ()))
 
     def issue(self, ref):
+        """Return a (code, message) pair if ref is not a usable address here, else None."""
         book, chapter, verse, suffix = ref
         chapters = self.counts.get(book)
         if not chapters:
@@ -312,14 +336,14 @@ class _Domain:
         for book, counts in self.counts.items():
             for chapter, maximum in enumerate(counts, 1):
                 for verse in range(1, maximum + 1):
-                    ref = (book, str(chapter), str(verse), None)
+                    ref = VerseRef(book, str(chapter), str(verse))
                     if ref not in self.excluded:
                         yield ref
         yield from sorted(self.zeros)
 
 
 class _Table:
-    def __init__(self, name, definition, domain, reference_domain, blocked_reference_books):
+    def __init__(self, name, definition, domain, reference_domain, blocked_reference_books) -> None:
         self.name = name
         self.domain = domain
         self.reference_domain = reference_domain
@@ -335,7 +359,7 @@ class _Table:
         touched = set()
         segmented = set()
 
-        def block_scope(text, scopes, diagnostic):
+        def block_scope(text, scopes, diagnostic) -> None:
             # A malformed span poisons its whole chapter; never infer corrected endpoints.
             if isinstance(text, (list, tuple)) and text:
                 for span in text:
@@ -345,7 +369,7 @@ class _Table:
             chapter = str(int(match[2])) if match and match[2] else None
             scopes.append((match[1] if match else None, chapter, diagnostic))
 
-        def record(left, right, *, grouped=False, origin=None):
+        def record(left, right, *, grouped:bool=False, origin=None) -> None:
             provenance = f'{name}: {origin + ": " if origin else ""}{left} = {right}'
             diagnostic = MappingDiagnostic('INVALID_MAPPING_RULE', 'The mapping rule is not usable.', name, rule=provenance)
             source = target = None
@@ -362,13 +386,13 @@ class _Table:
                     block_scope(text, scopes, diagnostic)
             if source:
                 touched.update(source)
-                segmented.update(_whole(r) for r in source if r[3])
+                segmented.update(_whole(r) for r in source if r.S)
                 problems.extend(f'Source {r}: {domain.issue(r)[1]}' for r in source if domain.issue(r))
-                problems.extend(definition['unsupportedBooks'][r[0]] for r in source
-                                if r[0] in definition.get('unsupportedBooks', {}))
+                problems.extend(definition['unsupportedBooks'][r.BBB] for r in source
+                                if r.BBB in definition.get('unsupportedBooks', {}))
             if target:
                 problems.extend(f'Target {r}: {reference_domain.issue(r)[1]}' for r in target if reference_domain.issue(r))
-                if any(r[0] in blocked_reference_books for r in target):
+                if any(r.BBB in blocked_reference_books for r in target):
                     problems.append('The destination uses an unresolved reference book/bridge.')
             if source and target and not grouped and len(source) != len(target):
                 problems.append('Unequal upstream ranges have not been verified as an intentional group mapping.')
@@ -377,11 +401,11 @@ class _Table:
                                                tuple(source or ()), provenance)
                 for r in source or ():
                     self.forward_blocks[r].append(diagnostic)
-                    if r[3]:
+                    if r.S:
                         self.forward_blocks[_whole(r)].append(diagnostic)
                 for r in target or ():
                     self.reverse_blocks[r].append(diagnostic)
-                    if r[3]:
+                    if r.S:
                         self.reverse_blocks[_whole(r)].append(diagnostic)
                 return
             pairs = [(source, target)] if grouped else [((s,), (t,)) for s, t in zip(source, target)]
@@ -412,16 +436,16 @@ class _Table:
         for source in domain.references():
             if source in touched or _whole(source) in segmented:
                 continue
-            destination_book = definition.get('identityBooks', {}).get(source[0])
+            destination_book = definition.get('identityBooks', {}).get(source.BBB)
             if destination_book is None:
                 continue
-            target = (destination_book, *source[1:])
-            if reference_domain.issue(target) or target[0] in blocked_reference_books:
+            target = source._replace(BBB=destination_book)
+            if reference_domain.issue(target) or target.BBB in blocked_reference_books:
                 continue
             self._add(_Relation((source,), (target,), f'{name}: declared delta identity {source}'))
         self._propagate_blocks()
 
-    def _propagate_blocks(self):
+    def _propagate_blocks(self) -> None:
         """Quarantine connected relationships, including otherwise implicit identities.
 
         A malformed source span can disable a chapter without enumerating its
@@ -435,10 +459,9 @@ class _Table:
                 (True, self.reverse, self.reverse_blocks, self.reverse_scopes)):
             for ref in index:
                 issues = list(blocks.get(ref, ()))
-                if ref[3]:
+                if ref.S:
                     issues.extend(blocks.get(_whole(ref), ()))
-                issues.extend(d for book, chapter, d in scopes
-                              if (book is None or book == ref[0]) and (chapter is None or chapter == ref[1]))
+                issues.extend(d for book, chapter, d in scopes if _in_scope(ref, book, chapter))
                 queue.extend((reverse, ref, issue) for issue in issues)
         visited = set()
         while queue:
@@ -454,7 +477,7 @@ class _Table:
                 queue.extend((False, r, diagnostic) for r in relation.source)
                 queue.extend((True, r, diagnostic) for r in relation.target)
 
-    def _add(self, relation):
+    def _add(self, relation) -> None:
         for ref in relation.source:
             if not any(r.source == relation.source and r.target == relation.target for r in self.forward[ref]):
                 self.forward[ref].append(relation)
@@ -462,7 +485,7 @@ class _Table:
             if not any(r.source == relation.source and r.target == relation.target for r in self.reverse[ref]):
                 self.reverse[ref].append(relation)
 
-    def apply(self, references, *, reverse=False, max_alternatives=64):
+    def apply(self, references, *, reverse:bool=False, max_alternatives=64):
         """Solve complete disjoint covers of the requested passage, never zip groups."""
         domain = self.reference_domain if reverse else self.domain
         index = self.reverse if reverse else self.forward
@@ -474,12 +497,11 @@ class _Table:
         for ref in references:
             problem = domain.issue(ref)
             if problem:
-                diagnostics.append(MappingDiagnostic(problem[0], problem[1], domain.name, (ref,)))
+                diagnostics.append(MappingDiagnostic(*problem, domain.name, (ref,)))
             diagnostics.extend(blocks.get(ref, ()))
-            if ref[3]:
+            if ref.S:
                 diagnostics.extend(blocks.get(_whole(ref), ()))
-            diagnostics.extend(d for book, chapter, d in scopes
-                               if (book is None or book == ref[0]) and (chapter is None or chapter == ref[1]))
+            diagnostics.extend(d for book, chapter, d in scopes if _in_scope(ref, book, chapter))
         # Requesting only part of a source verse bridge does not identify its text.
         for group in domain.merged:
             if set(group) & set(references) and not set(group) <= set(references):
@@ -557,8 +579,8 @@ class VersificationMappingEngine:
     (a source-book to reference-book dictionary). Definitions are copied.
     """
 
-    def __init__(self, reference_definition, systems, *, reference_name='BOSReference',
-                 reference_version='custom', data_revision='custom', blocked_reference_books=()):
+    def __init__(self, reference_definition, systems, *, reference_name:str='BOSReference',
+                 reference_version:str='custom', data_revision:str='custom', blocked_reference_books=()) -> None:
         self.reference_name = reference_name
         self.reference_version = reference_version
         self.data_revision = data_revision
@@ -571,9 +593,12 @@ class VersificationMappingEngine:
         self._domains[reference_name] = self._reference
         self._blocked_reference_books = frozenset(blocked_reference_books)
         self._tables = {}
+        # Nothing above changes after this point and results are immutable, so they can be remembered:
+        #   the same verse is typically converted again for every edition which uses the same versification.
+        self._convert_results = {} # (source_system, target_system, references) -> MappingResult
 
     @classmethod
-    def from_bundled_data(cls, *, bundle=None):
+    def from_bundled_data(cls, *, bundle=None) -> Self:
         """Adapt the pinned snapshot; unreviewed bridges remain explicit gaps."""
         bundle = load_bundle() if bundle is None else bundle
         reference = build_reference(bundle)
@@ -645,10 +670,10 @@ class VersificationMappingEngine:
                    data_revision=data_revision,
                    blocked_reference_books=('PAZ', 'DNG', 'EZ6', 'MQ1', 'MQ3', 'REP', 'BA4'))
 
-    def get_system_names(self):
+    def get_system_names(self) -> tuple:
         return (*self._definitions, self.reference_name)
 
-    def get_legacy_tables(self, name):
+    def get_legacy_tables(self, name) -> dict[str, dict]:
         """Adapt counts for the existing BOS registry without adding metadata keys."""
         domain = self._domains[name]
         cv = {book: {'numChapters': str(len(counts)), **{str(c): str(v) for c, v in enumerate(counts, 1)}}
@@ -659,7 +684,7 @@ class VersificationMappingEngine:
                 omitted[book].append((chapter, verse))
         return {'CV': cv, 'omitted': dict(omitted), 'combined': {}, 'reordered': {}}
 
-    def capabilities(self, name):
+    def capabilities(self, name) -> dict:
         if name not in self._domains:
             return {'status': 'unsupported', 'reason': 'No verified mapping profile; legacy counts are not a mapping.'}
         disabled = self._definitions.get(name, {}).get('disabledReason')
@@ -670,7 +695,7 @@ class VersificationMappingEngine:
                 'reference': self.reference_name, 'referenceVersion': self.reference_version,
                 'dataRevision': self.data_revision}
 
-    def audit_reference_coverage(self, name):
+    def audit_reference_coverage(self, name) -> dict:
         """Inventory numbered reference addresses missing from compiled relations.
 
         Group members count as represented even when a singleton request would
@@ -683,29 +708,29 @@ class VersificationMappingEngine:
         table = self._table(name)
         books = {}
         gaps = defaultdict(lambda: defaultdict(list))
-        for ref in sorted(self._reference.references(), key=lambda r: (r[0], int(r[1]), int(r[2]))):
-            book = books.setdefault(ref[0], {'referenceCount': 0, 'representedCount': 0,
-                                             'unmappedCount': 0, 'blockedCount': 0})
-            blocked = (table.disabled or ref[0] in self._blocked_reference_books
+        for ref in sorted(self._reference.references(), key=lambda r: (r.BBB, int(r.C), int(r.V))):
+            book = books.setdefault(ref.BBB, {'referenceCount': 0, 'representedCount': 0,
+                                              'unmappedCount': 0, 'blockedCount': 0})
+            blocked = (table.disabled or ref.BBB in self._blocked_reference_books
                        or ref in table.reverse_blocks or self._reference.issue(ref)
-                       or any((b is None or b == ref[0]) and (c is None or c == ref[1])
-                              for b, c, _ in table.reverse_scopes))
+                       or any(_in_scope(ref, b, c) for b, c, _ in table.reverse_scopes))
             category = 'blocked' if blocked else 'represented' if ref in table.reverse else 'unmapped'
             book['referenceCount'] += 1
             book[category + 'Count'] += 1
             if category != 'represented':
-                gaps[ref[0]][category].append(ref)
+                gaps[ref.BBB][category].append(ref)
         for book, counts in books.items():
             for category in ('unmapped', 'blocked'):
-                ranges = []
+                runs: list[_VerseRun] = []
                 for ref in gaps[book][category]:
-                    chapter, verse = int(ref[1]), int(ref[2])
-                    if ranges and ranges[-1][0] == chapter and ranges[-1][2] + 1 == verse:
-                        ranges[-1][2] = verse
+                    chapter, verse = int(ref.C), int(ref.V)
+                    if runs and runs[-1].chapter == chapter and runs[-1].last + 1 == verse:
+                        runs[-1].last = verse
                     else:
-                        ranges.append([chapter, verse, verse])
-                counts[category + 'Ranges'] = [f'{book} {c}:{v}' + (f'-{end}' if end != v else '')
-                                               for c, v, end in ranges]
+                        runs.append(_VerseRun(chapter, verse, verse))
+                counts[category + 'Ranges'] = [f'{book} {run.chapter}:{run.first}'
+                                               + (f'-{run.last}' if run.last != run.first else '')
+                                               for run in runs]
         return {'scope': 'Whole numbered reference verses and declared verse-zero titles; '
                          'represented includes atomic groups and ambiguous relationships, not proof of text coverage.',
                 'dataRevision': self.data_revision,
@@ -719,7 +744,7 @@ class VersificationMappingEngine:
                                         self._reference, self._blocked_reference_books)
         return self._tables[name]
 
-    def convert_range(self, source_system, target_system, start_reference, end_reference):
+    def convert_range(self, source_system, target_system, start_reference, end_reference) -> MappingResult:
         """Map an inclusive same-book range as one passage, including any verse gaps.
 
         Cross-book ordering and segment-range expansion require explicit caller
@@ -730,13 +755,13 @@ class VersificationMappingEngine:
         try:
             start = normalize_reference(start_reference)
             end = normalize_reference(end_reference)
-            if start[0] != end[0]:
+            if start.BBB != end.BBB:
                 raise ValueError('A cross-book range needs an explicit ordered reference list.')
-            if start[3] or end[3]:
+            if start.S or end.S:
                 if start == end:
                     return self.convert(source_system, target_system, [start])
                 raise ValueError('A segment range needs an explicit list of declared segments.')
-            if (int(start[1]), int(start[2])) > (int(end[1]), int(end[2])):
+            if (int(start.C), int(start.V)) > (int(end.C), int(end.V)):
                 raise ValueError('Range end precedes its start.')
             domain = self._domains[source_system]
             for endpoint in (start, end):
@@ -744,11 +769,11 @@ class VersificationMappingEngine:
                 if problem:
                     return self.convert(source_system, target_system, [endpoint])
             expanded = []
-            for chapter in range(int(start[1]), int(end[1]) + 1):
-                first = int(start[2]) if chapter == int(start[1]) else 1
-                last = int(end[2]) if chapter == int(end[1]) else domain.counts[start[0]][chapter - 1]
+            for chapter in range(int(start.C), int(end.C) + 1):
+                first = int(start.V) if chapter == int(start.C) else 1
+                last = int(end.V) if chapter == int(end.C) else domain.counts[start.BBB][chapter - 1]
                 for verse in range(first, last + 1):
-                    expanded.append((start[0], str(chapter), str(verse), None))
+                    expanded.append(VerseRef(start.BBB, str(chapter), str(verse)))
                     if len(expanded) > 10000:
                         raise ValueError('Range exceeds the 10000-reference expansion limit.')
             return self.convert(source_system, target_system, expanded)
@@ -770,14 +795,26 @@ class VersificationMappingEngine:
             references = _unique(normalize_reference(r) for r in references)
             if not references:
                 raise ValueError('At least one reference is required.')
-            if any(r[3] and _whole(r) in references for r in references):
+            if any(r.S and _whole(r) in references for r in references):
                 raise ValueError('Do not request a whole verse and one of its segments together.')
         except (ValueError, TypeError) as error:
             return MappingResult(source_system, target_system, (), MappingStatus.INVALID,
                                  diagnostics=(MappingDiagnostic('REFERENCE_SYNTAX', str(error), source_system),),
                                  reference_version=self.reference_version, data_revision=self.data_revision)
+        try:
+            return self._convert_results[(source_system, target_system, references)]
+        except KeyError: pass
+        except TypeError: # An unhashable system name can't be remembered
+            return self._convert_normalized(source_system, target_system, references)
+        if len(self._convert_results) >= 500_000: # Stop the memory use from growing without limit
+            self._convert_results.clear()
+        result = self._convert_results[(source_system, target_system, references)] \
+               = self._convert_normalized(source_system, target_system, references)
+        return result
 
-        def result(status, candidates=(), diagnostics=(), provenance=()):
+    def _convert_normalized(self, source_system, target_system, references) -> MappingResult:
+        """Do the actual work of convert() for an already normalised, non-empty tuple of references."""
+        def result(status, candidates=(), diagnostics=(), provenance=()) -> MappingResult:
             return MappingResult(source_system, target_system, references, status,
                 references=candidates[0] if status == MappingStatus.EXACT else (),
                 alternatives=candidates if status in (MappingStatus.AMBIGUOUS, MappingStatus.PARTIAL) else (),
@@ -794,14 +831,14 @@ class VersificationMappingEngine:
             if source_system == self.reference_name:
                 issues.extend(MappingDiagnostic('UNRESOLVED_REFERENCE_BOOK',
                     'Reference book needs a verified bridge.', source_system, (ref,))
-                    for ref in references if ref[0] in self._blocked_reference_books)
+                    for ref in references if ref.BBB in self._blocked_reference_books)
             if issues:
                 status = MappingStatus.INVALID if all(d.code in ('BOOK_NOT_IN_SYSTEM', 'OUTSIDE_SYSTEM') for d in issues) else MappingStatus.UNSUPPORTED
                 return result(status, diagnostics=issues)
             return result(MappingStatus.EXACT, (references,))
         if source_system == self.reference_name:
             issues = [MappingDiagnostic('UNRESOLVED_REFERENCE_BOOK', 'Reference book needs a verified bridge.',
-                                        source_system, (r,)) for r in references if r[0] in self._blocked_reference_books]
+                                        source_system, (r,)) for r in references if r.BBB in self._blocked_reference_books]
             for ref in references:
                 problem = self._reference.issue(ref)
                 if problem:
@@ -850,7 +887,7 @@ class VersificationMappingEngine:
             status = MappingStatus.EXACT
         return result(status, candidates, diagnostics, provenance)
 
-    def convert_passage(self, source_system, target_system, references):
+    def convert_passage(self, source_system, target_system, references) -> MappingResult:
         """Opt in to the smallest connected, unambiguous complete mapping group.
 
         Strict conversion is tried first. Only incomplete atomic/merged groups
@@ -871,7 +908,7 @@ class VersificationMappingEngine:
         coverage = {name: [] for name in names}
         pending, visited = deque(), set()
 
-        def include(name, group):
+        def include(name, group) -> None:
             existing = coverage[name]
             added = [ref for ref in group if ref not in existing]
             if not added:

@@ -21,6 +21,7 @@ import logging
 #from BibleOrgSys.Misc.singleton import singleton
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
+from typing import Self
 
 
 LAST_MODIFIED_DATE = '2026-10-06' # by RJH
@@ -48,7 +49,7 @@ class BiblePunctuationSystems:
         self.__DataDict = None # We'll import into this in loadData
     # end of __init__
 
-    def loadData( self, XMLFolder=None ):
+    def loadData( self, XMLFolder=None ) -> Self:
         """ Loads the XML data file and imports it to dictionary format (if not done already). """
         if not self.__DataDict: # Don't do this unnecessarily
             if XMLFolder is None:
@@ -136,23 +137,23 @@ class BiblePunctuationSystems:
         return result
     # end of __str__
 
-    def __len__( self ):
+    def __len__( self ) -> int:
         """ Returns the number of systems loaded. """
         return len( self.__DataDict )
     # end of __len__
 
-    def __contains__( self, name ):
+    def __contains__( self, name ) -> bool:
         """ Returns True/False if the name is in this system. """
         return name in self.__DataDict
     # end of __contains__
 
-    def getAvailablePunctuationSystemNames( self ):
+    def getAvailablePunctuationSystemNames( self ) -> list:
         """ Returns a list of available system name strings. """
         assert self.__DataDict
         return [x for x in self.__DataDict]
     # end of getAvailablePunctuationSystemNames
 
-    def isValidPunctuationSystemName( self, systemName ):
+    def isValidPunctuationSystemName( self, systemName ) -> bool:
         """ Returns True or False. """
         assert self.__DataDict
         assert systemName
@@ -170,7 +171,7 @@ class BiblePunctuationSystems:
         if BibleOrgSysGlobals.verbosityLevel>2: logging.error( "  " + f"Available systems are {self.getAvailablePunctuationSystemNames()}" )
     # end of getPunctuationSystem
 
-    def checkPunctuationSystem( self, systemName, punctuationSchemeToCheck, exportFlag=False, debugFlag=False ):
+    def checkPunctuationSystem( self, systemName, punctuationSchemeToCheck, exportFlag:bool=False, debugFlag:bool=False ) -> None:
         """
         Check the given punctuation scheme against all the loaded systems.
         Create a new punctuation file if it doesn't match any.
@@ -260,12 +261,12 @@ class BiblePunctuationSystem:
         return result
     # end of __str__
 
-    def __len__( self ):
+    def __len__( self ) -> int:
         """ Returns the number of entries in this system. """
         return len( self.__punctuationDict )
     # end of __len__
 
-    def __contains__( self, name ):
+    def __contains__( self, name ) -> bool:
         """ Returns True/False if the name is in this system. """
         assert name
         return name in self.__punctuationDict
@@ -281,7 +282,7 @@ class BiblePunctuationSystem:
         return self.__punctuationDict
     # end of getPunctuationDict
 
-    def getAvailablePunctuationValueNames( self ):
+    def getAvailablePunctuationValueNames( self ) -> list:
         """ Returns a list of available value name strings. """
         return [x for x in self.__punctuationDict]
     # end of getAvailablePunctuationValueNames

@@ -64,7 +64,7 @@ compulsoryFiles = ( 'ot','ot.vss', 'ot.bzs','ot.bzv','ot.bzz', 'nt','nt.vss', 'n
 
 
 
-def SwordBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=False, autoLoadBooks:bool=False ):
+def SwordBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=False, autoLoadBooks:bool=False ) -> 'bool | SwordBible | int | None':
     """
     Given a folder, search for Sword Bible files or folders in the folder and in the next level down.
 
@@ -89,7 +89,7 @@ def SwordBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=F
         logging.critical( f"SwordBibleFileCheck: Given {givenFolderName!r} path is not a folder" )
         return False
 
-    def confirmThisFolder( checkFolderpath ):
+    def confirmThisFolder( checkFolderpath ) -> int | list | None:
         """
         We are given the path to a folder that contains the two main top level folders.
 
@@ -244,7 +244,7 @@ class SwordBible( Bible ):
     """
     Class for reading, validating, and converting SwordBible files.
     """
-    def __init__( self, sourceFolder=None, moduleName=None, encoding='utf-8' ) -> None:
+    def __init__( self, sourceFolder=None, moduleName=None, encoding:str='utf-8' ) -> None:
         """
         Constructor: just sets up the Bible object.
 
@@ -340,7 +340,7 @@ class SwordBible( Bible ):
     # end of SwordBible.__init__
 
 
-    def loadBooks( self ):
+    def loadBooks( self ) -> None:
         """
         Load the compressed data file and import book elements.
         """
@@ -476,7 +476,7 @@ class SwordBible( Bible ):
 
 
 
-def testSwB( SwFolderpath, SwModuleName=None ):
+def testSwB( SwFolderpath, SwModuleName=None ) -> SwordBible:
     """
     Crudely demonstrate and test the Sword Bible class
     """

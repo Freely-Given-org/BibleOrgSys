@@ -99,7 +99,7 @@ class AugmentedStrongsIndexFileConverter:
     # end of AugmentedStrongsIndexFileConverter.__str__
 
 
-    def loadAndValidate( self, XMLFolder=None ):
+    def loadAndValidate( self, XMLFolder=None ) -> None:
         """
         Load the source XML file and remove the header from the tree.
         Also, extracts some useful elements from the header element.
@@ -131,7 +131,7 @@ class AugmentedStrongsIndexFileConverter:
     # end of AugmentedStrongsIndexFileConverter.loadAndValidate
 
 
-    def validateEntry( self, entry ):
+    def validateEntry( self, entry ) -> None:
         """
         Check/validate the given OSIS div record.
         """
@@ -253,7 +253,7 @@ class LexicalIndexFileConverter:
     # end of LexicalIndexFileConverter.__str__
 
 
-    def loadAndValidate( self, XMLFolder=None ):
+    def loadAndValidate( self, XMLFolder=None ) -> None:
         """
         Load the source XML file and remove the header from the tree.
         Also, extracts some useful elements from the header element.
@@ -279,7 +279,7 @@ class LexicalIndexFileConverter:
     # end of LexicalIndexFileConverter.loadAndValidate
 
 
-    def validatePart( self, part ):
+    def validatePart( self, part ) -> None:
         """
         Check/validate the given lexical index part.
         """
@@ -302,7 +302,7 @@ class LexicalIndexFileConverter:
     # end of LexicalIndexFileConverter.validatePart
 
 
-    def validateEntry( self, entry, lang ):
+    def validateEntry( self, entry, lang ) -> None:
         """
         Check/validate the given lexical index record.
         """
@@ -384,7 +384,7 @@ class LexicalIndexFileConverter:
     # end of LexicalIndexFileConverter.validateEntry
 
 
-    def importDataToPython( self ):
+    def importDataToPython( self ) -> dict | None:
         """
         Loads (and pivots) the data (not including the header) into suitable Python containers to use in a Python program.
         (Of course, you can just use the elementTree in self.XMLTree if you prefer.)
@@ -483,7 +483,7 @@ class HebrewStrongsFileConverter:
     # end of HebrewStrongsFileConverter.__str__
 
 
-    def loadAndValidate( self, XMLFolder=None ):
+    def loadAndValidate( self, XMLFolder=None ) -> None:
         """
         Load the source XML file and remove the header from the tree.
         Also, extracts some useful elements from the header element.
@@ -509,7 +509,7 @@ class HebrewStrongsFileConverter:
     # end of HebrewStrongsFileConverter.loadAndValidate
 
 
-    def validateEntry( self, entry ):
+    def validateEntry( self, entry ) -> None:
         """
         Check/validate the given OSIS div record.
         """
@@ -598,7 +598,7 @@ class HebrewStrongsFileConverter:
     # end of HebrewStrongsFileConverter.validateEntry
 
 
-    def importDataToPython( self ):
+    def importDataToPython( self ) -> dict | None:
         """
         Loads (and pivots) the data (not including the header) into suitable Python containers to use in a Python program.
         (Of course, you can just use the elementTree in self.XMLTree if you prefer.)
@@ -698,7 +698,7 @@ class BrownDriverBriggsFileConverter:
     # end of BrownDriverBriggsFileConverter.__str__
 
 
-    def loadAndValidate( self, XMLFolder=None ):
+    def loadAndValidate( self, XMLFolder=None ) -> None:
         """
         Load the source XML file and remove the header from the tree.
         Also, extracts some useful elements from the header element.
@@ -724,7 +724,7 @@ class BrownDriverBriggsFileConverter:
     # end of BrownDriverBriggsFileConverter.loadAndValidate
 
 
-    def validatePart( self, part ):
+    def validatePart( self, part ) -> None:
         """
         Check/validate the given lexical index part.
 
@@ -756,7 +756,7 @@ class BrownDriverBriggsFileConverter:
     # end of BrownDriverBriggsFileConverter.validatePart
 
 
-    def validateSection( self, section, partID, title, lang ):
+    def validateSection( self, section, partID, title, lang ) -> None:
         """
         Check/validate the given lexical index section.
         """
@@ -782,7 +782,7 @@ class BrownDriverBriggsFileConverter:
     # end of BrownDriverBriggsFileConverter.validateSection
 
 
-    def validateEntry( self, entry, partID, sectionID, title, lang ):
+    def validateEntry( self, entry, partID, sectionID, title, lang ) -> None:
         """
         Check/validate the given BDB entry.
         """

@@ -31,6 +31,7 @@ from BibleOrgSys.InputOutput.USXFilenames import USXFilenames
 from BibleOrgSys.Formats.USXXMLBibleBook import USXXMLBibleBook
 from BibleOrgSys.Bible import Bible
 import bos_books_codes_py
+from BibleOrgSys.Reference.BookCode import BookCode
 
 
 LAST_MODIFIED_DATE = '2026-10-06' # by RJH
@@ -44,7 +45,7 @@ DEBUGGING_THIS_MODULE = False
 logger = logging.getLogger( SHORT_PROGRAM_NAME )
 
 
-def USXXMLBibleFileCheck( givenFolderName:Path|str, strictCheck:bool=True, autoLoad:bool=False, autoLoadBooks:bool=False ):
+def USXXMLBibleFileCheck( givenFolderName:Path|str, strictCheck:bool=True, autoLoad:bool=False, autoLoadBooks:bool=False ) -> 'bool | USXXMLBible | int | None':
     """
     Given a folder, search for USX Bible files or folders in the folder and in the next level down.
 
@@ -155,7 +156,7 @@ class USXXMLBible( Bible ):
     Class to load and manipulate USX Bibles.
 
     """
-    def __init__( self, givenFolderName, givenName=None, givenAbbreviation=None, encoding='utf-8', *, versification=None ) -> None:
+    def __init__( self, givenFolderName, givenName=None, givenAbbreviation=None, encoding:str='utf-8', *, versification=None ) -> None:
         """
         Create the internal USX Bible object.
         """
@@ -179,7 +180,7 @@ class USXXMLBible( Bible ):
     # end of USXXMLBible.__init_
 
 
-    def preload( self ):
+    def preload( self ) -> None:
         """
         Tries to determine USX filename pattern.
         """
@@ -205,7 +206,7 @@ class USXXMLBible( Bible ):
     # end of USXXMLBible.preload
 
 
-    def loadBook( self, BBB:str, filename=None ):
+    def loadBook( self, BBB:BookCode, filename=None ) -> None:
         """
         NOTE: You should ensure that preload() has been called first.
         """
@@ -246,7 +247,7 @@ class USXXMLBible( Bible ):
     # end of USXXMLBible.loadBook
 
 
-    def _loadBookMP( self, BBB:str, filename=None ):
+    def _loadBookMP( self, BBB:BookCode, filename=None ) -> USXXMLBibleBook | None:
         """
         Used for multiprocessing.
 
@@ -278,7 +279,7 @@ class USXXMLBible( Bible ):
     # end of USXXMLBible._loadBookMP
 
 
-    def loadBooks( self ):
+    def loadBooks( self ) -> None:
         """
         Load the books.
         """
@@ -372,7 +373,7 @@ class USXXMLBible( Bible ):
         self.doPostLoadProcessing()
     # end of USXXMLBible.loadBooks
 
-    def load( self ):
+    def load( self ) -> None:
         self.loadBooks()
 # end of class USXXMLBible
 
@@ -383,7 +384,7 @@ CorV_RE = '[1-9][0-9]{0,2}'
 CV_RE = f'{CorV_RE}:{CorV_RE}'
 IOR_RE = re.compile( r'<char style="ior">(.+?)</char>' )
 
-def makeRefs( BBB:str, C:str, V:str, BRL, text:str ) -> str:
+def makeRefs( BBB:BookCode, C:str, V:str, BRL, text:str ) -> str:
     """
     Used for ior and xt fields to make computer-readable ref fields
 
@@ -516,7 +517,7 @@ def createUSXXMLBible( self, outputFolderpath:Path|str, controlDict, validationS
     ignoredMarkers, unhandledMarkers, unhandledBooks = set(), set(), []
 
 
-    def writeUSXBook( BBB:str, bkData ):
+    def writeUSXBook( BBB:BookCode, bkData ) -> tuple | None:
         """
         Writes a book to the filesFolder.
         """

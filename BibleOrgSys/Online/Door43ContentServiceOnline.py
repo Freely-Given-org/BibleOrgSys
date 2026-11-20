@@ -36,6 +36,7 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Misc.singleton import singleton
 from BibleOrgSys.Formats.USFMBible import USFMBible
+from BibleOrgSys.Reference.BookCode import BookCode
 
 
 LAST_MODIFIED_DATE = '2026-10-06' # by RJH
@@ -121,7 +122,7 @@ class DCSBibles:
     # end of DCSBibles.getOnlineData
 
 
-    def fetchAllBibles( self ):
+    def fetchAllBibles( self ) -> list:
         """
         Download the Bible lists from DCS.
 
@@ -232,7 +233,7 @@ class DCSBibles:
     ## end of DCSBibles.searchNames
 
 
-    def searchReposExact( self, wantedRepoOwner=None, wantedRepoTitle=None ):
+    def searchReposExact( self, wantedRepoOwner=None, wantedRepoTitle=None ) -> dict | list[dict]:
         """
         Search thru the list of available online Bibles to find
             a match of the optional title and optional owner.
@@ -257,7 +258,7 @@ class DCSBibles:
     # end of DCSBibles.searchReposExact
 
 
-    def searchReposFuzzy( self, wantedRepoOwner=None, wantedRepoTitle=None ):
+    def searchReposFuzzy( self, wantedRepoOwner=None, wantedRepoTitle=None ) -> dict | list[dict]:
         """
         Search thru the list of available online Bibles to find
             a match of the optional title and optional owner.
@@ -290,7 +291,7 @@ class DCSBible( USFMBible ):
 
     The interface provides a link to a zip file containing all of the USFM books.
     """
-    def __init__( self, parameterOne, resourcesObject=None, downloadAllBooks=False ) -> None:
+    def __init__( self, parameterOne, resourcesObject=None, downloadAllBooks:bool=False ) -> None:
         """
         Create the Door43 cataloged Bible object.
 
@@ -390,7 +391,7 @@ class DCSBible( USFMBible ):
     # end of DCSBible.__init__
 
 
-    def loadBookIfNecessary( self, BBB:str ):
+    def loadBookIfNecessary( self, BBB:BookCode ) -> None:
         """
         Download the book if necessary.
 

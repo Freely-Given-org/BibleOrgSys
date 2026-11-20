@@ -82,7 +82,7 @@ filenameEndingsToAccept = ( '.YET', ) # Must be UPPERCASE
 
 
 
-def YETBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=False, autoLoadBooks:bool=False ):
+def YETBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=False, autoLoadBooks:bool=False ) -> 'bool | YETBible | int | None':
     """
     Given a folder, search for YET Bible files or folders in the folder and in the next level down.
 
@@ -195,7 +195,7 @@ class YETBible( Bible ):
     """
     Class for reading, validating, and converting YETBible files.
     """
-    def __init__( self, sourceFolder, givenName, encoding='utf-8' ) -> None:
+    def __init__( self, sourceFolder, givenName, encoding:str='utf-8' ) -> None:
         """
         Constructor: just sets up the Bible object.
         """
@@ -218,7 +218,7 @@ class YETBible( Bible ):
     # end of YETBible.__init__
 
 
-    def load( self ):
+    def load( self ) -> None:
         """
         Load a single source file and load book elements.
         """
@@ -226,7 +226,7 @@ class YETBible( Bible ):
             vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Loading {self.sourceFilepath}…" )
 
         loadErrors:list[str] = []
-        def decodeVerse( encodedVerseString ):
+        def decodeVerse( encodedVerseString ) -> str:
             """
             Decodes the verse which has @ format codes.
 
@@ -441,7 +441,7 @@ class YETBible( Bible ):
 
 
 
-def testYB( TUBfilename ):
+def testYB( TUBfilename ) -> None:
     # Crudely demonstrate the YET Bible class
     from BibleOrgSys.Reference import VerseReferences
     TUBfolder = Path( '/srv/Bibles/YET modules/' ) # Must be the same as below

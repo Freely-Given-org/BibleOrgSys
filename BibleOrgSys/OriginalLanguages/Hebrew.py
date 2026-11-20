@@ -397,7 +397,7 @@ class Hebrew():
     # end of Hebrew._removeMetegOrSiluq
 
 
-    def removeCantillationMarks( self, givenText=None, removeMetegOrSiluq=False ) -> str:
+    def removeCantillationMarks( self, givenText=None, removeMetegOrSiluq:bool=False ) -> str:
         """
         Return the text with cantillation marks removed.
         """
@@ -423,7 +423,7 @@ class Hebrew():
     # end of Hebrew.removeCantillationMarks
 
 
-    def removeVowelPointing( self, text=None, removeMetegOrSiluq=False ) -> str:
+    def removeVowelPointing( self, text=None, removeMetegOrSiluq:bool=False ) -> str:
         """
         Return the text with vowel pointing removed.
         """
@@ -439,7 +439,7 @@ class Hebrew():
     # end of Hebrew.removeVowelPointing
 
 
-    def removeOtherMarks( self, text=None, removeSinShinDots=True ) -> str:
+    def removeOtherMarks( self, text=None, removeSinShinDots:bool=True ) -> str:
         """
         Return the text with other marks (like dagesh and sin/shin marks if required)
             and any remaining metegOrSiluq removed.

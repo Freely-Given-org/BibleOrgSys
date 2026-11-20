@@ -10,6 +10,7 @@
 
 use compact_str::CompactString;
 use std::fmt;
+use std::hash::{Hash, Hasher};
 
 use crate::error::ParseError;
 use crate::parsing::get_small_leading_int;
@@ -39,20 +40,29 @@ use crate::parsing::get_small_leading_int;
 /// let cv = ChapterVerse::new("1", "17a");
 /// assert_eq!(cv.verse_int().unwrap(), 17);
 /// ```
-#[derive(Clone, PartialEq, Eq, Hash, rkyv::Archive, rkyv::Serialize, rkyv::Deserialize)]
+#[derive(Clone, PartialEq, Eq)]
 pub struct ChapterVerse {
-    chapter: CompactString,
-    verse: CompactString,
+    // The chapter and the verse are stored in one string (with a separator character between them)
+    //  which takes half the memory of two strings (and there's one of these for every verse of every loaded Bible).
+    // Almost all references fit in the 24 bytes of the string itself, i.e., without any heap allocation.
+    text: CompactString,
 }
+
+/// Separates the chapter from the verse in the stored string
+///     (a character which can't sensibly occur in a chapter 'number').
+const SEPARATOR: char = '\0';
 
 impl ChapterVerse {
     /// Create a new ChapterVerse from chapter and verse strings.
     #[inline]
-    pub fn new(chapter: impl Into<CompactString>, verse: impl Into<CompactString>) -> Self {
-        Self {
-            chapter: chapter.into(),
-            verse: verse.into(),
-        }
+    pub fn new(chapter: impl AsRef<str>, verse: impl AsRef<str>) -> Self {
+        let (chapter, verse) = (chapter.as_ref(), verse.as_ref());
+        debug_assert!(!chapter.contains(SEPARATOR), "Chapter can't contain a NUL character: {chapter:?}");
+        let mut text = CompactString::with_capacity(chapter.len() + 1 + verse.len());
+        text.push_str(chapter);
+        text.push(SEPARATOR);
+        text.push_str(verse);
+        Self { text }
     }
 
     /// Create an introduction reference (chapter -1).
@@ -60,76 +70,76 @@ impl ChapterVerse {
     /// The verse_line parameter indicates which line of the introduction.
     #[inline]
     pub fn intro(verse_line: u16) -> Self {
-        Self {
-            chapter: CompactString::from("-1"),
-            verse: CompactString::from(verse_line.to_string()),
-        }
+        Self::new("-1", verse_line.to_string())
     }
 
     /// Create a chapter introduction reference (verse 0).
     ///
     /// This is used for section headings and other content at the start of a chapter.
     #[inline]
-    pub fn chapter_intro(chapter: impl Into<CompactString>) -> Self {
-        Self {
-            chapter: chapter.into(),
-            verse: CompactString::from("0"),
-        }
+    pub fn chapter_intro(chapter: impl AsRef<str>) -> Self {
+        Self::new(chapter, "0")
+    }
+
+    /// Get the position of the separator in the stored string.
+    #[inline]
+    fn separator_index(&self) -> usize {
+        self.text.as_bytes().iter().position(|&byte| byte == SEPARATOR as u8).unwrap_or(self.text.len())
     }
 
     /// Get the chapter string.
     #[inline]
     pub fn chapter(&self) -> &str {
-        &self.chapter
+        &self.text[..self.separator_index()]
     }
 
     /// Get the verse string.
     #[inline]
     pub fn verse(&self) -> &str {
-        &self.verse
+        self.text.get(self.separator_index() + 1..).unwrap_or("")
     }
 
     /// Get the leading integer from the chapter.
     ///
     /// This handles negative numbers (like -1 for intro).
     pub fn chapter_int(&self) -> Result<i16, ParseError> {
-        get_small_leading_int(&self.chapter)
+        get_small_leading_int(self.chapter())
     }
 
     /// Get the leading integer from the verse.
     ///
     /// This handles suffixed verses like `17a` and ranges like `17-25`.
     pub fn verse_int(&self) -> Result<i16, ParseError> {
-        get_small_leading_int(&self.verse)
+        get_small_leading_int(self.verse())
     }
 
     /// Check if this is an introduction reference (chapter -1).
     #[inline]
     pub fn is_intro(&self) -> bool {
-        self.chapter == "-1"
+        self.chapter() == "-1"
     }
 
     /// Check if this is a chapter introduction (verse 0).
     #[inline]
     pub fn is_chapter_intro(&self) -> bool {
-        self.verse == "0"
+        self.verse() == "0"
     }
 
     /// Check if the verse contains a range (e.g., `17-25`).
     #[inline]
     pub fn is_verse_range(&self) -> bool {
-        self.verse.contains('-') && !self.verse.starts_with('-')
+        self.verse().contains('-') && !self.verse().starts_with('-')
     }
 
     /// Check if the verse contains a list (e.g., `5,6,7`).
     #[inline]
     pub fn is_verse_list(&self) -> bool {
-        self.verse.contains(',')
+        self.verse().contains(',')
     }
 
     /// Check if the verse has a suffix (e.g., `17a`, `17b`).
     pub fn has_verse_suffix(&self) -> bool {
-        self.verse.chars().last().map(|c| c.is_alphabetic()).unwrap_or(false)
+        self.verse().chars().last().map(|c| c.is_alphabetic()).unwrap_or(false)
     }
 
     /// Parse a verse range into (start, end) integers.
@@ -140,7 +150,7 @@ impl ChapterVerse {
             return None;
         }
 
-        let parts: Vec<&str> = self.verse.splitn(2, '-').collect();
+        let parts: Vec<&str> = self.verse().splitn(2, '-').collect();
         if parts.len() != 2 {
             return None;
         }
@@ -159,7 +169,7 @@ impl ChapterVerse {
         }
 
         if self.is_verse_list() {
-            for part in self.verse.split(',') {
+            for part in self.verse().split(',') {
                 if let Ok(v) = get_small_leading_int(part.trim())
                     && v == verse_num
                 {
@@ -173,15 +183,66 @@ impl ChapterVerse {
     }
 }
 
+// Hashes the chapter and then the verse (exactly as when they were two separate fields)
+//  so that hash-ordered containers of these (in memory and in serialised files) are unchanged.
+impl Hash for ChapterVerse {
+    fn hash<H: Hasher>(&self, state: &mut H) {
+        self.chapter().hash(state);
+        self.verse().hash(state);
+    }
+}
+
+/// The serialised form: the chapter and the verse as two separate strings.
+///
+/// (This was also the in-memory form before the two were combined into one string,
+///  so the serialised file format is unchanged.)
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize)]
+#[rkyv(archived = ArchivedChapterVerse, resolver = ChapterVerseResolver)]
+pub struct ChapterVerseParts {
+    chapter: CompactString,
+    verse: CompactString,
+}
+
+impl ChapterVerse {
+    fn to_parts(&self) -> ChapterVerseParts {
+        ChapterVerseParts { chapter: self.chapter().into(), verse: self.verse().into() }
+    }
+}
+
+impl rkyv::Archive for ChapterVerse {
+    type Archived = ArchivedChapterVerse;
+    type Resolver = ChapterVerseResolver;
+
+    fn resolve(&self, resolver: Self::Resolver, out: rkyv::Place<Self::Archived>) {
+        self.to_parts().resolve(resolver, out);
+    }
+}
+
+impl<S> rkyv::Serialize<S> for ChapterVerse
+where
+    S: rkyv::rancor::Fallible + ?Sized,
+    ChapterVerseParts: rkyv::Serialize<S>,
+{
+    fn serialize(&self, serializer: &mut S) -> Result<Self::Resolver, S::Error> {
+        self.to_parts().serialize(serializer)
+    }
+}
+
+impl<D: rkyv::rancor::Fallible + ?Sized> rkyv::Deserialize<ChapterVerse, D> for ArchivedChapterVerse {
+    fn deserialize(&self, _: &mut D) -> Result<ChapterVerse, D::Error> {
+        Ok(ChapterVerse::new(self.chapter.as_str(), self.verse.as_str()))
+    }
+}
+
 impl fmt::Debug for ChapterVerse {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "CV({}:{})", self.chapter, self.verse)
+        write!(f, "CV({}:{})", self.chapter(), self.verse())
     }
 }
 
 impl fmt::Display for ChapterVerse {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{}:{}", self.chapter, self.verse)
+        write!(f, "{}:{}", self.chapter(), self.verse())
     }
 }
 
@@ -212,6 +273,25 @@ mod tests {
         let cv = ChapterVerse::new("3", "16");
         assert_eq!(cv.chapter(), "3");
         assert_eq!(cv.verse(), "16");
+    }
+
+    #[test]
+    fn test_size_and_parts() {
+        assert_eq!(std::mem::size_of::<ChapterVerse>(), 24);
+
+        for (chapter, verse) in [("3", "16"), ("-1", "0"), ("119", "175-176"), ("1", ""), ("", ""), ("1", "5,6,7"),
+                                 ("150", "a verse 'number' which is too long to store inline")] {
+            let cv = ChapterVerse::new(chapter, verse);
+            assert_eq!((cv.chapter(), cv.verse()), (chapter, verse));
+        }
+        assert_ne!(ChapterVerse::new("1", "12"), ChapterVerse::new("11", "2"));
+    }
+
+    #[test]
+    fn test_serialisation_round_trip() {
+        let cv = ChapterVerse::new("119", "175-176");
+        let bytes = rkyv::to_bytes::<rkyv::rancor::Error>(&cv).unwrap();
+        assert_eq!(rkyv::from_bytes::<ChapterVerse, rkyv::rancor::Error>(&bytes).unwrap(), cv);
     }
 
     #[test]

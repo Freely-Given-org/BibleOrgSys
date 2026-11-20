@@ -108,7 +108,7 @@ class HebrewWLCBibleAddon():
     # end of HebrewWLCBibleAddon.__init__
 
 
-    def getVerseDictList( self, verseDataEntry, ref ):
+    def getVerseDictList( self, verseDataEntry, ref ) -> list:
         """
         Given a verseDataEntry (an InternalBibleEntry)
             return the text as a list of dictionaries (one for each word).
@@ -119,7 +119,7 @@ class HebrewWLCBibleAddon():
             fnPrint( DEBUGGING_THIS_MODULE, f"getVerseDictList( {verseDataEntry}, {ref} )" )
         assert isinstance( verseDataEntry, InternalBibleEntry )
 
-        def handleExtra( thisExtra ):
+        def handleExtra( thisExtra ) -> dict | None:
             """
             Checks an extra to see if it's a ww extra (word attributes).
 
@@ -300,7 +300,7 @@ class HebrewWLCBibleAddon():
         return text.replace('=', '')
     # end of HebrewWLCBibleAddon.removeMorphemeBreaks
 
-    def removeCantillationMarks( self, text=None, removeMetegOrSiluq=False ):
+    def removeCantillationMarks( self, text=None, removeMetegOrSiluq:bool=False ):
         """
         Return the text with cantillation marks removed.
         """
@@ -316,7 +316,7 @@ class HebrewWLCBibleAddon():
         return h.removeCantillationMarks( removeMetegOrSiluq=removeMetegOrSiluq )
     # end of HebrewWLCBibleAddon.removeCantillationMarks
 
-    def removeVowelPointing( self, text=None, removeMetegOrSiluq=False ):
+    def removeVowelPointing( self, text=None, removeMetegOrSiluq:bool=False ):
         """
         Return the text with cantillation marks removed.
         """
@@ -334,7 +334,7 @@ class HebrewWLCBibleAddon():
 #
 # Functions for handling our glossing dictionary
 #
-    def _checkLoadedDict( self ):
+    def _checkLoadedDict( self ) -> None:
         """
         """
         if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.debugFlag:
@@ -392,7 +392,7 @@ class HebrewWLCBibleAddon():
 
 
 
-    def loadGlossingDict( self, glossingDictFilepath=None ):
+    def loadGlossingDict( self, glossingDictFilepath=None ) -> None:
         """
         """
         self.glossingDictFilepath = glossingDictFilepath
@@ -422,7 +422,7 @@ class HebrewWLCBibleAddon():
     # end of HebrewWLCBibleAddon.loadGlossingDict
 
 
-    def saveAnyChangedGlosses( self, exportAlso=False ):
+    def saveAnyChangedGlosses( self, exportAlso:bool=False ) -> None:
         """
         Save the glossing dictionary to a pickle file.
         """
@@ -442,7 +442,7 @@ class HebrewWLCBibleAddon():
     # end of HebrewWLCBibleAddon.saveAnyChangedGlosses
 
 
-    def importGlossingDictionary( self, glossingDictImportFilepath=None, overrideFlag=False ):
+    def importGlossingDictionary( self, glossingDictImportFilepath=None, overrideFlag:bool=False ) -> None:
         """
         Import the glossing dictionary from (an exported or handcrafted) text file.
 
@@ -512,7 +512,7 @@ class HebrewWLCBibleAddon():
     # end of HebrewWLCBibleAddon.importGlossingDictionary
 
 
-    def exportGlossingDictionary( self, glossingDictExportFilepath=None ):
+    def exportGlossingDictionary( self, glossingDictExportFilepath=None ) -> None:
         """
         Export the glossing dictionary to a text file
             plus a reversed text file (without the references).
@@ -558,7 +558,7 @@ class HebrewWLCBibleAddon():
     # end of HebrewWLCBibleAddon.exportGlossingDictionary
 
 
-    def setNewGenericGloss( self, normalizedHebrewWord, genericGloss, ref ):
+    def setNewGenericGloss( self, normalizedHebrewWord, genericGloss, ref ) -> None:
         """
         Check a new gloss and add it to the glossing dictionary.
         """
@@ -589,7 +589,7 @@ class HebrewWLCBibleAddon():
     # end of HebrewWLCBibleAddon.setNewGenericGloss
 
 
-    def setNewSpecificGloss( self, normalizedHebrewWord, specificGloss, ref ):
+    def setNewSpecificGloss( self, normalizedHebrewWord, specificGloss, ref ) -> None:
         """
         Check a new gloss and add it to the glossing dictionary.
 
@@ -619,7 +619,7 @@ class HebrewWLCBibleAddon():
     # end of HebrewWLCBibleAddon.setNewSpecificGloss
 
 
-    def addNewGenericGlossingReference( self, normalizedHebrewWord, ref ):
+    def addNewGenericGlossingReference( self, normalizedHebrewWord, ref ) -> None:
         """
         Add a new ref to the glossing dictionary if it's not already there.
         """
@@ -640,7 +640,7 @@ class HebrewWLCBibleAddon():
     # end of HebrewWLCBibleAddon.addNewGenericGlossingReference
 
 
-    def updateGenericGlossingReferences( self ):
+    def updateGenericGlossingReferences( self ) -> None:
         """
         Go through the entire WLC and check for words that we already have a gloss for
             and update the reference fields.

@@ -23,6 +23,9 @@ CHANGELOG:
     2026-08-07 Try to make uW handling more robust again
     2026-08-25 Handle special cases for T4T
     2026-10-25 Preserve ordinary line-leading character fields and adjacent verse notes
+    2026-11-16 Accept uW lines containing only \\zaln-s milestone(s) with the aligned words on following lines,
+                and \\zaln-e\\* milestones at the start of a line, and words ending with '{' plus punctuation,
+                and multi-line \\qa acrostic headings, and lines starting with nested \\+ markers
 """
 from typing import Any
 import os
@@ -35,12 +38,13 @@ from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.InputOutput.USFMFile import USFMFile
 from BibleOrgSys.Bible import Bible, BibleBook
 import usfm_markers_py
+from BibleOrgSys.Reference.BookCode import BookCode
 
 
-LAST_MODIFIED_DATE = '2026-10-25'
+LAST_MODIFIED_DATE = '2026-11-16' # by Opus5.5
 SHORT_PROGRAM_NAME = "USFMBibleBook"
 PROGRAM_NAME = "USFM Bible book handler"
-PROGRAM_VERSION = '0.70'
+PROGRAM_VERSION = '0.71'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -55,7 +59,7 @@ class USFMBibleBook( BibleBook ):
     Class to load and manipulate a single USFM file / book.
     """
 
-    def __init__( self, containerBibleObject:Bible, BBB:str ) -> None:
+    def __init__( self, containerBibleObject:Bible, BBB:BookCode ) -> None:
         """
         Create the USFM Bible book object.
         """
@@ -205,13 +209,15 @@ class USFMBibleBook( BibleBook ):
                     variables['words'] = variables['words'][:-1]
                 if not ( variables['words'].endswith( '"\\w*' )
                 or variables['words'].endswith( '\\w*{' ) # UST Act 1:18 (or should this have been handled earlier)
+                or (variables['words'][-1] in BibleOrgSysGlobals.TRAILING_WORD_PUNCT_CHARS
+                    and variables['words'][:-1].endswith( '\\w*{' )) # e.g., UST 1CH 4:12 '\\w Jephunneh\\w*{, another descendant…}'
                 or ((variables['words'][-1] in '-\u200c' # Zero-width non-joiner (for Kannada IEV)
                     or variables['words'][-1] in BibleOrgSysGlobals.TRAILING_WORD_PUNCT_CHARS)
                         and variables['words'][-5:-1] == '"\\w*' ) \
                 or (variables['words'][-1] in BibleOrgSysGlobals.TRAILING_WORD_PUNCT_CHARS
                     and len(variables['words'])>1 and variables['words'][-2] in BibleOrgSysGlobals.TRAILING_WORD_PUNCT_CHARS
                     and variables['words'][-6:-2] == '"\\w*' ) ):
-                        logging.critical( f"handleUWEncoding({givenMarker=} {givenText=} {variables['level']=} {variables['maxLevel']=}) got a problem at {self.BBB}_{C}:{V} with {variables['words']=}" )
+                        logging.critical( f"handleUWEncoding({givenMarker=} {givenText=} {variables['level']=} {variables['maxLevel']=}) got a problem at '{self.workName}' {self.BBB}_{C}:{V} with {variables['words']=}" )
                         # ['words']=' \\w the|x-occurrence="2" x-occurrences="3"\\w* {\\w head|x-occurrence="2" x-occurrences="2"\\w*|'
                 assert 'zaln' not in variables['words']
             if variables['level'] > MAX_EXPECTED_NESTING_LEVELS:
@@ -400,7 +406,10 @@ class USFMBibleBook( BibleBook ):
                 else: # end marker(s) must be on a following line
                     #dPrint( 'Quiet', debuggingThisFunction, self.wordName, self.BBB, C, V, "words3a", variables['words'] )
                     #dPrint( 'Quiet', debuggingThisFunction, f"{marker}={text}" )
-                    if marker == 'INLINE': assert not variables['words']
+                    if marker == 'INLINE':
+                        assert not variables['words']
+                        if not text.strip(): # Line held only \zaln-s milestone(s) -- valid USFM: the aligned words follow on later lines (e.g., ULT 1KI, JER)
+                            return None, None # Caller has nothing to add for this line
                     variables['words'] += text if marker=='INLINE' else f' \\{marker} {text}'
                     #dPrint( 'Quiet', debuggingThisFunction, "words3b", variables['words'] )
                     if (debuggingThisFunction) or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel >= 5:
@@ -463,6 +472,15 @@ class USFMBibleBook( BibleBook ):
         if encoding is None: encoding = 'utf-8'
         originalBook.read( self.sourceFilepath, encoding=encoding )
 
+        # A nested character marker (e.g., \\+w inside a footnote) can't start a new paragraph,
+        #   so a line beginning with one just continues the previous line (e.g., UHB 2SA 23:8 multi-line Qere footnote)
+        for ix in range( len(originalBook.lines)-1, 0, -1 ): # backwards, so consecutive lines all get joined
+            nestedMarker, nestedText = originalBook.lines[ix]
+            if nestedMarker and nestedMarker[0] == '+':
+                prevMarker, prevText = originalBook.lines[ix-1]
+                originalBook.lines[ix-1] = (prevMarker, f"{prevText.rstrip()} \\{nestedMarker}{'' if nestedMarker.endswith('*') else ' '}{nestedText}")
+                del originalBook.lines[ix]
+
         # Pre-check for uW alignment encoding in this file (it's not in FRT, etc.)
         gotUWEncoding = False
         for marker,text in originalBook.lines:
@@ -473,6 +491,13 @@ class USFMBibleBook( BibleBook ):
         if gotUWEncoding:
             self.containerBibleObject.uWencoded = True
             issueLinePositioningErrors = False
+            # A \zaln-e\* end milestone may validly start a new line (e.g., ULT JER 31:35, EZK 22:9)
+            #   but our alignment handling expects it on the same line as the last aligned word, so join it on
+            for ix in range( len(originalBook.lines)-1, 0, -1 ): # backwards, so consecutive lines all get joined
+                if originalBook.lines[ix][0] == 'zaln-e\\*':
+                    prevMarker, prevText = originalBook.lines[ix-1]
+                    originalBook.lines[ix-1] = (prevMarker, f"{prevText.rstrip()}\\zaln-e\\*{originalBook.lines[ix][1]}")
+                    del originalBook.lines[ix]
         alignmentVariables = { 'level':0, 'maxLevel':0, 'text':'', 'words':'', 'saved':[] }
 
         # Do some important cleaning up before we save the data
@@ -617,7 +642,7 @@ class USFMBibleBook( BibleBook ):
                     #  dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "HERE1", lastMarker, lastText, "now", marker, text)
                     marker, text = handleUWEncoding( marker, text, alignmentVariables )
                     #  dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "HERE2", lastMarker, lastText, "now", marker, text)
-                    if marker in BibleOrgSysGlobals.USFMCharacterMarkers and (lastMarker in ('c', 'v', 'XXXp~', 'd', 'q','pi','qm','li') or lastMarker in BibleOrgSysGlobals.USFMParagraphMarkers):
+                    if marker in BibleOrgSysGlobals.USFMCharacterMarkers and (lastMarker in ('c', 'v', 'XXXp~', 'd', 'q','pi','qm','li', 'qa') or lastMarker in BibleOrgSysGlobals.USFMParagraphMarkers):
                         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"HereXX with {lastMarker} now {marker}" )
                         if not lastText.endswith(' '): lastText += ' ' # Not always good to add a space, but it's their fault!
                         lastText +=  '\\' + marker + ' ' + text
@@ -686,6 +711,8 @@ class USFMBibleBook( BibleBook ):
                 if marker in ('zaln-s','zaln-e'): # it's a Door43 translation alignment marker (should be self-closed)
                     gotUWEncoding = True
                     marker, text = handleUWEncoding( marker, text, alignmentVariables )
+                    if marker is None: # line only opened alignment(s) -- words follow on later lines
+                        continue
                     if marker=='v~' and (lastMarker in ('v', 'q','pi','qm','li') or lastMarker in BibleOrgSysGlobals.USFMParagraphMarkers):
                         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"HereYY with {lastMarker} now {marker}" )
                         if not lastText.endswith(' '): lastText += ' ' # Not always good to add a space, but it's their fault!
@@ -735,7 +762,7 @@ class USFMBibleBook( BibleBook ):
                             break
                     # Otherwise, don't bother processing this line -- it'll just cause more problems later on
                         loadErrors.append( f"{self.BBB} {C}:{V} Found Bad USFM line with {marker=} {text=}" )
-                        logging.critical( f"Bad USFM line at {self.BBB} {C}:{V} with {marker=} {text=}" )
+                        logging.critical( f"Bad '{self.workName}' USFM line at {self.BBB} {C}:{V} with {marker=} {text=}" )
                     self.addPriorityError( 100, C, V, f"Found bad USFM line in file with {marker=} {text=}" )
             if (text and '.Καὶ' in text) or (lastText and '.Καὶ' in lastText): assert False, "We want to stop here"
             if marker and not lastMarker:
@@ -777,7 +804,7 @@ def briefDemo() -> None:
     """
     BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
-    def demoFile( name, filename, folder, BBB, encoding ):
+    def demoFile( name, filename, folder, BBB:BookCode, encoding ) -> None:
         if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
             vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Loading {} from {}{}…".format( BBB, filename, f" from {folder}" if BibleOrgSysGlobals.verbosityLevel > 2 else '' ) )
         UBB = USFMBibleBook( name, BBB )
@@ -847,7 +874,7 @@ def fullDemo() -> None:
     """
     BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
-    def demoFile( name, filename, folder, BBB, encoding ):
+    def demoFile( name, filename, folder, BBB:BookCode, encoding ) -> None:
         if (DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel >= 2:
             vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Loading {} from {}{}…".format( BBB, filename, f" from {folder}" if BibleOrgSysGlobals.verbosityLevel > 2 else '' ) )
         UBB = USFMBibleBook( name, BBB )

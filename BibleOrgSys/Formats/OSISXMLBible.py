@@ -39,6 +39,7 @@ from BibleOrgSys.Bible import Bible, BibleBook
 from usfm_markers_py import USFM_BIBLE_PARAGRAPH_MARKERS
 import bos_books_codes_py
 from bible_organisational_system import parseOsis
+from BibleOrgSys.Reference.BookCode import BookCode
 
 
 LAST_MODIFIED_DATE = '2026-10-06' # by RJH
@@ -61,7 +62,7 @@ ISOLanguages = ISO_639_3_Languages().loadData()
 
 
 
-def OSISXMLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=False, autoLoadBooks:bool=False ):
+def OSISXMLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=False, autoLoadBooks:bool=False ) -> 'bool | OSISXMLBible | int | None':
     """
     Given a folder, search for OSIS XML Bible files or folders in the folder and in the next level down.
 
@@ -260,7 +261,7 @@ class OSISXMLBible( Bible ):
     divTag = OSISNameSpace + 'div'
 
 
-    def __init__( self, sourceFilepath, givenName=None, givenAbbreviation=None, encoding='utf-8', *, versification=None ) -> None:
+    def __init__( self, sourceFilepath, givenName=None, givenAbbreviation=None, encoding:str='utf-8', *, versification=None ) -> None:
         """
         Constructor: just sets up the OSIS Bible object.
 
@@ -359,7 +360,7 @@ class OSISXMLBible( Bible ):
     # end of OSISXMLBible.__init__
 
 
-    def loadBooks( self ):
+    def loadBooks( self ) -> None:
         """
         Loads the OSIS XML file or files.
         """
@@ -427,11 +428,11 @@ class OSISXMLBible( Bible ):
         self.doPostLoadProcessing()
     # end of OSISXMLBible.loadBooks()
 
-    def load( self ):
+    def load( self ) -> None:
         self.loadBooks()
 
 
-    def loadBook( self, BBB:str, filename=None ):
+    def loadBook( self, BBB:BookCode, filename=None ) -> None:
         """
         Load the requested book into self.books if it's not already loaded.
 
@@ -651,7 +652,7 @@ class OSISXMLBible( Bible ):
     # end of OSISXMLBible._loadFile function
 
 
-    def validateDivineName( self, thisBook, element, locationDescription, verseMilestone, loadErrors ):
+    def validateDivineName( self, thisBook, element, locationDescription, verseMilestone, loadErrors ) -> None:
         """
         """
         assert isinstance( thisBook, BibleBook )
@@ -672,7 +673,7 @@ class OSISXMLBible( Bible ):
     # end of validateDivineName
 
 
-    def validateAndLoadSEG( self, thisBook, element, locationDescription, verseMilestone, loadErrors ):
+    def validateAndLoadSEG( self, thisBook, element, locationDescription, verseMilestone, loadErrors ) -> None:
         """
         Also handles the tail.
 
@@ -730,7 +731,7 @@ class OSISXMLBible( Bible ):
     # end of validateAndLoadSEG
 
 
-    def validateAndLoadWord( self, thisBook, element, location, verseMilestone, loadErrors ):
+    def validateAndLoadWord( self, thisBook, element, location, verseMilestone, loadErrors ) -> None:
         """
         Handle a 'w' element and submit a string (which may include embedded Strongs' numbers, etc.).
 
@@ -824,7 +825,7 @@ class OSISXMLBible( Bible ):
     # end of validateAndLoadWord
 
 
-    def validateHighlight( self, thisBook, element, locationDescription, verseMilestone, loadErrors ):
+    def validateHighlight( self, thisBook, element, locationDescription, verseMilestone, loadErrors ) -> None:
         """
         Also handles the tail.
 
@@ -871,7 +872,7 @@ class OSISXMLBible( Bible ):
     # end of validateHighlight
 
 
-    def validateRDG( self, thisBook, element, locationDescription, verseMilestone, loadErrors ):
+    def validateRDG( self, thisBook, element, locationDescription, verseMilestone, loadErrors ) -> None:
         """
         Also handles the tail.
 
@@ -933,7 +934,7 @@ class OSISXMLBible( Bible ):
     # end of validateRDG
 
 
-    def validateProperName( thisBook, element, locationDescription, verseMilestone, loadErrors ):
+    def validateProperName( thisBook, element, locationDescription, verseMilestone, loadErrors ) -> None:
         """
         """
         location = "validateProperName: " + locationDescription
@@ -945,7 +946,7 @@ class OSISXMLBible( Bible ):
     # end of validateProperName
 
 
-    def validateCrossReferenceOrFootnote( self, thisBook, element, locationDescription, verseMilestone, loadErrors ):
+    def validateCrossReferenceOrFootnote( self, thisBook, element, locationDescription, verseMilestone, loadErrors ) -> None:
         """
         Check/validate and process a cross-reference or footnote.
         """
@@ -1342,7 +1343,7 @@ class OSISXMLBible( Bible ):
     # end of OSISXMLBible.validateCrossReferenceOrFootnote
 
 
-    def validateTransChange( self, thisBook, element, location, verseMilestone, loadErrors ):
+    def validateTransChange( self, thisBook, element, location, verseMilestone, loadErrors ) -> None:
         """
         Handle a transChange element and return a string.
         """
@@ -1524,7 +1525,7 @@ class OSISXMLBible( Bible ):
     # end of OSISXMLBible.validateVerseElement
 
 
-    def validateTitle( self, thisBook, element, locationDescription, chapterMilestone, verseMilestone, loadErrors ):
+    def validateTitle( self, thisBook, element, locationDescription, chapterMilestone, verseMilestone, loadErrors ) -> None:
         """
         Check/validate and process a OSIS Bible paragraph, including all subfields.
         """
@@ -1735,7 +1736,7 @@ class OSISXMLBible( Bible ):
     # end of OSISXMLBible.validateTitle
 
 
-    def validateHeader( self, header, loadErrors ):
+    def validateHeader( self, header, loadErrors ) -> None:
         """
         Check/validate the given OSIS header record.
         """
@@ -2118,7 +2119,7 @@ class OSISXMLBible( Bible ):
     # end of OSISXMLBible.validateHeader
 
 
-    def validateFrontMatter( self, bookList, frontMatter, loadErrors ):
+    def validateFrontMatter( self, bookList, frontMatter, loadErrors ) -> None:
         """
         Check/validate the given OSIS front matter (div) record.
         """
@@ -2247,7 +2248,7 @@ class OSISXMLBible( Bible ):
     # end of OSISXMLBible.validateFrontMatter
 
 
-    def validateAndExtractMainDiv( self, bookList, div, loadErrors ):
+    def validateAndExtractMainDiv( self, bookList, div, loadErrors ) -> None:
         """
         Check/validate and extract data from the given OSIS div record.
             This may be a book group, or directly into a book
@@ -2262,7 +2263,7 @@ class OSISXMLBible( Bible ):
         self.haveBook = False
 
 
-        def validateGroupTitle( element, locationDescription ):
+        def validateGroupTitle( element, locationDescription ) -> None:
             """
             Check/validate and process a OSIS Bible paragraph, including all subfields.
             """
@@ -2339,7 +2340,7 @@ class OSISXMLBible( Bible ):
     # end of OSISXMLBible.validateAndExtractMainDiv
 
 
-    def validateAndExtractBookDiv( self, bookList, div, loadErrors ):
+    def validateAndExtractBookDiv( self, bookList, div, loadErrors ) -> None:
         """
         Check/validate and extract data from the given OSIS div record.
             This should be a book division.
@@ -2504,7 +2505,7 @@ class OSISXMLBible( Bible ):
         # end of OSISXMLBible.validateChapterElement
 
 
-        def validateSigned( thisBook, element, locationDescription, verseMilestone ):
+        def validateSigned( thisBook, element, locationDescription, verseMilestone ) -> None:
             """
             """
             location = "validateSigned: " + locationDescription
@@ -2517,7 +2518,7 @@ class OSISXMLBible( Bible ):
         # end of validateSigned
 
 
-        def validateLB( thisBook, element, locationDescription, verseMilestone ):
+        def validateLB( thisBook, element, locationDescription, verseMilestone ) -> None:
             """
             """
             location = "validateLB: " + locationDescription
@@ -2715,7 +2716,7 @@ class OSISXMLBible( Bible ):
         # end of OSISXMLBible.validateList
 
 
-        def validateMilestone( thisBook, subelement, location, verseMilestone ):
+        def validateMilestone( thisBook, subelement, location, verseMilestone ) -> None:
             """
             """
             sublocation = "milestone of " + location

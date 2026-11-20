@@ -25,6 +25,7 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Internals.InternalBibleBook import InternalBibleBook
 from BibleOrgSys.BibleWriter import BibleWriter
+from BibleOrgSys.Reference.BookCode import BookCode
 
 
 LAST_MODIFIED_DATE = '2026-10-06' # by RJH
@@ -55,7 +56,7 @@ class BibleBook( InternalBibleBook ):
             This means that the index has to be updated if the data is updated.
     """
 
-    def __init__( self, containerBibleObject, BBB:str ) -> None:
+    def __init__( self, containerBibleObject, BBB:BookCode ) -> None:
         """
         Constructor: creates an empty Bible book.
         """

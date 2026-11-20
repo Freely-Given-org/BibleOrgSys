@@ -102,6 +102,8 @@ CHANGELOG:
                 added exact-condition guards around vPrint/dPrint/fnPrint call sites
                 throughout the codebase (see Misc/addPrintGuards.py) so message f-strings
                 are no longer built when the message cannot print
+    2026-11-18 pickleObject writes via a temporary file, so a failed or interrupted pickle
+                can't leave a truncated .pickle file behind (which would look newer than its sources)
 """
 import sys
 import logging
@@ -149,10 +151,10 @@ BOOKLIST_88 = BOOKLIST_OT39 + BOOKLIST_DC22 + BOOKLIST_NT27
 assert len( BOOKLIST_88 ) == 88
 
 
-LAST_MODIFIED_DATE = '2026-10-06' # by RJH
+LAST_MODIFIED_DATE = '2026-11-18' # by RJH
 SHORT_PROGRAM_NAME = "BibleOrgSysGlobals"
 PROGRAM_NAME = "BibleOrgSys (BOS) Globals"
-PROGRAM_VERSION = '0.97'
+PROGRAM_VERSION = '0.98'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -847,7 +849,7 @@ def totalSize( obj, handlers={} ):
 # File comparisons
 #
 
-def fileCompare( filename1, filename2, folder1=None, folder2=None, printFlag=True, exitCount:int=10 ):
+def fileCompare( filename1, filename2, folder1=None, folder2=None, printFlag:bool=True, exitCount:int=10 ) -> bool | None:
     """
     Compare the two utf-8 files.
     """
@@ -915,7 +917,7 @@ def fileCompare( filename1, filename2, folder1=None, folder2=None, printFlag=Tru
 # end of BibleOrgSysGlobals.fileCompare
 
 
-def fileCompareUSFM( filename1, filename2, folder1=None, folder2=None, printFlag=True, exitCount:int=10 ):
+def fileCompareUSFM( filename1, filename2, folder1=None, folder2=None, printFlag:bool=True, exitCount:int=10 ) -> bool | None:
     """
     Compare the two utf-8 USFM files,
         ignoring little things like \\s vs \\s1.
@@ -1029,7 +1031,7 @@ def fileCompareXML( filename1:str, filename2:str, folder1:str=None, folder2:str=
         logging.critical( f"Unable to parse {filepath2}: {err}" )
         return None
 
-    def compareElements( element1, element2 ):
+    def compareElements( element1, element2 ) -> None:
         """
         """
         nonlocal diffCount, location
@@ -1396,7 +1398,7 @@ def rreplace( s:str, old:str, new:str, num:int ) -> str:
 # Reloading a saved Python object from the cache
 #
 
-def pickleObject( theObject, filename, folderName=None, disassembleObjectFlag=False ):
+def pickleObject( theObject, filename, folderName=None, disassembleObjectFlag:bool=False ) -> bool:
     """
     Writes the object to a .pickle file that can be easily loaded into a Python3 program.
         If folderName is None (or missing), defaults to the default cache folderName specified above.
@@ -1444,19 +1446,28 @@ def pickleObject( theObject, filename, folderName=None, disassembleObjectFlag=Fa
                     pickleObject( a, f, folderName, disassembleObjectFlag=True )
             else: dPrint( 'Quiet', DEBUGGING_THIS_MODULE, '  skip' )
 
-    with open( filepath, 'wb' ) as pickleOutputFile:
-        try:
-            pickle.dump( theObject, pickleOutputFile, pickle.HIGHEST_PROTOCOL )
-        except pickle.PicklingError as err:
-            logging.critical( f"BibleOrgSysGlobals: Unexpected error in pickleObject: {sys.exc_info()[0]} {err}" )
-            logging.critical( f"BibleOrgSysGlobals.pickleObject: Unable to pickle into {filename}" )
-            for k,v in theObject.__dict__.items(): # Adapted from https://stackoverflow.com/questions/30499341/establishing-why-an-object-cant-be-pickled
-                try: pickle.dumps(v)
-                except:
-                    badAttribute = k
-                    logging.critical( f"Can't pickle {badAttribute=} when pickling {type(v)} from {type(theObject)}" )
-                    # break
-            return False
+    # Write to a temporary file in the same folder, then rename it into place,
+    #   so that a failed or interrupted pickle never leaves a truncated file at filepath
+    #   (and any previous complete pickle stays untouched until the new one is complete)
+    filepath = Path( filepath )
+    temporaryFilepath = filepath.with_name( f'{filepath.name}.{os.getpid()}.tmp' )
+    try:
+        with open( temporaryFilepath, 'wb' ) as pickleOutputFile:
+            try:
+                pickle.dump( theObject, pickleOutputFile, pickle.HIGHEST_PROTOCOL )
+            except pickle.PicklingError as err:
+                logging.critical( f"BibleOrgSysGlobals: Unexpected error in pickleObject: {sys.exc_info()[0]} {err}" )
+                logging.critical( f"BibleOrgSysGlobals.pickleObject: Unable to pickle into {filename}" )
+                for k,v in theObject.__dict__.items(): # Adapted from https://stackoverflow.com/questions/30499341/establishing-why-an-object-cant-be-pickled
+                    try: pickle.dumps(v)
+                    except:
+                        badAttribute = k
+                        logging.critical( f"Can't pickle {badAttribute=} when pickling {type(v)} from {type(theObject)}" )
+                        # break
+                return False
+        os.replace( temporaryFilepath, filepath ) # Atomic on the same filesystem
+    finally:
+        temporaryFilepath.unlink( missing_ok=True ) # Only still exists if something went wrong
     return True
 # end of BibleOrgSysGlobals.pickleObject
 
@@ -1597,7 +1608,7 @@ def introduceProgram( theirName:str, theirPROGRAM_NAME_VERSION:str, theirLastMod
 # end of BibleOrgSysGlobals.introduceProgram function
 
 
-def setDebugFlag( newValue=True ) -> None:
+def setDebugFlag( newValue:bool=True ) -> None:
     """
     Set the debug flag.
     """
@@ -1609,7 +1620,7 @@ def setDebugFlag( newValue=True ) -> None:
 # end of BibleOrgSysGlobals.setDebugFlag
 
 
-def setStrictCheckingFlag( newValue=True ):
+def setStrictCheckingFlag( newValue:bool=True ) -> None:
     """
     See the strict checking flag.
     """
@@ -1622,7 +1633,7 @@ def setStrictCheckingFlag( newValue=True ):
 # end of BibleOrgSysGlobals.setStrictCheckingFlag
 
 
-def setMissionCriticalFlag( newValue=True ):
+def setMissionCriticalFlag( newValue:bool=True ) -> None:
     """
     See the strict checking flag.
     """
@@ -1663,7 +1674,7 @@ def preloadCommonData() -> None:
 # end of BibleOrgSysGlobals.preloadCommonData
 
 
-def addStandardOptionsAndProcess( parserObject, exportAvailable=False ) -> None:
+def addStandardOptionsAndProcess( parserObject, exportAvailable:bool=False ) -> None:
     """
     Add our standardOptions to the command line parser.
     Determine multiprocessing strategy.
@@ -1731,7 +1742,7 @@ def addStandardOptionsAndProcess( parserObject, exportAvailable=False ) -> None:
 # end of BibleOrgSysGlobals.addStandardOptionsAndProcess
 
 
-def printAllGlobals( indent=None ):
+def printAllGlobals( indent=None ) -> None:
     """
     Print all global variables (for debugging usually).
     """
@@ -1751,7 +1762,7 @@ def printAllGlobals( indent=None ):
 # end of BibleOrgSysGlobals.printAllGlobals
 
 
-def elapsedTime( startTime ):
+def elapsedTime( startTime ) -> str:
     """
     Returns a formatted string containing the elapsed time since startTime.
     """
@@ -1770,7 +1781,7 @@ def elapsedTime( startTime ):
 # end of elapsedTime
 
 
-def closedown( cProgName, cProgVersion ):
+def closedown( cProgName, cProgVersion ) -> None:
     """
     Does all the finishing off for the program.
     """

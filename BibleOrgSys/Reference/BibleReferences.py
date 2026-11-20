@@ -75,6 +75,7 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
 import bos_books_codes_py
+from BibleOrgSys.Reference.BookCode import BookCode
 
 
 LAST_MODIFIED_DATE = '2026-10-06' # by RJH
@@ -384,7 +385,7 @@ class BibleSingleReferences( BibleReferenceBase ):
         Returns a tuple with True/False result, haveWarnings, list of (BBB, C, V, S) tuples
         """
 
-        def saveReference( BBB:str, C:str, V:str, S, refList ):
+        def saveReference( BBB:BookCode, C:str, V:str, S, refList ) -> None:
             """ Checks the reference info then saves it as a referenceTuple in the refList. """
             nonlocal haveErrors, haveWarnings
             if len(S) > 1:
@@ -700,7 +701,7 @@ class BibleReferenceList( BibleReferenceBase ):
         We could rewrite this using RegularExpressions, but would it be able to give such precise formatting error messages?
         """
 
-        def saveReference( BBB:str, C:str, V:str, S:str, refList:list[tuple[str,str,str,str]] ) -> None:
+        def saveReference( BBB:BookCode, C:str, V:str, S:str, refList:list[tuple[str,str,str,str]] ) -> None:
             """ Checks the reference info then saves it as a referenceTuple in the refList. """
             nonlocal haveErrors, haveWarnings, totalVerseList
             if len(S) > 1:
@@ -718,7 +719,7 @@ class BibleReferenceList( BibleReferenceBase ):
         # end of saveReference
 
 
-        def saveStartReference( BBB:str, C:str, V:str, S:str ) -> None:
+        def saveStartReference( BBB:BookCode, C:str, V:str, S:str ) -> None:
             """ Checks the reference info then saves it as a referenceTuple. """
             nonlocal haveErrors, haveWarnings, startReferenceTuple
             if len(S) > 1:
@@ -731,7 +732,7 @@ class BibleReferenceList( BibleReferenceBase ):
         # end of saveStartReference
 
 
-        def saveReferenceRange( startTuple:tuple[str,str,str,str], BBB:str, C:str, V:str, S:str, refList:list[tuple[str,str,str,str]] ) -> None:
+        def saveReferenceRange( startTuple:tuple[str,str,str,str], BBB:BookCode, C:str, V:str, S:str, refList:list[tuple[str,str,str,str]] ) -> None:
             """
             Checks the reference info then saves it as a referenceTuple in the refList.
             """
@@ -1213,7 +1214,7 @@ class BibleReferenceList( BibleReferenceBase ):
     # end of BibleReferenceList.parseReferenceString
 
 
-    def getFirstReference( self, referenceString:str, location:str|None=None ):
+    def getFirstReference( self, referenceString:str, location:str|None=None ) -> tuple[str, str, str, str] | None:
         """
         Just return the first reference, even if given a range.
 
@@ -1332,7 +1333,7 @@ class BibleReferenceList( BibleReferenceBase ):
     ## end of BibleReferenceList.containsReferenceTuple
 
 
-    def containsReference( self, BBB:str, C:str, V:str, S:str|None=None ) -> bool:
+    def containsReference( self, BBB:BookCode, C:str, V:str, S:str|None=None ) -> bool:
         """ Returns True/False if the internal reference list contains the given reference. """
         #dPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"BibleReferenceList.containsReference( {BBB}, {C}, {V}, {S} )" )
         assert BBB and len(BBB)==3
@@ -1421,7 +1422,7 @@ class BibleAnchorReference:
     containsReference see if the BBB,C,V,S reference is in our internal list
     """
 
-    def __init__( self, BBB:str, chapterString:str, verseString:str, suffixString:str|None=None ) -> None:
+    def __init__( self, BBB:BookCode, chapterString:str, verseString:str, suffixString:str|None=None ) -> None:
         """ Initialize the object with known information.
         """
         self.objectNameString = 'Bible anchor reference object'
@@ -1480,7 +1481,7 @@ class BibleAnchorReference:
         assert location and isinstance( location, str )
 
 
-        def saveReference( BBB:str, C:str, V:str, S:str, refList:list[tuple[str,str,str,str]] ):
+        def saveReference( BBB:BookCode, C:str, V:str, S:str, refList:list[tuple[str,str,str,str]] ) -> None:
             """ Checks the reference info then saves it as a referenceTuple in the refList. """
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "saveReference:", BBB, C, V, S, refList )
             nonlocal haveErrors, haveWarnings, totalVerseList
@@ -1499,7 +1500,7 @@ class BibleAnchorReference:
         # end of saveReference
 
 
-        def saveStartReference( BBB:str, C:str, V:str, S:str ) -> None:
+        def saveStartReference( BBB:BookCode, C:str, V:str, S:str ) -> None:
             """ Checks the reference info then saves it as a referenceTuple. """
             nonlocal haveErrors, haveWarnings, startReferenceTuple
             if len(S) > 1:
@@ -1512,7 +1513,7 @@ class BibleAnchorReference:
         # end of saveStartReference
 
 
-        def saveReferenceRange( startTuple:tuple[str,str,str,str], BBB:str, C:str, V:str, S:str, refList:list[tuple[str,str,str,str]] ) -> None:
+        def saveReferenceRange( startTuple:tuple[str,str,str,str], BBB:BookCode, C:str, V:str, S:str, refList:list[tuple[str,str,str,str]] ) -> None:
             """
             Checks the reference info then saves it as a referenceTuple in the refList.
             """

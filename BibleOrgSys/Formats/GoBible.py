@@ -43,6 +43,7 @@ from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Bible import Bible, BibleBook
 from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
 import bos_books_codes_py
+from BibleOrgSys.Reference.BookCode import BookCode
 
 
 LAST_MODIFIED_DATE = '2026-10-06' # by RJH
@@ -57,7 +58,7 @@ DEBUGGING_THIS_MODULE = False
 GOBIBLE_FILENAME_END = '.jar'
 
 
-def GoBibleFileCheck( givenPathname, strictCheck=True, autoLoad=False, autoLoadBooks:bool=False ):
+def GoBibleFileCheck( givenPathname, strictCheck:bool=True, autoLoad:bool=False, autoLoadBooks:bool=False ) -> 'bool | GoBible | int | None':
     """
     Given a folder, search for GoBible files or folders in the folder and in the next level down.
     Or if given a zip filename, check that.
@@ -196,7 +197,7 @@ class GoBible( Bible ):
     # end of GoBible.__init__
 
 
-    def preload( self ):
+    def preload( self ) -> None:
         """
         Loads the Metadata file if it can be found.
         """
@@ -401,7 +402,7 @@ class GoBible( Bible ):
     # end of GoBible.preload
 
 
-    def loadBook( self, BBB:str ):
+    def loadBook( self, BBB:BookCode ) -> None:
         """
         Load the requested book into self.books if it's not already loaded.
 
@@ -425,7 +426,7 @@ class GoBible( Bible ):
     # end of GoBible.loadBook
 
 
-    def _loadBookMP( self, BBB:str ) -> BibleBook|None:
+    def _loadBookMP( self, BBB:BookCode ) -> BibleBook|None:
         """
         Multiprocessing version!
         Load the requested book if it's not already loaded (but doesn't save it as that is not safe for multiprocessing)
@@ -449,7 +450,7 @@ class GoBible( Bible ):
     # end of GoBible.loadBookMP
 
 
-    def loadBooks( self ):
+    def loadBooks( self ) -> None:
         """
         Load all the books.
         """
@@ -497,7 +498,7 @@ class GoBibleBook( BibleBook ):
     Class to load and manipulate a single GoBible file / book.
     """
 
-    def __init__( self, containerBibleObject:Bible, BBB:str ) -> None:
+    def __init__( self, containerBibleObject:Bible, BBB:BookCode ) -> None:
         """
         Create the Go Bible book object.
         """
@@ -511,7 +512,7 @@ class GoBibleBook( BibleBook ):
     # end of GoBibleBook.__init__
 
 
-    def load( self, indexToBook ):
+    def load( self, indexToBook ) -> None:
         """
         Load the Go Bible book from a folder.
 
@@ -631,7 +632,7 @@ class GoBibleBook( BibleBook ):
 
 
 
-def testGoBible( GoBibleFile ):
+def testGoBible( GoBibleFile ) -> None:
     # Crudely demonstrate the Go Bible class
     from BibleOrgSys.Reference import VerseReferences
 

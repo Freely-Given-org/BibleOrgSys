@@ -68,6 +68,7 @@ from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
 from BibleOrgSys.Bible import Bible, BibleBook
 import bos_books_codes_py
+from BibleOrgSys.Reference.BookCode import BookCode
 
 LAST_MODIFIED_DATE = '2026-10-06' # by RJH
 SHORT_PROGRAM_NAME = "ZefaniaBible"
@@ -85,7 +86,7 @@ EXTENSION_TO_IGNORE = ( 'ASC', 'BAK', 'BAK2', 'BAK3', 'BAK4', 'BBLX', 'BC', 'CCT
 
 
 
-def ZefaniaXMLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=False, autoLoadBooks:bool=False ):
+def ZefaniaXMLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=False, autoLoadBooks:bool=False ) -> 'bool | ZefaniaXMLBible | int | None':
     """
     Given a folder, search for Zefania XML Bible files or folders in the folder and in the next level down.
 
@@ -250,7 +251,7 @@ class ZefaniaXMLBible( Bible ):
     Class for reading, validating, and converting ZefaniaXMLBible XML.
     """
 
-    def __init__( self, sourceFileOrFolder, givenName, givenAbbreviation=None, encoding='utf-8' ) -> None:
+    def __init__( self, sourceFileOrFolder, givenName, givenAbbreviation=None, encoding:str='utf-8' ) -> None:
         """
         Constructor: just sets up the Zefania Bible object.
         """
@@ -283,9 +284,9 @@ class ZefaniaXMLBible( Bible ):
     # end of ZefaniaXMLBible.__init__
 
 
-    def loadBooks( self ):
+    def loadBooks( self ) -> None:
         self.load()
-    def load( self ):
+    def load( self ) -> None:
         """
         Load a single source XML file and load book elements.
         """
@@ -347,7 +348,7 @@ class ZefaniaXMLBible( Bible ):
     # end of ZefaniaXMLBible.load
 
 
-    def __validateAndExtractHeader( self ):
+    def __validateAndExtractHeader( self ) -> None:
         """
         Extracts information out of the header record, such as:
             <INFORMATION>
@@ -471,7 +472,7 @@ class ZefaniaXMLBible( Bible ):
     # end of ZefaniaXMLBible.__validateAndExtractHeader
 
 
-    def __validateAndExtractBook( self, book ):
+    def __validateAndExtractBook( self, book ) -> None:
         """
         Check/validate and extract book data from the given XML book record
             finding chapter subelements.
@@ -529,7 +530,7 @@ class ZefaniaXMLBible( Bible ):
     # end of ZefaniaXMLBible.__validateAndExtractBook
 
 
-    def __validateAndExtractChapter( self, BBB:str, thisBook, chapter ):
+    def __validateAndExtractChapter( self, BBB:BookCode, thisBook, chapter ) -> None:
         """
         Check/validate and extract chapter data from the given XML book record
             finding and saving chapter numbers and
@@ -581,7 +582,7 @@ class ZefaniaXMLBible( Bible ):
     # end of ZefaniaXMLBible.__validateAndExtractChapter
 
 
-    def __validateAndExtractVerse( self, BBB:str, chapterNumber:SHORT_PROGRAM_NAME, thisBook, verse ):
+    def __validateAndExtractVerse( self, BBB:BookCode, chapterNumber:SHORT_PROGRAM_NAME, thisBook, verse ) -> None:
         """
         Check/validate and extract chapter data from the given XML book record
             finding and saving chapter numbers and

@@ -1,0 +1,5246 @@
+{
+  "formatVersion": 1,
+  "version": "4",
+  "referenceVersion": "1-draft",
+  "dataLicense": "CC-BY-SA-4.0",
+  "name": "OET-LV",
+  "scope": "Explicit 83-book OET-LV source profile: 66 core books, 14 Brenton DC books, native PSS/ODE Swete addresses, and Latin LAO with reviewed reference boundaries. Earlier reviewed mappings and unresolved intervals are retained. LAO 1:1-20 maps individually to the BOS reference; this does not claim identical textual readings.",
+  "evidence": {
+    "source": "OpenEnglishTranslation--OET translatedTexts ESFM, inspected 2026-10-22",
+    "method": "LV OT follows original numbering; LV NT follows VLT, including the Philippians 1:16-17 order. Native word references are unchanged.",
+    "attribution": "OT definitions use Copenhagen Alliance data and the BOS supplement (CC BY-SA 4.0); see source-manifest.json. NT uses the reviewed VLT and BibleTagsNT boundaries.",
+    "boundaryWitnesses": [
+      {
+        "path": "derivedTexts/auto_edited_VLT_ESFM/OET-LV_ACT.ESFM",
+        "sha256": "aa77ff836b2cdf3cc1e76854be0bcd71b85612b319bf6e5177463a992f5bdc68"
+      },
+      {
+        "path": "derivedTexts/auto_edited_VLT_ESFM/OET-LV_CO2.ESFM",
+        "sha256": "ebd5ef5ba4f919513bd5f042a3a664538a46fb2b436a20b3d3a7c7322953d236"
+      },
+      {
+        "path": "derivedTexts/auto_edited_VLT_ESFM/OET-LV_PHP.ESFM",
+        "sha256": "793e2490ff1b500e7ff0e0c5e9bb8b9152e7e7d33547309a5905a1cae59e155f"
+      },
+      {
+        "path": "derivedTexts/auto_edited_VLT_ESFM/OET-LV_JN3.ESFM",
+        "sha256": "ad6f0a82bb7ced9861459c76800c373543a3d84bc9965fa158469fc823d869a0"
+      },
+      {
+        "path": "derivedTexts/auto_edited_VLT_ESFM/OET-LV_REV.ESFM",
+        "sha256": "d20016da8ccd5e5e260d7794ef87cece683a953c4994e05945b7821b6aaffd6b"
+      }
+    ],
+    "additionalBooksReview": {
+      "date": "2026-10-29",
+      "sourceRepository": "https://github.com/Freely-Given-org/OpenEnglishTranslation--OET",
+      "scope": "Native address inventory only; not a versification alignment or approval of the lexical draft text.",
+      "method": "Inventory every chapter and verse marker from the two generated ESFM files, preserving missing labels and exact a/b suffixes. Compare against the bundled Copenhagen counts and OET source-assembly documentation. Counts establish native addresses, not equivalent reference passages.",
+      "sourceFiles": [
+        {
+          "bosBook": "PSS",
+          "usfmId": "PSS",
+          "path": "derivedTexts/auto_edited_DC_ESFM/OET-LV_PSS.ESFM",
+          "sha256": "744851b3ba469fa6d6f723d4e4053240fce88a20ba963e9ec5cfd2c0c9a2132a",
+          "storedLabelCount": 332,
+          "missingLabels": [],
+          "chapterMaxima": [
+            8,
+            41,
+            16,
+            29,
+            22,
+            9,
+            9,
+            40,
+            20,
+            9,
+            9,
+            8,
+            11,
+            6,
+            15,
+            15,
+            51,
+            14
+          ],
+          "partialVerseLabels": {}
+        },
+        {
+          "bosBook": "ODE",
+          "usfmId": "ODA",
+          "path": "derivedTexts/auto_edited_DC_ESFM/OET-LV_ODE.ESFM",
+          "sha256": "14be6f33312400a9c0c3a748b0d39a6a4f4ee943d8ff89d718f86cb7e926a13d",
+          "storedLabelCount": 275,
+          "missingLabels": [
+            "ODE 5:1-2",
+            "ODE 7:1-9",
+            "ODE 7:15",
+            "ODE 9:1-25",
+            "ODE 10:1-50",
+            "ODE 11:1-45",
+            "ODE 12:1-28",
+            "ODE 13:1-67",
+            "ODE 13:74"
+          ],
+          "chapterMaxima": [
+            19,
+            43,
+            10,
+            20,
+            10,
+            19,
+            20,
+            15,
+            45,
+            88,
+            55,
+            32,
+            79,
+            47
+          ],
+          "partialVerseLabels": {
+            "ODE 4:1": [
+              "a"
+            ],
+            "ODE 4:2": [
+              "a"
+            ],
+            "ODE 4:3": [
+              "a"
+            ],
+            "ODE 4:4": [
+              "a"
+            ],
+            "ODE 4:5": [
+              "a"
+            ],
+            "ODE 4:6": [
+              "a"
+            ],
+            "ODE 4:7": [
+              "a"
+            ],
+            "ODE 4:8": [
+              "a"
+            ],
+            "ODE 4:9": [
+              "a",
+              "b"
+            ],
+            "ODE 4:10": [
+              "b"
+            ],
+            "ODE 4:11": [
+              "b"
+            ],
+            "ODE 4:12": [
+              "b"
+            ],
+            "ODE 4:13": [
+              "b"
+            ],
+            "ODE 4:14": [
+              "b"
+            ],
+            "ODE 4:15": [
+              "b"
+            ],
+            "ODE 4:16": [
+              "b"
+            ],
+            "ODE 4:17": [
+              "b"
+            ],
+            "ODE 4:18": [
+              "b"
+            ],
+            "ODE 4:19": [
+              "b"
+            ],
+            "ODE 4:20": [
+              "b"
+            ]
+          }
+        }
+      ],
+      "sourceEdition": "H. B. Swete, The Old Testament in Greek, volume III (1905), via Open Greek and Latin / First1KGreek.",
+      "sourceCommit": "ed91552c52530c8f5a3ddf2dd767e899372a804c",
+      "upstreamSources": [
+        {
+          "filename": "tlg0527.tlg035.1st1K-grc1.xml",
+          "url": "https://raw.githubusercontent.com/OpenGreekAndLatin/First1KGreek/ed91552c52530c8f5a3ddf2dd767e899372a804c/data/tlg0527/tlg035/tlg0527.tlg035.1st1K-grc1.xml",
+          "sha256": "539ddb781c11a4cc5e8d954f872e11a37711d9dd8a4a4851f803a14494fd067e",
+          "bytes": 105648,
+          "license": "CC-BY-SA-4.0",
+          "attribution": "Open Greek and Latin / First1KGreek; Harvard College Library; Digital Divide Data transcription of H. B. Swete, The Old Testament in Greek, volume III (1905)"
+        },
+        {
+          "filename": "tlg0527.tlg028.1st1K-grc1.xml",
+          "url": "https://raw.githubusercontent.com/OpenGreekAndLatin/First1KGreek/ed91552c52530c8f5a3ddf2dd767e899372a804c/data/tlg0527/tlg028/tlg0527.tlg028.1st1K-grc1.xml",
+          "sha256": "5155ba48f1474ef03abeea7a1a74e39b28cc54b4e8159c13208084f80d9b99a8",
+          "bytes": 91500,
+          "license": "CC-BY-SA-4.0",
+          "attribution": "Open Greek and Latin / First1KGreek; Harvard College Library; Digital Divide Data transcription of H. B. Swete, The Old Testament in Greek, volume III (1905)"
+        }
+      ],
+      "assemblyWitnesses": [
+        {
+          "path": "scripts/DC/README.md",
+          "sha256": "21a0e33dd7bec30b6320666de5ad5e181e67d453590ee82bdf0a9b69b65c0fce"
+        },
+        {
+          "path": "scripts/DC/source_manifest.json",
+          "sha256": "351607c0d21d9949828611629c2ff97136749b0a0ef43f9773aa476560d7fe72"
+        },
+        {
+          "path": "scripts/build_OET-LV_DC.py",
+          "sha256": "1601bdc22911d92d9e808e9e7c2f49c033451b32373032016a0bc1336d118680"
+        }
+      ],
+      "attribution": "Native labels derive from Open Greek and Latin / First1KGreek; Harvard College Library; Digital Divide Data transcription of Swete, CC BY-SA 4.0. OET assembly changes are documented in scripts/DC/README.md. Copenhagen reference counts are attributed in the BOS source-manifest.json. No Bible text or lexical data is copied here.",
+      "notes": [
+        "BOS ODE is USFM ODA, Biblical Odes, not Odes of Solomon. PSS is Psalms of Solomon, not Psalm 151 (PS2). Both book identities already exist in BOSReference.",
+        "ODE 4 combines two source songs, iva (Isaiah 5) and ivb (Isaiah 26). Native labels are 1a-9a followed by 9b-20b. These suffixes are source distinctions, not a claim that reference verse 9 is split in the same way.",
+        "ODE 14:1-47 are local XML poetry-line ordinals, not conventional verse numbers; do not map them positionally to the 46-verse reference chapter.",
+        "ODE 10 preserves source order 68,71,72,69,70,73; profile counts do not reorder stored text. Native callers can request explicit ordered references.",
+        "ODE 7:15 and 13:74 are missing source divisions. Other excluded labels precede the numbered song extracts. None implies that the corresponding reference text is absent.",
+        "No identityBooks entries or mappedVerses are added for these books. unsupportedBooks blocks both conversion directions, including apparently matching early verses.",
+        "The OET ESFM/XML files are evidence only, never runtime or test dependencies. The other 14 LV DC drafts are reviewed separately in evidence.deuterocanonicalReview."
+      ]
+    },
+    "deuterocanonicalReview": {
+      "date": "2026-10-29",
+      "sourceRepository": "https://github.com/Freely-Given-org/OpenEnglishTranslation--OET",
+      "method": "Inventory native ESFM labels; compare the retained Brenton Greek words with the Greek reference boundary witnesses and reviewed RV passages. Preserve chapter transpositions, lettered whole-verse aggregates and complete split/merge groups. Textual variants do not imply word-for-word equivalence. All definitions are bundled and reference-directed; no source checkout or automatic text matching is used at runtime.",
+      "sourceFiles": [
+        {
+          "bosBook": "BAR",
+          "path": "derivedTexts/auto_edited_DC_ESFM/OET-LV_BAR.ESFM",
+          "sha256": "1d47b257e1d6cb03e1d58600629a83c0497b10b433db318c35ec05a6830ed420",
+          "chapterMaxima": [
+            22,
+            35,
+            37,
+            37,
+            9,
+            73
+          ],
+          "storedLabelCount": 213,
+          "missingLabels": [],
+          "partialVerseLabels": {}
+        },
+        {
+          "bosBook": "DNG",
+          "path": "derivedTexts/auto_edited_DC_ESFM/OET-LV_DAG.ESFM",
+          "sha256": "0f2e64d1f70e25c1ff4385ffbe04dc8c1ed76a4a1eaa4eb68d086ee3f97655ba",
+          "chapterMaxima": [
+            21,
+            49,
+            97,
+            37,
+            30,
+            29,
+            28,
+            27,
+            27,
+            21,
+            45,
+            13,
+            64,
+            42
+          ],
+          "storedLabelCount": 528,
+          "missingLabels": [
+            "DNG 3:67-70"
+          ],
+          "partialVerseLabels": {
+            "DNG 3:72": [
+              "a",
+              "b"
+            ]
+          }
+        },
+        {
+          "bosBook": "GES",
+          "path": "derivedTexts/auto_edited_DC_ESFM/OET-LV_ES1.ESFM",
+          "sha256": "0c912f7fda53ac14aa42457256b6aa09b1c57a4de3278c4572986b996b84a51f",
+          "chapterMaxima": [
+            58,
+            30,
+            24,
+            63,
+            73,
+            34,
+            15,
+            96,
+            55
+          ],
+          "storedLabelCount": 448,
+          "missingLabels": [],
+          "partialVerseLabels": {}
+        },
+        {
+          "bosBook": "ESG",
+          "path": "derivedTexts/auto_edited_DC_ESFM/OET-LV_ESG.ESFM",
+          "sha256": "5c5d767089bab48f2e02af15d81f06355f3aa98fcdb1555d9260c5c53d6a43c7",
+          "chapterMaxima": [
+            22,
+            23,
+            15,
+            17,
+            14,
+            14,
+            10,
+            17,
+            32,
+            3
+          ],
+          "storedLabelCount": 252,
+          "missingLabels": [
+            "ESG 4:6",
+            "ESG 9:5",
+            "ESG 9:30"
+          ],
+          "partialVerseLabels": {
+            "ESG 1:1": [
+              "b",
+              "c",
+              "d",
+              "e",
+              "f",
+              "g",
+              "h",
+              "i",
+              "k",
+              "l",
+              "m",
+              "n",
+              "o",
+              "p",
+              "q",
+              "r",
+              "s"
+            ],
+            "ESG 3:13": [
+              "a",
+              "b",
+              "c",
+              "d",
+              "e",
+              "f",
+              "g"
+            ],
+            "ESG 4:17": [
+              "a",
+              "b",
+              "c",
+              "d",
+              "e",
+              "f",
+              "g",
+              "h",
+              "i",
+              "k",
+              "l",
+              "m",
+              "n",
+              "o",
+              "p",
+              "q",
+              "r",
+              "s",
+              "t",
+              "u",
+              "w",
+              "x",
+              "y",
+              "z"
+            ],
+            "ESG 5:1": [
+              "a",
+              "b",
+              "c",
+              "d",
+              "e",
+              "f"
+            ],
+            "ESG 5:2": [
+              "a",
+              "b"
+            ],
+            "ESG 8:12": [
+              "a",
+              "b",
+              "c",
+              "d",
+              "e",
+              "f",
+              "g",
+              "h",
+              "i",
+              "k",
+              "l",
+              "m",
+              "n",
+              "o",
+              "p",
+              "q",
+              "r",
+              "s",
+              "t",
+              "u",
+              "x"
+            ],
+            "ESG 10:3": [
+              "a",
+              "b",
+              "c",
+              "d",
+              "e",
+              "f",
+              "g",
+              "h",
+              "i",
+              "k",
+              "l"
+            ]
+          }
+        },
+        {
+          "bosBook": "JDT",
+          "path": "derivedTexts/auto_edited_DC_ESFM/OET-LV_JDT.ESFM",
+          "sha256": "ff8bd8ca1c851edac6b7e13236cb5ce901f22f61c8a747821dc3cdac0ccda058",
+          "chapterMaxima": [
+            16,
+            28,
+            10,
+            15,
+            24,
+            21,
+            32,
+            36,
+            14,
+            23,
+            23,
+            20,
+            20,
+            19,
+            13,
+            25
+          ],
+          "storedLabelCount": 339,
+          "missingLabels": [],
+          "partialVerseLabels": {}
+        },
+        {
+          "bosBook": "MA1",
+          "path": "derivedTexts/auto_edited_DC_ESFM/OET-LV_MA1.ESFM",
+          "sha256": "c0dddb80052b6e3dd8395701fc23def278ffcd40c3e69124d716deb2a2c3ee62",
+          "chapterMaxima": [
+            64,
+            70,
+            60,
+            61,
+            68,
+            63,
+            50,
+            32,
+            73,
+            89,
+            74,
+            53,
+            53,
+            49,
+            41,
+            24
+          ],
+          "storedLabelCount": 924,
+          "missingLabels": [],
+          "partialVerseLabels": {}
+        },
+        {
+          "bosBook": "MA2",
+          "path": "derivedTexts/auto_edited_DC_ESFM/OET-LV_MA2.ESFM",
+          "sha256": "96c9b2eec9d795f0533a6b61417663ffecfc8cb3f4f66a8538825088c4a9ac53",
+          "chapterMaxima": [
+            36,
+            32,
+            40,
+            50,
+            27,
+            31,
+            42,
+            36,
+            29,
+            38,
+            38,
+            45,
+            26,
+            46,
+            39
+          ],
+          "storedLabelCount": 555,
+          "missingLabels": [],
+          "partialVerseLabels": {}
+        },
+        {
+          "bosBook": "MA3",
+          "path": "derivedTexts/auto_edited_DC_ESFM/OET-LV_MA3.ESFM",
+          "sha256": "1fccfeddacfc57a9731e6a93806609d22f65e2b8c5d21a30b1b9bb71b21ca415",
+          "chapterMaxima": [
+            29,
+            33,
+            30,
+            21,
+            51,
+            41,
+            23
+          ],
+          "storedLabelCount": 228,
+          "missingLabels": [],
+          "partialVerseLabels": {}
+        },
+        {
+          "bosBook": "MA4",
+          "path": "derivedTexts/auto_edited_DC_ESFM/OET-LV_MA4.ESFM",
+          "sha256": "9b3aa1501dd0e35fba37bdaed40427fbc49cc506fe3586beb82db735b7a64a80",
+          "chapterMaxima": [
+            35,
+            24,
+            21,
+            26,
+            38,
+            35,
+            25,
+            27,
+            32,
+            21,
+            27,
+            20,
+            27,
+            20,
+            32,
+            25,
+            24,
+            24
+          ],
+          "storedLabelCount": 483,
+          "missingLabels": [
+            "MA4 10:4",
+            "MA4 11:7-8"
+          ],
+          "partialVerseLabels": {
+            "MA4 10:3": [
+              "a"
+            ],
+            "MA4 11:6": [
+              "a",
+              "b"
+            ]
+          }
+        },
+        {
+          "bosBook": "MAN",
+          "path": "derivedTexts/auto_edited_DC_ESFM/OET-LV_MAN.ESFM",
+          "sha256": "ec4b7b5365e40c9bddb36556798e5fb325e184a48a67782fbe28b589286f35a5",
+          "chapterMaxima": [
+            15
+          ],
+          "storedLabelCount": 15,
+          "missingLabels": [],
+          "partialVerseLabels": {}
+        },
+        {
+          "bosBook": "PS2",
+          "path": "derivedTexts/auto_edited_DC_ESFM/OET-LV_PS2.ESFM",
+          "sha256": "29c136581c7b472b486ccb68d6a4c214a5f0f6524f61d1c88466bf87f5fea56c",
+          "chapterMaxima": [
+            7
+          ],
+          "storedLabelCount": 7,
+          "missingLabels": [],
+          "partialVerseLabels": {}
+        },
+        {
+          "bosBook": "SIR",
+          "path": "derivedTexts/auto_edited_DC_ESFM/OET-LV_SIR.ESFM",
+          "sha256": "4523fe45970ad853cd82459953d4663368da7bad62f791a3e19d7ac942d6db0a",
+          "chapterMaxima": [
+            30,
+            18,
+            31,
+            31,
+            15,
+            37,
+            36,
+            19,
+            18,
+            31,
+            34,
+            18,
+            26,
+            27,
+            20,
+            30,
+            32,
+            33,
+            30,
+            31,
+            28,
+            27,
+            27,
+            34,
+            26,
+            29,
+            30,
+            26,
+            28,
+            40,
+            26,
+            20,
+            12,
+            31,
+            24,
+            31,
+            31,
+            34,
+            35,
+            30,
+            24,
+            25,
+            33,
+            23,
+            26,
+            20,
+            25,
+            25,
+            16,
+            29,
+            30
+          ],
+          "storedLabelCount": 1362,
+          "missingLabels": [
+            "SIR 1:5",
+            "SIR 1:7",
+            "SIR 1:21",
+            "SIR 3:19",
+            "SIR 3:25",
+            "SIR 6:1",
+            "SIR 10:21",
+            "SIR 11:15-16",
+            "SIR 13:14",
+            "SIR 16:15-16",
+            "SIR 17:5",
+            "SIR 17:9",
+            "SIR 17:16",
+            "SIR 17:18",
+            "SIR 17:21",
+            "SIR 18:3",
+            "SIR 19:18-19",
+            "SIR 19:21",
+            "SIR 22:7-8",
+            "SIR 24:18",
+            "SIR 24:24",
+            "SIR 25:12",
+            "SIR 26:19-27"
+          ],
+          "partialVerseLabels": {
+            "SIR 6:2": [
+              "a",
+              "b"
+            ],
+            "SIR 7:17": [
+              "a",
+              "b"
+            ],
+            "SIR 30:13": [
+              "a",
+              "b"
+            ]
+          }
+        },
+        {
+          "bosBook": "TOB",
+          "path": "derivedTexts/auto_edited_DC_ESFM/OET-LV_TOB.ESFM",
+          "sha256": "6775385eaa9442b4339633e0070661eef08d6ad2c5c2f50972ca286372f439ce",
+          "chapterMaxima": [
+            22,
+            14,
+            17,
+            21,
+            22,
+            17,
+            18,
+            21,
+            6,
+            13,
+            19,
+            22,
+            18,
+            15
+          ],
+          "storedLabelCount": 245,
+          "missingLabels": [
+            "TOB 4:8-18",
+            "TOB 13:8-10"
+          ],
+          "partialVerseLabels": {
+            "TOB 4:7": [
+              "a",
+              "b",
+              "c",
+              "d",
+              "e",
+              "f",
+              "g",
+              "h",
+              "i",
+              "k",
+              "l"
+            ],
+            "TOB 13:7": [
+              "a",
+              "b",
+              "c"
+            ]
+          }
+        },
+        {
+          "bosBook": "WIS",
+          "path": "derivedTexts/auto_edited_DC_ESFM/OET-LV_WIS.ESFM",
+          "sha256": "6c809b453602103c30fbcef55c7da84769d9dcbb9944f4c64bb7e998d6812503",
+          "chapterMaxima": [
+            16,
+            24,
+            19,
+            20,
+            23,
+            25,
+            30,
+            21,
+            18,
+            21,
+            26,
+            27,
+            19,
+            31,
+            19,
+            29,
+            21,
+            25,
+            22
+          ],
+          "storedLabelCount": 436,
+          "missingLabels": [],
+          "partialVerseLabels": {}
+        }
+      ],
+      "upstreamSource": {
+        "filename": "grcbrent_usfm.zip",
+        "url": "https://ebible.org/Scriptures/grcbrent_usfm.zip",
+        "sha256": "e8a6051afa366ff63c0c161fa5d5c8412de0e9fcfc7ba1a03e7d3b2eb02572ea",
+        "license": "Public Domain",
+        "attribution": "Brenton Greek Septuagint, eBible.org; source files dated 2026-04-08"
+      },
+      "assemblyWitnesses": [
+        {
+          "path": "scripts/build_OET-LV_DC.py",
+          "sha256": "f9b34de3d277721de36536bec05ffd0d123f47fab79f5bd4fd0bc531cd0fb805"
+        },
+        {
+          "path": "scripts/DC/README.md",
+          "sha256": "ad10c0560878d2e62b8828e7cdab7631e141dcb6c7cfa1ae0a1d212ec835e3bf"
+        },
+        {
+          "path": "scripts/DC/source_manifest.json",
+          "sha256": "351607c0d21d9949828611629c2ff97136749b0a0ef43f9773aa476560d7fe72"
+        },
+        {
+          "path": "derivedTexts/auto_edited_DC_ESFM/OET-LV_DC_word_table.tsv",
+          "sha256": "e5f40fce26d22cb1240ac5cbae9dd50359147e11cffb47d7535c4348f0b257dd"
+        }
+      ],
+      "referenceWitnesses": [
+        {
+          "collection": "LXX USFM",
+          "path": "68TOB.LXX",
+          "sha256": "4be16ae11c8b10b8c13d4ceabb41733a204c032bfa11c00779ea0b8b84b59416"
+        },
+        {
+          "collection": "LXX USFM",
+          "path": "69JDT.LXX",
+          "sha256": "9a628125bfbc938a1aa0f6cca05c7dbb5063b6f282c362f781f1d174c12e5848"
+        },
+        {
+          "collection": "LXX USFM",
+          "path": "71WIS.LXX",
+          "sha256": "b8e5192212939cf01a7040676b852bf53b5c94bf00b5bf812732218d0cf7972a"
+        },
+        {
+          "collection": "LXX USFM",
+          "path": "72SIR.LXX",
+          "sha256": "62c894949cf420ac0be4f5700a5212a94191964c6d6ab09c4200fb0a9108a8ab"
+        },
+        {
+          "collection": "LXX USFM",
+          "path": "73BAR.LXX",
+          "sha256": "30f8f2cf6c9addff17ec7c967841e313ce8ec54caaede3d509f4e842b38602d8"
+        },
+        {
+          "collection": "LXX USFM",
+          "path": "74LJE.LXX",
+          "sha256": "1c44a3c247625a3ba84be9a0864c2a4d1829ff723026fdb6bba79c234e91a5a2"
+        },
+        {
+          "collection": "LXX USFM",
+          "path": "814MA.LXX",
+          "sha256": "16d2fb5166cb436ba9f9c4a12e133c247adad030b3d998f1805fa184d4ee66df"
+        },
+        {
+          "collection": "LXX USFM",
+          "path": "821ES.LXX",
+          "sha256": "b2d592467c3f0d618824a9dc3c97aec599a90389fe88b00b8c81c2bc5798268f"
+        },
+        {
+          "collection": "World English Bible British Edition",
+          "path": "custom.vrs",
+          "sha256": "f8076328b48f8eec1bc0413e87ef8eaa76a3ece27c7049f5d0d593bbade6550a",
+          "attribution": "Michael Johnson, World English Bible project; public-domain source used by the RV DC files."
+        },
+        {
+          "collection": "LXX USFM",
+          "path": "76SUS.LXX",
+          "sha256": "12416ff91fe49b137d15b5a56017183e9cc62d0dc1d243fe293bdcc1996d8e9c"
+        },
+        {
+          "collection": "LXX USFM",
+          "path": "792MA.LXX",
+          "sha256": "2d81b668b7b6896a1b1578511c08444a2503f4313267158c2049307dbc4e5f52"
+        },
+        {
+          "collection": "LXX USFM",
+          "path": "781MA.LXX",
+          "sha256": "c0013420cfa132ab009de7f355243a7cbfe9f5c1ae4f9cb6286f9e6d33c65c92"
+        },
+        {
+          "collection": "LXX USFM",
+          "path": "77BEL.LXX",
+          "sha256": "58d442eb15b075f37f40637b838d6838e3a3098cd5281a123de2f7b05d477acd"
+        },
+        {
+          "collection": "LXX USFM",
+          "path": "803MA.LXX",
+          "sha256": "ab7ae764e82997fea5b178e31e65f9e0cd937c361310c8ec6eb6e1d57dfcd987"
+        }
+      ],
+      "atomicGroups": [
+        {
+          "source": "BAR 2:1-2",
+          "target": "BAR 2:1-2",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "BAR 3:10-11",
+          "target": "BAR 3:10-11",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "BAR 3:34",
+          "target": "BAR 3:34-35",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "BAR 4:17",
+          "target": "BAR 4:17-18",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "BAR 4:19-20",
+          "target": "BAR 4:20",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "BAR 6:1-2",
+          "target": "LJE 1:1",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "BAR 6:5-6",
+          "target": "LJE 1:4-5",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "BAR 6:10-13",
+          "target": "LJE 1:9-11",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "BAR 6:17",
+          "target": "LJE 1:15-16",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "BAR 6:26-27",
+          "target": "LJE 1:25-26",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "BAR 6:28-29",
+          "target": "LJE 1:27-28",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "BAR 6:40-41",
+          "target": "LJE 1:39-40",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "BAR 6:43",
+          "target": "LJE 1:42-43",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "BAR 6:50-51",
+          "target": "LJE 1:50",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "BAR 6:56",
+          "target": "LJE 1:55-56",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "BAR 6:57-58",
+          "target": "LJE 1:57",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "BAR 6:62-63",
+          "target": "LJE 1:61-62",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "GES 1:3-6",
+          "target": "GES 1:3-6",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "GES 1:11",
+          "target": "GES 1:11-12",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "GES 1:13-14",
+          "target": "GES 1:14",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "GES 1:15-16",
+          "target": "GES 1:15",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "GES 1:17-18",
+          "target": "GES 1:16",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "GES 1:51-52",
+          "target": "GES 1:49",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "GES 2:1-2",
+          "target": "GES 2:1",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "GES 2:3-4",
+          "target": "GES 2:2",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "GES 2:6-7",
+          "target": "GES 2:4",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "GES 2:11-12",
+          "target": "GES 2:8",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "GES 2:13",
+          "target": "GES 2:9-10",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "GES 2:14-15",
+          "target": "GES 2:11",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "GES 2:20-21",
+          "target": "GES 2:16",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "GES 2:22-23",
+          "target": "GES 2:17",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "GES 2:26-27",
+          "target": "GES 2:20-22",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "GES 2:28-29",
+          "target": "GES 2:23-24",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "GES 2:30",
+          "target": "GES 2:25-26",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "GES 3:4-5",
+          "target": "GES 3:4-5",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "GES 3:8-9",
+          "target": "GES 3:8-9",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "GES 3:14-15",
+          "target": "GES 3:14",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "GES 3:19",
+          "target": "GES 3:18-19",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "GES 4:10-11",
+          "target": "GES 4:10-11",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "GES 4:33-34",
+          "target": "GES 4:33-34",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "GES 4:39-40",
+          "target": "GES 4:39-40",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "GES 5:9-10",
+          "target": "GES 5:9-10",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "GES 5:41-42",
+          "target": "GES 5:41",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "GES 5:54-55",
+          "target": "GES 5:53",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "GES 5:58-60",
+          "target": "GES 5:56-57",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "GES 5:73",
+          "target": "GES 5:70-71",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "GES 6:3-4",
+          "target": "GES 6:3-4",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "GES 6:7-9",
+          "target": "GES 6:7-8",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "GES 6:24-25",
+          "target": "GES 6:23-24",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "GES 7:4-5",
+          "target": "GES 7:4-5",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "GES 8:5-6",
+          "target": "GES 8:5-6",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "GES 8:13-14",
+          "target": "GES 8:13-14",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "GES 8:20-21",
+          "target": "GES 8:20-21",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "GES 8:43-44",
+          "target": "GES 8:43",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "GES 8:50",
+          "target": "GES 8:49-50",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "GES 8:56-57",
+          "target": "GES 8:56",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "GES 8:63-64",
+          "target": "GES 8:62",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "GES 8:65-66",
+          "target": "GES 8:63",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "GES 8:82-83",
+          "target": "GES 8:79-80",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "GES 8:93-94",
+          "target": "GES 8:90",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "JDT 1:1-2",
+          "target": "JDT 1:1-2",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "JDT 1:9-10",
+          "target": "JDT 1:9-10",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "JDT 4:11-12",
+          "target": "JDT 4:11-12",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "JDT 6:2-3",
+          "target": "JDT 6:2-3",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "JDT 9:7-8",
+          "target": "JDT 9:7-8",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "JDT 10:8-9",
+          "target": "JDT 10:8-9",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "JDT 16:8",
+          "target": "JDT 16:7-8",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "MA1 9:11-12",
+          "target": "MA1 9:11-12",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "MA1 10:69-70",
+          "target": "MA1 10:69-70",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "MA1 11:69-70",
+          "target": "MA1 11:69-70",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "MA1 14:26-27",
+          "target": "MA1 14:26-27",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "MA2 1:9-10",
+          "target": "MA2 1:9-10",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "MA2 1:20-21",
+          "target": "MA2 1:20-21",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "MA2 7:8-9",
+          "target": "MA2 7:8-9",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "MA3 4:13-14",
+          "target": "MA3 4:13-14",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "MA3 4:17-18",
+          "target": "MA3 4:17-18",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "MA4 1:5-6",
+          "target": "MA4 1:5-6",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "MA4 1:10-11",
+          "target": "MA4 1:10-11",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "MA4 2:12",
+          "target": "MA4 2:12-13",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "MA4 2:13-14",
+          "target": "MA4 2:14",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "MA4 3:17-18",
+          "target": "MA4 3:17-18",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "MA4 4:16-17",
+          "target": "MA4 4:16-17",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "MA4 5:1-2",
+          "target": "MA4 5:1-2",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "MA4 5:6",
+          "target": "MA4 5:6-7",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "MA4 5:9-11",
+          "target": "MA4 5:10-11",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "MA4 6:6-7",
+          "target": "MA4 6:6-7",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "MA4 6:12-13",
+          "target": "MA4 6:12-13",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "MA4 6:20-21",
+          "target": "MA4 6:20-21",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "MA4 6:26-27",
+          "target": "MA4 6:26-27",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "MA4 6:34-35",
+          "target": "MA4 6:34-35",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": [
+            "MA4 7:25",
+            "MA4 8:1"
+          ],
+          "target": "MA4 8:2",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "MA4 8:4-5",
+          "target": "MA4 8:5-6",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "MA4 8:12-13",
+          "target": "MA4 8:13-14",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "MA4 8:27",
+          "target": "MA4 8:28-29",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "MA4 9:23-24",
+          "target": "MA4 9:23-24",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "MA4 10:3",
+          "target": "MA4 10:3-4",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "MA4 10:7-8",
+          "target": "MA4 10:7-8",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "MA4 11:6",
+          "target": "MA4 11:6-8",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "MA4 11:11-12",
+          "target": "MA4 11:11-12",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "MA4 12:2-3",
+          "target": "MA4 12:2",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "MA4 12:4",
+          "target": "MA4 12:3-4",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "MA4 12:7-8",
+          "target": "MA4 12:7-8",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "MA4 12:14-15",
+          "target": "MA4 12:14",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "MA4 17:13-14",
+          "target": "MA4 17:13-14",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "MA4 17:21-22",
+          "target": "MA4 17:21-22",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "MA4 18:5-6",
+          "target": "MA4 18:5",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "MA4 18:7",
+          "target": "MA4 18:6-7",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "MA4 18:8-9",
+          "target": "MA4 18:8-9",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "MA4 18:18-19",
+          "target": "MA4 18:18-19",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "SIR 6:2",
+          "target": "SIR 6:1-2",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "SIR 7:16-17",
+          "target": "SIR 7:16-17",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "SIR 20:16-17",
+          "target": "SIR 20:16-17",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "SIR 23:7-8",
+          "target": "SIR 23:7-8",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "SIR 23:16-17",
+          "target": "SIR 23:16-17",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "SIR 29:16-17",
+          "target": "SIR 29:16",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "SIR 29:18",
+          "target": "SIR 29:17-18",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "SIR 30:11-13",
+          "target": "SIR 30:11-13",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": [
+            "SIR 30:25-26",
+            "SIR 33:11",
+            "SIR 36:16"
+          ],
+          "target": [
+            "SIR 33:16-18",
+            "SIR 36:10"
+          ],
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "SIR 30:40",
+          "target": "SIR 33:32-33",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "SIR 31:16-17",
+          "target": "SIR 34:16-17",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "SIR 32:4-5",
+          "target": "SIR 35:4",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "SIR 32:12",
+          "target": "SIR 35:11-12",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "SIR 32:17",
+          "target": "SIR 35:17-18",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "SIR 32:18",
+          "target": "SIR 35:19-21",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "SIR 32:19",
+          "target": "SIR 35:22-23",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "SIR 33:1-2",
+          "target": "SIR 36:1",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "SIR 33:6-7",
+          "target": "SIR 36:5-6",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "SIR 36:22",
+          "target": "SIR 36:16-17",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "SIR 36:31",
+          "target": "SIR 36:26-27",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "SIR 37:17-18",
+          "target": "SIR 37:17-18",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "SIR 38:7-8",
+          "target": "SIR 38:7-8",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": [
+            "SIR 38:33-34",
+            "SIR 39:1"
+          ],
+          "target": [
+            "SIR 38:33-34",
+            "SIR 39:1"
+          ],
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "SIR 39:16-17",
+          "target": "SIR 39:16-17",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "SIR 40:4-5",
+          "target": "SIR 40:4-5",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "SIR 41:3-4",
+          "target": "SIR 41:3-4",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "SIR 41:18",
+          "target": "SIR 41:18-19",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "SIR 41:19-21",
+          "target": "SIR 41:20-23",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "SIR 41:22",
+          "target": "SIR 41:24-25",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "SIR 43:17-18",
+          "target": "SIR 43:17-18",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "SIR 44:11-12",
+          "target": "SIR 44:11-12",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "SIR 44:22-23",
+          "target": "SIR 44:22-23",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "SIR 45:10-11",
+          "target": "SIR 45:10-11",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "SIR 46:5-7",
+          "target": "SIR 46:5-7",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "SIR 47:23-24",
+          "target": "SIR 47:23-24",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "SIR 48:15-16",
+          "target": "SIR 48:15-16",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "SIR 49:6-7",
+          "target": "SIR 49:6-7",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "SIR 51:2-3",
+          "target": "SIR 51:2-3",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "SIR 51:10-12",
+          "target": "SIR 51:10-12",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "TOB 4:7",
+          "target": "TOB 4:7-18",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "TOB 5:4-5",
+          "target": "TOB 5:4-5",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "TOB 5:8",
+          "target": "TOB 5:8-9",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "TOB 6:5",
+          "target": "TOB 6:5-6",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "TOB 6:10-12",
+          "target": "TOB 6:11-13",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": [
+            "TOB 6:16-17",
+            "TOB 7:1"
+          ],
+          "target": [
+            "TOB 6:17-19",
+            "TOB 7:1"
+          ],
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "TOB 7:4-5",
+          "target": "TOB 7:4-5",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "TOB 7:6-7",
+          "target": "TOB 7:6",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "TOB 7:8",
+          "target": "TOB 7:7-9",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "TOB 7:9-10",
+          "target": "TOB 7:10",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "TOB 7:11-12",
+          "target": "TOB 7:11-12",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "TOB 7:14-15",
+          "target": "TOB 7:14",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "TOB 8:8-9",
+          "target": "TOB 8:8-9",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "TOB 10:7-8",
+          "target": "TOB 10:7-8",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "TOB 10:9-10",
+          "target": "TOB 10:9",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "TOB 10:13",
+          "target": "TOB 10:12-13",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "TOB 11:1-2",
+          "target": [
+            "TOB 10:14",
+            "TOB 11:1-2"
+          ],
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "TOB 13:1-2",
+          "target": "TOB 13:1-2",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "TOB 13:13-15",
+          "target": "TOB 13:15-16",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "TOB 13:16-17",
+          "target": "TOB 13:17",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "TOB 14:1-2",
+          "target": "TOB 14:1-2",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "WIS 2:14-15",
+          "target": "WIS 2:14-15",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "WIS 2:21-22",
+          "target": "WIS 2:21-22",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "WIS 3:2-3",
+          "target": "WIS 3:2-3",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "WIS 3:12-13",
+          "target": "WIS 3:12-13",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "WIS 4:14-15",
+          "target": "WIS 4:14-15",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "WIS 4:18-19",
+          "target": "WIS 4:18-19",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "WIS 5:3-4",
+          "target": "WIS 5:3-4",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "WIS 7:1-2",
+          "target": "WIS 7:1-2",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "WIS 7:21-23",
+          "target": "WIS 7:21-23",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "WIS 12:5-6",
+          "target": "WIS 12:5-6",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "WIS 13:17-18",
+          "target": "WIS 13:17-18",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        },
+        {
+          "source": "WIS 17:9-10",
+          "target": "WIS 17:9",
+          "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+        }
+      ],
+      "notes": [
+        "BAR 6 is assembled from the Brenton Letter of Jeremiah; its boundaries differ from RV even where their chapter maxima match.",
+        "SIR 30-36 transposes sections. LV 36:16 contains both reference 33:16a and 36:10b; its complete group also requires LV 30:25-26 and 33:11.",
+        "An unsuffixed native verse denotes all stored entries with that number, including its suffixes. Explicit suffixes validate natively but have no independent cross-system mapping unless declared. Do not assign a suffix to the following numbered verse by guesswork.",
+        "ESG additions (1:1, 3:13, 4:17-47 RV / 4:17 LV, 5:1-2, 8:12, 10:3-14 RV / 10:3 LV), DNG 1-12, and TOB 13:6-10 RV / 13:6-7 LV remain unreviewed reference bridges. These are unknown, not absent text.",
+        "LES has no LV source file. PSS and ODE remain separately inventoried and unsupported for cross-system mapping.",
+        "The pinned Copenhagen files and reference catalogue are unchanged. Copenhagen attribution and CC BY-SA 4.0 license are recorded in source-manifest.json. No Bible text or lexical glosses are copied into this profile."
+      ],
+      "unresolvedRanges": {
+        "ESG 1:1; 3:13; 4:17; 5:1-2; 8:12; 10:3": "Integrated additions require a reviewed reference segment convention. Ordinary intervals are explicitly mapped; no whole-book identity is declared.",
+        "DNG 1-12": "The provisional reference composite remains unresolved. Mapping these chapters to Hebrew DAN would introduce duplicate candidates within this profile. Chapters 13-14 are explicitly mapped to SUS/BEL instead.",
+        "TOB 13:6-7": "The full reference passage around the Greek witness lacuna is not verified. The Brenton/RV correspondence alone cannot establish the missing reference boundaries. No identity fallback or assertion of absent text is made."
+      },
+      "rvBoundaryWitnesses": [
+        {
+          "bosBook": "DNG",
+          "path": "translatedTexts/ReadersVersion/OET-RV_DAG.ESFM",
+          "usfmId": "DAG",
+          "sha256": "33cdfdbab581178672e66a139c71a58a347dc310acc63e34090240634f570da6",
+          "storedVerseBridges": [],
+          "missingVerseLabels": []
+        },
+        {
+          "bosBook": "ESG",
+          "path": "translatedTexts/ReadersVersion/OET-RV_ESG.ESFM",
+          "usfmId": "ESG",
+          "sha256": "0190bcd6173b7e7eb729589d4423eecc5f0c32839f5c701da319b78e2aa47a64",
+          "storedVerseBridges": [],
+          "missingVerseLabels": [
+            "ESG 4:6",
+            "ESG 9:5",
+            "ESG 9:30"
+          ]
+        },
+        {
+          "bosBook": "MAN",
+          "path": "translatedTexts/ReadersVersion/OET-RV_MAN.ESFM",
+          "usfmId": "MAN",
+          "sha256": "41231000edb5a95fd0dc1ff2cf296ba765fc3fe4e61c7e13cd7471e79eb0f641",
+          "storedVerseBridges": [],
+          "missingVerseLabels": []
+        },
+        {
+          "bosBook": "PS2",
+          "path": "translatedTexts/ReadersVersion/OET-RV_PS2.ESFM",
+          "usfmId": "PS2",
+          "sha256": "bec024d52ab3217d5ca2edf3b0b46b494b43ba7cadaa42086848a8f417739297",
+          "storedVerseBridges": [],
+          "missingVerseLabels": []
+        },
+        {
+          "bosBook": "SIR",
+          "path": "translatedTexts/ReadersVersion/OET-RV_SIR.ESFM",
+          "usfmId": "SIR",
+          "sha256": "6c3bd63e350af06bea54cbcb73cd95352ad7a0120abd3dfab4822d4c248e3ffb",
+          "storedVerseBridges": [
+            "SIR 11:15-16",
+            "SIR 16:15-16",
+            "SIR 19:18-19",
+            "SIR 22:9-10",
+            "SIR 26:19-27"
+          ],
+          "missingVerseLabels": []
+        },
+        {
+          "bosBook": "TOB",
+          "path": "translatedTexts/ReadersVersion/OET-RV_TOB.ESFM",
+          "usfmId": "TOB",
+          "sha256": "3d88fd53632655caae38118b8c98bac6aee81ffac14deb01ca5f8e0867918443",
+          "storedVerseBridges": [],
+          "missingVerseLabels": []
+        }
+      ]
+    },
+    "laodiceansReview": {
+      "date": "2026-10-30",
+      "sourceRepository": "https://github.com/Freely-Given-org/OpenEnglishTranslation--OET",
+      "sourceFiles": [
+        {
+          "bosBook": "LAO",
+          "usfmId": "LAO",
+          "path": "derivedTexts/auto_edited_DC_ESFM/OET-LV_LAO.ESFM",
+          "sha256": "c7ae55f6c01523bdde6e5d05de592c48d48f9bb0ab142457ba7fe7c203fdd564",
+          "chapterMaxima": [
+            20
+          ],
+          "storedLabelCount": 20,
+          "missingLabels": [],
+          "storedVerseBridges": []
+        }
+      ],
+      "assemblyWitnesses": [
+        {
+          "path": "scripts/DC/README.md",
+          "sha256": "a8f9f3ab58deb48c42a11365c892a09fb94868f284f845c4b8230dfd8177191c"
+        },
+        {
+          "path": "scripts/build_OET-LV_DC.py",
+          "sha256": "10d27d9fa856ff3194dc7a4632a3ea7951cfadf656ebcb6e9e7c1923d541942d"
+        },
+        {
+          "path": "intermediateTexts/DC_sources/Lightfoot-1875.html",
+          "sha256": "792d85add364d0328666376d4a2e9daed7556643d3b8483c63ac4b0a8c447129"
+        },
+        {
+          "path": "intermediateTexts/DC_sources/James-1924-LAO.html",
+          "sha256": "72486aaa42e683a37b5362bdcf3075ab854af74c98a4e373cf61e68310c8a73d"
+        }
+      ],
+      "method": "Compared the actual 20 ESFM verses, Lightfoot Latin (1875, pp. 353-355), James English (1924, pp. 478-479), and the numbered English boundary witness used by BOS reference-policy LAO. All 20 numbered passage boundaries correspond individually. This is a passage-address review, not an assertion of identical readings or approval of the draft translation.",
+      "boundaryConvention": {
+        "1-14": "Greeting, thanks, warning, work, bonds, salvation, living/dying, unity, obedience, God at work, action, rejoicing, requests: each passage stays within its corresponding numbered verse.",
+        "15": "Complete list of qualities and instruction to do them.",
+        "16": "Retain what was heard and received.",
+        "17": "Peace. This is the final clause of printed Lightfoot 16, explicitly split by the OET importer.",
+        "18": "Greeting from the holy ones.",
+        "19": "Grace blessing.",
+        "20": "Reciprocal reading with the Colossians."
+      },
+      "comparisonURLs": [
+        "https://www.gutenberg.org/files/50857/50857-h/50857-h.htm",
+        "https://en.wikisource.org/wiki/The_Apocryphal_New_Testament_(1924)/Epistles/The_Epistle_to_the_Laodiceans",
+        "https://www.bible-researcher.com/laodiceans.html"
+      ],
+      "limits": "Wycliffe-Zefania 15-16 remains an atomic group when converting to/from OET. No holy-kiss greeting is substituted for verse 17. Neither a common 20-verse count nor this review certifies every Latin witness. Individual word alignment is outside this profile.",
+      "attribution": "Lightfoot and James are public-domain editions. OET text is CC BY-SA 4.0. The Marlowe rendering was consulted only to compare boundaries with the existing BOS convention; no copyrighted translation text is bundled. This address review uses the profile CC-BY-SA-4.0 licence."
+    }
+  },
+  "definition": {
+    "maxVerses": {
+      "GEN": [
+        "31",
+        "25",
+        "24",
+        "26",
+        "32",
+        "22",
+        "24",
+        "22",
+        "29",
+        "32",
+        "32",
+        "20",
+        "18",
+        "24",
+        "21",
+        "16",
+        "27",
+        "33",
+        "38",
+        "18",
+        "34",
+        "24",
+        "20",
+        "67",
+        "34",
+        "35",
+        "46",
+        "22",
+        "35",
+        "43",
+        "54",
+        "33",
+        "20",
+        "31",
+        "29",
+        "43",
+        "36",
+        "30",
+        "23",
+        "23",
+        "57",
+        "38",
+        "34",
+        "34",
+        "28",
+        "34",
+        "31",
+        "22",
+        "33",
+        "26"
+      ],
+      "EXO": [
+        "22",
+        "25",
+        "22",
+        "31",
+        "23",
+        "30",
+        "29",
+        "28",
+        "35",
+        "29",
+        "10",
+        "51",
+        "22",
+        "31",
+        "27",
+        "36",
+        "16",
+        "27",
+        "25",
+        "26",
+        "37",
+        "30",
+        "33",
+        "18",
+        "40",
+        "37",
+        "21",
+        "43",
+        "46",
+        "38",
+        "18",
+        "35",
+        "23",
+        "35",
+        "35",
+        "38",
+        "29",
+        "31",
+        "43",
+        "38"
+      ],
+      "LEV": [
+        "17",
+        "16",
+        "17",
+        "35",
+        "26",
+        "23",
+        "38",
+        "36",
+        "24",
+        "20",
+        "47",
+        "8",
+        "59",
+        "57",
+        "33",
+        "34",
+        "16",
+        "30",
+        "37",
+        "27",
+        "24",
+        "33",
+        "44",
+        "23",
+        "55",
+        "46",
+        "34"
+      ],
+      "NUM": [
+        "54",
+        "34",
+        "51",
+        "49",
+        "31",
+        "27",
+        "89",
+        "26",
+        "23",
+        "36",
+        "35",
+        "16",
+        "33",
+        "45",
+        "41",
+        "35",
+        "28",
+        "32",
+        "22",
+        "29",
+        "35",
+        "41",
+        "30",
+        "25",
+        "19",
+        "65",
+        "23",
+        "31",
+        "39",
+        "17",
+        "54",
+        "42",
+        "56",
+        "29",
+        "34",
+        "13"
+      ],
+      "DEU": [
+        "46",
+        "37",
+        "29",
+        "49",
+        "33",
+        "25",
+        "26",
+        "20",
+        "29",
+        "22",
+        "32",
+        "31",
+        "19",
+        "29",
+        "23",
+        "22",
+        "20",
+        "22",
+        "21",
+        "20",
+        "23",
+        "29",
+        "26",
+        "22",
+        "19",
+        "19",
+        "26",
+        "69",
+        "28",
+        "20",
+        "30",
+        "52",
+        "29",
+        "12"
+      ],
+      "JOS": [
+        "18",
+        "24",
+        "17",
+        "24",
+        "15",
+        "27",
+        "26",
+        "35",
+        "27",
+        "43",
+        "23",
+        "24",
+        "33",
+        "15",
+        "63",
+        "10",
+        "18",
+        "28",
+        "51",
+        "9",
+        "45",
+        "34",
+        "16",
+        "33"
+      ],
+      "JDG": [
+        "36",
+        "23",
+        "31",
+        "24",
+        "31",
+        "40",
+        "25",
+        "35",
+        "57",
+        "18",
+        "40",
+        "15",
+        "25",
+        "20",
+        "20",
+        "31",
+        "13",
+        "31",
+        "30",
+        "48",
+        "25"
+      ],
+      "RUT": [
+        "22",
+        "23",
+        "18",
+        "22"
+      ],
+      "SA1": [
+        "28",
+        "36",
+        "21",
+        "22",
+        "12",
+        "21",
+        "17",
+        "22",
+        "27",
+        "27",
+        "15",
+        "25",
+        "23",
+        "52",
+        "35",
+        "23",
+        "58",
+        "30",
+        "24",
+        "42",
+        "16",
+        "23",
+        "28",
+        "23",
+        "44",
+        "25",
+        "12",
+        "25",
+        "11",
+        "31",
+        "13"
+      ],
+      "SA2": [
+        "27",
+        "32",
+        "39",
+        "12",
+        "25",
+        "23",
+        "29",
+        "18",
+        "13",
+        "19",
+        "27",
+        "31",
+        "39",
+        "33",
+        "37",
+        "23",
+        "29",
+        "32",
+        "44",
+        "26",
+        "22",
+        "51",
+        "39",
+        "25"
+      ],
+      "KI1": [
+        "53",
+        "46",
+        "28",
+        "20",
+        "32",
+        "38",
+        "51",
+        "66",
+        "28",
+        "29",
+        "43",
+        "33",
+        "34",
+        "31",
+        "34",
+        "34",
+        "24",
+        "46",
+        "21",
+        "43",
+        "29",
+        "54"
+      ],
+      "KI2": [
+        "18",
+        "25",
+        "27",
+        "44",
+        "27",
+        "33",
+        "20",
+        "29",
+        "37",
+        "36",
+        "20",
+        "22",
+        "25",
+        "29",
+        "38",
+        "20",
+        "41",
+        "37",
+        "37",
+        "21",
+        "26",
+        "20",
+        "37",
+        "20",
+        "30"
+      ],
+      "CH1": [
+        "54",
+        "55",
+        "24",
+        "43",
+        "41",
+        "66",
+        "40",
+        "40",
+        "44",
+        "14",
+        "47",
+        "41",
+        "14",
+        "17",
+        "29",
+        "43",
+        "27",
+        "17",
+        "19",
+        "8",
+        "30",
+        "19",
+        "32",
+        "31",
+        "31",
+        "32",
+        "34",
+        "21",
+        "30"
+      ],
+      "CH2": [
+        "18",
+        "17",
+        "17",
+        "22",
+        "14",
+        "42",
+        "22",
+        "18",
+        "31",
+        "19",
+        "23",
+        "16",
+        "23",
+        "14",
+        "19",
+        "14",
+        "19",
+        "34",
+        "11",
+        "37",
+        "20",
+        "12",
+        "21",
+        "27",
+        "28",
+        "23",
+        "9",
+        "27",
+        "36",
+        "27",
+        "21",
+        "33",
+        "25",
+        "33",
+        "27",
+        "23"
+      ],
+      "EZR": [
+        "11",
+        "70",
+        "13",
+        "24",
+        "17",
+        "22",
+        "28",
+        "36",
+        "15",
+        "44"
+      ],
+      "NEH": [
+        "11",
+        "20",
+        "38",
+        "17",
+        "19",
+        "19",
+        "72",
+        "18",
+        "37",
+        "40",
+        "36",
+        "47",
+        "31"
+      ],
+      "EST": [
+        "22",
+        "23",
+        "15",
+        "17",
+        "14",
+        "14",
+        "10",
+        "17",
+        "32",
+        "3"
+      ],
+      "JOB": [
+        "22",
+        "13",
+        "26",
+        "21",
+        "27",
+        "30",
+        "21",
+        "22",
+        "35",
+        "22",
+        "20",
+        "25",
+        "28",
+        "22",
+        "35",
+        "22",
+        "16",
+        "21",
+        "29",
+        "29",
+        "34",
+        "30",
+        "17",
+        "25",
+        "6",
+        "14",
+        "23",
+        "28",
+        "25",
+        "31",
+        "40",
+        "22",
+        "33",
+        "37",
+        "16",
+        "33",
+        "24",
+        "41",
+        "30",
+        "32",
+        "26",
+        "17"
+      ],
+      "PSA": [
+        "6",
+        "12",
+        "9",
+        "9",
+        "13",
+        "11",
+        "18",
+        "10",
+        "21",
+        "18",
+        "7",
+        "9",
+        "6",
+        "7",
+        "5",
+        "11",
+        "15",
+        "51",
+        "15",
+        "10",
+        "14",
+        "32",
+        "6",
+        "10",
+        "22",
+        "12",
+        "14",
+        "9",
+        "11",
+        "13",
+        "25",
+        "11",
+        "22",
+        "23",
+        "28",
+        "13",
+        "40",
+        "23",
+        "14",
+        "18",
+        "14",
+        "12",
+        "5",
+        "27",
+        "18",
+        "12",
+        "10",
+        "15",
+        "21",
+        "23",
+        "21",
+        "11",
+        "7",
+        "9",
+        "24",
+        "14",
+        "12",
+        "12",
+        "18",
+        "14",
+        "9",
+        "13",
+        "12",
+        "11",
+        "14",
+        "20",
+        "8",
+        "36",
+        "37",
+        "6",
+        "24",
+        "20",
+        "28",
+        "23",
+        "11",
+        "13",
+        "21",
+        "72",
+        "13",
+        "20",
+        "17",
+        "8",
+        "19",
+        "13",
+        "14",
+        "17",
+        "7",
+        "19",
+        "53",
+        "17",
+        "16",
+        "16",
+        "5",
+        "23",
+        "11",
+        "13",
+        "12",
+        "9",
+        "9",
+        "5",
+        "8",
+        "29",
+        "22",
+        "35",
+        "45",
+        "48",
+        "43",
+        "14",
+        "31",
+        "7",
+        "10",
+        "10",
+        "9",
+        "8",
+        "18",
+        "19",
+        "2",
+        "29",
+        "176",
+        "7",
+        "8",
+        "9",
+        "4",
+        "8",
+        "5",
+        "6",
+        "5",
+        "6",
+        "8",
+        "8",
+        "3",
+        "18",
+        "3",
+        "3",
+        "21",
+        "26",
+        "9",
+        "8",
+        "24",
+        "14",
+        "10",
+        "8",
+        "12",
+        "15",
+        "21",
+        "10",
+        "20",
+        "14",
+        "9",
+        "6"
+      ],
+      "PRO": [
+        "33",
+        "22",
+        "35",
+        "27",
+        "23",
+        "35",
+        "27",
+        "36",
+        "18",
+        "32",
+        "31",
+        "28",
+        "25",
+        "35",
+        "33",
+        "33",
+        "28",
+        "24",
+        "29",
+        "30",
+        "31",
+        "29",
+        "35",
+        "34",
+        "28",
+        "28",
+        "27",
+        "28",
+        "27",
+        "33",
+        "31"
+      ],
+      "ECC": [
+        "18",
+        "26",
+        "22",
+        "17",
+        "19",
+        "12",
+        "29",
+        "17",
+        "18",
+        "20",
+        "10",
+        "14"
+      ],
+      "SNG": [
+        "17",
+        "17",
+        "11",
+        "16",
+        "16",
+        "12",
+        "14",
+        "14"
+      ],
+      "ISA": [
+        "31",
+        "22",
+        "26",
+        "6",
+        "30",
+        "13",
+        "25",
+        "23",
+        "20",
+        "34",
+        "16",
+        "6",
+        "22",
+        "32",
+        "9",
+        "14",
+        "14",
+        "7",
+        "25",
+        "6",
+        "17",
+        "25",
+        "18",
+        "23",
+        "12",
+        "21",
+        "13",
+        "29",
+        "24",
+        "33",
+        "9",
+        "20",
+        "24",
+        "17",
+        "10",
+        "22",
+        "38",
+        "22",
+        "8",
+        "31",
+        "29",
+        "25",
+        "28",
+        "28",
+        "25",
+        "13",
+        "15",
+        "22",
+        "26",
+        "11",
+        "23",
+        "15",
+        "12",
+        "17",
+        "13",
+        "12",
+        "21",
+        "14",
+        "21",
+        "22",
+        "11",
+        "12",
+        "19",
+        "11",
+        "25",
+        "24"
+      ],
+      "JER": [
+        "19",
+        "37",
+        "25",
+        "31",
+        "31",
+        "30",
+        "34",
+        "23",
+        "25",
+        "25",
+        "23",
+        "17",
+        "27",
+        "22",
+        "21",
+        "21",
+        "27",
+        "23",
+        "15",
+        "18",
+        "14",
+        "30",
+        "40",
+        "10",
+        "38",
+        "24",
+        "22",
+        "17",
+        "32",
+        "24",
+        "40",
+        "44",
+        "26",
+        "22",
+        "19",
+        "32",
+        "21",
+        "28",
+        "18",
+        "16",
+        "18",
+        "22",
+        "13",
+        "30",
+        "5",
+        "28",
+        "7",
+        "47",
+        "39",
+        "46",
+        "64",
+        "34"
+      ],
+      "LAM": [
+        "22",
+        "22",
+        "66",
+        "22",
+        "22"
+      ],
+      "EZE": [
+        "28",
+        "10",
+        "27",
+        "17",
+        "17",
+        "14",
+        "27",
+        "18",
+        "11",
+        "22",
+        "25",
+        "28",
+        "23",
+        "23",
+        "8",
+        "63",
+        "24",
+        "32",
+        "14",
+        "44",
+        "37",
+        "31",
+        "49",
+        "27",
+        "17",
+        "21",
+        "36",
+        "26",
+        "21",
+        "26",
+        "18",
+        "32",
+        "33",
+        "31",
+        "15",
+        "38",
+        "28",
+        "23",
+        "29",
+        "49",
+        "26",
+        "20",
+        "27",
+        "31",
+        "25",
+        "24",
+        "23",
+        "35"
+      ],
+      "DAN": [
+        "21",
+        "49",
+        "33",
+        "34",
+        "30",
+        "29",
+        "28",
+        "27",
+        "27",
+        "21",
+        "45",
+        "13"
+      ],
+      "HOS": [
+        "9",
+        "25",
+        "5",
+        "19",
+        "15",
+        "11",
+        "16",
+        "14",
+        "17",
+        "15",
+        "11",
+        "15",
+        "15",
+        "10"
+      ],
+      "JOL": [
+        "20",
+        "27",
+        "5",
+        "21"
+      ],
+      "AMO": [
+        "15",
+        "16",
+        "15",
+        "13",
+        "27",
+        "14",
+        "17",
+        "14",
+        "15"
+      ],
+      "OBA": [
+        "21"
+      ],
+      "JNA": [
+        "16",
+        "11",
+        "10",
+        "11"
+      ],
+      "MIC": [
+        "16",
+        "13",
+        "12",
+        "14",
+        "14",
+        "16",
+        "20"
+      ],
+      "NAH": [
+        "14",
+        "14",
+        "19"
+      ],
+      "HAB": [
+        "17",
+        "20",
+        "19"
+      ],
+      "ZEP": [
+        "18",
+        "15",
+        "20"
+      ],
+      "HAG": [
+        "15",
+        "23"
+      ],
+      "ZEC": [
+        "17",
+        "17",
+        "10",
+        "14",
+        "11",
+        "15",
+        "14",
+        "23",
+        "17",
+        "12",
+        "17",
+        "14",
+        "9",
+        "21"
+      ],
+      "MAL": [
+        "14",
+        "17",
+        "24"
+      ],
+      "MAT": [
+        25,
+        23,
+        17,
+        25,
+        48,
+        34,
+        29,
+        34,
+        38,
+        42,
+        30,
+        50,
+        58,
+        36,
+        39,
+        28,
+        27,
+        35,
+        30,
+        34,
+        46,
+        46,
+        39,
+        51,
+        46,
+        75,
+        66,
+        20
+      ],
+      "MRK": [
+        45,
+        28,
+        35,
+        41,
+        43,
+        56,
+        37,
+        38,
+        50,
+        52,
+        33,
+        44,
+        37,
+        72,
+        47,
+        20
+      ],
+      "LUK": [
+        80,
+        52,
+        38,
+        44,
+        39,
+        49,
+        50,
+        56,
+        62,
+        42,
+        54,
+        59,
+        35,
+        35,
+        32,
+        31,
+        37,
+        43,
+        48,
+        47,
+        38,
+        71,
+        56,
+        53
+      ],
+      "JHN": [
+        51,
+        25,
+        36,
+        54,
+        47,
+        71,
+        53,
+        59,
+        41,
+        42,
+        57,
+        50,
+        38,
+        31,
+        27,
+        33,
+        26,
+        40,
+        42,
+        31,
+        25
+      ],
+      "ACT": [
+        26,
+        47,
+        26,
+        37,
+        42,
+        15,
+        60,
+        40,
+        43,
+        48,
+        30,
+        25,
+        52,
+        28,
+        41,
+        40,
+        34,
+        28,
+        40,
+        38,
+        40,
+        30,
+        35,
+        27,
+        27,
+        32,
+        44,
+        31
+      ],
+      "ROM": [
+        32,
+        29,
+        31,
+        25,
+        21,
+        23,
+        25,
+        39,
+        33,
+        21,
+        36,
+        21,
+        14,
+        23,
+        33,
+        27
+      ],
+      "CO1": [
+        31,
+        16,
+        23,
+        21,
+        13,
+        20,
+        40,
+        13,
+        27,
+        33,
+        34,
+        31,
+        13,
+        40,
+        58,
+        24
+      ],
+      "CO2": [
+        24,
+        17,
+        18,
+        18,
+        21,
+        18,
+        16,
+        24,
+        15,
+        18,
+        33,
+        21,
+        13
+      ],
+      "GAL": [
+        24,
+        21,
+        29,
+        31,
+        26,
+        18
+      ],
+      "EPH": [
+        23,
+        22,
+        21,
+        32,
+        33,
+        24
+      ],
+      "PHP": [
+        30,
+        30,
+        21,
+        23
+      ],
+      "COL": [
+        29,
+        23,
+        25,
+        18
+      ],
+      "TH1": [
+        10,
+        20,
+        13,
+        18,
+        28
+      ],
+      "TH2": [
+        12,
+        17,
+        18
+      ],
+      "TI1": [
+        20,
+        15,
+        16,
+        16,
+        25,
+        21
+      ],
+      "TI2": [
+        18,
+        26,
+        17,
+        22
+      ],
+      "TIT": [
+        16,
+        15,
+        15
+      ],
+      "PHM": [
+        25
+      ],
+      "HEB": [
+        14,
+        18,
+        19,
+        16,
+        14,
+        20,
+        28,
+        13,
+        28,
+        39,
+        40,
+        29,
+        25
+      ],
+      "JAM": [
+        27,
+        26,
+        18,
+        17,
+        20
+      ],
+      "PE1": [
+        25,
+        25,
+        22,
+        19,
+        14
+      ],
+      "PE2": [
+        21,
+        22,
+        18
+      ],
+      "JN1": [
+        10,
+        29,
+        24,
+        21,
+        21
+      ],
+      "JN2": [
+        13
+      ],
+      "JN3": [
+        15
+      ],
+      "JDE": [
+        25
+      ],
+      "REV": [
+        20,
+        29,
+        22,
+        11,
+        14,
+        17,
+        17,
+        13,
+        21,
+        11,
+        19,
+        18,
+        18,
+        20,
+        8,
+        21,
+        18,
+        24,
+        21,
+        15,
+        27,
+        21
+      ],
+      "PSS": [
+        "8",
+        "41",
+        "16",
+        "29",
+        "22",
+        "9",
+        "9",
+        "40",
+        "20",
+        "9",
+        "9",
+        "8",
+        "11",
+        "6",
+        "15",
+        "15",
+        "51",
+        "14"
+      ],
+      "ODE": [
+        "19",
+        "43",
+        "10",
+        "20",
+        "10",
+        "19",
+        "20",
+        "15",
+        "45",
+        "88",
+        "55",
+        "32",
+        "79",
+        "47"
+      ],
+      "BAR": [
+        "22",
+        "35",
+        "37",
+        "37",
+        "9",
+        "73"
+      ],
+      "DNG": [
+        "21",
+        "49",
+        "97",
+        "37",
+        "30",
+        "29",
+        "28",
+        "27",
+        "27",
+        "21",
+        "45",
+        "13",
+        "64",
+        "42"
+      ],
+      "GES": [
+        "58",
+        "30",
+        "24",
+        "63",
+        "73",
+        "34",
+        "15",
+        "96",
+        "55"
+      ],
+      "ESG": [
+        "22",
+        "23",
+        "15",
+        "17",
+        "14",
+        "14",
+        "10",
+        "17",
+        "32",
+        "3"
+      ],
+      "JDT": [
+        "16",
+        "28",
+        "10",
+        "15",
+        "24",
+        "21",
+        "32",
+        "36",
+        "14",
+        "23",
+        "23",
+        "20",
+        "20",
+        "19",
+        "13",
+        "25"
+      ],
+      "MA1": [
+        "64",
+        "70",
+        "60",
+        "61",
+        "68",
+        "63",
+        "50",
+        "32",
+        "73",
+        "89",
+        "74",
+        "53",
+        "53",
+        "49",
+        "41",
+        "24"
+      ],
+      "MA2": [
+        "36",
+        "32",
+        "40",
+        "50",
+        "27",
+        "31",
+        "42",
+        "36",
+        "29",
+        "38",
+        "38",
+        "45",
+        "26",
+        "46",
+        "39"
+      ],
+      "MA3": [
+        "29",
+        "33",
+        "30",
+        "21",
+        "51",
+        "41",
+        "23"
+      ],
+      "MA4": [
+        "35",
+        "24",
+        "21",
+        "26",
+        "38",
+        "35",
+        "25",
+        "27",
+        "32",
+        "21",
+        "27",
+        "20",
+        "27",
+        "20",
+        "32",
+        "25",
+        "24",
+        "24"
+      ],
+      "MAN": [
+        "15"
+      ],
+      "PS2": [
+        "7"
+      ],
+      "SIR": [
+        "30",
+        "18",
+        "31",
+        "31",
+        "15",
+        "37",
+        "36",
+        "19",
+        "18",
+        "31",
+        "34",
+        "18",
+        "26",
+        "27",
+        "20",
+        "30",
+        "32",
+        "33",
+        "30",
+        "31",
+        "28",
+        "27",
+        "27",
+        "34",
+        "26",
+        "29",
+        "30",
+        "26",
+        "28",
+        "40",
+        "26",
+        "20",
+        "12",
+        "31",
+        "24",
+        "31",
+        "31",
+        "34",
+        "35",
+        "30",
+        "24",
+        "25",
+        "33",
+        "23",
+        "26",
+        "20",
+        "25",
+        "25",
+        "16",
+        "29",
+        "30"
+      ],
+      "TOB": [
+        "22",
+        "14",
+        "17",
+        "21",
+        "22",
+        "17",
+        "18",
+        "21",
+        "6",
+        "13",
+        "19",
+        "22",
+        "18",
+        "15"
+      ],
+      "WIS": [
+        "16",
+        "24",
+        "19",
+        "20",
+        "23",
+        "25",
+        "30",
+        "21",
+        "18",
+        "21",
+        "26",
+        "27",
+        "19",
+        "31",
+        "19",
+        "29",
+        "21",
+        "25",
+        "22"
+      ],
+      "LAO": [
+        "20"
+      ]
+    },
+    "mappedVerses": {
+      "PHP 1:16": "PHP 1:17",
+      "PHP 1:17": "PHP 1:16",
+      "ESG 1:2-22": "ESG 1:2-22",
+      "ESG 2:1-23": "ESG 2:1-23",
+      "ESG 3:1-12": "ESG 3:1-12",
+      "ESG 3:14-15": "ESG 3:14-15",
+      "ESG 4:1-5": "ESG 4:1-5",
+      "ESG 4:7-16": "ESG 4:7-16",
+      "ESG 5:3-14": "ESG 5:3-14",
+      "ESG 6:1-14": "ESG 6:1-14",
+      "ESG 7:1-10": "ESG 7:1-10",
+      "ESG 8:1-11": "ESG 8:1-11",
+      "ESG 8:13-17": "ESG 8:13-17",
+      "ESG 9:1-4": "ESG 9:1-4",
+      "ESG 9:6-29": "ESG 9:6-29",
+      "ESG 9:31-32": "ESG 9:31-32",
+      "ESG 10:1-2": "ESG 10:1-2",
+      "DNG 13:1-64": "SUS 1:1-64",
+      "DNG 14:1-42": "BEL 1:1-42",
+      "BAR 1:1-22": "BAR 1:1-22",
+      "BAR 2:3-35": "BAR 2:3-35",
+      "BAR 3:1-9": "BAR 3:1-9",
+      "BAR 3:12-33": "BAR 3:12-33",
+      "BAR 3:35-37": "BAR 3:36-38",
+      "BAR 4:1-16": "BAR 4:1-16",
+      "BAR 4:18": "BAR 4:19",
+      "BAR 4:21-37": "BAR 4:21-37",
+      "BAR 5:1-9": "BAR 5:1-9",
+      "BAR 6:3-4": "LJE 1:2-3",
+      "BAR 6:7-9": "LJE 1:6-8",
+      "BAR 6:14-16": "LJE 1:12-14",
+      "BAR 6:18-25": "LJE 1:17-24",
+      "BAR 6:30-39": "LJE 1:29-38",
+      "BAR 6:42": "LJE 1:41",
+      "BAR 6:44-49": "LJE 1:44-49",
+      "BAR 6:52-55": "LJE 1:51-54",
+      "BAR 6:59-61": "LJE 1:58-60",
+      "BAR 6:64-73": "LJE 1:63-72",
+      "GES 1:1-2": "GES 1:1-2",
+      "GES 1:7-10": "GES 1:7-10",
+      "GES 1:12": "GES 1:13",
+      "GES 1:19-50": "GES 1:17-48",
+      "GES 1:53-58": "GES 1:50-55",
+      "GES 2:5": "GES 2:3",
+      "GES 2:8-10": "GES 2:5-7",
+      "GES 2:16-19": "GES 2:12-15",
+      "GES 2:24-25": "GES 2:18-19",
+      "GES 3:1-3": "GES 3:1-3",
+      "GES 3:6-7": "GES 3:6-7",
+      "GES 3:10-13": "GES 3:10-13",
+      "GES 3:16-18": "GES 3:15-17",
+      "GES 3:20-24": "GES 3:20-24",
+      "GES 4:1-9": "GES 4:1-9",
+      "GES 4:12-32": "GES 4:12-32",
+      "GES 4:35-38": "GES 4:35-38",
+      "GES 4:41-63": "GES 4:41-63",
+      "GES 5:1-8": "GES 5:1-8",
+      "GES 5:11-40": "GES 5:11-40",
+      "GES 5:43-53": "GES 5:42-52",
+      "GES 5:56-57": "GES 5:54-55",
+      "GES 5:61-72": "GES 5:58-69",
+      "GES 6:1-2": "GES 6:1-2",
+      "GES 6:5-6": "GES 6:5-6",
+      "GES 6:10-23": "GES 6:9-22",
+      "GES 6:26-34": "GES 6:25-33",
+      "GES 7:1-3": "GES 7:1-3",
+      "GES 7:6-15": "GES 7:6-15",
+      "GES 8:1-4": "GES 8:1-4",
+      "GES 8:7-12": "GES 8:7-12",
+      "GES 8:15-19": "GES 8:15-19",
+      "GES 8:22-42": "GES 8:22-42",
+      "GES 8:45-49": "GES 8:44-48",
+      "GES 8:51-55": "GES 8:51-55",
+      "GES 8:58-62": "GES 8:57-61",
+      "GES 8:67-81": "GES 8:64-78",
+      "GES 8:84-92": "GES 8:81-89",
+      "GES 8:95-96": "GES 8:91-92",
+      "GES 9:1-55": "GES 9:1-55",
+      "JDT 1:3-8": "JDT 1:3-8",
+      "JDT 1:11-16": "JDT 1:11-16",
+      "JDT 2:1-28": "JDT 2:1-28",
+      "JDT 3:1-10": "JDT 3:1-10",
+      "JDT 4:1-10": "JDT 4:1-10",
+      "JDT 4:13-15": "JDT 4:13-15",
+      "JDT 5:1-24": "JDT 5:1-24",
+      "JDT 6:1": "JDT 6:1",
+      "JDT 6:4-21": "JDT 6:4-21",
+      "JDT 7:1-32": "JDT 7:1-32",
+      "JDT 8:1-36": "JDT 8:1-36",
+      "JDT 9:1-6": "JDT 9:1-6",
+      "JDT 9:9-14": "JDT 9:9-14",
+      "JDT 10:1-7": "JDT 10:1-7",
+      "JDT 10:10-23": "JDT 10:10-23",
+      "JDT 11:1-23": "JDT 11:1-23",
+      "JDT 12:1-20": "JDT 12:1-20",
+      "JDT 13:1-20": "JDT 13:1-20",
+      "JDT 14:1-19": "JDT 14:1-19",
+      "JDT 15:1-13": "JDT 15:1-13",
+      "JDT 16:1": "JDT 15:14",
+      "JDT 16:2-7": "JDT 16:1-6",
+      "JDT 16:9-25": "JDT 16:9-25",
+      "MA1 1:1-64": "MA1 1:1-64",
+      "MA1 2:1-70": "MA1 2:1-70",
+      "MA1 3:1-60": "MA1 3:1-60",
+      "MA1 4:1-61": "MA1 4:1-61",
+      "MA1 5:1-68": "MA1 5:1-68",
+      "MA1 6:1-63": "MA1 6:1-63",
+      "MA1 7:1-50": "MA1 7:1-50",
+      "MA1 8:1-32": "MA1 8:1-32",
+      "MA1 9:1-10": "MA1 9:1-10",
+      "MA1 9:13-73": "MA1 9:13-73",
+      "MA1 10:1-68": "MA1 10:1-68",
+      "MA1 10:71-89": "MA1 10:71-89",
+      "MA1 11:1-68": "MA1 11:1-68",
+      "MA1 11:71-74": "MA1 11:71-74",
+      "MA1 12:1-53": "MA1 12:1-53",
+      "MA1 13:1-53": "MA1 13:1-53",
+      "MA1 14:1-25": "MA1 14:1-25",
+      "MA1 14:28-49": "MA1 14:28-49",
+      "MA1 15:1-41": "MA1 15:1-41",
+      "MA1 16:1-24": "MA1 16:1-24",
+      "MA2 1:1-8": "MA2 1:1-8",
+      "MA2 1:11-19": "MA2 1:11-19",
+      "MA2 1:22-36": "MA2 1:22-36",
+      "MA2 2:1-32": "MA2 2:1-32",
+      "MA2 3:1-40": "MA2 3:1-40",
+      "MA2 4:1-50": "MA2 4:1-50",
+      "MA2 5:1-27": "MA2 5:1-27",
+      "MA2 6:1-31": "MA2 6:1-31",
+      "MA2 7:1-7": "MA2 7:1-7",
+      "MA2 7:10-42": "MA2 7:10-42",
+      "MA2 8:1-36": "MA2 8:1-36",
+      "MA2 9:1-29": "MA2 9:1-29",
+      "MA2 10:1-38": "MA2 10:1-38",
+      "MA2 11:1-38": "MA2 11:1-38",
+      "MA2 12:1-45": "MA2 12:1-45",
+      "MA2 13:1-26": "MA2 13:1-26",
+      "MA2 14:1-46": "MA2 14:1-46",
+      "MA2 15:1-39": "MA2 15:1-39",
+      "MA3 1:1-29": "MA3 1:1-29",
+      "MA3 2:1-33": "MA3 2:1-33",
+      "MA3 3:1-30": "MA3 3:1-30",
+      "MA3 4:1-12": "MA3 4:1-12",
+      "MA3 4:15-16": "MA3 4:15-16",
+      "MA3 4:19-21": "MA3 4:19-21",
+      "MA3 5:1-51": "MA3 5:1-51",
+      "MA3 6:1-41": "MA3 6:1-41",
+      "MA3 7:1-23": "MA3 7:1-23",
+      "MA4 1:1-4": "MA4 1:1-4",
+      "MA4 1:7-9": "MA4 1:7-9",
+      "MA4 1:12-35": "MA4 1:12-35",
+      "MA4 2:1-11": "MA4 2:1-11",
+      "MA4 2:15-24": "MA4 2:15-24",
+      "MA4 3:1-16": "MA4 3:1-16",
+      "MA4 3:19-21": "MA4 3:19-21",
+      "MA4 4:1-15": "MA4 4:1-15",
+      "MA4 4:18-26": "MA4 4:18-26",
+      "MA4 5:3-5": "MA4 5:3-5",
+      "MA4 5:7-8": "MA4 5:8-9",
+      "MA4 5:12-38": "MA4 5:12-38",
+      "MA4 6:1-5": "MA4 6:1-5",
+      "MA4 6:8-11": "MA4 6:8-11",
+      "MA4 6:14-19": "MA4 6:14-19",
+      "MA4 6:22-25": "MA4 6:22-25",
+      "MA4 6:28-33": "MA4 6:28-33",
+      "MA4 7:1-23": "MA4 7:1-23",
+      "MA4 7:24": "MA4 8:1",
+      "MA4 8:2-3": "MA4 8:3-4",
+      "MA4 8:6-11": "MA4 8:7-12",
+      "MA4 8:14-26": "MA4 8:15-27",
+      "MA4 9:1-22": "MA4 9:1-22",
+      "MA4 9:25-32": "MA4 9:25-32",
+      "MA4 10:1-2": "MA4 10:1-2",
+      "MA4 10:5-6": "MA4 10:5-6",
+      "MA4 10:9-21": "MA4 10:9-21",
+      "MA4 11:1-5": "MA4 11:1-5",
+      "MA4 11:9-10": "MA4 11:9-10",
+      "MA4 11:13-27": "MA4 11:13-27",
+      "MA4 12:1": "MA4 12:1",
+      "MA4 12:5-6": "MA4 12:5-6",
+      "MA4 12:9-13": "MA4 12:9-13",
+      "MA4 12:16-20": "MA4 12:15-19",
+      "MA4 13:1-27": "MA4 13:1-27",
+      "MA4 14:1-20": "MA4 14:1-20",
+      "MA4 15:1-32": "MA4 15:1-32",
+      "MA4 16:1-25": "MA4 16:1-25",
+      "MA4 17:1-12": "MA4 17:1-12",
+      "MA4 17:15-20": "MA4 17:15-20",
+      "MA4 17:23-24": "MA4 17:23-24",
+      "MA4 18:1-4": "MA4 18:1-4",
+      "MA4 18:10-17": "MA4 18:10-17",
+      "MA4 18:20-24": "MA4 18:20-24",
+      "MAN 1:1-15": "MAN 1:1-15",
+      "PS2 1:1-7": "PS2 1:1-7",
+      "SIR 1:1-4": "SIR 1:1-4",
+      "SIR 1:6": "SIR 1:6",
+      "SIR 1:8-20": "SIR 1:8-20",
+      "SIR 1:22-30": "SIR 1:22-30",
+      "SIR 2:1-18": "SIR 2:1-18",
+      "SIR 3:1-18": "SIR 3:1-18",
+      "SIR 3:20-24": "SIR 3:20-24",
+      "SIR 3:26-31": "SIR 3:26-31",
+      "SIR 4:1-31": "SIR 4:1-31",
+      "SIR 5:1-15": "SIR 5:1-15",
+      "SIR 6:3-37": "SIR 6:3-37",
+      "SIR 7:1-15": "SIR 7:1-15",
+      "SIR 7:18-36": "SIR 7:18-36",
+      "SIR 8:1-19": "SIR 8:1-19",
+      "SIR 9:1-18": "SIR 9:1-18",
+      "SIR 10:1-20": "SIR 10:1-20",
+      "SIR 10:22-31": "SIR 10:22-31",
+      "SIR 11:1-14": "SIR 11:1-14",
+      "SIR 11:17-34": "SIR 11:17-34",
+      "SIR 12:1-18": "SIR 12:1-18",
+      "SIR 13:1-13": "SIR 13:1-13",
+      "SIR 13:15-26": "SIR 13:15-26",
+      "SIR 14:1-27": "SIR 14:1-27",
+      "SIR 15:1-20": "SIR 15:1-20",
+      "SIR 16:1-14": "SIR 16:1-14",
+      "SIR 16:17-30": "SIR 16:17-30",
+      "SIR 17:1-4": "SIR 17:1-4",
+      "SIR 17:6-8": "SIR 17:6-8",
+      "SIR 17:10-15": "SIR 17:10-15",
+      "SIR 17:17": "SIR 17:17",
+      "SIR 17:19-20": "SIR 17:19-20",
+      "SIR 17:22-32": "SIR 17:22-32",
+      "SIR 18:1-2": "SIR 18:1-2",
+      "SIR 18:4-33": "SIR 18:4-33",
+      "SIR 19:1-17": "SIR 19:1-17",
+      "SIR 19:20": "SIR 19:20",
+      "SIR 19:22-30": "SIR 19:22-30",
+      "SIR 20:1-15": "SIR 20:1-15",
+      "SIR 20:18-31": "SIR 20:18-31",
+      "SIR 21:1-28": "SIR 21:1-28",
+      "SIR 22:1-6": "SIR 22:1-6",
+      "SIR 22:9-27": "SIR 22:9-27",
+      "SIR 23:1-6": "SIR 23:1-6",
+      "SIR 23:9-15": "SIR 23:9-15",
+      "SIR 23:18-27": "SIR 23:18-27",
+      "SIR 24:1-17": "SIR 24:1-17",
+      "SIR 24:19-23": "SIR 24:19-23",
+      "SIR 24:25-34": "SIR 24:25-34",
+      "SIR 25:1-11": "SIR 25:1-11",
+      "SIR 25:13-26": "SIR 25:13-26",
+      "SIR 26:1-18": "SIR 26:1-18",
+      "SIR 26:28-29": "SIR 26:28-29",
+      "SIR 27:1-30": "SIR 27:1-30",
+      "SIR 28:1-26": "SIR 28:1-26",
+      "SIR 29:1-15": "SIR 29:1-15",
+      "SIR 29:19-28": "SIR 29:19-28",
+      "SIR 30:1-10": "SIR 30:1-10",
+      "SIR 30:14-24": "SIR 30:14-24",
+      "SIR 30:27-39": "SIR 33:19-31",
+      "SIR 31:1-15": "SIR 34:1-15",
+      "SIR 31:18-26": "SIR 34:18-26",
+      "SIR 32:1-3": "SIR 35:1-3",
+      "SIR 32:6-11": "SIR 35:5-10",
+      "SIR 32:13-16": "SIR 35:13-16",
+      "SIR 32:20": "SIR 35:24",
+      "SIR 33:3-5": "SIR 36:2-4",
+      "SIR 33:8-10": "SIR 36:7-9",
+      "SIR 33:12": "SIR 30:25",
+      "SIR 34:1-31": "SIR 31:1-31",
+      "SIR 35:1-24": "SIR 32:1-24",
+      "SIR 36:1-15": "SIR 33:1-15",
+      "SIR 36:17-21": "SIR 36:11-15",
+      "SIR 36:23-30": "SIR 36:18-25",
+      "SIR 37:1-16": "SIR 37:1-16",
+      "SIR 37:19-31": "SIR 37:19-31",
+      "SIR 38:1-6": "SIR 38:1-6",
+      "SIR 38:9-32": "SIR 38:9-32",
+      "SIR 39:2-15": "SIR 39:2-15",
+      "SIR 39:18-35": "SIR 39:18-35",
+      "SIR 40:1-3": "SIR 40:1-3",
+      "SIR 40:6-30": "SIR 40:6-30",
+      "SIR 41:1-2": "SIR 41:1-2",
+      "SIR 41:5-17": "SIR 41:5-17",
+      "SIR 41:23-24": "SIR 41:26-27",
+      "SIR 42:1-25": "SIR 42:1-25",
+      "SIR 43:1-16": "SIR 43:1-16",
+      "SIR 43:19-33": "SIR 43:19-33",
+      "SIR 44:1-10": "SIR 44:1-10",
+      "SIR 44:13-21": "SIR 44:13-21",
+      "SIR 45:1-9": "SIR 45:1-9",
+      "SIR 45:12-26": "SIR 45:12-26",
+      "SIR 46:1-4": "SIR 46:1-4",
+      "SIR 46:8-20": "SIR 46:8-20",
+      "SIR 47:1-22": "SIR 47:1-22",
+      "SIR 47:25": "SIR 47:25",
+      "SIR 48:1-14": "SIR 48:1-14",
+      "SIR 48:17-25": "SIR 48:17-25",
+      "SIR 49:1-5": "SIR 49:1-5",
+      "SIR 49:8-16": "SIR 49:8-16",
+      "SIR 50:1-29": "SIR 50:1-29",
+      "SIR 51:1": "SIR 51:1",
+      "SIR 51:4-9": "SIR 51:4-9",
+      "SIR 51:13-30": "SIR 51:13-30",
+      "TOB 1:1-22": "TOB 1:1-22",
+      "TOB 2:1-14": "TOB 2:1-14",
+      "TOB 3:1-17": "TOB 3:1-17",
+      "TOB 4:1-6": "TOB 4:1-6",
+      "TOB 4:19-21": "TOB 4:19-21",
+      "TOB 5:1-3": "TOB 5:1-3",
+      "TOB 5:6-7": "TOB 5:6-7",
+      "TOB 5:9-22": "TOB 5:10-23",
+      "TOB 6:1-4": "TOB 6:1-4",
+      "TOB 6:6-9": "TOB 6:7-10",
+      "TOB 6:13-15": "TOB 6:14-16",
+      "TOB 7:2-3": "TOB 7:2-3",
+      "TOB 7:13": "TOB 7:13",
+      "TOB 7:16-18": "TOB 7:15-17",
+      "TOB 8:1-7": "TOB 8:1-7",
+      "TOB 8:10-21": "TOB 8:10-21",
+      "TOB 9:1-6": "TOB 9:1-6",
+      "TOB 10:1-6": "TOB 10:1-6",
+      "TOB 10:11-12": "TOB 10:10-11",
+      "TOB 11:3-19": "TOB 11:3-19",
+      "TOB 12:1-22": "TOB 12:1-22",
+      "TOB 13:3-5": "TOB 13:3-5",
+      "TOB 13:11-12": "TOB 13:13-14",
+      "TOB 13:18": "TOB 13:18",
+      "TOB 14:3-15": "TOB 14:3-15",
+      "WIS 1:1-16": "WIS 1:1-16",
+      "WIS 2:1-13": "WIS 2:1-13",
+      "WIS 2:16-20": "WIS 2:16-20",
+      "WIS 2:23-24": "WIS 2:23-24",
+      "WIS 3:1": "WIS 3:1",
+      "WIS 3:4-11": "WIS 3:4-11",
+      "WIS 3:14-19": "WIS 3:14-19",
+      "WIS 4:1-13": "WIS 4:1-13",
+      "WIS 4:16-17": "WIS 4:16-17",
+      "WIS 4:20": "WIS 4:20",
+      "WIS 5:1-2": "WIS 5:1-2",
+      "WIS 5:5-23": "WIS 5:5-23",
+      "WIS 6:1-25": "WIS 6:1-25",
+      "WIS 7:3-20": "WIS 7:3-20",
+      "WIS 7:24-30": "WIS 7:24-30",
+      "WIS 8:1-21": "WIS 8:1-21",
+      "WIS 9:1-18": "WIS 9:1-18",
+      "WIS 10:1-21": "WIS 10:1-21",
+      "WIS 11:1-26": "WIS 11:1-26",
+      "WIS 12:1-4": "WIS 12:1-4",
+      "WIS 12:7-27": "WIS 12:7-27",
+      "WIS 13:1-16": "WIS 13:1-16",
+      "WIS 13:19": "WIS 13:19",
+      "WIS 14:1-31": "WIS 14:1-31",
+      "WIS 15:1-19": "WIS 15:1-19",
+      "WIS 16:1-29": "WIS 16:1-29",
+      "WIS 17:1-8": "WIS 17:1-8",
+      "WIS 17:11-21": "WIS 17:10-20",
+      "WIS 18:1-25": "WIS 18:1-25",
+      "WIS 19:1-22": "WIS 19:1-22",
+      "LAO 1:1-20": "LAO 1:1-20"
+    },
+    "excludedVerses": [
+      "ODE 5:1-2",
+      "ODE 7:1-9",
+      "ODE 7:15",
+      "ODE 9:1-25",
+      "ODE 10:1-50",
+      "ODE 11:1-45",
+      "ODE 12:1-28",
+      "ODE 13:1-67",
+      "ODE 13:74",
+      "DNG 3:67-70",
+      "ESG 4:6",
+      "ESG 9:5",
+      "ESG 9:30",
+      "MA4 10:4",
+      "MA4 11:7-8",
+      "SIR 1:5",
+      "SIR 1:7",
+      "SIR 1:21",
+      "SIR 3:19",
+      "SIR 3:25",
+      "SIR 6:1",
+      "SIR 10:21",
+      "SIR 11:15-16",
+      "SIR 13:14",
+      "SIR 16:15-16",
+      "SIR 17:5",
+      "SIR 17:9",
+      "SIR 17:16",
+      "SIR 17:18",
+      "SIR 17:21",
+      "SIR 18:3",
+      "SIR 19:18-19",
+      "SIR 19:21",
+      "SIR 22:7-8",
+      "SIR 24:18",
+      "SIR 24:24",
+      "SIR 25:12",
+      "SIR 26:19-27",
+      "TOB 4:8-18",
+      "TOB 13:8-10"
+    ],
+    "mergedVerses": [],
+    "partialVerses": {
+      "ODE 4:1": [
+        "a"
+      ],
+      "ODE 4:2": [
+        "a"
+      ],
+      "ODE 4:3": [
+        "a"
+      ],
+      "ODE 4:4": [
+        "a"
+      ],
+      "ODE 4:5": [
+        "a"
+      ],
+      "ODE 4:6": [
+        "a"
+      ],
+      "ODE 4:7": [
+        "a"
+      ],
+      "ODE 4:8": [
+        "a"
+      ],
+      "ODE 4:9": [
+        "a",
+        "b"
+      ],
+      "ODE 4:10": [
+        "b"
+      ],
+      "ODE 4:11": [
+        "b"
+      ],
+      "ODE 4:12": [
+        "b"
+      ],
+      "ODE 4:13": [
+        "b"
+      ],
+      "ODE 4:14": [
+        "b"
+      ],
+      "ODE 4:15": [
+        "b"
+      ],
+      "ODE 4:16": [
+        "b"
+      ],
+      "ODE 4:17": [
+        "b"
+      ],
+      "ODE 4:18": [
+        "b"
+      ],
+      "ODE 4:19": [
+        "b"
+      ],
+      "ODE 4:20": [
+        "b"
+      ],
+      "DNG 3:72": [
+        "a",
+        "b"
+      ],
+      "ESG 1:1": [
+        "b",
+        "c",
+        "d",
+        "e",
+        "f",
+        "g",
+        "h",
+        "i",
+        "k",
+        "l",
+        "m",
+        "n",
+        "o",
+        "p",
+        "q",
+        "r",
+        "s"
+      ],
+      "ESG 3:13": [
+        "a",
+        "b",
+        "c",
+        "d",
+        "e",
+        "f",
+        "g"
+      ],
+      "ESG 4:17": [
+        "a",
+        "b",
+        "c",
+        "d",
+        "e",
+        "f",
+        "g",
+        "h",
+        "i",
+        "k",
+        "l",
+        "m",
+        "n",
+        "o",
+        "p",
+        "q",
+        "r",
+        "s",
+        "t",
+        "u",
+        "w",
+        "x",
+        "y",
+        "z"
+      ],
+      "ESG 5:1": [
+        "a",
+        "b",
+        "c",
+        "d",
+        "e",
+        "f"
+      ],
+      "ESG 5:2": [
+        "a",
+        "b"
+      ],
+      "ESG 8:12": [
+        "a",
+        "b",
+        "c",
+        "d",
+        "e",
+        "f",
+        "g",
+        "h",
+        "i",
+        "k",
+        "l",
+        "m",
+        "n",
+        "o",
+        "p",
+        "q",
+        "r",
+        "s",
+        "t",
+        "u",
+        "x"
+      ],
+      "ESG 10:3": [
+        "a",
+        "b",
+        "c",
+        "d",
+        "e",
+        "f",
+        "g",
+        "h",
+        "i",
+        "k",
+        "l"
+      ],
+      "MA4 10:3": [
+        "a"
+      ],
+      "MA4 11:6": [
+        "a",
+        "b"
+      ],
+      "SIR 6:2": [
+        "a",
+        "b"
+      ],
+      "SIR 7:17": [
+        "a",
+        "b"
+      ],
+      "SIR 30:13": [
+        "a",
+        "b"
+      ],
+      "TOB 4:7": [
+        "a",
+        "b",
+        "c",
+        "d",
+        "e",
+        "f",
+        "g",
+        "h",
+        "i",
+        "k",
+        "l"
+      ],
+      "TOB 13:7": [
+        "a",
+        "b",
+        "c"
+      ]
+    },
+    "identityBooks": {
+      "GEN": "GEN",
+      "EXO": "EXO",
+      "LEV": "LEV",
+      "NUM": "NUM",
+      "DEU": "DEU",
+      "JOS": "JOS",
+      "JDG": "JDG",
+      "RUT": "RUT",
+      "SA1": "SA1",
+      "SA2": "SA2",
+      "KI1": "KI1",
+      "KI2": "KI2",
+      "CH1": "CH1",
+      "CH2": "CH2",
+      "EZR": "EZR",
+      "NEH": "NEH",
+      "EST": "EST",
+      "JOB": "JOB",
+      "PSA": "PSA",
+      "PRO": "PRO",
+      "ECC": "ECC",
+      "SNG": "SNG",
+      "ISA": "ISA",
+      "JER": "JER",
+      "LAM": "LAM",
+      "EZE": "EZE",
+      "DAN": "DAN",
+      "HOS": "HOS",
+      "JOL": "JOL",
+      "AMO": "AMO",
+      "OBA": "OBA",
+      "JNA": "JNA",
+      "MIC": "MIC",
+      "NAH": "NAH",
+      "HAB": "HAB",
+      "ZEP": "ZEP",
+      "HAG": "HAG",
+      "ZEC": "ZEC",
+      "MAL": "MAL",
+      "MAT": "MAT",
+      "MRK": "MRK",
+      "LUK": "LUK",
+      "JHN": "JHN",
+      "ACT": "ACT",
+      "ROM": "ROM",
+      "CO1": "CO1",
+      "CO2": "CO2",
+      "GAL": "GAL",
+      "EPH": "EPH",
+      "PHP": "PHP",
+      "COL": "COL",
+      "TH1": "TH1",
+      "TH2": "TH2",
+      "TI1": "TI1",
+      "TI2": "TI2",
+      "TIT": "TIT",
+      "PHM": "PHM",
+      "HEB": "HEB",
+      "JAM": "JAM",
+      "PE1": "PE1",
+      "PE2": "PE2",
+      "JN1": "JN1",
+      "JN2": "JN2",
+      "JN3": "JN3",
+      "JDE": "JDE",
+      "REV": "REV"
+    },
+    "verseZeroReferences": [
+      "PSA 100:0",
+      "PSA 101:0",
+      "PSA 102:0",
+      "PSA 103:0",
+      "PSA 104:0",
+      "PSA 105:0",
+      "PSA 106:0",
+      "PSA 107:0",
+      "PSA 108:0",
+      "PSA 109:0",
+      "PSA 10:0",
+      "PSA 110:0",
+      "PSA 111:0",
+      "PSA 112:0",
+      "PSA 113:0",
+      "PSA 114:0",
+      "PSA 115:0",
+      "PSA 116:0",
+      "PSA 117:0",
+      "PSA 118:0",
+      "PSA 119:0",
+      "PSA 11:0",
+      "PSA 120:0",
+      "PSA 121:0",
+      "PSA 122:0",
+      "PSA 123:0",
+      "PSA 124:0",
+      "PSA 125:0",
+      "PSA 126:0",
+      "PSA 127:0",
+      "PSA 128:0",
+      "PSA 129:0",
+      "PSA 12:0",
+      "PSA 130:0",
+      "PSA 131:0",
+      "PSA 132:0",
+      "PSA 133:0",
+      "PSA 134:0",
+      "PSA 135:0",
+      "PSA 136:0",
+      "PSA 137:0",
+      "PSA 138:0",
+      "PSA 139:0",
+      "PSA 13:0",
+      "PSA 140:0",
+      "PSA 141:0",
+      "PSA 142:0",
+      "PSA 143:0",
+      "PSA 144:0",
+      "PSA 145:0",
+      "PSA 146:0",
+      "PSA 147:0",
+      "PSA 148:0",
+      "PSA 149:0",
+      "PSA 14:0",
+      "PSA 150:0",
+      "PSA 15:0",
+      "PSA 16:0",
+      "PSA 17:0",
+      "PSA 18:0",
+      "PSA 19:0",
+      "PSA 1:0",
+      "PSA 20:0",
+      "PSA 21:0",
+      "PSA 22:0",
+      "PSA 23:0",
+      "PSA 24:0",
+      "PSA 25:0",
+      "PSA 26:0",
+      "PSA 27:0",
+      "PSA 28:0",
+      "PSA 29:0",
+      "PSA 2:0",
+      "PSA 30:0",
+      "PSA 31:0",
+      "PSA 32:0",
+      "PSA 33:0",
+      "PSA 34:0",
+      "PSA 35:0",
+      "PSA 36:0",
+      "PSA 37:0",
+      "PSA 38:0",
+      "PSA 39:0",
+      "PSA 3:0",
+      "PSA 40:0",
+      "PSA 41:0",
+      "PSA 42:0",
+      "PSA 43:0",
+      "PSA 44:0",
+      "PSA 45:0",
+      "PSA 46:0",
+      "PSA 47:0",
+      "PSA 48:0",
+      "PSA 49:0",
+      "PSA 4:0",
+      "PSA 50:0",
+      "PSA 51:0",
+      "PSA 52:0",
+      "PSA 53:0",
+      "PSA 54:0",
+      "PSA 55:0",
+      "PSA 56:0",
+      "PSA 57:0",
+      "PSA 58:0",
+      "PSA 59:0",
+      "PSA 5:0",
+      "PSA 60:0",
+      "PSA 61:0",
+      "PSA 62:0",
+      "PSA 63:0",
+      "PSA 64:0",
+      "PSA 65:0",
+      "PSA 66:0",
+      "PSA 67:0",
+      "PSA 68:0",
+      "PSA 69:0",
+      "PSA 6:0",
+      "PSA 70:0",
+      "PSA 71:0",
+      "PSA 72:0",
+      "PSA 73:0",
+      "PSA 74:0",
+      "PSA 75:0",
+      "PSA 76:0",
+      "PSA 77:0",
+      "PSA 78:0",
+      "PSA 79:0",
+      "PSA 7:0",
+      "PSA 80:0",
+      "PSA 81:0",
+      "PSA 82:0",
+      "PSA 83:0",
+      "PSA 84:0",
+      "PSA 85:0",
+      "PSA 86:0",
+      "PSA 87:0",
+      "PSA 88:0",
+      "PSA 89:0",
+      "PSA 8:0",
+      "PSA 90:0",
+      "PSA 91:0",
+      "PSA 92:0",
+      "PSA 93:0",
+      "PSA 94:0",
+      "PSA 95:0",
+      "PSA 96:0",
+      "PSA 97:0",
+      "PSA 98:0",
+      "PSA 99:0",
+      "PSA 9:0"
+    ],
+    "unsupportedBooks": {
+      "PSS": "OET-LV retains the Swete/First1KGreek source numbering, which differs from the Copenhagen org reference. The 18 Psalms have 332 native verse labels versus 293 in the reference. Native/same-system access is supported; no cross-system mapping is asserted until the source boundaries are reviewed. This is an unresolved alignment, not absent text.",
+      "ODE": "OET-LV retains the Swete/First1KGreek source numbering, which differs from the Copenhagen org reference. Odes have a different chapter arrangement, sparse labels, separate songs encoded with a/b suffixes, and 47 local XML-line labels in chapter 14. Native/same-system access is supported; no cross-system mapping is asserted until the source boundaries are reviewed. This is an unresolved alignment, not absent text."
+    },
+    "groupMappings": [
+      {
+        "source": "BAR 2:1-2",
+        "target": "BAR 2:1-2",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "BAR 3:10-11",
+        "target": "BAR 3:10-11",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "BAR 3:34",
+        "target": "BAR 3:34-35",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "BAR 4:17",
+        "target": "BAR 4:17-18",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "BAR 4:19-20",
+        "target": "BAR 4:20",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "BAR 6:1-2",
+        "target": "LJE 1:1",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "BAR 6:5-6",
+        "target": "LJE 1:4-5",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "BAR 6:10-13",
+        "target": "LJE 1:9-11",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "BAR 6:17",
+        "target": "LJE 1:15-16",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "BAR 6:26-27",
+        "target": "LJE 1:25-26",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "BAR 6:28-29",
+        "target": "LJE 1:27-28",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "BAR 6:40-41",
+        "target": "LJE 1:39-40",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "BAR 6:43",
+        "target": "LJE 1:42-43",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "BAR 6:50-51",
+        "target": "LJE 1:50",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "BAR 6:56",
+        "target": "LJE 1:55-56",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "BAR 6:57-58",
+        "target": "LJE 1:57",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "BAR 6:62-63",
+        "target": "LJE 1:61-62",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "GES 1:3-6",
+        "target": "GES 1:3-6",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "GES 1:11",
+        "target": "GES 1:11-12",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "GES 1:13-14",
+        "target": "GES 1:14",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "GES 1:15-16",
+        "target": "GES 1:15",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "GES 1:17-18",
+        "target": "GES 1:16",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "GES 1:51-52",
+        "target": "GES 1:49",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "GES 2:1-2",
+        "target": "GES 2:1",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "GES 2:3-4",
+        "target": "GES 2:2",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "GES 2:6-7",
+        "target": "GES 2:4",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "GES 2:11-12",
+        "target": "GES 2:8",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "GES 2:13",
+        "target": "GES 2:9-10",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "GES 2:14-15",
+        "target": "GES 2:11",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "GES 2:20-21",
+        "target": "GES 2:16",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "GES 2:22-23",
+        "target": "GES 2:17",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "GES 2:26-27",
+        "target": "GES 2:20-22",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "GES 2:28-29",
+        "target": "GES 2:23-24",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "GES 2:30",
+        "target": "GES 2:25-26",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "GES 3:4-5",
+        "target": "GES 3:4-5",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "GES 3:8-9",
+        "target": "GES 3:8-9",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "GES 3:14-15",
+        "target": "GES 3:14",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "GES 3:19",
+        "target": "GES 3:18-19",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "GES 4:10-11",
+        "target": "GES 4:10-11",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "GES 4:33-34",
+        "target": "GES 4:33-34",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "GES 4:39-40",
+        "target": "GES 4:39-40",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "GES 5:9-10",
+        "target": "GES 5:9-10",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "GES 5:41-42",
+        "target": "GES 5:41",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "GES 5:54-55",
+        "target": "GES 5:53",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "GES 5:58-60",
+        "target": "GES 5:56-57",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "GES 5:73",
+        "target": "GES 5:70-71",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "GES 6:3-4",
+        "target": "GES 6:3-4",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "GES 6:7-9",
+        "target": "GES 6:7-8",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "GES 6:24-25",
+        "target": "GES 6:23-24",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "GES 7:4-5",
+        "target": "GES 7:4-5",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "GES 8:5-6",
+        "target": "GES 8:5-6",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "GES 8:13-14",
+        "target": "GES 8:13-14",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "GES 8:20-21",
+        "target": "GES 8:20-21",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "GES 8:43-44",
+        "target": "GES 8:43",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "GES 8:50",
+        "target": "GES 8:49-50",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "GES 8:56-57",
+        "target": "GES 8:56",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "GES 8:63-64",
+        "target": "GES 8:62",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "GES 8:65-66",
+        "target": "GES 8:63",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "GES 8:82-83",
+        "target": "GES 8:79-80",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "GES 8:93-94",
+        "target": "GES 8:90",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "JDT 1:1-2",
+        "target": "JDT 1:1-2",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "JDT 1:9-10",
+        "target": "JDT 1:9-10",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "JDT 4:11-12",
+        "target": "JDT 4:11-12",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "JDT 6:2-3",
+        "target": "JDT 6:2-3",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "JDT 9:7-8",
+        "target": "JDT 9:7-8",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "JDT 10:8-9",
+        "target": "JDT 10:8-9",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "JDT 16:8",
+        "target": "JDT 16:7-8",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "MA1 9:11-12",
+        "target": "MA1 9:11-12",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "MA1 10:69-70",
+        "target": "MA1 10:69-70",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "MA1 11:69-70",
+        "target": "MA1 11:69-70",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "MA1 14:26-27",
+        "target": "MA1 14:26-27",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "MA2 1:9-10",
+        "target": "MA2 1:9-10",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "MA2 1:20-21",
+        "target": "MA2 1:20-21",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "MA2 7:8-9",
+        "target": "MA2 7:8-9",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "MA3 4:13-14",
+        "target": "MA3 4:13-14",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "MA3 4:17-18",
+        "target": "MA3 4:17-18",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "MA4 1:5-6",
+        "target": "MA4 1:5-6",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "MA4 1:10-11",
+        "target": "MA4 1:10-11",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "MA4 2:12",
+        "target": "MA4 2:12-13",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "MA4 2:13-14",
+        "target": "MA4 2:14",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "MA4 3:17-18",
+        "target": "MA4 3:17-18",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "MA4 4:16-17",
+        "target": "MA4 4:16-17",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "MA4 5:1-2",
+        "target": "MA4 5:1-2",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "MA4 5:6",
+        "target": "MA4 5:6-7",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "MA4 5:9-11",
+        "target": "MA4 5:10-11",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "MA4 6:6-7",
+        "target": "MA4 6:6-7",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "MA4 6:12-13",
+        "target": "MA4 6:12-13",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "MA4 6:20-21",
+        "target": "MA4 6:20-21",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "MA4 6:26-27",
+        "target": "MA4 6:26-27",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "MA4 6:34-35",
+        "target": "MA4 6:34-35",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": [
+          "MA4 7:25",
+          "MA4 8:1"
+        ],
+        "target": "MA4 8:2",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "MA4 8:4-5",
+        "target": "MA4 8:5-6",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "MA4 8:12-13",
+        "target": "MA4 8:13-14",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "MA4 8:27",
+        "target": "MA4 8:28-29",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "MA4 9:23-24",
+        "target": "MA4 9:23-24",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "MA4 10:3",
+        "target": "MA4 10:3-4",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "MA4 10:7-8",
+        "target": "MA4 10:7-8",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "MA4 11:6",
+        "target": "MA4 11:6-8",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "MA4 11:11-12",
+        "target": "MA4 11:11-12",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "MA4 12:2-3",
+        "target": "MA4 12:2",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "MA4 12:4",
+        "target": "MA4 12:3-4",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "MA4 12:7-8",
+        "target": "MA4 12:7-8",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "MA4 12:14-15",
+        "target": "MA4 12:14",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "MA4 17:13-14",
+        "target": "MA4 17:13-14",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "MA4 17:21-22",
+        "target": "MA4 17:21-22",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "MA4 18:5-6",
+        "target": "MA4 18:5",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "MA4 18:7",
+        "target": "MA4 18:6-7",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "MA4 18:8-9",
+        "target": "MA4 18:8-9",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "MA4 18:18-19",
+        "target": "MA4 18:18-19",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "SIR 6:2",
+        "target": "SIR 6:1-2",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "SIR 7:16-17",
+        "target": "SIR 7:16-17",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "SIR 20:16-17",
+        "target": "SIR 20:16-17",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "SIR 23:7-8",
+        "target": "SIR 23:7-8",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "SIR 23:16-17",
+        "target": "SIR 23:16-17",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "SIR 29:16-17",
+        "target": "SIR 29:16",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "SIR 29:18",
+        "target": "SIR 29:17-18",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "SIR 30:11-13",
+        "target": "SIR 30:11-13",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": [
+          "SIR 30:25-26",
+          "SIR 33:11",
+          "SIR 36:16"
+        ],
+        "target": [
+          "SIR 33:16-18",
+          "SIR 36:10"
+        ],
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "SIR 30:40",
+        "target": "SIR 33:32-33",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "SIR 31:16-17",
+        "target": "SIR 34:16-17",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "SIR 32:4-5",
+        "target": "SIR 35:4",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "SIR 32:12",
+        "target": "SIR 35:11-12",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "SIR 32:17",
+        "target": "SIR 35:17-18",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "SIR 32:18",
+        "target": "SIR 35:19-21",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "SIR 32:19",
+        "target": "SIR 35:22-23",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "SIR 33:1-2",
+        "target": "SIR 36:1",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "SIR 33:6-7",
+        "target": "SIR 36:5-6",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "SIR 36:22",
+        "target": "SIR 36:16-17",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "SIR 36:31",
+        "target": "SIR 36:26-27",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "SIR 37:17-18",
+        "target": "SIR 37:17-18",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "SIR 38:7-8",
+        "target": "SIR 38:7-8",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": [
+          "SIR 38:33-34",
+          "SIR 39:1"
+        ],
+        "target": [
+          "SIR 38:33-34",
+          "SIR 39:1"
+        ],
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "SIR 39:16-17",
+        "target": "SIR 39:16-17",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "SIR 40:4-5",
+        "target": "SIR 40:4-5",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "SIR 41:3-4",
+        "target": "SIR 41:3-4",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "SIR 41:18",
+        "target": "SIR 41:18-19",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "SIR 41:19-21",
+        "target": "SIR 41:20-23",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "SIR 41:22",
+        "target": "SIR 41:24-25",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "SIR 43:17-18",
+        "target": "SIR 43:17-18",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "SIR 44:11-12",
+        "target": "SIR 44:11-12",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "SIR 44:22-23",
+        "target": "SIR 44:22-23",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "SIR 45:10-11",
+        "target": "SIR 45:10-11",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "SIR 46:5-7",
+        "target": "SIR 46:5-7",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "SIR 47:23-24",
+        "target": "SIR 47:23-24",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "SIR 48:15-16",
+        "target": "SIR 48:15-16",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "SIR 49:6-7",
+        "target": "SIR 49:6-7",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "SIR 51:2-3",
+        "target": "SIR 51:2-3",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "SIR 51:10-12",
+        "target": "SIR 51:10-12",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "TOB 4:7",
+        "target": "TOB 4:7-18",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "TOB 5:4-5",
+        "target": "TOB 5:4-5",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "TOB 5:8",
+        "target": "TOB 5:8-9",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "TOB 6:5",
+        "target": "TOB 6:5-6",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "TOB 6:10-12",
+        "target": "TOB 6:11-13",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": [
+          "TOB 6:16-17",
+          "TOB 7:1"
+        ],
+        "target": [
+          "TOB 6:17-19",
+          "TOB 7:1"
+        ],
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "TOB 7:4-5",
+        "target": "TOB 7:4-5",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "TOB 7:6-7",
+        "target": "TOB 7:6",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "TOB 7:8",
+        "target": "TOB 7:7-9",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "TOB 7:9-10",
+        "target": "TOB 7:10",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "TOB 7:11-12",
+        "target": "TOB 7:11-12",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "TOB 7:14-15",
+        "target": "TOB 7:14",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "TOB 8:8-9",
+        "target": "TOB 8:8-9",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "TOB 10:7-8",
+        "target": "TOB 10:7-8",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "TOB 10:9-10",
+        "target": "TOB 10:9",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "TOB 10:13",
+        "target": "TOB 10:12-13",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "TOB 11:1-2",
+        "target": [
+          "TOB 10:14",
+          "TOB 11:1-2"
+        ],
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "TOB 13:1-2",
+        "target": "TOB 13:1-2",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "TOB 13:13-15",
+        "target": "TOB 13:15-16",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "TOB 13:16-17",
+        "target": "TOB 13:17",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "TOB 14:1-2",
+        "target": "TOB 14:1-2",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "WIS 2:14-15",
+        "target": "WIS 2:14-15",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "WIS 2:21-22",
+        "target": "WIS 2:21-22",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "WIS 3:2-3",
+        "target": "WIS 3:2-3",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "WIS 3:12-13",
+        "target": "WIS 3:12-13",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "WIS 4:14-15",
+        "target": "WIS 4:14-15",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "WIS 4:18-19",
+        "target": "WIS 4:18-19",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "WIS 5:3-4",
+        "target": "WIS 5:3-4",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "WIS 7:1-2",
+        "target": "WIS 7:1-2",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "WIS 7:21-23",
+        "target": "WIS 7:21-23",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "WIS 12:5-6",
+        "target": "WIS 12:5-6",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "WIS 13:17-18",
+        "target": "WIS 13:17-18",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      },
+      {
+        "source": "WIS 17:9-10",
+        "target": "WIS 17:9",
+        "provenance": "OET-LV DC boundary review 2026-10-29 (Brenton Greek source; see evidence.deuterocanonicalReview)"
+      }
+    ]
+  }
+}

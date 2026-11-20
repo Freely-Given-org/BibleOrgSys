@@ -107,6 +107,9 @@ pub enum IndexError {
 
     #[error("Inconsistent verse numbers at {0}: found {1}")]
     InconsistentVerseNumbers(ChapterVerse, String),
+
+    #[error("Too many entries ({1}) at {0}: a CV index entry can hold at most 65535")]
+    TooManyEntries(ChapterVerse, usize),
 }
 
 /// A combined result type for convenience.

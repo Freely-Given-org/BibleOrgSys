@@ -85,7 +85,7 @@ filenameEndingsToAccept = ('.BC',) # Must be UPPERCASE
 
 
 
-def DrupalBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=False, autoLoadBooks:bool=False ):
+def DrupalBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=False, autoLoadBooks:bool=False ) -> 'bool | DrupalBible | int | None':
     """
     Given a folder, search for DrupalBible Bible files or folders in the folder and in the next level down.
 
@@ -201,7 +201,7 @@ class DrupalBible( Bible ):
     """
     Class for reading, validating, and converting DrupalBible files.
     """
-    def __init__( self, sourceFolder, givenName, encoding='utf-8' ) -> None:
+    def __init__( self, sourceFolder, givenName, encoding:str='utf-8' ) -> None:
         """
         Constructor: just sets up the Bible object.
         """
@@ -229,7 +229,7 @@ class DrupalBible( Bible ):
     # end of DrupalBible.__init__
 
 
-    def load( self ):
+    def load( self ) -> None:
         """
         Load a single source file and load book elements.
         """
@@ -308,7 +308,7 @@ class DrupalBible( Bible ):
 
 
 
-def testDB( TUBfilename ):
+def testDB( TUBfilename ) -> None:
     # Crudely demonstrate the DrupalBible class
     from BibleOrgSys.Reference import VerseReferences
     TUBfolder = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'DrupalTest/') # Must be the same as below

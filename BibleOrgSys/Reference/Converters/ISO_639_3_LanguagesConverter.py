@@ -24,6 +24,7 @@ from xml.etree.ElementTree import ElementTree
 from BibleOrgSys.Misc.singleton import singleton
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
+from typing import Self
 
 
 LAST_MODIFIED_DATE = '2026-10-06' # by RJH
@@ -67,7 +68,7 @@ class ISO_639_3_LanguagesConverter:
         self._XMLTree, self.__DataDicts = None, {}
     # end of __init__
 
-    def loadAndValidate( self, XMLFileOrFilepath=None ):
+    def loadAndValidate( self, XMLFileOrFilepath=None ) -> Self:
         """
         Loads (and crudely validates the XML file) into an element tree.
             Allows the filepath of the source XML file to be specified, otherwise uses the default.
@@ -86,7 +87,7 @@ class ISO_639_3_LanguagesConverter:
         return self
     # end of loadAndValidate
 
-    def _load( self, XMLFileOrFilepath ):
+    def _load( self, XMLFileOrFilepath ) -> None:
         """
         Load the source XML file and remove the header from the tree.
         Also, extracts some useful Attributes from the header element.
@@ -104,7 +105,7 @@ class ISO_639_3_LanguagesConverter:
             logging.error( f"Expected to load {self._treeTag!r} but got {self._XMLTree.tag!r}" )
     # end of _load
 
-    def _validate( self ):
+    def _validate( self ) -> None:
         """
         Check/validate the loaded data.
         """
@@ -165,12 +166,12 @@ class ISO_639_3_LanguagesConverter:
         return result
     # end of __str__
 
-    def __len__( self ):
+    def __len__( self ) -> int:
         """ Returns the number of languages loaded. """
         return len( self._XMLTree )
     # end of __len__
 
-    def importDataToPython( self ):
+    def importDataToPython( self ) -> dict | tuple[dict, dict]:
         """
         Loads (and pivots) the data into suitable Python containers to use in a Python program.
         (Of course, you can just use the elementTree in self._XMLTree if you prefer.)
@@ -205,7 +206,7 @@ class ISO_639_3_LanguagesConverter:
         return self.__DataDicts
     # end of importDataToPython
 
-    def pickle( self, filepath=None ):
+    def pickle( self, filepath=None ) -> None:
         """
         Writes the information tables to a .pickle file that can be easily loaded into a Python3 program.
         """
@@ -225,11 +226,11 @@ class ISO_639_3_LanguagesConverter:
             pickle.dump( self.__DataDicts, myFile )
     # end of pickle
 
-    def exportDataToPython( self, filepath=None ):
+    def exportDataToPython( self, filepath=None ) -> None:
         """
         Writes the information tables to a .py file that can be cut and pasted into a Python program.
         """
-        def exportPythonDict( theFile, theDict, dictName, keyComment, fieldsComment ):
+        def exportPythonDict( theFile, theDict, dictName, keyComment, fieldsComment ) -> None:
             """Exports theDict to theFile."""
             theFile.write( f"{dictName} = {{\n  # Key is {keyComment}\n  # Fields are: {fieldsComment}\n" )
             for dictKey in sorted(theDict.keys()):
@@ -260,7 +261,7 @@ class ISO_639_3_LanguagesConverter:
             myFile.write( f"# end of {os.path.basename(filepath)}" )
     # end of exportDataToPython
 
-    def exportDataToJSON( self, filepath=None ):
+    def exportDataToJSON( self, filepath=None ) -> None:
         """
         Writes the information tables to a .json file that can be easily loaded into a Java program.
 
@@ -282,13 +283,13 @@ class ISO_639_3_LanguagesConverter:
             json.dump( self.__DataDicts, myFile, ensure_ascii=False, indent=2 )
     # end of exportDataToJSON
 
-    def exportDataToC( self, filepath=None ):
+    def exportDataToC( self, filepath=None ) -> None:
         """
         Writes the information tables to a .h and .c files that can be included in c and c++ programs.
 
         NOTE: The (optional) filepath should not have the file extension specified -- this is added automatically.
         """
-        def exportPythonDict( hFile, cFile, theDict, dictName, sortedBy, structure ):
+        def exportPythonDict( hFile, cFile, theDict, dictName, sortedBy, structure ) -> None:
             """ Exports theDict to the .h and .c files. """
             def convertEntry( entry ):
                 """ Convert special characters in an entry… """

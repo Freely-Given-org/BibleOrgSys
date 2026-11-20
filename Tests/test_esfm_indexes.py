@@ -61,44 +61,44 @@ def section_index(
 
 
 class TestCVIndex:
-    def test_is_indexed(self, cv_index: InternalBibleBookCVIndex):
+    def test_is_indexed(self, cv_index: InternalBibleBookCVIndex) -> None:
         assert cv_index.is_indexed
 
-    def test_chapter_count(self, cv_index: InternalBibleBookCVIndex):
+    def test_chapter_count(self, cv_index: InternalBibleBookCVIndex) -> None:
         # chapters() includes '-1' for intro/header content
         real_chapters = [c for c in cv_index.chapters() if c != "-1"]
         assert len(real_chapters) == 2
 
-    def test_chapter_1_verses(self, cv_index: InternalBibleBookCVIndex):
+    def test_chapter_1_verses(self, cv_index: InternalBibleBookCVIndex) -> None:
         assert ("1", "1") in cv_index
         assert ("1", "15") in cv_index
         assert ("1", "16") not in cv_index
 
-    def test_chapter_2_verses(self, cv_index: InternalBibleBookCVIndex):
+    def test_chapter_2_verses(self, cv_index: InternalBibleBookCVIndex) -> None:
         assert ("2", "1") in cv_index
         assert ("2", "23") in cv_index
         assert ("2", "24") not in cv_index
 
-    def test_no_chapter_3(self, cv_index: InternalBibleBookCVIndex):
+    def test_no_chapter_3(self, cv_index: InternalBibleBookCVIndex) -> None:
         assert ("3", "1") not in cv_index
 
-    def test_verse_lookup_returns_entries(self, cv_index: InternalBibleBookCVIndex):
+    def test_verse_lookup_returns_entries(self, cv_index: InternalBibleBookCVIndex) -> None:
         entries = cv_index.get_verse_entries(ChapterVerse("1", "1"))
         assert len(entries) > 0
 
-    def test_chapter_lookup_returns_entries(self, cv_index: InternalBibleBookCVIndex):
+    def test_chapter_lookup_returns_entries(self, cv_index: InternalBibleBookCVIndex) -> None:
         entries = cv_index.get_chapter_entries("1")
         assert len(entries) > 0
 
 
 class TestSectionIndex:
-    def test_is_indexed(self, section_index: InternalBibleBookSectionIndex):
+    def test_is_indexed(self, section_index: InternalBibleBookSectionIndex) -> None:
         assert section_index._indexedFlag
 
-    def test_has_sections(self, section_index: InternalBibleBookSectionIndex):
+    def test_has_sections(self, section_index: InternalBibleBookSectionIndex) -> None:
         assert len(section_index) > 0
 
-    def test_table_of_contents(self, section_index: InternalBibleBookSectionIndex):
+    def test_table_of_contents(self, section_index: InternalBibleBookSectionIndex) -> None:
         toc = section_index.items()
         assert len(toc) > 0
         names = [entry.sectionName for _cv, entry in toc]

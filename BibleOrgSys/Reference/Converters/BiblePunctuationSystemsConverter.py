@@ -23,6 +23,7 @@ from xml.etree.ElementTree import ElementTree
 from BibleOrgSys.Misc.singleton import singleton
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
+from typing import Self
 
 
 LAST_MODIFIED_DATE = '2026-10-06' # by RJH
@@ -70,7 +71,7 @@ class BiblePunctuationSystemsConverter:
         self._DataDict = {} # Used for import
     # end of __init__
 
-    def loadSystems( self, XMLFolder=None ):
+    def loadSystems( self, XMLFolder=None ) -> Self:
         """
         Load and pre-process the specified punctuation systems.
         """
@@ -131,7 +132,7 @@ class BiblePunctuationSystemsConverter:
         return self
     # end of loadSystems
 
-    def _validateSystem( self, punctuationTree, systemName ):
+    def _validateSystem( self, punctuationTree, systemName ) -> None:
         """
         """
         assert punctuationTree
@@ -226,12 +227,12 @@ class BiblePunctuationSystemsConverter:
         return result
     # end of __str__
 
-    def __len__( self ):
+    def __len__( self ) -> int:
         """ Returns the number of systems loaded. """
         return len( self._XMLSystems )
     # end of __len__
 
-    def importDataToPython( self ):
+    def importDataToPython( self ) -> dict:
         """
         Loads (and pivots) the data (not including the header) into suitable Python containers to use in a Python program.
         """
@@ -264,7 +265,7 @@ class BiblePunctuationSystemsConverter:
                                 differenceCount += 1
                                 if not firstTag:
                                     firstTag = tag
-                                    description = _(f" (-->{punctuationDict[tag]}<-- versus -->{checkSystemDataDict[tag]}<--)" )
+                                    description = f" (-->{punctuationDict[tag]}<-- versus -->{checkSystemDataDict[tag]}<--)"
                         if differenceCount==1:
                             logging.warning( f"{punctuationSystemCode} and {checkSystemCode} punctuation systems differ only by {firstTag}{description}" )
 
@@ -274,7 +275,7 @@ class BiblePunctuationSystemsConverter:
         return self._DataDict
     # end of importDataToPython
 
-    def pickle( self, filepath=None ):
+    def pickle( self, filepath=None ) -> None:
         """
         Writes the information tables to a .pickle file that can be easily loaded into a Python3 program.
         """
@@ -294,11 +295,11 @@ class BiblePunctuationSystemsConverter:
             pickle.dump( self._DataDict, myFile )
     # end of pickle
 
-    def exportDataToPython( self, filepath=None ):
+    def exportDataToPython( self, filepath=None ) -> None:
         """
         Writes the information tables to a .py file that can be cut and pasted into a Python program.
         """
-        def exportPythonDict( theFile, theDict, dictName, keyComment, fieldsComment ):
+        def exportPythonDict( theFile, theDict, dictName, keyComment, fieldsComment ) -> None:
             """Exports theDict to theFile."""
             theFile.write( f'  "{dictName}": {{\n    # Key is {keyComment}\n    # Fields are: {fieldsComment}\n' )
             for dictKey in theDict.keys():
@@ -331,7 +332,7 @@ class BiblePunctuationSystemsConverter:
             myFile.write( f"# end of {os.path.basename(filepath)}" )
     # end of exportDataToPython
 
-    def exportDataToJSON( self, filepath=None ):
+    def exportDataToJSON( self, filepath=None ) -> None:
         """
         Writes the information tables to a .json file that can be easily loaded into a Java program.
 
@@ -350,11 +351,11 @@ class BiblePunctuationSystemsConverter:
             json.dump( self._DataDict, myFile, ensure_ascii=False, indent=2 )
     # end of exportDataToJSON
 
-    def exportDataToC( self, filepath=None ):
+    def exportDataToC( self, filepath=None ) -> None:
         """
         Writes the information tables to a .h file that can be included in c and c++ programs.
         """
-        def writeStructure( hFile, structName, structure ):
+        def writeStructure( hFile, structName, structure ) -> None:
             """ Writes a typedef to the .h file. """
             hFile.write( f"typedef struct {structName}EntryStruct {{\n" )
             for declaration in structure.split(';'):
@@ -363,9 +364,9 @@ class BiblePunctuationSystemsConverter:
             hFile.write( f"}} {structName}Entry;\n\n" )
         # end of writeStructure
 
-        def exportPythonDict( cFile, theDict, dictName, structName, sortedBy, structure ):
+        def exportPythonDict( cFile, theDict, dictName, structName, sortedBy, structure ) -> None:
             """ Exports theDict to the .h and .c files. """
-            def convertEntry( entry ):
+            def convertEntry( entry ) -> str:
                 """ Convert special characters in an entry… """
                 result = ""
                 if isinstance( entry, int ): result += str(entry)
@@ -443,7 +444,7 @@ class BiblePunctuationSystemsConverter:
             myCFile.write( f"// end of {os.path.basename(cFilepath)}" )
     # end of exportDataToC
 
-    def obsoleteCheckPunctuationSystem( self, systemName, punctuationSchemeToCheck, exportFlag=False, debugFlag=False ):
+    def obsoleteCheckPunctuationSystem( self, systemName, punctuationSchemeToCheck, exportFlag:bool=False, debugFlag:bool=False ) -> None:
         """
         Check the given punctuation scheme against all the loaded systems.
         Create a new punctuation file if it doesn't match any.

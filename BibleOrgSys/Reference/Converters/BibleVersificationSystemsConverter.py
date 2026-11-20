@@ -27,6 +27,7 @@ from BibleOrgSys.Misc.singleton import singleton
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 import bos_books_codes_py
+from typing import Self
 
 
 LAST_MODIFIED_DATE = '2021-01-19' # by RJH
@@ -70,7 +71,7 @@ class BibleVersificationSystemsConverter:
     # end of BibleVersificationSystemsConverter.__init__
 
 
-    def loadSystems( self, XMLFolder=None ):
+    def loadSystems( self, XMLFolder=None ) -> Self:
         """
         Load and pre-process the specified versification systems.
         """
@@ -124,7 +125,7 @@ class BibleVersificationSystemsConverter:
     # end of BibleVersificationSystemsConverter.loadSystems
 
 
-    def _validateSystem( self, versificationTree ):
+    def _validateSystem( self, versificationTree ) -> None:
         """
         """
         assert versificationTree
@@ -238,13 +239,13 @@ class BibleVersificationSystemsConverter:
     # end of BibleVersificationSystemsConverter.__str__
 
 
-    def __len__( self ):
+    def __len__( self ) -> int:
         """ Returns the number of systems loaded. """
         return len( self.__XMLSystems )
     # end of BibleVersificationSystemsConverter.__len__
 
 
-    def importDataToPython( self ):
+    def importDataToPython( self ) -> dict:
         """
         Loads (and pivots) the data (not including the header) into suitable Python containers to use in a Python program.
         """
@@ -335,7 +336,7 @@ class BibleVersificationSystemsConverter:
     # end of BibleVersificationSystemsConverter.importDataToPython
 
 
-    def _validateSystems( self ):
+    def _validateSystems( self ) -> None:
         """
         Checks that none of the versification systems are identical.
 
@@ -381,7 +382,7 @@ class BibleVersificationSystemsConverter:
                             if ok and v > vr:
                                 logging.warning( f"The {versificationSystemCode} system contains {v} verses for {BBB} {ch} while only {vr} in {referenceCode}" )
 
-    def pickle( self, filepath=None ):
+    def pickle( self, filepath=None ) -> None:
         """
         Writes the information tables to a .pickle file that can be easily loaded into a Python3 program.
         """
@@ -401,11 +402,11 @@ class BibleVersificationSystemsConverter:
     # end of BibleVersificationSystemsConverter.pickle
 
 
-    def exportDataToPython( self, filepath=None ):
+    def exportDataToPython( self, filepath=None ) -> None:
         """
         Writes the information tables to a .py file that can be cut and pasted into a Python program.
         """
-        def exportPythonDict( theFile, theDict, systemName, keyComment, fieldsComment ):
+        def exportPythonDict( theFile, theDict, systemName, keyComment, fieldsComment ) -> None:
             """Exports theDict to theFile."""
             theFile.write( f'  "{systemName}": {{\n    # Key is{keyComment}\n    # Fields are:{fieldsComment}\n' )
             for dictKey in theDict.keys():
@@ -449,7 +450,7 @@ class BibleVersificationSystemsConverter:
     # end of BibleVersificationSystemsConverter.exportDataToPython
 
 
-    def exportDataToJSON( self, filepath=None ):
+    def exportDataToJSON( self, filepath=None ) -> None:
         """
         Writes the information tables to a .json file that can be easily loaded into a Java program.
 
@@ -475,11 +476,11 @@ class BibleVersificationSystemsConverter:
     # end of BibleVersificationSystemsConverter.exportDataToJSON
 
 
-    def exportDataToC( self, filepath=None ):
+    def exportDataToC( self, filepath=None ) -> None:
         """
         Writes the information tables to a .h file that can be included in c and c++ programs.
         """
-        def writeStructure( hFile, structName, structure ):
+        def writeStructure( hFile, structName, structure ) -> None:
             """ Writes a typedef to the .h file. """
             hFile.write( f"typedef struct{structName}EntryStruct {{\n" )
             for declaration in structure.split(';'):
@@ -488,9 +489,9 @@ class BibleVersificationSystemsConverter:
             hFile.write( f"}}{structName}Entry;\n\n" )
         # end of writeStructure
 
-        def exportPythonDict( cFile, theDict, dictName, structName, sortedBy, structure ):
+        def exportPythonDict( cFile, theDict, dictName, structName, sortedBy, structure ) -> None:
             """ Exports theDict to the .h and .c files. """
-            def convertEntry( entry ):
+            def convertEntry( entry ) -> str:
                 """ Convert special characters in an entry… """
                 result = ""
                 if isinstance( entry, int ): result += str(entry)
@@ -527,9 +528,9 @@ class BibleVersificationSystemsConverter:
             cFile.write( f"}}; //{dictName} ({len(theDict)} entries)\n\n" )
         # end of exportPythonDict
 
-        def XXXexportPythonDict( theFile, theDict, dictName, structName, fieldsComment ):
+        def XXXexportPythonDict( theFile, theDict, dictName, structName, fieldsComment ) -> None:
             """Exports theDict to theFile."""
-            def convertEntry( entry ):
+            def convertEntry( entry ) -> str:
                 """Convert special characters in an entry…"""
                 result = ""
                 for field in entry if isinstance( entry, list) else entry.items():

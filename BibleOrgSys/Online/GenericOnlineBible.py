@@ -19,6 +19,7 @@ import logging
 import requests
 import json
 from collections import OrderedDict
+from BibleOrgSys.Reference.BookCode import BookCode
 
 if __name__ == '__main__':
     import re
@@ -76,7 +77,7 @@ class GenericOnlineBible:
     # end of GenericOnlineBible.__str__
 
 
-    def __len__( self ):
+    def __len__( self ) -> int:
         """
         This method returns the number of books in the Bible.
         """
@@ -84,7 +85,7 @@ class GenericOnlineBible:
     # end of GenericOnlineBible.__len__
 
 
-    def __contains__( self, BBB:str ):
+    def __contains__( self, BBB:BookCode ) -> bool:
         """
         This method checks whether the Bible contains the BBB book.
         Returns True or False.
@@ -132,7 +133,7 @@ class GenericOnlineBible:
     ## end of GenericOnlineBible.getOnlineData
 
 
-    def cacheVerse( self, key, verseData ):
+    def cacheVerse( self, key, verseData ) -> None:
         """
         Given a BCV key, add the data to the cache.
         """
