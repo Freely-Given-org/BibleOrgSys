@@ -4,7 +4,7 @@ version = "0.3.6"
 description = "Bible Organisational System — load, check, and/or export Bible files/folders"
 readme = "README.md"
 requires-python = ">=3.12"
-license = "GPL-3.0-or-later"
+license = "MPL-2.0"
 authors = [
     { name = "Robert Hunt", email = "Freely.Given.org+BOS@gmail.com" },
 ]
@@ -14,7 +14,6 @@ classifiers = [
     "Intended Audience :: Developers",
     "Intended Audience :: Religion",
     "Topic :: Religion",
-    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
     "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: 3.14",
     "Operating System :: OS Independent",

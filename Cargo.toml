@@ -11,7 +11,7 @@ members = [
 
 [workspace.package]
 edition = "2024"
-license = "GPL-3.0-or-later"
+license = "MPL-2.0"
 authors = ["Robert Hunt <Freely.Given.org+BOS@gmail.com>"]
 
 [workspace.dependencies]
